@@ -1,0 +1,149 @@
+.btn-payone{
+    background-color: #00395a !important;
+    border-color: #FFFFFF;
+    color: #ffffff  !important;
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    margin-bottom: 15px;  
+}
+
+.btn-payone-fixed {
+    width: 400px;
+}
+
+.payone-menu-container{
+    margin-top:15px;
+}
+.payone-menu-container > li{
+    margin-bottom:20px;
+    border-radius:3px;
+}
+.payone-menu-container > li > a {
+    background-color:#00395a;
+    border-radius:3px;
+    color:#fff;
+}
+.payone-menu-container > li > a:hover,
+.payone-menu-container > li > a:focus{
+    background-color:#eee;
+    color:#00395a;
+}
+.payone-menu-container > li > a[aria-expanded="true"]{
+    border-bottom-left-radius:0px;
+    border-bottom-right-radius:0px;
+}
+.payone-menu-container > li > a .glyphicon.glyphicon-chevron-right{
+    float:right;
+    color:#fff;
+}
+.payone-menu-container > li > a .glyphicon.glyphicon-chevron-down{
+    float:right;
+    color:#fff;
+    display:none;
+}
+.payone-menu-container > li > a.open-menu .glyphicon.glyphicon-chevron-right{
+    display:none;
+}
+.payone-menu-container > li > a.open-menu .glyphicon.glyphicon-chevron-down{
+    display:inline-block;
+}
+.payone-menu-container > li a .glyphicon.glyphicon-arrow-right {
+    font-size:11px;
+    margin-right:10px;
+    color:inherit;
+}
+.payone-menu-container > li > ul{
+    border:1px solid #00395a;
+    padding-bottom:2px;
+    border-bottom-left-radius:3px;
+    border-bottom-right-radius:3px;
+}
+.payone-menu-container > li > ul a{
+    background-color:#fff;
+}
+.payone-menu-container > li > ul a.open-menu{
+    background-color:#eee;
+}
+.payone-menu-container > li > ul a .glyphicon.glyphicon-chevron-right{
+    float:right;
+    color:#00395a;
+}
+.payone-menu-container > li > ul a .glyphicon.glyphicon-chevron-down{
+    float:right;
+    color:#00395a;
+    display:none;
+}
+.payone-menu-container > li > ul a.open-menu .glyphicon.glyphicon-chevron-right{
+    display:none;
+}
+.payone-menu-container > li > ul a.open-menu .glyphicon.glyphicon-chevron-down{
+    display:inline-block;
+}
+.payone-menu-container > li ul li a.payone-submenu{
+    padding-left:45px;
+    background-color:#fff;
+}
+
+.payone-submenu {
+    background-color: #00395a;
+    border-color: #FFFFFF;
+}
+
+#payone-settings-level{
+    margin-bottom:0px;
+}
+#payone-settings-level .caret{
+    margin-left:5px;
+}
+#payone-settings-level:hover{
+    border-color:#00395a;
+}
+.btn-payone,
+.btn-payone:hover,
+.btn-payone:active{
+    border: none;
+}
+
+.form-horizontal .control-label.text-left{
+    text-align: left;
+}
+
+#data{
+    font-size: 12px;
+    color: #FFFFFF;
+    background-color: #000000;        
+    margin-top: 15px;
+    width: 640px;
+    height: 300px;
+}
+.glyphicon{
+    margin-right: 10px;
+}
+
+.popover{
+    max-width: 400px;
+    white-space: pre-wrap
+
+    
+}
+
+.popover-title {
+    color: #FFFFFF;
+    background-color: #00395a;
+    font-size: 14px;
+}
+.popover-content {
+   font-size: 12px;
+   white-space: pre-wrap;
+   white-space: pre-wrap;      /* CSS3 */   
+   white-space: -moz-pre-wrap; /* Firefox */   
+   white-space: -o-pre-wrap;   /* Opera 7 */    
+   word-wrap: break-word;      /* IE */    
+
+}
