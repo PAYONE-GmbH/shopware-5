@@ -141,7 +141,7 @@
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>
         </div>
-        <h3 data-toggle="collapse" data-target="#payonetable">Konfiguration hosted iFrame</h3>
+        <a style="font-size: 28px" href="#" data-toggle="collapse" data-target="#payonetable">Konfiguration hosted iFrame</a>
         <div id="payonetable" class="collapse">
             <form role="form" id="ajaxiframeconfigform">
                 <table class="table-condensed">

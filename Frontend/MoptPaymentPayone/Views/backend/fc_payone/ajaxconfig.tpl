@@ -97,11 +97,10 @@
                 dataType: 'text',
                 success: function (text) {
                     $("#data").html(text);
-                    setTimeout(getLog, 1000); // refresh every 30 seconds
+                    setTimeout(getLog, 3000); // refresh every 3 seconds
                 }
             })
         }
-        getLog();
 
         $(document).ready(function ()
         {
@@ -186,6 +185,7 @@
                 });
                 startable = false;
                 $("#startTest").addClass("disabled");
+                getLog();
             }
         });
 
