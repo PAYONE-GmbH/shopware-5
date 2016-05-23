@@ -1,0 +1,16 @@
+{"Titel":
+        [
+        "Anzahl Bestellungen Insgesamt",
+        "Anzahl Artikel online",
+        "Anzahl Zahlungen PAYONE VISA ",
+        "Anzahl Zahlungen PAYONE Lastschrift "
+        ],
+"SQL":
+        [
+        "SELECT COUNT(id) as platzhalter FROM `s_order` ",
+        "SELECT COUNT(id) as platzhalter FROM `s_articles`",
+        "SELECT COUNT(id) as platzhalter FROM `s_order` WHERE paymentID=7",
+        "SELECT COUNT(id) as platzhalter FROM `s_order` WHERE paymentID=22 "
+        ]
+}
+

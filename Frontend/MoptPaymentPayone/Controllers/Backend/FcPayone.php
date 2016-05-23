@@ -53,7 +53,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
         $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
 
-        $filename = Shopware()->Application()->Kernel()->getLogDir() . '/dashboardconfig.txt';
+        $filename = Shopware()->Application()->Kernel()->getRootDir() . '/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/dashboardconfig.txt';
+        
         $config = file_get_contents($filename);
         $aConfig = json_decode($config);
         $breadcrump = '';
@@ -73,7 +74,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             $ret[$i] = $data[0]['platzhalter'];
             $i++;
         }
-        $resultfile = fopen($filename, "r");
+
         $this->View()->assign(array(
             "data" => $ret,
             "breadcrump" => $breadcrump,
@@ -411,6 +412,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
     {
 
         $data = array();
+        sleep(2);
         $this->Front()->Plugins()->Json()->setRenderer(true);
         $filename = Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log';
         $resultfile = fopen($filename, "r");
