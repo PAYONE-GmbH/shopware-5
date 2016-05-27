@@ -53,7 +53,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
         $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
 
-        $filename = Shopware()->Application()->Kernel()->getRootDir() . '/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/dashboardconfig.txt';
+        $filename = __DIR__ . '/../../dashboardconfig.txt';
         
         $config = file_get_contents($filename);
         $aConfig = json_decode($config);
