@@ -63,7 +63,7 @@
         }
 
         function modeDetailsFormatter(value) {
-            if (value == 'false')
+            if (value === false)
             {
                 return 'Test';
             } else {
