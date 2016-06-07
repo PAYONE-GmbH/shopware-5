@@ -280,7 +280,7 @@ $.plugin('moptPayoneCreditcardPrepare', {
         }
 
         if (me.opts.moptCreditcardConfig.cardcvc_custom_style === '0') {
-            config.fields.cardcvc2.style = me.opts.moptCreditcardConfig.cardncvc_input_css;
+            config.fields.cardcvc2.style = me.opts.moptCreditcardConfig.cardcvc_input_css;
         }
         if (me.opts.moptCreditcardConfig.cardcvc_custom_iframe === '0') {
             config.fields.cardcvc2.iframe.width = me.opts.moptCreditcardConfig.cardcvc_iframe_width;

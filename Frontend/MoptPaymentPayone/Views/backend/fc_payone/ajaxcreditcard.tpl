@@ -179,7 +179,7 @@
                         <td><input name="cardnoInputCss" id="cardnoInputCss" type="text" class="form-control" /></td>
                     </tr>
                     <tr class="form-group">
-                        <th>Gültigkeitsmonat</th>
+                        <th>Kreditkartenprüfziffer</th>
                         <td><select name="cardcvcFieldType" id="cardcvcFieldType" style="max-width:125px;" class="form-control">
                                 <option value="tel">Numerisch</option>
                                 <option value="password">Passwort</option>
@@ -201,7 +201,7 @@
                         <td><input name="cardcvcInputCss" id="cardcvcInputCss" type="text" class="form-control" /></td>
                     </tr>
                     <tr class="form-group">
-                        <th>Kreditkartennummer</th>
+                        <th>Gültigkeitsmonat</th>
                         <td><select name="cardmonthFieldType" id="cardmonthFieldType" style="max-width:125px;" class="form-control">
                                 <option value="tel">Numerisch</option>
                                 <option value="password">Passwort</option>
