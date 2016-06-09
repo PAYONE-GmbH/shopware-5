@@ -458,6 +458,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     protected function createMenu() {
         $configurationLabelName = $this->getInstallHelper()->moptGetConfigurationLabelName();
+
+        $labelPayment = array('label' => 'Zahlungen');
+        $labelPayOne = array('label' => 'PAYONE');
         
         // Lightweight Backend Controller 
         $this->createMenuItem(
@@ -466,15 +469,15 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 'onclick' => 'Shopware.ModuleManager.createSimplifiedModule("FcPayone", { "title": "PAYONE Kontrollzentrum" })',
                 'class' => 'payoneicon',
                 'active' => 1,
-                'parent' => $this->Menu()->findOneBy('label', 'Zahlungen'),
+                'parent' => $this->Menu()->findOneBy($labelPayment),
             )
         );
 
-        if ($this->Menu()->findOneBy('label', 'PAYONE')) {
+        if ($this->Menu()->findOneBy($labelPayOne)) {
             return;
         }
 
-        $parent = $this->Menu()->findOneBy('label', 'Zahlungen');
+        $parent = $this->Menu()->findOneBy($labelPayment);
         $item = $this->createMenuItem(array(
             'label' => 'PAYONE',
             'class' => 'payoneicon',
