@@ -26,7 +26,7 @@ class FrontendPostDispatch implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container, $path)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container, $path)
     {
         $this->container = $container;
         $this->path = $path;
@@ -48,9 +48,9 @@ class FrontendPostDispatch implements SubscriberInterface
     /**
      * choose correct tpl folder
      * 
-     * @param Enlight_Event_EventArgs $args
+     * @param \Enlight_Controller_ActionEventArgs $args
      */
-    public function onPostDispatchBackend(Enlight_Event_EventArgs $args)
+    public function onPostDispatchBackend(\Enlight_Controller_ActionEventArgs $args)
     {
         $request = $args->getSubject()->Request();
         $response = $args->getSubject()->Response();
@@ -64,9 +64,9 @@ class FrontendPostDispatch implements SubscriberInterface
     /**
      * choose correct tpl folder and extend shopware templates
      * 
-     * @param Enlight_Event_EventArgs $args
+     * @param \Enlight_Controller_ActionEventArgs $args
      */
-    public function onPostDispatchFrontend(Enlight_Event_EventArgs $args)
+    public function onPostDispatchFrontend(\Enlight_Controller_ActionEventArgs $args)
     {
         $request = $args->getSubject()->Request();
         $response = $args->getSubject()->Response();

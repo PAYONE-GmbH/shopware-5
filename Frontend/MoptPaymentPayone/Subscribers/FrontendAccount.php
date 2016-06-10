@@ -19,7 +19,7 @@ class FrontendAccount implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container)
     {
         $this->container = $container;
     }
@@ -38,11 +38,11 @@ class FrontendAccount implements SubscriberInterface
     }
 
     /**
-     * assign saved paymend data to view
+     * assign saved payment data to view
      * 
-     * @param Enlight_Hook_HookArgs $arguments
+     * @param \Enlight_Hook_HookArgs $arguments
      */
-    public function onPaymentAction(Enlight_Hook_HookArgs $arguments)
+    public function onPaymentAction(\Enlight_Hook_HookArgs $arguments)
     {
         $subject = $arguments->getSubject();
         $userId = Shopware()->Session()->sUserId;
