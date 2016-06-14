@@ -159,6 +159,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'mandateActive',
             'mandateDownloadEnabled',
             'paypalEcsActive',
+            'payolutionB2bmode',                
         );
 
         foreach ($fields as $field) {
@@ -287,6 +288,12 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             if ($paymentHelper->isPayonePaydirekt($paymentData['name'])) {
                 $data['extra'] = 'paydirekt';
             }
+            if ($paymentHelper->isPayonePayolutionDebitNote($paymentData['name'])) {
+                $data['extra'] = 'payolution_debitnote';
+            }     
+            if ($paymentHelper->isPayonePayolutionInvoice($paymentData['name'])) {
+                $data['extra'] = 'payolution_invoice';
+            }               
         }
 
         $data = $this->getIsoCodesForCountries($data);

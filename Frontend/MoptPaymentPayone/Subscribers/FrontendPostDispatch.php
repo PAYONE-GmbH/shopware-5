@@ -108,7 +108,8 @@ class FrontendPostDispatch implements SubscriberInterface
 
         if (in_array($controllerName, array('account', 'checkout', 'register'))) {
             $moptPayoneData = $this->moptPayoneCheckEnvironment($controllerName);
-            $view->assign('moptCreditCardCheckEnvironment', $moptPayoneData);
+            $view->assign('moptCreditCardCheckEnvironment', $moptPayoneData);  
+            $view->assign('fcPayolutionConfig', $moptPayoneData['payolutionConfig']); 
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
             $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
             $mpotPaymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
@@ -245,8 +246,27 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__klarna_inst_birthyear'] = $birthday[0];
                 $data['mopt_payone__klarna_inst_telephone'] = $userData['billingaddress']['phone'];
             }
+            
+            
+            //prepare additional Payolution information and retrieve birthday from user data
+            if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name'])
+                    || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name']))
+                {
+                $data['payolutionConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+                
+                $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
+                        ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
+                $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__payolution_debitnote_birthday'] = $birthday[2];
+                $data['mopt_payone__payolution_debitnote_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payolution_debitnote_birthyear'] = $birthday[0];
+                $data['mopt_payone__payolution_invoice_birthday'] = $birthday[2];
+                $data['mopt_payone__payolution_invoice_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payolution_invoice_birthyear'] = $birthday[0];
+            }            
         }
-
+        
         $payoneParams = $moptPayoneMain->getParamBuilder()->getBasicParameters();
         $creditCardConfig = $this->getCreditcardConfig(); //retrieve additional creditcardconfig
 
@@ -254,6 +274,7 @@ class FrontendPostDispatch implements SubscriberInterface
         $payoneParams['portalid'] = $creditCardConfig['portal_id'];
         $payoneParams['key'] = $creditCardConfig['api_key'];
         $payoneParams['aid'] = $creditCardConfig['subaccount_id'];
+        
         if ($creditCardConfig['live_mode']) {
             $payoneParams['mode'] = 'live';
         } else {
@@ -298,6 +319,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         $data['moptCreditcardConfig'] = $creditCardConfig;
         $data['moptPayoneParams'] = $payoneParams;
+        
 
         if ($paymentData) {
             $data['sFormData'] = $paymentData;

@@ -168,6 +168,17 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(16).enable();
         }
         ;
+        if ( field === 'payolution_debitnote' || field === 'payolution_invoice') {
+            fieldset.items.getAt(18).enable();
+            fieldset.items.getAt(19).enable();
+        } 
+        else {
+            fieldset.items.getAt(18).disable();
+            fieldset.items.getAt(19).disable();  
+        }         
+        ;  
+        
+        
     },
     /**
      * creates form child elements
@@ -815,7 +826,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 xtype: 'combobox',
                 fieldLabel: '{s name=fieldlabel/checkAccount}Bankdaten überprüfen{/s}',
                 name: 'checkAccount',
-                store: me.data.checkcc,
+                store: me.data.yesno,
                 queryMode: 'local',
                 displayField: 'display',
                 valueField: 'value',
@@ -912,7 +923,30 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'creditcardMinValid',
                 allowBlank: false,
                 labelWidth: 200
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name=fieldlabel/payolutionCompanyName}Payolution Firmenname{/s}',
+                helpText: '{s name=fieldlabelhelp/payolutionCompanyName}Payolution Firmenname{/s}',
+                name: 'payolutionCompanyName',
+                allowBlank: true,
+                disabled: true,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/payolutionB2bMode}Payolution B2B Modus{/s}',
+                helpText: '{s name=fieldlabelhelp/payolutionB2bMode}Payolution B2B Modus{/s}',
+                name: 'payolutionB2bmode',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: true,
+                labelWidth: 200
             }
+            
         ];
     },
     getPaymentStatus: function () {

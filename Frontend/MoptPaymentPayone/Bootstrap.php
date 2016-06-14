@@ -49,7 +49,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      *
      * @return boolean 
      */
-    public function uninstall($deleteModels = false, $removeAttributes = false) {
+    public function uninstall($deleteModels = false, $removeAttributes = true) {
         if ($deleteModels) {
             $em = $this->Application()->Models();
             $platform = $em->getConnection()->getDatabasePlatform();
@@ -90,6 +90,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->removeAttribute('s_order_details_attributes', 'mopt_payone', 'shipment_date');
             Shopware()->Models()->removeAttribute('s_order_details_attributes', 'mopt_payone', 'captured');
             Shopware()->Models()->removeAttribute('s_order_details_attributes', 'mopt_payone', 'debit');
+            Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'payolution_workorder_id');
+            Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'payolution_clearing_reference');            
 
             Shopware()->Models()->generateAttributeModels(
                     array(
@@ -363,6 +365,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         if (!$this->getInstallHelper()->isTransactionLogModelUpdated()) {
             $this->getInstallHelper()->updateTransactionLogModel();
         }
+
+        // payone config payolution installment extension
+        if (!$this->getInstallHelper()->moptPayoneConfigPayolutionExtensionExist()) {
+            $this->getInstallHelper()->moptExtendConfigPayolutionDataTable();
+        }
         
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModel($this->getPayoneLogger());
 
@@ -415,7 +422,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'is_authorized', 'TINYINT(1)', true, null);
             Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'is_finally_captured', 'TINYINT(1)', true, null);
             Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'clearing_data', 'text', true, null);
-
+            Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'payolution_workorder_id', 'VARCHAR(64)', true, null);
+            Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'payolution_clearing_reference', 'VARCHAR(64)', true, null);
+            
             $models[] = 's_order_attributes';
         }
 
@@ -458,9 +467,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     protected function createMenu() {
         $configurationLabelName = $this->getInstallHelper()->moptGetConfigurationLabelName();
-
-        $labelPayment = array('label' => 'Zahlungen');
-        $labelPayOne = array('label' => 'PAYONE');
         
         // Lightweight Backend Controller 
         $this->createMenuItem(
@@ -469,15 +475,15 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 'onclick' => 'Shopware.ModuleManager.createSimplifiedModule("FcPayone", { "title": "PAYONE Kontrollzentrum" })',
                 'class' => 'payoneicon',
                 'active' => 1,
-                'parent' => $this->Menu()->findOneBy($labelPayment),
+                'parent' => $this->Menu()->findOneBy('label', 'Zahlungen'),
             )
         );
 
-        if ($this->Menu()->findOneBy($labelPayOne)) {
+        if ($this->Menu()->findOneBy('label', 'PAYONE')) {
             return;
         }
 
-        $parent = $this->Menu()->findOneBy($labelPayment);
+        $parent = $this->Menu()->findOneBy('label', 'Zahlungen');
         $item = $this->createMenuItem(array(
             'label' => 'PAYONE',
             'class' => 'payoneicon',

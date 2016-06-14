@@ -433,6 +433,16 @@ class MoptPayoneConfig extends ModelEntity
    */
   private $adresscheckShippingCountries;
   
+  /**
+   * @ORM\Column(name="payolution_company_name", type="string", length=255, nullable=true, unique=false)
+   */
+  private $payolutionCompanyName;  
+  
+   /**
+   * @ORM\Column(name="payolution_b2bmode", type="boolean", nullable=true, unique=false)
+   */
+  private $payolutionB2bmode;   
+  
   public function fromArray($array = array())
   {
     foreach ($array as $property => $value)
@@ -1240,4 +1250,25 @@ class MoptPayoneConfig extends ModelEntity
   {
     $this->adresscheckShippingCountries = $adresscheckShippingCountries;
   }
+  
+  public function getPayolutionCompanyName()
+  {
+    return $this->payolutionCompanyName;
+  }
+
+  public function setPayolutionCompanyName($payolutionCompanyName)
+  {
+    $this->payolutionCompanyName = $payolutionCompanyName;
+  }  
+ 
+  public function getPayolutionB2bmode()
+  {
+    return $this->payolutionB2bmode;
+  }
+
+  public function setPayolutionB2bMode($payolutionB2bmode)
+  {
+    $this->payolutionB2bmode = $payolutionB2bmode;
+  }   
+    
 }

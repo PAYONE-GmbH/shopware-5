@@ -36,4 +36,8 @@ class Payone_Api_Enum_FinancingType
     const CFR = 'CFR'; // COMMERZ FINANZ
     const KLV = 'KLV'; // KLARNA INVOICING
     const KLS = 'KLS'; // KLARNA FINANCING
+    const PYV = 'PYV'; // PAYOLUTION INVOICING
+    const PYD = 'PYD'; // PAYOLUTION DEBIT
+    const PYM = 'PYM'; // PAYOLUTION MONTHLY
+    const PYS = 'PYS'; // PAYOLUTION INSTALLMENT  
 }

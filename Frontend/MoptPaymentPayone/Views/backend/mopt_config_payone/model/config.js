@@ -83,7 +83,9 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'paypalEcsActive', type: 'boolean'},
     { name: 'creditcardMinValid', type: 'int'},
     { name: 'adresscheckBillingCountries', type: 'string'},
-    { name: 'adresscheckShippingCountries', type: 'string'}
+    { name: 'adresscheckShippingCountries', type: 'string'},
+    { name: 'payolutionCompanyName', type: 'string'},
+    { name: 'payolutionB2bmode', type: 'boolean'}
   ],
   /**
    * Validation

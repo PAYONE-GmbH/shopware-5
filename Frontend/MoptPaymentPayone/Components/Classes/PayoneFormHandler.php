@@ -3,8 +3,7 @@
 /**
  * $Id: $
  */
-class Mopt_PayoneFormHandler
-{
+class Mopt_PayoneFormHandler {
 
     /**
      * process payment form
@@ -14,8 +13,7 @@ class Mopt_PayoneFormHandler
      * @param Mopt_PayonePaymentHelper $paymentHelper
      * @return array payment data 
      */
-    public function processPaymentForm($paymentId, $formData, $paymentHelper)
-    {
+    public function processPaymentForm($paymentId, $formData, $paymentHelper) {
         if ($paymentHelper->isPayoneCreditcard($paymentId)) {
             return $this->proccessCreditCard($formData);
         }
@@ -48,6 +46,14 @@ class Mopt_PayoneFormHandler
             return $this->proccessKlarna($formData);
         }
 
+        if ($paymentHelper->isPayonePayolutionDebitNote($paymentId)) {
+            return $this->proccessPayolutionDebitNote($formData);
+        }
+
+        if ($paymentHelper->isPayonePayolutionInvoice($paymentId)) {
+            return $this->proccessPayolutionInvoice($formData);
+        }
+
         return array();
     }
 
@@ -57,8 +63,7 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array 
      */
-    protected function proccessSofortueberweisung($formData)
-    {
+    protected function proccessSofortueberweisung($formData) {
         $paymentData = array();
 
         if (!$formData["mopt_payone__sofort_bankaccount"]) {
@@ -112,8 +117,7 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array 
      */
-    protected function proccessGiropay($formData)
-    {
+    protected function proccessGiropay($formData) {
         $paymentData = array();
 
         if (!$formData["mopt_payone__giropay_iban"]) {
@@ -144,8 +148,7 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array 
      */
-    protected function proccessEps($formData)
-    {
+    protected function proccessEps($formData) {
         $paymentData = array();
 
         if (!isset($formData["mopt_payone__eps_bankgrouptype"]) || empty($formData["mopt_payone__eps_bankgrouptype"])) {
@@ -165,8 +168,7 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array 
      */
-    protected function proccessIdeal($formData)
-    {
+    protected function proccessIdeal($formData) {
         $paymentData = array();
 
         if ($formData["mopt_payone__ideal_bankgrouptype"] == 'not_choosen') {
@@ -186,8 +188,7 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array 
      */
-    protected function proccessDebitNote($formData)
-    {
+    protected function proccessDebitNote($formData) {
         $paymentData = array();
 
         //bankaccount/code or bic/iban
@@ -249,8 +250,7 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array 
      */
-    protected function proccessCreditCard($formData)
-    {
+    protected function proccessCreditCard($formData) {
         $paymentData = array();
         $paymentData['formData'] = $formData;
         return $paymentData;
@@ -262,8 +262,7 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array 
      */
-    protected function proccessKlarna($formData)
-    {
+    protected function proccessKlarna($formData) {
         $paymentData = array();
 
         if (!$formData["mopt_payone__klarna_telephone"]) {
@@ -310,8 +309,7 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array 
      */
-    protected function proccessKlarnaInstallment($formData)
-    {
+    protected function proccessKlarnaInstallment($formData) {
         $paymentData = array();
 
         if (!$formData["mopt_payone__klarna_inst_telephone"]) {
@@ -349,6 +347,141 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_save_birthday_and_phone'] = false;
         }
 
+        return $paymentData;
+    }
+
+    /**
+     * process form data 
+     *
+     * @param array $formData
+     * @return array 
+     */
+    protected function proccessPayolutionDebitNote($formData) {
+
+        // toDo check if Birthday is already in billingaddress object 
+
+        $paymentData = array();
+
+        if (!$formData["mopt_payone__debit_agreement"] || !in_array($formData["mopt_payone__debit_agreement"], array('on', true))) {
+            $paymentData['sErrorFlag']["mopt_payone__debit_agreement"] = true;
+        } else {
+            $paymentData['formData']["mopt_payone__debit_agreement"] = $formData["mopt_payone__debit_agreement"];
+        }
+        if (!$formData["mopt_payone__debit_agreement2"] || !in_array($formData["mopt_payone__debit_agreement2"], array('on', true))) {
+            $paymentData['sErrorFlag']["mopt_payone__debit_agreement2"] = true;
+        } else {
+            $paymentData['formData']["mopt_payone__debit_agreement2"] = $formData["mopt_payone__debit_agreement2"];
+        }        
+
+        if ($formData[mopt_payone__payolution_birthdaydate] == "0000-00-00" && !$formData[mopt_payone__payolution_b2bmode] == "1") {
+            if (!$formData["mopt_payone__payolution_debitnote_birthyear"]) {
+                $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthyear"] = true;
+            } else {
+                $paymentData['formData']["mopt_payone__payolution_debitnote_birthyear"] = $formData["mopt_payone__payolution_debitnote_birthyear"];
+            }
+
+            if (!$formData["mopt_payone__payolution_debitnote_birthmonth"]) {
+                $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthmonth"] = true;
+            } else {
+                $paymentData['formData']["mopt_payone__payolution_debitnote_birthmonth"] = $formData["mopt_payone__payolution_debitnote_birthmonth"];
+            }
+
+            if (!$formData["mopt_payone__payolution_debitnote_birthday"]) {
+                $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthday"] = true;
+            } else {
+                $paymentData['formData']["mopt_payone__payolution_debitnote_birthday"] = $formData["mopt_payone__payolution_debitnote_birthday"];
+            }
+            $paymentData['formData']['mopt_save_birthday'] = true;
+
+            if ($paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthyear"] || $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthmonth"] || $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthday"]) {
+                $paymentData['formData']['mopt_save_birthday'] = false;
+            }
+        }
+
+        if (!$formData["mopt_payone__debit_iban"]) {
+            $paymentData['sErrorFlag']["mopt_payone__debit_iban"] = true;
+        } else {
+            $paymentData['formData']["mopt_payone__debit_iban"] = $formData["mopt_payone__debit_iban"];
+        }
+
+        if (!$formData["mopt_payone__debit_bic"]) {
+            $paymentData['sErrorFlag']["mopt_payone__debit_bic"] = true;
+        } else {
+            $paymentData['formData']["mopt_payone__debit_bic"] = $formData["mopt_payone__debit_bic"];
+        }
+
+        if ($paymentData['sErrorFlag']["mopt_payone__debit_iban"] && $paymentData['sErrorFlag']["mopt_payone__debit_bic"]) {
+            unset($paymentData['sErrorFlag']["mopt_payone__debit_iban"]);
+            unset($paymentData['sErrorFlag']["mopt_payone__debit_bic"]);
+        }
+        
+        if ($formData[mopt_payone__payolution_b2bmode] === "1")  {
+
+            if (!$formData["mopt_payone__debitnote_company_trade_registry_number"]) {
+                $paymentData['sErrorFlag']["mopt_payone__debitnote_company_trade_registry_number"] = true;
+            } else {
+                $paymentData['formData']["mopt_payone__debitnote_company_trade_registry_number"] = $formData["mopt_payone__debitnote_company_trade_registry_number"];
+            }
+            
+            $paymentData['formData']["mopt_payone__payolution_b2bmode"] = $formData["mopt_payone__payolution_b2bmode"];            
+        }        
+        $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_birthdaydate"];
+
+        return $paymentData;
+    }
+
+    /**
+     * process form data 
+     *
+     * @param array $formData
+     * @return array 
+     */
+    protected function proccessPayolutionInvoice($formData) {
+        $paymentData = array();
+
+        if (!$formData["mopt_payone__payolution_invoice_agreement"] || !in_array($formData["mopt_payone__payolution_invoice_agreement"], array('on', true))) {
+            $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_agreement"] = true;
+        } else {
+            $paymentData['formData']["mopt_payone__payolution_invoice_agreement"] = $formData["mopt_payone__payolution_invoice_agreement"];
+        }
+
+        if ($formData[mopt_payone__payolution_birthdaydate] == "0000-00-00" && $formData[mopt_payone__payolution_b2bmode] !== "1") {
+            if (!$formData["mopt_payone__payolution_invoice_birthyear"]) {
+                $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthyear"] = true;
+            } else {
+                $paymentData['formData']["mopt_payone__payolution_invoice_birthyear"] = $formData["mopt_payone__payolution_invoice_birthyear"];
+            }
+
+            if (!$formData["mopt_payone__payolution_invoice_birthmonth"]) {
+                $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthmonth"] = true;
+            } else {
+                $paymentData['formData']["mopt_payone__payolution_invoice_birthmonth"] = $formData["mopt_payone__payolution_invoice_birthmonth"];
+            }
+
+            if (!$formData["mopt_payone__payolution_invoice_birthday"]) {
+                $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthday"] = true;
+            } else {
+                $paymentData['formData']["mopt_payone__payolution_invoice_birthday"] = $formData["mopt_payone__payolution_invoice_birthday"];
+            }
+            $paymentData['formData']['mopt_save_birthday'] = true;
+
+            if ($paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthyear"] || $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthmonth"] || $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthday"]) {
+                $paymentData['formData']['mopt_save_birthday'] = false;
+            }
+        } 
+        
+        if ($formData[mopt_payone__payolution_b2bmode] === "1")  {
+
+            if (!$formData["mopt_payone__invoice_company_trade_registry_number"]) {
+                $paymentData['sErrorFlag']["mopt_payone__invoice_company_trade_registry_number"] = true;
+            } else {
+                $paymentData['formData']["mopt_payone__invoice_company_trade_registry_number"] = $formData["mopt_payone__invoice_company_trade_registry_number"];
+            }
+            
+            $paymentData['formData']["mopt_payone__payolution_b2bmode"] = $formData["mopt_payone__payolution_b2bmode"];            
+        }
+        
+        $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_birthdaydate"];
         return $paymentData;
     }
 
