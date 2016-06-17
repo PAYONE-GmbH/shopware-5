@@ -467,6 +467,45 @@ class Mopt_PayoneInstallHelper {
 
         return true;
     }
+    
+
+    /**
+     * check if order attributes for Payolution Payments are already extended
+     *
+     * @return boolean 
+     */
+    public function moptPayolutionWorkOrderIdAttributeExist() {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='mopt_payone_payolution_workorder_id'";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+        return true;
+    }  
+    
+    /**
+     * check if order attributes for Payolution Payments are already extended
+     *
+     * @return boolean 
+     */
+    public function moptPayolutionClearingReferenceAttributeExist() {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='mopt_payone_payolution_clearing_reference'";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+        return true;
+    }      
 
     /**
      * check if order details attributes are already extended

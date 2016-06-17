@@ -358,8 +358,6 @@ class Mopt_PayoneFormHandler {
      */
     protected function proccessPayolutionDebitNote($formData) {
 
-        // toDo check if Birthday is already in billingaddress object 
-
         $paymentData = array();
 
         if (!$formData["mopt_payone__debit_agreement"] || !in_array($formData["mopt_payone__debit_agreement"], array('on', true))) {
@@ -426,6 +424,9 @@ class Mopt_PayoneFormHandler {
             $paymentData['formData']["mopt_payone__payolution_b2bmode"] = $formData["mopt_payone__payolution_b2bmode"];            
         }        
         $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_birthdaydate"];
+        
+        // set sessionflag to trigger precheck
+        Shopware()->Session()->moptPayolutionPrecheck = "1";
 
         return $paymentData;
     }
@@ -482,6 +483,10 @@ class Mopt_PayoneFormHandler {
         }
         
         $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_birthdaydate"];
+        
+        // set sessionflag to trigger precheck
+        Shopware()->Session()->moptPayolutionPrecheck = "1";
+        
         return $paymentData;
     }
 

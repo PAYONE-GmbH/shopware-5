@@ -174,6 +174,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->extendsTemplate('frontend/account/mopt_consumescore' . $templateSuffix . '.tpl');
             }
         }
+        
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
             unset($session->moptBarzahlenCode);
         }

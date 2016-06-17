@@ -18,7 +18,7 @@ class Mopt_PayonePaymentHelper
   const MOPT_PAYONE_KLARNA_INVOICE_TERMS_SE = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/sv_se/invoice?fee=0";
   
   //Payolution links for consents and legal terms
-  const MOPT_PAYONE_PAYOLUTION_CONSENT_DE = "https://payment.payolution.com/payolution-payment/infoport/dataprivacydeclaration?mId=##payolutionCompanyName##";
+  const MOPT_PAYONE_PAYOLUTION_CONSENT_DE = "https://payment.payolution.com/payolution-payment/infoport/dataprivacydeclaration?mId=";
   const MOPT_PAYONE_PAYOLUTION_SEPA_DE = "https://payment.payolution.com/payolution-payment/infoport/sepa/mandate.pdf";
   /**
    * adds Payone API value for creditcard
@@ -829,16 +829,23 @@ class Mopt_PayonePaymentHelper
   
   public function moptGetPayolutionAdditionalInformation($country, $companyname)
   {
-    $information = array('consent' => '', 'sepaagreement' => '');
+    $information = array('consentDebit' => '', 'consentInvoice' => '', 'sepaagreement' => '');
     
     switch ($country)
     {
       case 'DE': {
-        $information['consent'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
+        $information['consentDebit'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
                 . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
-                . 'Meine <a target="_blank" href="' . self::MOPT_PAYONE_PAYOLUTION_CONSENT_DE . '" '
-                . 'style="text-decoration: underline !important;">Einwilligung</a> '
+                . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayDebit();return false;">Einwilligung</a> '
                 . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
+        
+        $information['consentInvoice'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
+                . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInvoice();return false;">Einwilligung</a> '
+                . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';        
+
+        $information['overlaycontent'] = $this->moptGetPayolutionAcceptanceText($companyname);
+        
         
         $information['sepaagreement'] = 'Hiermit erteile ich das <a target="_blank" href="' . self::MOPT_PAYONE_PAYOLUTION_SEPA_DE . '" '
                 . 'style="text-decoration: underline !important;">Sepa-Lastschriftmandat</a> ';
@@ -847,9 +854,41 @@ class Mopt_PayonePaymentHelper
         break;
     }
     
-    $information['consent']   = str_replace('##payolutionCompanyName##', base64_encode($companyname), $information['consent']);
     return $information;
-  }  
+  } 
+  
+    protected function _isUtf8EncodingNeeded($sString) {
+        if (preg_match('!!u', $sString)) {
+            // this is utf-8
+            return false;
+        } else {
+            // definitely not utf-8
+            return true;
+        }
+    }  
+  
+    public function moptGetPayolutionAcceptanceText($companyname) {
+        $sUrl = self::MOPT_PAYONE_PAYOLUTION_CONSENT_DE . base64_encode($companyname);
+        $sContent = file_get_contents($sUrl);
+        $sPage = false;
+        if(!empty($sContent) && stripos($sContent, 'payolution') !== false && stripos($sContent, '<header>') !== false) {
+            //Parse content from HTML-body-tag from the given page
+            $sRegex = "#<\s*?body\b[^>]*>(.*?)</body\b[^>]*>#s";
+            preg_match($sRegex, $sContent, $aMatches);
+            if(is_array($aMatches) && count($aMatches) > 1) {
+                $sPage = $aMatches[1];
+                //remove everything bevore the <header> tag ( a window.close link which wouldn't work in the given context )
+                $sPage = substr($sPage, stripos($sPage, '<header>'));
+            }
+        }
+        if(!$sPage) {
+            $sPage = $this->_getFallbackText($companyname);
+        }
+        if($this->_isUtf8EncodingNeeded($sPage)) {
+            $sPage = utf8_encode($sPage);
+        }
+        return $sPage;
+    }  
   
   public function moptUpdateUserInformation($userId, $paymentData)
   {

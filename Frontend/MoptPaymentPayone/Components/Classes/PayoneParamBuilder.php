@@ -368,10 +368,11 @@ class Mopt_PayoneParamBuilder {
      * @param string $financeType
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution 
      */
-    public function getPaymentPayolutionInvoice($financeType, $paymentData) {
+    public function getPaymentPayolutionInvoice($financeType, $paymentData, $workorderId) {
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
+        $params['workorderid'] = $workorderId;
         $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
         if ($params['birthday'] == "00000000") {
             unset($params['birthday']);
@@ -397,34 +398,11 @@ class Mopt_PayoneParamBuilder {
     /**
      * create payolution payment object
      *
-     * @param string $financeType
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution 
      */
-    public function getPaymentPayolutionInvoicePreCheck($financeType, $paymentData) {
+    public function getPaymentPayolutionInvoicePreCheck($paymentData) {
         $params = array();
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $params['api_version'] = '3.10';
-        $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
-        if ($params['birthday'] == "00000000") {
-            unset($params['birthday']);
-        }
-        $params['financingtype'] = $financeType;
 
-        $payment = new Payone_Api_Request_Genericpayment($params);
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_PRE_CHECK)
-        ));
-
-        if ($paymentData['mopt_payone__payolution_b2bmode']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'b2b', 'data' => 'yes')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
-            ));
-            $payment->setPaydata($paydata);
-        }
 
         return $payment;
     }    
@@ -435,21 +413,18 @@ class Mopt_PayoneParamBuilder {
      * @param string $financeType
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
      */
-    public function getPaymentPayolutionDebitNote($financeType, $paymentData) {
+    public function getPaymentPayolutionDebitNote($financeType, $paymentData, $workorderId) {
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
+        $params['workorderid'] = $workorderId;
         $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
         if ($params['birthday'] == "00000000") {
             unset($params['birthday']);
         }
         $params['financingtype'] = $financeType;
-//      $params['bankaccountholder'] = $paymentData['mopt_payone__debit_bankaccountholder'];
         $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_iban']);
         $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_bic']);
-        if (Shopware()->Session()->moptMandateData) {
-            $params['mandate_identification'] = Shopware()->Session()->moptMandateData['mopt_payone__mandateIdentification'];
-        }
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
 
         if ($paymentData['mopt_payone__payolution_b2bmode']) {
@@ -481,7 +456,6 @@ class Mopt_PayoneParamBuilder {
             unset($params['birthday']);
         }
         $params['financingtype'] = $financeType;
-//      $params['bankaccountholder'] = $paymentData['mopt_payone__debit_bankaccountholder'];
         $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_iban']);
         $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_bic']);
 

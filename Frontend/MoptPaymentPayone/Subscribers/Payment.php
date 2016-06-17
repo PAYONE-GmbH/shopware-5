@@ -62,10 +62,7 @@ class Payment implements SubscriberInterface
         $post['mopt_payone__klarna_Year'] = $postData['mopt_payone__klarna_Year'];
         $post['mopt_payone__klarna_Month'] = $postData['mopt_payone__klarna_Month'];
         $post['mopt_payone__klarna_Day'] = $postData['mopt_payone__klarna_Day'];
-/*      $post['mopt_payone__payolution_debitnote_birthyear'] = $postData['mopt_payone__payolution_debitnote_birthyear'];
-        $post['mopt_payone__payolution_debitnote_birthmonth'] = $postData['mopt_payone__payolution_debitnote_birthmonth'];
-        $post['mopt_payone__payolution_debitnote_birthday'] = $postData['mopt_payone__payolution_debitnote_birthday'];        
-*/
+
         $paymentName = $returnValues['paymentData']['name'];
         $paymentId = $postData['register']['payment'];
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
@@ -123,7 +120,7 @@ class Payment implements SubscriberInterface
             $userData = $user['additional']['user'];
             $billingFormData = $user['billingaddress'];
 
-            if ($moptPayoneMain->getPaymentHelper()->isPayoneDebitnote($returnValues['paymentData']['name'])|| $moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitnote($returnValues['paymentData']['name'])) {
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneDebitnote($returnValues['paymentData']['name'])) {
                 //check if bankaccountcheck is enabled 
                 $bankAccountChecktype = $moptPayoneMain->getHelper()->getBankAccountCheckType($config);
 
@@ -131,9 +128,6 @@ class Payment implements SubscriberInterface
                 if ($config['mandateActive']) {
                     //perform bankaccountcheck
                     $params = $moptPayoneMain->getParamBuilder()->buildManageMandate($paymentId, $user, $paymentData['formData']);
-                    if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitnote($returnValues['paymentData']['name'])){
-                        $params['clearingtype'] = 'fnc';
-                    }
                     $payoneServiceBuilder = $this->container->get('MoptPayoneBuilder');
                     $service = $payoneServiceBuilder->buildServiceManagementManageMandate();
                     $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
