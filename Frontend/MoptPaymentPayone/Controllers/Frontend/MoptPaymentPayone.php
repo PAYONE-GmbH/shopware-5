@@ -649,7 +649,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $request->setClearingtype($clearingType);
 
         if (!$isPaypalRecurringInitialRequest && ($config['submitBasket'] || $clearingType === 'fnc')) {
+            // although payolution is clearingtype fnc respect submitBasket setting in Backend
+            if ( !$config['submitBasket'] &&  ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName))) {      
+                // do nothing
+            } else {
                 $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getShipment(), $this->getUserData()));
+            }
         }
 
         if ($payment) {
