@@ -362,6 +362,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
         if ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($this->getPaymentShortName())) {
             $financeType = Payone_Api_Enum_PayolutionType::PYD;
+            $paymentType = Payone_Api_Enum_PayolutionType::PYD_FULL;
             $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType);
             $responseData = $precheckresponse->toArray();
             $workorderId = $responseData['rawResponse'];
@@ -647,11 +648,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $request->setClearingtype($clearingType);
 
-        // Do not force submitBasket and Invoicing for Payolution Payments with clearingtype 'fnc' 
-        if (!$this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) && !$this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName)) {
-            if (!$isPaypalRecurringInitialRequest && ($config['submitBasket'] || $clearingType === 'fnc')) {
+        if (!$isPaypalRecurringInitialRequest && ($config['submitBasket'] || $clearingType === 'fnc')) {
                 $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getShipment(), $this->getUserData()));
-            }
         }
 
         if ($payment) {

@@ -33,7 +33,7 @@
                 id="mopt_payone__payolution_debitnote_birthmonth" onchange="payolutionDebitNoteDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="payment--field {if $error_flags.mopt_payone__payolution_debitnote_birthmonth} has--error{/if}">
-            <option value="">-</option>
+            <option value="">--</option>
             {section name="birthmonth" start=1 loop=13 step=1}
                 <option value="{$smarty.section.birthmonth.index}" 
                         {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_debitnote_birthmonth}
@@ -59,7 +59,7 @@
     {/if}
 
 
-    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_birthdaydate]" id="mopt_payone__payolution_debitnote_birthdaydate" value="{$sUserData.billingaddress.birthday}">   
+    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_debitnote_birthdaydate]" id="mopt_payone__payolution_debitnote_birthdaydate" value="{$sUserData.billingaddress.birthday}">   
     <div id="debitnote-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>        
 
     {if $fcPayolutionConfig.payolutionB2bmode && $sUserData.billingaddress.company}

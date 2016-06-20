@@ -909,18 +909,11 @@ class Mopt_PayonePaymentHelper
               . '-' . $paymentData['formData']['mopt_payone__klarna_inst_birthday']);
       $billing->setPhone($paymentData['formData']['mopt_payone__klarna_inst_telephone']);
     }
-    if(isset($paymentData['formData']['mopt_payone__payolution_debitnote_birthyear']))
+    if(isset($paymentData['formData']['mopt_payone__payolution_birthdaydate']))
     {
-      $billing->setBirthday($paymentData['formData']['mopt_payone__payolution_debitnote_birthyear'] 
-              . '-' . $paymentData['formData']['mopt_payone__payolution_debitnote_birthmonth'] 
-              . '-' . $paymentData['formData']['mopt_payone__payolution_debitnote_birthday']);
+      $billing->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
     }
-    if(isset($paymentData['formData']['mopt_payone__payolution_invoice_birthyear']))
-    {
-      $billing->setBirthday($paymentData['formData']['mopt_payone__payolution_invoice_birthyear'] 
-              . '-' . $paymentData['formData']['mopt_payone__payolution_invoice_birthmonth'] 
-              . '-' . $paymentData['formData']['mopt_payone__payolution_invoice_birthday']);
-    }    
+ 
     Shopware()->Models()->persist($billing);
     Shopware()->Models()->flush();
   }

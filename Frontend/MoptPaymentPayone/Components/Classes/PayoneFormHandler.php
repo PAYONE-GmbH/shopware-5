@@ -369,30 +369,16 @@ class Mopt_PayoneFormHandler {
             $paymentData['sErrorFlag']["mopt_payone__debit_agreement2"] = true;
         } else {
             $paymentData['formData']["mopt_payone__debit_agreement2"] = $formData["mopt_payone__debit_agreement2"];
-        }        
+        }
 
-        if ($formData[mopt_payone__payolution_birthdaydate] == "0000-00-00" && !$formData[mopt_payone__payolution_b2bmode] == "1") {
-            if (!$formData["mopt_payone__payolution_debitnote_birthyear"]) {
+        if ($formData[mopt_payone__payolution_birthdaydate] !== "0000-00-00" && $formData[mopt_payone__payolution_b2bmode] !== "1") {
+            if (time() < strtotime('+18 years', strtotime($formData[mopt_payone__payolution_birthdaydate]))) {
+                $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthday"] = true;
+                $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthmonth"] = true;
                 $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthyear"] = true;
             } else {
-                $paymentData['formData']["mopt_payone__payolution_debitnote_birthyear"] = $formData["mopt_payone__payolution_debitnote_birthyear"];
-            }
-
-            if (!$formData["mopt_payone__payolution_debitnote_birthmonth"]) {
-                $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthmonth"] = true;
-            } else {
-                $paymentData['formData']["mopt_payone__payolution_debitnote_birthmonth"] = $formData["mopt_payone__payolution_debitnote_birthmonth"];
-            }
-
-            if (!$formData["mopt_payone__payolution_debitnote_birthday"]) {
-                $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthday"] = true;
-            } else {
-                $paymentData['formData']["mopt_payone__payolution_debitnote_birthday"] = $formData["mopt_payone__payolution_debitnote_birthday"];
-            }
-            $paymentData['formData']['mopt_save_birthday'] = true;
-
-            if ($paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthyear"] || $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthmonth"] || $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthday"]) {
-                $paymentData['formData']['mopt_save_birthday'] = false;
+                $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_debitnote_birthdaydate"];                
+                $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
 
@@ -412,19 +398,18 @@ class Mopt_PayoneFormHandler {
             unset($paymentData['sErrorFlag']["mopt_payone__debit_iban"]);
             unset($paymentData['sErrorFlag']["mopt_payone__debit_bic"]);
         }
-        
-        if ($formData[mopt_payone__payolution_b2bmode] === "1")  {
+
+        if ($formData[mopt_payone__payolution_b2bmode] === "1") {
 
             if (!$formData["mopt_payone__debitnote_company_trade_registry_number"]) {
                 $paymentData['sErrorFlag']["mopt_payone__debitnote_company_trade_registry_number"] = true;
             } else {
                 $paymentData['formData']["mopt_payone__debitnote_company_trade_registry_number"] = $formData["mopt_payone__debitnote_company_trade_registry_number"];
             }
-            
-            $paymentData['formData']["mopt_payone__payolution_b2bmode"] = $formData["mopt_payone__payolution_b2bmode"];            
+
+            $paymentData['formData']["mopt_payone__payolution_b2bmode"] = $formData["mopt_payone__payolution_b2bmode"];
         }        
-        $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_birthdaydate"];
-        
+
         // set sessionflag to trigger precheck
         Shopware()->Session()->moptPayolutionPrecheck = "1";
 
@@ -446,47 +431,31 @@ class Mopt_PayoneFormHandler {
             $paymentData['formData']["mopt_payone__payolution_invoice_agreement"] = $formData["mopt_payone__payolution_invoice_agreement"];
         }
 
-        if ($formData[mopt_payone__payolution_birthdaydate] == "0000-00-00" && $formData[mopt_payone__payolution_b2bmode] !== "1") {
-            if (!$formData["mopt_payone__payolution_invoice_birthyear"]) {
-                $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthyear"] = true;
-            } else {
-                $paymentData['formData']["mopt_payone__payolution_invoice_birthyear"] = $formData["mopt_payone__payolution_invoice_birthyear"];
-            }
-
-            if (!$formData["mopt_payone__payolution_invoice_birthmonth"]) {
-                $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthmonth"] = true;
-            } else {
-                $paymentData['formData']["mopt_payone__payolution_invoice_birthmonth"] = $formData["mopt_payone__payolution_invoice_birthmonth"];
-            }
-
-            if (!$formData["mopt_payone__payolution_invoice_birthday"]) {
+        if ($formData[mopt_payone__payolution_invoice_birthdaydate] !== "0000-00-00" && $formData[mopt_payone__payolution_b2bmode] !== "1") {
+            if (time() < strtotime('+18 years', strtotime($formData[mopt_payone__payolution_invoice_birthdaydate]))) {
                 $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthday"] = true;
-            } else {
-                $paymentData['formData']["mopt_payone__payolution_invoice_birthday"] = $formData["mopt_payone__payolution_invoice_birthday"];
-            }
-            $paymentData['formData']['mopt_save_birthday'] = true;
-
-            if ($paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthyear"] || $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthmonth"] || $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthday"]) {
+                $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthmonth"] = true;
+                $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthyear"] = true;
                 $paymentData['formData']['mopt_save_birthday'] = false;
+            } else {
+                $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_invoice_birthdaydate"];                                
+                $paymentData['formData']['mopt_save_birthday'] = true;
             }
-        } 
+        }
         
-        if ($formData[mopt_payone__payolution_b2bmode] === "1")  {
+        if ($formData[mopt_payone__payolution_b2bmode] === "1") {
 
             if (!$formData["mopt_payone__invoice_company_trade_registry_number"]) {
                 $paymentData['sErrorFlag']["mopt_payone__invoice_company_trade_registry_number"] = true;
             } else {
                 $paymentData['formData']["mopt_payone__invoice_company_trade_registry_number"] = $formData["mopt_payone__invoice_company_trade_registry_number"];
             }
-            
-            $paymentData['formData']["mopt_payone__payolution_b2bmode"] = $formData["mopt_payone__payolution_b2bmode"];            
+
+            $paymentData['formData']["mopt_payone__payolution_b2bmode"] = $formData["mopt_payone__payolution_b2bmode"];
         }
-        
-        $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_birthdaydate"];
-        
         // set sessionflag to trigger precheck
         Shopware()->Session()->moptPayolutionPrecheck = "1";
-        
+
         return $paymentData;
     }
 
