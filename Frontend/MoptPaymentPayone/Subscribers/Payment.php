@@ -19,7 +19,7 @@ class Payment implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container)
     {
         $this->container = $container;
     }
@@ -46,9 +46,9 @@ class Payment implements SubscriberInterface
     /**
      * consumerscore check after choice if payment method
      * 
-     * @param Enlight_Hook_HookArgs $arguments 
+     * @param \Enlight_Hook_HookArgs $arguments
      */
-    public function onValidateStep3(Enlight_Hook_HookArgs $arguments)
+    public function onValidateStep3(\Enlight_Hook_HookArgs $arguments)
     {
         $returnValues = $arguments->getReturn();
         if (!empty($returnValues['sErrorMessages'])) {
@@ -217,9 +217,9 @@ class Payment implements SubscriberInterface
     /**
      * group creditcard payments
      * 
-     * @param Enlight_Hook_HookArgs $arguments 
+     * @param \Enlight_Hook_HookArgs $arguments
      */
-    public function onGetPaymentMeans(Enlight_Hook_HookArgs $arguments)
+    public function onGetPaymentMeans(\Enlight_Hook_HookArgs $arguments)
     {
         $dontGroupCreditCardActions = array('addArticle', 'cart', 'changeQuantity', 'confirm');
         $request = Shopware()->Front()->Request();
@@ -252,9 +252,9 @@ class Payment implements SubscriberInterface
     /**
      * special handling for grouped credit cards to calculate correct shipment costs
      * 
-     * @param Enlight_Hook_HookArgs $arguments 
+     * @param \Enlight_Hook_HookArgs $arguments
      */
-    public function onGetDispatchBasket(Enlight_Hook_HookArgs $arguments)
+    public function onGetDispatchBasket(\Enlight_Hook_HookArgs $arguments)
     {
         $returnValues = $arguments->getReturn();
         $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
@@ -288,10 +288,10 @@ class Payment implements SubscriberInterface
     /**
      * group credit cards for payment form
      * 
-     * @param Enlight_Hook_HookArgs $arguments
+     * @param \Enlight_Hook_HookArgs $arguments
      * @return type
      */
-    public function onShippingPaymentAction(Enlight_Hook_HookArgs $arguments)
+    public function onShippingPaymentAction(\Enlight_Hook_HookArgs $arguments)
     {
         $subject = $arguments->getSubject();
         $moptPayoneMain = $this->container->get('MoptPayoneMain');

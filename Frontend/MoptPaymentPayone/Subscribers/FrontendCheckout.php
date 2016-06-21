@@ -19,7 +19,7 @@ class FrontendCheckout implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container)
     {
         $this->container = $container;
     }
@@ -42,10 +42,10 @@ class FrontendCheckout implements SubscriberInterface
     /**
      * assign saved payment data to view
      * 
-     * @param Enlight_Hook_HookArgs $arguments
+     * @param \Enlight_Hook_HookArgs $arguments
      * @return type
      */
-    public function onGetSelectedPayment(Enlight_Hook_HookArgs $arguments)
+    public function onGetSelectedPayment(\Enlight_Hook_HookArgs $arguments)
     {
         $action = Shopware()->Modules()->Admin()->sSYSTEM->_GET['action'];
         $sTargetAction = Shopware()->Modules()->Admin()->sSYSTEM->_GET['sTargetAction'];
@@ -84,7 +84,7 @@ class FrontendCheckout implements SubscriberInterface
         $arguments->setReturn($ret);
     }
 
-    public function moptExtendController_Frontend_Checkout(Enlight_Event_EventArgs $args)
+    public function moptExtendController_Frontend_Checkout(\Enlight_Controller_ActionEventArgs $args)
     {
         $subject = $args->getSubject();
         $view = $subject->View();

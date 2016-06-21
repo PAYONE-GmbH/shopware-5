@@ -19,7 +19,7 @@ class BackendPayment implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container)
     {
         $this->container = $container;
     }
@@ -37,7 +37,7 @@ class BackendPayment implements SubscriberInterface
         );
     }
 
-    public function moptExtendController_Backend_Payment(Enlight_Event_EventArgs $args)
+    public function moptExtendController_Backend_Payment(\Enlight_Controller_ActionEventArgs $args)
     {
         $view = $args->getSubject()->View();
         $view->extendsTemplate('backend/mopt_payone_payment/controller/payment.js');
