@@ -409,11 +409,6 @@ class MoptPayoneConfig extends ModelEntity
   private $klarnaStoreId;
   
   /**
-   * @ORM\Column(name="klarna_campaign_code", type="string", length=255, precision=0, scale=0, nullable=true, unique=false)
-   */
-  private $klarnaCampaignCode;
-  
-  /**
    * @ORM\Column(name="save_terms", type="integer", nullable=true, unique=false)
    */
   private $saveTerms;
@@ -1204,16 +1199,6 @@ class MoptPayoneConfig extends ModelEntity
   public function setKlarnaStoreId($klarnaStoreId)
   {
     $this->klarnaStoreId = $klarnaStoreId;
-  }
-  
-  public function getKlarnaCampaignCode()
-  {
-    return $this->klarnaCampaignCode;
-  }
-
-  public function setKlarnaCampaignCode($klarnaCampaignCode)
-  {
-    $this->klarnaCampaignCode = $klarnaCampaignCode;
   }
   
   public function getSaveTerms()

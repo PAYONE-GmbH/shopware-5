@@ -323,22 +323,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @return $response 
      */
     protected function mopt_payone__klarna() {
-        if ($this->moptPayonePaymentHelper->isPayoneKlarnaInstallment($this->getPaymentShortName())) {
-            $financeType = Payone_Api_Enum_FinancingType::KLS;
-        } else {
-            $financeType = Payone_Api_Enum_FinancingType::KLV;
-        }
-
-
+        $financeType = Payone_Api_Enum_FinancingType::KLV;
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
 
-        if ($config['klarnaCampaignCode']) {
-            $campaignId = $config['klarnaCampaignCode'];
-        } else {
-            $campaignId = false;
-        }
-
-        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financeType, $campaignId);
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financeType);
 
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
 

@@ -79,7 +79,6 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'mandateActive', type: 'boolean'},
     { name: 'mandateDownloadEnabled', type: 'boolean'},
     { name: 'klarnaStoreId', type: 'string'},
-    { name: 'klarnaCampaignCode', type: 'string'},
     { name: 'saveTerms', type: 'int'},
     { name: 'paypalEcsActive', type: 'boolean'},
     { name: 'creditcardMinValid', type: 'int'},

@@ -632,20 +632,10 @@ class Mopt_PayoneParamBuilder {
      * create klarna payment object
      *
      * @param string $financeType
-     * @param string $campaignId
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing 
      */
-    public function getPaymentKlarna($financeType, $campaignId = false) {
+    public function getPaymentKlarna($financeType) {
         $params = array();
-
-        if ($campaignId) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'klsid', 'data' => $campaignId)));
-
-            $params['paydata'] = $paydata;
-        }
 
         $params['financingtype'] = $financeType;
 

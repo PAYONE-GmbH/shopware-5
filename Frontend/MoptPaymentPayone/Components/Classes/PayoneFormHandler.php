@@ -63,10 +63,6 @@ class Mopt_PayoneFormHandler
             return $this->proccessDebitNote($formData);
         }
 
-        if ($paymentHelper->isPayoneKlarnaInstallment($paymentId)) {
-            return $this->proccessKlarnaInstallment($formData);
-        }
-
         if ($paymentHelper->isPayoneKlarna($paymentId)) {
             return $this->proccessKlarna($formData);
         }
@@ -329,54 +325,6 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
 
         if ($paymentData['sErrorFlag']["mopt_payone__klarna_telephone"] || $paymentData['sErrorFlag']["mopt_payone__klarna_birthyear"] || $paymentData['sErrorFlag']["mopt_payone__klarna_birthmonth"] || $paymentData['sErrorFlag']["mopt_payone__klarna_birthday"]) {
-            $paymentData['formData']['mopt_save_birthday_and_phone'] = false;
-        }
-
-        return $paymentData;
-    }
-
-    /**
-     * process form data
-     *
-     * @param array $formData
-     * @return array
-     */
-    protected function proccessKlarnaInstallment($formData)
-    {
-        $paymentData = array();
-
-        if (!$formData["mopt_payone__klarna_inst_telephone"]) {
-            $paymentData['sErrorFlag']["mopt_payone__klarna_inst_telephone"] = true;
-        } else {
-            $paymentData['formData']["mopt_payone__klarna_inst_telephone"] = $formData["mopt_payone__klarna_inst_telephone"];
-        }
-
-        if (!$formData["mopt_payone__klarna_inst_agreement"] || $formData["mopt_payone__klarna_inst_agreement"] !== 'on') {
-            $paymentData['sErrorFlag']["mopt_payone__klarna_inst_agreement"] = true;
-        } else {
-            $paymentData['formData']["mopt_payone__klarna_inst_agreement"] = $formData["mopt_payone__klarna_inst_agreement"];
-        }
-
-        if (!$formData["mopt_payone__klarna_inst_birthyear"]) {
-            $paymentData['sErrorFlag']["mopt_payone__klarna_inst_birthyear"] = true;
-        } else {
-            $paymentData['formData']["mopt_payone__klarna_inst_birthyear"] = $formData["mopt_payone__klarna_inst_birthyear"];
-        }
-
-        if (!$formData["mopt_payone__klarna_inst_birthmonth"]) {
-            $paymentData['sErrorFlag']["mopt_payone__klarna_inst_birthmonth"] = true;
-        } else {
-            $paymentData['formData']["mopt_payone__klarna_inst_birthmonth"] = $formData["mopt_payone__klarna_inst_birthmonth"];
-        }
-
-        if (!$formData["mopt_payone__klarna_inst_birthday"]) {
-            $paymentData['sErrorFlag']["mopt_payone__klarna_inst_birthday"] = true;
-        } else {
-            $paymentData['formData']["mopt_payone__klarna_inst_birthday"] = $formData["mopt_payone__klarna_inst_birthday"];
-        }
-        $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
-
-        if ($paymentData['sErrorFlag']["mopt_payone__klarna_inst_telephone"] || $paymentData['sErrorFlag']["mopt_payone__klarna_inst_birthyear"] || $paymentData['sErrorFlag']["mopt_payone__klarna_inst_birthmonth"] || $paymentData['sErrorFlag']["mopt_payone__klarna_inst_birthday"]) {
             $paymentData['formData']['mopt_save_birthday_and_phone'] = false;
         }
 

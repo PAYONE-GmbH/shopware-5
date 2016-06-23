@@ -562,24 +562,6 @@ class Mopt_PayonePaymentHelper
   }
 
   /**
-   * check if given payment name is payone klarna installment payment
-   *
-   * @param string $paymentName
-   * @return boolean 
-   */
-  public function isPayoneKlarnaInstallment($paymentName)
-  {
-    if (preg_match('#mopt_payone__fin_klarna_installment#', $paymentName))
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  /**
    * check if given payment name is payone P24 payment
    *
    * @param string $paymentName
@@ -901,13 +883,6 @@ class Mopt_PayonePaymentHelper
               . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth'] 
               . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
       $billing->setPhone($paymentData['formData']['mopt_payone__klarna_telephone']);
-    }
-    if(isset($paymentData['formData']['payone__klarna_inst_birthyear']))
-    {
-      $billing->setBirthday($paymentData['formData']['mopt_payone__klarna_inst_birthyear'] 
-              . '-' . $paymentData['formData']['mopt_payone__klarna_inst_birthmonth'] 
-              . '-' . $paymentData['formData']['mopt_payone__klarna_inst_birthday']);
-      $billing->setPhone($paymentData['formData']['mopt_payone__klarna_inst_telephone']);
     }
     if(isset($paymentData['formData']['mopt_payone__payolution_birthdaydate']))
     {

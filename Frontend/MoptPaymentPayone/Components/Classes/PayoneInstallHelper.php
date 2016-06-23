@@ -147,25 +147,20 @@ class Mopt_PayoneInstallHelper
                 'template' => 'mopt_paymentmean_klarna.tpl',
                 'position' => 21,),
             array(
-                'name' => 'mopt_payone__fin_klarna_installment',
-                'description' => 'PAYONE Klarna Ratenkauf',
-                'template' => 'mopt_paymentmean_klarna_installment.tpl',
-                'position' => 22,),
-            array(
                 'name' => 'mopt_payone__ibt_p24',
                 'description' => 'PAYONE P24',
                 'template' => null,
-                'position' => 23,),
+                'position' => 22,),
             array(
                 'name' => 'mopt_payone__creditcard_iframe',
                 'description' => 'PAYONE Kreditkarte',
                 'template' => null,
-                'position' => 24,),
+                'position' => 23,),
             array(
                 'name' => 'mopt_payone__csh_barzahlen',
                 'description' => 'PAYONE Barzahlen',
                 'template' => null,
-                'position' => 25,
+                'position' => 24,
                 'additionalDescription' => '<label for="payment_barzahlen">'
                 . '  <img style="height: 3em; vertical-align: -1em;" src="https://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen">'
                 . '</label>'
@@ -187,17 +182,17 @@ class Mopt_PayoneInstallHelper
                 'name' => 'mopt_payone__ewallet_paydirekt',
                 'description' => 'PAYONE Paydirekt',
                 'template' => null,
-                'position' => 26,),
+                'position' => 25,),
             array(
                 'name' => 'mopt_payone__fin_payolution_invoice',
                 'description' => 'PAYONE Payolution Rechnungskauf',
                 'template' => 'mopt_paymentmean_payolution_invoice.tpl',
-                'position' => 27,),
+                'position' => 26,),
             array(
                 'name' => 'mopt_payone__fin_payolution_debitnote',
                 'description' => 'PAYONE Payolution Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
-                'position' => 28,),
+                'position' => 27,),
         );
     }
 
@@ -230,16 +225,6 @@ class Mopt_PayoneInstallHelper
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN klarna_store_id VARCHAR(255) DEFAULT 0;";
-        Shopware()->Db()->exec($sql);
-    }
-
-    /**
-     * extend config data table with klarna campaing code for installment coloumn
-     */
-    public function moptExtendConfigKlarnaInstallmentDataTable()
-    {
-        $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN klarna_campaign_code VARCHAR(255) DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -681,27 +666,6 @@ class Mopt_PayoneInstallHelper
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
                 AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
                 AND COLUMN_NAME ='klarna_store_id'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * check if payone configuration is already extended for klarna installment payment
-     *
-     * @return boolean
-     */
-    public function moptPayoneConfigKlarnaInstallmentExtensionExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='klarna_campaign_code'";
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {

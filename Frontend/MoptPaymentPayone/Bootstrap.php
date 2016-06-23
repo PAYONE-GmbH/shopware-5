@@ -65,6 +65,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createDatabase();
         $this->addAttributes();
         $this->createMenu();
+        $this->removePayment('mopt_payone__fin_klarna_installment');
 
         return array('success' => true, 'invalidateCache' => array('backend', 'proxy'));
     }
@@ -90,7 +91,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     /**
      * delete Custom Models
      *
-     * @return null
+     * 
      */
     protected function deleteModels()
     {
@@ -111,7 +112,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     /**
      * delete payone custom attribute extensions
      *
-     * @return null
+     * 
      */
     protected function removeAttributes()
     {
@@ -176,6 +177,30 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 's_order_details_attributes',
             )
         );
+    }
+
+    /**
+     * Remove payment instance
+     *
+     * @param string $paymentName
+     *
+     */
+    public function removePayment($paymentName)
+    {
+        $payment = $this->Payments()->findOneBy(
+            array(
+                'name' => $paymentName
+            )
+        );
+        if ($payment === null)
+        {
+            // do nothing
+
+        } else
+        {
+            Shopware()->Models()->remove($payment);
+            Shopware()->Models()->flush();
+        }
     }
 
     /**
@@ -419,11 +444,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // payone config klarna extension
         if (!$this->getInstallHelper()->moptPayoneConfigKlarnaExtensionExist()) {
             $this->getInstallHelper()->moptExtendConfigKlarnaDataTable();
-        }
-
-        // payone config klarna installment extension
-        if (!$this->getInstallHelper()->moptPayoneConfigKlarnaInstallmentExtensionExist()) {
-            $this->getInstallHelper()->moptExtendConfigKlarnaInstallmentDataTable();
         }
 
         // payone save terms acceptance extension

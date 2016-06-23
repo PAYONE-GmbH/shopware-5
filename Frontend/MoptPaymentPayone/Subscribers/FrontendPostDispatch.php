@@ -270,10 +270,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__klarna_birthmonth'] = $birthday[1];
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
                 $data['mopt_payone__klarna_telephone'] = $userData['billingaddress']['phone'];
-                $data['mopt_payone__klarna_inst_birthday'] = $birthday[2];
-                $data['mopt_payone__klarna_inst_birthmonth'] = $birthday[1];
-                $data['mopt_payone__klarna_inst_birthyear'] = $birthday[0];
-                $data['mopt_payone__klarna_inst_telephone'] = $userData['billingaddress']['phone'];
             }
             
             

@@ -277,9 +277,6 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             if ($paymentHelper->isPayoneKlarna($paymentData['name'])) {
                 $data['extra'] = 'klarna';
             }
-            if ($paymentHelper->isPayoneKlarnaInstallment($paymentData['name'])) {
-                $data['extra'] = 'klarnaInstallment';
-            }
             if ($paymentHelper->isPayoneCreditcardNotGrouped($paymentData['name'])) {
                 $data['extra'] = 'cc';
             }
