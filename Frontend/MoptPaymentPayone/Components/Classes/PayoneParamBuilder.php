@@ -423,8 +423,8 @@ class Mopt_PayoneParamBuilder {
             unset($params['birthday']);
         }
         $params['financingtype'] = $financeType;
-        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_iban']);
-        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_bic']);
+        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_iban']);
+        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_bic']);
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
 
         if ($paymentData['mopt_payone__payolution_b2bmode']) {
@@ -456,8 +456,8 @@ class Mopt_PayoneParamBuilder {
             unset($params['birthday']);
         }
         $params['financingtype'] = $financeType;
-        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_iban']);
-        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_bic']);
+        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_iban']);
+        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_bic']);
 
         $payment = new Payone_Api_Request_Genericpayment($params);
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();

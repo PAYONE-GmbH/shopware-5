@@ -71,30 +71,30 @@
         <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_b2bmode]" id="moptPaymentData[mopt_payone__payolution_b2bmode]" value="1">   
     {/if}    
 
-    <input name="moptPaymentData[mopt_payone__debit_iban]"
+    <input name="moptPaymentData[mopt_payone__payolution_debitnote_iban]"
            type="text"
-           id="mopt_payone__debit_iban"
+           id="mopt_payone__payolution_debitnote_iban"
            {if $moptRequired}required="required" aria-required="true"{/if}
            placeholder="{s name='bankIBAN'}IBAN{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-           value="{$form_data.mopt_payone__debit_iban|escape}" 
+           value="{$form_data.mopt_payone__payolution_debitnote_iban|escape}" 
            data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
-           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__debit_iban} has--error{/if} moptPayoneIbanBic" />
+           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_debitnote_iban} has--error{/if} moptPayoneIbanBic" />
 
-    <input name="moptPaymentData[mopt_payone__debit_bic]"
+    <input name="moptPaymentData[mopt_payone__payolution_debitnote_bic]"
            type="text"
-           id="mopt_payone__debit_bic"
+           id="mopt_payone__payolution_debitnote_bic"
            {if $moptRequired}required="required" aria-required="true"{/if}
            placeholder="{s name='bankBIC'}BIC{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-           value="{$form_data.mopt_payone__debit_bic|escape}" 
+           value="{$form_data.mopt_payone__payolution_debitnote_bic|escape}" 
            data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
-           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__debit_bic} has--error{/if} moptPayoneIbanBic" />        
+           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_debitnote_bic} has--error{/if} moptPayoneIbanBic" />        
     <p class="none clearfix">
-        <input name="moptPaymentData[mopt_payone__debit_agreement]" type="checkbox" id="mopt_payone__debit_agreement" value="true"
-               {if $form_data.mopt_payone__debit_agreement eq "on"}
+        <input name="moptPaymentData[mopt_payone__payolution_debitnote_agreement]" type="checkbox" id="mopt_payone__payolution_debitnote_agreement" value="true"
+               {if $form_data.mopt_payone__payolution_debitnote_agreement eq "on"}
                    checked="checked"
                {/if}
                class="checkbox"/>
-        <label class="{if $error_flags.mopt_payone__debit_agreement} has--error {/if}" for="mopt_payone__debit_agreement"  style="float:none; width:100%; display:inline">{$moptCreditCardCheckEnvironment.moptPayolutionInformation.consentDebit}</label>
+        <label class="{if $error_flags.mopt_payone__payolution_debitnote_agreement} has--error {/if}" for="mopt_payone__payolution_debitnote_agreement"  style="float:none; width:100%; display:inline">{$moptCreditCardCheckEnvironment.moptPayolutionInformation.consentDebit}</label>
     </p>
     <div class="register--required-info">{$moptCreditCardCheckEnvironment.moptPayolutionInformation.legalTerm}</div>
 
@@ -106,12 +106,12 @@
     <div id="payolution_overlay_debit_bg" class="js--overlay is--open" style="opacity: 0.8; display: none"></div>
 
     <p class="none clearfix">
-        <input name="moptPaymentData[mopt_payone__debit_agreement2]" type="checkbox" id="mopt_payone__debit_agreement2" value="true"
-               {if $form_data.mopt_payone__debit_agreement2 eq "on"}
+        <input name="moptPaymentData[mopt_payone__payolution_debitnote_agreement2]" type="checkbox" id="mopt_payone__payolution_debitnote_agreement2" value="true"
+               {if $form_data.mopt_payone__payolution_debitnote_agreement2 eq "on"}
                    checked="checked"
                {/if}
                class="checkbox"/>
-        <label class="{if $error_flags.mopt_payone__debit_agreement2} has--error{/if}" for="mopt_payone__debit_agreement2"  style="float:none; width:100%; display:inline">{$moptCreditCardCheckEnvironment.moptPayolutionInformation.sepaagreement}</label>
+        <label class="{if $error_flags.mopt_payone__payolution_debitnote_agreement2} has--error{/if}" for="mopt_payone__payolution_debitnote_agreement2"  style="float:none; width:100%; display:inline">{$moptCreditCardCheckEnvironment.moptPayolutionInformation.sepaagreement}</label>
     </p>  
     
     <div id="payolution_overlay_debit" class="js--modal content" style="width:78%; height:auto; display: none; opacity: 0.9; margin: 0 auto;">

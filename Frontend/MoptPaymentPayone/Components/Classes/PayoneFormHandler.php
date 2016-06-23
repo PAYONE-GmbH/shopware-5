@@ -360,15 +360,15 @@ class Mopt_PayoneFormHandler {
 
         $paymentData = array();
 
-        if (!$formData["mopt_payone__debit_agreement"] || !in_array($formData["mopt_payone__debit_agreement"], array('on', true))) {
-            $paymentData['sErrorFlag']["mopt_payone__debit_agreement"] = true;
+        if (!$formData["mopt_payone__payolution_debitnote_agreement"] || !in_array($formData["mopt_payone__payolution_debitnote_agreement"], array('on', true))) {
+            $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_agreement"] = true;
         } else {
-            $paymentData['formData']["mopt_payone__debit_agreement"] = $formData["mopt_payone__debit_agreement"];
+            $paymentData['formData']["mopt_payone__payolution_debitnote_agreement"] = $formData["mopt_payone__payolution_debitnote_agreement"];
         }
-        if (!$formData["mopt_payone__debit_agreement2"] || !in_array($formData["mopt_payone__debit_agreement2"], array('on', true))) {
-            $paymentData['sErrorFlag']["mopt_payone__debit_agreement2"] = true;
+        if (!$formData["mopt_payone__payolution_debitnote_agreement2"] || !in_array($formData["mopt_payone__payolution_debitnote_agreement2"], array('on', true))) {
+            $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_agreement2"] = true;
         } else {
-            $paymentData['formData']["mopt_payone__debit_agreement2"] = $formData["mopt_payone__debit_agreement2"];
+            $paymentData['formData']["mopt_payone__payolution_debitnote_agreement2"] = $formData["mopt_payone__payolution_debitnote_agreement2"];
         }
 
         if ($formData[mopt_payone__payolution_birthdaydate] !== "0000-00-00" && $formData[mopt_payone__payolution_b2bmode] !== "1") {
@@ -382,19 +382,19 @@ class Mopt_PayoneFormHandler {
             }
         }
 
-        if (!$formData["mopt_payone__debit_iban"]) {
-            $paymentData['sErrorFlag']["mopt_payone__debit_iban"] = true;
+        if (!$formData["mopt_payone__payolution_debitnote_iban"]) {
+            $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_iban"] = true;
         } else {
-            $paymentData['formData']["mopt_payone__debit_iban"] = $formData["mopt_payone__debit_iban"];
+            $paymentData['formData']["mopt_payone__payolution_debitnote_iban"] = $formData["mopt_payone__payolution_debitnote_iban"];
         }
 
-        if (!$formData["mopt_payone__debit_bic"]) {
-            $paymentData['sErrorFlag']["mopt_payone__debit_bic"] = true;
+        if (!$formData["mopt_payone__payolution_debitnote_bic"]) {
+            $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_bic"] = true;
         } else {
-            $paymentData['formData']["mopt_payone__debit_bic"] = $formData["mopt_payone__debit_bic"];
+            $paymentData['formData']["mopt_payone__payolution_debitnote_bic"] = $formData["mopt_payone__payolution_debitnote_bic"];
         }
 
-        if ($paymentData['sErrorFlag']["mopt_payone__debit_iban"] && $paymentData['sErrorFlag']["mopt_payone__debit_bic"]) {
+        if ($paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_iban"] && $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_bic"]) {
             unset($paymentData['sErrorFlag']["mopt_payone__debit_iban"]);
             unset($paymentData['sErrorFlag']["mopt_payone__debit_bic"]);
         }
