@@ -1,19 +1,45 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * $Id: $
+ * This class handles:
+ * installment, uninstallment
+ *
+ *
+ * PHP version 5
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GNU General Public License (GPL 3)
+ * that is bundled with this package in the file LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Payone to newer
+ * versions in the future. If you wish to customize Payone for your
+ * needs please refer to http://www.payone.de for more information.
+ *
+ * @category        Payone
+ * @package         Payone Payment Plugin for Shopware 5
+ * @subpackage      Installer
+ * @copyright       Copyright (c) 2016 <kontakt@fatchip.de> - www.fatchip.com
+ * @author          Stefan Müller <stefan.mueller@fatchip.de>
+ * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.fatchip.com
  */
-class Mopt_PayoneInstallHelper {
+class Mopt_PayoneInstallHelper
+{
 
     /**
      * returns array of PAYONE payment methods
-     * 
+     *
      * payment types are grouped
      * mopt_payone__[group]_[brand]
      *
-     * @return array 
+     * @return array
      */
-    public function mopt_payone__getPaymentMethods() {
+    public function mopt_payone__getPaymentMethods()
+    {
         return array(
             array(
                 'name' => 'mopt_payone__cc_visa',
@@ -176,9 +202,10 @@ class Mopt_PayoneInstallHelper {
     }
 
     /**
-     * add payment data table 
+     * add payment data table
      */
-    public function moptCreatePaymentDataTable() {
+    public function moptCreatePaymentDataTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `s_plugin_mopt_payone_payment_data` (`userId` int(11) NOT NULL,`moptPaymentData`"
                 . " text NOT NULL, PRIMARY KEY (`userId`))";
         Shopware()->Db()->exec($sql);
@@ -187,7 +214,8 @@ class Mopt_PayoneInstallHelper {
     /**
      * extend config data table with sepa config coloumns
      */
-    public function moptExtendConfigDataTable() {
+    public function moptExtendConfigDataTable()
+    {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN show_accountnumber TINYINT(1) NOT NULL DEFAULT 0,"
                 . "ADD COLUMN mandate_active TINYINT(1) NOT NULL DEFAULT 0,"
@@ -198,7 +226,8 @@ class Mopt_PayoneInstallHelper {
     /**
      * extend config data table with klarna config coloumn
      */
-    public function moptExtendConfigKlarnaDataTable() {
+    public function moptExtendConfigKlarnaDataTable()
+    {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN klarna_store_id VARCHAR(255) DEFAULT 0;";
         Shopware()->Db()->exec($sql);
@@ -207,7 +236,8 @@ class Mopt_PayoneInstallHelper {
     /**
      * extend config data table with klarna campaing code for installment coloumn
      */
-    public function moptExtendConfigKlarnaInstallmentDataTable() {
+    public function moptExtendConfigKlarnaInstallmentDataTable()
+    {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN klarna_campaign_code VARCHAR(255) DEFAULT 0;";
         Shopware()->Db()->exec($sql);
@@ -216,7 +246,8 @@ class Mopt_PayoneInstallHelper {
     /**
      * extend config data table with payolution config coloumn
      */
-    public function moptExtendConfigPayolutionDataTable() {
+    public function moptExtendConfigPayolutionDataTable()
+    {
         $sql = "SELECT value FROM s_core_config_values "
                 . "WHERE element_id = '893';";
         $result = Shopware()->Db()->query($sql);
@@ -234,11 +265,22 @@ class Mopt_PayoneInstallHelper {
 
         Shopware()->Db()->exec($sql);
     }
+    
+    /**
+     * extend config data table with showBic config coloumn
+     */
+    public function fcExtendConfigShowBicDataTable()
+    {
+        $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN show_bic TINYINT(1) DEFAULT 0;";
+        Shopware()->Db()->exec($sql);
+    }
 
     /**
      * extend config data table with save terms coloumn
      */
-    public function moptExtendConfigSaveTermsDataTable() {
+    public function moptExtendConfigSaveTermsDataTable()
+    {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN save_terms VARCHAR(255) DEFAULT 0;";
         Shopware()->Db()->exec($sql);
@@ -247,7 +289,8 @@ class Mopt_PayoneInstallHelper {
     /**
      * extend config data table with save terms coloumn
      */
-    public function moptExtendConfigPaypalEcsDataTable() {
+    public function moptExtendConfigPaypalEcsDataTable()
+    {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN paypal_ecs_active TINYINT(1) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
@@ -256,7 +299,8 @@ class Mopt_PayoneInstallHelper {
     /**
      * extend config data table with save terms coloumn
      */
-    public function moptExtendConfigCreditcardMinValidDays() {
+    public function moptExtendConfigCreditcardMinValidDays()
+    {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN creditcard_min_valid INT(11) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
@@ -265,7 +309,8 @@ class Mopt_PayoneInstallHelper {
     /**
      * extend config table for addresscheck country configuration
      */
-    public function moptExtendConfigAddressCheckCountries() {
+    public function moptExtendConfigAddressCheckCountries()
+    {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN adresscheck_billing_countries VARCHAR(255);";
         $sql1 = "ALTER TABLE `s_plugin_mopt_payone_config` "
@@ -277,7 +322,8 @@ class Mopt_PayoneInstallHelper {
     /**
      * add order attributes for order hash and generated payment reference
      */
-    public function moptExtendOrderAttributes() {
+    public function moptExtendOrderAttributes()
+    {
         Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'payment_reference', 'VARCHAR(100)', true, null);
         Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'order_hash', 'VARCHAR(255)', true, null);
 
@@ -287,7 +333,8 @@ class Mopt_PayoneInstallHelper {
     /**
      * insert document extensions (used to display additional PAYONE data) if not already stored in DB
      */
-    public function moptInsertDocumentsExtensionIntoDatabaseIfNotExist() {
+    public function moptInsertDocumentsExtensionIntoDatabaseIfNotExist()
+    {
         $sql = 'SELECT * FROM s_core_documents_box WHERE name = ? OR name = ?';
         $result = Shopware()->Db()->query($sql, array('PAYONE_Footer', 'PAYONE_Content_Info'));
 
@@ -374,9 +421,10 @@ class Mopt_PayoneInstallHelper {
 
     /**
      * insert empty config on installations to keep the shop stable
-     * without any config and activated plugin exceptions will occur during checkout 
+     * without any config and activated plugin exceptions will occur during checkout
      */
-    public function moptInsertEmptyConfigIfNotExists() {
+    public function moptInsertEmptyConfigIfNotExists()
+    {
         $sql = 'SELECT id FROM s_plugin_mopt_payone_config WHERE payment_id = 0;';
         $result = Shopware()->Db()->query($sql);
 
@@ -390,10 +438,11 @@ class Mopt_PayoneInstallHelper {
 
     /**
      * check if user attributes are already extended
-     * 
-     * @return boolean 
+     *
+     * @return boolean
      */
-    public function moptUserAttributesExist() {
+    public function moptUserAttributesExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_user_attributes'
@@ -411,9 +460,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if billing address attributes are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptBillingAddressAttributesExist() {
+    public function moptBillingAddressAttributesExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_user_billingaddress_attributes'
@@ -431,9 +481,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if shipping address attributes are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptShippingAddressAttributesExist() {
+    public function moptShippingAddressAttributesExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_user_shippingaddress_attributes'
@@ -451,9 +502,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if order attributes are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptOrderAttributesExist() {
+    public function moptOrderAttributesExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
@@ -472,9 +524,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if order attributes for Payolution Payments are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayolutionWorkOrderIdAttributeExist() {
+    public function moptPayolutionWorkOrderIdAttributeExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
@@ -486,14 +539,15 @@ class Mopt_PayoneInstallHelper {
             return false;
         }
         return true;
-    }  
+    }
     
     /**
      * check if order attributes for Payolution Payments are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayolutionClearingReferenceAttributeExist() {
+    public function moptPayolutionClearingReferenceAttributeExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
@@ -505,14 +559,15 @@ class Mopt_PayoneInstallHelper {
             return false;
         }
         return true;
-    }      
+    }
 
     /**
      * check if order details attributes are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptOrderDetailsAttributesExist() {
+    public function moptOrderDetailsAttributesExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_details_attributes'
@@ -531,9 +586,10 @@ class Mopt_PayoneInstallHelper {
      * check if 2nd order details attributes extension is already made
      * needed to for new shipping costs handling
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptOrderAttributesShippingCostsExist() {
+    public function moptOrderAttributesShippingCostsExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
@@ -552,9 +608,10 @@ class Mopt_PayoneInstallHelper {
      * check if 3rd order attributes extension is already made
      * needed to for abo commerce support
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptOrderAttributesPaymentDataExist() {
+    public function moptOrderAttributesPaymentDataExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
@@ -573,9 +630,10 @@ class Mopt_PayoneInstallHelper {
      * check if 4th order attributes extension is already made
      * needed to save orderhash
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptOrderAttributesOrderHashExist() {
+    public function moptOrderAttributesOrderHashExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
@@ -593,9 +651,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if payone configuration is already extended for sepa options
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayoneConfigExtensionExist() {
+    public function moptPayoneConfigExtensionExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
@@ -613,9 +672,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if payone configuration is already extended for klarna options
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayoneConfigKlarnaExtensionExist() {
+    public function moptPayoneConfigKlarnaExtensionExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
@@ -633,9 +693,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if payone configuration is already extended for klarna installment payment
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayoneConfigKlarnaInstallmentExtensionExist() {
+    public function moptPayoneConfigKlarnaInstallmentExtensionExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
@@ -653,9 +714,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if payone configuration is already extended for payolution payment
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayoneConfigPayolutionExtensionExist() {
+    public function moptPayoneConfigPayolutionExtensionExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
@@ -669,13 +731,35 @@ class Mopt_PayoneInstallHelper {
 
         return true;
     }
+    
+    /**
+     * check if payone configuration is already extended for showBoc config option
+     *
+     * @return boolean
+     */
+    public function fcPayoneConfigShowBicExtensionExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='show_bic';";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * check if payone configuration is already extended with save terms option
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayoneConfigSaveTermsExtensionExist() {
+    public function moptPayoneConfigSaveTermsExtensionExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
@@ -693,9 +777,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if payone configuration is already extended with paypal ecs option
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayoneConfigPaypalEcsExtensionExist() {
+    public function moptPayoneConfigPaypalEcsExtensionExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
@@ -713,9 +798,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if ordernr column has correct type
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function isTransactionLogModelUpdated() {
+    public function isTransactionLogModelUpdated()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_transaction_log'
@@ -737,9 +823,10 @@ class Mopt_PayoneInstallHelper {
     /**
      * check if payone configuration is already extended country config for risk checks
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayoneConfigRiskCountryExtensionExist() {
+    public function moptPayoneConfigRiskCountryExtensionExist()
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
@@ -759,7 +846,8 @@ class Mopt_PayoneInstallHelper {
      *
      * @return string
      */
-    public function moptGetConfigurationLabelName() {
+    public function moptGetConfigurationLabelName()
+    {
         $sql = "SELECT id FROM s_core_menu
                 WHERE name = 'Konfiguration'
                 AND controller <> 'MoptConfigPayone'";
@@ -772,12 +860,14 @@ class Mopt_PayoneInstallHelper {
         return 'PAYONE Konfiguration';
     }
 
-    public function updateTransactionLogModel() {
+    public function updateTransactionLogModel()
+    {
         $sql = 'alter table s_plugin_mopt_payone_transaction_log change order_nr order_nr varchar(100)';
         Shopware()->Db()->query($sql);
     }
 
-    public function checkAndUpdateCreditcardConfigModel($logger) {
+    public function checkAndUpdateCreditcardConfigModel($logger)
+    {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "select CONSTRAINT_NAME from "
@@ -812,7 +902,8 @@ class Mopt_PayoneInstallHelper {
         }
     }
 
-    public function checkAndUpdateCreditcardConfigModelExtension() {
+    public function checkAndUpdateCreditcardConfigModelExtension()
+    {
         $db = Shopware()->Db();
 
         $DBConfig = $db->getConfig();
@@ -835,5 +926,4 @@ class Mopt_PayoneInstallHelper {
             $db->exec($sql);
         }
     }
-
 }

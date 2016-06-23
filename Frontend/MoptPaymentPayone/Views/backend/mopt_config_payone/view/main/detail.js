@@ -138,45 +138,50 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
         if (field === 'debit') {
             fieldset.items.getAt(8).disable();
             fieldset.items.getAt(9).enable();
+            fieldset.items.getAt(10).enable();
+            fieldset.items.getAt(11).enable();
         } else {
             fieldset.items.getAt(8).disable();
             fieldset.items.getAt(9).disable();
+            fieldset.items.getAt(10).disable();
+            fieldset.items.getAt(11).disable();
         }
         ;
         if (field === 'klarnaInstallment') {
-            fieldset.items.getAt(13).enable();
             fieldset.items.getAt(14).enable();
+            fieldset.items.getAt(15).enable();
         }
         else
         {
-            fieldset.items.getAt(13).disable();
             fieldset.items.getAt(14).disable();
+            fieldset.items.getAt(15).disable();
         }
         ;
         if (field === 'klarna') {
-            fieldset.items.getAt(13).enable();
+            fieldset.items.getAt(14).enable();
         }
         else
         {
             if (field !== 'klarnaInstallment')
             {
-                fieldset.items.getAt(13).disable();
+                fieldset.items.getAt(14).disable();
             }
         }
         ;
         if (field === 'paypal') {
-            fieldset.items.getAt(16).enable();
+            fieldset.items.getAt(17).enable();
         }
         ;
         if ( field === 'payolution_debitnote' || field === 'payolution_invoice') {
-            fieldset.items.getAt(18).enable();
             fieldset.items.getAt(19).enable();
+            fieldset.items.getAt(20).enable();
         } 
         else {
-            fieldset.items.getAt(18).disable();
-            fieldset.items.getAt(19).disable();  
+            fieldset.items.getAt(19).disable();
+            fieldset.items.getAt(20).disable();  
         }         
         ;  
+      
         
         
     },
@@ -845,6 +850,19 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 valueField: 'value',
                 allowBlank: false,
                 disabled: false,
+                labelWidth: 200
+            },            
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/showBIC}Zusätzlich zur IBAN auch BIC abfragen?{/s}',
+                helpText: '{s name=fieldlabelhelp/showBIC}Zusätzlich zur IBAN auch BIC abfragen?{/s}',
+                name: 'showBic',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: true,
                 labelWidth: 200
             },
             {

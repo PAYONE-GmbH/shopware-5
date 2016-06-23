@@ -156,6 +156,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'consumerscoreActive',
             'checkCc',
             'showAccountnumber',
+            'showBic',
             'mandateActive',
             'mandateDownloadEnabled',
             'paypalEcsActive',

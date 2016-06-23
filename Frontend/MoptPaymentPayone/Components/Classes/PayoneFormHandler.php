@@ -1,9 +1,33 @@
 <?php
-
 /**
- * $Id: $
+ * This class handles:
+ * form submits for all PAYONE payment methods
+ *
+ *
+ * PHP version 5
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GNU General Public License (GPL 3)
+ * that is bundled with this package in the file LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Payone to newer
+ * versions in the future. If you wish to customize Payone for your
+ * needs please refer to http://www.payone.de for more information.
+ *
+ * @category        Payone
+ * @package         Payone Payment Plugin for Shopware 5
+ * @subpackage      Formhandler
+ * @copyright       Copyright (c) 2016 <kontakt@fatchip.de> - www.fatchip.com
+ * @author          Stefan Müller <stefan.mueller@fatchip.de>
+ * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.fatchip.com
  */
-class Mopt_PayoneFormHandler {
+
+class Mopt_PayoneFormHandler
+{
 
     /**
      * process payment form
@@ -11,9 +35,10 @@ class Mopt_PayoneFormHandler {
      * @param string $paymentId
      * @param array $formData
      * @param Mopt_PayonePaymentHelper $paymentHelper
-     * @return array payment data 
+     * @return array payment data
      */
-    public function processPaymentForm($paymentId, $formData, $paymentHelper) {
+    public function processPaymentForm($paymentId, $formData, $paymentHelper)
+    {
         if ($paymentHelper->isPayoneCreditcard($paymentId)) {
             return $this->proccessCreditCard($formData);
         }
@@ -58,12 +83,13 @@ class Mopt_PayoneFormHandler {
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessSofortueberweisung($formData) {
+    protected function proccessSofortueberweisung($formData)
+    {
         $paymentData = array();
 
         if (!$formData["mopt_payone__sofort_bankaccount"]) {
@@ -112,12 +138,13 @@ class Mopt_PayoneFormHandler {
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessGiropay($formData) {
+    protected function proccessGiropay($formData)
+    {
         $paymentData = array();
 
         if (!$formData["mopt_payone__giropay_iban"]) {
@@ -143,12 +170,13 @@ class Mopt_PayoneFormHandler {
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessEps($formData) {
+    protected function proccessEps($formData)
+    {
         $paymentData = array();
 
         if (!isset($formData["mopt_payone__eps_bankgrouptype"]) || empty($formData["mopt_payone__eps_bankgrouptype"])) {
@@ -163,12 +191,13 @@ class Mopt_PayoneFormHandler {
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessIdeal($formData) {
+    protected function proccessIdeal($formData)
+    {
         $paymentData = array();
 
         if ($formData["mopt_payone__ideal_bankgrouptype"] == 'not_choosen') {
@@ -183,12 +212,13 @@ class Mopt_PayoneFormHandler {
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessDebitNote($formData) {
+    protected function proccessDebitNote($formData)
+    {
         $paymentData = array();
 
         //bankaccount/code or bic/iban
@@ -199,7 +229,7 @@ class Mopt_PayoneFormHandler {
             $paymentData['formData']["mopt_payone__debit_iban"] = $formData["mopt_payone__debit_iban"];
         }
 
-        if (!$formData["mopt_payone__debit_bic"]) {
+        if (!$formData["mopt_payone__debit_bic"] && !$formData["mopt_payone__debit_showbic"]==="") {
             $paymentData['sErrorFlag']["mopt_payone__debit_bic"] = true;
         } else {
             $paymentData['formData']["mopt_payone__debit_bic"] = $formData["mopt_payone__debit_bic"];
@@ -245,24 +275,26 @@ class Mopt_PayoneFormHandler {
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessCreditCard($formData) {
+    protected function proccessCreditCard($formData)
+    {
         $paymentData = array();
         $paymentData['formData'] = $formData;
         return $paymentData;
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessKlarna($formData) {
+    protected function proccessKlarna($formData)
+    {
         $paymentData = array();
 
         if (!$formData["mopt_payone__klarna_telephone"]) {
@@ -304,12 +336,13 @@ class Mopt_PayoneFormHandler {
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessKlarnaInstallment($formData) {
+    protected function proccessKlarnaInstallment($formData)
+    {
         $paymentData = array();
 
         if (!$formData["mopt_payone__klarna_inst_telephone"]) {
@@ -351,12 +384,13 @@ class Mopt_PayoneFormHandler {
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessPayolutionDebitNote($formData) {
+    protected function proccessPayolutionDebitNote($formData)
+    {
 
         $paymentData = array();
 
@@ -377,7 +411,7 @@ class Mopt_PayoneFormHandler {
                 $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthmonth"] = true;
                 $paymentData['sErrorFlag']["mopt_payone__payolution_debitnote_birthyear"] = true;
             } else {
-                $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_debitnote_birthdaydate"];                
+                $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_debitnote_birthdaydate"];
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
@@ -408,7 +442,7 @@ class Mopt_PayoneFormHandler {
             }
 
             $paymentData['formData']["mopt_payone__payolution_b2bmode"] = $formData["mopt_payone__payolution_b2bmode"];
-        }        
+        }
 
         // set sessionflag to trigger precheck
         Shopware()->Session()->moptPayolutionPrecheck = "1";
@@ -417,12 +451,13 @@ class Mopt_PayoneFormHandler {
     }
 
     /**
-     * process form data 
+     * process form data
      *
      * @param array $formData
-     * @return array 
+     * @return array
      */
-    protected function proccessPayolutionInvoice($formData) {
+    protected function proccessPayolutionInvoice($formData)
+    {
         $paymentData = array();
 
         if (!$formData["mopt_payone__payolution_invoice_agreement"] || !in_array($formData["mopt_payone__payolution_invoice_agreement"], array('on', true))) {
@@ -438,7 +473,7 @@ class Mopt_PayoneFormHandler {
                 $paymentData['sErrorFlag']["mopt_payone__payolution_invoice_birthyear"] = true;
                 $paymentData['formData']['mopt_save_birthday'] = false;
             } else {
-                $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_invoice_birthdaydate"];                                
+                $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_invoice_birthdaydate"];
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
@@ -458,5 +493,4 @@ class Mopt_PayoneFormHandler {
 
         return $paymentData;
     }
-
 }

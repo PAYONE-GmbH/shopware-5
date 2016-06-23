@@ -389,6 +389,11 @@ class MoptPayoneConfig extends ModelEntity
   private $showAccountnumber;
   
   /**
+   * @ORM\Column(name="show_bic", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+   */
+  private $showBic;  
+  
+  /**
    * @ORM\Column(name="mandate_active", type="boolean", precision=0, scale=0, nullable=false, unique=false)
    */
   private $mandateActive;
@@ -1160,6 +1165,16 @@ class MoptPayoneConfig extends ModelEntity
   {
     $this->showAccountnumber = $showAccountnumber;
   }
+  
+  public function getShowBic()
+  {
+    return $this->showBic;
+  }
+
+  public function setShowBic($showBic)
+  {
+    $this->showBic = $showBic;
+  }  
 
   public function getMandateActive()
   {
