@@ -344,6 +344,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             // Backend
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendPayment($container),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendRiskManagement($container),
+            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendOrder($container),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendOrder($container)
         );
         foreach ($subscribers as $subscriber) {
@@ -474,6 +475,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // config option for ELV showBic
         if (!$this->getInstallHelper()->fcPayoneConfigShowBicExtensionExist()) {
             $this->getInstallHelper()->fcExtendConfigShowBicDataTable();
+        }
+
+        // config option for Sofortüberweisung
+        if (!$this->getInstallHelper()->fcPayoneConfigShowSofortIbanBicExtensionExist()) {
+            $this->getInstallHelper()->fcExtendConfigShowSofortIbanBicDataTable();
         }
 
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModel($this->getPayoneLogger());

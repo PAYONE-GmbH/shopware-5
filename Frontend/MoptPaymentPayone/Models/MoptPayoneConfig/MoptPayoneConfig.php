@@ -441,7 +441,12 @@ class MoptPayoneConfig extends ModelEntity
    /**
    * @ORM\Column(name="payolution_b2bmode", type="boolean", nullable=true, unique=false)
    */
-  private $payolutionB2bmode;   
+  private $payolutionB2bmode;
+
+    /**
+   * @ORM\Column(name="show_sofort_iban_bic", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+   */
+  private $showSofortIbanBic;
   
   public function fromArray($array = array())
   {
@@ -1269,6 +1274,17 @@ class MoptPayoneConfig extends ModelEntity
   public function setPayolutionB2bMode($payolutionB2bmode)
   {
     $this->payolutionB2bmode = $payolutionB2bmode;
-  }   
+  }
+
+  public function getShowSofortIbanBic()
+  {
+    return $this->showSofortIbanBic;
+  }
+
+  public function setShowSofortIbanBic($showSofortIbanBic)
+  {
+    $this->showSofortIbanBice = $showSofortIbanBic;
+  }
     
 }
+

@@ -21,6 +21,8 @@
                data-moptBankCodeErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name='bankcodeFormField'}Die Bankleitzahl muss aus 8 Ziffern bestehen{/s}" 
                class="payment--field is--required{if $error_flags.mopt_payone__sofort_bankcode} has--error{/if} moptPayoneBankcode" />
     {else}
+        
+        {if $moptPaymentConfigParams.moptShowSofortIbanBic}
         <input name="moptPaymentData[mopt_payone__sofort_iban]"
                type="text"
                id="mopt_payone__sofort_iban"
@@ -38,7 +40,8 @@
                value="{$form_data.mopt_payone__sofort_bic|escape}" 
                data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
                class="payment--field is--required{if $error_flags.mopt_payone__sofort_bic} has--error{/if} moptPayoneIbanBic" />
-
+        {/if}
+        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__sofort_show_sofort_iban_bic]" id="moptPaymentData[mopt_payone__sofort_show_sofort_iban_bic]" value="{$moptPaymentConfigParams.moptShowSofortIbanBic}">              
     {/if}
     <input type="hidden" name="moptPaymentData[mopt_payone__sofort_bankcountry]" 
            id="mopt_payone__sofort_bankcountry" value="{$sUserData.additional.country.countryiso}"/>

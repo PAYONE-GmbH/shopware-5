@@ -160,7 +160,8 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'mandateActive',
             'mandateDownloadEnabled',
             'paypalEcsActive',
-            'payolutionB2bmode',                
+            'payolutionB2bmode',  
+            'showSofortIbanBic',
         );
 
         foreach ($fields as $field) {

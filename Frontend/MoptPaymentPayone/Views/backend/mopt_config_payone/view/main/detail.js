@@ -148,24 +148,24 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
         }
         ;
         if (field === 'klarna') {
-            fieldset.items.getAt(14).enable();
+            fieldset.items.getAt(15).enable();
         }
         else
         {
-            fieldset.items.getAt(14).disable();
+            fieldset.items.getAt(15).disable();
         }
         ;
         if (field === 'paypal') {
-            fieldset.items.getAt(16).enable();
+            fieldset.items.getAt(17).enable();
         }
         ;
         if ( field === 'payolution_debitnote' || field === 'payolution_invoice') {
-            fieldset.items.getAt(18).enable();
             fieldset.items.getAt(19).enable();
+            fieldset.items.getAt(20).enable();
         } 
         else {
-            fieldset.items.getAt(18).disable();
-            fieldset.items.getAt(19).disable();  
+            fieldset.items.getAt(19).disable();
+            fieldset.items.getAt(20).disable();  
         }         
         ;  
     },
@@ -561,7 +561,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 valueField: 'value',
                 allowBlank: false,
                 labelWidth: 200
-            },
+            }
         ];
     },
     getConsumerSetItems: function () {
@@ -713,7 +713,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                     }
                 ]
             }
-        ]
+        ];
     },
     /**
      * helper function to create form elements of field set
@@ -851,8 +851,21 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/showSofortIbanBic}Bei Sofortüberweisung IBAN und BIC abfragen?{/s}',
+                helpText: '{s name=fieldlabelhelp/showSofortIbanBic}Bei Sofortüberweisung IBAN und BIC abfragen?{/s}',
+                name: 'showSofortIbanBic',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },            
+            {
+                xtype: 'combobox',
                 fieldLabel: '{s name=fieldlabel/mandateActive}Mandatserteilung aktivieren?{/s}',
-                helpText: '{s name=fieldlabelhelp/mandateActive}Die Mandatserteilung erfolgt mit dem kosteplfichtigen Request -managemandate-. Dieser Request beinhaltet einen bankaccountcheck. Allerdings ist hier keine Abfrage der POS-Sperrliste möglich.{/s}',
+                helpText: '{s name=fieldlabelhelp/mandateActive}Die Mandatserteilung erfolgt mit dem kostenpflichtigen Request -managemandate-. Dieser Request beinhaltet einen bankaccountcheck. Allerdings ist hier keine Abfrage der POS-Sperrliste möglich.{/s}',
                 name: 'mandateActive',
                 store: me.data.yesno,
                 queryMode: 'local',
@@ -1077,8 +1090,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
-            },
-        ]
+            }
+        ];
     }
 });
 //{/block}

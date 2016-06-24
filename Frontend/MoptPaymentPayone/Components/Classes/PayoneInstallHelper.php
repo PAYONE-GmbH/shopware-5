@@ -241,23 +241,33 @@ class Mopt_PayoneInstallHelper
         if ($companyName) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                     . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT '" . $companyName . "' ,"
-                    . "ADD COLUMN payolution_b2bmode TINYINT(1) DEFAULT 0;";
+                    . "ADD COLUMN payolution_b2bmode TINYINT(1) NOT NULL DEFAULT 1;";
         } else {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                     . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT 'Ihr Firmenname' ,"
-                    . "ADD COLUMN payolution_b2bmode TINYINT(1) DEFAULT 0;";
+                    . "ADD COLUMN payolution_b2bmode TINYINT(1) NOT NULL DEFAULT 1;";
         }
 
         Shopware()->Db()->exec($sql);
     }
     
     /**
-     * extend config data table with showBic config coloumn
+     * extend config data table with showBic config column
      */
     public function fcExtendConfigShowBicDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN show_bic TINYINT(1) DEFAULT 0;";
+                . "ADD COLUMN show_bic TINYINT(1) NOT NULL DEFAULT 0;";
+        Shopware()->Db()->exec($sql);
+    }
+
+    /**
+     * extend config data table with showSofortIbanBic config column
+     */
+    public function fcExtendConfigShowSofortIbanBicDataTable()
+    {
+        $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN show_sofort_iban_bic TINYINT(1) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -697,7 +707,7 @@ class Mopt_PayoneInstallHelper
     }
     
     /**
-     * check if payone configuration is already extended for showBoc config option
+     * check if payone configuration is already extended for show_bic config option
      *
      * @return boolean
      */
@@ -708,6 +718,27 @@ class Mopt_PayoneInstallHelper
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
                 AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
                 AND COLUMN_NAME ='show_bic';";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * check if payone configuration is already extended for show_sofort_iban_bic config option
+     *
+     * @return boolean
+     */
+    public function fcPayoneConfigShowSofortIbanBicExtensionExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='show_sofort_iban_bic';";
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
