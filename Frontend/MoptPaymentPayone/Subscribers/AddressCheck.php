@@ -20,7 +20,7 @@ class AddressCheck implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container)
     {
         $this->container = $container;
     }
@@ -61,10 +61,10 @@ class AddressCheck implements SubscriberInterface
   /**
    * prepare payone risk checks
    * 
-   * @param Enlight_Hook_HookArgs $arguments
+   * @param \Enlight_Hook_HookArgs $arguments
    * @return boolean
    */
-  public function sAdmin__sManageRisks__before(Enlight_Hook_HookArgs $arguments)
+  public function sAdmin__sManageRisks__before(\Enlight_Hook_HookArgs $arguments)
   {
       Shopware()->Session()->moptRiskCheckPaymentId = $arguments->get('paymentID');
   }
@@ -72,10 +72,10 @@ class AddressCheck implements SubscriberInterface
   /**
    * clean up payone risk checks
    * 
-   * @param Enlight_Hook_HookArgs $arguments
+   * @param \Enlight_Hook_HookArgs $arguments
    * @return boolean
    */
-  public function sAdmin__sManageRisks__after(Enlight_Hook_HookArgs $arguments)
+  public function sAdmin__sManageRisks__after(\Enlight_Hook_HookArgs $arguments)
   {
       unset(Shopware()->Session()->moptRiskCheckPaymentId);
   }
@@ -85,9 +85,9 @@ class AddressCheck implements SubscriberInterface
      * returns true if risk condition is fulfilled
      * arguments: $rule, $user, $basket, $value
      * 
-     * @param \Shopware\Plugins\MoptPaymentPayone\Subscribers\Enlight_Hook_HookArgs $arguments
+     * @param \Enlight_Hook_HookArgs $arguments
      */
-    public function sAdmin__executeRiskRule(Enlight_Hook_HookArgs $arguments)
+    public function sAdmin__executeRiskRule(\Enlight_Hook_HookArgs $arguments)
     {
         $rule = $arguments->get('rule');
         
@@ -379,10 +379,10 @@ class AddressCheck implements SubscriberInterface
   /**
    * perform risk checks
    * 
-   * @param Enlight_Hook_HookArgs $arguments
+   * @param \Enlight_Hook_HookArgs $arguments
    * @return type
    */
-  public function onConfirmAction(Enlight_Hook_HookArgs $arguments)
+  public function onConfirmAction(\Enlight_Hook_HookArgs $arguments)
   {
     $subject = $arguments->getSubject();
     $moptPayoneMain = $this->container->get('MoptPayoneMain');
@@ -527,9 +527,9 @@ class AddressCheck implements SubscriberInterface
   /**
    * billingaddress addresscheck
    * 
-   * @param Enlight_Hook_HookArgs $arguments 
+   * @param \Enlight_Event_EventArgs $arguments
    */
-  public function onValidateStep2(Enlight_Hook_HookArgs $arguments)
+  public function onValidateStep2(\Enlight_Event_EventArgs $arguments)
   {
     $ret = $arguments->getReturn();
 
@@ -694,9 +694,9 @@ class AddressCheck implements SubscriberInterface
   /**
    * save addresscheck result
    *
-   * @param Enlight_Hook_HookArgs $arguments 
+   * @param \Enlight_Hook_HookArgs $arguments
    */
-  public function onSaveRegister(Enlight_Hook_HookArgs $arguments)
+  public function onSaveRegister(\Enlight_Hook_HookArgs $arguments)
   {
       $this->onUpdateBilling($arguments);
       $this->onUpdateShipping($arguments);
@@ -705,9 +705,9 @@ class AddressCheck implements SubscriberInterface
   /**
    * save addresscheck result
    *
-   * @param Enlight_Hook_HookArgs $arguments 
+   * @param \Enlight_Hook_HookArgs $arguments
    */
-  public function onUpdateBilling(Enlight_Hook_HookArgs $arguments)
+  public function onUpdateBilling(\Enlight_Hook_HookArgs $arguments)
   {
     $session = Shopware()->Session();
 
@@ -745,9 +745,9 @@ class AddressCheck implements SubscriberInterface
    * 
    * shipmentaddress addresscheck
    * 
-   * @param Enlight_Hook_HookArgs $arguments 
+   * @param \Enlight_Event_EventArgs $arguments
    */
-  public function onValidateStep2ShippingAddress(Enlight_Hook_HookArgs $arguments)
+  public function onValidateStep2ShippingAddress(\Enlight_Event_EventArgs $arguments)
   {
     $ret = $arguments->getReturn();
 
@@ -902,9 +902,9 @@ class AddressCheck implements SubscriberInterface
   /**
    * save addresscheck result
    *
-   * @param Enlight_Hook_HookArgs $arguments 
+   * @param \Enlight_Hook_HookArgs $arguments
    */
-  public function onUpdateShipping(Enlight_Hook_HookArgs $arguments)
+  public function onUpdateShipping(\Enlight_Hook_HookArgs $arguments)
   {
     $session = Shopware()->Session();
 
@@ -939,7 +939,7 @@ class AddressCheck implements SubscriberInterface
   }
   
   
-  public function onUpdatePayment(Enlight_Hook_HookArgs $arguments)
+  public function onUpdatePayment(\Enlight_Hook_HookArgs $arguments)
   {
     $session = Shopware()->Session();
 

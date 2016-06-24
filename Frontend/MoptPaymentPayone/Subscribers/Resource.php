@@ -24,10 +24,10 @@ class Resource implements SubscriberInterface
   /**
    * Creates and returns the payone builder for an event.
    *
-   * @param Enlight_Event_EventArgs $args
+   * @param \Enlight_Event_EventArgs $args
    * @return \Shopware_Components_Payone_Builder
    */
-  public function onInitResourcePayoneBuilder(Enlight_Event_EventArgs $args)
+  public function onInitResourcePayoneBuilder(\Enlight_Event_EventArgs $args)
   {
     $payoneConfig = new \Payone_Config();
     $logger = array('Payone_Protocol_Logger_Log4php' => null);
@@ -45,10 +45,10 @@ class Resource implements SubscriberInterface
   /**
    * Creates and returns the payone builder for an event.
    *
-   * @param Enlight_Event_EventArgs $args
+   * @param \Enlight_Event_EventArgs $args
    * @return \Shopware_Components_Payone_Builder
    */
-  public function onInitResourcePayoneMain(Enlight_Event_EventArgs $args)
+  public function onInitResourcePayoneMain(\Enlight_Event_EventArgs $args)
   {
     $moptPayoneMain = \Mopt_PayoneMain::getInstance();
     return $moptPayoneMain;

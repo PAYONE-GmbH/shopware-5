@@ -19,7 +19,7 @@ class BackendRiskManagement implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container)
     {
         $this->container = $container;
     }
@@ -37,7 +37,7 @@ class BackendRiskManagement implements SubscriberInterface
         );
     }
 
-    public function onBackendRiskManagementPostDispatch(Enlight_Event_EventArgs $args)
+    public function onBackendRiskManagementPostDispatch(\Enlight_Controller_ActionEventArgs $args)
     {
         $view = $args->getSubject()->View();
         $view->extendsTemplate('backend/mopt_risk_management/controller/main.js');

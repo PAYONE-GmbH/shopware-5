@@ -20,7 +20,7 @@ class BackendOrder implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container)
     {
         $this->container = $container;
     }
@@ -40,7 +40,7 @@ class BackendOrder implements SubscriberInterface
         );
     }
     
-    public function moptExtendController_Backend_Order(Enlight_Event_EventArgs $args)
+    public function moptExtendController_Backend_Order(\Enlight_Controller_ActionEventArgs $args)
     {
         $view = $args->getSubject()->View();
         $view->extendsTemplate('backend/mopt_payone_order/controller/detail.js');
@@ -53,9 +53,9 @@ class BackendOrder implements SubscriberInterface
     * add attribute data to detail-data
     * @parent fnc head: protected function getList($filter, $sort, $offset, $limit)
     * 
-    * @param Enlight_Event_EventArgs $args
+    * @param \Enlight_Controller_ActionEventArgs $args
     */
-    public function Order__getList__after(Enlight_Event_EventArgs $args)
+    public function Order__getList__after(\Enlight_Controller_ActionEventArgs $args)
     {
       $return = $args->getReturn();
       $helper = $this->container->get('MoptPayoneMain')->getHelper();

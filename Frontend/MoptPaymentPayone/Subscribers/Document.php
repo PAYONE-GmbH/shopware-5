@@ -26,7 +26,7 @@ class Document implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container, $path)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container, $path)
     {
         $this->container = $container;
         $this->path = $path;
@@ -48,9 +48,9 @@ class Document implements SubscriberInterface
     /**
      * add payone clearing data to document
      * 
-     * @param \Shopware\Plugins\MoptPaymentPayone\Subscribers\Enlight_Hook_HookArgs $args
+     * @param \Enlight_Hook_HookArgs $args
      */
-    public function onBeforeRenderDocument(Enlight_Hook_HookArgs $args)
+    public function onBeforeRenderDocument(\Enlight_Hook_HookArgs $args)
     {
         $document = $args->getSubject();
 

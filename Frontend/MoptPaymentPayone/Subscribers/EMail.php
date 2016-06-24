@@ -22,7 +22,7 @@ class EMail implements SubscriberInterface
      * 
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(\Shopware\Components\DependencyInjection\Container $container)
     {
         $this->container = $container;
     }
@@ -42,10 +42,10 @@ class EMail implements SubscriberInterface
     /**
      * add clearing data to email variables
      * 
-     * @param \Shopware\Plugins\MoptPaymentPayone\Subscribers\Enlight_Hook_HookArgs $args
+     * @param \Enlight_Event_EventArgs $args
      * @return array
      */
-    public function onSendMailFilterVariablesFilter(Enlight_Hook_HookArgs $args)
+    public function onSendMailFilterVariablesFilter(\Enlight_Event_EventArgs $args)
     {
         $variables = $args->getReturn();
         $session = Shopware()->Session();
