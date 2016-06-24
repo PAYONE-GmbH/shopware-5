@@ -3,8 +3,7 @@
 /**
  * mopt payone payment controller
  */
-class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controllers_Frontend_Payment
-{
+class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controllers_Frontend_Payment {
 
     /**
      * Reference to sAdmin object (core/class/sAdmin.php)
@@ -36,8 +35,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * init payment controller
      */
-    public function init()
-    {
+    public function init() {
         $this->admin = Shopware()->Modules()->Admin();
         $this->payoneServiceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
         $this->moptPayoneMain = $this->Plugin()->Application()->MoptPayoneMain();
@@ -50,8 +48,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * 
      * @return redirect to payment action or checkout controller 
      */
-    public function indexAction()
-    {
+    public function indexAction() {
         if ($this->session->moptConsumerScoreCheckNeedsUserAgreement) {
             return $this->redirect(array('controller' => 'checkout'));
         }
@@ -59,12 +56,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $action = $this->moptPayonePaymentHelper->getActionFromPaymentName($this->getPaymentShortName());
 
         if ($action === 'debitnote') {
-            if($this->session->moptMandateAgreement === 'on') {
+            if ($this->session->moptMandateAgreement === 'on') {
                 $this->session->moptMandateAgreement = 1;
             }
-            
-            if ($this->session->moptMandateData['mopt_payone__showMandateText'] == true 
-                    && (int) $this->session->moptMandateAgreement !== 1) {
+
+            if ($this->session->moptMandateData['mopt_payone__showMandateText'] == true && (int) $this->session->moptMandateAgreement !== 1) {
                 $this->session->moptMandateAgreementError = true;
                 $action = false;
             }
@@ -77,8 +73,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
     }
 
-    public function creditcardAction()
-    {
+    public function creditcardAction() {
         $response = $this->mopt_payone__creditcard();
         if ($response->isRedirect()) {
             $this->mopt_payone__handleRedirectFeedback($response);
@@ -87,14 +82,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
     }
 
-    public function instanttransferAction()
-    {
+    public function instanttransferAction() {
         $response = $this->mopt_payone__instanttransfer();
         $this->mopt_payone__handleRedirectFeedback($response);
     }
 
-    public function paypalAction()
-    {
+    public function paypalAction() {
         $response = $this->mopt_payone__paypal();
 
         if (Shopware()->Session()->moptPaypalEcsWorkerId) {
@@ -104,53 +97,55 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
     }
 
-    public function debitnoteAction()
-    {
+    public function debitnoteAction() {
         $response = $this->mopt_payone__debitnote();
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
-    public function standardAction()
-    {
+    public function standardAction() {
         $response = $this->mopt_payone__standard();
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
-    public function cashondelAction()
-    {
+    public function cashondelAction() {
         $response = $this->mopt_payone__cashondel();
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
-    public function klarnaAction()
-    {
+    public function klarnaAction() {
         $response = $this->mopt_payone__klarna();
         $this->mopt_payone__handleDirectFeedback($response);
     }
-    
-    public function barzahlenAction()
-    {
+
+    public function barzahlenAction() {
         $response = $this->mopt_payone__barzahlen();
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
-    public function financeAction()
-    {
+    public function financeAction() {
         $response = $this->mopt_payone__finance();
         $this->mopt_payone__handleRedirectFeedback($response);
     }
-    
-    public function paydirektAction()
-    {
+
+    public function paydirektAction() {
         $response = $this->mopt_payone__paydirekt();
         $this->mopt_payone__handleRedirectFeedback($response);
+    }
+
+    public function payolutioninvoiceAction() {
+        $response = $this->mopt_payone__payolution();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
+    public function payolutiondebitAction() {
+        $response = $this->mopt_payone__payolution();
+        $this->mopt_payone__handleDirectFeedback($response);
     }
 
     /**
      * @return $response 
      */
-    protected function mopt_payone__creditcard()
-    {
+    protected function mopt_payone__creditcard() {
         $paymentData = $this->getPaymentData();
         $paymendId = $paymentData['mopt_payone__cc_paymentid'];
         $config = $this->moptPayoneMain->getPayoneConfig($paymendId);
@@ -165,12 +160,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         return $response;
     }
-    
+
     /**
      * @return $response
      */
-    protected function mopt_payone__barzahlen()
-    {
+    protected function mopt_payone__barzahlen() {
         $paymendId = $this->getPaymentId();
         $config = $this->moptPayoneMain->getPayoneConfig($paymendId);
         $response = $this->buildAndCallPayment($config, 'csh', null);
@@ -181,8 +175,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * @return $response
      */
-    protected function mopt_payone__instanttransfer()
-    {
+    protected function mopt_payone__instanttransfer() {
         $paymentData = $this->getPaymentData();
         $paymentShortName = $this->getPaymentShortName();
 
@@ -197,11 +190,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         return $response;
     }
 
-  /**
+    /**
      * @return $response 
      */
-    protected function mopt_payone__paypal()
-    {
+    protected function mopt_payone__paypal() {
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $recurringOrder = false;
         $isInitialRecurringRequest = false;
@@ -229,12 +221,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         return $response;
     }
-    
-      /**
+
+    /**
      * @return $response 
      */
-    protected function mopt_payone__paydirekt()
-    {
+    protected function mopt_payone__paydirekt() {
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $recurringOrder = false;
         $isInitialRecurringRequest = false;
@@ -255,12 +246,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         return $response;
     }
-    
+
     /**
      * @return redirect 
      */
-    public function paypalRecurringSuccessAction()
-    {
+    public function paypalRecurringSuccessAction() {
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $recurringOrder = true;
         $customerPresent = false;
@@ -272,12 +262,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $this->mopt_payone__handleDirectFeedback($response);
     }
-    
+
     /**
      * @return redirect 
      */
-    public function paydirektRecurringSuccessAction()
-    {
+    public function paydirektRecurringSuccessAction() {
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $recurringOrder = true;
         $customerPresent = false;
@@ -291,8 +280,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * @return $response 
      */
-    protected function mopt_payone__debitnote()
-    {
+    protected function mopt_payone__debitnote() {
         $paymentData = Shopware()->Session()->moptPayment;
 
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
@@ -305,8 +293,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * @return $response 
      */
-    protected function mopt_payone__standard()
-    {
+    protected function mopt_payone__standard() {
         $paymentId = $this->getPaymentShortName();
 
         if ($this->moptPayonePaymentHelper->isPayoneInvoice($paymentId)) {
@@ -324,8 +311,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * @return $response 
      */
-    protected function mopt_payone__cashondel()
-    {
+    protected function mopt_payone__cashondel() {
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentCashOnDelivery($this->getUserData());
         $response = $this->buildAndCallPayment($config, 'cod', $payment);
@@ -336,24 +322,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * @return $response 
      */
-    protected function mopt_payone__klarna()
-    {
-        if ($this->moptPayonePaymentHelper->isPayoneKlarnaInstallment($this->getPaymentShortName())) {
-            $financeType = Payone_Api_Enum_FinancingType::KLS;
-        } else {
-            $financeType = Payone_Api_Enum_FinancingType::KLV;
-        }
-
-
+    protected function mopt_payone__klarna() {
+        $financeType = Payone_Api_Enum_FinancingType::KLV;
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
 
-        if ($config['klarnaCampaignCode']) {
-            $campaignId = $config['klarnaCampaignCode'];
-        } else {
-            $campaignId = false;
-        }
-
-        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financeType, $campaignId);
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financeType);
 
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
 
@@ -363,8 +336,36 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * @return $response 
      */
-    protected function mopt_payone__finance()
-    {
+    protected function mopt_payone__payolution() {
+        $paymentData = Shopware()->Session()->moptPayment;
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = Payone_Api_Enum_PayolutionType::PYV;
+        $paymentType = Payone_Api_Enum_PayolutionType::PYV_FULL;
+        if ($this->moptPayonePaymentHelper->isPayonePayolutionInvoice($this->getPaymentShortName())) {
+            $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
+            $responseData = $precheckresponse->toArray();
+            $workorderId = $responseData['rawResponse'];
+            $workorderId = $workorderId['workorderid'];
+            $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayolutionInvoice($financeType, $paymentData, $workorderId);
+        }
+        if ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($this->getPaymentShortName())) {
+            $financeType = Payone_Api_Enum_PayolutionType::PYD;
+            $paymentType = Payone_Api_Enum_PayolutionType::PYD_FULL;
+            $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
+            $responseData = $precheckresponse->toArray();
+            $workorderId = $responseData['rawResponse'];
+            $workorderId = $workorderId['workorderid'];
+            $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayolutionDebitNote($financeType, $paymentData, $workorderId);
+        }
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment);
+
+        return $response;
+    }
+
+    /**
+     * @return $response 
+     */
+    protected function mopt_payone__finance() {
         $paymentId = $this->getPaymentShortName();
 
         if ($this->moptPayonePaymentHelper->isPayoneBillsafe($paymentId)) {
@@ -384,19 +385,16 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * this action is submitted to Payone with redirect payments
      * url is called when customer payment succeeds on 3rd party site
      */
-    public function successAction()
-    {
+    public function successAction() {
         $session = Shopware()->Session();
-        $this->forward('finishOrder', 'MoptPaymentPayone', null, 
-                array('txid' => $session->txId, 'hash' => $session->paymentReference));
+        $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $session->txId, 'hash' => $session->paymentReference));
     }
 
     /**
      * this action is submitted to Payone with redirect payments
      * url is called when customer payment fails on 3rd party site
      */
-    public function failureAction()
-    {
+    public function failureAction() {
         $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                 ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten', true);
         $this->forward('error');
@@ -406,8 +404,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * this action is submitted to Payone with redirect payments
      * url is called when customer cancels redirect payment on 3rd party site
      */
-    public function cancelAction()
-    {
+    public function cancelAction() {
         $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/messages')
                 ->get('cancelMessage', 'Der Bezahlvorgang wurde abgebrochen', true);
         $this->forward('error');
@@ -418,8 +415,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      *
      * @return Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap
      */
-    public function Plugin()
-    {
+    public function Plugin() {
         return Shopware()->Plugins()->Frontend()->MoptPaymentPayone();
     }
 
@@ -427,8 +423,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * Cancel action method
      * renders automatically error.tpl, errormessage is already assigned e.g. mopt_payone__handleDirectFeedback
      */
-    public function errorAction()
-    {
+    public function errorAction() {
         
     }
 
@@ -439,11 +434,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param string $moptPaymentReference
      * @return redirect to finish page 
      */
-    public function finishOrderAction()
-    {
+    public function finishOrderAction() {
         $txId = $this->Request()->getParam('txid');
         $moptPaymentReference = $this->Request()->getParam('hash');
         $session = Shopware()->Session();
+        $paymentData = Shopware()->Session()->moptPayment;
 
         if (!$this->isOrderFinished($txId)) {
             $orderHash = md5(serialize($session['sOrderVariables']));
@@ -457,6 +452,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if ($session->moptClearingData) {
             $clearingData = json_encode($session->moptClearingData);
             unset($session->moptClearingData);
+        }
+
+        // Check for Payolution Clearing Data
+        if ($session->fcPayolutionClearingData) {
+            $payolutionClearingData = $session->fcPayolutionClearingData;
+            unset($session->fcPayolutionClearingData);
         }
 
         $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
@@ -476,6 +477,15 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 $session->moptOrderHash, $orderId));
         }
 
+        if ($payolutionClearingData) {
+            $payolutionClearingReference = $payolutionClearingData['add_paydata[clearing_reference]'];
+            $payolutionWorkOrderId = $payolutionClearingData['add_paydata[workorderid]'];
+            $b2bMode = '1';
+            $sql = 'UPDATE `s_order_attributes`' .
+                    'SET mopt_payone_payolution_clearing_reference = ?, mopt_payone_payolution_workorder_id = ? WHERE orderID = ?';
+            Shopware()->Db()->query($sql, array($payolutionClearingReference, $payolutionWorkOrderId, $orderId));
+        }
+
         if (Shopware()->Session()->moptPayment) {
             $this->saveTransactionPaymentData($orderId, Shopware()->Session()->moptPayment);
         }
@@ -492,8 +502,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      *
      * @param type $response 
      */
-    protected function mopt_payone__handleDirectFeedback($response)
-    {
+    protected function mopt_payone__handleDirectFeedback($response) {
         $session = Shopware()->Session();
 
         if ($response->getStatus() == 'ERROR') {
@@ -505,6 +514,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $barzahlenCode = $this->moptPayoneMain->getPaymentHelper()->extractBarzahlenCodeFromResponse($response);
             if ($barzahlenCode) {
                 $session->moptBarzahlenCode = $barzahlenCode;
+            }
+
+            //extract possible clearing data
+            $payolutionClearingData = $this->moptPayoneMain->getPaymentHelper()->extractPayolutionClearingDataFromResponse($response);
+            if ($payolutionClearingData) {
+                $session->fcPayolutionClearingData = $payolutionClearingData;
             }
 
             //extract possible clearing data
@@ -522,7 +537,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 $session->moptMandateDataDownload = $session->moptMandateData['mopt_payone__mandateIdentification'];
                 unset($session->moptMandateData);
             }
-            
+
             //save order
             $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
                 'hash' => $session->paymentReference));
@@ -535,8 +550,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      *
      * @param type $response 
      */
-    protected function mopt_payone__handleRedirectFeedback($response)
-    {
+    protected function mopt_payone__handleRedirectFeedback($response) {
         if ($response->getStatus() == 'ERROR') {
             $this->View()->errormessage = $this->moptPayoneMain->getPaymentHelper()
                     ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
@@ -561,8 +575,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param bool $forceAuthorize
      * @return type $response
      */
-    protected function buildAndCallPayment($config, $clearingType, $payment, $workerId = false, $isPaypalRecurring = false, $isPaypalRecurringInitialRequest = false, $forceAuthorize = false)
-    {
+    protected function buildAndCallPayment($config, $clearingType, $payment, $workerId = false, $isPaypalRecurring = false, $isPaypalRecurringInitialRequest = false, $forceAuthorize = false) {
         $paramBuilder = $this->moptPayoneMain->getParamBuilder();
         $session = Shopware()->Session();
 
@@ -572,16 +585,19 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session->moptOrderHash = $orderHash;
         $user = $this->getUser();
         $paymentName = $user['additional']['payment']['name'];
-        
-        if (!$forceAuthorize && ($config['authorisationMethod'] == 'preAuthorise' 
-                || $config['authorisationMethod'] == 'Vorautorisierung' 
-                || $this->moptPayonePaymentHelper->isPayoneBarzahlen($paymentName) 
-                || $isPaypalRecurringInitialRequest)) {
+
+        if (!$forceAuthorize && ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung' || $this->moptPayonePaymentHelper->isPayoneBarzahlen($paymentName) || $isPaypalRecurringInitialRequest)) {
             $session->moptIsAuthorized = false;
         } else {
             $session->moptIsAuthorized = true;
         }
-        
+
+        // Always use PreAuthorize for Payolution Payments
+        if ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName)) {
+
+            $session->moptIsAuthorized = false;
+        }
+
         $request = $this->mopt_payone__prepareRequest($config['paymentId'], $session->moptIsAuthorized);
 
         $request->setAmount($this->getAmount());
@@ -595,11 +611,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $transactionStatusPushCustomParam = 'session-' . Shopware()->Shop()->getId()
                 . '|' . $this->admin->sSYSTEM->sSESSION_ID . '|' . $orderHash;
         $request->setParam($transactionStatusPushCustomParam);
-        
+
         if ($workerId) {
             $request->setWorkorderId($workerId);
         }
-        
+
         if ($isPaypalRecurring && $isPaypalRecurringInitialRequest) {
             $request->setAmount(0.01);
             $request->setRecurrence('recurring');
@@ -621,20 +637,84 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $request->setClearingtype($clearingType);
 
         if (!$isPaypalRecurringInitialRequest && ($config['submitBasket'] || $clearingType === 'fnc')) {
-            $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), 
-                    $this->getShipment(), $this->getUserData()));
+            // although payolution is clearingtype fnc respect submitBasket setting in Backend
+            if ( !$config['submitBasket'] &&  ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName))) {      
+                // do nothing
+            } else {
+                $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getShipment(), $this->getUserData()));
+            }
         }
 
         if ($payment) {
             $request->setPayment($payment);
         }
 
-        if (!$forceAuthorize && ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung' || $this->moptPayonePaymentHelper->isPayoneBarzahlen($paymentName) || $isPaypalRecurringInitialRequest)) {
+        if (!$forceAuthorize && ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung' || $this->moptPayonePaymentHelper->isPayoneBarzahlen($paymentName) || $isPaypalRecurringInitialRequest || $this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName))) {
             $response = $this->service->preauthorize($request);
         } else {
             $response = $this->service->authorize($request);
         }
 
+        return $response;
+    }
+
+    /**
+     * prepare and do payment server api call
+     *
+     * @param array $config
+     * @param string $clearingType
+     * @param string $financetype
+     * @param string $paymenttype
+     * @return type $response
+     */
+    protected function buildAndCallPrecheck($config, $clearingType, $financetype, $paymenttype, $paymentData) {
+        $paramBuilder = $this->moptPayoneMain->getParamBuilder();
+        $session = Shopware()->Session();
+        $personalData = $paramBuilder->getPersonalData($this->getUserData());        
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        $params['financingtype'] = $financetype;        
+        //create hash
+        $orderVariables = $session['sOrderVariables'];
+        $orderHash = md5(serialize($orderVariables));
+        $session->moptOrderHash = $orderHash;
+        
+        $request = new Payone_Api_Request_Genericpayment($params);
+        
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_PRE_CHECK)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'payment_type', 'data' => $paymenttype)
+        ));
+
+        if ($paymentData['mopt_payone__payolution_b2bmode']) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
+            ));
+        }
+        $request->setPaydata($paydata);
+        $request->setAmount($this->getAmount());
+        $request->setCurrency($this->getCurrencyShortName());
+        $request->setCompany($personalData->getCompany());
+        $request->setFirstname($personalData->getFirstname());
+        $request->setLastname($personalData->getLastname());
+        $request->setStreet($personalData->getStreet());
+        $request->setZip($personalData->getZip());
+        $request->setCity($personalData->getCity());
+        $request->setCountry($personalData->getCountry());
+        $request->setBirthday($personalData->getBirthday());
+        $request->setEmail($personalData->getEmail());
+        $request->setIp($personalData->getIp());
+        $request->setLanguage($personalData->getLanguage());        
+        
+        $request->setClearingtype($clearingType);      
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $response = $this->service->request($request);
         return $response;
     }
 
@@ -645,8 +725,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param bool $isAuthorized
      * @return \Payone_Api_Request_Preauthorization
      */
-    protected function mopt_payone__prepareRequest($paymentId = 0, $isAuthorized = false)
-    {
+    protected function mopt_payone__prepareRequest($paymentId = 0, $isAuthorized = false) {
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
         $user = $this->getUser();
         $paymentName = $user['additional']['payment']['name'];
@@ -661,6 +740,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $request->setCashType(Payone_Api_Enum_CashType::BARZAHLEN);
             $request->setApiVersion('3.10');
         }
+
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
                         'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
@@ -673,8 +753,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      *
      * @return array
      */
-    public function getUserData()
-    {
+    public function getUserData() {
         if ($this->isRecurringOrder()) {
             $orderVars = Shopware()->Session()->sOrderVariables;
             return $orderVars['sUserData'];
@@ -687,8 +766,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             if (!empty($userData['additional']['countryShipping']['taxfree'])) {
                 $sTaxFree = true;
             } elseif (
-                    !empty($userData['additional']['countryShipping']['taxfree_ustid']) 
-                    && !empty($userData['billingaddress']['ustid'])
+                    !empty($userData['additional']['countryShipping']['taxfree_ustid']) && !empty($userData['billingaddress']['ustid'])
             ) {
                 $sTaxFree = true;
             }
@@ -720,8 +798,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * 
      * @return string
      */
-    protected function getPaymentId()
-    {
+    protected function getPaymentId() {
         $user = $this->getUser();
         return $user['additional']['payment']['id'];
     }
@@ -729,8 +806,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      *  this action is called when sth. goes wrong during SEPA mandate PDF download
      */
-    public function downloadErrorAction()
-    {
+    public function downloadErrorAction() {
         $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                 ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten');
     }
@@ -740,8 +816,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * 
      * @return array
      */
-    protected function getPaymentData()
-    {
+    protected function getPaymentData() {
         $userId = $this->session->sUserId;
 
         if ($this->isRecurringOrder()) {
@@ -760,10 +835,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      *
      * @return array
      */
-    public function getShipment()
-    {
+    public function getShipment() {
         $session = Shopware()->Session();
-        
+
         if (!empty($session->sOrderVariables['sDispatch'])) {
             return $session->sOrderVariables['sDispatch'];
         } else {
@@ -774,8 +848,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * Recurring payment action method.
      */
-    public function recurringAction()
-    {
+    public function recurringAction() {
         if (!$this->getAmount() || $this->getOrderNumber()) {
             $this->redirect(array(
                 'controller' => 'checkout'
@@ -791,14 +864,14 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if ($this->moptPayonePaymentHelper->isPayoneCreditcard($this->getPaymentShortName())) {
             Shopware()->Session()->moptOverwriteEcommerceMode = Payone_Api_Enum_Ecommercemode::INTERNET;
         }
-        
+
         if ($this->moptPayonePaymentHelper->isPayonePaypal($this->getPaymentShortName())) {
             Shopware()->Session()->moptIsPaypalRecurringOrder = true;
         }
-        
+
         if ($this->moptPayonePaymentHelper->isPayonePaydirekt($this->getPaymentShortName())) {
             Shopware()->Session()->moptIsPaydirektRecurringOrder = true;
-        }        
+        }
 
         $action = 'mopt_payone__' . $this->moptPayonePaymentHelper
                         ->getActionFromPaymentName($this->getPaymentShortName());
@@ -879,8 +952,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param string $orderId
      * @param array $paymentData
      */
-    protected function saveTransactionPaymentData($orderId, $paymentData)
-    {
+    protected function saveTransactionPaymentData($orderId, $paymentData) {
         $sql = 'UPDATE `s_order_attributes` SET mopt_payone_payment_data=? WHERE orderID = ?';
         Shopware()->Db()->query($sql, array(serialize($paymentData), $orderId));
     }
@@ -891,8 +963,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param string $orderId
      * @return array
      */
-    protected function getPaymentDataFromOrder($orderId)
-    {
+    protected function getPaymentDataFromOrder($orderId) {
         $sql = 'SELECT `mopt_payone_payment_data` FROM `s_order_attributes` WHERE orderID = ?';
         $paymentData = Shopware()->Db()->fetchOne($sql, $orderId);
 
@@ -904,8 +975,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * 
      * @return bool
      */
-    protected function isRecurringOrder()
-    {
+    protected function isRecurringOrder() {
         return isset(Shopware()->Session()->isRecuringAboOrder);
     }
 
@@ -915,8 +985,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param string $transactionId
      * @return boolean
      */
-    protected function isOrderFinished($transactionId)
-    {
+    protected function isOrderFinished($transactionId) {
         $sql = '
             SELECT ordernumber FROM s_order
             WHERE transactionID=? AND status!=-1';
@@ -933,8 +1002,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * action for creditcard iframe
      */
-    public function creditcardIframeAction()
-    {
+    public function creditcardIframeAction() {
         $paramBuilder = $this->moptPayoneMain->getParamBuilder();
 
         $params = $paramBuilder->buildIframeParameters($this->getBasket(), $this->getShipment(), $this->getUserData());
@@ -952,8 +1020,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * success url
      */
-    public function creditcardIframeSuccessAction()
-    {
+    public function creditcardIframeSuccessAction() {
         $txId = $this->Request()->getParam('reference');
         $sessionId = $this->admin->sSYSTEM->sSESSION_ID;
 
@@ -983,8 +1050,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * 
      * @return boolean 
      */
-    protected function moptSetTransactionIdForTempOrder($txId)
-    {
+    protected function moptSetTransactionIdForTempOrder($txId) {
         $sql = 'SELECT `transactionID` FROM `s_order` WHERE temporaryID = ?';
         $result = Shopware()->Db()->fetchOne($sql, $this->admin->sSYSTEM->sSESSION_ID);
 

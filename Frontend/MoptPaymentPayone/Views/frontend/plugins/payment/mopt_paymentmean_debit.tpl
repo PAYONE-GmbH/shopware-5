@@ -44,7 +44,7 @@
            value="{$form_data.mopt_payone__debit_iban|escape}" 
            data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
            class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__debit_iban} has--error{/if} moptPayoneIbanBic" />
-
+    {if $moptPaymentConfigParams.moptShowBic}
     <input name="moptPaymentData[mopt_payone__debit_bic]"
            type="text"
            id="mopt_payone__debit_bic"
@@ -52,8 +52,11 @@
            placeholder="{s name='bankBIC'}BIC{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
            value="{$form_data.mopt_payone__debit_bic|escape}" 
            data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
-           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__debit_bic} has--error{/if} moptPayoneIbanBic" />
-
+           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__debit_bic} has--error{/if} moptPayoneIbanBic" />    
+    {/if}
+    
+    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__debit_showbic]" id="moptPaymentData[mopt_payone__debit_showbic]" value="{$moptPaymentConfigParams.moptShowBic}">              
+    
     {if $moptPaymentConfigParams.moptShowAccountnumber}
         <p class="none">
             {s namespace='frontend/MoptPaymentPayone/payment' name='debitDescription'}

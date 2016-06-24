@@ -389,6 +389,11 @@ class MoptPayoneConfig extends ModelEntity
   private $showAccountnumber;
   
   /**
+   * @ORM\Column(name="show_bic", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+   */
+  private $showBic;  
+  
+  /**
    * @ORM\Column(name="mandate_active", type="boolean", precision=0, scale=0, nullable=false, unique=false)
    */
   private $mandateActive;
@@ -402,11 +407,6 @@ class MoptPayoneConfig extends ModelEntity
    * @ORM\Column(name="klarna_store_id", type="string", length=255, precision=0, scale=0, nullable=true, unique=false)
    */
   private $klarnaStoreId;
-  
-  /**
-   * @ORM\Column(name="klarna_campaign_code", type="string", length=255, precision=0, scale=0, nullable=true, unique=false)
-   */
-  private $klarnaCampaignCode;
   
   /**
    * @ORM\Column(name="save_terms", type="integer", nullable=true, unique=false)
@@ -432,6 +432,16 @@ class MoptPayoneConfig extends ModelEntity
    * @ORM\Column(name="adresscheck_shipping_countries", type="string", length=255, unique=false, nullable=true)
    */
   private $adresscheckShippingCountries;
+  
+  /**
+   * @ORM\Column(name="payolution_company_name", type="string", length=255, nullable=true, unique=false)
+   */
+  private $payolutionCompanyName;  
+  
+   /**
+   * @ORM\Column(name="payolution_b2bmode", type="boolean", nullable=true, unique=false)
+   */
+  private $payolutionB2bmode;   
   
   public function fromArray($array = array())
   {
@@ -1150,6 +1160,16 @@ class MoptPayoneConfig extends ModelEntity
   {
     $this->showAccountnumber = $showAccountnumber;
   }
+  
+  public function getShowBic()
+  {
+    return $this->showBic;
+  }
+
+  public function setShowBic($showBic)
+  {
+    $this->showBic = $showBic;
+  }  
 
   public function getMandateActive()
   {
@@ -1179,16 +1199,6 @@ class MoptPayoneConfig extends ModelEntity
   public function setKlarnaStoreId($klarnaStoreId)
   {
     $this->klarnaStoreId = $klarnaStoreId;
-  }
-  
-  public function getKlarnaCampaignCode()
-  {
-    return $this->klarnaCampaignCode;
-  }
-
-  public function setKlarnaCampaignCode($klarnaCampaignCode)
-  {
-    $this->klarnaCampaignCode = $klarnaCampaignCode;
   }
   
   public function getSaveTerms()
@@ -1240,4 +1250,25 @@ class MoptPayoneConfig extends ModelEntity
   {
     $this->adresscheckShippingCountries = $adresscheckShippingCountries;
   }
+  
+  public function getPayolutionCompanyName()
+  {
+    return $this->payolutionCompanyName;
+  }
+
+  public function setPayolutionCompanyName($payolutionCompanyName)
+  {
+    $this->payolutionCompanyName = $payolutionCompanyName;
+  }  
+ 
+  public function getPayolutionB2bmode()
+  {
+    return $this->payolutionB2bmode;
+  }
+
+  public function setPayolutionB2bMode($payolutionB2bmode)
+  {
+    $this->payolutionB2bmode = $payolutionB2bmode;
+  }   
+    
 }

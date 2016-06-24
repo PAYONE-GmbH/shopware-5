@@ -59,7 +59,17 @@ class Payone_Api_Request_Capture extends Payone_Api_Request_Abstract
      * @var Payone_Api_Request_Parameter_Invoicing_Transaction
      */
     protected $invoicing = null;
-
+    
+    /**
+     * @var Payone_Api_Request_Parameter_Paydata_Paydata 
+     */
+    protected $paydata = NULL;
+    
+    /**
+     * @var string
+     */
+    protected $api_version = NULL;    
+    
     /**
      * @var string
      */
@@ -176,4 +186,33 @@ class Payone_Api_Request_Capture extends Payone_Api_Request_Abstract
     {
         $this->narrative_text = $narrative_text;
     }
+    
+    
+    /**
+     * @param Payone_Api_Request_Parameter_Paydata_Paydata $paydata
+     */
+    public function setPaydata($paydata) {
+        $this->paydata = $paydata;
+    }
+ 
+    /**
+     * 
+     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     */
+    public function getPaydata() {
+        return $this->paydata;
+    }
+ 
+    public function setApiVersion($sApiVersion)
+    {
+        $this->api_version = $sApiVersion;
+    }
+ 
+    /**
+     * @return string
+     */
+    public function getApiVersion()
+    {
+        return $this->api_version;
+    }    
 }

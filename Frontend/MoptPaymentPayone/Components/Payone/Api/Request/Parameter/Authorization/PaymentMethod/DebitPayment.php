@@ -61,6 +61,13 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_DebitPayment
      * @var string
      */
     protected $mandate_identification = NULL;
+    
+    /**
+     * Enum FinancingType
+     * @var string
+     */
+    
+    protected $financingtype = NULL;    
 
     /**
      * @param string $bankaccount
@@ -173,4 +180,20 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_DebitPayment
     {
         return $this->mandate_identification;
     }
+    
+    /**
+     * @param string $financingtype
+     */
+    public function setFinancingtype($financingtype)
+    {
+        $this->financingtype = $financingtype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFinancingtype()
+    {
+        return $this->financingtype;
+    }    
 }

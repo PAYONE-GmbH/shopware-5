@@ -248,8 +248,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
         $paymentDto->setFinancingType($this->getFinancingType($paymentHelper, $paymentName));
         if($paymentHelper->isPayoneKlarna($paymentName))
         {
-          $paymentDto->setKlarnaConfig(array('klarnaStoreId' => $config['klarnaStoreId'],
-              'klarnaCampaignCode' => $config['klarnaCampaignCode']));
+          $paymentDto->setKlarnaConfig(array('klarnaStoreId' => $config['klarnaStoreId']));
         }
       }
       
@@ -338,10 +337,6 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
        if($paymentHelper->isPayoneBillsafe($paymentName))
        {
            return Payone_Api_Enum_FinancingType::BSV;
-       }
-       if($paymentHelper->isPayoneKlarnaInstallment($paymentName))
-       {
-           return Payone_Api_Enum_FinancingType::KLS;
        }
        if($paymentHelper->isPayoneKlarna($paymentName))
        {

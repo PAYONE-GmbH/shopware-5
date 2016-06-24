@@ -17,6 +17,9 @@ class Mopt_PayonePaymentHelper
   const MOPT_PAYONE_KLARNA_INVOICE_TERMS_NO = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/nb_no/invoice?fee=0";
   const MOPT_PAYONE_KLARNA_INVOICE_TERMS_SE = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/sv_se/invoice?fee=0";
   
+  //Payolution links for consents and legal terms
+  const MOPT_PAYONE_PAYOLUTION_CONSENT_DE = "https://payment.payolution.com/payolution-payment/infoport/dataprivacydeclaration?mId=";
+  const MOPT_PAYONE_PAYOLUTION_SEPA_DE = "https://payment.payolution.com/payolution-payment/infoport/sepa/mandate.pdf";
   /**
    * adds Payone API value for creditcard
    * 
@@ -174,6 +177,26 @@ class Mopt_PayonePaymentHelper
         return $arr['instruction_notes'];
     }
   }
+  
+    /**
+   * extract Payolution Clearingdata on checkout finish page from response object
+   *
+   * @param object $response
+   * @return boolean/array
+   */
+  public function extractPayolutionClearingDataFromResponse($response)
+  {
+    if (!method_exists($response, 'getPaydata')) {
+        return;
+    }
+    $payData = $response->getPaydata();
+    if (!$payData) {
+        return false;
+    }
+    $arr = $payData->toArray();
+   
+    return($arr);   
+  }  
 
   /**
    * returns clearing data
@@ -539,24 +562,6 @@ class Mopt_PayonePaymentHelper
   }
 
   /**
-   * check if given payment name is payone klarna installment payment
-   *
-   * @param string $paymentName
-   * @return boolean 
-   */
-  public function isPayoneKlarnaInstallment($paymentName)
-  {
-    if (preg_match('#mopt_payone__fin_klarna_installment#', $paymentName))
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  /**
    * check if given payment name is payone P24 payment
    *
    * @param string $paymentName
@@ -638,6 +643,42 @@ class Mopt_PayonePaymentHelper
     {
         return strpos($paymentName, 'mopt_payone__creditcard_iframe') === 0;
     }
+    
+  /**
+   * check if given payment name is payone payolution debitnote payment
+   *
+   * @param string $paymentName
+   * @return boolean 
+   */
+  public function isPayonePayolutionDebitNote($paymentName)
+  {
+    if (preg_match('#mopt_payone__fin_payolution_debitnote#', $paymentName))
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  /**
+   * check if given payment name is payone payolution invoice payment
+   *
+   * @param string $paymentName 
+   * @return boolean 
+   */
+  public function isPayonePayolutionInvoice($paymentName)
+  {
+    if (preg_match('#mopt_payone__fin_payolution_invoice#', $paymentName))
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }    
 
     /**
    * get online bank transfer type for api communication
@@ -768,6 +809,69 @@ class Mopt_PayonePaymentHelper
     return $information;
   }
   
+  public function moptGetPayolutionAdditionalInformation($country, $companyname)
+  {
+    $information = array('consentDebit' => '', 'consentInvoice' => '', 'sepaagreement' => '');
+    
+    switch ($country)
+    {
+      case 'DE': {
+        $information['consentDebit'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
+                . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayDebit();return false;">Einwilligung</a> '
+                . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
+        
+        $information['consentInvoice'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
+                . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInvoice();return false;">Einwilligung</a> '
+                . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';        
+
+        $information['overlaycontent'] = $this->moptGetPayolutionAcceptanceText($companyname);
+        
+        
+        $information['sepaagreement'] = 'Hiermit erteile ich das <a target="_blank" href="' . self::MOPT_PAYONE_PAYOLUTION_SEPA_DE . '" '
+                . 'style="text-decoration: underline !important;">Sepa-Lastschriftmandat</a> ';
+        
+      }
+        break;
+    }
+    
+    return $information;
+  } 
+  
+    protected function _isUtf8EncodingNeeded($sString) {
+        if (preg_match('!!u', $sString)) {
+            // this is utf-8
+            return false;
+        } else {
+            // definitely not utf-8
+            return true;
+        }
+    }  
+  
+    public function moptGetPayolutionAcceptanceText($companyname) {
+        $sUrl = self::MOPT_PAYONE_PAYOLUTION_CONSENT_DE . base64_encode($companyname);
+        $sContent = file_get_contents($sUrl);
+        $sPage = false;
+        if(!empty($sContent) && stripos($sContent, 'payolution') !== false && stripos($sContent, '<header>') !== false) {
+            //Parse content from HTML-body-tag from the given page
+            $sRegex = "#<\s*?body\b[^>]*>(.*?)</body\b[^>]*>#s";
+            preg_match($sRegex, $sContent, $aMatches);
+            if(is_array($aMatches) && count($aMatches) > 1) {
+                $sPage = $aMatches[1];
+                //remove everything bevore the <header> tag ( a window.close link which wouldn't work in the given context )
+                $sPage = substr($sPage, stripos($sPage, '<header>'));
+            }
+        }
+        if(!$sPage) {
+            $sPage = $this->_getFallbackText($companyname);
+        }
+        if($this->_isUtf8EncodingNeeded($sPage)) {
+            $sPage = utf8_encode($sPage);
+        }
+        return $sPage;
+    }  
+  
   public function moptUpdateUserInformation($userId, $paymentData)
   {
     $user             = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
@@ -780,13 +884,11 @@ class Mopt_PayonePaymentHelper
               . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
       $billing->setPhone($paymentData['formData']['mopt_payone__klarna_telephone']);
     }
-    else
+    if(isset($paymentData['formData']['mopt_payone__payolution_birthdaydate']))
     {
-      $billing->setBirthday($paymentData['formData']['mopt_payone__klarna_inst_birthyear'] 
-              . '-' . $paymentData['formData']['mopt_payone__klarna_inst_birthmonth'] 
-              . '-' . $paymentData['formData']['mopt_payone__klarna_inst_birthday']);
-      $billing->setPhone($paymentData['formData']['mopt_payone__klarna_inst_telephone']);
+      $billing->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
     }
+ 
     Shopware()->Models()->persist($billing);
     Shopware()->Models()->flush();
   }
@@ -883,6 +985,12 @@ class Mopt_PayonePaymentHelper
         {
             return 'klarna';
         }
+        if ($this->isPayonePayolutionDebitNote($paymentShortName)) {
+            return 'payolutiondebit';
+        }
+        if ($this->isPayonePayolutionInvoice($paymentShortName)) {
+            return 'payolutioninvoice';
+        }         
 
         if ($this->isPayoneFinance($paymentShortName))
         {
