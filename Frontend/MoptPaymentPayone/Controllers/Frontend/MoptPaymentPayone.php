@@ -342,7 +342,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $financeType = Payone_Api_Enum_PayolutionType::PYV;
         $paymentType = Payone_Api_Enum_PayolutionType::PYV_FULL;
         if ($this->moptPayonePaymentHelper->isPayonePayolutionInvoice($this->getPaymentShortName())) {
-            $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType);
+            $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
             $responseData = $precheckresponse->toArray();
             $workorderId = $responseData['rawResponse'];
             $workorderId = $workorderId['workorderid'];
@@ -351,7 +351,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($this->getPaymentShortName())) {
             $financeType = Payone_Api_Enum_PayolutionType::PYD;
             $paymentType = Payone_Api_Enum_PayolutionType::PYD_FULL;
-            $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType);
+            $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
             $responseData = $precheckresponse->toArray();
             $workorderId = $responseData['rawResponse'];
             $workorderId = $workorderId['workorderid'];
@@ -667,7 +667,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param string $paymenttype
      * @return type $response
      */
-    protected function buildAndCallPrecheck($config, $clearingType, $financetype, $paymenttype) {
+    protected function buildAndCallPrecheck($config, $clearingType, $financetype, $paymenttype, $paymentData) {
         $paramBuilder = $this->moptPayoneMain->getParamBuilder();
         $session = Shopware()->Session();
         $personalData = $paramBuilder->getPersonalData($this->getUserData());        
