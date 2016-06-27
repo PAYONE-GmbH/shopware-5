@@ -447,14 +447,6 @@ class MoptPayoneConfig extends ModelEntity
    * @ORM\Column(name="show_sofort_iban_bic", type="boolean", precision=0, scale=0, nullable=false, unique=false)
    */
   private $showSofortIbanBic;
-  
-  public function fromArray($array = array())
-  {
-    foreach ($array as $property => $value)
-    {
-      $this->$property = $value;
-    }
-  }
 
   public function getId()
   {
