@@ -26,7 +26,7 @@
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         {foreach from=$payonepaymentmethods item=paymentmethod}
-                            <li><a href="#" id="{$paymentmethod.id}">{$paymentmethod.description}</a></li>
+                            <li><a href="#" data-name="{$paymentmethod.name}" id="{$paymentmethod.id}">{$paymentmethod.description}</a></li>
                             {/foreach}   
                     </ul>
                 </div>
@@ -106,7 +106,6 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
-
                     <label for="mobileInactive" class="text-left col-md-3 control-label">{s name=formpanel_mobileInactive_label}Inaktiv für Smartphone{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mobileInactive" name="mobileInactive" aria-describedby="mobileInactive-status" >
@@ -116,15 +115,32 @@
                     </div>
                 </div>     
                 <div id="klarnastoreid" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" disabled style="display: none; ">
-
                     <label for="klarnaStoreId" class="text-left col-md-3 control-label">{s name=fieldlabel/klarnaStoreId}Klarna Store-ID{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='' minlength="" maxlength="" id="klarnaStoreId" name="klarnaStoreId" aria-describedby="klarnaStoreId-status" >
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="" maxlength="" id="klarnaStoreId" name="klarnaStoreId" aria-describedby="klarnaStoreId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="klarnaStoreId-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
                     </div>
-                </div>                    
+                </div>
+                <div id="payolutionCompanyName" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" disabled style="display: none; ">
+                    <label for="payolutionCompanyName" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionCompanyName}Payolution Firmenname{/s}</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="" maxlength="" id="payolutionCompanyName" name="payolutionCompanyName" aria-describedby="payolutionCompanyName-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="payolutionCompanyName-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div> 
+                <div id="payolutionB2bMode" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" disabled style="display: none; ">
+                    <label for="payolutionB2bMode" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionB2bMode}Payolution B2B Mode {/s}</label>
+                    <div class="col-md-6">
+                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionB2bMode" name="payolutionB2bMode" aria-describedby="payolutionB2bMode-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="payolutionB2bMode-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>                     
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>
         </div>
@@ -165,6 +181,7 @@
         $(".dropdown-menu li a").click(function () {
             var params = "paymentid=" + this.id;
             var call = url + '?' + params;
+            var filterid = this.getAttribute("data-name");
             paymentid = this.id;
 
             $.ajax({
@@ -173,9 +190,24 @@
                 success: function (data) {
                     response = $.parseJSON(data);
                     if (response.status === 'success') {
+                        if(/mopt_payone__fin_klarna/.test(filterid)){
+                            $('#klarnastoreid').show();
+                            } else {
+                            $('#klarnastoreid').hide();
+                        } 
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionCompanyName').show();
+                            } else {
+                            $('#payolutionCompanyName').hide();
+                        }    
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionB2bMode').show();
+                            } else {
+                            $('#payolutionB2bMode').hide();
+                        }    
+                        
                         populateForm(form, response.data);
                         form.validator('validate');
-
                     }
                     if (response.status === 'error') {
                     }

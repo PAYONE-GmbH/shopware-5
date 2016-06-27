@@ -62,6 +62,7 @@ class Payment implements SubscriberInterface
         $post['mopt_payone__klarna_Year'] = $postData['mopt_payone__klarna_Year'];
         $post['mopt_payone__klarna_Month'] = $postData['mopt_payone__klarna_Month'];
         $post['mopt_payone__klarna_Day'] = $postData['mopt_payone__klarna_Day'];
+
         $paymentName = $returnValues['paymentData']['name'];
         $paymentId = $postData['register']['payment'];
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
@@ -95,6 +96,10 @@ class Payment implements SubscriberInterface
         if (isset($paymentData['formData']['mopt_save_birthday_and_phone']) && $paymentData['formData']['mopt_save_birthday_and_phone']) {
             $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
         }
+        
+        if (isset($paymentData['formData']['mopt_save_birthday']) && $paymentData['formData']['mopt_save_birthday']) {
+            $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
+        }        
 
         if (count($paymentData['sErrorFlag'])) {
             $error = true;
@@ -123,7 +128,6 @@ class Payment implements SubscriberInterface
                 if ($config['mandateActive']) {
                     //perform bankaccountcheck
                     $params = $moptPayoneMain->getParamBuilder()->buildManageMandate($paymentId, $user, $paymentData['formData']);
-
                     $payoneServiceBuilder = $this->container->get('MoptPayoneBuilder');
                     $service = $payoneServiceBuilder->buildServiceManagementManageMandate();
                     $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(

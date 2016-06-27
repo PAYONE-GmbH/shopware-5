@@ -75,15 +75,17 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'transTransfer', type: 'string'},
     { name: 'transInvoice', type: 'string'},
     { name: 'showAccountnumber', type: 'boolean'},
+    { name: 'showBic', type: 'boolean'},    
     { name: 'mandateActive', type: 'boolean'},
     { name: 'mandateDownloadEnabled', type: 'boolean'},
     { name: 'klarnaStoreId', type: 'string'},
-    { name: 'klarnaCampaignCode', type: 'string'},
     { name: 'saveTerms', type: 'int'},
     { name: 'paypalEcsActive', type: 'boolean'},
     { name: 'creditcardMinValid', type: 'int'},
     { name: 'adresscheckBillingCountries', type: 'string'},
-    { name: 'adresscheckShippingCountries', type: 'string'}
+    { name: 'adresscheckShippingCountries', type: 'string'},
+    { name: 'payolutionCompanyName', type: 'string'},
+    { name: 'payolutionB2bmode', type: 'boolean'}
   ],
   /**
    * Validation

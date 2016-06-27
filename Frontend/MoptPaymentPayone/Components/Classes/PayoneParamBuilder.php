@@ -108,6 +108,12 @@ class Mopt_PayoneParamBuilder {
 
         $params['business'] = $business;
 
+        if ($paymentName == "mopt_payone__fin_payolution_invoice" || "mopt_payone__fin_payolution_debitnote") {
+            if ($order->getBilling()->getCompany()) {
+                $params['payolution_b2b']= true;
+            }
+        }
+
         return $params;
     }
 
@@ -355,7 +361,125 @@ class Mopt_PayoneParamBuilder {
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
         return $payment;
     }
+
+    /**
+     * create payolution payment object
+     *
+     * @param string $financeType
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution 
+     */
+    public function getPaymentPayolutionInvoice($financeType, $paymentData, $workorderId) {
+        $params = array();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $params['api_version'] = '3.10';
+        $params['workorderid'] = $workorderId;
+        $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        if ($params['birthday'] == "00000000") {
+            unset($params['birthday']);
+        }
+        $params['financingtype'] = $financeType;
+
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
+
+        if ($paymentData['mopt_payone__payolution_b2bmode']) {
+            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
+            ));
+            $payment->setPaydata($paydata);
+        }
+
+        return $payment;
+    }
     
+    /**
+     * create payolution payment object
+     *
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution 
+     */
+    public function getPaymentPayolutionInvoicePreCheck($paymentData) {
+        $params = array();
+
+
+        return $payment;
+    }    
+
+    /**
+     * create payolution payment object
+     *
+     * @param string $financeType
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     */
+    public function getPaymentPayolutionDebitNote($financeType, $paymentData, $workorderId) {
+        $params = array();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $params['api_version'] = '3.10';
+        $params['workorderid'] = $workorderId;
+        $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        if ($params['birthday'] == "00000000") {
+            unset($params['birthday']);
+        }
+        $params['financingtype'] = $financeType;
+        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_iban']);
+        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_bic']);
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
+
+        if ($paymentData['mopt_payone__payolution_b2bmode']) {
+            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__debitnote_company_trade_registry_number'])
+            ));
+            $payment->setPaydata($paydata);
+        }
+
+        return $payment;
+    }
+    
+    /**
+     * create payolution payment object
+     *
+     * @param string $financeType
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     */
+    public function getPaymentPayolutionDebitNotePreCheck($financeType, $paymentData) {
+        $params = array();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $params['api_version'] = '3.10';
+        $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        if ($params['birthday'] == "00000000") {
+            unset($params['birthday']);
+        }
+        $params['financingtype'] = $financeType;
+        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_iban']);
+        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_bic']);
+
+        $payment = new Payone_Api_Request_Genericpayment($params);
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_PRE_CHECK)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'payment_type', 'data' => Payone_Api_Enum_PayolutionType::PYD_FULL)
+        ));                    
+        if ($paymentData['mopt_payone__payolution_b2bmode']) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__debitnote_company_trade_registry_number'])
+            ));
+            $payment->setPaydata($paydata);
+        }
+
+        return $payment;
+    }    
+
     /**
      * returns paydirekt payment data object
      *
@@ -381,7 +505,7 @@ class Mopt_PayoneParamBuilder {
 
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
         return $payment;
-    }    
+    }
 
     /**
      * returns payment data for dbitnote payment
@@ -508,20 +632,10 @@ class Mopt_PayoneParamBuilder {
      * create klarna payment object
      *
      * @param string $financeType
-     * @param string $campaignId
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing 
      */
-    public function getPaymentKlarna($financeType, $campaignId = false) {
+    public function getPaymentKlarna($financeType) {
         $params = array();
-
-        if ($campaignId) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'klsid', 'data' => $campaignId)));
-
-            $params['paydata'] = $paydata;
-        }
 
         $params['financingtype'] = $financeType;
 
@@ -653,7 +767,7 @@ class Mopt_PayoneParamBuilder {
             if ($taxFree) {
                 $params['pr'] = $article['priceNumeric']; //price
             } else {
-                $params['pr'] = round($article['netprice'] * (1 + ( $article['tax_rate'] / 100)),2); //price
+                $params['pr'] = round($article['netprice'] * (1 + ( $article['tax_rate'] / 100)), 2); //price
             }
             $params['no'] = $article['quantity']; // ordered quantity
             $params['de'] = substr($article['articlename'], 0, 100); // description
@@ -907,7 +1021,7 @@ class Mopt_PayoneParamBuilder {
      * @return string 
      */
     public function getParamPaymentReference() {
-        return 'mopt_' . uniqid() . rand(10, 99);
+        return 'mopt-' . uniqid() . rand(10, 99);
     }
 
     /**

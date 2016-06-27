@@ -130,6 +130,19 @@
                 </div>
                 <div class="lastschrift form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
+                    <label for="showBic" class="text-left col-md-3 control-label">{s name=fieldlabel/showBic}Zusätzlich zur IBAN auch BIC abfragen?{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="showBic" name="showBic" aria-describedby="showBic-status" >
+                            <option value="true">Ja</option>
+                            <option value="false">Nein</option>
+                        </select>                        
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="showBic-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>                    
+                <div class="lastschrift form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+
                     <label for="mandateActive" class="text-left col-md-3 control-label">{s name=fieldlabel/mandateActive}Mandatserteilung aktivieren?{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mandateActive" name="mandateActive" aria-describedby="mandateActive-status" >

@@ -29,4 +29,6 @@ class Payone_Api_Enum_GenericpaymentAction
      * get customer shipping address from paypal
      */
     const PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS='getexpresscheckoutdetails';
+    
+    const PAYOLUTION_PRE_CHECK = 'pre_check';    
 }

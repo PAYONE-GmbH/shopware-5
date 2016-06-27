@@ -1,18 +1,42 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * $Id: $
+ * This class handles:
+ * installment, uninstallment
+ *
+ *
+ * PHP version 5
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GNU General Public License (GPL 3)
+ * that is bundled with this package in the file LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Payone to newer
+ * versions in the future. If you wish to customize Payone for your
+ * needs please refer to http://www.payone.de for more information.
+ *
+ * @category        Payone
+ * @package         Payone Payment Plugin for Shopware 5
+ * @subpackage      Installer
+ * @copyright       Copyright (c) 2016 <kontakt@fatchip.de> - www.fatchip.com
+ * @author          Stefan Müller <stefan.mueller@fatchip.de>
+ * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.fatchip.com
  */
 class Mopt_PayoneInstallHelper
 {
 
     /**
      * returns array of PAYONE payment methods
-     * 
+     *
      * payment types are grouped
      * mopt_payone__[group]_[brand]
      *
-     * @return array 
+     * @return array
      */
     public function mopt_payone__getPaymentMethods()
     {
@@ -123,25 +147,20 @@ class Mopt_PayoneInstallHelper
                 'template' => 'mopt_paymentmean_klarna.tpl',
                 'position' => 21,),
             array(
-                'name' => 'mopt_payone__fin_klarna_installment',
-                'description' => 'PAYONE Klarna Ratenkauf',
-                'template' => 'mopt_paymentmean_klarna_installment.tpl',
-                'position' => 22,),
-            array(
                 'name' => 'mopt_payone__ibt_p24',
                 'description' => 'PAYONE P24',
                 'template' => null,
-                'position' => 23,),
+                'position' => 22,),
             array(
                 'name' => 'mopt_payone__creditcard_iframe',
                 'description' => 'PAYONE Kreditkarte',
                 'template' => null,
-                'position' => 24,),
+                'position' => 23,),
             array(
                 'name' => 'mopt_payone__csh_barzahlen',
                 'description' => 'PAYONE Barzahlen',
                 'template' => null,
-                'position' => 25,
+                'position' => 24,
                 'additionalDescription' => '<label for="payment_barzahlen">'
                 . '  <img style="height: 3em; vertical-align: -1em;" src="https://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen">'
                 . '</label>'
@@ -163,12 +182,22 @@ class Mopt_PayoneInstallHelper
                 'name' => 'mopt_payone__ewallet_paydirekt',
                 'description' => 'PAYONE Paydirekt',
                 'template' => null,
+                'position' => 25,),
+            array(
+                'name' => 'mopt_payone__fin_payolution_invoice',
+                'description' => 'PAYONE Payolution Rechnungskauf',
+                'template' => 'mopt_paymentmean_payolution_invoice.tpl',
                 'position' => 26,),
+            array(
+                'name' => 'mopt_payone__fin_payolution_debitnote',
+                'description' => 'PAYONE Payolution Lastschrift',
+                'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
+                'position' => 27,),
         );
     }
 
     /**
-     * add payment data table 
+     * add payment data table
      */
     public function moptCreatePaymentDataTable()
     {
@@ -200,12 +229,35 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
-     * extend config data table with klarna campaing code for installment coloumn
+     * extend config data table with payolution config coloumn
      */
-    public function moptExtendConfigKlarnaInstallmentDataTable()
+    public function moptExtendConfigPayolutionDataTable()
+    {
+        $sql = "SELECT value FROM s_core_config_values "
+                . "WHERE element_id = '893';";
+        $result = Shopware()->Db()->query($sql);
+        $serializedCompanyName = $result->fetchColumn(0);
+        $companyName = unserialize((string) $serializedCompanyName);
+        if ($companyName) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                    . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT '" . $companyName . "' ,"
+                    . "ADD COLUMN payolution_b2bmode TINYINT(1) DEFAULT 0;";
+        } else {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                    . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT 'Ihr Firmenname' ,"
+                    . "ADD COLUMN payolution_b2bmode TINYINT(1) DEFAULT 0;";
+        }
+
+        Shopware()->Db()->exec($sql);
+    }
+    
+    /**
+     * extend config data table with showBic config coloumn
+     */
+    public function fcExtendConfigShowBicDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN klarna_campaign_code VARCHAR(255) DEFAULT 0;";
+                . "ADD COLUMN show_bic TINYINT(1) DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -345,7 +397,7 @@ class Mopt_PayoneInstallHelper
                 . '</tr>'
                 . '<tr>'
                 . '	<td>Verwendungszweck:</td>'
-                . '	<td>{$instruction.clearing_reference}</td>'
+                . '	<td>{$instruction.clearing_reference}{$instruction.clearing_reference}</td>'
                 . '</tr>'
                 . '</table>'
             ));
@@ -354,7 +406,7 @@ class Mopt_PayoneInstallHelper
 
     /**
      * insert empty config on installations to keep the shop stable
-     * without any config and activated plugin exceptions will occur during checkout 
+     * without any config and activated plugin exceptions will occur during checkout
      */
     public function moptInsertEmptyConfigIfNotExists()
     {
@@ -367,23 +419,12 @@ class Mopt_PayoneInstallHelper
       ";
             Shopware()->Db()->query($sql);
         }
-        
-        // insert default values for creditcard config
-        $sql = 'SELECT id FROM s_plugin_mopt_payone_creditcard_config';
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            $sql = "INSERT INTO `s_plugin_mopt_payone_creditcard_config` (`error_locale_id`, `shop_id`, `show_errors`, `is_default`, `integration_type`, `standard_input_css`, `standard_input_css_selected`, `standard_iframe_height`, `standard_iframe_width`, `cardno_input_chars`, `cardno_input_chars_max`, `cardno_input_css`, `cardno_custom_iframe`, `cardno_iframe_height`, `cardno_iframe_width`, `cardno_custom_style`, `cardno_field_type`, `cardcvc_input_chars`, `cardcvc_input_chars_max`, `cardcvc_input_css`, `cardcvc_custom_iframe`, `cardcvc_iframe_height`, `cardcvc_iframe_width`, `cardcvc_custom_style`, `cardcvc_field_type`, `cardmonth_input_chars`, `cardmonth_input_chars_max`, `cardmonth_input_css`, `cardmonth_custom_iframe`, `cardmonth_iframe_height`, `cardmonth_iframe_width`, `cardmonth_custom_style`, `cardmonth_field_type`, `cardyear_input_chars`, `cardyear_input_chars_max`, `cardyear_input_css`, `cardyear_custom_iframe`, `cardyear_iframe_height`, `cardyear_iframe_width`, `cardyear_custom_style`, `cardyear_field_type`, `merchant_id`, `portal_id`, `subaccount_id`, `api_key`, `live_mode`, `check_cc`, `creditcard_min_valid`) VALUES
-      (1, 1, 1, 1, 0, 'box-shadow:inset 0 1px 1px #dadae5;background:#f8f8fa;border:1px solid #dadae5;border-top-color:#cbcbdb;line-height:19px;font-size:.875rem;width:85%;padding:.625rem .625rem .5625rem .625rem;color:#8798a9;','box-shadow:inset 0 1px 1px #dadae5;background:#f8f8fa;border:1px solid #dadae5;border-top-color:#cbcbdb;line-height:19px;font-size:.875rem;width:85%;padding:.625rem .625rem .5625rem .625rem;color:#8798a9;', '20px', '80px', 20, 20, '', 0, '20px', '100px', 1, 'tel', 4, 4, '', 0, '20px', '100px', 1, 'tel', 4, 4, '', 0, '20px', '40px', 1, 'select', 4, 4, '', 0, '20px', '40px', 1, 'select', 0, 0, 0, '', 0, 1, 0);
-      ";
-            Shopware()->Db()->query($sql);
-        }
     }
 
     /**
      * check if user attributes are already extended
-     * 
-     * @return boolean 
+     *
+     * @return boolean
      */
     public function moptUserAttributesExist()
     {
@@ -404,7 +445,7 @@ class Mopt_PayoneInstallHelper
     /**
      * check if billing address attributes are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptBillingAddressAttributesExist()
     {
@@ -425,7 +466,7 @@ class Mopt_PayoneInstallHelper
     /**
      * check if shipping address attributes are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptShippingAddressAttributesExist()
     {
@@ -446,7 +487,7 @@ class Mopt_PayoneInstallHelper
     /**
      * check if order attributes are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptOrderAttributesExist()
     {
@@ -463,11 +504,52 @@ class Mopt_PayoneInstallHelper
 
         return true;
     }
+    
+
+    /**
+     * check if order attributes for Payolution Payments are already extended
+     *
+     * @return boolean
+     */
+    public function moptPayolutionWorkOrderIdAttributeExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='mopt_payone_payolution_workorder_id'";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * check if order attributes for Payolution Payments are already extended
+     *
+     * @return boolean
+     */
+    public function moptPayolutionClearingReferenceAttributeExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='mopt_payone_payolution_clearing_reference'";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+        return true;
+    }
 
     /**
      * check if order details attributes are already extended
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptOrderDetailsAttributesExist()
     {
@@ -489,7 +571,7 @@ class Mopt_PayoneInstallHelper
      * check if 2nd order details attributes extension is already made
      * needed to for new shipping costs handling
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptOrderAttributesShippingCostsExist()
     {
@@ -511,7 +593,7 @@ class Mopt_PayoneInstallHelper
      * check if 3rd order attributes extension is already made
      * needed to for abo commerce support
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptOrderAttributesPaymentDataExist()
     {
@@ -533,7 +615,7 @@ class Mopt_PayoneInstallHelper
      * check if 4th order attributes extension is already made
      * needed to save orderhash
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptOrderAttributesOrderHashExist()
     {
@@ -554,7 +636,7 @@ class Mopt_PayoneInstallHelper
     /**
      * check if payone configuration is already extended for sepa options
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptPayoneConfigExtensionExist()
     {
@@ -575,7 +657,7 @@ class Mopt_PayoneInstallHelper
     /**
      * check if payone configuration is already extended for klarna options
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptPayoneConfigKlarnaExtensionExist()
     {
@@ -594,17 +676,38 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
-     * check if payone configuration is already extended for klarna installment payment
+     * check if payone configuration is already extended for payolution payment
      *
-     * @return boolean 
+     * @return boolean
      */
-    public function moptPayoneConfigKlarnaInstallmentExtensionExist()
+    public function moptPayoneConfigPayolutionExtensionExist()
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
                 AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='klarna_campaign_code'";
+                AND COLUMN_NAME ='payolution_company_name';";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    /**
+     * check if payone configuration is already extended for showBoc config option
+     *
+     * @return boolean
+     */
+    public function fcPayoneConfigShowBicExtensionExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='show_bic';";
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
@@ -617,7 +720,7 @@ class Mopt_PayoneInstallHelper
     /**
      * check if payone configuration is already extended with save terms option
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptPayoneConfigSaveTermsExtensionExist()
     {
@@ -638,7 +741,7 @@ class Mopt_PayoneInstallHelper
     /**
      * check if payone configuration is already extended with paypal ecs option
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptPayoneConfigPaypalEcsExtensionExist()
     {
@@ -659,7 +762,7 @@ class Mopt_PayoneInstallHelper
     /**
      * check if ordernr column has correct type
      *
-     * @return boolean 
+     * @return boolean
      */
     public function isTransactionLogModelUpdated()
     {
@@ -684,7 +787,7 @@ class Mopt_PayoneInstallHelper
     /**
      * check if payone configuration is already extended country config for risk checks
      *
-     * @return boolean 
+     * @return boolean
      */
     public function moptPayoneConfigRiskCountryExtensionExist()
     {

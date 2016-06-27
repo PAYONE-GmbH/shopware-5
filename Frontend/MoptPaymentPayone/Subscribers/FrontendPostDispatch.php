@@ -1,4 +1,30 @@
 <?php
+/**
+ * This class handles:
+ * form submits for all PAYONE payment methods
+ *
+ *
+ * PHP version 5
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GNU General Public License (GPL 3)
+ * that is bundled with this package in the file LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Payone to newer
+ * versions in the future. If you wish to customize Payone for your
+ * needs please refer to http://www.payone.de for more information.
+ *
+ * @category        Payone
+ * @package         Payone Payment Plugin for Shopware 5
+ * @subpackage      Subscribers
+ * @copyright       Copyright (c) 2016 <kontakt@fatchip.de> - www.fatchip.com
+ * @author          Stefan Müller <stefan.mueller@fatchip.de>
+ * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.fatchip.com
+ */
 
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
@@ -9,21 +35,21 @@ class FrontendPostDispatch implements SubscriberInterface
 
     /**
      * di container
-     * 
+     *
      * @var \Shopware\Components\DependencyInjection\Container
      */
     private $container;
 
     /**
      * path to plugin files
-     * 
+     *
      * @var string
      */
     private $path;
 
     /**
      * inject di container
-     * 
+     *
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
     public function __construct(\Shopware\Components\DependencyInjection\Container $container, $path)
@@ -34,7 +60,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
     /**
      * return array with all subsribed events
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
@@ -109,6 +135,7 @@ class FrontendPostDispatch implements SubscriberInterface
         if (in_array($controllerName, array('account', 'checkout', 'register'))) {
             $moptPayoneData = $this->moptPayoneCheckEnvironment($controllerName);
             $view->assign('moptCreditCardCheckEnvironment', $moptPayoneData);
+            $view->assign('fcPayolutionConfig', $moptPayoneData['payolutionConfig']);
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
             $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
             $mpotPaymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
@@ -173,6 +200,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->extendsTemplate('frontend/account/mopt_consumescore' . $templateSuffix . '.tpl');
             }
         }
+        
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
             unset($session->moptBarzahlenCode);
         }
@@ -229,6 +257,8 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['payment_mean'] = $paymentMean;
             }
 
+
+
             //prepare additional Klarna information and retrieve birthday and phone nr from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayoneKlarna($paymentMean['name'])) {
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
@@ -240,13 +270,27 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__klarna_birthmonth'] = $birthday[1];
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
                 $data['mopt_payone__klarna_telephone'] = $userData['billingaddress']['phone'];
-                $data['mopt_payone__klarna_inst_birthday'] = $birthday[2];
-                $data['mopt_payone__klarna_inst_birthmonth'] = $birthday[1];
-                $data['mopt_payone__klarna_inst_birthyear'] = $birthday[0];
-                $data['mopt_payone__klarna_inst_telephone'] = $userData['billingaddress']['phone'];
+            }
+            
+            
+            //prepare additional Payolution information and retrieve birthday from user data
+            if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name'])
+                    || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name'])) {
+                $data['payolutionConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+                
+                $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
+                        ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
+                $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__payolution_debitnote_birthday'] = $birthday[2];
+                $data['mopt_payone__payolution_debitnote_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payolution_debitnote_birthyear'] = $birthday[0];
+                $data['mopt_payone__payolution_invoice_birthday'] = $birthday[2];
+                $data['mopt_payone__payolution_invoice_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payolution_invoice_birthyear'] = $birthday[0];
             }
         }
-
+        
         $payoneParams = $moptPayoneMain->getParamBuilder()->getBasicParameters();
         $creditCardConfig = $this->getCreditcardConfig(); //retrieve additional creditcardconfig
 
@@ -254,6 +298,7 @@ class FrontendPostDispatch implements SubscriberInterface
         $payoneParams['portalid'] = $creditCardConfig['portal_id'];
         $payoneParams['key'] = $creditCardConfig['api_key'];
         $payoneParams['aid'] = $creditCardConfig['subaccount_id'];
+        
         if ($creditCardConfig['live_mode']) {
             $payoneParams['mode'] = 'live';
         } else {
@@ -287,17 +332,18 @@ class FrontendPostDispatch implements SubscriberInterface
         $data['moptPayoneCheckCc'] = $creditCardConfig['check_cc'];
         $data['moptCreditcardMinValid'] = (int) $creditCardConfig['creditcard_min_valid'];
         
-        // remove the api key; only ['hash'] ist used 
+        // remove the api key; only ['hash'] ist used
         $creditCardConfig['api_key'] = "";
         // to be safe also remove key in $payoneParams
         $payoneParams['key'] = "";
         // also remove key from array [jsonconfig]
-        $json_tmp = json_decode($creditCardConfig['jsonConfig'],true);
+        $json_tmp = json_decode($creditCardConfig['jsonConfig'], true);
         unset($json_tmp['api_key']);
         $creditCardConfig['jsonConfig'] = json_encode($json_tmp);
 
         $data['moptCreditcardConfig'] = $creditCardConfig;
         $data['moptPayoneParams'] = $payoneParams;
+        
 
         if ($paymentData) {
             $data['sFormData'] = $paymentData;
@@ -314,11 +360,16 @@ class FrontendPostDispatch implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config = $moptPayoneMain->getPayoneConfig();
 
+
         $paymentMeans = Shopware()->Modules()->Admin()->sGetPaymentMeans();
         foreach ($paymentMeans as $paymentMean) {
             if ($moptPayoneMain->getPaymentHelper()->isPayoneDebitnote($paymentMean['name'])) {
                 $data['moptDebitCountries'] = $moptPayoneMain->getPaymentHelper()
                         ->moptGetCountriesAssignedToPayment($paymentMean['id']);
+
+                $debitConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+                $data['moptShowBic'] = $debitConfig['showBic'];
+
                 break;
             }
         }
@@ -370,5 +421,4 @@ class FrontendPostDispatch implements SubscriberInterface
 
         return $configData;
     }
-
 }

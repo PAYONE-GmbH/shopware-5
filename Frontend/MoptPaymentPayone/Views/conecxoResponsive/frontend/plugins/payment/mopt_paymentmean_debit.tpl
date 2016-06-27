@@ -42,7 +42,7 @@
                    value="{$form_data.mopt_payone__debit_iban|escape}" class="form-control"/>
         </div>
     </div>
-
+    {if $moptPaymentConfigParams.moptShowBic}
     <div class="form-group {if $error_flags.mopt_payone__debit_bic}instyle_error{/if}">
         <label for="mopt_payone__debit_bic" class="col-lg-4 control-label">
           {s namespace='frontend/MoptPaymentPayone/payment' name='bankBIC'}BIC{/s}
@@ -52,7 +52,10 @@
             <input name="moptPaymentData[mopt_payone__debit_bic]" type="text" id="mopt_payone__debit_bic" 
                    value="{$form_data.mopt_payone__debit_bic|escape}" class="form-control"/>
         </div>
-    </div>
+    </div>    
+    {/if}
+    
+    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__debit_showbic]" id="moptPaymentData[mopt_payone__debit_showbic]" value="{$moptPaymentConfigParams.moptShowBic}">              
   
   {if $moptPaymentConfigParams.moptShowAccountnumber}
     <p class="description">
@@ -169,13 +172,13 @@
           $('#mopt_payone__debit_iban').parent().after('<div class="error moptFormError">{s namespace="frontend/MoptPaymentPayone/errorMessages" name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}</div>');
           formNotValid = true;
       }
-      
+    {if $moptPaymentConfigParams.moptShowBic}      
     if($('#mopt_payone__debit_bic').val() && !ibanbicReg.test($('#mopt_payone__debit_bic').val())){
           $('#mopt_payone__debit_bic').addClass('instyle_error');
           $('#mopt_payone__debit_bic').parent().after('<div class="error moptFormError">{s namespace="frontend/MoptPaymentPayone/errorMessages" name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}</div>');
           formNotValid = true;
       }
-
+     {/if}
     if(formNotValid)
     {
         return false;
