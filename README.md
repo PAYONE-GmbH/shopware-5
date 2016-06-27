@@ -44,7 +44,7 @@ More than 12 years of know-how. More than 3,000 customers. More than 100 dedicat
 
 ##More information
 
-Documentation for Shopware: http://www.payone.de/uploads/media/PAYONE_Dokumentation_Shopware-Payment-Plugin_01.pdf
+Documentation for Shopware: https://www.payone.de/uploads/media/PAYONE_Dokumentation_Shopware-Payment-Plugin.pdf
 
 Videoguide: Installation and configuration: https://www.youtube.com/watch?v=P3Q7Gt1opsI
 
