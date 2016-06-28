@@ -1,19 +1,19 @@
 {
     "label": {
-        "de": "%%NAME%%",
-        "en": "%%NAME%%"
+        "de": "PAYONE Payment Plugin",
+        "en": "PAYONE Payment Plugin"
     },
     "author": "FATCHIP GmbH",
-    "copyright": "Copyright © 2015, FATCHIP GmbH",
+    "copyright": "Copyright ?? 2015, FATCHIP GmbH",
     "link": "http://www.fatchip.de/",
     "support": "support@fatchip.de",    
-    "currentVersion": "%%VERSION%%_%%REVISION%%",
+    "currentVersion": "3.3.8_5669",
     "solution_name": "fatchip",
     
     "changelogs": {
         "de": {
-            "3.0.0": "Shopware 5 Kompatibilität",
-            "3.1.0": "Länderkonfiguration für Adressprüfung, Steuern als Basispunkte, Mindestgültigkeitsdauer für Kreditkarten",
+            "3.0.0": "Shopware 5 Kompatibilit??t",
+            "3.1.0": "L??nderkonfiguration f??r Adresspr??fung, Steuern als Basispunkte, Mindestg??ltigkeitsdauer f??r Kreditkarten",
             "3.1.1": "Bestellabschluss bei Redirect-Zahlungen angepasst",
             "3.1.2": "Bugfixes",
             "3.1.3": "Kreditkartenzahlung per Frontend-API",
@@ -21,16 +21,16 @@
             "3.2.1": "Bugfixes",
             "3.2.2": "Neue Zahlart Barzahlen integriert",
             "3.2.3": "Bugfixes",
-            "3.2.4": "Javascript Integration an geänderte Shopware Templates angepast",
-            "3.3.0": "Paypal Unterstützung für Abo-Commerce integriert",
+            "3.2.4": "Javascript Integration an ge??nderte Shopware Templates angepast",
+            "3.3.0": "Paypal Unterst??tzung f??r Abo-Commerce integriert",
             "3.3.1": "Paypal Abo-Commerce Bugfix, globale Kreditkartenkonfiguration in Export integriert",
-            "3.3.2": "Kreditkartenkonfiguration erweitert für Multishopkompatibilität, Tx Status Änderungen ohne ORM verarbeiten",
-            "3.3.3": "Bugfix: Clearingdaten für Emailtemplates zur Verfügung stellen",
+            "3.3.2": "Kreditkartenkonfiguration erweitert f??r Multishopkompatibilit??t, Tx Status ??nderungen ohne ORM verarbeiten",
+            "3.3.3": "Bugfix: Clearingdaten f??r Emailtemplates zur Verf??gung stellen",
             "3.3.4": "Bugfix: Klarna Formularvalidierung",
-            "3.3.5": "Kompatibilität für SW 5.0.3, 5.0.4, 5.1.0, 5.1.1",
+            "3.3.5": "Kompatibilit??t f??r SW 5.0.3, 5.0.4, 5.1.0, 5.1.1",
             "3.3.6": "Transaktionsfeedback in korrektem Shubshop verarbeiten",
-            "3.3.7": "Kompatibilität für SW 5.1.2",
-            "3.3.8": "PAYONE Lightweight Backend hinzugefügt"            
+            "3.3.7": "Kompatibilit??t f??r SW 5.1.2",
+            "3.3.8": "PAYONE Lightweight Backend hinzugef??gt"            
         },
         "en": {
             "3.0.0": "Shopware 5 compatibility",
@@ -50,8 +50,8 @@
             "3.3.4": "Fixed klarna payment form validation",
             "3.3.5": "Compatibility for SW 5.0.3, 5.0.4, 5.1.0, 5.1.1",
             "3.3.6": "Use correct subshop for transaction feedback processing",
-            "3.3.7": "Compatibility für SW 5.1.2",
-            "3.3.8": "PAYONE Lightweight Backend hinzugefügt"                        
+            "3.3.7": "Compatibility f??r SW 5.1.2",
+            "3.3.8": "PAYONE Lightweight Backend hinzugef??gt"                        
         }
     },
 

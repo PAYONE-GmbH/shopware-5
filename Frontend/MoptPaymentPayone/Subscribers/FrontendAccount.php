@@ -38,7 +38,7 @@ class FrontendAccount implements SubscriberInterface
     }
 
     /**
-     * assign saved payment data to view
+     * assign saved paymend data to view
      * 
      * @param \Enlight_Hook_HookArgs $arguments
      */

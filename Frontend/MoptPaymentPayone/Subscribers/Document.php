@@ -48,7 +48,7 @@ class Document implements SubscriberInterface
     /**
      * add payone clearing data to document
      * 
-     * @param \Enlight_Hook_HookArgs $args
+     * @param \Enlight_Hook_HookArgs $args $args
      */
     public function onBeforeRenderDocument(\Enlight_Hook_HookArgs $args)
     {

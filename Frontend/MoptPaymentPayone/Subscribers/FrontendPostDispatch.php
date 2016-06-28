@@ -257,6 +257,12 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['payment_mean'] = $paymentMean;
             }
 
+
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneSofortuerberweisung($paymentMean['name'])) {
+                $sofortConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+                $data['moptShowSofortIbanBic'] = $sofortConfig['showSofortIbanBic'];
+            }
+
             //prepare additional Klarna information and retrieve birthday and phone nr from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayoneKlarna($paymentMean['name'])) {
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
@@ -367,12 +373,6 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $debitConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptShowBic'] = $debitConfig['showBic'];
-
-                break;
-            }
-            if ($moptPayoneMain->getPaymentHelper()->isPayoneSofortuerberweisung($paymentMean['name'])) {
-                $sofortConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
-                $data['moptShowSofortIbanBic'] = $sofortConfig['showSofortIbanBic'];
 
                 break;
             }

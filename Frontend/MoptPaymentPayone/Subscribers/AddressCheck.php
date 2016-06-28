@@ -85,7 +85,7 @@ class AddressCheck implements SubscriberInterface
      * returns true if risk condition is fulfilled
      * arguments: $rule, $user, $basket, $value
      * 
-     * @param \Enlight_Hook_HookArgs $arguments
+     * * @param \Enlight_Hook_HookArgs $arguments
      */
     public function sAdmin__executeRiskRule(\Enlight_Hook_HookArgs $arguments)
     {
@@ -379,7 +379,7 @@ class AddressCheck implements SubscriberInterface
   /**
    * perform risk checks
    * 
-   * @param \Enlight_Hook_HookArgs $arguments
+   * \Enlight_Hook_HookArgs $arguments
    * @return type
    */
   public function onConfirmAction(\Enlight_Hook_HookArgs $arguments)
@@ -694,7 +694,7 @@ class AddressCheck implements SubscriberInterface
   /**
    * save addresscheck result
    *
-   * @param \Enlight_Hook_HookArgs $arguments
+   * @param param \Enlight_Hook_HookArgs $arguments
    */
   public function onSaveRegister(\Enlight_Hook_HookArgs $arguments)
   {
