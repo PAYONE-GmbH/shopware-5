@@ -212,7 +212,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         //extra handling for early beta version
         if (strpos($oldVersion, '0.0.') === 0) {
-            $this->uninstall(true);
+            $this->uninstall();
             $this->install();
 
             return true;
@@ -648,8 +648,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $labelPayment = array('label' => 'Zahlungen');
         $labelPayOne  = array('label' => 'PAYONE');
+        $labelKontollZentrum  = array('label' => 'PAYONE Kontrollzentrum');
 
         // Lightweight Backend Controller
+        $ret = $this->Menu()->findOneBy($labelKontollZentrum);
+        if ( !$ret ){
         $this->createMenuItem(
             array(
                 'label' => 'PAYONE Kontrollzentrum',
@@ -659,7 +662,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 'parent' => $this->Menu()->findOneBy($labelPayment),
             )
         );
-
+        }
+        
         if ($this->Menu()->findOneBy($labelPayOne)) {
             return;
         }

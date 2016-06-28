@@ -351,6 +351,10 @@ class Payone_Builder {
                     if (class_exists($className)) {
                         /** @var $logger Payone_Protocol_Logger_Interface * */
                         $logger = new $className;
+                        // make sure options is an empty array if not set
+                        if (!$options){
+                            $options = array();
+                        }
                         if (method_exists($logger, 'setConfig')) {
                             $logger->setConfig($options);
                         }
