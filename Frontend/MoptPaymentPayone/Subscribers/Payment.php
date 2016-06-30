@@ -131,9 +131,9 @@ class Payment implements SubscriberInterface
                     $payoneServiceBuilder = $this->container->get('MoptPayoneBuilder');
                     $service = $payoneServiceBuilder->buildServiceManagementManageMandate();
                     $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                                    'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+                       'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
                     ));
-
+                  
                     $request = new \Payone_Api_Request_ManageMandate($params);
                     $response = $service->managemandate($request);
 
@@ -167,9 +167,8 @@ class Payment implements SubscriberInterface
                     $payoneServiceBuilder = $this->container->get('MoptPayoneBuilder');
                     $service = $payoneServiceBuilder->buildServiceVerificationBankAccountCheck();
                     $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                                    'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+                            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
                     ));
-
                     $request = new \Payone_Api_Request_BankAccountCheck($params);
                     $response = $service->check($request);
 

@@ -41,9 +41,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $builder = $this->moptPayone__serviceBuilder;
         $service = $builder->buildServicePaymentGenericpayment();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
-        
         // Response with new workorderid and redirect-url to paypal
         $response = $service->request($request);
 
@@ -88,7 +87,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $builder = $this->moptPayone__serviceBuilder;
         $service = $builder->buildServicePaymentGenericpayment();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         
         $response = $service->request($request);

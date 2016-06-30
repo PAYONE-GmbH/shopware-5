@@ -53,9 +53,9 @@ class BackendOrder implements SubscriberInterface
     * add attribute data to detail-data
     * @parent fnc head: protected function getList($filter, $sort, $offset, $limit)
     * 
-    * @param \Enlight_Controller_ActionEventArgs $args
+    * @param \Enlight_Hook_HookArgs  $args
     */
-    public function Order__getList__after(\Enlight_Controller_ActionEventArgs $args)
+    public function Order__getList__after(\Enlight_Hook_HookArgs  $args)
     {
       $return = $args->getReturn();
       $helper = $this->container->get('MoptPayoneMain')->getHelper();

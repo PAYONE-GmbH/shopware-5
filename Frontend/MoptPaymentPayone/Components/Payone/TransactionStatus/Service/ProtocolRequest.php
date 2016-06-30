@@ -48,8 +48,13 @@ class Payone_TransactionStatus_Service_ProtocolRequest
         Payone_TransactionStatus_Response_Interface $response = null
     )
     {
-        $this->getServiceApplyFilters()->apply($request);
-        $this->getServiceApplyFilters()->apply($response);
+        // PHP 7 compat
+        $requestArray = array();
+        $responseArray = array();
+        $requestArray[0] = $request;
+        $responseArray[0] = $response;
+        $this->getServiceApplyFilters()->apply($requestArray);
+        $this->getServiceApplyFilters()->apply($responseArray);
 
 
         foreach ($this->loggers as $key => $logger)
@@ -76,7 +81,9 @@ class Payone_TransactionStatus_Service_ProtocolRequest
     public function protocolException(Exception $e, Payone_TransactionStatus_Request_Interface $request = null)
     {
         if ($request !== null) {
-            $this->getServiceApplyFilters()->apply($request);
+            $requestArray = array();
+            $requestArray[0] = $request;
+            $this->getServiceApplyFilters()->apply($requestArray);
         }
 
         foreach ($this->loggers as $key => $logger)

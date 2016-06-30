@@ -151,11 +151,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     {
         $hashedKey = md5($key);
         $service = $this->moptPayone__serviceBuilder->buildServiceTransactionStatusHandleRequest($hashedKey, $validIps);
-
-        $repository = Shopware()->Models()
-                ->getRepository('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog');
-        $service->getServiceProtocol()->addRepository($repository);
-
+        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+                'Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog'
+            ));
         return $service;
     }
 
@@ -354,9 +352,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     {
         $sessionParam = explode('|', $customParam);
 
-        $cookieName = explode('-', $sessionParam[0]);
-        $shopId = $cookieName[1];
+        //$cookieName = explode('-', $sessionParam[0]);
+        //$shopId = $cookieName[1];
         $activeShopId = Shopware()->Shop()->getId();
+        $shopId = 1;
 
         if ($activeShopId !== $shopId) {
             $shopRepository = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');

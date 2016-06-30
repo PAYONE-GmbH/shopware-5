@@ -119,9 +119,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 ->getConsumerscoreCheckParams($billingAddressData, $paymentId);
         $service = $this->payoneServiceBuilder->buildServiceVerificationConsumerscore();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
-
         $request = new Payone_Api_Request_Consumerscore($params);
 
         $billingAddressChecktype = 'NO';

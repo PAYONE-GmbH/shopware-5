@@ -740,11 +740,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $request->setCashType(Payone_Api_Enum_CashType::BARZAHLEN);
             $request->setApiVersion('3.10');
         }
-
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-
+                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            ));
         return $request;
     }
 

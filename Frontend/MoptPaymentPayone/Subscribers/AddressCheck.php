@@ -142,9 +142,8 @@ class AddressCheck implements SubscriberInterface
     {
         $service = $payoneServiceBuilder->buildServiceVerificationAddressCheck();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+           'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
-
         $request = new \Payone_Api_Request_AddressCheck($params);
 
         $request->setAddresschecktype($billingAddressChecktype);
@@ -162,9 +161,9 @@ class AddressCheck implements SubscriberInterface
         $params = $moptPayoneMain->getParamBuilder()->getConsumerscoreCheckParams($addressData, $paymentID);
         $service = $payoneServiceBuilder->buildServiceVerificationConsumerscore();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+           'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
-
+       
         $request = new \Payone_Api_Request_Consumerscore($params);
 
         $billingAddressChecktype = \Payone_Api_Enum_AddressCheckType::NONE;

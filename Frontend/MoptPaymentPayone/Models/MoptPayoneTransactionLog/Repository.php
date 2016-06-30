@@ -8,10 +8,13 @@ namespace Shopware\CustomModels\MoptPayoneTransactionLog;
 
 use Shopware\Components\Model\ModelRepository;
 
+use \Payone_TransactionStatus_Persistence_Interface;
+
+
 /**
  * Transaction Log Repository
  */
-class Repository extends ModelRepository
+class Repository extends ModelRepository implements \Payone_TransactionStatus_Persistence_Interface
 {
 
   const KEY = 'p1_shopware_transaction';
@@ -24,7 +27,7 @@ class Repository extends ModelRepository
     return self::KEY;
   }
 
-  public function save($request, $response)
+  public function save(\Payone_TransactionStatus_Request_Interface $request, \Payone_TransactionStatus_Response_Interface $response )
   {
     $transactionLog = new \Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog();
 
@@ -89,7 +92,7 @@ class Repository extends ModelRepository
    * @param Exception
    * @return boolean
    */
-  public function saveException(Payone_Api_Request_Interface $request, Exception $ex)
+  public function saveException(\Payone_Api_Request_Interface $request, Exception $ex)
   {
     
   }

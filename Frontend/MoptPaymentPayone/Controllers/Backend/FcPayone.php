@@ -157,9 +157,16 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $request->setClearingtype($this->aMinimumParams['clearingtype']);
 
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
-        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'));
+        // PHP 7 Compatibility
+        try{
+            $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            ));
 
+        } catch (\TypeError $typeError) {
+            // Do Nothing
+        }
+  
         $pData = new Payone_Api_Request_Parameter_Authorization_PersonalData();
         $pData->setFirstname($this->aMinimumParams['firstname']);
         $pData->setLastname($this->aMinimumParams['lastname']);
@@ -210,8 +217,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $request = new Payone_Api_Request_Preauthorization($params);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'));
+                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
         $request->setAmount($this->aMinimumParams['amount']);
         $request->setCurrency($this->aMinimumParams['currency']);
         $request->setReference(rand(10000000, 99999999));
@@ -266,8 +275,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize("mopt_payone__acc_payinadvance");
         $request = new Payone_Api_Request_Preauthorization($params);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'));
+                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
         $request->setAmount($this->aMinimumParams['amount']);
         $request->setCurrency($this->aMinimumParams['currency']);
         $request->setReference(rand(10000000, 99999999));
@@ -316,9 +327,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $request = new Payone_Api_Request_Preauthorization($params);
 
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'));
-
+                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
         $request->setAmount($this->aMinimumParams['amount']);
         $request->setCurrency($this->aMinimumParams['currency']);
         $request->setReference(rand(10000000, 99999999));
@@ -369,8 +381,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'));
-
+                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
         $request->setAmount($this->aMinimumParams['amount']);
         $request->setCurrency($this->aMinimumParams['currency']);
         $request->setReference(rand(10000000, 99999999));

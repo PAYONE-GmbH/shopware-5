@@ -211,10 +211,9 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
   protected function moptPayone_callCaptureService($params, $invoicing = null)
   {
     $service = $this->moptPayone__sdk__Builder->buildServicePaymentCapture();
-
-    $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog');
-    $service->getServiceProtocol()->addRepository($repository);
-
+    $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
     $request = new Payone_Api_Request_Capture($params);
 
     if ($invoicing)
@@ -288,9 +287,9 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
   {
     $service = $this->moptPayone__sdk__Builder->buildServicePaymentDebit();
 
-    $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog');
-    $service->getServiceProtocol()->addRepository($repository);
-
+    $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
     $request = new Payone_Api_Request_Debit($params);
 
     if ($invoicing)
