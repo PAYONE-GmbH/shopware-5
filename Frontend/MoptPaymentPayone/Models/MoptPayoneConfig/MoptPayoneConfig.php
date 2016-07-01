@@ -1274,6 +1274,6 @@ class MoptPayoneConfig extends ModelEntity
 
     public function setShowSofortIbanBic($showSofortIbanBic)
     {
-        $this->showSofortIbanBice = $showSofortIbanBic;
+        $this->showSofortIbanBic = $showSofortIbanBic;
     }
 }
