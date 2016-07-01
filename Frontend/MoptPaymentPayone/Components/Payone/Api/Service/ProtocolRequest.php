@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Service_ProtocolRequest
-    extends Payone_Protocol_Service_Protocol_Abstract
-    implements Payone_Api_Service_ProtocolRequest_Interface
+class Payone_Api_Service_ProtocolRequest extends Payone_Protocol_Service_Protocol_Abstract implements Payone_Api_Service_ProtocolRequest_Interface
 {
     /**
      * @var Payone_Api_Persistence_Interface[]
@@ -43,9 +41,11 @@ class Payone_Api_Service_ProtocolRequest
      * @param Payone_Api_Request_Interface $request
      * @param null|Payone_Api_Response_Interface $response
      */
-    public function protocol(Payone_Api_Request_Interface $request,
-                             Payone_Api_Response_Interface $response = null)
-    {
+    public function protocol(
+        Payone_Api_Request_Interface $request,
+        Payone_Api_Response_Interface $response = null
+    ) {
+    
         $request->setApplyFilters($this->getServiceApplyFilters());
         $response->setApplyFilters($this->getServiceApplyFilters());
         $requestAsString = $request->__toString();
@@ -106,5 +106,4 @@ class Payone_Api_Service_ProtocolRequest
         }
         return false;
     }
-
 }

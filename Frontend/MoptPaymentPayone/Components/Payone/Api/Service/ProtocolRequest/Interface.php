@@ -43,5 +43,4 @@ interface Payone_Api_Service_ProtocolRequest_Interface
     public function addLogger(Payone_Protocol_Logger_Interface $logger);
 
     public function removeLogger($key);
-
 }

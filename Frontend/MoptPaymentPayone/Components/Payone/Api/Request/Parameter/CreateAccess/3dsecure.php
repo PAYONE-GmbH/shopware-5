@@ -30,21 +30,20 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_CreateAccess_3dsecure
-    extends Payone_Api_Request_Parameter_CreateAccess_Abstract
+class Payone_Api_Request_Parameter_CreateAccess_3dsecure extends Payone_Api_Request_Parameter_CreateAccess_Abstract
 {
     /**
      * @var string
      */
-    protected $xid = NULL;
+    protected $xid = null;
     /**
      * @var string
      */
-    protected $cavv = NULL;
+    protected $cavv = null;
     /**
      * @var string
      */
-    protected $eci = NULL;
+    protected $eci = null;
 
     /**
      * @param string $cavv

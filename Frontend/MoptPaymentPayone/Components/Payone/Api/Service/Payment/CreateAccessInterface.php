@@ -38,5 +38,4 @@ interface Payone_Api_Service_Payment_CreateAccessInterface
      * @throws Exception
      */
     public function createaccess(Payone_Api_Request_CreateAccess $request);
-
 }

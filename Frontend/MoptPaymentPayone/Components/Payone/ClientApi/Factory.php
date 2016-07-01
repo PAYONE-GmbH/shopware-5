@@ -30,10 +30,10 @@ class Payone_ClientApi_Factory
     public function buildService($key)
     {
         switch ($key) {
-            case 'generateHash' :
+            case 'generateHash':
                 return $this->buildServiceGenerateHash();
                 break;
-            default :
+            default:
                 throw new Exception('Could not build service with key "' . $key . '"');
         }
     }
@@ -46,5 +46,4 @@ class Payone_ClientApi_Factory
         $service = new Payone_ClientApi_Service_GenerateHash();
         return $service;
     }
-
 }

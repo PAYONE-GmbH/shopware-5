@@ -7,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,33 +24,35 @@
  * This appender has no configurable parameters.
  *
  * Levels are mapped as follows:
- * 
+ *
  * - <b>level < WARN</b> mapped to E_USER_NOTICE
  * - <b>WARN <= level < ERROR</b> mapped to E_USER_WARNING
- * - <b>level >= ERROR</b> mapped to E_USER_ERROR  
+ * - <b>level >= ERROR</b> mapped to E_USER_ERROR
  *
  * An example:
- * 
+ *
  * {@example ../../examples/php/appender_php.php 19}
- * 
+ *
  * {@example ../../examples/resources/appender_php.properties 18}
  *
  * @version $Revision$
  * @package log4php
  * @subpackage appenders
- */ 
-class Payone_Log4php_LoggerAppenderPhp extends Payone_Log4php_LoggerAppender {
+ */
+class Payone_Log4php_LoggerAppenderPhp extends Payone_Log4php_LoggerAppender
+{
 
-	public function append(Payone_Log4php_LoggerLoggingEvent $event) {
-		if($this->layout !== null) {
-			$level = $event->getLevel();
-			if($level->isGreaterOrEqual(Payone_Log4php_LoggerLevel::getLevelError())) {
-				trigger_error($this->layout->format($event), E_USER_ERROR);
-			} else if ($level->isGreaterOrEqual(Payone_Log4php_LoggerLevel::getLevelWarn())) {
-				trigger_error($this->layout->format($event), E_USER_WARNING);
-			} else {
-				trigger_error($this->layout->format($event), E_USER_NOTICE);
-			}
-		}
-	}
+    public function append(Payone_Log4php_LoggerLoggingEvent $event)
+    {
+        if ($this->layout !== null) {
+            $level = $event->getLevel();
+            if ($level->isGreaterOrEqual(Payone_Log4php_LoggerLevel::getLevelError())) {
+                trigger_error($this->layout->format($event), E_USER_ERROR);
+            } elseif ($level->isGreaterOrEqual(Payone_Log4php_LoggerLevel::getLevelWarn())) {
+                trigger_error($this->layout->format($event), E_USER_WARNING);
+            } else {
+                trigger_error($this->layout->format($event), E_USER_NOTICE);
+            }
+        }
+    }
 }

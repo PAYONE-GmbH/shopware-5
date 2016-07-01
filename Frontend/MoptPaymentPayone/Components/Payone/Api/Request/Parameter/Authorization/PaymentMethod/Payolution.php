@@ -21,35 +21,34 @@
  * @link            http://www.fatchip.com
  */
 
-class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
-    extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
+class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
 {
 
     /**
      * Enum FinancingType
      * @var string
      */
-    protected $financingtype = NULL;
+    protected $financingtype = null;
     
-    protected $paydata = NULL;
+    protected $paydata = null;
     
-    protected $birthday = NULL;
-    
-    /**
-     * @var string
-     */
-    protected $iban = NULL;
-    /**
-     * @var string
-     */
-    protected $bic = NULL;
-    
-    protected $workorderid = NULL;
+    protected $birthday = null;
     
     /**
      * @var string
      */
-    protected $api_version = NULL;
+    protected $iban = null;
+    /**
+     * @var string
+     */
+    protected $bic = null;
+    
+    protected $workorderid = null;
+    
+    /**
+     * @var string
+     */
+    protected $api_version = null;
 
     public function setApiVersion()
     {
@@ -83,15 +82,17 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
     /**
      * @param Payone_Api_Request_Parameter_Paydata_Paydata $paydata
      */
-    public function setPaydata($paydata) {
+    public function setPaydata($paydata)
+    {
         $this->paydata = $paydata;
     }
 
     /**
-     * 
+     *
      * @return Payone_Api_Request_Parameter_Paydata_Paydata
      */
-    public function getPaydata() {
+    public function getPaydata()
+    {
         return $this->paydata;
     }
     
@@ -153,5 +154,4 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
     {
         return $this->workorderid;
     }
-    
 }

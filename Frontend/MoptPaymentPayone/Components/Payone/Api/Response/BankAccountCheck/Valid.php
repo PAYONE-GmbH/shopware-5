@@ -35,27 +35,27 @@ class Payone_Api_Response_BankAccountCheck_Valid extends Payone_Api_Response_Abs
     /**
      * @var int
      */
-    protected $bankcode = NULL;
+    protected $bankcode = null;
     /**
      * @var string
      */
-    protected $bankaccount = NULL;
+    protected $bankaccount = null;
     /**
      * @var int
      */
-    protected $bankbranchcode = NULL;
+    protected $bankbranchcode = null;
     /**
      * @var string
      */
-    protected $bankcheckdigit = NULL;
+    protected $bankcheckdigit = null;
     /**
      * @var string
      */
-    protected $iban = NULL;
+    protected $iban = null;
     /**
      * @var string
      */
-    protected $bic = NULL;
+    protected $bic = null;
 
     /**
      * @param int $bankcode

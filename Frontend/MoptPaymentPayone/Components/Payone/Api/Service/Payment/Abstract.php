@@ -30,7 +30,6 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Service_Payment_Abstract
-    extends Payone_Api_Service_Abstract
+class Payone_Api_Service_Payment_Abstract extends Payone_Api_Service_Abstract
 {
 }

@@ -37,27 +37,27 @@ class Payone_Api_Request_Debit extends Payone_Api_Request_Abstract
     /**
      * @var string
      */
-    protected $txid = NULL;
+    protected $txid = null;
     /**
      * @var int
      */
-    protected $sequencenumber = NULL;
+    protected $sequencenumber = null;
     /**
      * @var int
      */
-    protected $amount = NULL;
+    protected $amount = null;
     /**
      * @var string
      */
-    protected $currency = NULL;
+    protected $currency = null;
     /**
      * @var string
      */
-    protected $clearingtype = NULL;
+    protected $clearingtype = null;
     /**
      * @var string
      */
-    protected $use_customerdata = NULL;
+    protected $use_customerdata = null;
 
     /**
      * @var Payone_Api_Request_Parameter_Debit_Business

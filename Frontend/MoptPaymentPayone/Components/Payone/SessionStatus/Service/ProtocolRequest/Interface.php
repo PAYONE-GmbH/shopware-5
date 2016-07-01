@@ -72,5 +72,4 @@ interface Payone_SessionStatus_Service_ProtocolRequest_Interface
      * @param $key
      */
     public function removeLogger($key);
-
 }

@@ -37,47 +37,47 @@ class Payone_SessionStatus_Request_Item extends Payone_SessionStatus_Request_Ite
     /**
      * @var int
      */
-    protected $accessid = NULL;
+    protected $accessid = null;
     /**
      * @var string
      */
-    protected $action = NULL;
+    protected $action = null;
     /**
      * @var int
      */
-    protected $portalid = NULL;
+    protected $portalid = null;
     /**
      * @var int
      */
-    protected $productid = NULL;
+    protected $productid = null;
     /**
      * @var int
      */
-    protected $expiretime = NULL;
+    protected $expiretime = null;
     /**
      * @var int
      */
-    protected $userid = NULL;
+    protected $userid = null;
     /**
      * @var string
      */
-    protected $customerid = NULL;
+    protected $customerid = null;
     /**
      * @var string
      */
-    protected $accessname = NULL;
+    protected $accessname = null;
     /**
      * @var string
      */
-    protected $accesscode = NULL;
+    protected $accesscode = null;
     /**
      * @var string
      */
-    protected $ip = NULL;
+    protected $ip = null;
     /**
      * @var string
      */
-    protected $param = NULL;
+    protected $param = null;
 
 
     /**
@@ -276,5 +276,4 @@ class Payone_SessionStatus_Request_Item extends Payone_SessionStatus_Request_Ite
     {
         return $this->userid;
     }
-
 }

@@ -7,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,19 +21,19 @@
 /**
  * This is a very simple filter based on level matching, which can be
  * used to reject messages with priorities outside a certain range.
- *	
+ *
  * <p>The filter admits three options <b><var>LevelMin</var></b>, <b><var>LevelMax</var></b>
  * and <b><var>AcceptOnMatch</var></b>.</p>
  *
  * <p>If the level of the {@link LoggerLoggingEvent} is not between Min and Max
  * (inclusive), then {@link LoggerFilter::DENY} is returned.</p>
- *	
+ *
  * <p>If the Logging event level is within the specified range, then if
- * <b><var>AcceptOnMatch</var></b> is <i>true</i>, 
+ * <b><var>AcceptOnMatch</var></b> is <i>true</i>,
  * {@link LoggerFilter::ACCEPT} is returned, and if
- * <b><var>AcceptOnMatch</var></b> is <i>false</i>, 
+ * <b><var>AcceptOnMatch</var></b> is <i>false</i>,
  * {@link LoggerFilter::NEUTRAL} is returned.</p>
- *	
+ *
  * <p>If <b><var>LevelMin</var></b> is not defined, then there is no
  * minimum acceptable level (i.e. a level is never rejected for
  * being too "low"/unimportant).  If <b><var>LevelMax</var></b> is not
@@ -46,93 +46,98 @@
  *
  * <p>
  * An example for this filter:
- * 
+ *
  * {@example ../../examples/php/filter_levelrange.php 19}
  *
  * <p>
  * The corresponding XML file:
- * 
+ *
  * {@example ../../examples/resources/filter_levelrange.xml 18}
  *
  * @author Simon Kitching
- * @author based on the org.apache.log4j.varia.LevelRangeFilte Java code by Ceki G&uuml;lc&uuml; 
+ * @author based on the org.apache.log4j.varia.LevelRangeFilte Java code by Ceki G&uuml;lc&uuml;
  *
  * @version $Revision$
  * @package log4php
  * @subpackage filters
  * @since 0.6
  */
-class Payone_Log4php_LoggerFilterLevelRange extends Payone_Log4php_LoggerFilter {
+class Payone_Log4php_LoggerFilterLevelRange extends Payone_Log4php_LoggerFilter
+{
 
-	/**
-	 * @var boolean
-	 */
-	protected $acceptOnMatch = true;
+    /**
+     * @var boolean
+     */
+    protected $acceptOnMatch = true;
 
-	/**
-	 * @var Payone_Log4php_LoggerLevel
-	 */
-	protected $levelMin;
+    /**
+     * @var Payone_Log4php_LoggerLevel
+     */
+    protected $levelMin;
   
-	/**
-	 * @var Payone_Log4php_LoggerLevel
-	 */
-	protected $levelMax;
+    /**
+     * @var Payone_Log4php_LoggerLevel
+     */
+    protected $levelMax;
 
-	/**
-	 * @param boolean $acceptOnMatch
-	 */
-	public function setAcceptOnMatch($acceptOnMatch) {
-		$this->setBoolean('acceptOnMatch', $acceptOnMatch); 
-	}
-	
-	/**
-	 * @param string $l the level min to match
-	 */
-	public function setLevelMin($level) {
-		$this->setLevel('levelMin', $level);
-	}
+    /**
+     * @param boolean $acceptOnMatch
+     */
+    public function setAcceptOnMatch($acceptOnMatch)
+    {
+        $this->setBoolean('acceptOnMatch', $acceptOnMatch);
+    }
+    
+    /**
+     * @param string $l the level min to match
+     */
+    public function setLevelMin($level)
+    {
+        $this->setLevel('levelMin', $level);
+    }
 
-	/**
-	 * @param string $l the level max to match
-	 */
-	public function setLevelMax($level) {
-		$this->setLevel('levelMax', $level);
-	}
+    /**
+     * @param string $l the level max to match
+     */
+    public function setLevelMax($level)
+    {
+        $this->setLevel('levelMax', $level);
+    }
 
-	/**
-	 * Return the decision of this filter.
-	 *
-	 * @param Payone_Log4php_LoggerLoggingEvent $event
-	 * @return integer
-	 */
-	public function decide(Payone_Log4php_LoggerLoggingEvent $event) {
-		$level = $event->getLevel();
-		
-		if($this->levelMin !== null) {
-			if($level->isGreaterOrEqual($this->levelMin) == false) {
-				// level of event is less than minimum
-				return Payone_Log4php_LoggerFilter::DENY;
-			}
-		}
+    /**
+     * Return the decision of this filter.
+     *
+     * @param Payone_Log4php_LoggerLoggingEvent $event
+     * @return integer
+     */
+    public function decide(Payone_Log4php_LoggerLoggingEvent $event)
+    {
+        $level = $event->getLevel();
+        
+        if ($this->levelMin !== null) {
+            if ($level->isGreaterOrEqual($this->levelMin) == false) {
+                // level of event is less than minimum
+                return Payone_Log4php_LoggerFilter::DENY;
+            }
+        }
 
-		if($this->levelMax !== null) {
-			if($level->toInt() > $this->levelMax->toInt()) {
-				// level of event is greater than maximum
-				// Alas, there is no Level.isGreater method. and using
-				// a combo of isGreaterOrEqual && !Equal seems worse than
-				// checking the int values of the level objects..
-				return Payone_Log4php_LoggerFilter::DENY;
-			}
-		}
+        if ($this->levelMax !== null) {
+            if ($level->toInt() > $this->levelMax->toInt()) {
+                // level of event is greater than maximum
+                // Alas, there is no Level.isGreater method. and using
+                // a combo of isGreaterOrEqual && !Equal seems worse than
+                // checking the int values of the level objects..
+                return Payone_Log4php_LoggerFilter::DENY;
+            }
+        }
 
-		if($this->acceptOnMatch) {
-			// this filter set up to bypass later filters and always return
-			// accept if level in range
-			return Payone_Log4php_LoggerFilter::ACCEPT;
-		} else {
-			// event is ok for this filter; allow later filters to have a look..
-			return Payone_Log4php_LoggerFilter::NEUTRAL;
-		}
-	}
+        if ($this->acceptOnMatch) {
+            // this filter set up to bypass later filters and always return
+            // accept if level in range
+            return Payone_Log4php_LoggerFilter::ACCEPT;
+        } else {
+            // event is ok for this filter; allow later filters to have a look..
+            return Payone_Log4php_LoggerFilter::NEUTRAL;
+        }
+    }
 }

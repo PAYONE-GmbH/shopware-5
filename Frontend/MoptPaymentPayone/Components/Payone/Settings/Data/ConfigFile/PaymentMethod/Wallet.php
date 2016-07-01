@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Settings_Data_ConfigFile_PaymentMethod_Wallet
-    extends Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract
-    implements Payone_Settings_Data_ConfigFile_Interface
+class Payone_Settings_Data_ConfigFile_PaymentMethod_Wallet extends Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract implements Payone_Settings_Data_ConfigFile_Interface
 {
     /** @var string */
     protected $key = Payone_Enum_ClearingType::WALLET;

@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Debit_Abstract
-    extends Payone_Api_Request_Parameter_Abstract
+class Payone_Api_Request_Parameter_Debit_Abstract extends Payone_Api_Request_Parameter_Abstract
 {
 
 }

@@ -38,5 +38,4 @@ interface Payone_Api_Service_Payment_CaptureInterface
      * @throws Exception
      */
     public function capture(Payone_Api_Request_Capture $request);
-
 }

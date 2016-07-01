@@ -30,7 +30,6 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Response_Preauthorization_Redirect
-    extends Payone_Api_Response_Authorization_Redirect
+class Payone_Api_Response_Preauthorization_Redirect extends Payone_Api_Response_Authorization_Redirect
 {
 }

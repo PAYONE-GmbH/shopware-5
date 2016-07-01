@@ -50,8 +50,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Service_Verification_3dsCheck
-    extends Payone_Api_Service_Abstract
+class Payone_Api_Service_Verification_3dsCheck extends Payone_Api_Service_Abstract
 {
     /**
      * Perform a 3dscheck with the injected request
@@ -65,8 +64,7 @@ class Payone_Api_Service_Verification_3dsCheck
      */
     public function check(Payone_Api_Request_3dsCheck $request)
     {
-        try
-        {
+        try {
             $this->validateRequest($request);
 
             $requestParams = $request->toArray();
@@ -81,13 +79,11 @@ class Payone_Api_Service_Verification_3dsCheck
             $response = $mapper->map($responseRaw);
 
             $this->protocol($request, $response);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->protocolException($e, $request);
             throw $e;
         }
 
         return $response;
     }
-
 }

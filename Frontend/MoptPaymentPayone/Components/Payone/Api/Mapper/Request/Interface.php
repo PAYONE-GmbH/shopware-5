@@ -37,5 +37,4 @@ interface Payone_Api_Mapper_Request_Interface
      * @return array
      */
     public function map(Payone_Api_Request_Interface $request);
-
 }

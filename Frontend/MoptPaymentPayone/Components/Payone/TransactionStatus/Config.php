@@ -56,5 +56,4 @@ class Payone_TransactionStatus_Config extends Payone_Config_Abstract
         );
         return $defaultConfig;
     }
-
 }

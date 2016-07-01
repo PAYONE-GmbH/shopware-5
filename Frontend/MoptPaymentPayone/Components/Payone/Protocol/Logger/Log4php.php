@@ -43,8 +43,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Protocol_Logger_Log4php
-    implements Payone_Protocol_Logger_Interface
+class Payone_Protocol_Logger_Log4php implements Payone_Protocol_Logger_Interface
 {
     const KEY = 'p1_log4php';
     const LOGGER_APPENDER_NAME = 'Payone_Logger_Log4php_File';
@@ -82,22 +81,22 @@ class Payone_Protocol_Logger_Log4php
     {
         $fileName = $this->getConfigValue('filename');
         if (empty($fileName)) {
-            return FALSE;
+            return false;
         }
 
         $logger = $this->getLogger();
 
         switch ($level) {
-            case self::LEVEL_ERROR :
+            case self::LEVEL_ERROR:
                 $logger->error($message);
                 break;
-            case self::LEVEL_INFO :
-            default :
+            case self::LEVEL_INFO:
+            default:
                 $logger->info($message);
                 break;
         }
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -132,7 +131,7 @@ class Payone_Protocol_Logger_Log4php
                     ),
                     'params' => array(
                         'file' => $fileName,
-                        'append' => TRUE,
+                        'append' => true,
                         'maxFileSize' => $fileSize,
                         'maxBackupIndex' => $fileCount,
                     ),

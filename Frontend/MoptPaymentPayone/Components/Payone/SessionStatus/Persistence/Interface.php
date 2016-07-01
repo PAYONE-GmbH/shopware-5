@@ -49,5 +49,4 @@ interface Payone_SessionStatus_Persistence_Interface
         Payone_SessionStatus_Request_Interface $request,
         Payone_SessionStatus_Response_Interface $response
     );
-
 }

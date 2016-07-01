@@ -187,8 +187,7 @@ abstract class Payone_ClientApi_Request_Abstract implements Payone_ClientApi_Req
 
                 return $object->get($propertyName);
             }
-        }
-        elseif (property_exists($this, $name)) {
+        } elseif (property_exists($this, $name)) {
             return $this->$name;
         }
         return null;
@@ -423,5 +422,4 @@ abstract class Payone_ClientApi_Request_Abstract implements Payone_ClientApi_Req
     {
         return $this->language;
     }
-
 }

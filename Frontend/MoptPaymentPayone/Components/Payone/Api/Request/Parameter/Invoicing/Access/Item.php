@@ -30,50 +30,49 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Invoicing_Access_Item
-    extends Payone_Api_Request_Parameter_Abstract
+class Payone_Api_Request_Parameter_Invoicing_Access_Item extends Payone_Api_Request_Parameter_Abstract
 {
     /**
      * @var string
      */
-    protected $id_trail = NULL;
+    protected $id_trail = null;
     /**
      * @var int
      */
-    protected $no_trail = NULL;
+    protected $no_trail = null;
     /**
      * @var int
      */
-    protected $pr_trail = NULL;
+    protected $pr_trail = null;
     /**
      * @var string
      */
-    protected $de_trail = NULL;
+    protected $de_trail = null;
     /**
      * @var int
      */
-    protected $va_trail = NULL;
+    protected $va_trail = null;
 
     /**
      * @var string
      */
-    protected $id_recurring = NULL;
+    protected $id_recurring = null;
     /**
      * @var int
      */
-    protected $no_recurring = NULL;
+    protected $no_recurring = null;
     /**
      * @var int
      */
-    protected $pr_recurring = NULL;
+    protected $pr_recurring = null;
     /**
      * @var string
      */
-    protected $de_recurring = NULL;
+    protected $de_recurring = null;
     /**
      * @var int
      */
-    protected $va_recurring = NULL;
+    protected $va_recurring = null;
 
     /**
      * @param int $key
@@ -254,5 +253,4 @@ class Payone_Api_Request_Parameter_Invoicing_Access_Item
     {
         return $this->va_trail;
     }
-
 }

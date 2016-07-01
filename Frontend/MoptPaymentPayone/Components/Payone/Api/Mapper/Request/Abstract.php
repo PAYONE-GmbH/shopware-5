@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-abstract class Payone_Api_Mapper_Request_Abstract
-    extends Payone_Api_Mapper_Abstract
+abstract class Payone_Api_Mapper_Request_Abstract extends Payone_Api_Mapper_Abstract
 {
     /**
      * @var Payone_Api_Mapper_Currency_Interface

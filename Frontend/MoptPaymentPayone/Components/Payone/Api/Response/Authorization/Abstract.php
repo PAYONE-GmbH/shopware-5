@@ -30,58 +30,57 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-abstract class Payone_Api_Response_Authorization_Abstract
-    extends Payone_Api_Response_Abstract
+abstract class Payone_Api_Response_Authorization_Abstract extends Payone_Api_Response_Abstract
 {
     /**
      * @var int
      */
-    protected $txid = NULL;
+    protected $txid = null;
     /**
      * @var int
      */
-    protected $userid = NULL;
+    protected $userid = null;
     /**
      * @var string
      */
-    protected $protect_result_avs = NULL;
+    protected $protect_result_avs = null;
     /**
      * @var string
      */
-    protected $clearing_bankaccountholder = NULL;
+    protected $clearing_bankaccountholder = null;
     /**
      * @var string
      */
-    protected $clearing_bankcountry = NULL;
+    protected $clearing_bankcountry = null;
     /**
      * @var string
      */
-    protected $clearing_bankaccount = NULL;
+    protected $clearing_bankaccount = null;
     /**
      * @var string
      */
-    protected $clearing_bankcode = NULL;
+    protected $clearing_bankcode = null;
     /**
      * @var string
      */
-    protected $clearing_bankiban = NULL;
+    protected $clearing_bankiban = null;
     /**
      * @var string
      */
-    protected $clearing_bankbic = NULL;
+    protected $clearing_bankbic = null;
     /**
      * @var string
      */
-    protected $clearing_bankcity = NULL;
+    protected $clearing_bankcity = null;
     /**
      * @var string
      */
-    protected $clearing_bankname = NULL;
+    protected $clearing_bankname = null;
 
     /**
      * @var string
      */
-    protected $mandate_identification = NULL;
+    protected $mandate_identification = null;
 
 
     /**

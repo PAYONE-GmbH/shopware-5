@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_TransactionStatus_Exception_MissmatchingKeys
-    extends Payone_TransactionStatus_Exception_Abstract
+class Payone_TransactionStatus_Exception_MissmatchingKeys extends Payone_TransactionStatus_Exception_Abstract
 {
 
 }

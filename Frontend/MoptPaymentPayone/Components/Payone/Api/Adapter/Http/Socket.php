@@ -108,5 +108,4 @@ class Payone_Api_Adapter_Http_Socket extends Payone_Api_Adapter_Http_Abstract
 
         return $response;
     }
-
 }

@@ -91,27 +91,26 @@ class Payone_Config
     public function __construct(array $data = array())
     {
         if (empty($data)) {
-            if($this->getApiConfig() === null)
-            {
+            if ($this->getApiConfig() === null) {
                 $this->apiConfig = new Payone_Api_Config();
             }
-            if($this->getTransactionStatusConfig() === null)
-            {
+            if ($this->getTransactionStatusConfig() === null) {
                 $this->transactionStatusConfig = new Payone_TransactionStatus_Config();
             }
-            if($this->getSessionStatusConfig() === null)
-            {
+            if ($this->getSessionStatusConfig() === null) {
                 $this->sessionStatusConfig = new Payone_SessionStatus_Config();
             }
             $this->config = $this->getDefaultConfigData();
-        }
-        else {
-            if(array_key_exists('api', $data))
+        } else {
+            if (array_key_exists('api', $data)) {
                 $this->setApiConfig($data['api']);
-            if(array_key_exists('transaction_status',$data))
+            }
+            if (array_key_exists('transaction_status', $data)) {
                 $this->setTransactionStatusConfig($data['transaction_status']);
-            if(array_key_exists('session_status',$data))
+            }
+            if (array_key_exists('session_status', $data)) {
                 $this->setSessionStatusConfig($data['session_status']);
+            }
             $this->config = $data;
         }
     }
@@ -158,24 +157,23 @@ class Payone_Config
      */
     protected function set($key, $value, array &$tree)
     {
-        if (strpos($key, self::KEY_SEPARATOR) !== FALSE
+        if (strpos($key, self::KEY_SEPARATOR) !== false
             // and is_array($tree)
         ) {
             // Disassemble key, extracting the first node of the string:
             $explodedKey = explode(self::KEY_SEPARATOR, $key);
             $currentKey = array_shift($explodedKey);
-            $newKey = implode(self::KEY_SEPARATOR,$explodedKey);
+            $newKey = implode(self::KEY_SEPARATOR, $explodedKey);
 
             /** @var $object Payone_Config_Abstract  */
             $object = $tree[$currentKey];
-            $object->setValue($newKey,$value);
-            return TRUE;
-        }
-        else {
+            $object->setValue($newKey, $value);
+            return true;
+        } else {
             // Set value (can overwrite an existing value)
             $tree[$key] = $value;
             // Exit recursion, Success!
-            return TRUE;
+            return true;
         }
     }
 
@@ -196,21 +194,19 @@ class Payone_Config
      */
     protected function get($key, $tree)
     {
-        if (strpos($key, self::KEY_SEPARATOR) !== FALSE and is_array($tree)) {
+        if (strpos($key, self::KEY_SEPARATOR) !== false and is_array($tree)) {
             // Disassemble key, extracting the first node of the string:
             $explodedKey = explode(self::KEY_SEPARATOR, $key);
             $currentKey = array_shift($explodedKey);
-            $newKey = implode(self::KEY_SEPARATOR,$explodedKey);
+            $newKey = implode(self::KEY_SEPARATOR, $explodedKey);
 
             /** @var $object Payone_Config_Abstract */
             $object = $tree[$currentKey];
             return $object->getValue($newKey);
-        }
-        elseif (is_array($tree) and array_key_exists($key, $tree)) {
+        } elseif (is_array($tree) and array_key_exists($key, $tree)) {
             return $tree[$key]; // Exit recursion, Success!
-        }
-        else {
-            return NULL; // Exit recursion, unsuccessful
+        } else {
+            return null; // Exit recursion, unsuccessful
         }
     }
 

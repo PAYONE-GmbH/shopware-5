@@ -35,11 +35,11 @@ class Payone_Api_Response_Refund_Approved extends Payone_Api_Response_Abstract
     /**
      * @var int
      */
-    protected $txid = NULL;
+    protected $txid = null;
     /**
      * @var string
      */
-    protected $protect_result_avs = NULL;
+    protected $protect_result_avs = null;
 
     /**
      * @param string $protect_result_avs

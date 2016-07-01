@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-abstract class Payone_Api_Request_Parameter_Abstract
-    implements Payone_Api_Request_Parameter_Interface
+abstract class Payone_Api_Request_Parameter_Abstract implements Payone_Api_Request_Parameter_Interface
 {
     /**
      * @param array $data
@@ -48,8 +47,7 @@ abstract class Payone_Api_Request_Parameter_Abstract
      */
     public function init(array $data = array())
     {
-        foreach ($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $key = ucwords(str_replace('_', ' ', $key));
             $method = 'set' . str_replace(' ', '', $key);
 
@@ -65,12 +63,10 @@ abstract class Payone_Api_Request_Parameter_Abstract
     public function toArray()
     {
         $result = array();
-        foreach ($this as $key => $data)
-        {
+        foreach ($this as $key => $data) {
             if (!is_array($data) and !is_object($data)) {
                 $result[$key] = $data;
-            }
-            else if ($data instanceof Payone_Api_Request_Parameter_Interface) {
+            } elseif ($data instanceof Payone_Api_Request_Parameter_Interface) {
                 /**
                  * @var Payone_Api_Request_Parameter_Interface $data
                  */
@@ -124,5 +120,4 @@ abstract class Payone_Api_Request_Parameter_Abstract
     {
         return $this->set($key, $name);
     }
-
 }

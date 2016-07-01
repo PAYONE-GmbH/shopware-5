@@ -24,20 +24,19 @@
  * @category        Payone
  * @package         Payone_Api
  * @subpackage      Request
- * @copyright       Copyright (c) 2014 
+ * @copyright       Copyright (c) 2014
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  */
-class Payone_Api_Request_Parameter_Paydata_DataItem
-    extends Payone_Api_Request_Parameter_Abstract
+class Payone_Api_Request_Parameter_Paydata_DataItem extends Payone_Api_Request_Parameter_Abstract
 {
     /**
      * @var string
      */
-    protected $key = NULL;
+    protected $key = null;
     /**
      * @var string
      */
-    protected $data = NULL;
+    protected $data = null;
 
     /**
      * @param int $key
@@ -81,5 +80,4 @@ class Payone_Api_Request_Parameter_Paydata_DataItem
     {
         return $this->data;
     }
-
 }

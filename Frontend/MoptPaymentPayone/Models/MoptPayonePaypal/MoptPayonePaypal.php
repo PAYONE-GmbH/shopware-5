@@ -6,8 +6,8 @@
 
 namespace Shopware\CustomModels\MoptPayonePaypal;
 
-use Shopware\Components\Model\ModelEntity,
-    Doctrine\ORM\Mapping AS ORM;
+use Shopware\Components\Model\ModelEntity;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="Repository")
@@ -18,7 +18,7 @@ class MoptPayonePaypal extends ModelEntity
 
     /**
      * @var integer $id
-     * 
+     *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -131,5 +131,4 @@ class MoptPayonePaypal extends ModelEntity
     {
         $this->isDefault = $isDefault;
     }
-
 }

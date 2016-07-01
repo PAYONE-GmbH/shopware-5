@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_ManageMandate_PersonalData
-    extends Payone_Api_Request_Parameter_ManageMandate_Abstract
+class Payone_Api_Request_Parameter_ManageMandate_PersonalData extends Payone_Api_Request_Parameter_ManageMandate_Abstract
 {
     /**
      * Merchant's customer ID (Permitted symbols: 0-9, a-z, A-Z, .,-,_,/)
@@ -43,7 +42,7 @@ class Payone_Api_Request_Parameter_ManageMandate_PersonalData
      *
      * @var int
      */
-    protected $userid = NULL;
+    protected $userid = null;
     protected $firstname = null;
     protected $lastname = null;
     protected $company = null;

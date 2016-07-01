@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-abstract class Payone_Settings_Data_ConfigFile_Abstract
-    implements Payone_Settings_Data_ConfigFile_Interface
+abstract class Payone_Settings_Data_ConfigFile_Abstract implements Payone_Settings_Data_ConfigFile_Interface
 {
     /**
      * @abstract
@@ -42,29 +41,23 @@ abstract class Payone_Settings_Data_ConfigFile_Abstract
         $array = array();
 
 
-        foreach ($this as $key => $data)
-        {
+        foreach ($this as $key => $data) {
             if ($data === null || $key == 'key') {
                 continue;
             }
             if ($data instanceof Payone_Settings_Data_ConfigFile_Interface) {
                 /** @var Payone_Api_Request_Parameter_Interface $data */
                 $array[$key] = $data->toArray();
-            }
-            elseif (is_array($data))
-            {
-                foreach ($data as $innerKey => $innerValue)
-                {
+            } elseif (is_array($data)) {
+                foreach ($data as $innerKey => $innerValue) {
                     if ($innerValue instanceof Payone_Settings_Data_ConfigFile_Interface) {
                         /** @var Payone_Api_Request_Parameter_Interface $innerValue */
                         $array[$key][$innerValue->getKey()] = $innerValue->toArray();
-                    }
-                    else {
+                    } else {
                         $array[$key][$innerKey] = $innerValue;
                     }
                 }
-            }
-            else {
+            } else {
                 $array[$key] = $data;
             }
         }

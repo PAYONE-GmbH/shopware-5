@@ -33,7 +33,6 @@
 
 
 
-abstract class Payone_TransactionStatus_Validator_Abstract
-    implements Payone_TransactionStatus_Validator_Interface
+abstract class Payone_TransactionStatus_Validator_Abstract implements Payone_TransactionStatus_Validator_Interface
 {
 }

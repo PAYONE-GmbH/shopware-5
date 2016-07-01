@@ -158,9 +158,7 @@ abstract class Payone_Api_Mapper_Response_Abstract extends Payone_Api_Mapper_Abs
     {
         if (is_array($this->params) and array_key_exists($key, $this->params)) {
             return $this->params[$key];
-        }
-        else
-        {
+        } else {
             return null;
         }
     }

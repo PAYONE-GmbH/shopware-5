@@ -38,5 +38,4 @@ interface Payone_Api_Service_Payment_RefundInterface
      * @throws Exception
      */
     public function refund(Payone_Api_Request_Refund $request);
-
 }

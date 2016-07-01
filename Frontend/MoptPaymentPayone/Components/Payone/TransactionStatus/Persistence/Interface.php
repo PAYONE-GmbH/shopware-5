@@ -49,5 +49,4 @@ interface Payone_TransactionStatus_Persistence_Interface
         Payone_TransactionStatus_Request_Interface $request,
         Payone_TransactionStatus_Response_Interface $response
     );
-
 }

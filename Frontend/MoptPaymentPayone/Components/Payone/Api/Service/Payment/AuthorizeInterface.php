@@ -38,5 +38,4 @@ interface Payone_Api_Service_Payment_AuthorizeInterface
      * @throws Exception
      */
     public function authorize(Payone_Api_Request_Authorization $request);
-
 }

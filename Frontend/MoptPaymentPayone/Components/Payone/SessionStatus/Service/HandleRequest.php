@@ -99,8 +99,7 @@ class Payone_SessionStatus_Service_HandleRequest
 
             // Protocol
             $this->protocol($request, $response);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->protocolException($e, $request);
             throw $e;
         }
@@ -126,9 +125,11 @@ class Payone_SessionStatus_Service_HandleRequest
      * @param Payone_SessionStatus_Request_Interface $request
      * @param Payone_SessionStatus_Response_Interface $response
      */
-    protected function protocol(Payone_SessionStatus_Request_Interface $request,
-                                Payone_SessionStatus_Response_Interface $response)
-    {
+    protected function protocol(
+        Payone_SessionStatus_Request_Interface $request,
+        Payone_SessionStatus_Response_Interface $response
+    ) {
+    
         $serviceProtocol = $this->getServiceProtocol();
         if ($serviceProtocol instanceof Payone_SessionStatus_Service_ProtocolRequest_Interface) {
             $serviceProtocol->protocol($request, $response);
@@ -202,5 +203,4 @@ class Payone_SessionStatus_Service_HandleRequest
     {
         return $this->mapper;
     }
-
 }

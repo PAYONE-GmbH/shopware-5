@@ -30,44 +30,43 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Authorization_PaymentMethod_DebitPayment
-    extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
+class Payone_Api_Request_Parameter_Authorization_PaymentMethod_DebitPayment extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
 {
     /**
      * @var string
      */
-    protected $bankcountry = NULL;
+    protected $bankcountry = null;
     /**
      * @var string
      */
-    protected $bankaccount = NULL;
+    protected $bankaccount = null;
     /**
      * @var string
      */
-    protected $bankcode = NULL;
+    protected $bankcode = null;
     /**
      * @var string
      */
-    protected $bankaccountholder = NULL;
+    protected $bankaccountholder = null;
     /**
      * @var string
      */
-    protected $iban = NULL;
+    protected $iban = null;
     /**
      * @var string
      */
-    protected $bic = NULL;
+    protected $bic = null;
     /**
      * @var string
      */
-    protected $mandate_identification = NULL;
+    protected $mandate_identification = null;
     
     /**
      * Enum FinancingType
      * @var string
      */
     
-    protected $financingtype = NULL;    
+    protected $financingtype = null;
 
     /**
      * @param string $bankaccount
@@ -195,5 +194,5 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_DebitPayment
     public function getFinancingtype()
     {
         return $this->financingtype;
-    }    
+    }
 }

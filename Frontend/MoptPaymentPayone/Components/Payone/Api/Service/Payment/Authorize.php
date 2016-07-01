@@ -45,9 +45,7 @@
  *
  * @api
  */
-class Payone_Api_Service_Payment_Authorize
-    extends Payone_Api_Service_Payment_Abstract
-    implements Payone_Api_Service_Payment_AuthorizeInterface
+class Payone_Api_Service_Payment_Authorize extends Payone_Api_Service_Payment_Abstract implements Payone_Api_Service_Payment_AuthorizeInterface
 {
     /**
      * Execute Authorization for the injected Request
@@ -60,8 +58,7 @@ class Payone_Api_Service_Payment_Authorize
      */
     public function authorize(Payone_Api_Request_Authorization $request)
     {
-        try
-        {
+        try {
             $this->validateRequest($request);
 
             $requestParams = $this->getMapperRequest()->map($request);
@@ -71,13 +68,11 @@ class Payone_Api_Service_Payment_Authorize
             $response = $this->getMapperResponse()->map($responseRaw);
 
             $this->protocol($request, $response);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->protocolException($e, $request);
             throw $e;
         }
 
         return $response;
     }
-
 }

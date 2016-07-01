@@ -9,14 +9,14 @@ class Payment implements SubscriberInterface
 
     /**
      * di container
-     * 
+     *
      * @var \Shopware\Components\DependencyInjection\Container
      */
     private $container;
 
     /**
      * inject di container
-     * 
+     *
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
     public function __construct(\Shopware\Components\DependencyInjection\Container $container)
@@ -26,7 +26,7 @@ class Payment implements SubscriberInterface
 
     /**
      * return array with all subsribed events
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
@@ -45,7 +45,7 @@ class Payment implements SubscriberInterface
 
     /**
      * consumerscore check after choice if payment method
-     * 
+     *
      * @param \Enlight_Hook_HookArgs $arguments
      */
     public function onValidateStep3(\Enlight_Hook_HookArgs $arguments)
@@ -78,7 +78,7 @@ class Payment implements SubscriberInterface
             }
         }
 
-        //check if payone payment method, exit if not and delete pament data 
+        //check if payone payment method, exit if not and delete pament data
         if (!$moptPayoneMain->getPaymentHelper()->isPayonePaymentMethod($paymentName)) {
             $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
             unset($session->moptMandateData);
@@ -99,7 +99,7 @@ class Payment implements SubscriberInterface
         
         if (isset($paymentData['formData']['mopt_save_birthday']) && $paymentData['formData']['mopt_save_birthday']) {
             $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
-        }        
+        }
 
         if (count($paymentData['sErrorFlag'])) {
             $error = true;
@@ -121,7 +121,7 @@ class Payment implements SubscriberInterface
             $billingFormData = $user['billingaddress'];
 
             if ($moptPayoneMain->getPaymentHelper()->isPayoneDebitnote($returnValues['paymentData']['name'])) {
-                //check if bankaccountcheck is enabled 
+                //check if bankaccountcheck is enabled
                 $bankAccountChecktype = $moptPayoneMain->getHelper()->getBankAccountCheckType($config);
 
                 //check if manage mandate is enabled
@@ -131,9 +131,8 @@ class Payment implements SubscriberInterface
                     $payoneServiceBuilder = $this->container->get('MoptPayoneBuilder');
                     $service = $payoneServiceBuilder->buildServiceManagementManageMandate();
                     $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                       'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
                     ));
-                  
                     $request = new \Payone_Api_Request_ManageMandate($params);
                     $response = $service->managemandate($request);
 
@@ -167,7 +166,7 @@ class Payment implements SubscriberInterface
                     $payoneServiceBuilder = $this->container->get('MoptPayoneBuilder');
                     $service = $payoneServiceBuilder->buildServiceVerificationBankAccountCheck();
                     $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
                     ));
                     $request = new \Payone_Api_Request_BankAccountCheck($params);
                     $response = $service->check($request);
@@ -198,7 +197,7 @@ class Payment implements SubscriberInterface
             if ($config['consumerscoreActive'] && $config['consumerscoreCheckMoment'] == 1) {
                 //check if consumerscore is still valid or needs to be checked
                 if (!$moptPayoneMain->getHelper()->isConsumerScoreCheckValid($config['consumerscoreLifetime'], $userData['moptPayoneConsumerscoreDate'])) {
-                    // add flag and data to session 
+                    // add flag and data to session
                     $session->moptConsumerScoreCheckNeedsUserAgreement = true;
                     $session->moptPaymentData = $paymentData;
                     $session->moptPaymentId = $paymentId;
@@ -208,9 +207,8 @@ class Payment implements SubscriberInterface
 
             //save data to table and session
             $session->moptPayment = $post;
-            if(!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentId))
-            {
-                $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);  
+            if (!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentId)) {
+                $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
             }
         }
 
@@ -219,7 +217,7 @@ class Payment implements SubscriberInterface
 
     /**
      * group creditcard payments
-     * 
+     *
      * @param \Enlight_Hook_HookArgs $arguments
      */
     public function onGetPaymentMeans(\Enlight_Hook_HookArgs $arguments)
@@ -254,7 +252,7 @@ class Payment implements SubscriberInterface
 
     /**
      * special handling for grouped credit cards to calculate correct shipment costs
-     * 
+     *
      * @param \Enlight_Hook_HookArgs $arguments
      */
     public function onGetDispatchBasket(\Enlight_Hook_HookArgs $arguments)
@@ -290,7 +288,7 @@ class Payment implements SubscriberInterface
 
     /**
      * group credit cards for payment form
-     * 
+     *
      * @param \Enlight_Hook_HookArgs $arguments
      * @return type
      */
@@ -304,5 +302,4 @@ class Payment implements SubscriberInterface
             $subject->View()->sPayments = $groupedPaymentMeans;
         }
     }
-    
 }

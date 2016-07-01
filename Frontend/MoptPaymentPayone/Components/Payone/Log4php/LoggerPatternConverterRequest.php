@@ -7,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,15 +19,16 @@
  */
 
 /**
- * Returns a value from the $_REQUEST superglobal array corresponding to the 
+ * Returns a value from the $_REQUEST superglobal array corresponding to the
  * given key.
- * 
+ *
  * Options:
  *  [0] $_REQUEST key value
- * 
+ *
  * @package log4php
  * @subpackage pattern
  */
-class Payone_Log4php_LoggerPatternConverterRequest extends Payone_Log4php_LoggerPatternConverterSuperglobal {
-	protected $name = '_REQUEST';
+class Payone_Log4php_LoggerPatternConverterRequest extends Payone_Log4php_LoggerPatternConverterSuperglobal
+{
+    protected $name = '_REQUEST';
 }

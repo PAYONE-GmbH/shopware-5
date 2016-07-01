@@ -12,14 +12,14 @@ class EMail implements SubscriberInterface
 
     /**
      * di container
-     * 
+     *
      * @var \Shopware\Components\DependencyInjection\Container
      */
     private $container;
 
     /**
      * inject di container
-     * 
+     *
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
     public function __construct(\Shopware\Components\DependencyInjection\Container $container)
@@ -29,7 +29,7 @@ class EMail implements SubscriberInterface
 
     /**
      * return array with all subsribed events
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
@@ -41,7 +41,7 @@ class EMail implements SubscriberInterface
 
     /**
      * add clearing data to email variables
-     * 
+     *
      * @param \Enlight_Event_EventArgs $args
      * @return array
      */
@@ -55,5 +55,4 @@ class EMail implements SubscriberInterface
             $args->setReturn($variables);
         }
     }
-
 }

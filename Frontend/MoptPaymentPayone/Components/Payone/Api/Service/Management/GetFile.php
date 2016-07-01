@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Service_Management_GetFile
-    extends Payone_Api_Service_Abstract
+class Payone_Api_Service_Management_GetFile extends Payone_Api_Service_Abstract
 {
     /**
      * @param Payone_Api_Request_GetFile $request
@@ -54,13 +53,11 @@ class Payone_Api_Service_Management_GetFile
             $response->setRawResponse($adapter->getRawResponse());
 
              $this->protocol($request, $response);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->protocolException($e, $request);
             throw $e;
         }
 
         return $response;
     }
-
 }

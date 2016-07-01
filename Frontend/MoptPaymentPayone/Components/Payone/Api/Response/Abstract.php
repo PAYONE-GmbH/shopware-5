@@ -32,14 +32,14 @@
  */
 abstract class Payone_Api_Response_Abstract implements Payone_Api_Response_Interface
 {
-    protected $status = NULL;
+    protected $status = null;
 
-    protected $rawResponse = NULL;
+    protected $rawResponse = null;
 
     /**
      * @var Payone_Protocol_Service_ApplyFilters
      */
-    private $applyFilters = NULL;
+    private $applyFilters = null;
 
     /**
      * @param array $params
@@ -75,8 +75,7 @@ abstract class Payone_Api_Response_Abstract implements Payone_Api_Response_Inter
         foreach ($this as $key => $data) {
             if ($data === null) {
                 continue;
-            }
-            elseif ($data instanceof Payone_Protocol_Service_ApplyFilters == false) {
+            } elseif ($data instanceof Payone_Protocol_Service_ApplyFilters == false) {
                 $result[$key] = $data;
             }
         }
@@ -89,7 +88,7 @@ abstract class Payone_Api_Response_Abstract implements Payone_Api_Response_Inter
      */
     public function __toString()
     {
-        if($this->applyFilters) {
+        if ($this->applyFilters) {
             $result = $this->applyFilters->apply($this->toArray());
         } else {
             $protocolFactory     = new Payone_Protocol_Factory();

@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-abstract class Payone_Api_Adapter_Http_Abstract
-    implements Payone_Api_Adapter_Interface
+abstract class Payone_Api_Adapter_Http_Abstract implements Payone_Api_Adapter_Interface
 {
     /**
      * @todo refactor to use some kind of config
@@ -187,5 +186,4 @@ abstract class Payone_Api_Adapter_Http_Abstract
     {
         $this->rawResponse = $rawResponse;
     }
-
 }

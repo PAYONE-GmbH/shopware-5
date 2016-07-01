@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Settings_Data_ConfigFile_Global_StatusMapping
-    extends Payone_Settings_Data_ConfigFile_Abstract
-    implements Payone_Settings_Data_ConfigFile_Interface
+class Payone_Settings_Data_ConfigFile_Global_StatusMapping extends Payone_Settings_Data_ConfigFile_Abstract implements Payone_Settings_Data_ConfigFile_Interface
 {
     protected $key = 'status_mapping';
 
@@ -50,7 +48,7 @@ class Payone_Settings_Data_ConfigFile_Global_StatusMapping
     /**
      * @param $value
      */
-    public function addStatusMapping($key,$value)
+    public function addStatusMapping($key, $value)
     {
         $this->status_mapping[$key] = $value;
     }

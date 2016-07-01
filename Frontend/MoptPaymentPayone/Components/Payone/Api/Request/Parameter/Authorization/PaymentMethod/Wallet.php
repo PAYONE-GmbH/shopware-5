@@ -30,25 +30,24 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
-    extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
+class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
 {
     /**
      * @var string
      */
-    protected $wallettype = NULL;
+    protected $wallettype = null;
     /**
      * @var string
      */
-    protected $successurl = NULL;
+    protected $successurl = null;
     /**
      * @var string
      */
-    protected $errorurl = NULL;
+    protected $errorurl = null;
     /**
      * @var string
      */
-    protected $backurl = NULL;
+    protected $backurl = null;
 
     /**
      * @param $successurl

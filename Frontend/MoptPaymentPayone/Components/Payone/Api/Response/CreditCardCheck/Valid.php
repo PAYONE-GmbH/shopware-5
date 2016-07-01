@@ -35,11 +35,11 @@ class Payone_Api_Response_CreditCardCheck_Valid extends Payone_Api_Response_Abst
     /**
      * @var string
      */
-    protected $pseudocardpan = NULL;
+    protected $pseudocardpan = null;
     /**
      * @var string
      */
-    protected $truncatedcardpan = NULL;
+    protected $truncatedcardpan = null;
 
     /**
      * @param string $truncatedcardpan

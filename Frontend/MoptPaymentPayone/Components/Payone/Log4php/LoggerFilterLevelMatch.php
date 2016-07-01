@@ -7,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,78 +23,82 @@
  *
  * <p>The filter admits two options <b><var>LevelToMatch</var></b> and
  * <b><var>AcceptOnMatch</var></b>. If there is an exact match between the value
- * of the <b><var>LevelToMatch</var></b> option and the level of the 
- * {@link LoggerLoggingEvent}, then the {@link decide()} method returns 
- * {@link LoggerFilter::ACCEPT} in case the <b><var>AcceptOnMatch</var></b> 
- * option value is set to <i>true</i>, if it is <i>false</i> then 
- * {@link LoggerFilter::DENY} is returned. If there is no match, 
+ * of the <b><var>LevelToMatch</var></b> option and the level of the
+ * {@link LoggerLoggingEvent}, then the {@link decide()} method returns
+ * {@link LoggerFilter::ACCEPT} in case the <b><var>AcceptOnMatch</var></b>
+ * option value is set to <i>true</i>, if it is <i>false</i> then
+ * {@link LoggerFilter::DENY} is returned. If there is no match,
  * {@link LoggerFilter::NEUTRAL} is returned.</p>
- * 
+ *
  * <p>
  * An example for this filter:
- * 
+ *
  * {@example ../../examples/php/filter_levelmatch.php 19}
  *
  * <p>
  * The corresponding XML file:
- * 
+ *
  * {@example ../../examples/resources/filter_levelmatch.xml 18}
- * 
+ *
  * @version $Revision$
  * @package log4php
  * @subpackage filters
  * @since 0.6
  */
-class Payone_Log4php_LoggerFilterLevelMatch extends Payone_Log4php_LoggerFilter {
+class Payone_Log4php_LoggerFilterLevelMatch extends Payone_Log4php_LoggerFilter
+{
   
-	/** 
-	 * Indicates if this event should be accepted or denied on match
-	 * @var boolean
-	 */
-	protected $acceptOnMatch = true;
+    /**
+     * Indicates if this event should be accepted or denied on match
+     * @var boolean
+     */
+    protected $acceptOnMatch = true;
 
-	/**
-	 * The level, when to match
-	 * @var Payone_Log4php_LoggerLevel
-	 */
-	protected $levelToMatch;
+    /**
+     * The level, when to match
+     * @var Payone_Log4php_LoggerLevel
+     */
+    protected $levelToMatch;
   
-	/**
-	 * @param boolean $acceptOnMatch
-	 */
-	public function setAcceptOnMatch($acceptOnMatch) {
-		$this->setBoolean('acceptOnMatch', $acceptOnMatch);
-	}
-	
-	/**
-	 * @param string $l the level to match
-	 */
-	public function setLevelToMatch($level) {
-		$this->setLevel('levelToMatch', $level);
-	}
+    /**
+     * @param boolean $acceptOnMatch
+     */
+    public function setAcceptOnMatch($acceptOnMatch)
+    {
+        $this->setBoolean('acceptOnMatch', $acceptOnMatch);
+    }
+    
+    /**
+     * @param string $l the level to match
+     */
+    public function setLevelToMatch($level)
+    {
+        $this->setLevel('levelToMatch', $level);
+    }
 
-	/**
-	 * Return the decision of this filter.
-	 * 
-	 * Returns {@link LoggerFilter::NEUTRAL} if the <b><var>LevelToMatch</var></b>
-	 * option is not set or if there is not match.	Otherwise, if there is a
-	 * match, then the returned decision is {@link LoggerFilter::ACCEPT} if the
-	 * <b><var>AcceptOnMatch</var></b> property is set to <i>true</i>. The
-	 * returned decision is {@link LoggerFilter::DENY} if the
-	 * <b><var>AcceptOnMatch</var></b> property is set to <i>false</i>.
-	 *
-	 * @param Payone_Log4php_LoggerLoggingEvent $event
-	 * @return integer
-	 */
-	public function decide(Payone_Log4php_LoggerLoggingEvent $event) {
-		if($this->levelToMatch === null) {
-			return Payone_Log4php_LoggerFilter::NEUTRAL;
-		}
-		
-		if($this->levelToMatch->equals($event->getLevel())) {	
-			return $this->acceptOnMatch ? Payone_Log4php_LoggerFilter::ACCEPT : Payone_Log4php_LoggerFilter::DENY;
-		} else {
-			return Payone_Log4php_LoggerFilter::NEUTRAL;
-		}
-	}
+    /**
+     * Return the decision of this filter.
+     *
+     * Returns {@link LoggerFilter::NEUTRAL} if the <b><var>LevelToMatch</var></b>
+     * option is not set or if there is not match.  Otherwise, if there is a
+     * match, then the returned decision is {@link LoggerFilter::ACCEPT} if the
+     * <b><var>AcceptOnMatch</var></b> property is set to <i>true</i>. The
+     * returned decision is {@link LoggerFilter::DENY} if the
+     * <b><var>AcceptOnMatch</var></b> property is set to <i>false</i>.
+     *
+     * @param Payone_Log4php_LoggerLoggingEvent $event
+     * @return integer
+     */
+    public function decide(Payone_Log4php_LoggerLoggingEvent $event)
+    {
+        if ($this->levelToMatch === null) {
+            return Payone_Log4php_LoggerFilter::NEUTRAL;
+        }
+        
+        if ($this->levelToMatch->equals($event->getLevel())) {
+            return $this->acceptOnMatch ? Payone_Log4php_LoggerFilter::ACCEPT : Payone_Log4php_LoggerFilter::DENY;
+        } else {
+            return Payone_Log4php_LoggerFilter::NEUTRAL;
+        }
+    }
 }

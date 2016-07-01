@@ -112,5 +112,4 @@ class Payone_ClientApi_Request_CreditCardCheck extends Payone_ClientApi_Request_
     {
         return $this->successurl;
     }
-
 }

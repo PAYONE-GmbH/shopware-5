@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_CreateAccess_Billing
-    extends Payone_Api_Request_Parameter_Abstract
+class Payone_Api_Request_Parameter_CreateAccess_Billing extends Payone_Api_Request_Parameter_Abstract
 {
 
     /**
@@ -39,33 +38,33 @@ class Payone_Api_Request_Parameter_CreateAccess_Billing
      *
      * @var string
      */
-    protected $vaccountname = NULL;
+    protected $vaccountname = null;
 
     /**
      * Length of payroll cycle
      *
      * @var int
      */
-    protected $settle_period_length = NULL;
+    protected $settle_period_length = null;
 
     /**
      * Time unit of payroll cycle
      *
      * @var string
      */
-    protected $settle_period_unit = NULL;
+    protected $settle_period_unit = null;
 
     /**
      * Date of next billing as unixtimestamp
      *
      * @var int
      */
-    protected $settletime = NULL;
+    protected $settletime = null;
 
     /**
      * @var string
      */
-    protected $payout_open_balance = NULL;
+    protected $payout_open_balance = null;
 
     /**
      * @param string $payout_open_balance
@@ -146,6 +145,4 @@ class Payone_Api_Request_Parameter_CreateAccess_Billing
     {
         return $this->vaccountname;
     }
-
-
 }

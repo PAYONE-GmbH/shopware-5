@@ -50,77 +50,77 @@ class Payone_Api_Request_UpdateAccess extends Payone_Api_Request_Abstract
      *
      * @var int
      */
-    protected $productid = NULL;
+    protected $productid = null;
 
     /**
      * Startdate of access as unixtimestamp
      *
      * @var int
      */
-    protected $access_starttime = NULL;
+    protected $access_starttime = null;
 
     /**
      * Expiredate of first term or timestamp of renewal as unixtimestamp
      *
      * @var int
      */
-    protected $access_expiretime = NULL;
+    protected $access_expiretime = null;
 
     /**
      * Canelationdate as unixtimestamp
      *
      * @var int
      */
-    protected $access_canceltime = NULL;
+    protected $access_canceltime = null;
 
     /**
      * Entire price of first term, must be equal to sum of amount * price. Must be in smallest currency unit
      *
      * @var int
      */
-    protected $amount_trail = NULL;
+    protected $amount_trail = null;
 
     /**
      * Time unit of first term
      *
      * @var string
      */
-    protected $period_unit_trail = NULL;
+    protected $period_unit_trail = null;
 
     /**
      * Lenght of first term
      *
      * @var int
      */
-    protected $period_length_trail = NULL;
+    protected $period_length_trail = null;
 
     /**
      * Entire price of all products in one renewal term. Must be in smallest currency unit
      *
      * @var int
      */
-    protected $amount_recurring = NULL;
+    protected $amount_recurring = null;
 
     /**
      * Time unit of renewal term
      *
      * @var string
      */
-    protected $period_unit_recurring = NULL;
+    protected $period_unit_recurring = null;
 
     /**
      * Length of renewal term
      *
      * @var int
      */
-    protected $period_length_recurring = NULL;
+    protected $period_length_recurring = null;
 
     /**
      * Currency (ISO-4217)
      *
      * @var string
      */
-    protected $currency = NULL;
+    protected $currency = null;
 
     /**
      * @var Payone_Api_Request_Parameter_UpdateAccess_Invoicing_Transaction

@@ -34,193 +34,193 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @var string Payment portal key as MD5 value
      */
-    protected $key = NULL;
+    protected $key = null;
     /**
      * @var string
      */
-    protected $txaction = NULL;
+    protected $txaction = null;
     /**
      * @var string
      */
-    protected $mode = NULL;
+    protected $mode = null;
     /**
      * @var int Payment portal ID
      */
-    protected $portalid = NULL;
+    protected $portalid = null;
     /**
      * @var int Account ID (subaccount ID)
      */
-    protected $aid = NULL;
+    protected $aid = null;
     /**     *
      * @var string
      */
-    protected $clearingtype = NULL;
+    protected $clearingtype = null;
     /**
      * unix timestamp
      *
      * @var int
      */
-    protected $txtime = NULL;
+    protected $txtime = null;
     /**
      * @var string ISO-4217
      */
-    protected $currency = NULL;
+    protected $currency = null;
     /**
      * @var int
      */
-    protected $userid = NULL;
+    protected $userid = null;
     /**
      * @var int
      */
-    protected $customerid = NULL;
+    protected $customerid = null;
     /**
      * @var string
      */
-    protected $param = NULL;
+    protected $param = null;
 
     // Parameter bei einer Statusmeldung eines Zahlungsvorgangs
 
     /**
      * @var int
      */
-    protected $txid = NULL;
+    protected $txid = null;
     /**
      * @var string
      */
-    protected $reference = NULL;
+    protected $reference = null;
     /**
      * @var string
      */
-    protected $sequencenumber = NULL;
+    protected $sequencenumber = null;
     /**
      * @var string
      */
-    protected $receivable = NULL;
+    protected $receivable = null;
     /**
      * @var string
      */
-    protected $balance = NULL;
+    protected $balance = null;
     /**
      * @var string
      */
-    protected $failedcause = NULL;
+    protected $failedcause = null;
 
     // Zusätzliche Parameter Contract bei Statusmeldung eines Zahlungsvorgangs
 
     /**
      * @var int
      */
-    protected $productid = NULL;
+    protected $productid = null;
     /**
      * @var int
      */
-    protected $accessid = NULL;
+    protected $accessid = null;
 
     // Zusätzliche Parameter Collect (txaction=reminder) bei Statusmeldung eines Zahlungsvorgangs
 
     /**
      * @var string
      */
-    protected $reminderlevel = NULL;
+    protected $reminderlevel = null;
 
     // Parameter Invoicing (txaction=invoice)
 
     /**
      * @var string
      */
-    protected $invoiceid = NULL;
+    protected $invoiceid = null;
     /**
      * @var string
      */
-    protected $invoice_grossamount = NULL;
+    protected $invoice_grossamount = null;
     /**
      * @var string
      */
-    protected $invoice_date = NULL;
+    protected $invoice_date = null;
     /**
      * @var string
      */
-    protected $invoice_deliverydate = NULL;
+    protected $invoice_deliverydate = null;
     /**
      * @var string
      */
-    protected $invoice_deliveryenddate = NULL;
+    protected $invoice_deliveryenddate = null;
 
     
     /**
      * @var string
      */
-    protected $clearing_bankaccountholder = NULL;
+    protected $clearing_bankaccountholder = null;
     /**
      * @var string
      */
-    protected $clearing_bankcountry = NULL;
+    protected $clearing_bankcountry = null;
     /**
      * @var string
      */
-    protected $clearing_bankaccount = NULL;
+    protected $clearing_bankaccount = null;
     /**
      * @var string
      */
-    protected $clearing_bankcode = NULL;
+    protected $clearing_bankcode = null;
     /**
      * @var string
      */
-    protected $clearing_bankiban = NULL;
+    protected $clearing_bankiban = null;
     /**
      * @var string
      */
-    protected $clearing_bankbic = NULL;
+    protected $clearing_bankbic = null;
     /**
      * @var string
      */
-    protected $clearing_bankcity = NULL;
+    protected $clearing_bankcity = null;
     /**
      * @var string
      */
-    protected $clearing_bankname = NULL;
+    protected $clearing_bankname = null;
     
 
     /** @var string */
-    protected $clearing_legalnote = NULL;
+    protected $clearing_legalnote = null;
 
     /**
      * (YYYYMMDD)
      * @var string
      */
-    protected $clearing_duedate = NULL;
+    protected $clearing_duedate = null;
 
     /** @var string */
-    protected $clearing_reference = NULL;
+    protected $clearing_reference = null;
 
     /** @var string */
-    protected $clearing_instructionnote = NULL;
+    protected $clearing_instructionnote = null;
 
     /**
      * @var string
      */
-    protected $iban = NULL;
+    protected $iban = null;
     /**
      * @var string
      */
-    protected $bic = NULL;
+    protected $bic = null;
     /**
      * @var string
      */
-    protected $mandate_identification = NULL;
+    protected $mandate_identification = null;
     /**
      * @var string
      */
-    protected $creditor_identifier = NULL;
+    protected $creditor_identifier = null;
     /**
      * Format YYYYMMDD
      * @var int
      */
-    protected $clearing_date = NULL;
+    protected $clearing_date = null;
     /**
      * @var float
      */
-    protected $clearing_amount = NULL;
+    protected $clearing_amount = null;
 
 
     /**
@@ -626,7 +626,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_bankaccount
      */
-    public function setClearingBankaccount( $clearing_bankaccount)
+    public function setClearingBankaccount($clearing_bankaccount)
     {
         $this->clearing_bankaccount = $clearing_bankaccount;
     }
@@ -642,7 +642,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_bankaccountholder
      */
-    public function setClearingBankaccountholder( $clearing_bankaccountholder)
+    public function setClearingBankaccountholder($clearing_bankaccountholder)
     {
         $this->clearing_bankaccountholder = $clearing_bankaccountholder;
     }
@@ -658,7 +658,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_bankbic
      */
-    public function setClearingBankbic( $clearing_bankbic)
+    public function setClearingBankbic($clearing_bankbic)
     {
         $this->clearing_bankbic = $clearing_bankbic;
     }
@@ -674,7 +674,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_bankcity
      */
-    public function setClearingBankcity( $clearing_bankcity)
+    public function setClearingBankcity($clearing_bankcity)
     {
         $this->clearing_bankcity = $clearing_bankcity;
     }
@@ -690,7 +690,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_bankcode
      */
-    public function setClearingBankcode( $clearing_bankcode)
+    public function setClearingBankcode($clearing_bankcode)
     {
         $this->clearing_bankcode = $clearing_bankcode;
     }
@@ -706,7 +706,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_bankcountry
      */
-    public function setClearingBankcountry( $clearing_bankcountry)
+    public function setClearingBankcountry($clearing_bankcountry)
     {
         $this->clearing_bankcountry = $clearing_bankcountry;
     }
@@ -722,7 +722,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_bankiban
      */
-    public function setClearingBankiban( $clearing_bankiban)
+    public function setClearingBankiban($clearing_bankiban)
     {
         $this->clearing_bankiban = $clearing_bankiban;
     }
@@ -738,7 +738,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_bankname
      */
-    public function setClearingBankname( $clearing_bankname)
+    public function setClearingBankname($clearing_bankname)
     {
         $this->clearing_bankname = $clearing_bankname;
     }
@@ -754,7 +754,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_duedate
      */
-    public function setClearingDuedate( $clearing_duedate)
+    public function setClearingDuedate($clearing_duedate)
     {
         $this->clearing_duedate = $clearing_duedate;
     }
@@ -770,7 +770,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_instructionnote
      */
-    public function setClearingInstructionnote( $clearing_instructionnote)
+    public function setClearingInstructionnote($clearing_instructionnote)
     {
         $this->clearing_instructionnote = $clearing_instructionnote;
     }
@@ -786,7 +786,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_legalnote
      */
-    public function setClearingLegalnote( $clearing_legalnote)
+    public function setClearingLegalnote($clearing_legalnote)
     {
         $this->clearing_legalnote = $clearing_legalnote;
     }
@@ -802,7 +802,7 @@ class Payone_TransactionStatus_Request extends Payone_TransactionStatus_Request_
     /**
      * @param string $clearing_reference
      */
-    public function setClearingReference( $clearing_reference)
+    public function setClearingReference($clearing_reference)
     {
         $this->clearing_reference = $clearing_reference;
     }

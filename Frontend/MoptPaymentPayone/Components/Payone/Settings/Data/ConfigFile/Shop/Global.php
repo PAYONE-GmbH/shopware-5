@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Settings_Data_ConfigFile_Shop_Global
-    extends Payone_Settings_Data_ConfigFile_Abstract
-    implements Payone_Settings_Data_ConfigFile_Interface
+class Payone_Settings_Data_ConfigFile_Shop_Global extends Payone_Settings_Data_ConfigFile_Abstract implements Payone_Settings_Data_ConfigFile_Interface
 {
     protected $key = 'global';
 

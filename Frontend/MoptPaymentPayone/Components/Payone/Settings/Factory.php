@@ -41,12 +41,11 @@ class Payone_Settings_Factory
      */
     public function buildService($key)
     {
-        switch ($key)
-        {
-            case 'xmlgenerate' :
+        switch ($key) {
+            case 'xmlgenerate':
                 return $this->buildServiceXmlGenerate();
                 break;
-            default :
+            default:
                 throw new Exception('Could not build service with key "' . $key . '"');
         }
     }

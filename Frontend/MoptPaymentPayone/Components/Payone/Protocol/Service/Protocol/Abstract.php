@@ -87,6 +87,6 @@ abstract class Payone_Protocol_Service_Protocol_Abstract
         if (array_key_exists($key, $this->loggers)) {
             return $this->loggers[$key];
         }
-        return NULL;
+        return null;
     }
 }

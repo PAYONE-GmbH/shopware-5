@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_TransactionStatus_Validator_Ip
-    extends Payone_TransactionStatus_Validator_Abstract
+class Payone_TransactionStatus_Validator_Ip extends Payone_TransactionStatus_Validator_Abstract
 {
     /** @var array */
     protected $validIps = array();
@@ -104,7 +103,7 @@ class Payone_TransactionStatus_Validator_Ip
     {
         $remoteAddr = $_SERVER['REMOTE_ADDR'];
         if ($this->getProxyCheckEnabled() == 1) {
-            if(array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+            if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
                 $proxy = $_SERVER['HTTP_X_FORWARDED_FOR'];
                 if (!empty($proxy)) {
                     $proxyIps = explode(',', $proxy);
@@ -143,5 +142,4 @@ class Payone_TransactionStatus_Validator_Ip
     {
         return $this->config;
     }
-
 }

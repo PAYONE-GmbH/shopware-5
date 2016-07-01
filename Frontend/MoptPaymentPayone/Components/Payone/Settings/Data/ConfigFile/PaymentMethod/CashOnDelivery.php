@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Settings_Data_ConfigFile_PaymentMethod_CashOnDelivery
-extends Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract
-implements Payone_Settings_Data_ConfigFile_Interface
+class Payone_Settings_Data_ConfigFile_PaymentMethod_CashOnDelivery extends Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract implements Payone_Settings_Data_ConfigFile_Interface
 {
     /** @var string */
     protected $key = Payone_Enum_ClearingType::CASHONDELIVERY;
@@ -56,7 +54,7 @@ implements Payone_Settings_Data_ConfigFile_Interface
     /**
      * @param string $active
      */
-    public function setActive( $active)
+    public function setActive($active)
     {
         $this->active = $active;
     }
@@ -72,7 +70,7 @@ implements Payone_Settings_Data_ConfigFile_Interface
     /**
      * @param string $authorization
      */
-    public function setAuthorization( $authorization)
+    public function setAuthorization($authorization)
     {
         $this->authorization = $authorization;
     }
@@ -88,7 +86,7 @@ implements Payone_Settings_Data_ConfigFile_Interface
     /**
      * @param string $countries
      */
-    public function setCountries( $countries)
+    public function setCountries($countries)
     {
         $this->countries = $countries;
     }
@@ -105,7 +103,7 @@ implements Payone_Settings_Data_ConfigFile_Interface
     /**
      * @param string $mode
      */
-    public function setMode( $mode)
+    public function setMode($mode)
     {
         $this->mode = $mode;
     }
@@ -121,7 +119,7 @@ implements Payone_Settings_Data_ConfigFile_Interface
     /**
      * @param string $newOrderStatus
      */
-    public function setNewOrderStatus( $newOrderStatus)
+    public function setNewOrderStatus($newOrderStatus)
     {
         $this->newOrderStatus = $newOrderStatus;
     }
@@ -145,8 +143,8 @@ implements Payone_Settings_Data_ConfigFile_Interface
     /**
          * @return string
          */
-        public function getKey()
-        {
-            return $this->key;
-        }
+    public function getKey()
+    {
+        return $this->key;
+    }
 }

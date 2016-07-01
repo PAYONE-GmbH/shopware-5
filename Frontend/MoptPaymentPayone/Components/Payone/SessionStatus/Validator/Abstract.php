@@ -33,7 +33,6 @@
 
 
 
-abstract class Payone_SessionStatus_Validator_Abstract
-    implements Payone_SessionStatus_Validator_Interface
+abstract class Payone_SessionStatus_Validator_Abstract implements Payone_SessionStatus_Validator_Interface
 {
 }

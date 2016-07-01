@@ -24,7 +24,7 @@ class Payone_SessionStatus_Request extends Payone_SessionStatus_Request_Abstract
     /**
      * @var string Payment portal key as MD5 value
      */
-    protected $key = NULL;
+    protected $key = null;
 
     /**
      * @var Payone_SessionStatus_Request_Item[]

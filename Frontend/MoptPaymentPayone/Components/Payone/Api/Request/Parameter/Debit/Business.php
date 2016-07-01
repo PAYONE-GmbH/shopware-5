@@ -30,25 +30,24 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Debit_Business
-    extends Payone_Api_Request_Parameter_Debit_Abstract
+class Payone_Api_Request_Parameter_Debit_Business extends Payone_Api_Request_Parameter_Debit_Abstract
 {
     /**
      * @var string
      */
-    protected $settleaccount = NULL;
+    protected $settleaccount = null;
     /**
      * @var string
      */
-    protected $transactiontype = NULL;
+    protected $transactiontype = null;
     /**
      * @var string
      */
-    protected $booking_date = NULL;
+    protected $booking_date = null;
     /**
      * @var string
      */
-    protected $document_date = NULL;
+    protected $document_date = null;
 
     /**
      * @param string $booking_date

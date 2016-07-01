@@ -30,27 +30,26 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Authorization_Business
-    extends Payone_Api_Request_Parameter_Authorization_Abstract
+class Payone_Api_Request_Parameter_Authorization_Business extends Payone_Api_Request_Parameter_Authorization_Abstract
 {
     /**
      * (YYYYMMDD)
      *
      * @var string
      */
-    protected $document_date = NULL;
+    protected $document_date = null;
     /**
      * (YYYYMMDD)
      *
      * @var string
      */
-    protected $booking_date = NULL;
+    protected $booking_date = null;
     /**
      * (Unixtimestamp)
      *
      * @var string
      */
-    protected $due_time = NULL;
+    protected $due_time = null;
 
     /**
      * @param string $booking_date

@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Mapper_Request_Management_UpdateAccess
-    extends Payone_Api_Mapper_Request_Abstract
-    implements Payone_Api_Mapper_Request_Interface
+class Payone_Api_Mapper_Request_Management_UpdateAccess extends Payone_Api_Mapper_Request_Abstract implements Payone_Api_Mapper_Request_Interface
 {
     public function map(Payone_Api_Request_Interface $request)
     {
@@ -91,5 +89,4 @@ class Payone_Api_Mapper_Request_Management_UpdateAccess
         }
         return true;
     }
-
 }

@@ -38,5 +38,4 @@ interface Payone_Api_Service_Payment_DebitInterface
      * @throws Exception
      */
     public function debit(Payone_Api_Request_Debit $request);
-
 }

@@ -9,21 +9,21 @@ class Document implements SubscriberInterface
 
     /**
     * path to plugin files
-    * 
+    *
     * @var string
     */
     private $path;
     
     /**
      * di container
-     * 
+     *
      * @var \Shopware\Components\DependencyInjection\Container
      */
     private $container;
 
     /**
      * inject di container
-     * 
+     *
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
     public function __construct(\Shopware\Components\DependencyInjection\Container $container, $path)
@@ -34,7 +34,7 @@ class Document implements SubscriberInterface
 
     /**
      * return array with all subsribed events
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
@@ -47,7 +47,7 @@ class Document implements SubscriberInterface
 
     /**
      * add payone clearing data to document
-     * 
+     *
      * @param \Enlight_Hook_HookArgs $args $args
      */
     public function onBeforeRenderDocument(\Enlight_Hook_HookArgs $args)
@@ -80,5 +80,4 @@ class Document implements SubscriberInterface
         $containerData['Content_Info']['style'] = '}' . $containerData['Content_Info']['style'] . ' #info {';
         $view->assign('Containers', $containerData);
     }
-
 }

@@ -58,5 +58,4 @@ class Payone_Api_Config extends Payone_Config_Abstract
         );
         return $defaultConfig;
     }
-
 }

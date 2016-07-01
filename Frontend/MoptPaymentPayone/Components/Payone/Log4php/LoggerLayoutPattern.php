@@ -25,130 +25,136 @@
  * @package log4php
  * @subpackage layouts
  */
-class Payone_Log4php_LoggerLayoutPattern extends Payone_Log4php_LoggerLayout {
-	
-	/** Default conversion pattern */
-	const DEFAULT_CONVERSION_PATTERN = '%m%n';
+class Payone_Log4php_LoggerLayoutPattern extends Payone_Log4php_LoggerLayout
+{
+    
+    /** Default conversion pattern */
+    const DEFAULT_CONVERSION_PATTERN = '%m%n';
 
-	/** Default conversion TTCC Pattern */
-	const TTCC_CONVERSION_PATTERN = '%d [%t] %p %c %x - %m%n';
+    /** Default conversion TTCC Pattern */
+    const TTCC_CONVERSION_PATTERN = '%d [%t] %p %c %x - %m%n';
 
-	/** The conversion pattern. */ 
-	protected $pattern = self::DEFAULT_CONVERSION_PATTERN;
-	
-	/** Maps conversion keywords to the relevant converter. */
-	protected static $defaultConverterMap = array(
-		'c' => 'LoggerPatternConverterLogger',
-		'lo' => 'LoggerPatternConverterLogger',
-		'logger' => 'LoggerPatternConverterLogger',
-		
-		'C' => 'LoggerPatternConverterClass',
-		'class' => 'LoggerPatternConverterClass',
-		
-		'cookie' => 'LoggerPatternConverterCookie',
-		
-		'd' => 'LoggerPatternConverterDate',
-		'date' => 'LoggerPatternConverterDate',
-		
-		'e' => 'LoggerPatternConverterEnvironment',
-		'env' => 'LoggerPatternConverterEnvironment',
-		
-		'ex' => 'LoggerPatternConverterThrowable',
-		'throwable' => 'LoggerPatternConverterThrowable',
-		
-		'F' => 'LoggerPatternConverterFile',
-		'file' => 'LoggerPatternConverterFile',
-		
-		'L' => 'LoggerPatternConverterLine',
-		'line' => 'LoggerPatternConverterLine',
-		
-		'm' => 'LoggerPatternConverterMessage',
-		'msg' => 'LoggerPatternConverterMessage',
-		'message' => 'LoggerPatternConverterMessage',
-		
-		'M' => 'LoggerPatternConverterMethod',
-		'method' => 'LoggerPatternConverterMethod',
-		
-		'n' => 'LoggerPatternConverterNewLine',
-		'newline' => 'LoggerPatternConverterNewLine',
-		
-		'p' => 'LoggerPatternConverterLevel',
-		'le' => 'LoggerPatternConverterLevel',
-		'level' => 'LoggerPatternConverterLevel',
-	
-		'r' => 'LoggerPatternConverterRelative',
-		'relative' => 'LoggerPatternConverterRelative',
-		
-		'req' => 'LoggerPatternConverterRequest',
-		'request' => 'LoggerPatternConverterRequest',
-		
-		's' => 'LoggerPatternConverterServer',
-		'server' => 'LoggerPatternConverterServer',
-		
-		'ses' => 'LoggerPatternConverterSession',
-		'session' => 'LoggerPatternConverterSession',
-		
-		'sid' => 'LoggerPatternConverterSessionID',
-		'sessionid' => 'LoggerPatternConverterSessionID',
-	
-		't' => 'LoggerPatternConverterProcess',
-		'pid' => 'LoggerPatternConverterProcess',
-		'process' => 'LoggerPatternConverterProcess',
-		
-		'x' => 'LoggerPatternConverterNDC',
-		'ndc' => 'LoggerPatternConverterNDC',
-			
-		'X' => 'LoggerPatternConverterMDC',
-		'mdc' => 'LoggerPatternConverterMDC',
-	);
+    /** The conversion pattern. */
+    protected $pattern = self::DEFAULT_CONVERSION_PATTERN;
+    
+    /** Maps conversion keywords to the relevant converter. */
+    protected static $defaultConverterMap = array(
+        'c' => 'LoggerPatternConverterLogger',
+        'lo' => 'LoggerPatternConverterLogger',
+        'logger' => 'LoggerPatternConverterLogger',
+        
+        'C' => 'LoggerPatternConverterClass',
+        'class' => 'LoggerPatternConverterClass',
+        
+        'cookie' => 'LoggerPatternConverterCookie',
+        
+        'd' => 'LoggerPatternConverterDate',
+        'date' => 'LoggerPatternConverterDate',
+        
+        'e' => 'LoggerPatternConverterEnvironment',
+        'env' => 'LoggerPatternConverterEnvironment',
+        
+        'ex' => 'LoggerPatternConverterThrowable',
+        'throwable' => 'LoggerPatternConverterThrowable',
+        
+        'F' => 'LoggerPatternConverterFile',
+        'file' => 'LoggerPatternConverterFile',
+        
+        'L' => 'LoggerPatternConverterLine',
+        'line' => 'LoggerPatternConverterLine',
+        
+        'm' => 'LoggerPatternConverterMessage',
+        'msg' => 'LoggerPatternConverterMessage',
+        'message' => 'LoggerPatternConverterMessage',
+        
+        'M' => 'LoggerPatternConverterMethod',
+        'method' => 'LoggerPatternConverterMethod',
+        
+        'n' => 'LoggerPatternConverterNewLine',
+        'newline' => 'LoggerPatternConverterNewLine',
+        
+        'p' => 'LoggerPatternConverterLevel',
+        'le' => 'LoggerPatternConverterLevel',
+        'level' => 'LoggerPatternConverterLevel',
+    
+        'r' => 'LoggerPatternConverterRelative',
+        'relative' => 'LoggerPatternConverterRelative',
+        
+        'req' => 'LoggerPatternConverterRequest',
+        'request' => 'LoggerPatternConverterRequest',
+        
+        's' => 'LoggerPatternConverterServer',
+        'server' => 'LoggerPatternConverterServer',
+        
+        'ses' => 'LoggerPatternConverterSession',
+        'session' => 'LoggerPatternConverterSession',
+        
+        'sid' => 'LoggerPatternConverterSessionID',
+        'sessionid' => 'LoggerPatternConverterSessionID',
+    
+        't' => 'LoggerPatternConverterProcess',
+        'pid' => 'LoggerPatternConverterProcess',
+        'process' => 'LoggerPatternConverterProcess',
+        
+        'x' => 'LoggerPatternConverterNDC',
+        'ndc' => 'LoggerPatternConverterNDC',
+            
+        'X' => 'LoggerPatternConverterMDC',
+        'mdc' => 'LoggerPatternConverterMDC',
+    );
 
-	protected $converterMap = array();
-	
-	/** 
-	 * Head of a chain of Converters.
-	 * @var Payone_Log4php_LoggerPatternConverter
-	 */
-	private $head;
+    protected $converterMap = array();
+    
+    /**
+     * Head of a chain of Converters.
+     * @var Payone_Log4php_LoggerPatternConverter
+     */
+    private $head;
 
-	public static function getDefaultConverterMap() {
-		return self::$defaultConverterMap;
-	}
-	
-	public function __construct() {
-		$this->converterMap = self::$defaultConverterMap;
-	}
-	
-	/**
-	 * Set the <b>ConversionPattern</b> option. This is the string which
-	 * controls formatting and consists of a mix of literal content and
-	 * conversion specifiers.
-	 */
-	public function setConversionPattern($conversionPattern) {
-		$this->pattern = $conversionPattern;
-	}
-	
-	public function activateOptions() {
-		if (!isset($this->pattern)) {
-			throw new Payone_Log4php_LoggerException("Mandatory parameter 'conversionPattern' is not set.");
-		}
-		
-		$parser = new Payone_Log4php_LoggerPatternParser($this->pattern, $this->converterMap);
-		$this->head = $parser->parse();
-	}
-	
-	/**
-	 * Produces a formatted string as specified by the conversion pattern.
-	 *
-	 * @param Payone_Log4php_LoggerLoggingEvent $event
-	 * @return string
-	 */
-	public function format(Payone_Log4php_LoggerLoggingEvent $event) {
-		$sbuf = '';
-		$converter = $this->head;
-		while ($converter !== null) {
-			$converter->format($sbuf, $event);
-			$converter = $converter->next;
-		}
-		return $sbuf;
-	}
+    public static function getDefaultConverterMap()
+    {
+        return self::$defaultConverterMap;
+    }
+    
+    public function __construct()
+    {
+        $this->converterMap = self::$defaultConverterMap;
+    }
+    
+    /**
+     * Set the <b>ConversionPattern</b> option. This is the string which
+     * controls formatting and consists of a mix of literal content and
+     * conversion specifiers.
+     */
+    public function setConversionPattern($conversionPattern)
+    {
+        $this->pattern = $conversionPattern;
+    }
+    
+    public function activateOptions()
+    {
+        if (!isset($this->pattern)) {
+            throw new Payone_Log4php_LoggerException("Mandatory parameter 'conversionPattern' is not set.");
+        }
+        
+        $parser = new Payone_Log4php_LoggerPatternParser($this->pattern, $this->converterMap);
+        $this->head = $parser->parse();
+    }
+    
+    /**
+     * Produces a formatted string as specified by the conversion pattern.
+     *
+     * @param Payone_Log4php_LoggerLoggingEvent $event
+     * @return string
+     */
+    public function format(Payone_Log4php_LoggerLoggingEvent $event)
+    {
+        $sbuf = '';
+        $converter = $this->head;
+        while ($converter !== null) {
+            $converter->format($sbuf, $event);
+            $converter = $converter->next;
+        }
+        return $sbuf;
+    }
 }

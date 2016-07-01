@@ -33,8 +33,7 @@
 
 
 
-abstract class Payone_SessionStatus_Response_Abstract
-    implements Payone_SessionStatus_Response_Interface
+abstract class Payone_SessionStatus_Response_Abstract implements Payone_SessionStatus_Response_Interface
 {
     /**
      * @param $name
@@ -61,7 +60,4 @@ abstract class Payone_SessionStatus_Response_Abstract
         }
         return null;
     }
-
-
-
 }

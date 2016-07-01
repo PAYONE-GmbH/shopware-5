@@ -18,9 +18,7 @@
  * @author          Ronny Schröder
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  */
-class Payone_Api_Mapper_Response_Genericpayment
-    extends Payone_Api_Mapper_Response_Abstract
-    implements Payone_Api_Mapper_Response_Interface
+class Payone_Api_Mapper_Response_Genericpayment extends Payone_Api_Mapper_Response_Abstract implements Payone_Api_Mapper_Response_Interface
 {
     /**
      * @param array $params
@@ -34,17 +32,13 @@ class Payone_Api_Mapper_Response_Genericpayment
 
         if ($this->isApproved()) {
             $response = new Payone_Api_Response_Genericpayment_Approved($params);
-        }
-        elseif ($this->isOk()) {
+        } elseif ($this->isOk()) {
             $response = new Payone_Api_Response_Genericpayment_Ok($params);
-        }
-        elseif ($this->isRedirect()) {
+        } elseif ($this->isRedirect()) {
             $response = new Payone_Api_Response_Genericpayment_Redirect($params);
-        }
-        elseif ($this->isError()) {
+        } elseif ($this->isError()) {
             $response = new Payone_Api_Response_Error($params);
-        }
-        else {
+        } else {
             throw new Payone_Api_Exception_UnknownStatus();
         }
         
@@ -52,5 +46,4 @@ class Payone_Api_Mapper_Response_Genericpayment
 
         return $response;
     }
-
 }

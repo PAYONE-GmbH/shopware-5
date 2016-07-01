@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Mapper_Currency extends Payone_Api_Mapper_Abstract
-    implements Payone_Api_Mapper_Currency_Interface
+class Payone_Api_Mapper_Currency extends Payone_Api_Mapper_Abstract implements Payone_Api_Mapper_Currency_Interface
 {
     const PATH_CURRENCY_PROPERTIES_DEFAULT = 'currency.properties';
 

@@ -37,35 +37,35 @@ class Payone_Api_Request_CreditCardCheck extends Payone_Api_Request_Abstract
     /**
      * @var int
      */
-    protected $aid = NULL;
+    protected $aid = null;
     /**
      * @var string
      */
-    protected $cardpan = NULL;
+    protected $cardpan = null;
     /**
      * @var string
      */
-    protected $cardtype = NULL;
+    protected $cardtype = null;
     /**
      * @var int
      */
-    protected $cardexpiredate = NULL;
+    protected $cardexpiredate = null;
     /**
      * @var int
      */
-    protected $cardcvc2 = NULL;
+    protected $cardcvc2 = null;
     /**
      * @var int
      */
-    protected $cardissuenumber = NULL;
+    protected $cardissuenumber = null;
     /**
      * @var string
      */
-    protected $storecarddata = NULL;
+    protected $storecarddata = null;
     /**
      * @var string
      */
-    protected $language = NULL;
+    protected $language = null;
 
     /**
      * @param int $aid

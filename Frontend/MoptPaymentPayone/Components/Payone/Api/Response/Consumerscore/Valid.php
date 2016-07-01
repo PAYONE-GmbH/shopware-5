@@ -35,55 +35,55 @@ class Payone_Api_Response_Consumerscore_Valid extends Payone_Api_Response_Abstra
     /**
      * @var int
      */
-    protected $secstatus = NULL;
+    protected $secstatus = null;
     /**
      * @var string
      */
-    protected $score = NULL;
+    protected $score = null;
     /**
      * @var int
      */
-    protected $scorevalue = NULL;
+    protected $scorevalue = null;
     /**
      * @var string
      */
-    protected $secscore = NULL;
+    protected $secscore = null;
     /**
      * @var string
      */
-    protected $divergence = NULL;
+    protected $divergence = null;
     /**
      * @var string
      */
-    protected $personstatus = NULL;
+    protected $personstatus = null;
     /**
      * @var string
      */
-    protected $firstname = NULL;
+    protected $firstname = null;
     /**
      * @var string
      */
-    protected $lastname = NULL;
+    protected $lastname = null;
     /**
      * @var string
      */
-    protected $street = NULL;
+    protected $street = null;
     /**
      * @var string
      */
-    protected $streetname = NULL;
+    protected $streetname = null;
     /**
      * @var string
      */
-    protected $streetnumber = NULL;
+    protected $streetnumber = null;
     /**
      * @var string
      */
-    protected $zip = NULL;
+    protected $zip = null;
     /**
      * @var string
      */
-    protected $city = NULL;
+    protected $city = null;
 
     /**
      * @param string $city

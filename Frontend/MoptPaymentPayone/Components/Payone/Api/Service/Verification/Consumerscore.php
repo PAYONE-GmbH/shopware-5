@@ -48,8 +48,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Service_Verification_Consumerscore
-    extends Payone_Api_Service_Abstract
+class Payone_Api_Service_Verification_Consumerscore extends Payone_Api_Service_Abstract
 {
     /**
      *
@@ -74,13 +73,11 @@ class Payone_Api_Service_Verification_Consumerscore
             $response = $this->getMapperResponse()->map($responseRaw);
 
             $this->protocol($request, $response);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->protocolException($e, $request);
             throw $e;
         }
 
         return $response;
     }
-
 }

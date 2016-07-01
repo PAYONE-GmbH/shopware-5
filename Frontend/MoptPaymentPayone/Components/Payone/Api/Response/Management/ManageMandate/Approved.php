@@ -35,27 +35,27 @@ class Payone_Api_Response_Management_ManageMandate_Approved extends Payone_Api_R
     /**
      * @var string
      */
-    protected $mandate_identification = NULL;
+    protected $mandate_identification = null;
     /**
      * @var string
      */
-    protected $mandate_status = NULL;
+    protected $mandate_status = null;
     /**
      * @var string
      */
-    protected $mandate_text = NULL;
+    protected $mandate_text = null;
     /**
      * @var string
      */
-    protected $creditor_identifier = NULL;
+    protected $creditor_identifier = null;
     /**
      * @var string
      */
-    protected $iban = NULL;
+    protected $iban = null;
     /**
      * @var string
      */
-    protected $bic = NULL;
+    protected $bic = null;
 
     /**
      * @param string $mandateIdentification

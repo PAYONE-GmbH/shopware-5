@@ -105,5 +105,4 @@ class Payone_ClientApi_Service_GenerateHash
         $hash = md5($hashString);
         return $hash;
     }
-
 }

@@ -2,7 +2,7 @@
 
 /**
  * backend controller for payone creditcard config editing
- * 
+ *
  * $Id: $
  */
 class Shopware_Controllers_Backend_MoptPayoneCreditcardConfig extends Shopware_Controllers_Backend_Application
@@ -37,7 +37,7 @@ class Shopware_Controllers_Backend_MoptPayoneCreditcardConfig extends Shopware_C
 
     /**
      * extend save method to catch validation errors
-     * 
+     *
      * @param array $data
      * @return array
      */
@@ -83,5 +83,4 @@ class Shopware_Controllers_Backend_MoptPayoneCreditcardConfig extends Shopware_C
         
         return parent::save($data);
     }
-
 }

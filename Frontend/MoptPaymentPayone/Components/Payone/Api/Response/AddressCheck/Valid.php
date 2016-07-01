@@ -30,37 +30,36 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Response_AddressCheck_Valid
-    extends Payone_Api_Response_Abstract
+class Payone_Api_Response_AddressCheck_Valid extends Payone_Api_Response_Abstract
 {
     /**
      * @var int
      */
-    protected $secstatus = NULL;
+    protected $secstatus = null;
     /**
      * @var string
      */
-    protected $personstatus = NULL;
+    protected $personstatus = null;
     /**
      * @var string
      */
-    protected $street = NULL;
+    protected $street = null;
     /**
      * @var string
      */
-    protected $streetname = NULL;
+    protected $streetname = null;
     /**
      * @var string
      */
-    protected $streetnumber = NULL;
+    protected $streetnumber = null;
     /**
      * @var string
      */
-    protected $zip = NULL;
+    protected $zip = null;
     /**
      * @var string
      */
-    protected $city = NULL;
+    protected $city = null;
 
     /**
      * @return bool
@@ -68,10 +67,9 @@ class Payone_Api_Response_AddressCheck_Valid
     public function isCorrect()
     {
         if ($this->secstatus == Payone_Api_Enum_AddressCheckSecstatus::ADDRESS_CORRECT) {
-            return TRUE;
-        }
-        else {
-            return FALSE;
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -81,10 +79,9 @@ class Payone_Api_Response_AddressCheck_Valid
     public function isCorrectable()
     {
         if ($this->secstatus == Payone_Api_Enum_AddressCheckSecstatus::ADDRESS_CORRECTABLE) {
-            return TRUE;
-        }
-        else {
-            return FALSE;
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -94,10 +91,9 @@ class Payone_Api_Response_AddressCheck_Valid
     public function isNotCorrectable()
     {
         if ($this->secstatus == Payone_Api_Enum_AddressCheckSecstatus::ADDRESS_NONE_CORRECTABLE) {
-            return TRUE;
-        }
-        else {
-            return FALSE;
+            return true;
+        } else {
+            return false;
         }
     }
 

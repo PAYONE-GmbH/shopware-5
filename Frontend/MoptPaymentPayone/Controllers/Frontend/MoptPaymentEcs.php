@@ -33,8 +33,12 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $amount = $this->getBasketAmount($userData);
         
         $expressCheckoutRequestData = $paramBuilder->buildPayPalExpressCheckout(
-                $paymentId, $this->Front()->Router(), $amount, $this->getCurrencyShortName(), 
-                $userData);
+            $paymentId,
+            $this->Front()->Router(),
+            $amount,
+            $this->getCurrencyShortName(),
+            $userData
+        );
 
         $request = new Payone_Api_Request_Genericpayment($expressCheckoutRequestData);
 
@@ -56,7 +60,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
 
     /**
      * get plugin bootstrap
-     * 
+     *
      * @return plugin
      */
     protected function Plugin()
@@ -79,8 +83,13 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $amount = $this->getBasketAmount($userData);
         
         $expressCheckoutRequestData = $paramBuilder->buildPayPalExpressCheckoutDetails(
-                $paymentId, $this->Front()->Router(), $amount, $this->getCurrencyShortName(), 
-                $userData, $session->moptPaypalEcsWorkerId);
+            $paymentId,
+            $this->Front()->Router(),
+            $amount,
+            $this->getCurrencyShortName(),
+            $userData,
+            $session->moptPaypalEcsWorkerId
+        );
 
         $request = new Payone_Api_Request_Genericpayment($expressCheckoutRequestData);
 
@@ -121,9 +130,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
             $sTaxFree = false;
             if (!empty($userData['additional']['countryShipping']['taxfree'])) {
                 $sTaxFree = true;
-            } elseif (
-                    !empty($userData['additional']['countryShipping']['taxfree_ustid']) 
-                    && !empty($userData['billingaddress']['ustid']) 
+            } elseif (!empty($userData['additional']['countryShipping']['taxfree_ustid'])
+                    && !empty($userData['billingaddress']['ustid'])
             ) {
                 $sTaxFree = true;
             }
@@ -170,10 +178,9 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
     {
         $payData = $apiResponse->getPaydata()->toAssocArray();
         
-        if(!$this->isUserLoggedIn($session)){
+        if (!$this->isUserLoggedIn($session)) {
             $this->createUserWithoutAccount($payData, $session, $paymentId);
-        }
-        else {
+        } else {
             $user = $this->updateUserAddresses($payData, $session, $paymentId);
             if ($user === null) {
                 return $this->ecsAbortAction();
@@ -197,47 +204,47 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
     }
     
   /**
-   * create / register user without login 
+   * create / register user without login
    */
-  protected function createUserWithoutAccount($personalData, $session, $paymentId)
-  {
-    $register = $this->extractData($personalData);
-    $register["payment"]["object"]["id"] = $paymentId;
+    protected function createUserWithoutAccount($personalData, $session, $paymentId)
+    {
+        $register = $this->extractData($personalData);
+        $register["payment"]["object"]["id"] = $paymentId;
 
-    $session['sRegister'] = $register;
-    $session['sRegisterFinished'] = false;
+        $session['sRegister'] = $register;
+        $session['sRegisterFinished'] = false;
 
-    $this->admin->sSaveRegister();
-  }
+        $this->admin->sSaveRegister();
+    }
   
-  protected function updateUserAddresses($personalData, $session, $paymentId)
-  {
-    $personalData = $this->extractData($personalData);
-    // use old phone number in case phone number is required
-    if (Shopware()->Config()->get('requirePhoneField')) {
-        $oldUserData = $this->admin->sGetUserData();
-        $personalData['billing']['phone'] = $oldUserData['billingaddress']['phone'];
+    protected function updateUserAddresses($personalData, $session, $paymentId)
+    {
+        $personalData = $this->extractData($personalData);
+      // use old phone number in case phone number is required
+        if (Shopware()->Config()->get('requirePhoneField')) {
+            $oldUserData = $this->admin->sGetUserData();
+            $personalData['billing']['phone'] = $oldUserData['billingaddress']['phone'];
+        }
+        $updated = $this->updateBillingAddress($personalData, $session, $paymentId);
+        if (!$updated) {
+            return null;
+        }
+        $$updated = $checkData = $this->updateShippingAddress($personalData, $session, $paymentId);
+        if (!$updated) {
+            return null;
+        }
+        return $personalData;
     }
-    $updated = $this->updateBillingAddress($personalData, $session, $paymentId);
-    if (!$updated) {
-        return null;
-    }
-    $$updated = $checkData = $this->updateShippingAddress($personalData, $session, $paymentId);
-    if (!$updated) {
-        return null;
-    }
-    return $personalData;
-  }
   
-  protected function updateBillingAddress($personalData, $session, $paymentId)
-  {
-    $countryData = $this->admin->sGetCountryList();
-    $countryIds = array();
-    foreach ($countryData as $key => $country) {
-        $countryIds[$key] = $country['id'];
-    }
-    $this->admin->sSYSTEM->_POST  = $personalData['billing'];
-    $rules = array(
+    protected function updateBillingAddress($personalData, $session, $paymentId)
+    {
+        $countryData = $this->admin->sGetCountryList();
+        $countryIds = array();
+        foreach ($countryData as $key => $country) {
+            $countryIds[$key] = $country['id'];
+        }
+        $this->admin->sSYSTEM->_POST  = $personalData['billing'];
+        $rules = array(
                 'salutation'=>array('required'=>1),
                 'firstname'=>array('required'=>1),
                 'lastname'=>array('required'=>1),
@@ -247,86 +254,85 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
                 'phone'=>array('required'=> intval(Shopware()->Config()->get('requirePhoneField'))),
                 'country'=>array('required' => 1, 'in' => $countryIds)
             );
-    $checkData = $this->admin->sValidateStep2($rules, true);
-    if (!empty($checkData['sErrorMessages'])) {
-        $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-        $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-        return false;
-    } else {
-        $this->admin->sUpdateBilling();
-        return true;
+        $checkData = $this->admin->sValidateStep2($rules, true);
+        if (!empty($checkData['sErrorMessages'])) {
+            $this->View()->sErrorFlag = $checkData['sErrorFlag'];
+            $this->View()->sErrorMessages = $checkData['sErrorMessages'];
+            return false;
+        } else {
+            $this->admin->sUpdateBilling();
+            return true;
+        }
     }
-  }
   
-  protected function updateShippingAddress($personalData, $session, $paymentId)
-  {
-    $rules = array(
+    protected function updateShippingAddress($personalData, $session, $paymentId)
+    {
+        $rules = array(
         'salutation'=>array('required'=>1),
         'firstname'=>array('required'=>1),
         'lastname'=>array('required'=>1),
         'street'=>array('required'=>1),
         'zipcode'=>array('required'=>1),
         'city'=>array('required'=>1)
-    );
-    $this->admin->sSYSTEM->_POST = $personalData['shipping'];
-    $checkData = $this->admin->sValidateStep2ShippingAddress($rules, true);
-    if (!empty($checkData['sErrorMessages'])) {
-        $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-        $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-        return false;
-    } else {
-        $this->admin->sUpdateShipping();
-        return true;
+        );
+        $this->admin->sSYSTEM->_POST = $personalData['shipping'];
+        $checkData = $this->admin->sValidateStep2ShippingAddress($rules, true);
+        if (!empty($checkData['sErrorMessages'])) {
+            $this->View()->sErrorFlag = $checkData['sErrorFlag'];
+            $this->View()->sErrorMessages = $checkData['sErrorMessages'];
+            return false;
+        } else {
+            $this->admin->sUpdateShipping();
+            return true;
+        }
     }
-  }
   
   /**
    * get user-data as array from response
-   * 
+   *
    * @param array $personalData
    * @return array
    */
-  protected function extractData($personalData)
-  {
-    $register = array();
-    $register['billing']['city']           = $personalData['shipping_city'];
-    $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['shipping_country']);
-    if($personalData['shipping_state'] !== 'Empty') {
-        $register['billing']['stateID']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['shipping_state']);
+    protected function extractData($personalData)
+    {
+        $register = array();
+        $register['billing']['city']           = $personalData['shipping_city'];
+        $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['shipping_country']);
+        if ($personalData['shipping_state'] !== 'Empty') {
+            $register['billing']['stateID']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['shipping_state']);
+        }
+        $register['billing']['street']         = $personalData['shipping_street'];
+        $register['billing']['zipcode']        = $personalData['shipping_zip'];
+        $register['billing']['firstname']      = $personalData['shipping_firstname'];
+        $register['billing']['lastname']       = $personalData['shipping_lastname'];
+        $register['billing']['salutation']     = 'mr';
+        if (isset($personalData['shipping_company']) && !empty($personalData['shipping_company'])) {
+            $register['billing']['company']        = $personalData['shipping_company'];
+        } else {
+            $register['billing']['company']        = '';
+            $register['personal']['customer_type'] = 'private';
+        }
+        $register['personal']['email']         = $personalData['email'];
+        $register['personal']['firstname']     = $personalData['shipping_firstname'];
+        $register['personal']['lastname']      = $personalData['shipping_lastname'];
+        $register['personal']['salutation']    = 'mr';
+        $register['personal']['skipLogin']     = 1;
+        $register['shipping']['salutation']   = 'mr';
+        $register['shipping']['firstname']    = $register['billing']['firstname'];
+        $register['shipping']['lastname']     = $register['billing']['lastname'];
+        $register['shipping']['street']       = $register['billing']['street'];
+        $register['shipping']['zipcode']      = $register['billing']['zipcode'];
+        $register['shipping']['city']         = $register['billing']['city'];
+        $register['shipping']['country']      = $register['billing']['country'];
+        if ($personalData['shipping_state'] !== 'Empty') {
+            $register['shipping']['stateID']  = $register['billing']['stateID'];
+        }
+        $register['shipping']['company']      = $register['billing']['company'];
+        $register['shipping']['department']   = '';
+        $register['auth']['email']            = $personalData['email'];
+        $register['auth']['password']         = md5(uniqid('', true));
+        $register['auth']['accountmode']      = 1;
+        $register['auth']['encoderName']      = '';
+        return $register;
     }
-    $register['billing']['street']         = $personalData['shipping_street'];
-    $register['billing']['zipcode']        = $personalData['shipping_zip'];
-    $register['billing']['firstname']      = $personalData['shipping_firstname'];
-    $register['billing']['lastname']       = $personalData['shipping_lastname'];
-    $register['billing']['salutation']     = 'mr';
-    if(isset($personalData['shipping_company']) && !empty($personalData['shipping_company'])){
-        $register['billing']['company']        = $personalData['shipping_company'];
-    }
-    else {
-        $register['billing']['company']        = '';
-        $register['personal']['customer_type'] = 'private';
-    }
-    $register['personal']['email']         = $personalData['email'];
-    $register['personal']['firstname']     = $personalData['shipping_firstname'];
-    $register['personal']['lastname']      = $personalData['shipping_lastname'];
-    $register['personal']['salutation']    = 'mr';
-    $register['personal']['skipLogin']     = 1;
-    $register['shipping']['salutation']   = 'mr';
-    $register['shipping']['firstname']    = $register['billing']['firstname'];
-    $register['shipping']['lastname']     = $register['billing']['lastname'];
-    $register['shipping']['street']       = $register['billing']['street'];
-    $register['shipping']['zipcode']      = $register['billing']['zipcode'];
-    $register['shipping']['city']         = $register['billing']['city'];
-    $register['shipping']['country']      = $register['billing']['country'];
-    if ($personalData['shipping_state'] !== 'Empty') {
-        $register['shipping']['stateID']  = $register['billing']['stateID'];
-    }
-    $register['shipping']['company']      = $register['billing']['company'];
-    $register['shipping']['department']   = '';
-    $register['auth']['email']            = $personalData['email'];
-    $register['auth']['password']         = md5(uniqid('', true));
-    $register['auth']['accountmode']      = 1;
-    $register['auth']['encoderName']      = '';
-    return $register;
-  }
 }

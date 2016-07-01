@@ -7,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,46 +25,50 @@
  * @package log4php
  * @see Logger
  */
-class Payone_Log4php_LoggerRoot extends Payone_Log4php_Logger {
-	/**
-	 * Constructor
-	 *
-	 * @param integer $level initial log level
-	 */
-	public function __construct($level = null) {
-		parent::__construct('root');
+class Payone_Log4php_LoggerRoot extends Payone_Log4php_Logger
+{
+    /**
+     * Constructor
+     *
+     * @param integer $level initial log level
+     */
+    public function __construct($level = null)
+    {
+        parent::__construct('root');
 
-		if($level == null) {
-			$level = Payone_Log4php_LoggerLevel::getLevelAll();
-		}
-		$this->setLevel($level);
-	} 
-	
-	/**
-	 * @return Payone_Log4php_LoggerLevel the level
-	 */
-	public function getChainedLevel() {
-		return parent::getLevel();
-	} 
-	
-	/**
-	 * Setting a null value to the level of the root category may have catastrophic results.
-	 * @param Payone_Log4php_LoggerLevel $level
-	 */
-	public function setLevel($level) {
-		if($level != null) {
-			parent::setLevel($level);
-		}	 
-	}
-	
-	/**
-	 * Always returns false.
-	 * Because LoggerRoot has no parents, it returns false.
-	 * @param Logger $parent
-	 * @return boolean
-	 */
-	public function setParent(Payone_Log4php_Logger $parent) {
-		return false;
-	}
-
+        if ($level == null) {
+            $level = Payone_Log4php_LoggerLevel::getLevelAll();
+        }
+        $this->setLevel($level);
+    }
+    
+    /**
+     * @return Payone_Log4php_LoggerLevel the level
+     */
+    public function getChainedLevel()
+    {
+        return parent::getLevel();
+    }
+    
+    /**
+     * Setting a null value to the level of the root category may have catastrophic results.
+     * @param Payone_Log4php_LoggerLevel $level
+     */
+    public function setLevel($level)
+    {
+        if ($level != null) {
+            parent::setLevel($level);
+        }
+    }
+    
+    /**
+     * Always returns false.
+     * Because LoggerRoot has no parents, it returns false.
+     * @param Logger $parent
+     * @return boolean
+     */
+    public function setParent(Payone_Log4php_Logger $parent)
+    {
+        return false;
+    }
 }

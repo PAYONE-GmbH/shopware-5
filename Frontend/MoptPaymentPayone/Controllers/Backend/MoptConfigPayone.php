@@ -2,7 +2,7 @@
 
 /**
  * backend controller for payone configuration
- * 
+ *
  * $Id: $
  */
 class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers_Backend_ExtJs
@@ -23,21 +23,21 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
 
     /**
      * get payone config repository
-     * 
+     *
      * @return \Shopware\CustomModels\MoptPayoneConfig\Repository
      */
     public function getRepository()
     {
         if ($this->repository === null) {
             $this->repository = Shopware()->Models()->getRepository(
-                    'Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig'
+                'Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig'
             );
         }
         return $this->repository;
     }
 
     /**
-     * get global payone config 
+     * get global payone config
      */
     public function getConfigAction()
     {
@@ -47,8 +47,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
         $this->View()->assign(array(
             "success" => true,
             "data" => $data,
-            "totalCount" => count($data))
-        );
+            "totalCount" => count($data)));
     }
 
     /**
@@ -58,14 +57,14 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     public function updateConfigAction()
     {
         $this->View()->assign(
-                $this->saveConfig()
+            $this->saveConfig()
         );
     }
 
     /**
      * saves submitted payment config or calls deleteConfigAction if reset is requested
      *
-     * @return mixed 
+     * @return mixed
      */
     public function saveConfigAction()
     {
@@ -110,12 +109,14 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
      * delete separate config
      * does not delete global config
      *
-     * @param array $data 
+     * @param array $data
      */
     protected function deleteConfigAction($data)
     {
         $data = $this->get('MoptPayoneMain')->getPayoneConfig(
-                $data['paymentId'], true, false
+            $data['paymentId'],
+            true,
+            false
         );
 
         if ($data->getPaymentId() != 0) {
@@ -160,7 +161,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'mandateActive',
             'mandateDownloadEnabled',
             'paypalEcsActive',
-            'payolutionB2bmode',  
+            'payolutionB2bmode',
             'showSofortIbanBic',
         );
 
@@ -214,12 +215,11 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
         $this->View()->assign(array(
             "success" => true,
             "data" => $data,
-            "totalCount" => count($data))
-        );
+            "totalCount" => count($data)));
     }
 
     /**
-     * get pament config action, returns config according to submitted payment id 
+     * get pament config action, returns config according to submitted payment id
      */
     public function getPaymentConfigAction()
     {
@@ -234,7 +234,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     }
 
     /**
-     * retrieve all possible payment states a order may have for transaction status mapping 
+     * retrieve all possible payment states a order may have for transaction status mapping
      */
     public function readPaymentStateAction()
     {
@@ -251,7 +251,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
      * get config for given payment id
      * and add extra information for some payment methods for special form treatment
      *
-     * @param string $paymentId 
+     * @param string $paymentId
      */
     protected function moptGetPaymentConfig($paymentId)
     {
@@ -260,7 +260,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
         $paymentHelper = Shopware()->Plugins()->Frontend()->MoptPaymentPayone()
                         ->Application()->MoptPayoneMain()->getPaymentHelper();
 
-        //getPaymentName 
+        //getPaymentName
         $builder = Shopware()->Models()->createQueryBuilder();
         $paymentData = $builder->select('a.name')
                         ->from('Shopware\Models\Payment\Payment a')
@@ -289,10 +289,10 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             }
             if ($paymentHelper->isPayonePayolutionDebitNote($paymentData['name'])) {
                 $data['extra'] = 'payolution_debitnote';
-            }     
+            }
             if ($paymentHelper->isPayonePayolutionInvoice($paymentData['name'])) {
                 $data['extra'] = 'payolution_invoice';
-            }               
+            }
         }
 
         $data = $this->getIsoCodesForCountries($data);
@@ -304,7 +304,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
      * checks if a separate config exists for given payment id
      *
      * @param string $paymentId
-     * @return boolean 
+     * @return boolean
      */
     protected function moptDoesSeparateConfigExists($paymentId)
     {
@@ -383,5 +383,4 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
 
         return $configData;
     }
-
 }

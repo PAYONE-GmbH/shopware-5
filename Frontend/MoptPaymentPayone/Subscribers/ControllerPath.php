@@ -16,14 +16,14 @@ class ControllerPath implements SubscriberInterface
     
     /**
      * path to plugin files
-     * 
+     *
      * @var string
      */
     private $path;
     
     /**
      * inject path to plugin files
-     * 
+     *
      * @param type $path
      */
     public function __construct($path)
@@ -33,7 +33,7 @@ class ControllerPath implements SubscriberInterface
     
     /**
      * return array with all subsribed events
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
@@ -61,7 +61,7 @@ class ControllerPath implements SubscriberInterface
             => 'moptRegisterController_Backend_MoptPayonePayment',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptExportPayone' => 'onGetBackendExportController',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayonePaypal' => 'onGetBackendControllerPaypal',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneCreditcardConfig' 
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneCreditcardConfig'
             => 'onGetBackendControllerCreditcardConfig',
         );
     }
@@ -74,37 +74,37 @@ class ControllerPath implements SubscriberInterface
     */
     public function onGetControllerPathFrontendMoptPaymentPayone()
     {
-      return $this->path . '/Controllers/Frontend/MoptPaymentPayone.php';
+        return $this->path . '/Controllers/Frontend/MoptPaymentPayone.php';
     }
     
     /**
     * controller callback, return path to controller file
-    * 
+    *
     * @return string
     */
     public function moptRegisterController_Frontend_MoptPaymentEcs()
     {
-      return $this->path . 'Controllers/Frontend/MoptPaymentEcs.php';
+        return $this->path . 'Controllers/Frontend/MoptPaymentEcs.php';
     }
     
     /**
     * controller callback, return path to controller file
-    * 
+    *
     * @return string
     */
     public function moptRegisterController_Frontend_MoptAjaxPayone()
     {
-      return $this->path . 'Controllers/Frontend/MoptAjaxPayone.php';
+        return $this->path . 'Controllers/Frontend/MoptAjaxPayone.php';
     }
     
     /**
     * controller callback, return path to controller file
-    * 
+    *
     * @return string
     */
     public function moptRegisterController_Frontend_MoptShopNotification()
     {
-      return $this->path . 'Controllers/Frontend/MoptShopNotification.php';
+        return $this->path . 'Controllers/Frontend/MoptShopNotification.php';
     }
     
     /**
@@ -114,7 +114,7 @@ class ControllerPath implements SubscriberInterface
     */
     public function onGetConfigControllerBackend()
     {
-      return $this->path . 'Controllers/Backend/MoptConfigPayone.php';
+        return $this->path . 'Controllers/Backend/MoptConfigPayone.php';
     }
     
       /**
@@ -122,74 +122,73 @@ class ControllerPath implements SubscriberInterface
    *
    * @return string
    */
-  public function onGetApilogControllerBackend()
-  {
-    return $this->path . 'Controllers/Backend/MoptApilogPayone.php';
-  }
+    public function onGetApilogControllerBackend()
+    {
+        return $this->path . 'Controllers/Backend/MoptApilogPayone.php';
+    }
 
-  public function onGetTransactionLogControllerBackend()
-  {
-    return $this->path . 'Controllers/Backend/MoptPayoneTransactionLog.php';
-  }
-
-  /**
-   * Returns the path to a backend controller for an event.
-   *
-   * @return string
-   */
-  public function onGetSupportControllerBackend()
-  {
-    return $this->path . 'Controllers/Backend/MoptSupportPayone.php';
-  }
+    public function onGetTransactionLogControllerBackend()
+    {
+        return $this->path . 'Controllers/Backend/MoptPayoneTransactionLog.php';
+    }
 
   /**
    * Returns the path to a backend controller for an event.
    *
    * @return string
    */
-  public function onGetBackendExportController()
-  {
-    return $this->path . 'Controllers/Backend/MoptExportPayone.php';
-  }
+    public function onGetSupportControllerBackend()
+    {
+        return $this->path . 'Controllers/Backend/MoptSupportPayone.php';
+    }
+
+  /**
+   * Returns the path to a backend controller for an event.
+   *
+   * @return string
+   */
+    public function onGetBackendExportController()
+    {
+        return $this->path . 'Controllers/Backend/MoptExportPayone.php';
+    }
   
     /**
    * controller callback, return path to controller file
-   * 
+   *
    * @return string
    */
-  public function moptRegisterController_Backend_MoptPayoneOrder()
-  {
-    return $this->path . 'Controllers/Backend/MoptPayoneOrder.php';
-  }
+    public function moptRegisterController_Backend_MoptPayoneOrder()
+    {
+        return $this->path . 'Controllers/Backend/MoptPayoneOrder.php';
+    }
 
   /**
    * controller callback, return path to controller file
-   * 
+   *
    * @return string
    */
-  public function moptRegisterController_Backend_MoptPayonePayment()
-  {
-    return $this->path . 'Controllers/Backend/MoptPayonePayment.php';
-  }
+    public function moptRegisterController_Backend_MoptPayonePayment()
+    {
+        return $this->path . 'Controllers/Backend/MoptPayonePayment.php';
+    }
   
   /**
    * Returns the path to a backend controller for an event.
    *
    * @return string
    */
-  public function onGetBackendControllerPaypal()
-  {
-    return $this->path . 'Controllers/Backend/MoptPayonePaypal.php';
-  }
+    public function onGetBackendControllerPaypal()
+    {
+        return $this->path . 'Controllers/Backend/MoptPayonePaypal.php';
+    }
   
   /**
    * Returns the path to a backend controller for an event.
    *
    * @return string
    */
-  public function onGetBackendControllerCreditcardConfig()
-  {
-    return $this->path . 'Controllers/Backend/MoptPayoneCreditcardConfig.php';
-  }
-
+    public function onGetBackendControllerCreditcardConfig()
+    {
+        return $this->path . 'Controllers/Backend/MoptPayoneCreditcardConfig.php';
+    }
 }

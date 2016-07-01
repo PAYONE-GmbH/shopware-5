@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_TransactionStatus_Mapper_Request
-    implements Payone_TransactionStatus_Mapper_RequestInterface
+class Payone_TransactionStatus_Mapper_Request implements Payone_TransactionStatus_Mapper_RequestInterface
 {
     public function mapByArray(array $data)
     {
@@ -42,5 +41,4 @@ class Payone_TransactionStatus_Mapper_Request
 
         return $request;
     }
-
 }

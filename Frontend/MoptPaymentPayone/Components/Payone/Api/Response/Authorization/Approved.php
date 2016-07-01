@@ -30,21 +30,20 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Response_Authorization_Approved
-    extends Payone_Api_Response_Authorization_Abstract
+class Payone_Api_Response_Authorization_Approved extends Payone_Api_Response_Authorization_Abstract
 {
     /**
      * @var string
      */
-    protected $creditor_identifier = NULL;
+    protected $creditor_identifier = null;
     /**
      * @var int
      */
-    protected $clearing_date = NULL;
+    protected $clearing_date = null;
     /**
      * @var int
      */
-    protected $clearing_amount = NULL;
+    protected $clearing_amount = null;
 
     /**
      * @param string $creditorIdentifier

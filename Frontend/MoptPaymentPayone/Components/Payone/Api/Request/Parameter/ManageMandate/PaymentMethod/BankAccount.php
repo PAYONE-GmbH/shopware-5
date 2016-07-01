@@ -30,29 +30,28 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_ManageMandate_PaymentMethod_BankAccount
-    extends Payone_Api_Request_Parameter_ManageMandate_PaymentMethod_Abstract
+class Payone_Api_Request_Parameter_ManageMandate_PaymentMethod_BankAccount extends Payone_Api_Request_Parameter_ManageMandate_PaymentMethod_Abstract
 {
      /**
      * @var string
      */
-    protected $bankcountry = NULL;
+    protected $bankcountry = null;
     /**
      * @var string
      */
-    protected $bankaccount = NULL;
+    protected $bankaccount = null;
     /**
      * @var string
      */
-    protected $bankcode = NULL;
+    protected $bankcode = null;
     /**
      * @var string
      */
-    protected $iban = NULL;
+    protected $iban = null;
     /**
      * @var string
      */
-    protected $bic = NULL;
+    protected $bic = null;
 
     /**
      * @param string $bankcountry

@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Settings_Data_ConfigFile_Misc_TransactionstatusForwarding
-    extends Payone_Settings_Data_ConfigFile_Abstract
-    implements Payone_Settings_Data_ConfigFile_Interface
+class Payone_Settings_Data_ConfigFile_Misc_TransactionstatusForwarding extends Payone_Settings_Data_ConfigFile_Abstract implements Payone_Settings_Data_ConfigFile_Interface
 {
     protected $key = 'transactionstatus_forwarding';
 
@@ -50,7 +48,8 @@ class Payone_Settings_Data_ConfigFile_Misc_TransactionstatusForwarding
     /**
      * @param $value
      */
-    public function addTransactionstatusForwarding($value){
+    public function addTransactionstatusForwarding($value)
+    {
         $this->transactionstatus_forwarding[] = $value;
     }
 

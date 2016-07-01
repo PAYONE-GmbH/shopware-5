@@ -24,7 +24,7 @@ class Payone_Api_Response_Genericpayment_Redirect extends Payone_Api_Response_Ge
     /**
      * @var string
      */
-    protected $redirecturl = NULL;
+    protected $redirecturl = null;
 
     /**
      * @param string $redirecturl

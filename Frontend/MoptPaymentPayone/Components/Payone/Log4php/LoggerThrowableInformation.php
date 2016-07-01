@@ -7,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,53 +24,56 @@
  * @package log4php
  * @since 2.1
  */
-class Payone_Log4php_LoggerThrowableInformation {
-	
-	/** @var Exception Throwable to log */
-	private $throwable;
-	
-	/** @var array Array of throwable messages */
-	private $throwableArray;
-	
-	/** @var Logger reference */
-	private $logger;
-	
-	/**
-	 * Create a new instance
-	 * 
-	 * @param $throwable - a throwable as a exception
-	 * @param $logger - Logger reference
-	 */
-	public function __construct(Exception $throwable)  {
-		$this->throwable = $throwable;
-	}
-	
-	/**
-	* Return source exception
-	* 
-	* @return Exception
-	*/
-	public function getThrowable() {
-		return $this->throwable;
-	}
-	
-	/**
-	 * @desc Returns string representation of throwable
-	 * 
-	 * @return array 
-	 */
-	public function getStringRepresentation() {
-		if (!is_array($this->throwableArray)) {
-			$renderer = Payone_Log4php_Logger::getHierarchy()->getRendererMap()->getByClassName(get_class($this->throwable));
-			
-			// TODO: why this?
-			if ($renderer instanceof Payone_Log4php_LoggerRendererDefault) {
-				$renderer = new Payone_Log4php_LoggerRendererException();
-			}
-			$this->throwableArray = explode("\n", $renderer->render($this->throwable));
-		}
-		
-		return $this->throwableArray;
-	}
+class Payone_Log4php_LoggerThrowableInformation
+{
+    
+    /** @var Exception Throwable to log */
+    private $throwable;
+    
+    /** @var array Array of throwable messages */
+    private $throwableArray;
+    
+    /** @var Logger reference */
+    private $logger;
+    
+    /**
+     * Create a new instance
+     *
+     * @param $throwable - a throwable as a exception
+     * @param $logger - Logger reference
+     */
+    public function __construct(Exception $throwable)
+    {
+        $this->throwable = $throwable;
+    }
+    
+    /**
+    * Return source exception
+    *
+    * @return Exception
+    */
+    public function getThrowable()
+    {
+        return $this->throwable;
+    }
+    
+    /**
+     * @desc Returns string representation of throwable
+     *
+     * @return array
+     */
+    public function getStringRepresentation()
+    {
+        if (!is_array($this->throwableArray)) {
+            $renderer = Payone_Log4php_Logger::getHierarchy()->getRendererMap()->getByClassName(get_class($this->throwable));
+            
+            // TODO: why this?
+            if ($renderer instanceof Payone_Log4php_LoggerRendererDefault) {
+                $renderer = new Payone_Log4php_LoggerRendererException();
+            }
+            $this->throwableArray = explode("\n", $renderer->render($this->throwable));
+        }
+        
+        return $this->throwableArray;
+    }
 }
-?>

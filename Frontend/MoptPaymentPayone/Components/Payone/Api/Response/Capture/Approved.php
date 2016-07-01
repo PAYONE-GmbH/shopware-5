@@ -35,75 +35,75 @@ class Payone_Api_Response_Capture_Approved extends Payone_Api_Response_Abstract
     /**
      * @var int
      */
-    protected $txid = NULL;
+    protected $txid = null;
     /**
      * @var string
      */
-    protected $settleaccount = NULL;
+    protected $settleaccount = null;
     /**
      * @var string
      */
-    protected $clearing_bankaccountholder = NULL;
+    protected $clearing_bankaccountholder = null;
     /**
      * @var string
      */
-    protected $clearing_bankcountry = NULL;
+    protected $clearing_bankcountry = null;
     /**
      * @var string
      */
-    protected $clearing_bankaccount = NULL;
+    protected $clearing_bankaccount = null;
     /**
      * @var string
      */
-    protected $clearing_bankcode = NULL;
+    protected $clearing_bankcode = null;
     /**
      * @var string
      */
-    protected $clearing_bankiban = NULL;
+    protected $clearing_bankiban = null;
     /**
      * @var string
      */
-    protected $clearing_bankbic = NULL;
+    protected $clearing_bankbic = null;
     /**
      * @var string
      */
-    protected $clearing_bankcity = NULL;
+    protected $clearing_bankcity = null;
     /**
      * @var string
      */
-    protected $clearing_bankname = NULL;
+    protected $clearing_bankname = null;
 
     /** @var string */
-    protected $clearing_legalnote = NULL;
+    protected $clearing_legalnote = null;
 
     /**
      * (YYYYMMDD)
      * @var string
      */
-    protected $clearing_duedate = NULL;
+    protected $clearing_duedate = null;
 
     /** @var string */
-    protected $clearing_reference = NULL;
+    protected $clearing_reference = null;
 
     /** @var string */
-    protected $clearing_instructionnote = NULL;
+    protected $clearing_instructionnote = null;
 
     /**
      * @var string
      */
-    protected $mandate_identification = NULL;
+    protected $mandate_identification = null;
     /**
      * @var string
      */
-    protected $creditor_identifier = NULL;
+    protected $creditor_identifier = null;
     /**
      * @var int
      */
-    protected $clearing_date = NULL;
+    protected $clearing_date = null;
     /**
      * @var int
      */
-    protected $clearing_amount = NULL;
+    protected $clearing_amount = null;
 
     /**
      * @param string $clearing_bankaccount

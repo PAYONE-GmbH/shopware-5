@@ -30,47 +30,46 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Invoicing_Item
-    extends Payone_Api_Request_Parameter_Abstract
+class Payone_Api_Request_Parameter_Invoicing_Item extends Payone_Api_Request_Parameter_Abstract
 {
     /**
      * @var string
      */
-    protected $id = NULL;
+    protected $id = null;
     /**
      * @var int
      */
-    protected $pr = NULL;
+    protected $pr = null;
     /**
      * @var int
      */
-    protected $no = NULL;
+    protected $no = null;
     /**
      * @var string
      */
-    protected $de = NULL;
+    protected $de = null;
 
     /**
      * Artikeltyp (Enum)
      * @var string */
-    protected $it = NULL;
+    protected $it = null;
 
     /**
      * @var int
      */
-    protected $va = NULL;
+    protected $va = null;
     /**
      * DeliveryDate (YYYYMMDD)
      *
      * @var string
      */
-    protected $sd = NULL;
+    protected $sd = null;
     /**
      * Lieferzeitraums-Ende (YYYYMMDD)
      *
      * @var string
      */
-    protected $ed = NULL;
+    protected $ed = null;
 
     /**
      * @param int $key

@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Settings_Configuration_Verification_Consumerscore
-    extends Payone_Settings_Configuration_Abstract
+class Payone_Settings_Configuration_Verification_Consumerscore extends Payone_Settings_Configuration_Abstract
 {
     /**
      * @return array
@@ -56,5 +55,4 @@ class Payone_Settings_Configuration_Verification_Consumerscore
 
         return $constants;
     }
-
 }

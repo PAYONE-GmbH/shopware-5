@@ -23,11 +23,11 @@ class Payone_Api_Response_Parameter_Paydata_DataItem extends Payone_Api_Response
     /**
      * @var string
      */
-    protected $key = NULL;
+    protected $key = null;
     /**
      * @var string
      */
-    protected $data = NULL;
+    protected $data = null;
 
     /**
      * @param int $key
@@ -71,5 +71,4 @@ class Payone_Api_Response_Parameter_Paydata_DataItem extends Payone_Api_Response
     {
         return $this->data;
     }
-
 }

@@ -38,5 +38,4 @@ interface Payone_SessionStatus_Mapper_RequestInterface
      * @return Payone_SessionStatus_Request
      */
     public function mapByArray(array $data);
-
 }

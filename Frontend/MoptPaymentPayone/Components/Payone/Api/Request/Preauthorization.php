@@ -40,19 +40,23 @@ class Payone_Api_Request_Preauthorization extends Payone_Api_Request_Authorizati
     
     
     
-    function getApiVersion() {
+    function getApiVersion()
+    {
         return $this->api_version;
     }
 
-    function getCashtype() {
+    function getCashtype()
+    {
         return $this->cashtype;
     }
 
-    function setApiVersion($api_version) {
+    function setApiVersion($api_version)
+    {
         $this->api_version = $api_version;
     }
 
-    function setCashtype($cashtype) {
+    function setCashtype($cashtype)
+    {
         $this->cashtype = $cashtype;
     }
     
@@ -70,7 +74,7 @@ class Payone_Api_Request_Preauthorization extends Payone_Api_Request_Authorizati
     public function getFinancingtype()
     {
         return $this->financingtype;
-    }    
+    }
 
     /**
      * @param string $birthday
@@ -86,8 +90,5 @@ class Payone_Api_Request_Preauthorization extends Payone_Api_Request_Authorizati
     public function getBirthday()
     {
         return $this->birthday;
-    }     
-
-
-
+    }
 }

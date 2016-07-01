@@ -30,49 +30,48 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-abstract class Payone_Api_Request_Authorization_Abstract
-    extends Payone_Api_Request_Abstract
+abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Request_Abstract
 {
     /**
      * Sub account ID
      *
      * @var int
      */
-    protected $aid = NULL;
+    protected $aid = null;
     /**
      * @var string
      */
-    protected $clearingtype = NULL;
+    protected $clearingtype = null;
     /**
      * Merchant reference number for the payment process. (Permitted symbols: 0-9, a-z, A-Z, .,-,_,/)
      *
      * @var string
      */
-    protected $reference = NULL;
+    protected $reference = null;
     /**
      * Total amount (in smallest currency unit! e.g. cent)
      *
      * @var int
      */
-    protected $amount = NULL;
+    protected $amount = null;
     /**
      * Currency (ISO-4217)
      *
      * @var string
      */
-    protected $currency = NULL;
+    protected $currency = null;
     /**
      * Individual parameter
      *
      * @var string
      */
-    protected $param = NULL;
+    protected $param = null;
     /**
      * dynamic text for debit and creditcard payments
      *
      * @var string
      */
-    protected $narrative_text = NULL;
+    protected $narrative_text = null;
 
     /**
      * @var Payone_Api_Request_Parameter_Authorization_PersonalData
@@ -99,7 +98,7 @@ abstract class Payone_Api_Request_Authorization_Abstract
     /**
      * Mandatory for PayPal Express Checkout
      * Alphanumeric max 16 chars
-     * @var string 
+     * @var string
      */
     protected $workorderid = null;
     
@@ -304,31 +303,36 @@ abstract class Payone_Api_Request_Authorization_Abstract
     /**
      * @return string
      */
-    function getWorkorderId() {
+    function getWorkorderId()
+    {
         return $this->workorderid;
     }
 
     /**
      * @param string $workorderid
      */
-    function setWorkorderId($workorderid) {
+    function setWorkorderId($workorderid)
+    {
         $this->workorderid = $workorderid;
     }
     
-    function getCustomerIsPresent() {
+    function getCustomerIsPresent()
+    {
         return $this->customer_is_present;
     }
 
-    function getRecurrence() {
+    function getRecurrence()
+    {
         return $this->recurrence;
     }
 
-    function setCustomerIsPresent($customer_is_present) {
+    function setCustomerIsPresent($customer_is_present)
+    {
         $this->customer_is_present = $customer_is_present;
     }
 
-    function setRecurrence($recurrence) {
+    function setRecurrence($recurrence)
+    {
         $this->recurrence = $recurrence;
     }
-
 }

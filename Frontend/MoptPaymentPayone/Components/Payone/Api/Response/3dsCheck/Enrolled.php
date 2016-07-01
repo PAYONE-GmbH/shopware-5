@@ -35,31 +35,31 @@ class Payone_Api_Response_3dsCheck_Enrolled extends Payone_Api_Response_Abstract
     /**
      * @var string
      */
-    protected $acsurl = NULL;
+    protected $acsurl = null;
     /**
      * @var string
      */
-    protected $termurl = NULL;
+    protected $termurl = null;
     /**
      * @var string
      */
-    protected $pareq = NULL;
+    protected $pareq = null;
     /**
      * @var string
      */
-    protected $xid = NULL;
+    protected $xid = null;
     /**
      * @var string
      */
-    protected $md = NULL;
+    protected $md = null;
     /**
      * @var string
      */
-    protected $pseudocardpan = NULL;
+    protected $pseudocardpan = null;
     /**
      * @var string
      */
-    protected $truncatedcardpan = NULL;
+    protected $truncatedcardpan = null;
 
     /**
      * @param string $acsurl

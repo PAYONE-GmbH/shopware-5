@@ -35,15 +35,15 @@ class Payone_Api_Response_3dsCheck_Valid extends Payone_Api_Response_Abstract
     /**
      * @var string
      */
-    protected $xid = NULL;
+    protected $xid = null;
     /**
      * @var string
      */
-    protected $pseudocardpan = NULL;
+    protected $pseudocardpan = null;
     /**
      * @var string
      */
-    protected $truncatedcardpan = NULL;
+    protected $truncatedcardpan = null;
 
     /**
      * @param string $pseudocardpan

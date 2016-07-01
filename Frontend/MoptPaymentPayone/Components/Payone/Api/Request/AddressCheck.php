@@ -37,59 +37,59 @@ class Payone_Api_Request_AddressCheck extends Payone_Api_Request_Abstract
     /**
      * @var int
      */
-    protected $aid = NULL;
+    protected $aid = null;
     /**
      * @var string
      */
-    protected $addresschecktype = NULL;
+    protected $addresschecktype = null;
     /**
      * @var string
      */
-    protected $firstname = NULL;
+    protected $firstname = null;
     /**
      * @var string
      */
-    protected $lastname = NULL;
+    protected $lastname = null;
     /**
      * @var string
      */
-    protected $company = NULL;
+    protected $company = null;
     /**
      * @var string
      */
-    protected $street = NULL;
+    protected $street = null;
     /**
      * @var string
      */
-    protected $streetname = NULL;
+    protected $streetname = null;
     /**
      * @var string
      */
-    protected $streetnumber = NULL;
+    protected $streetnumber = null;
     /**
      * @var string
      */
-    protected $zip = NULL;
+    protected $zip = null;
     /**
      * @var string
      */
-    protected $city = NULL;
+    protected $city = null;
     /**
      * @var string
      */
-    protected $state = NULL;
+    protected $state = null;
     /**
      * @var string
      */
-    protected $country = NULL;
+    protected $country = null;
     /**
      * @var string
      */
-    protected $telephonenumber = NULL;
+    protected $telephonenumber = null;
     /**
      * @var string
      */
-    protected $language = NULL;
+    protected $language = null;
 
     /**
      * @param string $addresschecktype

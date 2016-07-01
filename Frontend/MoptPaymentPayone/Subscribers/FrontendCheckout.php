@@ -9,14 +9,14 @@ class FrontendCheckout implements SubscriberInterface
 
     /**
      * di container
-     * 
+     *
      * @var \Shopware\Components\DependencyInjection\Container
      */
     private $container;
 
     /**
      * inject di container
-     * 
+     *
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
     public function __construct(\Shopware\Components\DependencyInjection\Container $container)
@@ -26,7 +26,7 @@ class FrontendCheckout implements SubscriberInterface
 
     /**
      * return array with all subsribed events
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
@@ -41,7 +41,7 @@ class FrontendCheckout implements SubscriberInterface
 
     /**
      * assign saved payment data to view
-     * 
+     *
      * @param \Enlight_Hook_HookArgs $arguments
      * @return type
      */
@@ -164,7 +164,7 @@ class FrontendCheckout implements SubscriberInterface
 
     /**
      * get url to configured and uploaded paypal ecs button
-     * 
+     *
      * @return boolean|string
      */
     protected function moptPayoneShortcutImgURL()
@@ -195,5 +195,4 @@ class FrontendCheckout implements SubscriberInterface
 
         return $result['image'];
     }
-
 }

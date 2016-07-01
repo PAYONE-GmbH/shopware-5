@@ -35,19 +35,19 @@ class Payone_Api_Response_Error extends Payone_Api_Response_Abstract
     /**
      * @var string
      */
-    protected $status = NULL;
+    protected $status = null;
     /**
      * @var string
      */
-    protected $errorcode = NULL;
+    protected $errorcode = null;
     /**
      * @var string
      */
-    protected $errormessage = NULL;
+    protected $errormessage = null;
     /**
      * @var string
      */
-    protected $customermessage = NULL;
+    protected $customermessage = null;
 
     /**
      * @param string $customermessage
@@ -112,5 +112,4 @@ class Payone_Api_Response_Error extends Payone_Api_Response_Abstract
     {
         return $this->status;
     }
-
 }

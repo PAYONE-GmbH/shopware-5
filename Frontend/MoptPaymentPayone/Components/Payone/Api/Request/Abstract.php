@@ -32,71 +32,70 @@
  */
 
 
-abstract class Payone_Api_Request_Abstract
-    implements Payone_Api_Request_Interface
+abstract class Payone_Api_Request_Abstract implements Payone_Api_Request_Interface
 {
     /**
      * @var int
      */
-    protected $mid = NULL;
+    protected $mid = null;
 
     /**
      * @var int
      */
-    protected $portalid = NULL;
+    protected $portalid = null;
 
     /**
      * @var string
      */
-    protected $key = NULL;
+    protected $key = null;
 
     /**
      * @var string
      */
-    protected $mode = NULL;
+    protected $mode = null;
 
     /**
      * @var string
      */
-    protected $request = NULL;
+    protected $request = null;
 
     /**
      * @var string
      */
-    protected $encoding = NULL;
+    protected $encoding = null;
 
     /**
      * name of the solution-partner (company)
      *
      * @var string
      */
-    protected $solution_name = NULL;
+    protected $solution_name = null;
 
     /**
      * version of the solution-partner's app / extension / plugin / etc..
      *
      * @var string
      */
-    protected $solution_version = NULL;
+    protected $solution_version = null;
 
     /**
      * system-name
      *
      * @var string
      */
-    protected $integrator_name = NULL;
+    protected $integrator_name = null;
 
     /**
      * system-version
      *
      * @var string
      */
-    protected $integrator_version = NULL;
+    protected $integrator_version = null;
 
     /**
      * @var Payone_Protocol_Service_ApplyFilters
      */
-    private $applyFilters = NULL;
+    private $applyFilters = null;
     
     /**
      * @param array $data
@@ -113,8 +112,7 @@ abstract class Payone_Api_Request_Abstract
      */
     public function init(array $data = array())
     {
-        foreach ($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $key = ucwords(str_replace('_', ' ', $key));
             $method = 'set' . str_replace(' ', '', $key);
 
@@ -130,8 +128,7 @@ abstract class Payone_Api_Request_Abstract
     public function toArray()
     {
         $result = array();
-        foreach ($this as $key => $data)
-        {
+        foreach ($this as $key => $data) {
             if ($data === null) {
                 continue;
             }
@@ -140,8 +137,7 @@ abstract class Payone_Api_Request_Abstract
                  * @var Payone_Api_Request_Parameter_Interface $data
                  */
                 $result = array_merge($result, $data->toArray());
-            }
-            elseif ($data instanceof Payone_Protocol_Service_ApplyFilters == false) {
+            } elseif ($data instanceof Payone_Protocol_Service_ApplyFilters == false) {
                 $result[$key] = $data;
             }
         }
@@ -156,7 +152,7 @@ abstract class Payone_Api_Request_Abstract
      */
     public function __toString()
     {
-        if($this->applyFilters) {
+        if ($this->applyFilters) {
             $result = $this->applyFilters->apply($this->toArray());
         } else {
             $protocolFactory     = new Payone_Protocol_Factory();
@@ -192,8 +188,7 @@ abstract class Payone_Api_Request_Abstract
 
                 return $object->get($propertyName);
             }
-        }
-        elseif (property_exists($this, $name)) {
+        } elseif (property_exists($this, $name)) {
             return $this->$name;
         }
         return null;
@@ -224,8 +219,7 @@ abstract class Payone_Api_Request_Abstract
 
                 return $object->set($propertyName, $value);
             }
-        }
-        elseif (property_exists($this, $name)) {
+        } elseif (property_exists($this, $name)) {
             $this->$name = $value;
             return true;
         }

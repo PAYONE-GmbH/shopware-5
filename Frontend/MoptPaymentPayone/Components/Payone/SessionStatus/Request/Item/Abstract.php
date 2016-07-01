@@ -33,14 +33,13 @@
 
 
 
-abstract class Payone_SessionStatus_Request_Item_Abstract
-    implements Payone_SessionStatus_Request_Item_Interface
+abstract class Payone_SessionStatus_Request_Item_Abstract implements Payone_SessionStatus_Request_Item_Interface
 {
 
     /**
      * @var Payone_Protocol_Service_ApplyFilters
      */
-    private $applyFilters = NULL;
+    private $applyFilters = null;
 
     function __construct(array $params = array())
     {
@@ -51,8 +50,7 @@ abstract class Payone_SessionStatus_Request_Item_Abstract
 
     public function init(array $data = array())
     {
-        foreach ($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $this->set($key, $value);
         }
     }
@@ -62,7 +60,7 @@ abstract class Payone_SessionStatus_Request_Item_Abstract
      */
     public function __toString()
     {
-        if($this->applyFilters) {
+        if ($this->applyFilters) {
             $result = $this->applyFilters->apply($this->toArray());
         } else {
             $protocolFactory     = new Payone_Protocol_Factory();
@@ -79,12 +77,10 @@ abstract class Payone_SessionStatus_Request_Item_Abstract
     public function toArray()
     {
         $result = array();
-        foreach ($this as $key => $data)
-        {
+        foreach ($this as $key => $data) {
             if ($data === null) {
                 continue;
-            }
-            elseif ($data instanceof Payone_Protocol_Service_ApplyFilters == false) {
+            } elseif ($data instanceof Payone_Protocol_Service_ApplyFilters == false) {
                 $result[$key] = $data;
             }
         }

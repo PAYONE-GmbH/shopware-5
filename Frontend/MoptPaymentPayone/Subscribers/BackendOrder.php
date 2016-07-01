@@ -4,20 +4,19 @@ namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
 
-
 class BackendOrder implements SubscriberInterface
 {
 
     /**
     * di container
-    * 
+    *
     * @var \Shopware\Components\DependencyInjection\Container
     */
     private $container;
     
     /**
      * inject di container
-     * 
+     *
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
     public function __construct(\Shopware\Components\DependencyInjection\Container $container)
@@ -27,7 +26,7 @@ class BackendOrder implements SubscriberInterface
     
     /**
      * return array with all subsribed events
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
@@ -52,46 +51,41 @@ class BackendOrder implements SubscriberInterface
     /**
     * add attribute data to detail-data
     * @parent fnc head: protected function getList($filter, $sort, $offset, $limit)
-    * 
+    *
     * @param \Enlight_Hook_HookArgs  $args
     */
     public function Order__getList__after(\Enlight_Hook_HookArgs  $args)
     {
-      $return = $args->getReturn();
-      $helper = $this->container->get('MoptPayoneMain')->getHelper();
+        $return = $args->getReturn();
+        $helper = $this->container->get('MoptPayoneMain')->getHelper();
       
-      if (empty($return['success']) || empty($return['data']))
-      {
-        return;
-      }
-
-      foreach ($return['data'] as &$order)
-      {
-        
-        foreach ($order["details"] as &$orderDetail)
-        {
-          $blTaxFree = $order['taxFree'];
-          $blNet = $order['net'];
-          // check here if netto is set and it corresponds with taxfree flag
-          // if order is netto and taxfree is not set add taxes to all positions
-          $blDebitBrutto = (!$blTaxFree && $blNet);
-          //get detail attribute
-          $detailObj                         = Shopware()->Models()->getRepository('Shopware\Models\Order\Detail')
-                  ->find($orderDetail['id']);
-          $attribute                         = $helper->getOrCreateAttribute($detailObj);
-          if (!$blDebitBrutto){
-            $orderDetail['moptPayoneCaptured'] = $attribute->getMoptPayoneCaptured();
-            $orderDetail['moptPayoneDebit']    = $attribute->getMoptPayoneDebit();
-            
-          } else {
-            $orderDetail['moptPayoneCaptured'] = round($orderDetail['moptPayoneCaptured'] * ( 1 + ($orderDetail['taxRate'] /100)) , 2);
-            $orderDetail['moptPayoneDebit'] = round($orderDetail['moptPayoneDebit'] * ( 1 + ($orderDetail['taxRate'] /100)) , 2);
-            $orderDetail['price'] = round($orderDetail['price'] * ( 1 + ($orderDetail['taxRate'] /100)) , 2);  
-          }
+        if (empty($return['success']) || empty($return['data'])) {
+            return;
         }
-      }
 
-      $args->setReturn($return);
+        foreach ($return['data'] as &$order) {
+            foreach ($order["details"] as &$orderDetail) {
+                $blTaxFree = $order['taxFree'];
+                $blNet = $order['net'];
+                  // check here if netto is set and it corresponds with taxfree flag
+                  // if order is netto and taxfree is not set add taxes to all positions
+                $blDebitBrutto = (!$blTaxFree && $blNet);
+                  //get detail attribute
+                $detailObj                         = Shopware()->Models()->getRepository('Shopware\Models\Order\Detail')
+                  ->find($orderDetail['id']);
+                $attribute                         = $helper->getOrCreateAttribute($detailObj);
+                if (!$blDebitBrutto) {
+                    $orderDetail['moptPayoneCaptured'] = $attribute->getMoptPayoneCaptured();
+                    $orderDetail['moptPayoneDebit']    = $attribute->getMoptPayoneDebit();
+            
+                } else {
+                    $orderDetail['moptPayoneCaptured'] = round($orderDetail['moptPayoneCaptured'] * ( 1 + ($orderDetail['taxRate'] /100)), 2);
+                    $orderDetail['moptPayoneDebit'] = round($orderDetail['moptPayoneDebit'] * ( 1 + ($orderDetail['taxRate'] /100)), 2);
+                    $orderDetail['price'] = round($orderDetail['price'] * ( 1 + ($orderDetail['taxRate'] /100)), 2);
+                }
+            }
+        }
+
+        $args->setReturn($return);
     }
-    
 }

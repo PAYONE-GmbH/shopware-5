@@ -30,33 +30,32 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_CreateAccess_PaymentMethod_CreditCard
-    extends Payone_Api_Request_Parameter_CreateAccess_PaymentMethod_Abstract
+class Payone_Api_Request_Parameter_CreateAccess_PaymentMethod_CreditCard extends Payone_Api_Request_Parameter_CreateAccess_PaymentMethod_Abstract
 {
     /**
      * @var string
      */
-    protected $cardpan = NULL;
+    protected $cardpan = null;
     /**
      * @var string
      */
-    protected $cardtype = NULL;
+    protected $cardtype = null;
     /**
      * @var int
      */
-    protected $cardexpiredate = NULL;
+    protected $cardexpiredate = null;
     /**
      * @var int
      */
-    protected $cardcvc2 = NULL;
+    protected $cardcvc2 = null;
     /**
      * @var string
      */
-    protected $cardholder = NULL;
+    protected $cardholder = null;
     /**
      * @var string
      */
-    protected $pseudocardpan = NULL;
+    protected $pseudocardpan = null;
 
     /**
      * @param int $cardcvc2

@@ -54,5 +54,4 @@ class Payone_Api_Request_Authorization extends Payone_Api_Request_Authorization_
     {
         return $this->business;
     }
-
 }

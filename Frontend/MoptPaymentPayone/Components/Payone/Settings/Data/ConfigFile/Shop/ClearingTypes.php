@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Settings_Data_ConfigFile_Shop_ClearingTypes
-    extends Payone_Settings_Data_ConfigFile_Abstract
-    implements Payone_Settings_Data_ConfigFile_Interface
+class Payone_Settings_Data_ConfigFile_Shop_ClearingTypes extends Payone_Settings_Data_ConfigFile_Abstract implements Payone_Settings_Data_ConfigFile_Interface
 {
     protected $key = 'clearingtypes';
 
@@ -58,8 +56,7 @@ class Payone_Settings_Data_ConfigFile_Shop_ClearingTypes
             if ($value instanceof Payone_Settings_Data_ConfigFile_Interface) {
                 /** @var Payone_Api_Request_Parameter_Interface $value */
                 $array[$value->getKey()] = $value->toArray();
-            }
-            else {
+            } else {
                 $array[$key] = $value;
             }
         }

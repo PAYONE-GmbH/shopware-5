@@ -9,14 +9,14 @@ class BackendRiskManagement implements SubscriberInterface
 
     /**
      * di container
-     * 
+     *
      * @var \Shopware\Components\DependencyInjection\Container
      */
     private $container;
 
     /**
      * inject di container
-     * 
+     *
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
     public function __construct(\Shopware\Components\DependencyInjection\Container $container)
@@ -26,7 +26,7 @@ class BackendRiskManagement implements SubscriberInterface
 
     /**
      * return array with all subsribed events
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
@@ -46,5 +46,4 @@ class BackendRiskManagement implements SubscriberInterface
         $view->extendsTemplate('backend/mopt_risk_management/store/trafficLights.js');
         $view->extendsTemplate('backend/mopt_risk_management/view/risk_management/container.js');
     }
-
 }

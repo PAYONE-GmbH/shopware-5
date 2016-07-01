@@ -33,14 +33,13 @@
 
 
 
-abstract class Payone_TransactionStatus_Response_Abstract
-    implements Payone_TransactionStatus_Response_Interface
+abstract class Payone_TransactionStatus_Response_Abstract implements Payone_TransactionStatus_Response_Interface
 {
 
     /**
      * @var Payone_Protocol_Service_ApplyFilters
      */
-    private $applyFilters = NULL;
+    private $applyFilters = null;
 
     /**
      * @param $name
@@ -75,5 +74,4 @@ abstract class Payone_TransactionStatus_Response_Abstract
     {
         $this->applyFilters = $applyFilters;
     }
-
 }

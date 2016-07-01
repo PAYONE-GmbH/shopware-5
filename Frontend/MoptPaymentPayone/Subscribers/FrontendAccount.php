@@ -9,14 +9,14 @@ class FrontendAccount implements SubscriberInterface
 
     /**
      * di container
-     * 
+     *
      * @var \Shopware\Components\DependencyInjection\Container
      */
     private $container;
 
     /**
      * inject di container
-     * 
+     *
      * @param \Shopware\Components\DependencyInjection\Container $container
      */
     public function __construct(\Shopware\Components\DependencyInjection\Container $container)
@@ -26,7 +26,7 @@ class FrontendAccount implements SubscriberInterface
 
     /**
      * return array with all subsribed events
-     * 
+     *
      * @return array
      */
     public static function getSubscribedEvents()
@@ -39,7 +39,7 @@ class FrontendAccount implements SubscriberInterface
 
     /**
      * assign saved paymend data to view
-     * 
+     *
      * @param \Enlight_Hook_HookArgs $arguments
      */
     public function onPaymentAction(\Enlight_Hook_HookArgs $arguments)
@@ -68,5 +68,4 @@ class FrontendAccount implements SubscriberInterface
             }
         }
     }
-
 }

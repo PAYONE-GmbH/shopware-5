@@ -48,9 +48,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Service_Payment_Refund
-    extends Payone_Api_Service_Payment_Abstract
-    implements Payone_Api_Service_Payment_RefundInterface
+class Payone_Api_Service_Payment_Refund extends Payone_Api_Service_Payment_Abstract implements Payone_Api_Service_Payment_RefundInterface
 {
     /**
      *
@@ -74,8 +72,7 @@ class Payone_Api_Service_Payment_Refund
             $response = $this->getMapperResponse()->map($responseRaw);
 
             $this->protocol($request, $response);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->protocolException($e, $request);
             throw $e;
         }

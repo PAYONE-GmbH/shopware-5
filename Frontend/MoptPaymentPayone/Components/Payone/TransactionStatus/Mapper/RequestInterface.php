@@ -38,5 +38,4 @@ interface Payone_TransactionStatus_Mapper_RequestInterface
      * @return Payone_TransactionStatus_Request
      */
     public function mapByArray(array $data);
-
 }

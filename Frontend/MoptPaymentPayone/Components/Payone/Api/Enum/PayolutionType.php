@@ -33,7 +33,8 @@ class Payone_Api_Enum_PayolutionType
     const PYS_FULL = 'Payolution-Installment';
     const PYD_FULL = 'Payolution-Debit';
     
-    public static function getLongType($sType) {
+    public static function getLongType($sType)
+    {
         $sLongType = '';
         switch ($sType) {
             case self::PYV:
@@ -53,5 +54,4 @@ class Payone_Api_Enum_PayolutionType
         }
         return $sLongType;
     }
-    
 }

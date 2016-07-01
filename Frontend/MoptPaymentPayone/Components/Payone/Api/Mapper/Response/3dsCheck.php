@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Mapper_Response_3dsCheck
-    extends Payone_Api_Mapper_Response_Abstract
-    implements Payone_Api_Mapper_Response_Interface
+class Payone_Api_Mapper_Response_3dsCheck extends Payone_Api_Mapper_Response_Abstract implements Payone_Api_Mapper_Response_Interface
 {
     /**
      * @param array $params
@@ -45,21 +43,16 @@ class Payone_Api_Mapper_Response_3dsCheck
 
         if ($this->isValid()) {
             $response = new Payone_Api_Response_3dsCheck_Valid($params);
-        }
-        elseif ($this->isEnrolled()) {
+        } elseif ($this->isEnrolled()) {
             $response = new Payone_Api_Response_3dsCheck_Enrolled($params);
-        }
-        elseif ($this->isInvalid()) {
+        } elseif ($this->isInvalid()) {
             $response = new Payone_Api_Response_3dsCheck_Invalid($params);
-        }
-        elseif ($this->isError()) {
+        } elseif ($this->isError()) {
             $response = new Payone_Api_Response_Error($params);
-        }
-        else {
+        } else {
             throw new Payone_Api_Exception_UnknownStatus();
         }
 
         return $response;
     }
-
 }

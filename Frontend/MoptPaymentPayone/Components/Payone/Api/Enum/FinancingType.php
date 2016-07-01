@@ -37,5 +37,5 @@ class Payone_Api_Enum_FinancingType
     const PYV = 'PYV'; // PAYOLUTION INVOICING
     const PYD = 'PYD'; // PAYOLUTION DEBIT
     const PYM = 'PYM'; // PAYOLUTION MONTHLY
-    const PYS = 'PYS'; // PAYOLUTION INSTALLMENT  
+    const PYS = 'PYS'; // PAYOLUTION INSTALLMENT
 }

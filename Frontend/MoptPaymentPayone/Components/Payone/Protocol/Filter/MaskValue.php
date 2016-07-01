@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Protocol_Filter_MaskValue
-    extends Payone_Protocol_Filter_Abstract
+class Payone_Protocol_Filter_MaskValue extends Payone_Protocol_Filter_Abstract
 {
     const MASK_CHAR = 'x';
     const FILTER_KEY = 'mask_value';
@@ -92,5 +91,4 @@ class Payone_Protocol_Filter_MaskValue
     {
         return $this->getConfig('percent');
     }
-
 }

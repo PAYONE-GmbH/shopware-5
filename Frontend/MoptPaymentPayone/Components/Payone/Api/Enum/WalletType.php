@@ -31,7 +31,8 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Enum_WalletType {
+class Payone_Api_Enum_WalletType
+{
 
     const PAYPAL_EXPRESS = 'PPE';
 
@@ -73,5 +74,4 @@ class Payone_Api_Enum_WalletType {
      *       If response status is REDIRECT, send customer to the redirecturl (Yapital).
      */
     const YAPITAL = 'YPL';
-
 }

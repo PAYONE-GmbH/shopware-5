@@ -73,7 +73,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
     /**
      * choose correct tpl folder
-     * 
+     *
      * @param \Enlight_Controller_ActionEventArgs $args
      */
     public function onPostDispatchBackend(\Enlight_Controller_ActionEventArgs $args)
@@ -89,7 +89,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
     /**
      * choose correct tpl folder and extend shopware templates
-     * 
+     *
      * @param \Enlight_Controller_ActionEventArgs $args
      */
     public function onPostDispatchFrontend(\Enlight_Controller_ActionEventArgs $args)

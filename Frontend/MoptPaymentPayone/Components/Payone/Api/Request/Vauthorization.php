@@ -39,55 +39,55 @@ class Payone_Api_Request_Vauthorization extends Payone_Api_Request_Abstract
      *
      * @var int
      */
-    protected $aid = NULL;
+    protected $aid = null;
     /**
      * @var string
      */
-    protected $clearingtype = NULL;
+    protected $clearingtype = null;
     /**
      * Merchant reference number for the payment process. (Permitted symbols: 0-9, a-z, A-Z, .,-,_,/)
      *
      * @var string
      */
-    protected $vreference = NULL;
+    protected $vreference = null;
     /**
      * @var string
      */
-    protected $vaccountname = NULL;
+    protected $vaccountname = null;
     /**
      * Total amount (in smallest currency unit! e.g. cent)
      *
      * @var int
      */
-    protected $amount = NULL;
+    protected $amount = null;
     /**
      * Currency (ISO-4217)
      *
      * @var string
      */
-    protected $currency = NULL;
+    protected $currency = null;
     /**
      * @var int
      */
-    protected $settle_period_length = NULL;
+    protected $settle_period_length = null;
     /**
      * @var string
      */
-    protected $settle_period_unit = NULL;
+    protected $settle_period_unit = null;
     /**
      * @var int
      */
-    protected $settletime = NULL;
+    protected $settletime = null;
     /**
      * @var string
      */
-    protected $payout_open_balance = NULL;
+    protected $payout_open_balance = null;
     /**
      * Individual parameter
      *
      * @var string
      */
-    protected $param = NULL;
+    protected $param = null;
 
     /**
      * @var Payone_Api_Request_Parameter_Vauthorization_Invoicing_Transaction
@@ -325,6 +325,4 @@ class Payone_Api_Request_Vauthorization extends Payone_Api_Request_Abstract
     {
         return $this->vreference;
     }
-
-
 }

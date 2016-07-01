@@ -35,7 +35,7 @@ class Payone_Api_Response_Management_GetInvoice extends Payone_Api_Response_Abst
     /**
      * @var string
      */
-    protected $response = NULL;
+    protected $response = null;
 
     /**
      * @param string $response
@@ -60,8 +60,7 @@ class Payone_Api_Response_Management_GetInvoice extends Payone_Api_Response_Abst
     {
         if ($this->isError()) {
             $result = parent::__toString();
-        }
-        else {
+        } else {
             $stringArray = array('status=' . $this->getStatus(), 'data=PDF-Content');
             $result = implode('|', $stringArray);
         }

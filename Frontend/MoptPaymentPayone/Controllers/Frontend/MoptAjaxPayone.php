@@ -15,19 +15,19 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
     /**
      * PayoneMain
-     * @var Mopt_PayoneMain 
+     * @var Mopt_PayoneMain
      */
     protected $moptPayoneMain = null;
 
     /**
      * PayoneMain
-     * @var Mopt_PayonePaymentHelper 
+     * @var Mopt_PayonePaymentHelper
      */
     protected $moptPayonePaymentHelper = null;
 
     /**
      * PayOne Builder
-     * @var PayoneBuilder 
+     * @var PayoneBuilder
      */
     protected $payoneServiceBuilder = null;
     protected $service = null;
@@ -150,7 +150,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $this->moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
                 echo json_encode(false);
             } else {
-                //proceed 
+                //proceed
                 echo json_encode(true);
             }
         }
@@ -334,7 +334,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
     /**
      * download SEPA mandate PDF file on success page
-     * 
+     *
      * @return mixed
      */
     public function downloadMandateAction()
@@ -377,12 +377,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
     /**
      * get actual payment method id
-     * 
+     *
      * @return string
      */
     protected function getPaymentId()
     {
         return Shopware()->Session()->sOrderVariables['sUserData']['additional']['payment']['id'];
     }
-
 }

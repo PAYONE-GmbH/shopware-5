@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Response_BankAccountCheck_Invalid
-    extends Payone_Api_Response_Invalid
+class Payone_Api_Response_BankAccountCheck_Invalid extends Payone_Api_Response_Invalid
 {
 
 }

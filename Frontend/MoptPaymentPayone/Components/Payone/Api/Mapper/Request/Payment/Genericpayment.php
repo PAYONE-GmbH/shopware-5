@@ -18,9 +18,7 @@
  * @author          Ronny Schröder
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  */
-class Payone_Api_Mapper_Request_Payment_Genericpayment
-    extends Payone_Api_Mapper_Request_Payment_Abstract
-    implements Payone_Api_Mapper_Request_Interface
+class Payone_Api_Mapper_Request_Payment_Genericpayment extends Payone_Api_Mapper_Request_Payment_Abstract implements Payone_Api_Mapper_Request_Interface
 {
     /**
      * Convert amount for payone service request
@@ -34,5 +32,4 @@ class Payone_Api_Mapper_Request_Payment_Genericpayment
 
         return $request->toArray();
     }
-
 }

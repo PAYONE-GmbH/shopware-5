@@ -22,35 +22,37 @@
  * A simple layout.
  *
  * Returns the log statement in a format consisting of the
- * <b>level</b>, followed by " - " and then the <b>message</b>. 
+ * <b>level</b>, followed by " - " and then the <b>message</b>.
  *
  * For example the following php and properties files
- * 
+ *
  * {@example ../../examples/php/layout_simple.php 19}<br>
- * 
+ *
  * {@example ../../examples/resources/layout_simple.properties 18}<br>
  *
  * would result in:
- * 
+ *
  * <samp>INFO - Hello World!</samp>
  *
  * @version $Revision$
  * @package log4php
  * @subpackage layouts
- */  
-class Payone_Log4php_LoggerLayoutSimple extends Payone_Log4php_LoggerLayout {
-	/**
-	 * Returns the log statement in a format consisting of the
-	 * <b>level</b>, followed by " - " and then the
-	 * <b>message</b>. For example, 
-	 * <samp> INFO - "A message" </samp>
-	 *
-	 * @param Payone_Log4php_LoggerLoggingEvent $event
-	 * @return string
-	 */
-	public function format(Payone_Log4php_LoggerLoggingEvent $event) {
-		$level = $event->getLevel();
-		$message = $event->getRenderedMessage();
-		return "$level - $message" . PHP_EOL;
-	}
+ */
+class Payone_Log4php_LoggerLayoutSimple extends Payone_Log4php_LoggerLayout
+{
+    /**
+     * Returns the log statement in a format consisting of the
+     * <b>level</b>, followed by " - " and then the
+     * <b>message</b>. For example,
+     * <samp> INFO - "A message" </samp>
+     *
+     * @param Payone_Log4php_LoggerLoggingEvent $event
+     * @return string
+     */
+    public function format(Payone_Log4php_LoggerLoggingEvent $event)
+    {
+        $level = $event->getLevel();
+        $message = $event->getRenderedMessage();
+        return "$level - $message" . PHP_EOL;
+    }
 }

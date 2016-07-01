@@ -19,33 +19,36 @@
  * @author          Ronny Schröder
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  */
-class Payone_Api_Response_Genericpayment_Approved extends Payone_Api_Response_Genericpayment_Abstract {
+class Payone_Api_Response_Genericpayment_Approved extends Payone_Api_Response_Genericpayment_Abstract
+{
     
     /**
      * add_paydata[workorderid] = workorderid from payone
      * add_paydata[...] = delivery data
      * @var Payone_Api_Response_Parameter_Paydata_Paydata
      */
-    protected $paydata = NULL;
+    protected $paydata = null;
 
     /**
      * @param array $params
      */
-    function __construct(array $params = array()) {
+    function __construct(array $params = array())
+    {
         parent::__construct($params);
 
         $this->setRawResponse($params);
         $this->initPaydata($params);
     }
 
-    protected function initPaydata($param) {
+    protected function initPaydata($param)
+    {
 
         $payData = new Payone_Api_Response_Parameter_Paydata_Paydata($param);
 
         if ($payData->hasItems()) {
             $this->setPaydata($payData);
         } else {
-            $this->setPaydata(NULL);
+            $this->setPaydata(null);
         }
     }
 
@@ -58,9 +61,9 @@ class Payone_Api_Response_Genericpayment_Approved extends Payone_Api_Response_Ge
      * $service = $builder->buildServicePaymentGenericpayment();
      * $response = $service->request($request);
      * print_r($response->getPaydata()->toAssocArray());
-     * 
+     *
      * you get an array like that:
-     * 
+     *
      * Array
      * (
      *    [shipping_zip] => 79111
@@ -71,18 +74,19 @@ class Payone_Api_Response_Genericpayment_Approved extends Payone_Api_Response_Ge
      *    [shipping_firstname] => Max
      *    [shipping_lastname] => Mustermann
      * )
-     * 
+     *
      * @return Payone_Api_Response_Parameter_Paydata_Paydata
      */
-    public function getPaydata() {
+    public function getPaydata()
+    {
         return $this->paydata;
     }
 
     /**
      * @param Payone_Api_Response_Parameter_Paydata_Paydata $paydata
      */
-    public function setPaydata($paydata) {
+    public function setPaydata($paydata)
+    {
         $this->paydata = $paydata;
     }
-
 }

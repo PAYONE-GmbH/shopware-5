@@ -7,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,7 @@
 
 /**
  * Interface for logger configurators.
- * 
+ *
  * @package log4php
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  * @version $Revision$
@@ -28,15 +28,15 @@
  */
 interface Payone_Log4php_LoggerConfigurator
 {
-	/**
-	 * Configures log4php based on the given configuration. 
-	 * 
-	 * All configurators implementations must implement this interface.
-	 * 
-	 * @param Payone_Log4php_LoggerHierarchy $hierarchy The hierarchy on which to perform
-	 * 		the configuration. 
-	 * @param mixed $input Either path to the config file or the 
-	 * 		configuration as an array.
-	 */
-	public function configure(Payone_Log4php_LoggerHierarchy $hierarchy, $input = null);
+    /**
+     * Configures log4php based on the given configuration.
+     *
+     * All configurators implementations must implement this interface.
+     *
+     * @param Payone_Log4php_LoggerHierarchy $hierarchy The hierarchy on which to perform
+     *      the configuration.
+     * @param mixed $input Either path to the config file or the
+     *      configuration as an array.
+     */
+    public function configure(Payone_Log4php_LoggerHierarchy $hierarchy, $input = null);
 }

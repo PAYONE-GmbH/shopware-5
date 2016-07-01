@@ -37,15 +37,15 @@ class Payone_Api_Request_GetFile extends Payone_Api_Request_Abstract
     /**
      * @var int
      */
-    protected $file_reference = NULL;
+    protected $file_reference = null;
     /**
      * @var string
      */
-    protected $file_type = NULL;
+    protected $file_type = null;
     /**
      * @var string
      */
-    protected $file_format = NULL;
+    protected $file_format = null;
 
 
     /**

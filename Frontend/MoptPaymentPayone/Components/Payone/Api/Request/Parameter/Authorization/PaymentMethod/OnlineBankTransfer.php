@@ -30,49 +30,48 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Authorization_PaymentMethod_OnlineBankTransfer
-    extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
+class Payone_Api_Request_Parameter_Authorization_PaymentMethod_OnlineBankTransfer extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
 {
     /**
      * @var string
      */
-    protected $onlinebanktransfertype = NULL;
+    protected $onlinebanktransfertype = null;
     /**
      * @var string
      */
-    protected $bankcountry = NULL;
+    protected $bankcountry = null;
     /**
      * @var string
      */
-    protected $bankaccount = NULL;
+    protected $bankaccount = null;
     /**
      * @var string
      */
-    protected $bankcode = NULL;
+    protected $bankcode = null;
     /**
      * @var string
      */
-    protected $bankgrouptype = NULL;
+    protected $bankgrouptype = null;
     /**
      * @var string
      */
-    protected $iban = NULL;
+    protected $iban = null;
     /**
      * @var string
      */
-    protected $bic = NULL;
+    protected $bic = null;
     /**
      * @var string
      */
-    protected $successurl = NULL;
+    protected $successurl = null;
     /**
      * @var string
      */
-    protected $errorurl = NULL;
+    protected $errorurl = null;
     /**
      * @var string
      */
-    protected $backurl = NULL;
+    protected $backurl = null;
 
     /**
      * @param string $backurl

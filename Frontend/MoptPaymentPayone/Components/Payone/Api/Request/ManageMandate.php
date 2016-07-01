@@ -37,21 +37,21 @@ class Payone_Api_Request_ManageMandate extends Payone_Api_Request_Abstract
     /**
      * @var int
      */
-    protected $aid = NULL;
+    protected $aid = null;
     /**
      * @var string
      */
-    protected $clearingtype = NULL;
+    protected $clearingtype = null;
     /**
      * @var string
      */
-    protected $mandate_identification = NULL;
+    protected $mandate_identification = null;
     /**
      * Currency (ISO 4217)
      *
      * @var string
      */
-    protected $currency = NULL;
+    protected $currency = null;
 
 
     /**

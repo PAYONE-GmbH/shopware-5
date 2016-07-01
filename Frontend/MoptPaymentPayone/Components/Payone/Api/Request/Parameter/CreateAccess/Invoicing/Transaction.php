@@ -30,17 +30,16 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_CreateAccess_Invoicing_Transaction
-    extends Payone_Api_Request_Parameter_Abstract
+class Payone_Api_Request_Parameter_CreateAccess_Invoicing_Transaction extends Payone_Api_Request_Parameter_Abstract
 {
     /**
      * @var string
      */
-    protected $invoice_deliverymode = NULL;
+    protected $invoice_deliverymode = null;
     /**
      * @var string
      */
-    protected $invoiceappendix = NULL;
+    protected $invoiceappendix = null;
 
 
     /**

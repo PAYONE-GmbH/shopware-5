@@ -30,50 +30,49 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Authorization_DeliveryData
-    extends Payone_Api_Request_Parameter_Authorization_Abstract
+class Payone_Api_Request_Parameter_Authorization_DeliveryData extends Payone_Api_Request_Parameter_Authorization_Abstract
 {
     /**
      * @var string
      */
-    protected $shipping_firstname = NULL;
+    protected $shipping_firstname = null;
     /**
      * @var string
      */
-    protected $shipping_lastname = NULL;
+    protected $shipping_lastname = null;
     /**
      * @var string
      */
-    protected $shipping_company = NULL;
+    protected $shipping_company = null;
     /**
      * @var string
      */
-    protected $shipping_street = NULL;
+    protected $shipping_street = null;
     /**
      * @var string
      */
-    protected $shipping_zip = NULL;
+    protected $shipping_zip = null;
     /**
      * @var string
      */
-    protected $shipping_city = NULL;
+    protected $shipping_city = null;
     /**
      * ISO-3166 Subdivisions
      * only necessary for country US or CA
      *
      * @var string
      */
-    protected $shipping_state = NULL;
+    protected $shipping_state = null;
     /**
      * Country (ISO-3166)
      *
      * @var string
      */
-    protected $shipping_country = NULL;
+    protected $shipping_country = null;
     /**
      * @var string
      */
-    protected $shipping_addressaddition = NULL;
+    protected $shipping_addressaddition = null;
 
     /**
      * @param string $shipping_addressaddition

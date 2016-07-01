@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_TransactionStatus_Service_ProtocolRequest
-    extends Payone_Protocol_Service_Protocol_Abstract
-    implements Payone_TransactionStatus_Service_ProtocolRequest_Interface
+class Payone_TransactionStatus_Service_ProtocolRequest extends Payone_Protocol_Service_Protocol_Abstract implements Payone_TransactionStatus_Service_ProtocolRequest_Interface
 {
     /**
      * @var Payone_TransactionStatus_Persistence_Interface[]
@@ -46,8 +44,8 @@ class Payone_TransactionStatus_Service_ProtocolRequest
     public function protocol(
         Payone_TransactionStatus_Request_Interface $request,
         Payone_TransactionStatus_Response_Interface $response = null
-    )
-    {
+    ) {
+    
         // PHP 7 compat
         $requestArray = array();
         $responseArray = array();
@@ -57,9 +55,8 @@ class Payone_TransactionStatus_Service_ProtocolRequest
         $this->getServiceApplyFilters()->apply($responseArray);
 
 
-        foreach ($this->loggers as $key => $logger)
-        {
-            /** @var $logger Payone_Protocol_Logger_Interface */
+        foreach ($this->loggers as $key => $logger) {
+        /** @var $logger Payone_Protocol_Logger_Interface */
             $requestAsString = $request->__toString();
             $responseAsString = $response->__toString();
 
@@ -67,9 +64,8 @@ class Payone_TransactionStatus_Service_ProtocolRequest
             $logger->log($responseAsString, Payone_Protocol_Logger_Interface::LEVEL_INFO);
         }
 
-        foreach ($this->repositories as $key => $repository)
-        {
-            /** @var $repository Payone_TransactionStatus_Persistence_Interface */
+        foreach ($this->repositories as $key => $repository) {
+        /** @var $repository Payone_TransactionStatus_Persistence_Interface */
             $repository->save($request, $response);
         }
     }
@@ -86,9 +82,8 @@ class Payone_TransactionStatus_Service_ProtocolRequest
             $this->getServiceApplyFilters()->apply($requestArray);
         }
 
-        foreach ($this->loggers as $key => $logger)
-        {
-            /** @var $logger Payone_Protocol_Logger_Interface */
+        foreach ($this->loggers as $key => $logger) {
+        /** @var $logger Payone_Protocol_Logger_Interface */
             $logger->log(get_class($e) . ' ' . $e->getMessage());
 
             if ($request !== null) {
@@ -118,6 +113,4 @@ class Payone_TransactionStatus_Service_ProtocolRequest
         }
         return false;
     }
-
-
 }

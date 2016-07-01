@@ -77,8 +77,7 @@ abstract class Payone_Config_Abstract
     {
         if (empty($data)) {
             $this->config = $this->getDefaultConfigData();
-        }
-        else {
+        } else {
             $this->config = $data;
         }
     }
@@ -111,7 +110,7 @@ abstract class Payone_Config_Abstract
      */
     protected function set($key, $value, array &$tree)
     {
-        if (strpos($key, self::KEY_SEPARATOR) !== FALSE
+        if (strpos($key, self::KEY_SEPARATOR) !== false
             // and is_array($tree)
         ) {
             // Disassemble key, extracting the first node of the string:
@@ -120,19 +119,18 @@ abstract class Payone_Config_Abstract
 
             // Reassemble shortened key:
             $newKey = implode(self::KEY_SEPARATOR, $explodedKey);
-            if (FALSE === array_key_exists($currentKey, $tree)) {
+            if (false === array_key_exists($currentKey, $tree)) {
                 // Create new array index:
                 $tree[$currentKey] = array();
             }
             // Start recursion:
             return $this->set($newKey, $value, $tree[$currentKey]);
 
-        }
-        else {
+        } else {
             // Set value (can overwrite an existing value)
             $tree[$key] = $value;
             // Exit recursion, Success!
-            return TRUE;
+            return true;
         }
     }
 
@@ -154,7 +152,7 @@ abstract class Payone_Config_Abstract
      */
     protected function get($key, $tree)
     {
-        if (strpos($key, self::KEY_SEPARATOR) !== FALSE and is_array($tree)) {
+        if (strpos($key, self::KEY_SEPARATOR) !== false and is_array($tree)) {
             // Disassemble key, extracting the first node of the string:
             $explodedKey = explode(self::KEY_SEPARATOR, $key);
             $currentKey = array_shift($explodedKey);
@@ -166,17 +164,14 @@ abstract class Payone_Config_Abstract
                 // Reassemble key, start recursion:
                 $newKey = implode(self::KEY_SEPARATOR, $explodedKey);
                 return $this->get($newKey, $newTree);
-            }
-            else {
-                return NULL; // Exit recursion, unsuccessful
+            } else {
+                return null; // Exit recursion, unsuccessful
             }
 
-        }
-        elseif (is_array($tree) and array_key_exists($key, $tree)) {
+        } elseif (is_array($tree) and array_key_exists($key, $tree)) {
             return $tree[$key]; // Exit recursion, Success!
-        }
-        else {
-            return NULL; // Exit recursion, unsuccessful
+        } else {
+            return null; // Exit recursion, unsuccessful
         }
     }
 
@@ -195,5 +190,4 @@ abstract class Payone_Config_Abstract
     {
         return $this->config;
     }
-
 }

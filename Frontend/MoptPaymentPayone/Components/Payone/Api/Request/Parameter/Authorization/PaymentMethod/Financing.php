@@ -30,29 +30,28 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
-    extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
+class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
 {
     /**
      * Enum FinancingType
      * @var string
      */
-    protected $financingtype = NULL;
+    protected $financingtype = null;
 
     /**
      * @var string
      */
-    protected $successurl = NULL;
+    protected $successurl = null;
     /**
      * @var string
      */
-    protected $errorurl = NULL;
+    protected $errorurl = null;
     /**
      * @var string
      */
-    protected $backurl = NULL;
+    protected $backurl = null;
     
-    protected $paydata = NULL;
+    protected $paydata = null;
 
     /**
      * @param string $financingtype
@@ -121,15 +120,17 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
     /**
      * @param Payone_Api_Request_Parameter_Paydata_Paydata $paydata
      */
-    public function setPaydata($paydata) {
+    public function setPaydata($paydata)
+    {
         $this->paydata = $paydata;
     }
 
     /**
-     * 
+     *
      * @return Payone_Api_Request_Parameter_Paydata_Paydata
      */
-    public function getPaydata() {
+    public function getPaydata()
+    {
         return $this->paydata;
     }
 }

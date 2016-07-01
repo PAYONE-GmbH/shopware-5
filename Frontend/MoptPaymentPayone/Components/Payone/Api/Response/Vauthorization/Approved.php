@@ -35,15 +35,15 @@ class Payone_Api_Response_Vauthorization_Approved extends Payone_Api_Response_Ab
     /**
      * @var int
      */
-    protected $vxid = NULL;
+    protected $vxid = null;
     /**
      * @var string
      */
-    protected $vaid = NULL;
+    protected $vaid = null;
     /**
      * @var string
      */
-    protected $userid = NULL;
+    protected $userid = null;
 
     /**
      * @param string $userid

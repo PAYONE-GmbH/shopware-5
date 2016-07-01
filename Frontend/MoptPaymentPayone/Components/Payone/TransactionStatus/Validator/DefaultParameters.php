@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_TransactionStatus_Validator_DefaultParameters
-    extends Payone_TransactionStatus_Validator_Abstract
+class Payone_TransactionStatus_Validator_DefaultParameters extends Payone_TransactionStatus_Validator_Abstract
 {
     /**
      * @var string

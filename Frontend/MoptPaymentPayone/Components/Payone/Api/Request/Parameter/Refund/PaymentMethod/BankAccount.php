@@ -30,41 +30,40 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Refund_PaymentMethod_BankAccount
-    extends Payone_Api_Request_Parameter_Refund_Abstract
+class Payone_Api_Request_Parameter_Refund_PaymentMethod_BankAccount extends Payone_Api_Request_Parameter_Refund_Abstract
 {
     /**
      * @var string
      */
-    protected $bankcountry = NULL;
+    protected $bankcountry = null;
     /**
      * @var string
      */
-    protected $bankaccount = NULL;
+    protected $bankaccount = null;
     /**
      * @var int
      */
-    protected $bankcode = NULL;
+    protected $bankcode = null;
     /**
      * @var int
      */
-    protected $bankbranchcode = NULL;
+    protected $bankbranchcode = null;
     /**
      * @var int
      */
-    protected $bankcheckdigit = NULL;
+    protected $bankcheckdigit = null;
     /**
      * @var string
      */
-    protected $iban = NULL;
+    protected $iban = null;
     /**
      * @var string
      */
-    protected $bic = NULL;
+    protected $bic = null;
     /**
      * @var string
      */
-    protected $mandate_identification = NULL;
+    protected $mandate_identification = null;
 
     /**
      * @param string $bankaccount

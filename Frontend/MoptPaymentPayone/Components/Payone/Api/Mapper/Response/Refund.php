@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Mapper_Response_Refund
-    extends Payone_Api_Mapper_Response_Abstract
-    implements Payone_Api_Mapper_Response_Interface
+class Payone_Api_Mapper_Response_Refund extends Payone_Api_Mapper_Response_Abstract implements Payone_Api_Mapper_Response_Interface
 {
     /**
      * @param array $params
@@ -47,15 +45,12 @@ class Payone_Api_Mapper_Response_Refund
 
         if ($this->isApproved()) {
             $response = new Payone_Api_Response_Refund_Approved($params);
-        }
-        elseif ($this->isError()) {
+        } elseif ($this->isError()) {
             $response = new Payone_Api_Response_Error($params);
-        }
-        else {
+        } else {
             throw new Payone_Api_Exception_UnknownStatus();
         }
 
         return $response;
     }
-
 }

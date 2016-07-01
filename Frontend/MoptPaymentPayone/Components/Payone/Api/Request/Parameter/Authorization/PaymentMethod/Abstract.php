@@ -33,8 +33,7 @@
 
 
 
-abstract class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
-    extends Payone_Api_Request_Parameter_Abstract
+abstract class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract extends Payone_Api_Request_Parameter_Abstract
 {
 
 }

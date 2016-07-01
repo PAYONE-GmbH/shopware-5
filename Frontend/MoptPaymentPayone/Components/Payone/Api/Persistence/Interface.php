@@ -54,5 +54,4 @@ interface Payone_Api_Persistence_Interface
      * @return boolean
      */
     public function saveException(Payone_Api_Request_Interface $request, Exception $ex);
-
 }

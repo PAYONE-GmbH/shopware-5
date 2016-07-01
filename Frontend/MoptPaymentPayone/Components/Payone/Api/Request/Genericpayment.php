@@ -1,7 +1,7 @@
 <?php
 /**
- * For PayPal ECS the request type genericpayment ist mandatory 
- * 
+ * For PayPal ECS the request type genericpayment ist mandatory
+ *
  * NOTICE OF LICENSE
  *
  * This source file is subject to the GNU General Public License (GPL 3)
@@ -19,40 +19,41 @@
  * @author          Ronny Schröder
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  */
-class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract {
+class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
+{
     
     /**
      * Sub account ID
      *
      * @var int
      */
-    protected $aid = NULL;
+    protected $aid = null;
 
     /**
      * @var string
      */
-    protected $clearingtype = NULL;
+    protected $clearingtype = null;
 
     /**
      * Total amount (in smallest currency unit! e.g. cent)
      *
      * @var int
      */
-    protected $amount = NULL;
+    protected $amount = null;
 
     /**
      * Currency (ISO-4217)
      *
      * @var string
      */
-    protected $currency = NULL;
+    protected $currency = null;
 
     /**
      * dynamic text for debit and creditcard payments
      *
      * @var string
      */
-    protected $narrative_text = NULL;
+    protected $narrative_text = null;
 
     /**
      * @var Payone_Api_Request_Parameter_Authorization_DeliveryData
@@ -60,18 +61,18 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract {
     protected $deliveryData = null;
 
     /**
-     * With the first genericpayment the workorderid will be generated from the 
-     * PAYONE platform and will be sent to you in the response. The ID is unique. 
-     * The returned workorderid is mandatory for the following requests of 
+     * With the first genericpayment the workorderid will be generated from the
+     * PAYONE platform and will be sent to you in the response. The ID is unique.
+     * The returned workorderid is mandatory for the following requests of
      * PayPal Express Checkout.
-     * 
+     *
      * @var string
      */
-    protected $workorderid = NULL;
+    protected $workorderid = null;
 
     /**
      * Wallet provider PPE: PayPal Express
-     * @var Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet 
+     * @var Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
      */
     protected $wallet = null;
 
@@ -79,10 +80,10 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract {
      * Mandatory for PayPal ECS:
      * 1. action=setexpresscheckout
      * 2. action=getexpresscheckoutdetails
-     * 
-     * @var Payone_Api_Request_Parameter_Paydata_Paydata 
+     *
+     * @var Payone_Api_Request_Parameter_Paydata_Paydata
      */
-    protected $paydata = NULL;
+    protected $paydata = null;
     
     protected $company = null;
     protected $firstname = null;
@@ -90,7 +91,7 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract {
     protected $street = null;
     protected $zip = null;
     protected $city = null;
-    protected $country = null;  
+    protected $country = null;
     protected $api_version = null;
     protected $birthday = null;
     protected $email = null;
@@ -100,7 +101,7 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract {
     /**
      * @var string
      */
-    protected $financingtype = NULL;    
+    protected $financingtype = null;
     
     
     
@@ -117,190 +118,222 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract {
     /**
      * @param int $aid
      */
-    public function setAid($aid) {
+    public function setAid($aid)
+    {
         $this->aid = $aid;
     }
 
     /**
      * @return int
      */
-    public function getAid() {
+    public function getAid()
+    {
         return $this->aid;
     }
 
     /**
      * @param int $amount
      */
-    public function setAmount($amount) {
+    public function setAmount($amount)
+    {
         $this->amount = $amount;
     }
 
     /**
      * @return int
      */
-    public function getAmount() {
+    public function getAmount()
+    {
         return $this->amount;
     }
 
     /**
      * @param string $clearingtype
      */
-    public function setClearingtype($clearingtype) {
+    public function setClearingtype($clearingtype)
+    {
         $this->clearingtype = $clearingtype;
     }
 
     /**
      * @return string
      */
-    public function getClearingtype() {
+    public function getClearingtype()
+    {
         return $this->clearingtype;
     }
 
     /**
      * @param string $currency
      */
-    public function setCurrency($currency) {
+    public function setCurrency($currency)
+    {
         $this->currency = $currency;
     }
 
     /**
      * @return string
      */
-    public function getCurrency() {
+    public function getCurrency()
+    {
         return $this->currency;
     }
 
     /**
      * @param string $narrative_text
      */
-    public function setNarrativeText($narrative_text) {
+    public function setNarrativeText($narrative_text)
+    {
         $this->narrative_text = $narrative_text;
     }
 
     /**
      * @return string
      */
-    public function getNarrativeText() {
+    public function getNarrativeText()
+    {
         return $this->narrative_text;
     }
 
     /**
      * @param Payone_Api_Request_Parameter_Authorization_DeliveryData $deliveryData
      */
-    public function setDeliveryData(Payone_Api_Request_Parameter_Authorization_DeliveryData $deliveryData) {
+    public function setDeliveryData(Payone_Api_Request_Parameter_Authorization_DeliveryData $deliveryData)
+    {
         $this->deliveryData = $deliveryData;
     }
 
     /**
      * @return Payone_Api_Request_Parameter_Authorization_DeliveryData
      */
-    public function getDeliveryData() {
+    public function getDeliveryData()
+    {
         return $this->deliveryData;
     }
 
     /**
-     * 
+     *
      * @return string
      */
-    function getWorkorderId() {
+    function getWorkorderId()
+    {
         return $this->workorderid;
     }
 
     /**
-     * 
+     *
      * @param string $workorderid
      */
-    function setWorkorderId($workorderid) {
+    function setWorkorderId($workorderid)
+    {
         $this->workorderid = $workorderid;
     }
 
     /**
-     * 
+     *
      * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
      */
-    function getWallet() {
+    function getWallet()
+    {
         return $this->wallet;
     }
 
     /**
-     * 
+     *
      * @param Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet $wallet
      */
-    function setWallet(Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet $wallet) {
+    function setWallet(Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet $wallet)
+    {
         $this->wallet = $wallet;
     }
 
     /**
      * @param Payone_Api_Request_Parameter_Paydata_Paydata $paydata
      */
-    public function setPaydata($paydata) {
+    public function setPaydata($paydata)
+    {
         $this->paydata = $paydata;
     }
 
     /**
-     * 
+     *
      * @return Payone_Api_Request_Parameter_Paydata_Paydata
      */
-    public function getPaydata() {
+    public function getPaydata()
+    {
         return $this->paydata;
     }
     
    
-    public function setCompany($company) {
+    public function setCompany($company)
+    {
         $this->company = $company;
     }
     
-    public function getCompany() {
+    public function getCompany()
+    {
         return $this->company;
     }
     
-    public function setFirstname($firstname) {
+    public function setFirstname($firstname)
+    {
         $this->firstname = $firstname;
     }
     
-    public function getFirstname() {
+    public function getFirstname()
+    {
         return $this->firstname;
     }
     
-    public function setLastname($lastname) {
+    public function setLastname($lastname)
+    {
         $this->lastname = $lastname;
     }
     
-    public function getLastname() {
+    public function getLastname()
+    {
         return $this->lastname;
     }
     
-    public function setStreet($street) {
+    public function setStreet($street)
+    {
         $this->street = $street;
     }
     
-    public function getStreet() {
+    public function getStreet()
+    {
         return $this->street;
     }
     
-    public function setZip($zip) {
+    public function setZip($zip)
+    {
         $this->zip = $zip;
     }
     
-    public function getZip() {
+    public function getZip()
+    {
         return $this->zip;
     }
     
-    public function setCity($city) {
+    public function setCity($city)
+    {
         $this->city = $city;
     }
     
-    public function getCity() {
+    public function getCity()
+    {
         return $this->city;
     }
     
-    public function setCountry($country) {
+    public function setCountry($country)
+    {
         $this->country = $country;
     }
     
-    public function getCountry() {
+    public function getCountry()
+    {
         return $this->country;
-    }  
+    }
     
     
     public function setApiVersion($api_version)
@@ -351,19 +384,20 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract {
     public function getLanguage()
     {
         return $this->language;
-    }   
+    }
     
     /* @return string
      */
-    public function getFinancingType() {
+    public function getFinancingType()
+    {
         return $this->financingtype;
-    }    
+    }
     
     /**
      * @param string $financingtype
      */
-    public function setFinancingType($financingtype) {
+    public function setFinancingType($financingtype)
+    {
         $this->financingtype = $financingtype;
-    }    
-
+    }
 }

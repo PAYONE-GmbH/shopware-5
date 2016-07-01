@@ -38,5 +38,4 @@ interface Payone_Api_Mapper_Response_Interface
      * @throws Payone_Api_Exception_UnknownStatus
      */
     public function map(array $params);
-
 }

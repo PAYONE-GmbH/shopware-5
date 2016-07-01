@@ -7,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,24 +20,24 @@
 
 /**
  * This is a very simple filter based on string matching.
- * 
+ *
  * <p>The filter admits two options {@link $stringToMatch} and
  * {@link $acceptOnMatch}. If there is a match (using {@link PHP_MANUAL#strpos}
- * between the value of the {@link $stringToMatch} option and the message 
+ * between the value of the {@link $stringToMatch} option and the message
  * of the {@link LoggerLoggingEvent},
  * then the {@link decide()} method returns {@link LoggerFilter::ACCEPT} if
  * the <b>AcceptOnMatch</b> option value is true, if it is false then
  * {@link LoggerFilter::DENY} is returned. If there is no match, {@link LoggerFilter::NEUTRAL}
  * is returned.</p>
- * 
+ *
  * <p>
  * An example for this filter:
- * 
+ *
  * {@example ../../examples/php/filter_stringmatch.php 19}
  *
  * <p>
  * The corresponding XML file:
- * 
+ *
  * {@example ../../examples/resources/filter_stringmatch.xml 18}
  *
  * @version $Revision$
@@ -45,45 +45,49 @@
  * @subpackage filters
  * @since 0.3
  */
-class Payone_Log4php_LoggerFilterStringMatch extends Payone_Log4php_LoggerFilter {
+class Payone_Log4php_LoggerFilterStringMatch extends Payone_Log4php_LoggerFilter
+{
 
-	/**
-	 * @var boolean
-	 */
-	protected $acceptOnMatch = true;
+    /**
+     * @var boolean
+     */
+    protected $acceptOnMatch = true;
 
-	/**
-	 * @var string
-	 */
-	protected $stringToMatch;
+    /**
+     * @var string
+     */
+    protected $stringToMatch;
 
-	/**
-	 * @param mixed $acceptOnMatch a boolean or a string ('true' or 'false')
-	 */
-	public function setAcceptOnMatch($acceptOnMatch) {
-		$this->setBoolean('acceptOnMatch', $acceptOnMatch);
-	}
-	
-	/**
-	 * @param string $s the string to match
-	 */
-	public function setStringToMatch($string) {
-		$this->setString('stringToMatch', $string);
-	}
+    /**
+     * @param mixed $acceptOnMatch a boolean or a string ('true' or 'false')
+     */
+    public function setAcceptOnMatch($acceptOnMatch)
+    {
+        $this->setBoolean('acceptOnMatch', $acceptOnMatch);
+    }
+    
+    /**
+     * @param string $s the string to match
+     */
+    public function setStringToMatch($string)
+    {
+        $this->setString('stringToMatch', $string);
+    }
 
-	/**
-	 * @return integer a {@link LOGGER_FILTER_NEUTRAL} is there is no string match.
-	 */
-	public function decide(Payone_Log4php_LoggerLoggingEvent $event) {
-		$msg = $event->getRenderedMessage();
-		
-		if($msg === null or $this->stringToMatch === null) {
-			return Payone_Log4php_LoggerFilter::NEUTRAL;
-		}
-		
-		if(strpos($msg, $this->stringToMatch) !== false ) {
-			return ($this->acceptOnMatch) ? Payone_Log4php_LoggerFilter::ACCEPT : Payone_Log4php_LoggerFilter::DENY;
-		}
-		return Payone_Log4php_LoggerFilter::NEUTRAL;
-	}
+    /**
+     * @return integer a {@link LOGGER_FILTER_NEUTRAL} is there is no string match.
+     */
+    public function decide(Payone_Log4php_LoggerLoggingEvent $event)
+    {
+        $msg = $event->getRenderedMessage();
+        
+        if ($msg === null or $this->stringToMatch === null) {
+            return Payone_Log4php_LoggerFilter::NEUTRAL;
+        }
+        
+        if (strpos($msg, $this->stringToMatch) !== false) {
+            return ($this->acceptOnMatch) ? Payone_Log4php_LoggerFilter::ACCEPT : Payone_Log4php_LoggerFilter::DENY;
+        }
+        return Payone_Log4php_LoggerFilter::NEUTRAL;
+    }
 }

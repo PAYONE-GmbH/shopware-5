@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Mapper_Response_GetFile
-    extends Payone_Api_Mapper_Response_Abstract
-    implements Payone_Api_Mapper_Response_Interface
+class Payone_Api_Mapper_Response_GetFile extends Payone_Api_Mapper_Response_Abstract implements Payone_Api_Mapper_Response_Interface
 {
 
     /**
@@ -47,13 +45,11 @@ class Payone_Api_Mapper_Response_GetFile
 
         if ($this->isError()) {
             $response = new Payone_Api_Response_Error($params);
-        }
-        elseif (empty($params) || $this->isApproved() || $this->isBlocked() || $this->isEnrolled() ||
+        } elseif (empty($params) || $this->isApproved() || $this->isBlocked() || $this->isEnrolled() ||
             $this->isInvalid() || $this->isRedirect() || $this->isValid()
         ) {
             throw new Payone_Api_Exception_UnknownStatus();
-        }
-        else {
+        } else {
             $params = array('response' => $params);
             $response = new Payone_Api_Response_Management_GetFile($params);
             $response->setStatus(Payone_Api_Enum_ResponseType::VALID);

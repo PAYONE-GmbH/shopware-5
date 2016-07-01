@@ -54,9 +54,7 @@
  *
  * @api
  */
-class Payone_Api_Service_Payment_Preauthorize
-    extends Payone_Api_Service_Payment_Abstract
-    implements Payone_Api_Service_Payment_PreauthorizeInterface
+class Payone_Api_Service_Payment_Preauthorize extends Payone_Api_Service_Payment_Abstract implements Payone_Api_Service_Payment_PreauthorizeInterface
 {
     /**
      * Execute Preauthorize for the injected Request
@@ -79,8 +77,7 @@ class Payone_Api_Service_Payment_Preauthorize
             $response = $this->getMapperResponse()->map($responseRaw);
 
             $this->protocol($request, $response);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->protocolException($e, $request);
             throw $e;
         }

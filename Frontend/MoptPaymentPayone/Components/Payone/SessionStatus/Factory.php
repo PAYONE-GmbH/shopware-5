@@ -59,12 +59,11 @@ class Payone_SessionStatus_Factory
      */
     public function buildService($key)
     {
-        switch ($key)
-        {
-            case 'handlerequest' :
+        switch ($key) {
+            case 'handlerequest':
                 return $this->buildServiceHandleRequest();
                 break;
-            default :
+            default:
                 throw new Exception('Could not build service with key "' . $key . '"');
                 break;
         }
@@ -107,6 +106,4 @@ class Payone_SessionStatus_Factory
     {
         return $this->config;
     }
-
-
 }

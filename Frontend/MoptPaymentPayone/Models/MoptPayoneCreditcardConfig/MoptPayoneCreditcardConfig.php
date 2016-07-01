@@ -6,8 +6,8 @@
 
 namespace Shopware\CustomModels\MoptPayoneCreditcardConfig;
 
-use Shopware\Components\Model\ModelEntity,
-    Doctrine\ORM\Mapping AS ORM;
+use Shopware\Components\Model\ModelEntity;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="Repository")
@@ -18,7 +18,7 @@ class MoptPayoneCreditcardConfig extends ModelEntity
 
     /**
      * @var integer $id
-     * 
+     *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -27,7 +27,7 @@ class MoptPayoneCreditcardConfig extends ModelEntity
 
     /**
      * @var integer $errorLocaleId
-     * 
+     *
      * @ORM\Column(name="error_locale_id", type="integer")
      */
     protected $errorLocaleId;
@@ -96,14 +96,14 @@ class MoptPayoneCreditcardConfig extends ModelEntity
 
     /**
      * @var integer $cardnoInputChars
-     * 
+     *
      * @ORM\Column(name="cardno_input_chars", type="integer", unique=false, nullable=true)
      */
     protected $cardnoInputChars;
 
     /**
      * @var integer $cardnoInputCharsMax
-     * 
+     *
      * @ORM\Column(name="cardno_input_chars_max", type="integer", unique=false, nullable=true)
      */
     protected $cardnoInputCharsMax;
@@ -146,14 +146,14 @@ class MoptPayoneCreditcardConfig extends ModelEntity
 
     /**
      * @var integer $cardcvcInputChars
-     * 
+     *
      * @ORM\Column(name="cardcvc_input_chars", type="integer", unique=false, nullable=true)
      */
     protected $cardcvcInputChars;
 
     /**
      * @var integer $cardcvcInputCharsMax
-     * 
+     *
      * @ORM\Column(name="cardcvc_input_chars_max", type="integer", unique=false, nullable=true)
      */
     protected $cardcvcInputCharsMax;
@@ -196,14 +196,14 @@ class MoptPayoneCreditcardConfig extends ModelEntity
 
     /**
      * @var integer $cardmonthInputChars
-     * 
+     *
      * @ORM\Column(name="cardmonth_input_chars", type="integer", unique=false, nullable=true)
      */
     protected $cardmonthInputChars;
 
     /**
      * @var integer $cardmonthInputCharsMax
-     * 
+     *
      * @ORM\Column(name="cardmonth_input_chars_max", type="integer", unique=false, nullable=true)
      */
     protected $cardmonthInputCharsMax;
@@ -246,14 +246,14 @@ class MoptPayoneCreditcardConfig extends ModelEntity
 
     /**
      * @var integer $cardyearInputChars
-     * 
+     *
      * @ORM\Column(name="cardyear_input_chars", type="integer", unique=false, nullable=true)
      */
     protected $cardyearInputChars;
 
     /**
      * @var integer $cardyearInputCharsMax
-     * 
+     *
      * @ORM\Column(name="cardyear_input_chars_max", type="integer", unique=false, nullable=true)
      */
     protected $cardyearInputCharsMax;

@@ -30,13 +30,12 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_Authorization_PaymentMethod_CashOnDelivery
-    extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
+class Payone_Api_Request_Parameter_Authorization_PaymentMethod_CashOnDelivery extends Payone_Api_Request_Parameter_Authorization_PaymentMethod_Abstract
 {
     /**
      * @var string
      */
-    protected $shippingprovider = NULL;
+    protected $shippingprovider = null;
 
     /**
      * @param string $shippingprovider

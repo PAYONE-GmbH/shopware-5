@@ -35,7 +35,7 @@ class Payone_Api_Response_AddressCheck_Invalid extends Payone_Api_Response_Inval
     /**
      * @var int
      */
-    protected $secstatus = NULL;
+    protected $secstatus = null;
 
     /**
      * @param int $secstatus

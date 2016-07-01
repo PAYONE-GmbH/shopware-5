@@ -35,11 +35,11 @@ class Payone_Api_Response_Debit_Approved extends Payone_Api_Response_Abstract
     /**
      * @var int
      */
-    protected $txid = NULL;
+    protected $txid = null;
     /**
      * @var string
      */
-    protected $settleaccount = NULL;
+    protected $settleaccount = null;
 
     /**
      * @param string $settleaccount

@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_SessionStatus_Mapper_Request
-    implements Payone_SessionStatus_Mapper_RequestInterface
+class Payone_SessionStatus_Mapper_Request implements Payone_SessionStatus_Mapper_RequestInterface
 {
     public function mapByArray(array $data)
     {

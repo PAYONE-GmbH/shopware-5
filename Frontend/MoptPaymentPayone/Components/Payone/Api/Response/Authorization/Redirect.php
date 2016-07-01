@@ -35,15 +35,15 @@ class Payone_Api_Response_Authorization_Redirect extends Payone_Api_Response_Abs
     /**
      * @var int
      */
-    protected $txid = NULL;
+    protected $txid = null;
     /**
      * @var int
      */
-    protected $userid = NULL;
+    protected $userid = null;
     /**
      * @var string
      */
-    protected $redirecturl = NULL;
+    protected $redirecturl = null;
 
     /**
      * @param string $redirecturl

@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-abstract class Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract
-    extends Payone_Settings_Data_ConfigFile_Abstract
-    implements Payone_Settings_Data_ConfigFile_Interface
+abstract class Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract extends Payone_Settings_Data_ConfigFile_Abstract implements Payone_Settings_Data_ConfigFile_Interface
 {
     /** @var string */
     protected $id = '';
@@ -237,5 +235,4 @@ abstract class Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract
     {
         $this->key = $key;
     }
-
 }

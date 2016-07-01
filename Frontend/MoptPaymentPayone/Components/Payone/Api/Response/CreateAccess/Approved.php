@@ -35,15 +35,15 @@ class Payone_Api_Response_CreateAccess_Approved extends Payone_Api_Response_Abst
     /**
      * @var int
      */
-    protected $txid = NULL;
+    protected $txid = null;
     /**
      * @var int
      */
-    protected $userid = NULL;
+    protected $userid = null;
     /**
      * @var int
      */
-    protected $accessid = NULL;
+    protected $accessid = null;
 
     /**
      * @param int $txid

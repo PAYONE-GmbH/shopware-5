@@ -35,7 +35,7 @@ class Payone_Api_Response_Consumerscore_Invalid extends Payone_Api_Response_Inva
     /**
      * @var int
      */
-    protected $secstatus = NULL;
+    protected $secstatus = null;
 
     /**
      * @param int $secstatus

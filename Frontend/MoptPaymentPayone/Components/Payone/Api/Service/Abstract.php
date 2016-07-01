@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-abstract class Payone_Api_Service_Abstract
-    implements Payone_Api_Service_Interface
+abstract class Payone_Api_Service_Abstract implements Payone_Api_Service_Interface
 {
     /**
      * @var Payone_Api_Adapter_Interface
@@ -68,9 +67,11 @@ abstract class Payone_Api_Service_Abstract
      * @param Payone_Api_Request_Interface $request
      * @param Payone_Api_Response_Interface $response
      */
-    protected function protocol(Payone_Api_Request_Interface $request,
-                                Payone_Api_Response_Interface $response)
-    {
+    protected function protocol(
+        Payone_Api_Request_Interface $request,
+        Payone_Api_Response_Interface $response
+    ) {
+    
         $serviceProtocol = $this->getServiceProtocol();
         if ($serviceProtocol instanceof Payone_Api_Service_ProtocolRequest_Interface) {
             $serviceProtocol->protocol($request, $response);
@@ -168,5 +169,4 @@ abstract class Payone_Api_Service_Abstract
     {
         return $this->validator;
     }
-
 }

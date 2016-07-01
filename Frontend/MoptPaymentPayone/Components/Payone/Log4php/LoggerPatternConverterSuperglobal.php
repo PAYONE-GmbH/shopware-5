@@ -7,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,37 +19,39 @@
  */
 
 /**
- * Returns a value from a superglobal array corresponding to the 
+ * Returns a value from a superglobal array corresponding to the
  * given key.
- * 
+ *
  * Option: the key to look up within the superglobal array
- * 
+ *
  * Also, it is possible that a superglobal variable is not populated by PHP
  * because of the settings in the variables-order ini directive. In this case
  * the converter will return an empty value.
- * 
+ *
  * @see http://php.net/manual/en/language.variables.superglobals.php
  * @see http://www.php.net/manual/en/ini.core.php#ini.variables-order
  * @package log4php
  * @subpackage pattern
  */
-abstract class Payone_Log4php_LoggerPatternConverterSuperglobal extends Payone_Log4php_LoggerPatternConverter {
+abstract class Payone_Log4php_LoggerPatternConverterSuperglobal extends Payone_Log4php_LoggerPatternConverter
+{
 
-	/** 
-	 * Name of the superglobal variable, to be defined by subclasses. 
-	 * For example: "_SERVER" or "_ENV". 
-	 */
-	protected $name;
-	
-	protected $value = '';
-	
-	public function activateOptions() {
-		// Read the key from options array
-		if (isset($this->option) && $this->option !== '') {
-			$key = $this->option;
-		}
-	
-		/*
+    /**
+     * Name of the superglobal variable, to be defined by subclasses.
+     * For example: "_SERVER" or "_ENV".
+     */
+    protected $name;
+    
+    protected $value = '';
+    
+    public function activateOptions()
+    {
+        // Read the key from options array
+        if (isset($this->option) && $this->option !== '') {
+            $key = $this->option;
+        }
+    
+        /*
 		 * There is a bug in PHP which doesn't allow superglobals to be 
 		 * accessed when their name is stored in a variable, e.g.:
 		 * 
@@ -65,35 +67,34 @@ abstract class Payone_Log4php_LoggerPatternConverterSuperglobal extends Payone_L
 		 * 
 		 * That's why global is used here.
 		 */
-		global ${$this->name};
-			
-		// Check the given superglobal exists. It is possible that it is not initialized.
-		if (!isset(${$this->name})) {
-			$class = get_class($this);
-			trigger_error("log4php: $class: Cannot find superglobal variable \${$this->name}.", E_USER_WARNING);
-			return;
-		}
-		
-		$source = ${$this->name};
-		
-		// When the key is set, display the matching value
-		if (isset($key)) {
-			if (isset($source[$key])) {
-				$this->value = $source[$key]; 
-			}
-		}
-		
-		// When the key is not set, display all values
-		else {
-			$values = array();
-			foreach($source as $key => $value) {
-				$values[] = "$key=$value";
-			}
-			$this->value = implode(', ', $values);			
-		}
-	}
-	
-	public function convert(Payone_Log4php_LoggerLoggingEvent $event) {
-		return $this->value;
-	}
+        global ${$this->name};
+            
+        // Check the given superglobal exists. It is possible that it is not initialized.
+        if (!isset(${$this->name})) {
+            $class = get_class($this);
+            trigger_error("log4php: $class: Cannot find superglobal variable \${$this->name}.", E_USER_WARNING);
+            return;
+        }
+        
+        $source = ${$this->name};
+        
+        // When the key is set, display the matching value
+        if (isset($key)) {
+            if (isset($source[$key])) {
+                $this->value = $source[$key];
+            }
+        } // When the key is not set, display all values
+        else {
+            $values = array();
+            foreach ($source as $key => $value) {
+                $values[] = "$key=$value";
+            }
+            $this->value = implode(', ', $values);
+        }
+    }
+    
+    public function convert(Payone_Log4php_LoggerLoggingEvent $event)
+    {
+        return $this->value;
+    }
 }

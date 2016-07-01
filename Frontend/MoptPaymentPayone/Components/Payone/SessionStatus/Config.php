@@ -47,5 +47,4 @@ class Payone_SessionStatus_Config extends Payone_Config_Abstract
         );
         return $defaultConfig;
     }
-
 }

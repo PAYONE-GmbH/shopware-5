@@ -37,43 +37,43 @@ class Payone_Api_Request_BankAccountCheck extends Payone_Api_Request_Abstract
     /**
      * @var int
      */
-    protected $aid = NULL;
+    protected $aid = null;
     /**
      * @var string
      */
-    protected $checktype = NULL;
+    protected $checktype = null;
     /**
      * @var string
      */
-    protected $bankcountry = NULL;
+    protected $bankcountry = null;
     /**
      * @var string
      */
-    protected $bankaccount = NULL;
+    protected $bankaccount = null;
     /**
      * @var int
      */
-    protected $bankcode = NULL;
+    protected $bankcode = null;
     /**
      * @var int
      */
-    protected $bankbranchcode = NULL;
+    protected $bankbranchcode = null;
     /**
      * @var int
      */
-    protected $bankcheckdigit = NULL;
+    protected $bankcheckdigit = null;
     /**
      * @var string
      */
-    protected $iban = NULL;
+    protected $iban = null;
     /**
      * @var string
      */
-    protected $bic = NULL;
+    protected $bic = null;
     /**
      * @var string
      */
-    protected $language = NULL;
+    protected $language = null;
 
     /**
      * @param int $aid

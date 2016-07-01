@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Request_Parameter_UpdateAccess_Invoicing_Transaction
-    extends Payone_Api_Request_Parameter_Abstract
+class Payone_Api_Request_Parameter_UpdateAccess_Invoicing_Transaction extends Payone_Api_Request_Parameter_Abstract
 {
     /**
      * @var Payone_Api_Request_Parameter_Invoicing_Access_Item[]

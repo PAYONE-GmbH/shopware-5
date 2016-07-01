@@ -15,19 +15,19 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
     /**
      * PayoneMain
-     * @var Mopt_PayoneMain 
+     * @var Mopt_PayoneMain
      */
     protected $moptPayoneMain = null;
 
     /**
      * PayoneMain
-     * @var Mopt_PayonePaymentHelper 
+     * @var Mopt_PayonePaymentHelper
      */
     protected $moptPayonePaymentHelper = null;
 
     /**
      * PayOne Builder
-     * @var PayoneBuilder 
+     * @var PayoneBuilder
      */
     protected $payoneServiceBuilder = null;
     
@@ -35,8 +35,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         
     protected $mid = '';
     protected $aid = '';
-    protected $pid = ''; 
-    protected $apikey = ''; 
+    protected $pid = '';
+    protected $apikey = '';
     protected $testfailed = false;
     protected $aLogcontext = array(" ", " ", " ");
     protected $aMinimumParams = null;
@@ -62,15 +62,12 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $title = $aConfig->Titel;
         $sql = $aConfig->SQL;
         $i = 0;
-        foreach ($sql as $statement)
-        {
-
+        foreach ($sql as $statement) {
             $datas[$i] = Shopware()->Db()->fetchall($statement, array("1"));
             $i++;
         }
         $i = 0;
-        foreach ($datas as $data)
-        {
+        foreach ($datas as $data) {
             $ret[$i] = $data[0]['platzhalter'];
             $i++;
         }
@@ -80,8 +77,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "title" => $title,
             "params" => $params,
-            )
-        );
+            ));
     }
     
     /**
@@ -92,7 +88,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
     public function Plugin()
     {
         return Shopware()->Plugins()->Frontend()->MoptPaymentPayone();
-    }    
+    }
 
     public function connectiontestAction()
     {
@@ -104,31 +100,21 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         unlink(Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log');
         $this->logging->lwrite('<span style="color: green;">Starte Verbindungstest</span>', $this->aLogcontext);
-        if (!$this->testfailed)
-        {
+        if (!$this->testfailed) {
             $this->creditcardCheckVisa(true);
         }
-        if (!$this->testfailed)
-        {
+        if (!$this->testfailed) {
             $this->creditcardCheckMaster(true);
         }
-        if (!$this->testfailed)
-        {
+        if (!$this->testfailed) {
             $this->vorkasseCheck(true);
         }
-        if (!$this->testfailed)
-        {
+        if (!$this->testfailed) {
             $this->rechnungCheck(true);
         }
-        if (!$this->testfailed)
-        {
+        if (!$this->testfailed) {
             $this->lastschriftCheck();
         }
-        $this->View()->assign(array(
-            "data" => $data,
-            "params" => $params
-            )
-        );
     }
 
     public function creditcardCheckVisa($ecommercemode = null)
@@ -157,16 +143,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $request->setClearingtype($this->aMinimumParams['clearingtype']);
 
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
-        // PHP 7 Compatibility
-        try{
-            $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-            ));
-
-        } catch (\TypeError $typeError) {
-            // Do Nothing
-        }
-  
+        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
         $pData = new Payone_Api_Request_Parameter_Authorization_PersonalData();
         $pData->setFirstname($this->aMinimumParams['firstname']);
         $pData->setLastname($this->aMinimumParams['lastname']);
@@ -182,11 +161,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Visa)</span>');
         $response = $this->service->preauthorize($request);
-        if ($response->getStatus() == "APPROVED")
-        {
+        if ($response->getStatus() == "APPROVED") {
             $this->logging->lwrite('<span style="color: green;">Test erfolgreich</span>');
-        } else
-        {
+        } else {
             $this->logging->lwrite('<span style="color: red;">Test fehlgeschlagen!!!</span>');
             $this->logging->lwrite('<span style="color: red;">Fehlermeldung:' . $response->getErrorMessage() . '</span>');
 
@@ -195,8 +172,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $this->View()->assign(array(
             "data" => $data,
             "params" => $params
-            )
-        );
+            ));
     }
 
     public function creditcardCheckMaster($ecommercemode = null)
@@ -217,9 +193,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $request = new Payone_Api_Request_Preauthorization($params);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         $request->setAmount($this->aMinimumParams['amount']);
         $request->setCurrency($this->aMinimumParams['currency']);
@@ -243,11 +218,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Mastercard)</span>');
         $response = $this->service->preauthorize($request);
-        if ($response->getStatus() == "APPROVED")
-        {
+        if ($response->getStatus() == "APPROVED") {
             $this->logging->lwrite('<span style="color: green;">Test erfolgreich</span>');
-        } else
-        {
+        } else {
             $this->logging->lwrite('<span style="color: red;">Test fehlgeschlagen!!!</span>');
             $this->logging->lwrite('<span style="color: red;">Fehlermeldung:' . $response->getErrorMessage() . '</span>');
             $this->testfailed = true;
@@ -256,8 +229,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $this->View()->assign(array(
             "data" => $data,
             "params" => $params
-            )
-        );
+            ));
     }
 
     public function vorkasseCheck($ecommercemode = null)
@@ -275,9 +247,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize("mopt_payone__acc_payinadvance");
         $request = new Payone_Api_Request_Preauthorization($params);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         $request->setAmount($this->aMinimumParams['amount']);
         $request->setCurrency($this->aMinimumParams['currency']);
@@ -293,11 +264,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $this->logging->lwrite('<span style="color: yellow;"> teste Request Authorisierung im Modus Test mit Zahlart Vorkasse</span>');
         $response = $this->service->preauthorize($request);
-        if ($response->getStatus() == "APPROVED")
-        {
+        if ($response->getStatus() == "APPROVED") {
             $this->logging->lwrite('<span style="color: green;">Test erfolgreich</span>');
-        } else
-        {
+        } else {
             $this->logging->lwrite('<span style="color: red;">Test fehlgeschlagen!!!</span>');
             $this->logging->lwrite('<span style="color: red;">Fehlermeldung:' . $response->getErrorMessage() . '</span>');
             $this->testfailed = true;
@@ -306,8 +275,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $this->View()->assign(array(
             "data" => $data,
             "params" => $params
-            )
-        );
+            ));
     }
 
     public function rechnungCheck($ecommercemode = null)
@@ -327,9 +295,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $request = new Payone_Api_Request_Preauthorization($params);
 
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         $request->setAmount($this->aMinimumParams['amount']);
         $request->setCurrency($this->aMinimumParams['currency']);
@@ -344,11 +311,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $this->logging->lwrite('<span style="color: yellow;"> teste Request Authorisierung im Modus Test mit Zahlart Rechnung</span>');
         $response = $this->service->preauthorize($request);
-        if ($response->getStatus() == "APPROVED")
-        {
+        if ($response->getStatus() == "APPROVED") {
             $this->logging->lwrite('<span style="color: green;">Test erfolgreich</span>');
-        } else
-        {
+        } else {
             $this->logging->lwrite('<span style="color: red;">Test fehlgeschlagen!!!</span>');
             $this->logging->lwrite('<span style="color: red;">Fehlermeldung:' . $response->getErrorMessage() . '</span>');
             $this->testfailed = true;
@@ -358,8 +323,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $this->View()->assign(array(
             "data" => $data,
             "params" => $params
-            )
-        );
+            ));
     }
 
     public function lastschriftCheck()
@@ -381,7 +345,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         $request->setAmount($this->aMinimumParams['amount']);
         $request->setCurrency($this->aMinimumParams['currency']);
@@ -403,11 +367,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Lastschrift</span>');
 
         $response = $this->service->preauthorize($request);
-        if ($response->getStatus() == "APPROVED")
-        {
+        if ($response->getStatus() == "APPROVED") {
             $this->logging->lwrite('<span style="color: green;">Test erfolgreich</span>');
-        } else
-        {
+        } else {
             $this->logging->lwrite('<span style="color: red;">Test fehlgeschlagen!!!</span>');
             $this->logging->lwrite('<span style="color: red;">Fehlermeldung:' . $response->getErrorMessage() . '</span>');
             $this->testfailed = true;
@@ -416,8 +378,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $this->View()->assign(array(
             "data" => $data,
             "params" => $params
-            )
-        );
+            ));
     }
 
     public function ajaxgetTestResultsAction()
@@ -429,8 +390,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $filename = Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log';
         $resultfile = fopen($filename, "r");
         $aLines = '';
-        while (!feof($resultfile))
-        {
+        while (!feof($resultfile)) {
             $aLines .= fgets($resultfile) . "<br>";
         }
 
@@ -457,8 +417,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function apilogAction()
@@ -484,8 +443,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "data" => $apilogentries,
             "breadcrump" => $breadcrump,
             "params" => $params,
-            )
-        );
+            ));
     }
 
     public function ajaxapilogAction()
@@ -529,14 +487,11 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $order = (array) $this->Request()->getParam('sort', array());
 
-        if ($order)
-        {
-            foreach ($order as $ord)
-            {
+        if ($order) {
+            foreach ($order as $ord) {
                 $builder->addOrderBy('log.' . $ord['property'], $ord['direction']);
             }
-        } else
-        {
+        } else {
             $builder->addOrderBy('log.creationDate', 'DESC');
         }
 
@@ -578,8 +533,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function ajaxgetPaymentStatusConfigAction()
@@ -623,8 +577,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
     public function transactionlogAction()
     {
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
         $breadcrump = array(
             "Konfiguration", "Protokolle", "transactionlog", "Zahlstatus"
         );
@@ -633,19 +585,14 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
         $this->View()->assign(array
             (
-            "data" => $data,
             "breadcrump" => $breadcrump,
-            "form" => $myForm,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function generalAction()
     {
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
         $breadcrump = array(
             "Konfiguration", "Information", "general", "Allgemein"
         );
@@ -654,19 +601,14 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
         $this->View()->assign(array
             (
-            "data" => $data,
             "breadcrump" => $breadcrump,
-            "form" => $myForm,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function supportAction()
     {
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
         $breadcrump = array(
             "Konfiguration", "Information", "support", "Support"
         );
@@ -676,18 +618,14 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $this->View()->assign(array
             (
-            "data" => $data,
             "breadcrump" => $breadcrump,
-            "form" => $myForm,
-            "params" => $params
-            )
-        );
+            "params" => $params,
+            "data" => $data,
+            ));
     }
 
     public function tippsAction()
     {
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
         $breadcrump = array(
             "Konfiguration", "Information", "tipps", "Tipps"
         );
@@ -699,10 +637,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             (
             "data" => $data,
             "breadcrump" => $breadcrump,
-            "form" => $myForm,
             "params" => $params
-            )
-        );
+            ));
     }
 
     public function ajaxcreditcardAction()
@@ -721,8 +657,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function ajaxgetCreditCardConfigAction()
@@ -775,6 +710,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
     public function ajaxdebitAction()
     {
+        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
+        $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
         $breadcrump = array(
             "Konfiguration", "Zahlungsarten", "ajaxdebit", "Kontobasiert"
         );
@@ -787,8 +724,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function ajaxgetDebitConfigAction()
@@ -823,8 +759,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function ajaxgetFinanceConfigAction()
@@ -857,8 +792,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $this->View()->assign(array(
             "payonepaymentmethods" => $payonepaymentmethods,
             "breadcrump" => $breadcrump,
-            )
-        );
+            "params" => $params,
+            "data" => $data,
+            ));
     }
 
     public function ajaxgetOnlineTransferConfigAction()
@@ -893,8 +829,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function ajaxgetWalletConfigAction()
@@ -929,8 +864,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function ajaxgetTransactionStatusConfigAction()
@@ -962,8 +896,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            )
-        );
+            ));
     }
 
     public function ajaxgetGeneralConfigAction()
@@ -995,25 +928,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            )
-        );
-    }
-
-    public function ajaxfeaturesAction()
-    {
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
-        $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
-        $query = $this->getAllPaymentsQuery(array('name' => 'mopt_payone__%'), null, $repository);
-        $payonepaymentmethods = $query->getArrayResult();
-
-        $this->View()->assign(array(
-            "payonepaymentmethods" => $payonepaymentmethods,
-            "breadcrump" => $breadcrump,
-            "params" => $params,
-            "data" => $data,
-            )
-        );
+            ));
     }
 
     public function ajaxaddresscheckAction()
@@ -1033,8 +948,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "payonepaymentmethods" => $payonepaymentmethods,
             "breadcrump" => $breadcrump,
             "params" => $params,
-            )
-        );
+            ));
     }
 
     public function ajaxtextblocksAction()
@@ -1054,8 +968,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
             "payonepaymentmethods" => $payonepaymentmethods,
             "breadcrump" => $breadcrump,
             "params" => $params,
-            )
-        );
+            ));
     }
 
     public function ajaxgettextblocksAction()
@@ -1179,8 +1092,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
                 'id' => $options['paymentId']
             )
         );
-        if ($payment === null)
-        {
+        if ($payment === null) {
             $payment = new \Shopware\Models\Payment\Payment();
             $payment->setName($options['name']);
             Shopware()->Models()->persist($payment);
@@ -1229,8 +1141,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
                 'paymentId' => $options['paymentId']
             )
         );
-        if ($data === null)
-        {
+        if ($data === null) {
             $olddata = $repository->findOneBy(
                 array(
                     'paymentId' => 0
@@ -1243,52 +1154,40 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         };
 
         $data->fromArray($options);
-        if ($options['adresscheckActive'] == "false")
-        {
+        if ($options['adresscheckActive'] == "false") {
             $data->setAdresscheckActive(0);
         }
-        if ($options['adresscheckActive'] == "true")
-        {
+        if ($options['adresscheckActive'] == "true") {
             $data->setAdresscheckActive(1);
         }
-        if ($options['adresscheckLiveMode'] == "false")
-        {
+        if ($options['adresscheckLiveMode'] == "false") {
             $data->setAdresscheckLiveMode(0);
         }
-        if ($options['adresscheckLiveMode'] == "true")
-        {
+        if ($options['adresscheckLiveMode'] == "true") {
             $data->setAdresscheckLiveMode(1);
         }
-        if ($options['consumerscoreActive'] == "false")
-        {
+        if ($options['consumerscoreActive'] == "false") {
             $data->setConsumerscoreActive(0);
         }
-        if ($options['consumerscoreActive'] == "true")
-        {
+        if ($options['consumerscoreActive'] == "true") {
             $data->setConsumerscoreActive(1);
         }
-        if ($options['consumerscoreLiveMode'] == "false")
-        {
+        if ($options['consumerscoreLiveMode'] == "false") {
             $data->setConsumerscoreLiveMode(0);
         }
-        if ($options['consumerscoreLiveMode'] == "true")
-        {
+        if ($options['consumerscoreLiveMode'] == "true") {
             $data->setConsumerscoreLiveMode(1);
         }
-        if ($options['submitBasket'] == "false")
-        {
+        if ($options['submitBasket'] == "false") {
             $data->setSubmitBasket(0);
         }
-        if ($options['submitBasket'] == "true")
-        {
+        if ($options['submitBasket'] == "true") {
             $data->setSubmitBasket(1);
         }
-        if ($options['liveMode'] == "false")
-        {
+        if ($options['liveMode'] == "false") {
             $data->setLiveMode(0);
         }
-        if ($options['liveMode'] == "true")
-        {
+        if ($options['liveMode'] == "true") {
             $data->setLiveMode(1);
         }
 
@@ -1303,12 +1202,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $builder->select(
             array('p')
         );
-        if ($filter !== null)
-        {
+        if ($filter !== null) {
             $builder->addFilter($filter);
         }
-        if ($order !== null)
-        {
+        if ($order !== null) {
             $builder->addOrderBy($order);
         }
 
@@ -1321,12 +1218,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $builder->select(
             array('p')
         );
-        if ($filter !== null)
-        {
+        if ($filter !== null) {
             $builder->addFilter($filter);
         }
-        if ($order !== null)
-        {
+        if ($order !== null) {
             $builder->addOrderBy($order);
         }
 
@@ -1335,32 +1230,25 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
     protected function addArrayRequestResponse($result)
     {
-        if (!empty($result))
-        {
-            foreach ($result as $key => $entry)
-            {
+        if (!empty($result)) {
+            foreach ($result as $key => $entry) {
                 $request = '';
                 $response = '';
                 $dataRequest = explode('|', $entry['requestDetails']);
 
-                foreach ($dataRequest as $value)
-                {
+                foreach ($dataRequest as $value) {
                     $tmp = explode('=', $value);
-                    if ($tmp[1])
-                    {
+                    if ($tmp[1]) {
                         $request .= $tmp[0] . "=" . $tmp[1] . '<BR>';
                     }
                 }
                 $dataResponse = explode('|', $entry['responseDetails']);
-                foreach ($dataResponse as $value)
-                {
+                foreach ($dataResponse as $value) {
                     $tmp = explode('=', $value);
-                    if ($tmp[0] == 'rawResponse')
-                    {
+                    if ($tmp[0] == 'rawResponse') {
                         unset($tmp[1]);
                     }
-                    if ($tmp[1])
-                    {
+                    if ($tmp[1]) {
                         $response .= $tmp[0] . "=" . $tmp[1] . '<BR>';
                     }
                 }
@@ -1374,17 +1262,12 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
     protected function addArrayOrderDetails($result)
     {
 
-        if (!empty($result))
-        {
-
-            foreach ($result as $key => $entry)
-            {
+        if (!empty($result)) {
+            foreach ($result as $key => $entry) {
                 $request = '';
                 $dataResponse = $entry['details'];
-                foreach ($dataResponse as $subkey => $value)
-                {
-                    if ($value)
-                    {
+                foreach ($dataResponse as $subkey => $value) {
+                    if ($value) {
                         $request .= $subkey . "=" . $value . '<BR>';
                     }
                 }
@@ -1393,7 +1276,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         }
         return $result;
     }
-
 }
 
 /**
@@ -1410,8 +1292,7 @@ class Logging
 
     public function lwrite($message)
     {
-        if (!is_resource($this->fp))
-        {
+        if (!is_resource($this->fp)) {
             $this->lopen();
         }
 
@@ -1431,5 +1312,4 @@ class Logging
         $lfile = $this->log_file ? $this->log_file : $log_file_default;
         $this->fp = fopen($lfile, 'a') or exit("Can't open $lfile!");
     }
-
 }

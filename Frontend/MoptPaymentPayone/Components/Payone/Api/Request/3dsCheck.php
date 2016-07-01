@@ -37,47 +37,47 @@ class Payone_Api_Request_3dsCheck extends Payone_Api_Request_Abstract
     /**
      * @var int
      */
-    protected $aid = NULL;
+    protected $aid = null;
     /**
      * @var int
      */
-    protected $amount = NULL;
+    protected $amount = null;
     /**
      * @var string
      */
-    protected $currency = NULL;
+    protected $currency = null;
     /**
      * @var string
      */
-    protected $clearingtype = NULL;
+    protected $clearingtype = null;
     /**
      * @var string
      */
-    protected $exiturl = NULL;
+    protected $exiturl = null;
     /**
      * @var string
      */
-    protected $cardpan = NULL;
+    protected $cardpan = null;
     /**
      * @var string
      */
-    protected $cardtype = NULL;
+    protected $cardtype = null;
     /**
      * @var string
      */
-    protected $cardexpiredate = NULL;
+    protected $cardexpiredate = null;
     /**
      * @var int
      */
-    protected $cardcvc2 = NULL;
+    protected $cardcvc2 = null;
     /**
      * @var string
      */
-    protected $storecarddata = NULL;
+    protected $storecarddata = null;
     /**
      * @var string
      */
-    protected $language = NULL;
+    protected $language = null;
 
     /**
      * @param int $aid

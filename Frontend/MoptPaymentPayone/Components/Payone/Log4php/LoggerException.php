@@ -24,5 +24,6 @@
  * @version $Revision: 771547 $
  * @package log4php
  */
-class Payone_Log4php_LoggerException extends Exception {
+class Payone_Log4php_LoggerException extends Exception
+{
 }

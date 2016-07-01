@@ -30,9 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-class Payone_Api_Mapper_Response_Preauthorization
-    extends Payone_Api_Mapper_Response_Abstract
-    implements Payone_Api_Mapper_Response_Interface
+class Payone_Api_Mapper_Response_Preauthorization extends Payone_Api_Mapper_Response_Abstract implements Payone_Api_Mapper_Response_Interface
 {
     /**
      * @param array $params
@@ -46,18 +44,14 @@ class Payone_Api_Mapper_Response_Preauthorization
 
         if ($this->isApproved()) {
             $response = new Payone_Api_Response_Preauthorization_Approved($params);
-        }
-        elseif ($this->isRedirect()) {
+        } elseif ($this->isRedirect()) {
             $response = new Payone_Api_Response_Preauthorization_Redirect($params);
-        }
-        elseif ($this->isError()) {
+        } elseif ($this->isError()) {
             $response = new Payone_Api_Response_Error($params);
-        }
-        else {
+        } else {
             throw new Payone_Api_Exception_UnknownStatus();
         }
 
         return $response;
     }
-
 }

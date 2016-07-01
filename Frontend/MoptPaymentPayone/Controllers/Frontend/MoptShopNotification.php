@@ -32,7 +32,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     /**
      * index action called by Payone platform to transmit transaction status updates
-     * 
+     *
      * @return mixed
      */
     public function indexAction()
@@ -128,7 +128,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
         if (!$orderIsCorrupted) {
             $mappedShopwareState = $this->moptPayone__helper->getMappedShopwarePaymentStatusId(
-                    $config, $request->getParam('txaction'));
+                $config,
+                $request->getParam('txaction')
+            );
 
             $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
         }
@@ -142,7 +144,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     /**
      * get transaction service, validate key and ip addresses
-     * 
+     *
      * @param string $key
      * @param array $validIps
      * @return service
@@ -152,14 +154,14 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $hashedKey = md5($key);
         $service = $this->moptPayone__serviceBuilder->buildServiceTransactionStatusHandleRequest($hashedKey, $validIps);
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog'
-            ));
+            'Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog'
+        ));
         return $service;
     }
 
     /**
      * forward request to configured urls
-     * 
+     *
      * @param array $payoneConfig
      * @param array $rawPost
      * @param string $payoneStatus
@@ -190,7 +192,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     /**
      * get plugin bootstrap
-     * 
+     *
      * @return plugin
      */
     public function Plugin()
@@ -200,7 +202,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     /**
      * try to load order via transaction id
-     * 
+     *
      * @param string $transactionId
      * @return order
      */
@@ -217,7 +219,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     /**
      * try to load order via transaction id
-     * 
+     *
      * @param string $orderNumber
      * @return order
      */
@@ -234,7 +236,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     /**
      * restore session from Id
-     * 
+     *
      * @param string $customParam
      */
     protected function restoreSession($customParam)
@@ -248,7 +250,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     /**
      * determine wether order is already finished
-     * 
+     *
      * @param string $transactionId
      * @param string $paymentReference
      * @return boolean
@@ -271,7 +273,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     /**
      * determine wether order is already finished
      * additional check for frontend api creditcard payments
-     * 
+     *
      * @param string $paymentReference
      * @param string $transactionId
      * @return boolean
@@ -294,7 +296,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     /**
      * update transaction id, needed for frontend api creditcard payments
-     * 
+     *
      * @param string $orderNumber
      * @param string $transactionId
      * @return boolean
@@ -310,7 +312,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     /**
      * persist tx-status information
-     * 
+     *
      * @param array $order
      * @param array $attributeData
      * @param bool $saveOrderHash
@@ -345,26 +347,26 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     /**
      * check if correct active shop is loaded
      * load and register correct shop and resources
-     * 
+     *
      * @param array $customParam
      */
     protected function CheckAndFixActiveShopIfNeeded($customParam)
     {
         $sessionParam = explode('|', $customParam);
 
-        //$cookieName = explode('-', $sessionParam[0]);
-        //$shopId = $cookieName[1];
+        $cookieName = explode('-', $sessionParam[0]);
+        $shopId = $cookieName[1];
         $activeShopId = Shopware()->Shop()->getId();
-        $shopId = 1;
 
         if ($activeShopId !== $shopId) {
             $shopRepository = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');
             $shop = $shopRepository->getActiveById($shopId);
             $shop->registerResources(Shopware()->Bootstrap());
             
-            $this->logger->info('different shop active, submitted id, new shopid', 
-                    array($activeShopId, $shopId, Shopware()->Shop()->getId()));
+            $this->logger->info(
+                'different shop active, submitted id, new shopid',
+                array($activeShopId, $shopId, Shopware()->Shop()->getId())
+            );
         }
     }
-
 }

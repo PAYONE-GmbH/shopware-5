@@ -18,6 +18,7 @@
  * @author          Ronny Schröder
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  */
-class Payone_Api_Enum_CashType {
+class Payone_Api_Enum_CashType
+{
     const BARZAHLEN = 'BZN';
 }

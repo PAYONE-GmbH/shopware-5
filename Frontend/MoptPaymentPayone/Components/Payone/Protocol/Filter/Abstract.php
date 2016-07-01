@@ -30,8 +30,7 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-abstract class Payone_Protocol_Filter_Abstract
-    implements Payone_Protocol_Filter_Interface
+abstract class Payone_Protocol_Filter_Abstract implements Payone_Protocol_Filter_Interface
 {
     protected $key = '';
 

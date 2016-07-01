@@ -44,5 +44,4 @@ class Payone_Bootstrap
         require_once 'Payone/Autoload.php';
         new Payone_Autoload();
     }
-
 }

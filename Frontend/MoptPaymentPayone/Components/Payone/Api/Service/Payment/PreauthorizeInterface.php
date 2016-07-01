@@ -38,5 +38,4 @@ interface Payone_Api_Service_Payment_PreauthorizeInterface
      * @throws Exception
      */
     public function preauthorize(Payone_Api_Request_Preauthorization $request);
-
 }
