@@ -593,7 +593,7 @@ class MoptPayoneCreditcardConfig extends ModelEntity
         return $this->cardyearFieldType;
     }
 
-    public function setShop(Shop $shop)
+    public function setShop(\Shopware\Models\Shop\Shop $shop)
     {
         $this->shop = $shop;
     }
