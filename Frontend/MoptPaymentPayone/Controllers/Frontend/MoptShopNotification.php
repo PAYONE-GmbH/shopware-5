@@ -75,6 +75,14 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
         $service = $this->moptPayoneInitTransactionService($key, $validIps);
 
+        // enable support for proxied requests and load balancers for IP Validation
+        $validators = $service->getValidators();
+        foreach ($validators as $validator) {
+            if ($validator instanceof Payone_TransactionStatus_Validator_Ip) {
+                $validator->getConfig()->setValue('validator/proxy/enabled',1);
+            }
+        }
+
         try {
             $response = $service->handleByPost();
         } catch (Exception $exc) {
