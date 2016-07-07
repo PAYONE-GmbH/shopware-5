@@ -130,6 +130,8 @@ class Mopt_PayoneFormHandler
 
         $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::INSTANT_MONEY_TRANSFER;
 
+        $paymentData['formData']["mopt_payone__sofort_bankcountry"] = $formData["mopt_payone__sofort_bankcountry"];
+
         return $paymentData;
     }
 
