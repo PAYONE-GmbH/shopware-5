@@ -1,9 +1,11 @@
 <?php
 
+use Shopware\Components\CSRFWhitelistAware;
+
 /**
  * updated and finish transactions
  */
-class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
 
     protected $moptPayone__serviceBuilder = null;
@@ -28,6 +30,16 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->logger->pushHandler($streamHandler);
 
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+    }
+
+    /**
+     * whitelists indexAction for SW 5.2 compatibility
+     */
+    public function getWhitelistedCSRFActions()
+    {
+        return [
+            'index',
+        ];
     }
 
     /**

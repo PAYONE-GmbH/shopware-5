@@ -27,6 +27,14 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.fatchip.com
  */
+
+// needed for CSRF Protection compatibility SW versions < 5.2
+require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
+
+if (!interface_exists('\Shopware\Components\CSRFWhitelistAware')) {
+    interface CSRFWhitelistAware {}
+}
+
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
     /**

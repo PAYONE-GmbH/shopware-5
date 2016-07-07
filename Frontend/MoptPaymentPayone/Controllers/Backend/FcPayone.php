@@ -2,6 +2,7 @@
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
+use Shopware\Components\CSRFWhitelistAware;
 
 /*
  * (c) shopware AG <info@shopware.com>
@@ -10,7 +11,7 @@ use Doctrine\ORM\Query\Expr\Join;
  * file that was distributed with this source code.
  */
 
-class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
+class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action implements CSRFWhitelistAware
 {
 
     /**
@@ -46,6 +47,52 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
     {
         $this->logging = new Logging();
         $this->logging->lfile(Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log');
+    }
+
+    public function getWhitelistedCSRFActions()
+    {
+        return [
+            'index',
+            'connectiontest',
+            'ajaxgetTestResults',
+            'ajaxconfig',
+            'apilog',
+            'ajaxapilog',
+            'ajaxtransactionstatus',
+            'ajaxpaymentstatusconfig',
+            'ajaxgetPaymentStatusConfig',
+            'ajaxgetRiskCheckConfig',
+            'ajaxgetAddressCheckConfig',
+            'transactionlog',
+            'general',
+            'support',
+            'tipps',
+            'ajaxcreditcard',
+            'ajaxgetCreditCardConfig',
+            'ajaxgetIframeConfig',
+            'ajaxgetPaypalConfig',
+            'ajaxdebit',
+            'ajaxgetDebitConfig',
+            'ajaxfinance',
+            'ajaxgetFinanceConfig',
+            'ajaxonlinetransfer',
+            'ajaxgetOnlineTransferConfig',
+            'ajaxwallet',
+            'ajaxgetWalletConfig',
+            'ajaxtransactionstatusconfig',
+            'ajaxgetTransactionStatusConfig',
+            'ajaxgeneralconfig',
+            'ajaxgetGeneralConfig',
+            'ajaxriskcheck',
+            'ajaxaddresscheck',
+            'ajaxtextblocks',
+            'ajaxgettextblocks',
+            'ajaxsavetextblocks',
+            'ajaxSavePaymentConfig',
+            'ajaxSavePayoneConfig',
+            'ajaxSaveIframeConfig',
+            'ajaxSavePaypalConfig',
+        ];
     }
 
     public function indexAction()
@@ -158,6 +205,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $request->setPersonalData($pData);
         $request->setPayment($paymentData);
+        $request->setMode('test');
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Visa)</span>');
         $response = $this->service->preauthorize($request);
@@ -215,6 +263,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $request->setPayment($paymentData);
 
         $paymentData->setEcommercemode('internet');
+        $request->setMode('test');
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Mastercard)</span>');
         $response = $this->service->preauthorize($request);
@@ -261,6 +310,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $pData->setCountry($this->aMinimumParams['country']);
 
         $request->setPersonalData($pData);
+        $request->setMode('test');
 
         $this->logging->lwrite('<span style="color: yellow;"> teste Request Authorisierung im Modus Test mit Zahlart Vorkasse</span>');
         $response = $this->service->preauthorize($request);
@@ -308,6 +358,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
         $pData->setLastname($this->aMinimumParams['lastname']);
         $pData->setCountry($this->aMinimumParams['country']);
         $request->setPersonalData($pData);
+        $request->setMode('test');
 
         $this->logging->lwrite('<span style="color: yellow;"> teste Request Authorisierung im Modus Test mit Zahlart Rechnung</span>');
         $response = $this->service->preauthorize($request);
@@ -363,6 +414,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action
 
         $request->setPersonalData($pData);
         $request->setPayment($paymentData);
+        $request->setMode('test');
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Lastschrift</span>');
 
