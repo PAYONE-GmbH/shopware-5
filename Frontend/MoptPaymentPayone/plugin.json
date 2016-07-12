@@ -7,7 +7,7 @@
     "copyright": "Copyright © 2015, FATCHIP GmbH",
     "link": "http://www.fatchip.de/",
     "support": "support@fatchip.de",    
-    "currentVersion": "3.3.8_5708",
+    "currentVersion": "3.3.9_5728",
     "solution_name": "fatchip",
     
     "changelogs": {
@@ -51,7 +51,8 @@
             "3.3.5": "Compatibility for SW 5.0.3, 5.0.4, 5.1.0, 5.1.1",
             "3.3.6": "Use correct subshop for transaction feedback processing",
             "3.3.7": "Compatibility für SW 5.1.2",
-            "3.3.8": "PAYONE Lightweight Backend hinzugefügt"                        
+            "3.3.8": "PAYONE Lightweight Backend hinzugefügt",
+            "3.3.9": "Added Support for SW 5.2 and PHP 7"                   
         }
     },
 
