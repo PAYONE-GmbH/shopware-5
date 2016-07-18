@@ -23,7 +23,7 @@
         </div>
     </div>
   {else}
-        {if $moptPaymentConfigParams.moptShowSofortIbanBic}
+        {if $moptCreditCardCheckEnvironment.moptShowSofortIbanBic}
     <div class="form-group {if $error_flags.mopt_payone__sofort_iban}has-error{/if}">
         <label for="mopt_payone__sofort_iban" class="col-lg-4 control-label">
           {s namespace='frontend/MoptPaymentPayone/payment' name='bankIBAN'}IBAN{/s}
@@ -69,7 +69,7 @@
         $('input[type="radio"]:not(:checked)').trigger('change');
     });
   {else}
-    {if $moptPaymentConfigParams.moptShowSofortIbanBic}
+    {if $moptCreditCardCheckEnvironment.moptShowSofortIbanBic}
     $('#mopt_payone__sofort_iban').focus(function() {
       $('#payment_mean{$payment_mean.id}').attr('checked',true);
       $('#moptSavePayment{$payment_mean.id}').slideDown();

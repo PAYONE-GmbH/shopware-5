@@ -22,7 +22,7 @@
                class="payment--field is--required{if $error_flags.mopt_payone__sofort_bankcode} has--error{/if} moptPayoneBankcode" />
     {else}
         
-        {if $moptPaymentConfigParams.moptShowSofortIbanBic}
+        {if $moptCreditCardCheckEnvironment.moptShowSofortIbanBic}
         <input name="moptPaymentData[mopt_payone__sofort_iban]"
                type="text"
                id="mopt_payone__sofort_iban"

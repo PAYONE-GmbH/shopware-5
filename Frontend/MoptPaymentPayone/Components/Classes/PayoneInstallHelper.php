@@ -267,7 +267,7 @@ class Mopt_PayoneInstallHelper
     public function fcExtendConfigShowSofortIbanBicDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN show_sofort_iban_bic TINYINT(1) NOT NULL DEFAULT 0;";
+                . "ADD COLUMN show_sofort_iban_bic TINYINT(1) NOT NULL DEFAULT 1;";
         Shopware()->Db()->exec($sql);
     }
 
