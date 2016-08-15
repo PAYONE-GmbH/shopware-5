@@ -309,6 +309,20 @@ class Mopt_PayoneParamBuilder
         $params['language'] = $this->getLanguageFromActiveShop();
         $params['vatid'] = $billingAddress['ustid'];
         $params['ip'] = $_SERVER['REMOTE_ADDR'];
+        
+        // GitHub #29 wrong customer ip with loadbalancer setup
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+            $proxy = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            if (!empty($proxy)) {
+                $proxyIps = explode(',', $proxy);
+                $relevantIp = array_shift($proxyIps);
+                $relevantIp = trim($relevantIp);
+                if (!empty($relevantIp)) {
+                    $params['ip'] = $relevantIp;
+                }
+            }
+        }        
+        
         $params['gender'] = ($billingAddress['salutation'] === 'mr') ? 'm' : 'f';
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
             if ($userData['additional']['user']['birthday'] !== '0000-00-00') {
