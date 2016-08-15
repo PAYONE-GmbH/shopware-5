@@ -269,7 +269,11 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
                         ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
                 $userData = Shopware()->Modules()->Admin()->sGetUserData();
-                $birthday = explode('-', $userData['billingaddress']['birthday']);
+		if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+			$birthday = explode('-', $userData['additional']['user']['birthday']);
+		} else {
+                	$birthday = explode('-', $userData['billingaddress']['birthday']);
+		}
                 $data['mopt_payone__klarna_birthday'] = $birthday[2];
                 $data['mopt_payone__klarna_birthmonth'] = $birthday[1];
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
@@ -285,6 +289,14 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
                         ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
                 $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                    if (!isset($userData['additional']['user']['birthday'])){
+                       $userData['billingaddress']['birthday'] = "0000-00-00";
+                    } else {
+                       $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                    }
+                }
+                $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__payolution_debitnote_birthday'] = $birthday[2];
                 $data['mopt_payone__payolution_debitnote_birthmonth'] = $birthday[1];

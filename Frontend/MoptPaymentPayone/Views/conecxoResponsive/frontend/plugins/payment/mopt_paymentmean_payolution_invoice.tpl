@@ -2,7 +2,7 @@
 
 <div class="payment--form-group">
 
-    {if ($fcPayolutionConfig.payolutionB2bmode == "0" && $sUserData.billingaddress.birthday == "0000-00-00") || ( $fcPayolutionConfig.payolutionB2bmode == 1 && $sUserData.billingaddress.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
+    {if ($fcPayolutionConfig.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfig.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
 
         <p class ="none">
             <label for="mopt_payone__payolution_invoice_birthday">
@@ -53,7 +53,7 @@
         </select>
     {/if}  
 
-    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_invoice_birthdaydate]" id="mopt_payone__payolution_invoice_birthdaydate" value="{$sUserData.billingaddress.birthday}">   
+    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_invoice_birthdaydate]" id="mopt_payone__payolution_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">   
     <div id="invoice-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>        
 
     {if $fcPayolutionConfig.payolutionB2bmode && $sUserData.billingaddress.company}

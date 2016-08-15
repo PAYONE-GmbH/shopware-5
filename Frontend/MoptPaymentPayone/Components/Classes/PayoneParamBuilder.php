@@ -310,8 +310,14 @@ class Mopt_PayoneParamBuilder
         $params['vatid'] = $billingAddress['ustid'];
         $params['ip'] = $_SERVER['REMOTE_ADDR'];
         $params['gender'] = ($billingAddress['salutation'] === 'mr') ? 'm' : 'f';
-        if ($billingAddress['birthday'] !== '0000-00-00') {
-            $params['birthday'] = str_replace('-', '', $billingAddress['birthday']); //YYYYMMDD
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            if ($userData['additional']['user']['birthday'] !== '0000-00-00') {
+                $params['birthday'] = str_replace('-', '', $userData['additional']['user']['birthday']); //YYYYMMDD            
+            }
+        }  else {     
+            if ($billingAddress['birthday'] !== '0000-00-00') {
+                $params['birthday'] = str_replace('-', '', $billingAddress['birthday']); //YYYYMMDD
+            }
         }
 
         $personalData = new Payone_Api_Request_Parameter_Authorization_PersonalData($params);
@@ -387,7 +393,11 @@ class Mopt_PayoneParamBuilder
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
         $params['workorderid'] = $workorderId;
-        $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
+        } else {
+            $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        }
         if ($params['birthday'] == "00000000") {
             unset($params['birthday']);
         }
@@ -422,7 +432,12 @@ class Mopt_PayoneParamBuilder
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
         $params['workorderid'] = $workorderId;
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
+        } else {
         $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        }
+        
         if ($params['birthday'] == "00000000") {
             unset($params['birthday']);
         }
@@ -456,7 +471,11 @@ class Mopt_PayoneParamBuilder
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
+        } else {
         $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        }
         if ($params['birthday'] == "00000000") {
             unset($params['birthday']);
         }

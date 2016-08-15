@@ -76,7 +76,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'transInvoice', type: 'string'},
     { name: 'showAccountnumber', type: 'boolean'},
     { name: 'showBic', type: 'boolean'},    
-    { name: 'showSofortIbanBic', type: 'boolean'},    
+    { name: 'showSofortIbanBic', type: 'boolean'},
     { name: 'mandateActive', type: 'boolean'},
     { name: 'mandateDownloadEnabled', type: 'boolean'},
     { name: 'klarnaStoreId', type: 'string'},
