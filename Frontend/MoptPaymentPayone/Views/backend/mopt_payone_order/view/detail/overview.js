@@ -4,23 +4,26 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
 {
   override: 'Shopware.apps.Order.view.detail.Overview',
 
-  initComponent: function() 
+  initComponent: function()
   {
+    var swVersion = Ext.shopwareRevision;
     var me = this;
     me.callParent(arguments);
     
-    if(/mopt_payone__/.test(me.record.raw.payment.name))
-    {        
-      me.items.insert(2, me.createMoptPayoneShippingCostContainer());
-    }
-    else
-    {
-      me.items.insert(2, me.createMoptPayoneNoPayoneOrderContainer());
-    }
-    
-    if(/mopt_payone__fin_payolution/.test(me.record.raw.payment.name))
-    {
-      me.items.insert(3, me.createFcPayonePayolutionContainer());
+    if (swVersion < 201607011315){
+        if(/mopt_payone__/.test(me.record.raw.payment.name))
+        {        
+          me.items.insert(2, me.createMoptPayoneShippingCostContainer());
+        }
+        else
+        {
+          me.items.insert(2, me.createMoptPayoneNoPayoneOrderContainer());
+        }
+
+        if(/mopt_payone__fin_payolution/.test(me.record.raw.payment.name))
+        {
+          me.items.insert(3, me.createFcPayonePayolutionContainer());
+        }
     }
     
   },

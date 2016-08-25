@@ -121,6 +121,45 @@ class Mopt_PayoneParamBuilder
 
         return $params;
     }
+    
+    /**
+     * returns params to capture orders
+     *
+     * @param object $order
+     * @param array $orderDetailParams
+     * @param bool $finalize
+     * @param bool $includeShipment
+     * @return \Payone_Api_Request_Parameter_Capture_Business
+     */
+    public function buildCustomOrderCapture($order, $orderDetailParams, $finalize, $includeShipment = false)
+    {
+        $paymentName = $order->getPayment()->getName();
+
+        $params = $this->getAuthParameters($order->getPayment()->getId());
+        $params['txid'] = $order->getTransactionId();
+        $params['sequencenumber'] = $this->getParamSequencenumber($order);
+        $params['amount'] = (string) array_sum($orderDetailParams);
+        $params['currency'] = $order->getCurrency();
+
+        //create business object (used for settleaccount param)
+        $business = new Payone_Api_Request_Parameter_Capture_Business();
+
+        if ($this->payonePaymentHelper->isPayonePayInAdvance($paymentName) || $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName)) {
+            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::NO);
+        } else {
+            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::AUTO);
+        }
+
+        $params['business'] = $business;
+
+        if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
+            if ($order->getBilling()->getCompany()) {
+                $params['payolution_b2b']= true;
+            }
+        }
+
+        return $params;
+    }        
 
     /**
      * build parameters for debit
@@ -140,6 +179,25 @@ class Mopt_PayoneParamBuilder
 
         return $params;
     }
+    
+    /**
+     * build parameters for debit
+     *
+     * @param object $order
+     * @param array $orderDetailParams
+     * @param bool $includeShipment
+     * @return array
+     */
+    public function buildCustomOrderDebit($order, $orderDetailParams, $includeShipment = false)
+    {
+        $params = $this->getAuthParameters($order->getPayment()->getId());
+        $params['txid'] = $order->getTransactionId();
+        $params['sequencenumber'] = $this->getParamSequencenumber($order);
+        $params['amount'] = (string) array_sum($orderDetailParams);
+        $params['currency'] = $order->getCurrency();
+
+        return $params;
+    }     
 
     /**
      * increase last seq-number for non-auth'ed orders
@@ -321,7 +379,7 @@ class Mopt_PayoneParamBuilder
                     $params['ip'] = $relevantIp;
                 }
             }
-        }        
+        }
         
         $params['gender'] = ($billingAddress['salutation'] === 'mr') ? 'm' : 'f';
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {

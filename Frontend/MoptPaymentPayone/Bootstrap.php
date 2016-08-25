@@ -789,6 +789,41 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             );
             Shopware()->Models()->generateAttributeModels(array('s_order_attributes'));
         }
+        
+        if ($this->assertMinimumVersion('5.2')) {
+            $this->get('shopware_attribute.crud_service')->update(
+                    's_order_attributes', 'mopt_payone_payolution_clearing_reference', 'string', [
+                'label' => 'Payolution Clearing Reference:',
+                'helpText' => '',
+                'displayInBackend' => true,
+                'pluginId' => $this->getId()
+                    ]
+            );
+            $this->get('shopware_attribute.crud_service')->update(
+                    's_order_attributes', 'mopt_payone_payolution_workorder_id', 'string', [
+                'label' => 'Payolution WorkOrderId:',
+                'helpText' => '',
+                'displayInBackend' => true,
+                'pluginId' => $this->getId()
+                    ]
+            );
+            $this->get('shopware_attribute.crud_service')->update(
+                    's_order_attributes', 'mopt_payone_ship_captured', 'string', [
+                'label' => 'Versandkosten Bisher eingezogen:',
+                'helpText' => '',
+                'displayInBackend' => true,
+                'pluginId' => $this->getId()
+                    ]
+            );
+            $this->get('shopware_attribute.crud_service')->update(
+                    's_order_attributes', 'mopt_payone_ship_debit', 'string', [
+                'label' => 'Versandkosten Bisher gutgeschrieben:',
+                'helpText' => '',
+                'displayInBackend' => true,
+                'pluginId' => $this->getId()
+                    ]
+            );
+        }                       
     }
 
     /**
@@ -942,4 +977,249 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         return $this->Path().'Controllers/Backend/FcPayone.php';
     }
+    
+    public function captureOrder($orderDetailParams, $finalize = false, $includeShipment = false)
+    {
+
+        $orderParams = array_combine(array_column($orderDetailParams, 'id'), array_column($orderDetailParams, 'amount'));
+
+        try {
+            $orderDetailId = key($orderParams);
+            if (!$orderDetail = Shopware()->Models()->getRepository('Shopware\Models\Order\Detail')->find($orderDetailId)) {
+                $message = Shopware()->Snippets()->getNamespace('backend/MoptPaymentPayone/errorMessages')
+                        ->get('orderNotFound', 'BestellungsPosition nicht gefunden', true);
+                throw new Exception($message);
+            }
+
+            if (!$order = $orderDetail->getOrder()) {
+                $message = Shopware()->Snippets()->getNamespace('backend/MoptPaymentPayone/errorMessages')
+                        ->get('orderNotFound', 'Bestellung nicht gefunden', true);
+                throw new Exception($message);
+            }
+
+            $payment = $order->getPayment();
+            $paymentName = $payment->getName();
+
+            //check if order was payment type payone
+            if (strpos($paymentName, 'mopt_payone__') !== 0) {
+                $message = 'Capture is only possible with payone payments';
+                throw new Exception($message);
+            }
+
+            $config = Mopt_PayoneMain::getInstance()->getPayoneConfig($payment->getId());
+
+            //fetch params
+            $params = Mopt_PayoneMain::getInstance()->getParamBuilder()
+                    ->buildCustomOrderCapture($order, $orderParams, $finalize, $includeShipment);
+
+            if ($config['submitBasket'] || Mopt_PayoneMain::getInstance()->getPaymentHelper()->isPayoneBillsafe($paymentName)) {
+                $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
+                        ->getInvoicingFromOrder($order, array_column($orderDetailParams, 'id'), $finalize, false, $includeShipment);
+            }
+
+            //call capture service
+            $response = $this->callPayoneCaptureService($params, $invoicing);
+
+            if ($response->getStatus() == Payone_Api_Enum_ResponseType::APPROVED) {
+                //increase sequence
+                $this->updateSequenceNumber($order, true);
+
+                //mark / fill positions as captured
+                $this->markPositionsAsCaptured($order, $orderDetailParams, $includeShipment);
+
+                //extract and save clearing data
+                $clearingData = Mopt_PayoneMain::getInstance()->getPaymentHelper()->extractClearingDataFromResponse($response);
+                if ($clearingData) {
+                    $this->saveClearingData($order, $clearingData);
+                }
+
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+
+            echo "Exception: " . $e->getMessage();
+        }
+    }
+
+    public function refundOrder($orderDetailParams, $finalize = false, $includeShipment = false)
+    {
+
+        $orderParams = array_combine(array_column($orderDetailParams, 'id'), array_column($orderDetailParams, 'amount'));
+
+        try {
+            $orderDetailId = key($orderParams);
+            if (!$orderDetail = Shopware()->Models()->getRepository('Shopware\Models\Order\Detail')->find($orderDetailId)) {
+                $message = Shopware()->Snippets()->getNamespace('backend/MoptPaymentPayone/errorMessages')
+                        ->get('orderNotFound', 'BestellungsPosition nicht gefunden', true);
+                throw new Exception($message);
+            }
+
+            if (!$order = $orderDetail->getOrder()) {
+                $message = Shopware()->Snippets()->getNamespace('backend/MoptPaymentPayone/errorMessages')
+                        ->get('orderNotFound', 'Bestellung nicht gefunden', true);
+                throw new Exception($message);
+            }
+
+            $payment = $order->getPayment();
+            $paymentName = $payment->getName();
+
+            //check if order was payment type was a payone payment
+            if (strpos($paymentName, 'mopt_payone__') !== 0) {
+                $message = 'Refund is only possible with payone payments';
+                throw new Exception($message);
+            }
+
+            $config = Mopt_PayoneMain::getInstance()->getPayoneConfig($payment->getId());
+
+            //fetch params
+            $params = Mopt_PayoneMain::getInstance()->getParamBuilder()->buildCustomOrderDebit($order, $orderParams, $includeShipment);
+
+            if ($config['submitBasket'] || Mopt_PayoneMain::getInstance()->getPaymentHelper()->isPayoneBillsafe($paymentName)) {
+                $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
+                        ->getInvoicingFromOrder($order, array_column($orderDetailParams, 'id'), $finalize, false, $includeShipment);
+            }
+            //call capture service
+
+            $response = $this->callPayoneRefundService($params, $invoicing);
+
+            if ($response->getStatus() == Payone_Api_Enum_ResponseType::APPROVED) {
+                //increase sequence
+                $this->updateSequenceNumber($order, true);
+
+                //mark / fill positions as captured
+                $this->markPositionsAsDebited($order, $orderDetailParams, $includeShipment);
+
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+
+            echo "Exception: " . $e->getMessage();
+        }
+    }
+
+    protected function callPayoneCaptureService($params, $invoicing = null)
+    {
+        $service = Shopware()->Plugins()->Frontend()
+                        ->MoptPaymentPayone()->Application()->MoptPayoneBuilder()->buildServicePaymentCapture();
+        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+        $request = new Payone_Api_Request_Capture($params);
+
+        if ($invoicing) {
+            $request->setInvoicing($invoicing);
+        }
+
+        if ($params['payolution_b2b'] == true) {
+            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $request->setPaydata($paydata);
+        }
+        return $service->capture($request);
+    }
+
+    protected function callPayoneRefundService($params, $invoicing = null)
+    {
+        $service = Shopware()->Plugins()->Frontend()
+                        ->MoptPaymentPayone()->Application()->MoptPayoneBuilder()->buildServicePaymentDebit();
+        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+        $request = new Payone_Api_Request_Debit($params);
+
+        if ($invoicing) {
+            $request->setInvoicing($invoicing);
+        }
+
+        return $service->debit($request);
+    }
+
+    protected function updateSequenceNumber($order, $isAuth = false)
+    {
+        $attribute = Mopt_PayoneMain::getInstance()->getHelper()->getOrCreateAttribute($order);
+        $newSeq = $attribute->getMoptPayoneSequencenumber() + 1;
+        $attribute->setMoptPayoneSequencenumber($newSeq);
+        if ($isAuth) {
+            $attribute->setMoptPayoneIsAuthorized(true);
+        }
+
+        Shopware()->Models()->persist($attribute);
+        Shopware()->Models()->flush();
+    }
+
+    protected function markPositionsAsCaptured($order, $orderDetailParams, $includeShipment = false)
+    {
+
+        $orderParams = array_combine(array_column($orderDetailParams, 'id'), array_column($orderDetailParams, 'amount'));
+        foreach ($order->getDetails() as $position) {
+            if (!in_array($position->getId(), array_column($orderDetailParams, 'id'))) {
+                continue;
+            }
+
+
+            $attribute = Mopt_PayoneMain::getInstance()->getHelper()->getOrCreateAttribute($position);
+            $amount = $orderParams[$position->getId()];
+            $attribute->setMoptPayoneCaptured($amount + $attribute->getMoptPayoneCaptured());
+
+            Shopware()->Models()->persist($attribute);
+            Shopware()->Models()->flush();
+
+            //check if shipping is included as position
+            if ($position->getArticleNumber() == 'SHIPPING') {
+                $includeShipment = false;
+            }
+        }
+
+        if ($includeShipment) {
+            $orderAttribute = Mopt_PayoneMain::getInstance()->getHelper()->getOrCreateAttribute($order);
+            $orderAttribute->setMoptPayoneShipCaptured($order->getInvoiceShipping());
+            Shopware()->Models()->persist($orderAttribute);
+            Shopware()->Models()->flush();
+        }
+    }
+
+    protected function saveClearingData($order, $clearingData)
+    {
+        $attribute = Mopt_PayoneMain::getInstance()->getHelper()->getOrCreateAttribute($order);
+        $attribute->setMoptPayoneClearingData(json_encode($clearingData));
+
+        Shopware()->Models()->persist($attribute);
+        Shopware()->Models()->flush();
+    }
+
+    protected function markPositionsAsDebited($order, $orderDetailParams, $includeShipment = false)
+    {
+
+        $orderParams = array_combine(array_column($orderDetailParams, 'id'), array_column($orderDetailParams, 'amount'));
+
+        foreach ($order->getDetails() as $position) {
+            if (!in_array($position->getId(), array_column($orderDetailParams, 'id'))) {
+                continue;
+            }
+
+            $attribute = Mopt_PayoneMain::getInstance()->getHelper()->getOrCreateAttribute($position);
+            $amount = $orderParams[$position->getId()];
+            $attribute->setMoptPayoneDebit($amount + $attribute->getMoptPayoneDebit());
+
+            Shopware()->Models()->persist($attribute);
+            Shopware()->Models()->flush();
+
+            if ($position->getArticleNumber() == 'SHIPPING') {
+                $includeShipment = false;
+            }
+        }
+
+        if ($includeShipment) {
+            $orderAttribute = Mopt_PayoneMain::getInstance()->getHelper()->getOrCreateAttribute($order);
+            $orderAttribute->setMoptPayoneShipDebit($order->getInvoiceShipping());
+            Shopware()->Models()->persist($orderAttribute);
+            Shopware()->Models()->flush();
+        }
+    }      
 }
