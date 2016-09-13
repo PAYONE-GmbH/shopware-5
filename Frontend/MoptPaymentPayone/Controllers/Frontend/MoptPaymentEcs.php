@@ -192,6 +192,11 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $user['sUserData']['additional']['charge_vat'] = true;
         //set payment id
         $user['sUserData']["additional"]["user"]["paymentID"] = $paymentId;
+        
+        //set userdata
+        $user['additional']['charge_vat'] = true;
+        //set payment id
+        $user['additional']['user']['paymentID'] = $paymentId;   
         //set user data
         //set payment method
         //set shipment
@@ -213,8 +218,14 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
 
         $session['sRegister'] = $register;
         $session['sRegisterFinished'] = false;
-
+        
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $newdata = $this->saveUser($register,$paymentId);
+            $this->admin->sSYSTEM->_POST = $newdata['auth'];
+            $this->admin->sLogin(true);            
+        } else {
         $this->admin->sSaveRegister();
+        }
     }
   
     protected function updateUserAddresses($personalData, $session, $paymentId)
@@ -229,15 +240,19 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         if (!$updated) {
             return null;
         }
-        $$updated = $checkData = $this->updateShippingAddress($personalData, $session, $paymentId);
+        $updated = $this->updateShippingAddress($personalData, $session, $paymentId);
         if (!$updated) {
             return null;
-        }
+        }        
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $this->updateCustomer($personalData, $paymentId);
+        }         
         return $personalData;
     }
   
     protected function updateBillingAddress($personalData, $session, $paymentId)
     {
+        $userId = $session->offsetGet('sUserId');
         $countryData = $this->admin->sGetCountryList();
         $countryIds = array();
         foreach ($countryData as $key => $country) {
@@ -254,19 +269,25 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
                 'phone'=>array('required'=> intval(Shopware()->Config()->get('requirePhoneField'))),
                 'country'=>array('required' => 1, 'in' => $countryIds)
             );
-        $checkData = $this->admin->sValidateStep2($rules, true);
-        if (!empty($checkData['sErrorMessages'])) {
-            $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-            $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-            return false;
-        } else {
-            $this->admin->sUpdateBilling();
-            return true;
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {            
+            $this->updateBilling($userId, $personalData['billing']);
+            return true;                        
+        } else {            
+            $checkData = $this->admin->sValidateStep2($rules, true);
+            if (!empty($checkData['sErrorMessages'])) {
+                $this->View()->sErrorFlag = $checkData['sErrorFlag'];
+                $this->View()->sErrorMessages = $checkData['sErrorMessages'];
+                return false;
+            } else {
+                $this->admin->sUpdateBilling();
+                return true;
+            }
         }
     }
   
     protected function updateShippingAddress($personalData, $session, $paymentId)
     {
+        $userId = $session->offsetGet('sUserId');
         $rules = array(
         'salutation'=>array('required'=>1),
         'firstname'=>array('required'=>1),
@@ -276,15 +297,20 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         'city'=>array('required'=>1)
         );
         $this->admin->sSYSTEM->_POST = $personalData['shipping'];
-        $checkData = $this->admin->sValidateStep2ShippingAddress($rules, true);
-        if (!empty($checkData['sErrorMessages'])) {
-            $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-            $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-            return false;
-        } else {
-            $this->admin->sUpdateShipping();
-            return true;
-        }
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {            
+            $this->updateShipping($userId, $personalData['billing']);
+            return true;                        
+        } else {      
+            $checkData = $this->admin->sValidateStep2ShippingAddress($rules, true);
+            if (!empty($checkData['sErrorMessages'])) {
+                $this->View()->sErrorFlag = $checkData['sErrorFlag'];
+                $this->View()->sErrorMessages = $checkData['sErrorMessages'];
+                return false;
+            } else {
+                $this->admin->sUpdateShipping();
+                return true;
+            }
+        }  
     }
   
   /**
@@ -335,4 +361,120 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $register['auth']['encoderName']      = '';
         return $register;
     }
+    
+    /**
+     * Saves a new user to the system.
+     *
+     * @param array $data
+     */
+    private function saveUser($data, $paymentId)
+    {
+
+        $builder = Shopware()->Models()->createQueryBuilder();
+        $plain = array_merge($data['auth'], $data['billing']);
+
+        //Create forms and validate the input
+        $customer = new Shopware\Models\Customer\Customer();
+        $form = $this->createForm('Shopware\Bundle\AccountBundle\Form\Account\PersonalFormType', $customer);
+        $form->submit($plain);
+
+        $address = new Shopware\Models\Customer\Address();
+        $form = $this->createForm('Shopware\Bundle\AccountBundle\Form\Account\AddressFormType', $address);
+        $form->submit($plain);
+
+        
+        /** @var Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface $context */
+        $context = $this->get('shopware_storefront.context_service')->getShopContext();
+
+        /** @var Shopware\Bundle\StoreFrontBundle\Struct\Shop $shop */
+        $shop = $context->getShop();
+
+        /** @var Shopware\Bundle\AccountBundle\Service\RegisterServiceInterface $registerService */
+        $registerService = $this->get('shopware_account.register_service');
+        $registerService->register($shop, $customer, $address, $address);
+
+        // get updated password; it is md5 randomized after register
+	$getUser = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->findOneBy(
+		array('email' =>  $data['auth']['email'])
+		);
+        // Update PaymentId 
+        $getUser->setPaymentId($paymentId);
+        Shopware()->Models()->persist($getUser);
+        Shopware()->Models()->flush();
+        
+
+       $data['auth']['password']= $getUser->getPassword();
+       $data['auth']['passwordMD5']= $getUser->getPassword();
+       $data['auth']['encoderName'] = 'md5';
+       return $data;
+    }
+
+    /**
+     * Updates the billing address
+     *
+     * @param int $userId
+     * @param array $billingData
+     */
+    private function updateBilling($userId, $billingData)
+    {
+        /** @var \Shopware\Components\Model\ModelManager $em */
+        $em = $this->get('models');
+
+        /** @var \Shopware\Models\Customer\Customer $customer */
+        $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
+
+        /** @var \Shopware\Models\Customer\Address $address */
+        $address = $customer->getDefaultBillingAddress();
+        
+         /** @var \Shopware\Models\Country\Country $country */
+        $country = $address->getCountry();
+        $billingData['country'] = $country;
+        $address->fromArray($billingData);
+
+        $this->get('shopware_account.address_service')->update($address);
+    }
+    
+    /**
+     * Updates the shipping address
+     *
+     * @param int $userId
+     * @param array $shippingData
+     */
+    private function updateShipping($userId, $shippingData)
+    {
+        /** @var \Shopware\Components\Model\ModelManager $em */
+        $em = $this->get('models');
+
+        /** @var \Shopware\Models\Customer\Customer $customer */
+        $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
+
+        /** @var \Shopware\Models\Customer\Address $address */
+        $address = $customer->getDefaultShippingAddress();
+        
+         /** @var \Shopware\Models\Country\Country $country */
+        $country = $address->getCountry();
+        $shippingData['country'] = $country;
+        $address->fromArray($shippingData);
+
+        $this->get('shopware_account.address_service')->update($address);
+    } 
+    
+    /**
+     * Endpoint for changing the main profile data
+     */
+    public function updateCustomer($data, $paymentId)
+    {
+        unset ($data['shipping']);
+        unset ($data['billing']);        
+        
+        $userId = $this->get('session')->get('sUserId');
+
+        $customer = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->findOneBy(
+		array('id' =>  $userId)
+		);
+        $customer->fromArray($data);
+        $customer->setPaymentId($paymentId);
+        Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
+    }
+    
 }

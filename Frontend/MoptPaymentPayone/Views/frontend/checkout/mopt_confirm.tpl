@@ -1,9 +1,5 @@
 {extends file="frontend/checkout/confirm.tpl"}
 
-{block name="frontend_index_header_javascript_jquery" append}
-    <script src="{link file='frontend/_resources/javascript/mopt_checkout.js'}"></script>
-{/block}
-
 {block name="frontend_checkout_confirm_confirm_table_actions" prepend}
     {if $moptMandateData.mopt_payone__showMandateText}
         <div>

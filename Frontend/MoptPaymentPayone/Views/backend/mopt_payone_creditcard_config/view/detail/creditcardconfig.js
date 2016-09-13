@@ -171,7 +171,12 @@ Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.view.detail.Creditcardconfi
                             fieldLabel: '{s name=css}CSS{/s}',
                             name: 'cardnoInputCss',
                             allowBlank: true
-                        }
+                        },
+                        defaultTranslationIframeCardpan: {
+                            fieldLabel: '{s name=IframeCardpan}Platzhalter{/s}',
+                            name: 'defaultTranslationIframeCardpan',
+                            allowBlank: true
+                        }                         
                     }
                 },
                 {
@@ -235,7 +240,12 @@ Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.view.detail.Creditcardconfi
                             fieldLabel: '{s name=css}CSS{/s}',
                             name: 'cardcvcInputCss',
                             allowBlank: true
-                        }
+                        },
+                        defaultTranslationIframeCvc: {
+                            fieldLabel: '{s name=IframeCvc}Platzhalter{/s}',
+                            name: 'defaultTranslationIframeCvc',
+                            allowBlank: true
+                        }                        
                     }
                 },
                 {
@@ -393,15 +403,111 @@ Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.view.detail.Creditcardconfi
                     }
                 },
                 {
-                    title: '{s name=errorConfig}Fehlerausgabe{/s}',
+                    title: '{s name=defaultTranslation}Standardübersetzung{/s}',
+                    layout: 'column',
+                    fields: {
+                        defaultTranslationIframeMonth1: {
+                            fieldLabel: '{s name=iframeMonth1}Januar{/s}',
+                            name: 'defaultTranslationIframeMonth1',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeMonth2: {
+                            fieldLabel: '{s name=iframeMonth2}Februar{/s}',
+                            name: 'defaultTranslationIframeMonth2',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeMonth3: {
+                            fieldLabel: '{s name=iframeMonth3}März{/s}',
+                            name: 'defaultTranslationIframeMonth3',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeMonth4: {
+                            fieldLabel: '{s name=iframeMonth4}April{/s}',
+                            name: 'defaultTranslationIframeMonth4',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeMonth5: {
+                            fieldLabel: '{s name=iframeMonth5}Mai{/s}',
+                            name: 'defaultTranslationIframeMonth5',
+                            allowBlank: true
+                        },                        
+                        defaultTranslationIframeMonth6: {
+                            fieldLabel: '{s name=iframeMonth6}Juni{/s}',
+                            name: 'defaultTranslationIframeMonth6',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeMonth7: {
+                            fieldLabel: '{s name=iframeMonth7}Juli{/s}',
+                            name: 'defaultTranslationIframeMonth7',
+                            allowBlank: true
+                        },                        
+                        defaultTranslationIframeMonth8: {
+                            fieldLabel: '{s name=iframeMonth8}August{/s}',
+                            name: 'defaultTranslationIframeMonth8',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeMonth9: {
+                            fieldLabel: '{s name=iframeMonth9}September{/s}',
+                            name: 'defaultTranslationIframeMonth9',
+                            allowBlank: true
+                        },                        
+                        defaultTranslationIframeMonth10: {
+                            fieldLabel: '{s name=iframeMonth10}Oktober{/s}',
+                            name: 'defaultTranslationIframeMonth10',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeMonth11: {
+                            fieldLabel: '{s name=iframeMonth11}November{/s}',
+                            name: 'defaultTranslationIframeMonth11',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeMonth12: {
+                            fieldLabel: '{s name=iframeMonth12}Dezember{/s}',
+                            name: 'defaultTranslationIframeMonth12',
+                            allowBlank: true
+                        }
+                    }
+                },                
+                {
+                    title: '{s name=errorConfig}Fehlerausgabe und eigene Fehlermeldungen{/s}',
                     layout: 'column',
                     fields: {
                         showErrors: '{s name=active}Aktiv{/s}',
-                        errorLocaleId: {
-                            fieldLabel: '{s name=language}Sprache{/s}',
-                            name: 'errorLocaleId',
-                            allowBlank: false
-                        }
+                        defaultTranslationIframeinvalidCardpan: {
+                            fieldLabel: '{s name=invalidCardpan}Ungültige Kreditkartennummer{/s}',
+                            name: 'defaultTranslationIframeinvalidCardpan',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeinvalidCvc: {
+                            fieldLabel: '{s name=invalidCvc}Ungültige Kartenprüfziffer{/s}',
+                            name: 'defaultTranslationIframeinvalidCvc',
+                            allowBlank: true
+                        }, 
+                        defaultTranslationIframeinvalidPanForCardtype: {
+                            fieldLabel: '{s name=invalidPanForCardtype}Ungültige Kreditkartennummer für den Kartentyp{/s}',
+                            name: 'defaultTranslationIframeinvalidPanForCardtype',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeinvalidCardtype: {
+                            fieldLabel: '{s name=invalidCardtype}Ungültiger Kartentyp{/s}',
+                            name: 'defaultTranslationIframeinvalidCardtype',
+                            allowBlank: true
+                        },    
+                        defaultTranslationIframeinvalidExpireDate: {
+                            fieldLabel: '{s name=invalidExpireDate}Ungültiges Verfallsdatum{/s}',
+                            name: 'defaultTranslationIframeinvalidExpireDate',
+                            allowBlank: true
+                        },
+                        defaultTranslationIframeinvalidIssueNumber: {
+                            fieldLabel: '{s name=invalidIssueNumber}Ungültige Ausstellungsnummer{/s}',
+                            name: 'defaultTranslationIframeinvalidIssueNumber',
+                            allowBlank: true
+                        }, 
+                        defaultTranslationIframetransactionRejected: {
+                            fieldLabel: '{s name=transactionRejected}Transaktion abgelehnt{/s}',
+                            name: 'defaultTranslationIframetransactionRejected',
+                            allowBlank: true
+                        }                       
                     }
                 }
             ]

@@ -921,4 +921,42 @@ class Mopt_PayoneInstallHelper
             $db->exec($sql);
         }
     }
+    
+    public function checkAndUpdateCreditcardModelIframeExtension()
+    {
+        $db = Shopware()->Db();
+
+        $DBConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_creditcard_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='default_translation_iframe_month1'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+           $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config` "
+                    . "ADD COLUMN default_translation_iframe_month1 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month2 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month3 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month4 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month5 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month6 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month7 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month8 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month9 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month10 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month11 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframe_month12 VARCHAR(40) NULL,"
+                    . "ADD COLUMN default_translation_iframeinvalid_cardpan VARCHAR(255) NULL,"
+                    . "ADD COLUMN default_translation_iframeinvalid_cvc VARCHAR(255) NULL,"
+                    . "ADD COLUMN default_translation_iframeinvalid_pan_for_cardtype VARCHAR(255) NULL,"
+                    . "ADD COLUMN default_translation_iframeinvalid_cardtype VARCHAR(255) NULL,"
+                    . "ADD COLUMN default_translation_iframeinvalid_expire_date VARCHAR(255) NULL,"
+                    . "ADD COLUMN default_translation_iframeinvalid_issue_number VARCHAR(255) NULL,"
+                    . "ADD COLUMN default_translation_iframetransaction_rejected VARCHAR(255) NULL,"
+                    . "ADD COLUMN default_translation_iframe_cardpan VARCHAR(255) NULL,"
+                    . "ADD COLUMN default_translation_iframe_cvc VARCHAR(255) NULL;";
+            $db->exec($sql);
+        }
+    }    
 }

@@ -7,7 +7,7 @@
     "copyright": "Copyright © 2015, FATCHIP GmbH",
     "link": "http://www.fatchip.de/",
     "support": "support@fatchip.de",    
-    "currentVersion": "3.3.9_5831",
+    "currentVersion": "3.4.0_5945",
     "solution_name": "fatchip",
     
     "changelogs": {
@@ -31,7 +31,8 @@
             "3.3.6": "Transaktionsfeedback in korrektem Shubshop verarbeiten",
             "3.3.7": "Kompatibilität für SW 5.1.2",
             "3.3.8": "PAYONE Lightweight Backend hinzugefügt",
-            "3.3.9": "Support für SW 5.2 und PHP 7 hinzugefügt"                   
+            "3.3.9": "Support für SW 5.2 und PHP 7 hinzugefügt",
+            "3.4.0": "Bugfixes für Payolution und Paypal ECS"
         },
         "en": {
             "3.0.0": "Shopware 5 compatibility",
@@ -53,7 +54,8 @@
             "3.3.6": "Use correct subshop for transaction feedback processing",
             "3.3.7": "Compatibility für SW 5.1.2",
             "3.3.8": "added PAYONE Lightweight Backend",
-            "3.3.9": "Added Support for SW 5.2 and PHP 7"                   
+            "3.3.9": "Added Support for SW 5.2 and PHP 7",
+            "3.4.0": "Bugfixes for Payolution and Paypal ECS payments"
         }
     },
 

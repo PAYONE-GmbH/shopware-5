@@ -328,6 +328,111 @@ class MoptPayoneCreditcardConfig extends ModelEntity
      * @ORM\Column(name="creditcard_min_valid", type="integer", nullable=true, unique=false)
      */
     private $creditcardMinValid;
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_month1", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth1;    
+
+    /**
+     * @ORM\Column(name="default_translation_iframe_month2", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth2;
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_month3", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth3;   
+
+    /**
+     * @ORM\Column(name="default_translation_iframe_month4", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth4;       
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_month5", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth5;  
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_month6", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth6;       
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_month7", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth7;    
+
+    /**
+     * @ORM\Column(name="default_translation_iframe_month8", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth8;
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_month9", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth9;   
+
+    /**
+     * @ORM\Column(name="default_translation_iframe_month10", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth10;       
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_month11", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth11;  
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_month12", type="string", length=60, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeMonth12;        
+    
+    /**
+     * @ORM\Column(name="default_translation_iframeinvalid_cardpan", type="string", length=255, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeinvalidCardpan;    
+
+    /**
+     * @ORM\Column(name="default_translation_iframeinvalid_cvc", type="string", length=255, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeinvalidCvc;
+    
+    /**
+     * @ORM\Column(name="default_translation_iframeinvalid_pan_for_cardtype", type="string", length=255, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeinvalidPanForCardtype;   
+
+    /**
+     * @ORM\Column(name="default_translation_iframeinvalid_cardtype", type="string", length=255, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeinvalidCardtype;       
+    
+    /**
+     * @ORM\Column(name="default_translation_iframeinvalid_expire_date", type="string", length=255, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeinvalidExpireDate;  
+    
+    /**
+     * @ORM\Column(name="default_translation_iframeinvalid_issue_number", type="string", length=255, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeinvalidIssueNumber;       
+    
+    /**
+     * @ORM\Column(name="default_translation_iframetransaction_rejected", type="string", length=255, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframetransactionRejected;   
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_cardpan", type="string", length=255, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeCardpan;       
+    
+    /**
+     * @ORM\Column(name="default_translation_iframe_cvc", type="string", length=255, precision=0, scale=0, nullable=false)
+     */
+    private $defaultTranslationIframeCvc;      
 
     public function __construct()
     {
@@ -862,4 +967,216 @@ class MoptPayoneCreditcardConfig extends ModelEntity
     {
         $this->creditcardMinValid = $creditcardMinValid;
     }
+    
+    public function getDefaultTranslationIframeMonth1()
+    {
+        return $this->defaultTranslationIframeMonth1;
+    }
+
+    public function setDefaultTranslationIframeMonth1($defaultTranslationIframeMonth1)
+    {
+        $this->defaultTranslationIframeMonth1 = $defaultTranslationIframeMonth1;
+    }       
+    
+    public function getDefaultTranslationIframeMonth2()
+    {
+        return $this->defaultTranslationIframeMonth2;
+    }
+
+    public function setDefaultTranslationIframeMonth2($defaultTranslationIframeMonth2)
+    {
+        $this->defaultTranslationIframeMonth2 = $defaultTranslationIframeMonth2;
+    }
+    
+    public function getDefaultTranslationIframeMonth3()
+    {
+        return $this->defaultTranslationIframeMonth3;
+    }
+
+    public function setDefaultTranslationIframeMonth3($defaultTranslationIframeMonth3)
+    {
+        $this->defaultTranslationIframeMonth3 = $defaultTranslationIframeMonth3;
+    }   
+
+    public function getDefaultTranslationIframeMonth4()
+    {
+        return $this->defaultTranslationIframeMonth4;
+    }
+
+    public function setDefaultTranslationIframeMonth4($defaultTranslationIframeMonth4)
+    {
+        $this->defaultTranslationIframeMonth4 = $defaultTranslationIframeMonth4;
+    }     
+    
+    public function getDefaultTranslationIframeMonth5()
+    {
+        return $this->defaultTranslationIframeMonth5;
+    }
+
+    public function setDefaultTranslationIframeMonth5($defaultTranslationIframeMonth5)
+    {
+        $this->defaultTranslationIframeMonth5 = $defaultTranslationIframeMonth5;
+    }  
+
+    public function getDefaultTranslationIframeMonth6()
+    {
+        return $this->defaultTranslationIframeMonth6;
+    }
+
+    public function setDefaultTranslationIframeMonth6($defaultTranslationIframeMonth6)
+    {
+        $this->defaultTranslationIframeMonth6 = $defaultTranslationIframeMonth6;
+    }  
+
+    public function getDefaultTranslationIframeMonth7()
+    {
+        return $this->defaultTranslationIframeMonth7;
+    }
+
+    public function setDefaultTranslationIframeMonth7($defaultTranslationIframeMonth7)
+    {
+        $this->defaultTranslationIframeMonth7 = $defaultTranslationIframeMonth7;
+    }  
+
+    public function getDefaultTranslationIframeMonth8()
+    {
+        return $this->defaultTranslationIframeMonth8;
+    }
+
+    public function setDefaultTranslationIframeMonth8($defaultTranslationIframeMonth8)
+    {
+        $this->defaultTranslationIframeMonth8 = $defaultTranslationIframeMonth8;
+    }  
+
+    public function getDefaultTranslationIframeMonth9()
+    {
+        return $this->defaultTranslationIframeMonth9;
+    }
+
+    public function setDefaultTranslationIframeMonth9($defaultTranslationIframeMonth9)
+    {
+        $this->defaultTranslationIframeMonth9 = $defaultTranslationIframeMonth9;
+    }  
+
+    public function getDefaultTranslationIframeMonth10()
+    {
+        return $this->defaultTranslationIframeMonth10;
+    }
+
+    public function setDefaultTranslationIframeMonth10($defaultTranslationIframeMonth10)
+    {
+        $this->defaultTranslationIframeMonth10 = $defaultTranslationIframeMonth10;
+    }  
+
+    public function getDefaultTranslationIframeMonth11()
+    {
+        return $this->defaultTranslationIframeMonth11;
+    }
+
+    public function setDefaultTranslationIframeMonth11($defaultTranslationIframeMonth11)
+    {
+        $this->defaultTranslationIframeMonth11 = $defaultTranslationIframeMonth11;
+    }      
+    
+    public function getDefaultTranslationIframeMonth12()
+    {
+        return $this->defaultTranslationIframeMonth12;
+    }
+
+    public function setDefaultTranslationIframeMonth12($defaultTranslationIframeMonth12)
+    {
+        $this->defaultTranslationIframeMonth12 = $defaultTranslationIframeMonth12;
+    }
+
+    public function getDefaultTranslationIframeinvalidCardpan()
+    {
+        return $this->defaultTranslationIframeinvalidCardpan;
+    }
+
+    public function setDefaultTranslationIframeinvalidCardpan($defaultTranslationIframeinvalidCardpan)
+    {
+        $this->defaultTranslationIframeinvalidCardpan = $defaultTranslationIframeinvalidCardpan;
+    }       
+    
+    public function getDefaultTranslationIframeinvalidCvc()
+    {
+        return $this->defaultTranslationIframeinvalidCvc;
+    }
+
+    public function setDefaultTranslationIframeinvalidCvc($defaultTranslationIframeinvalidCvc)
+    {
+        $this->defaultTranslationIframeinvalidCvc = $defaultTranslationIframeinvalidCvc;
+    }
+    
+    public function getDefaultTranslationIframeinvalidPanForCardtype()
+    {
+        return $this->defaultTranslationIframeinvalidPanForCardtype;
+    }
+
+    public function setDefaultTranslationIframeinvalidPanForCardtype($defaultTranslationIframeinvalidPanForCardtype)
+    {
+        $this->defaultTranslationIframeinvalidPanForCardtype = $defaultTranslationIframeinvalidPanForCardtype;
+    }
+    
+    public function getDefaultTranslationIframeinvalidCardtype()
+    {
+        return $this->defaultTranslationIframeinvalidCardtype;
+    }
+
+    public function setDefaultTranslationIframeinvalidCardtype($defaultTranslationIframeinvalidCardtype)
+    {
+        $this->defaultTranslationIframeinvalidCardtype = $defaultTranslationIframeinvalidCardtype;
+    }      
+
+    public function getDefaultTranslationIframeinvalidExpireDate()
+    {
+        return $this->defaultTranslationIframeinvalidExpireDate;
+    }
+
+    public function setDefaultTranslationIframeinvalidExpireDate($defaultTranslationIframeinvalidExpireDate)
+    {
+        $this->defaultTranslationIframeinvalidExpireDate = $defaultTranslationIframeinvalidExpireDate;
+    }     
+    
+    public function getDefaultTranslationIframeinvalidIssueNumber()
+    {
+        return $this->defaultTranslationIframeinvalidIssueNumber;
+    }
+
+    public function setDefaultTranslationIframeinvalidIssueNumber($defaultTranslationIframeinvalidIssueNumber)
+    {
+        $this->defaultTranslationIframeinvalidIssueNumber = $defaultTranslationIframeinvalidIssueNumber;
+    }      
+
+    public function getDefaultTranslationIframetransactionRejected()
+    {
+        return $this->defaultTranslationIframeinvalidExpireDate;
+    }
+
+    public function setDefaultTranslationIframetransactionRejected($defaultTranslationIframetransactionRejected)
+    {
+        $this->defaultTranslationIframetransactionRejected = $defaultTranslationIframetransactionRejected;
+    }     
+    
+    public function getDefaultTranslationIframeCardpan()
+    {
+        return $this->defaultTranslationIframeCardpan;
+    }
+
+    public function setDefaultTranslationIframeCardpan($defaultTranslationIframeCardpan)
+    {
+        $this->defaultTranslationIframeCardpan = $defaultTranslationIframeCardpan;
+    }  
+
+    public function getDefaultTranslationIframeCvc()
+    {
+        return $this->defaultTranslationIframeCvc;
+    }
+
+    public function setDefaultTranslationIframeCvc($defaultTranslationIframeCvc)
+    {
+        $this->defaultTranslationIframeCvc = $defaultTranslationIframeCvc;
+    }
+
+    
 }

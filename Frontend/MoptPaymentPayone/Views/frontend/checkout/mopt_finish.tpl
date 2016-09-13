@@ -1,7 +1,9 @@
 {extends file="frontend/checkout/finish.tpl"}
 
 {block name="frontend_index_header_css_screen" append}
-   <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/barzahlen.css"}" />
+    {if $moptBarzahlenCode}
+        <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/barzahlen.css"}" />
+    {/if}
 {/block}
 
 {block name="frontend_checkout_finish_teaser_actions" append}

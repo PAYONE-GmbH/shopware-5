@@ -148,13 +148,13 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     public function payolutioninvoiceAction()
     {
         $response = $this->mopt_payone__payolution();
-        $this->mopt_payone__handleDirectFeedback($response);
+        $this->mopt_payone__handlePayolutionFeedback($response);
     }
 
     public function payolutiondebitAction()
     {
         $response = $this->mopt_payone__payolution();
-        $this->mopt_payone__handleDirectFeedback($response);
+        $this->mopt_payone__handlePayolutionFeedback($response);
     }
 
     /**
@@ -370,22 +370,27 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $paymentType = Payone_Api_Enum_PayolutionType::PYV_FULL;
         if ($this->moptPayonePaymentHelper->isPayonePayolutionInvoice($this->getPaymentShortName())) {
             $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
-            $responseData = $precheckresponse->toArray();
-            $workorderId = $responseData['rawResponse'];
-            $workorderId = $workorderId['workorderid'];
-            $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayolutionInvoice($financeType, $paymentData, $workorderId);
+            if ($precheckresponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
+                $responseData = $precheckresponse->toArray();
+                $workorderId = $responseData['rawResponse']['workorderid'];
+                $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayolutionInvoice($financeType, $paymentData, $workorderId);
+            } else {
+                return $precheckresponse;
+            }
         }
         if ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($this->getPaymentShortName())) {
             $financeType = Payone_Api_Enum_PayolutionType::PYD;
             $paymentType = Payone_Api_Enum_PayolutionType::PYD_FULL;
             $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
-            $responseData = $precheckresponse->toArray();
-            $workorderId = $responseData['rawResponse'];
-            $workorderId = $workorderId['workorderid'];
-            $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayolutionDebitNote($financeType, $paymentData, $workorderId);
+            if ($precheckresponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
+                $responseData = $precheckresponse->toArray();
+                $workorderId = $responseData['rawResponse']['workorderid'];
+                $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayolutionDebitNote($financeType, $paymentData, $workorderId);
+            } else {
+                return $precheckresponse;
+            } 
         }
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
-
         return $response;
     }
 
@@ -598,6 +603,38 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $this->redirect($response->getRedirecturl());
         }
     }
+    
+    /**
+     * handle direct feedback
+     * on success save order
+     *
+     * @param type $response
+     */
+    protected function mopt_payone__handlePayolutionFeedback($response)
+    {
+        $session = Shopware()->Session();
+
+        if ($response->getStatus() == 'ERROR') {
+            $this->forward('payolutionError');
+        } else {
+            //extract possible clearing data
+            $payolutionClearingData = $this->moptPayoneMain->getPaymentHelper()->extractPayolutionClearingDataFromResponse($response);
+            if ($payolutionClearingData) {
+                $session->fcPayolutionClearingData = $payolutionClearingData;
+            }
+
+            //extract possible clearing data
+            $clearingData = $this->moptPayoneMain->getPaymentHelper()->extractClearingDataFromResponse($response);
+
+            if ($clearingData) {
+                $session->moptClearingData = $clearingData;
+            }
+
+            //save order
+            $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
+                'hash' => $session->paymentReference));
+        }
+    }    
 
     /**
      * prepare and do payment server api call
@@ -849,6 +886,15 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                 ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten');
     }
+    
+    /**
+     *  this action is called when sth. goes wrong with payolution payments
+     */
+    public function payolutionErrorAction()
+    {
+        $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+             ->get('payolutionErrorMessage', 'Es ist ein Fehler aufgetreten');
+    }    
 
     /**
      * retrieve payment data

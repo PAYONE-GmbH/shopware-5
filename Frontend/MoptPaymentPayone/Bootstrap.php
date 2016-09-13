@@ -71,7 +71,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createMenu();
         $this->removePayment('mopt_payone__fin_klarna_installment');
 
-        return array('success' => true, 'invalidateCache' => array('backend', 'proxy'));
+        return array('success' => true, 'invalidateCache' => array('backend', 'proxy','theme'));
     }
 
     /**
@@ -344,8 +344,21 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_FcPayone',
             'onGetBackendController'
         );
+        $this->subscribeEvent(
+                'Theme_Compiler_Collect_Plugin_Javascript',
+                'addJsFiles'
+        );        
     }
-
+    
+    public function addJsFiles(Enlight_Event_EventArgs $args){
+        $jsFiles = [
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_checkout.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/client_api.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_payment.js',
+        ];
+        return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
+    }   
+    
     /**
      * register all subscriber classes for dynamic event subscription without plugin reinstallation
      *
@@ -511,6 +524,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModelExtension();
 
         $this->getInstallHelper()->moptInsertEmptyConfigIfNotExists();
+        
+        $this->getInstallHelper()->checkAndUpdateCreditcardModelIframeExtension();
     }
 
     /**

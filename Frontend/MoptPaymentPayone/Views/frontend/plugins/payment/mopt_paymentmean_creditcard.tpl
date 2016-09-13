@@ -111,7 +111,7 @@
                placeholder="{s name='creditCardCvc'}Prüfziffer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
                class="payment--field is--required{if $error_flags.mopt_payone__cc_cvc} has--error{/if} moptPayoneNumber" />
     </p>
-    {else}
+    {elseif $moptCreditCardCheckEnvironment.moptPayoneCheckCc}
         <p class="none">
             <label for="mopt_payone__cc_cvc">
                 {s name='creditCardCvc'}Prüfziffer{/s}
@@ -144,6 +144,9 @@
     <input name="moptPaymentData[mopt_payone__cc_hostediframesubmit]" type="hidden" 
            id="mopt_payone__cc_hostediframesubmit" 
            value="1"/>
+    <input name="moptPaymentData[mopt_payone__cc_cardexpiredate]" type="hidden" 
+           id="mopt_payone__cc_cardexpiredate" 
+           value="{$form_data.mopt_payone__cc_cardexpiredate|escape}"/>
     <br />
 </div>
 
@@ -195,6 +198,7 @@
                             $('#mopt_payone__cc_paymentid').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
                             $('#mopt_payone__cc_paymentname').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'));
                             $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
+                            $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
                             $('#mopt_payone__cc_show_saved_hint').show();
                                     var data = {
                             mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
@@ -203,17 +207,33 @@
                             mopt_payone__cc_pseudocardpan: response.pseudocardpan,
                             mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
                             mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
-                            mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text()
+                            mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
+                            mopt_payone__cc_cardexpiredate: response.cardexpiredate
                         };
                         jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
                         {
-                            $("#shippingPaymentForm").submit();
-                            $('form[name="frmRegister"]').submit();
+                            var today = new Date();
+                            var configuredDays = {$moptCreditCardCheckEnvironment.moptCreditcardMinValid};
+                            var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + configuredDays);
+                            var selectedDate = new Date(response.cardexpiredate, 0);
+                            var diff = selectedDate.getTime() - minValidDate.getTime();
+                            //console.log("configuredDays: " + configuredDays);
+                            //console.log("minValidDate: " + minValidDate);
+                            //console.log("selectedDate: " + selectedDate);
+                            //console.log("diff: " + diff);
+                            if (diff > 0){
+                                $("#shippingPaymentForm").submit();
+                                $('form[name="frmRegister"]').submit();
+                            } else {
+                              alert("Das Ablaufdatum ihrer Kreditkarte ist unzureichend!");
+                            }
                         });
         } else {
-                        var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
-                        if (response && (response.errorcode in errorMessages[0])) {
-                            alert(errorMessages[0][response.errorcode]);
+                        // var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
+                        // if (response && (response.errorcode in errorMessages[0])) {
+                        //    alert(errorMessages[0][response.errorcode]);
+                        if (response && response.errormessage) {
+                            alert(response.errormessage);                        
                         } else {
                             alert(errorMessages[0].general);
                         }
