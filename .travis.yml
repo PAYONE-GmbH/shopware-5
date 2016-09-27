@@ -1,0 +1,44 @@
+language: php
+php:
+- '5.6'
+#- '7.0'
+services:
+- mysql
+before_script:
+- git clone https://github.com/shopware/shopware.git /tmp/shopware
+- cd ..
+- cd /tmp/shopware
+- ant -f build/build.xml -Ddb.user=travis -Ddb.host=127.0.0.1 -Ddb.name=shopware build-unit
+- cp -R /home/travis/build/fjbender/shopware-5/Frontend/MoptPaymentPayone /tmp/shopware/engine/Shopware/Plugins/Default/Frontend
+- cd /tmp/shopware
+- ls engine/Shopware/Plugins/Default/Frontend
+- php bin/console sw:plugin:refresh
+- php bin/console sw:plugin:list
+- php bin/console sw:plugin:install MoptPaymentPayone
+- php bin/console sw:plugin:activate MoptPaymentPayone
+- php bin/console sw:generate:attributes
+- php bin/console orm:generate:proxies
+- cd /tmp/shopware/tests
+script:
+- cd $TRAVIS_BUILD_DIR
+- ant
+before_deploy:
+- export PACKAGE=$(ls *.zip)
+- echo "Deploying $PACKAGE"
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key:
+    secure: ND561AGzW+lzKsgKCMUGUYr2YpbgbAbmIu3N2OBvIPaFwu4tkqqQh9uEZF+hRs9GD7HNE3cpQZ37WwvbQZbAdY0IxuN5NqRFvgoqVofY4WT1KMXWP0tlZd8pyay7rhjrMxAFMALYfiLSHcsWgIKjcwQkrw3tbgAHAVBrqAtwmxp5s6Ar0tWptPmGv9pNanvwalyWufJIbdyMnPJXFYtsMeUdbFDXDVDNrkSXIXZFnNjMVtg1LbNWyHv0p0kFTN0yitS8VUz4+WvxDpuxUkb3FKbIMOyaUhg/uJTeVsEUFBOYuGBBuuoKPTlw8EsACd+a2UjGavePmiT6wvqIGcGd5eMAnx7MFNZ3n3uWAHmF8VBJ834MJmQzGwGhsm03Tl/RglzUpc1+SRqfLi5cYzeRByeYtsN7ctt95gObKIgOmI0GJQ8InSXDoRlIK9Dr9lVwt0xdZ6eLT4jR25Olz7/5lFUqnjEXJSiMfshyouNpvWwtj6zELPN1YZtj8zQ0G1cJdo0OXkPwASUz1aYeBQxbg9o0n5DpfzRqCRTgKldVig1skMqV+7F6Z0ihjhdBQYojmBldCFAksyUhdgbbDOvR5kTsGhOpO2Ew/xWIctoFogGAZaJYAyN70jkNVluakGj0J3BjiRc31qWsYiOVWia+TK9FTnUJU/7OqtjKQKTzWO4=
+  file:
+    - "${PACKAGE}"
+  on:
+    repo: fjbender/shopware-5 
+    all_branches: true
+    tags: true
+notifications:
+  email: false
+  slack:
+    on_success: always
+    on_failure: always
+    secure: e+EIyCPTEEbpBU34zbU5cSFH5zOMkHkgQxGVq4QT47CQl8ooiWTaXjrUpIivaGG5bpT7gxMKkcGuZUdDzJ3SzS8zGKERMDgjnuSL84NzYq13CRr9yvYOg+xOxVLvqGC5eMJQWs4l2U8G7Q6SaqEuP9IT5eQ+UxrNqfx0uhag/ylknvTwopyg7TajPQ2v9zKeXXtshet40Du0vSG0+rJ4G/iZD+xAyTl8kp+O2TcfU0PeYqnceY7+beayj5HbD5cN31LGFdLCMcRXp7HgwPoOA9XsdGsCEq2NgrlDSgirg17R1wukdvlPljiLekX3xDwHLX6x9NZ8b5rECgJlLFlDWXW+dbf9iFBLTUVJSiUumDk4dRYmA6WPvm/olKN3EEjs6cDc7V/V2XfJqeGkQmv4vLMPjnuk+oygl9kmlCtmK0EyWvxw25HaijYxWyPITp9DQ+3b137AeLcToKbNlIFJjC1pmdi1C3oUjbjKu+NL8DMRG+z7F74o0cdqyNjKhYDmWmtYyIQFUml55wU5mG4WBlCGxAoKy14DpwfHlbPyZslB2A5CuqeJXZ0ewd5AqGBaZByTzFEJE4EUM7tbjG42B6wcK99FVoK6ffIIYOK/vliY6t/wQOK41JJNF5gYO7S3dFlJCEocX95J7Vipo9JV0MH+3isUECuyWZ/SvskMaTE=
