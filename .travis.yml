@@ -8,7 +8,7 @@ before_script:
 - cd ..
 - cd /tmp/shopware
 - ant -f build/build.xml -Ddb.user=travis -Ddb.host=127.0.0.1 -Ddb.name=shopware build-unit
-- cp -R /home/travis/build/fjbender/shopware-5/Frontend/MoptPaymentPayone /tmp/shopware/engine/Shopware/Plugins/Default/Frontend
+- cp -R /home/travis/build/PAYONE-GmbH/shopware-5/Frontend/MoptPaymentPayone /tmp/shopware/engine/Shopware/Plugins/Default/Frontend
 - cd /tmp/shopware
 - ls engine/Shopware/Plugins/Default/Frontend
 - php bin/console sw:plugin:refresh
