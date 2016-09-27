@@ -1,0 +1,74 @@
+<project name="PAYONE Payment Plugin" default="buildTarget" basedir=".">
+  <description>
+        Build file for release packages
+  </description>
+        
+  <!-- set global properties for this build -->
+  <property name="srcShopware5" location="./"/>
+  <property name="build"  location="/tmp/MoptPaymentPayone-build/"/>
+  <property name="dist"  location="./"/>
+  <!-- property name="expires"  value="2011-05-11"/ -->
+
+<available file=".git" type="dir" property="git.present"/>
+
+  <target name="git.revision" description="Store git revision in ${repository.version}" if="git.present">
+      <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+          <arg value="describe"/>
+          <arg value="--tags"/>
+          <arg value="--always"/>
+          <arg value="HEAD"/>
+      </exec>
+      <condition property="repository.version" value="${git.revision}" else="unknown">
+          <and>
+              <isset property="git.revision"/>
+              <length string="${git.revision}" trim="yes" length="0" when="greater"/>
+          </and>
+      </condition>
+  </target>
+
+  <target name="init" depends="git.revision">
+    <!-- Create the time stamp -->
+    <tstamp/>
+                  
+        <echo>Module Version: ${git.revision}</echo>       
+
+    <condition  property="expiry" value="2999-12-31" >
+        <not>
+            <isset property="expiry" />
+        </not>
+    </condition>
+    <echo>Expire Date: ${expiry}</echo>
+        
+  </target>
+  
+  <target name="buildTarget" depends="init" description="copy the files, do the zip" >
+        <!-- Create the build directory structure-->
+        <mkdir dir="${build}"/>
+        <!-- somehow this seems necessary -->
+	<delete dir=".idea" />
+        <!-- copy module to build folder excluding git files -->
+        <copy todir="${build}" overwrite="true" encoding="UTF-8" outputencoding="UTF-8" >
+            <fileset dir="${srcShopware5}" excludes=".* README.md build.xml composer.json .idea" />
+        </copy>
+
+
+        <!-- replace Comment vars in Shopware4 -->
+        <replace dir="${build}" encoding="UTF-8" >
+            <replacefilter token="%%NAME%%" value="${ant.project.name}"/>
+            <replacefilter token="%%VERSION%%" value="${git.revision}"/>
+            <replacefilter token="%%REVISION%%" value=""/>
+            
+            <include name="Frontend/MoptPaymentPayone/Bootstrap.php"/>
+            <include name="Frontend/MoptPaymentPayone/plugin.json"/>
+        </replace>
+        
+
+        <!-- pack source code zip file -->
+        <zip destfile="${dist}/FatchipPayoneConnector_${git.revision}_shopware5_source.zip" basedir="${build}"  />
+
+        <!-- Clean UP -->
+        <delete dir="${build}"/>
+  </target>
+  
+</project>
+ 
