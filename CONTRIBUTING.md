@@ -10,12 +10,12 @@ If you think you have found a bug, please feel free to open an issue on our [Git
 
 Please fork our repository and then clone it to your machine:
 
-    git clone git@github.com:[your-username]/shopware-5
+    git clone https://github.com/[your-username]/shopware-5
 
 After that, add the upstream, to be able to update:
 
     cd shopware-5
-    git add upstream git://github.com/PAYONE-GmbH/shopware-5
+    git remote add upstream https://github.com/PAYONE-GmbH/shopware-5.git
     git config branch.master.remote upstream
 
 Usually, you would create a feature branch for the feature you're adding.
