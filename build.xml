@@ -48,7 +48,7 @@
 	<delete dir=".idea" />
         <!-- copy module to build folder excluding git files -->
         <copy todir="${build}" overwrite="true" encoding="UTF-8" outputencoding="UTF-8" >
-            <fileset dir="${srcShopware5}" excludes=".* README.md build.xml composer.json .idea" />
+            <fileset dir="${srcShopware5}" excludes=".* README.md CONTRIBUTING.md build.xml composer.json .idea" />
         </copy>
 
 
