@@ -31,4 +31,6 @@ class Payone_Api_Enum_GenericpaymentAction
     const PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS='getexpresscheckoutdetails';
     
     const PAYOLUTION_PRE_CHECK = 'pre_check';
+    
+    const PAYOLUTION_CALCULATION = 'calculation';
 }

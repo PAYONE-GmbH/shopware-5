@@ -120,13 +120,15 @@
         <span id="mopt_payone__cc_cvc" class="inputIframe"></span>
     {/if}
     
+    {if $moptIsAjax}
     <p class="none">
         <span id="mopt_payone__cc_show_saved_hint" style="display:none;font-weight: bold;color: #e1540f;">    
             {s namespace='frontend/MoptPaymentPayone/payment' name='ccShowSavedHint'}Platzhalter ccShowSavedHint{/s}
         </span>
     </p>      
+    {/if}
     
-    
+
     <div id="errorOutput"></div>
 
     <input name="moptPaymentData[mopt_payone__cc_pseudocardpan]" type="hidden" 
@@ -199,7 +201,6 @@
                             $('#mopt_payone__cc_paymentname').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'));
                             $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
                             $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
-                            $('#mopt_payone__cc_show_saved_hint').show();
                                     var data = {
                             mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
                             mopt_payone__cc_cardtype: $('#mopt_payone__cc_cardtype').val(),
@@ -215,12 +216,10 @@
                             var today = new Date();
                             var configuredDays = {$moptCreditCardCheckEnvironment.moptCreditcardMinValid};
                             var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + configuredDays);
-                            var selectedDate = new Date(response.cardexpiredate, 0);
+                            var selectedYear = '20'+response.cardexpiredate.substring(0,2);
+                            var selectedMonth = response.cardexpiredate.substring(2,4);
+                            var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
                             var diff = selectedDate.getTime() - minValidDate.getTime();
-                            //console.log("configuredDays: " + configuredDays);
-                            //console.log("minValidDate: " + minValidDate);
-                            //console.log("selectedDate: " + selectedDate);
-                            //console.log("diff: " + diff);
                             if (diff > 0){
                                 $("#shippingPaymentForm").submit();
                                 $('form[name="frmRegister"]').submit();
@@ -229,13 +228,11 @@
                             }
                         });
         } else {
-                        // var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
-                        // if (response && (response.errorcode in errorMessages[0])) {
-                        //    alert(errorMessages[0][response.errorcode]);
+
                         if (response && response.errormessage) {
                             alert(response.errormessage);                        
                         } else {
-                            alert(errorMessages[0].general);
+                            moptShowGeneralIFrameError();
                         }
         }
     };
@@ -243,6 +240,10 @@
     function moptShowGeneralError() {
         var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
         alert(errorMessages[0].general);
+    };
+    
+    function moptShowGeneralIFrameError() {
+        alert("Bitte füllen Sie alle Formularfelder vollständig aus");
     };
 //]]>
 </script>           

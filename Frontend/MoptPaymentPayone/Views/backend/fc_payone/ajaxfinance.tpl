@@ -114,33 +114,51 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>     
-                <div id="klarnastoreid" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" disabled style="display: none; ">
+                <div id="klarnastoreid" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
                     <label for="klarnaStoreId" class="text-left col-md-3 control-label">{s name=fieldlabel/klarnaStoreId}Klarna Store-ID{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="" maxlength="" id="klarnaStoreId" name="klarnaStoreId" aria-describedby="klarnaStoreId-status" >
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="klarnaStoreId" name="klarnaStoreId" aria-describedby="klarnaStoreId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="klarnaStoreId-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
-                <div id="payolutionCompanyName" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" disabled style="display: none; ">
+                <div id="payolutionCompanyName" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
                     <label for="payolutionCompanyName" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionCompanyName}Payolution Firmenname{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="" maxlength="" id="payolutionCompanyName" name="payolutionCompanyName" aria-describedby="payolutionCompanyName-status" >
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionCompanyName" name="payolutionCompanyName" aria-describedby="payolutionCompanyName-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="payolutionCompanyName-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
                     </div>
                 </div> 
-                <div id="payolutionB2bMode" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" disabled style="display: none; ">
-                    <label for="payolutionB2bMode" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionB2bMode}Payolution B2B Mode {/s}</label>
+                <div id="payolutionB2bmode" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
+                    <label for="payolutionB2bmode" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionB2bmode}Payolution B2B Mode {/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionB2bMode" name="payolutionB2bMode" aria-describedby="payolutionB2bMode-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionB2bmode" name="payolutionB2bmode" aria-describedby="payolutionB2bmode-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="payolutionB2bMode-status" class="sr-only">(success)</span>
+                        <span id="payolutionB2bmode-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
                     </div>
-                </div>                     
+                </div>   
+                <div id="payolutionDraftUser" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
+                    <label for="payolutionDraftUser" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionDraftUser}Payolution HTTP-Benutzername{/s}</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftUser" name="payolutionDraftUser" aria-describedby="payolutionDraftUser-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="payolutionDraftUser-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>    
+                <div id="payolutionDraftPassword" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
+                    <label for="payolutionDraftPassword" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionDraftPassword}Payolution HTTP-Passwort{/s}</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftPassword" name="payolutionDraftPassword" aria-describedby="payolutionDraftPassword-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="payolutionDraftPassword-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>                      
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>
         </div>
@@ -154,13 +172,14 @@
 
         var form = $('#ajaxfinanceform');
         var url = "{url controller=FcPayone action=ajaxgetFinanceConfig forceSecure}";
+        var url_config = "{url controller=FcPayone action=ajaxgetGeneralConfig forceSecure}";
         var paymentid = null;
 
         $(document).ready(function ()
         {
             var params = "paymentid=0";
             var call = url + '?' + params;
-
+            var call_config = url_config + '?' + params;
             form.validator('validate');
 
             $.ajax({
@@ -176,11 +195,50 @@
                     }
                 }
             });
+            $.ajax({
+                url: call_config,
+                type: 'POST',
+                success: function (data) {
+                    response = $.parseJSON(data);
+                    if (response.status === 'success') {
+                        populateForm(form, response.data);
+                        form.validator('validate');
+                    }
+                    if (response.status === 'error') {
+                    }
+                }
+            });            
+                        if(/mopt_payone__fin_klarna/.test(filterid)){
+                            $('#klarnastoreid').show();
+                            } else {
+                            $('#klarnastoreid').hide();
+                        } 
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionCompanyName').show();
+                            } else {
+                            $('#payolutionCompanyName').hide();
+                        }    
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionB2bmode').show();
+                            } else {
+                            $('#payolutionB2bmode').hide();
+                        }
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionDraftUser').show();
+                            } else {
+                            $('#payolutionDraftUser').hide();
+                        } 
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionDraftPassword').show();
+                            } else {
+                            $('#payolutionDraftPassword').hide();
+                        }                         
         });
 
         $(".dropdown-menu li a").click(function () {
             var params = "paymentid=" + this.id;
             var call = url + '?' + params;
+            var call_config = url_config + '?' + params;
             var filterid = this.getAttribute("data-name");
             paymentid = this.id;
 
@@ -201,18 +259,67 @@
                             $('#payolutionCompanyName').hide();
                         }    
                         if(/mopt_payone__fin_payolution/.test(filterid)){
-                            $('#payolutionB2bMode').show();
+                            $('#payolutionB2bmode').show();
                             } else {
-                            $('#payolutionB2bMode').hide();
-                        }    
+                            $('#payolutionB2bmode').hide();
+                        }   
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionDraftUser').show();
+                            } else {
+                            $('#payolutionDraftUser').hide();
+                        } 
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionDraftPassword').show();
+                            } else {
+                            $('#payolutionDraftPassword').hide();
+                        }                          
                         
                         populateForm(form, response.data);
-                        form.validator('validate');
+                        form.validator('validate');form.validator('validate');
                     }
                     if (response.status === 'error') {
                     }
                 }
             });
+$.ajax({
+                url: call_config,
+                type: 'POST',
+                success: function (data) {
+                    response = $.parseJSON(data);
+                    if (response.status === 'success') {
+                        if(/mopt_payone__fin_klarna/.test(filterid)){
+                            $('#klarnastoreid').show();
+                            } else {
+                            $('#klarnastoreid').hide();
+                        } 
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionCompanyName').show();
+                            } else {
+                            $('#payolutionCompanyName').hide();
+                        }    
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionB2bmode').show();
+                            } else {
+                            $('#payolutionB2bmode').hide();
+                        }
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionDraftUser').show();
+                            } else {
+                            $('#payolutionDraftUser').hide();
+                        } 
+                        if(/mopt_payone__fin_payolution/.test(filterid)){
+                            $('#payolutionDraftPassword').show();
+                            } else {
+                            $('#payolutionDraftPassword').hide();
+                        }                          
+                        
+                        populateForm(form, response.data);
+                        form.validator('validate');form.validator('validate');
+                    }
+                    if (response.status === 'error') {
+                    }
+                }
+            });            
         });
 
         form.on("submit", function (event) {
@@ -231,11 +338,11 @@
                 $(value).attr('type', 'checkbox');
             });
             var url = 'ajaxSavePayoneConfig';
+            values = values + '&paymentId=' + paymentid;
             $.post(url, values, function (response) {
                 var data_array = $.parseJSON(response);
             });            
             var url = 'ajaxSavePaymentConfig';
-            values = values + '&paymentId=' + paymentid;
             $.post(url, values, function (response) {
                 var data_array = $.parseJSON(response);
                 showalert("Die Daten wurden gespeichert", "alert-success");

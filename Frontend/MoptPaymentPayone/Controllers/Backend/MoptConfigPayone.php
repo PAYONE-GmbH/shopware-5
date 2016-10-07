@@ -293,6 +293,9 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             if ($paymentHelper->isPayonePayolutionInvoice($paymentData['name'])) {
                 $data['extra'] = 'payolution_invoice';
             }
+            if ($paymentHelper->isPayonePayolutionInstallment($paymentData['name'])) {
+                $data['extra'] = 'payolution_installment';
+            }            
         }
 
         $data = $this->getIsoCodesForCountries($data);

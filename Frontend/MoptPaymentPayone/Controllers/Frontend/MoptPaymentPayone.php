@@ -156,6 +156,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $response = $this->mopt_payone__payolution();
         $this->mopt_payone__handlePayolutionFeedback($response);
     }
+    
+    public function payolutioninstallmentAction()
+    {
+        $response = $this->mopt_payone__payolution();
+        $this->mopt_payone__handlePayolutionFeedback($response);
+    }    
 
     /**
      * @return $response
@@ -390,6 +396,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 return $precheckresponse;
             } 
         }
+        
+        if ($this->moptPayonePaymentHelper->isPayonePayolutionInstallment($this->getPaymentShortName())) {
+            $financeType = Payone_Api_Enum_PayolutionType::PYS;
+            $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
+            $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayolutionInstallment($financeType, $paymentData, $workorderId);
+        }        
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
         return $response;
     }
@@ -403,8 +415,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         if ($this->moptPayonePaymentHelper->isPayoneBillsafe($paymentId)) {
             $financeType = Payone_Api_Enum_FinancingType::BSV;
-        } else {
-            $financeType = Payone_Api_Enum_FinancingType::CFR;
         }
 
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());

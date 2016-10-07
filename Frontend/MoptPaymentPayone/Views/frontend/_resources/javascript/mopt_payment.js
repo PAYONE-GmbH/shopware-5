@@ -266,9 +266,9 @@ $.plugin('moptPayoneCreditcardPrepare', {
         };
 
         if (me.opts.moptCreditcardConfig.show_errors === '1') {
-            config.error = "errorOutput";
-            config.language = eval('Payone.ClientApi.Language.' + me.opts.moptPayoneParamsLanguage);
+            config.error = "errorOutput";    
         }
+        config.language = eval('Payone.ClientApi.Language.' + me.opts.moptPayoneParamsLanguage);
 
 
         if (me.opts.moptCreditcardConfig.cardno_custom_style === '0') {
@@ -279,10 +279,10 @@ $.plugin('moptPayoneCreditcardPrepare', {
             config.fields.cardpan.iframe.height = me.opts.moptCreditcardConfig.cardno_iframe_height;
         }
 
-        if (me.opts.moptCreditcardConfig.cardcvc_custom_style === '0') {
+        if (me.opts.moptCreditcardConfig.cardcvc_custom_style === '0' && me.opts.moptCreditcardConfig.check_cc === '1') {
             config.fields.cardcvc2.style = me.opts.moptCreditcardConfig.cardcvc_input_css;
         }
-        if (me.opts.moptCreditcardConfig.cardcvc_custom_iframe === '0') {
+        if (me.opts.moptCreditcardConfig.cardcvc_custom_iframe === '0' && me.opts.moptCreditcardConfig.check_cc === '1' ) {
             config.fields.cardcvc2.iframe.width = me.opts.moptCreditcardConfig.cardcvc_iframe_width;
             config.fields.cardcvc2.iframe.height = me.opts.moptCreditcardConfig.cardcvc_iframe_height;
         }
@@ -341,31 +341,31 @@ $.plugin('moptPayoneCreditcardPrepare', {
         if (me.opts.moptCreditcardConfig.default_translation_iframe_month12){
             Payone.ClientApi.Language[fcpolang].months.month12 = me.opts.moptCreditcardConfig.default_translation_iframe_month12;
         }
-        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalid_cardpan){
+        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalid_cardpan && me.opts.moptCreditcardConfig.show_errors === '1'){
             Payone.ClientApi.Language[fcpolang].invalidCardpan = me.opts.moptCreditcardConfig.default_translation_iframeinvalid_cardpan;
         }
-        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalid_cvc){
+        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalid_cvc && me.opts.moptCreditcardConfig.show_errors === '1'){
             Payone.ClientApi.Language[fcpolang].invalidCvc = me.opts.moptCreditcardConfig.default_translation_iframeinvalid_cvc;
         }
-        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalid_pan_for_cardtype){
+        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalid_pan_for_cardtype && me.opts.moptCreditcardConfig.show_errors === '1'){
             Payone.ClientApi.Language[fcpolang].invalidPanForCardtype = me.opts.moptCreditcardConfig.default_translation_iframeinvalid_pan_for_cardtype;
         }
-        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalid_cardtype){
+        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalid_cardtype && me.opts.moptCreditcardConfig.show_errors === '1'){
             Payone.ClientApi.Language[fcpolang].invalidCardtype = me.opts.moptCreditcardConfig.default_translation_iframeinvalid_cardtype;
         }
-        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalidExpireDate){
+        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalidExpireDate && me.opts.moptCreditcardConfig.show_errors === '1'){
             Payone.ClientApi.Language[fcpolang].invalidExpireDate = me.opts.moptCreditcardConfig.default_translation_iframeinvalidExpireDate;
         }
-        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalidIssueNumber){
+        if (me.opts.moptCreditcardConfig.default_translation_iframeinvalidIssueNumber && me.opts.moptCreditcardConfig.show_errors === '1'){
             Payone.ClientApi.Language[fcpolang].invalidIssueNumber = me.opts.moptCreditcardConfig.default_translation_iframeinvalidIssueNumber;
         }
-        if (me.opts.moptCreditcardConfig.default_translation_iframetransactionRejected){
+        if (me.opts.moptCreditcardConfig.default_translation_iframetransactionRejected && me.opts.moptCreditcardConfig.show_errors === '1'){
             Payone.ClientApi.Language[fcpolang].transactionRejected = me.opts.moptCreditcardConfig.default_translation_iframetransactionRejected;  
         }
         if (me.opts.moptCreditcardConfig.default_translation_iframe_cardpan){
             Payone.ClientApi.Language[fcpolang].placeholders.cardpan =  me.opts.moptCreditcardConfig.default_translation_iframe_cardpan;
         }
-        if (me.opts.moptCreditcardConfig.default_translation_iframe_cvc){
+        if (me.opts.moptCreditcardConfig.default_translation_iframe_cvc && me.opts.moptCreditcardConfig.check_cc === '1' ){
         Payone.ClientApi.Language[fcpolang].placeholders.cvc =  me.opts.moptCreditcardConfig.default_translation_iframe_cvc;        
     	}
                    
@@ -472,7 +472,7 @@ $.plugin('moptPayoneIframeCreditcardCheck', {
         if (iframes.isComplete()) {
             iframes.creditCardCheck('processPayoneIframeResponse');
         } else {
-            moptShowGeneralError();
+            moptShowGeneralIFrameError();
         }
     },
     destroy: function () {

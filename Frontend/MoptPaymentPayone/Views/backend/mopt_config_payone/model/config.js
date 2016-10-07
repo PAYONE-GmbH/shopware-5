@@ -86,7 +86,9 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'adresscheckBillingCountries', type: 'string'},
     { name: 'adresscheckShippingCountries', type: 'string'},
     { name: 'payolutionCompanyName', type: 'string'},
-    { name: 'payolutionB2bmode', type: 'boolean'}
+    { name: 'payolutionB2bmode', type: 'boolean'},
+    { name: 'payolutionDraftUser', type: 'string'},
+    { name: 'payolutionDraftPassword', type: 'string'}
   ],
   /**
    * Validation

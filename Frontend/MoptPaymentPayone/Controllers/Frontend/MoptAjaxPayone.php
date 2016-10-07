@@ -385,4 +385,243 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     {
         return Shopware()->Session()->sOrderVariables['sUserData']['additional']['payment']['id'];
     }
+    
+    
+   /**
+     * get actual payment method id
+     *
+     * @return string
+     */
+    protected function ajaxHandlePayolutionPreCheckAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $paymentData = Shopware()->Session()->moptPayment;
+        $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getPost('hreg');
+        $paymentData['dob'] = $this->Request()->getPost('dob');
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = Payone_Api_Enum_PayolutionType::PYS;
+        $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;        
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $paymentName = $userData['additional']['payment']['name'];
+        if ($this->moptPayonePaymentHelper->isPayonePayolutionInstallment($paymentName)) {
+            $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
+            if ($precheckresponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
+                $responseData = $precheckresponse->toArray();
+                $workorderId = $responseData['rawResponse']['workorderid'];
+                $calculation = $this->buildAndCallCalculate($config, 'fnc', $financeType, $paymentType, $paymentData, $workorderId);
+                $responseData = $calculation->getInstallmentData();
+                $data['data'] = $responseData;
+                $data['status'] = 'success';
+                $data['workorderid'] =  $workorderId;
+                $encoded = json_encode($data);               
+                echo $encoded;
+                exit(0);  
+            } else {
+                $data['data'] = $precheckresponse;
+                $data['status'] = 'error';
+                $encoded = json_encode($data);  
+                echo $encoded;
+                exit(0);
+            }
+        }
+        return false;
+    }
+    
+     /**
+     * render the payolution installment deb container for frontend usage
+     *
+     * @return string
+     */
+    protected function renderPayolutionInstallmentAction()
+    {
+        $installmentData = $this->Request()->getPost('data');
+        $this->View()->assign(array('InstallmentPlan' => $installmentData)
+                ); 
+    }  
+    
+     /**
+     * download the payolution installment info pdf for frontend usage
+     *
+     * @return string
+     */
+    protected function getPayolutionDraftUrlAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $url = $this->Request()->getParam('url');
+        $duration = $this->Request()->getParam('duration');
+        if ($url) {
+            $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+            $user = $config['payolutionDraftUser'];
+            $password = $config['payolutionDraftPassword'];
+
+            $downloadUrl = str_ireplace('https://', 'https://'.$user.':'.$password.'@', $url.'&duration='.$duration);
+            // debug
+            // $downloadUrl  = 'http://www.orimi.com/pdf-test.pdf';
+            $content = file_get_contents($downloadUrl);
+            $filename= 'terms-of-payment.pdf';            
+            if($content) {
+                header("Content-Type: application/pdf");
+                header("Content-Disposition: attachment; filename=\"{$filename}\"");
+                echo $content;
+                exit;
+            }
+            echo "Es ist ein Fehler beim Download aufgetreten <br>Bitte versuchen Sie es später noch einmal.";
+        }  
+    }      
+    
+    /**
+     * prepare and do payment server api call
+     *
+     * @param array $config
+     * @param string $clearingType
+     * @param string $financetype
+     * @param string $paymenttype
+     * @return type $response
+     */
+    protected function buildAndCallPrecheck($config, $clearingType, $financetype, $paymenttype, $paymentData)
+    {
+        $paramBuilder = $this->moptPayoneMain->getParamBuilder();
+        $session = Shopware()->Session();
+        $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        $params['financingtype'] = $financetype;
+        $session = Shopware()->Session();
+        $orderVariables = $session['sOrderVariables']->getArrayCopy();        
+        //create hash
+        $orderHash = md5(serialize($orderVariables));
+        $session->moptOrderHash = $orderHash;
+        
+        $request = new Payone_Api_Request_Genericpayment($params);
+        
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_PRE_CHECK)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'payment_type', 'data' => $paymenttype)
+        ));
+
+        if ($paymentData && $paymentData['mopt_payone__payolution_b2bmode']) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__installment_company_trade_registry_number'])
+            ));
+        }
+        $request->setPaydata($paydata);
+        $request->setAmount($this->getAmount());
+        $request->setCurrency($this->getCurrencyShortName());
+        $request->setCompany($personalData->getCompany());
+        $request->setFirstname($personalData->getFirstname());
+        $request->setLastname($personalData->getLastname());
+        $request->setStreet($personalData->getStreet());
+        $request->setZip($personalData->getZip());
+        $request->setCity($personalData->getCity());
+        $request->setCountry($personalData->getCountry());
+        if ($personalData->getBirthday() !== "00000000" && $personalData->getBirthday() !== ""){
+            $request->setBirthday($personalData->getBirthday());
+        } else {
+            $request->setBirthday($paymentData['dob']);
+        }
+        
+        if ($paymentData && $paymentData['mopt_payone__payolution_b2bmode']) {
+           $request->setBirthday("");
+        }        
+        $request->setEmail($personalData->getEmail());
+        $request->setIp($personalData->getIp());
+        $request->setLanguage($personalData->getLanguage());        
+        $request->setClearingtype($clearingType);
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $response = $this->service->request($request);
+        return $response;
+    } 
+    
+    /**
+     * prepare and do payment server api call
+     *
+     * @param array $config
+     * @param string $clearingType
+     * @param string $financetype
+     * @param string $paymenttype
+     * @return type $response
+     */
+    protected function buildAndCallCalculate($config, $clearingType, $financetype, $paymenttype, $paymentData, $workorderId)
+    {
+        $paramBuilder = $this->moptPayoneMain->getParamBuilder();
+        $session = Shopware()->Session();
+        $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        $params['financingtype'] = $financetype;
+        $params['workorderid'] = $workorderId;        
+        $session = Shopware()->Session();
+        $orderVariables = $session['sOrderVariables']->getArrayCopy();        
+        //create hash
+        $orderHash = md5(serialize($orderVariables));
+        $session->moptOrderHash = $orderHash;
+        
+        $request = new Payone_Api_Request_Genericpayment($params);
+        
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_CALCULATION)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'payment_type', 'data' => $paymenttype)
+        ));
+
+        if ($paymentData && $paymentData['mopt_payone__payolution_b2bmode']) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
+            ));
+        }
+        $request->setPaydata($paydata);
+        $request->setAmount($this->getAmount());
+        $request->setCurrency($this->getCurrencyShortName());
+        $request->setCompany($personalData->getCompany());
+        $request->setFirstname($personalData->getFirstname());
+        $request->setLastname($personalData->getLastname());
+        $request->setStreet($personalData->getStreet());
+        $request->setZip($personalData->getZip());
+        $request->setCity($personalData->getCity());
+        $request->setCountry($personalData->getCountry());
+        $request->setBirthday($paymentData['dob']);
+        $request->setEmail($personalData->getEmail());
+        $request->setIp($personalData->getIp());
+        $request->setLanguage($personalData->getLanguage());
+        
+        $request->setClearingtype($clearingType);
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $response = $this->service->request($request);
+        return $response;
+    }     
+    
+    /**
+     * Return the full amount to pay.
+     *
+     * @return float
+     */
+    public function getAmount()
+    {
+        $session = Shopware()->Session();
+        $orderVariables = $session['sOrderVariables']->getArrayCopy();         
+        $basket = $orderVariables['sBasket'];
+        return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
+    }
+
+    /**
+     * Returns the current currency short name.
+     *
+     * @return string
+     */
+    public function getCurrencyShortName()
+    {
+        return Shopware()->Currency()->getShortName();
+    }    
+    
 }

@@ -443,6 +443,16 @@ class MoptPayoneConfig extends ModelEntity
    */
     private $payolutionB2bmode;
 
+   /**
+   * @ORM\Column(name="payolution_draft_user", type="string", length=255, nullable=true, unique=false)
+   */
+    private $payolutionDraftUser;
+
+   /**
+   * @ORM\Column(name="payolution_draft_password", type="string", length=255, nullable=true, unique=false)
+   */
+    private $payolutionDraftPassword;    
+    
     /**
    * @ORM\Column(name="show_sofort_iban_bic", type="boolean", precision=0, scale=0, nullable=false, unique=false)
    */
@@ -1266,6 +1276,26 @@ class MoptPayoneConfig extends ModelEntity
     {
         $this->payolutionB2bmode = $payolutionB2bmode;
     }
+    
+    public function getPayolutionDraftUser()
+    {
+        return $this->payolutionDraftUser;
+    }
+
+    public function setPayolutionDraftUser($payolutionDraftUser)
+    {
+        $this->payolutionDraftUser = $payolutionDraftUser;
+    }  
+    
+    public function getPayolutionDraftPassword()
+    {
+        return $this->payolutionDraftPassword;
+    }
+
+    public function setPayolutionDraftPassword($payolutionDraftPassword)
+    {
+        $this->payolutionDraftPassword = $payolutionDraftPassword;
+    }      
 
     public function getShowSofortIbanBic()
     {

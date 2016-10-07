@@ -155,6 +155,7 @@
                         <th>Höhe</th>
                         <th>Stil</th>
                         <th>Css</th>
+                        <th>Platzhalter</th>
                     </tr>
                     <tr class="form-group">
                         <th>Kreditkartennummer</th>
@@ -177,6 +178,7 @@
                                 <option value="false">Benutzerdefiniert</option>
                             </select></td>
                         <td><input name="cardnoInputCss" id="cardnoInputCss" type="text" class="form-control" /></td>
+                        <td><input name="defaultTranslationIframeCardpan" id="defaultTranslationIframeCardpan" type="text" class="form-control" /></td>
                     </tr>
                     <tr class="form-group">
                         <th>Kreditkartenprüfziffer</th>
@@ -199,6 +201,7 @@
                                 <option value="false">Benutzerdefiniert</option>
                             </select></td>
                         <td><input name="cardcvcInputCss" id="cardcvcInputCss" type="text" class="form-control" /></td>
+                        <td><input name="defaultTranslationIframeCvc" id="defaultTranslationIframeCvc" type="text" class="form-control" /></td>
                     </tr>
                     <tr class="form-group">
                         <th>Gültigkeitsmonat</th>
@@ -262,7 +265,91 @@
                         <td></span><input name="standardIframeHeight" id="standardIframeHeight" type="text" class="form-control" placeholder="Breite"/></td>
                         <td><input name="standardIframeWidth" id="standardIframeWidth" type="text" class="form-control" placeholder="Höhe"/></td>
                     </tr>
+
+                <table class="table-condensed">
+                    <th>Standardübersetzung</th>
+                    <tr>
+                        <th>Monat</th>
+                        <th>Übersetzung</th>
+                        <th>Monat</th>
+                        <th>Übersetzung</th>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Januar</th>
+                        <td><input name="defaultTranslationIframeMonth1" id="defaultTranslationIframeMonth1" type="text" class="form-control"/></td>
+                        <th>Juli</th>
+                        <td><input name="defaultTranslationIframeMonth7" id="defaultTranslationIframeMonth7" type="text" class="form-control"/></td>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Februar</th>
+                        <td><input name="defaultTranslationIframeMonth2" id="defaultTranslationIframeMonth2" type="text" class="form-control"/></td>
+                        <th>August</th>
+                        <td><input name="defaultTranslationIframeMonth8" id="defaultTranslationIframeMonth8" type="text" class="form-control"/></td>                        
+                    </tr>
+                    <tr class="form-group">
+                        <th>März</th>
+                        <td><input name="defaultTranslationIframeMonth3" id="defaultTranslationIframeMonth3" type="text" class="form-control"/></td>
+                        <th>September</th>
+                        <td><input name="defaultTranslationIframeMonth9" id="defaultTranslationIframeMonth9" type="text" class="form-control"/></td>                        
+                    </tr>
+                    <tr class="form-group">
+                        <th>April</th>
+                        <td><input name="defaultTranslationIframeMonth4" id="defaultTranslationIframeMonth4" type="text" class="form-control"/></td>
+                        <th>Oktober</th>
+                        <td><input name="defaultTranslationIframeMonth10" id="defaultTranslationIframeMonth10" type="text" class="form-control"/></td>                        
+                    </tr>
+                    <tr class="form-group">
+                        <th>Mai</th>
+                        <td><input name="defaultTranslationIframeMonth5" id="defaultTranslationIframeMonth5" type="text" class="form-control"/></td>
+                        <th>November</th>
+                        <td><input name="defaultTranslationIframeMonth11" id="defaultTranslationIframeMonth11" type="text" class="form-control"/></td>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Juni</th>
+                        <td><input name="defaultTranslationIframeMonth6" id="defaultTranslationIframeMonth6" type="text" class="form-control"/></td>
+                        <th>Dezember</th>
+                        <td><input name="defaultTranslationIframeMonth12" id="defaultTranslationIframeMonth12" type="text" class="form-control"/></td>                        
+                    </tr>
                 </table>
+                <table class="table-condensed">
+                    <h3>Fehlerausgabe und eigene Fehlermeldungen<h3>
+                    <tr class="form-group">
+                        <th>Fehlerausgabe aktivieren</th>
+                        <td><input name="showErrors" id="showErrors" type="checkbox" class="form-control"/></td>
+                    </tr>
+                    <tr>
+                        <th>Fehlermeldung</th>
+                        <th>eigene Fehlermeldung</th>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Ungültige Kreditkartennummer</th>
+                        <td><input name="defaultTranslationIframeinvalidCardpan" id="defaultTranslationIframeinvalidCardpan" type="text" class="form-control"/></td>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Ungültige Kartenprüfziffer</th>
+                        <td><input name="defaultTranslationIframeinvalidCvc" id="defaultTranslationIframeinvalidCvc" type="text" class="form-control"/></td>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Ungültige Kreditkartennummer für den Kartentyp</th>
+                        <td><input name="defaultTranslationIframeinvalidPanForCardtype" id="defaultTranslationIframeinvalidPanForCardtype" type="text" class="form-control"/></td>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Ungültiger Kartentyp</th>
+                        <td><input name="defaultTranslationIframeinvalidCardtype" id="defaultTranslationIframeinvalidCardtype" type="text" class="form-control"/></td>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Ungültiges Verfallsdatum</th>
+                        <td><input name="defaultTranslationIframeinvalidExpireDate" id="defaultTranslationIframeinvalidExpireDate" type="text" class="form-control"/></td>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Ungültige Ausstellungsnummer</th>
+                        <td><input name="defaultTranslationIframeinvalidIssueNumber" id="defaultTranslationIframeinvalidIssueNumber" type="text" class="form-control"/></td>
+                    </tr>
+                    <tr class="form-group">
+                        <th>Transaktion abgelehnt</th>
+                        <td><input name="defaultTranslationIframetransactionRejected" id="defaultTranslationIframetransactionRejected" type="text" class="form-control"/></td>
+                    </tr>                    
+                </table>                    
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>
         </div>

@@ -171,11 +171,20 @@ class Mopt_PayoneParamBuilder
      */
     public function buildOrderDebit($order, $postionIds, $includeShipment = false)
     {
+        $paymentName = $order->getPayment()->getName();
+
         $params = $this->getAuthParameters($order->getPayment()->getId());
         $params['txid'] = $order->getTransactionId();
         $params['sequencenumber'] = $this->getParamSequencenumber($order);
         $params['amount'] = $this->getParamDebitAmount($order, $postionIds, $includeShipment);
         $params['currency'] = $order->getCurrency();
+
+        if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
+            if ($order->getBilling()->getCompany()) {
+                $params['payolution_b2b'] = true;
+                $params['vatid'] = $order->getBilling()->getUstid();
+            }
+        }
 
         return $params;
     }
@@ -538,15 +547,54 @@ class Mopt_PayoneParamBuilder
      * @param string $financeType
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
      */
-    public function getPaymentPayolutionDebitNotePreCheck($financeType, $paymentData)
-    {
+    public function getPaymentPayolutionInstallment($financeType, $paymentData, $workorderId) {
+        $params = array();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $params['api_version'] = '3.10';
+        $params['workorderid'] = $paymentData['mopt_payone__payolution_installment_workorderid'];
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
+        } else {
+            $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        }
+        if ($params['birthday'] == "00000000") {
+            unset($params['birthday']);
+        }
+        $params['financingtype'] = $financeType;
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'installment_duration', 'data' => $paymentData['mopt_payone__payolution_installment_duration'])
+            ));
+        
+        if ($paymentData['mopt_payone__payolution_b2bmode']) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                    array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__installment_company_trade_registry_number'])
+            ));
+        }
+        $payment->setPaydata($paydata);
+        
+        return $payment;
+    }
+
+    /**
+     * create payolution payment object
+     *
+     * @param string $financeType
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     */
+    public function getPaymentPayolutionDebitNotePreCheck($financeType, $paymentData) {
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
-        $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+            $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
         }
         if ($params['birthday'] == "00000000") {
             unset($params['birthday']);
