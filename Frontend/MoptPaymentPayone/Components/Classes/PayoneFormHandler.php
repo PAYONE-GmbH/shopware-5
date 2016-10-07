@@ -74,6 +74,9 @@ class Mopt_PayoneFormHandler
         if ($paymentHelper->isPayonePayolutionInvoice($paymentId)) {
             return $this->proccessPayolutionInvoice($formData);
         }
+        if ($paymentHelper->isPayonePayolutionInstallment($paymentId)) {
+            return $this->proccessPayolutionInstallment($formData);
+        }
 
         return array();
     }
@@ -227,7 +230,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']["mopt_payone__debit_iban"] = $formData["mopt_payone__debit_iban"];
         }
 
-        if (!$formData["mopt_payone__debit_bic"] && !$formData["mopt_payone__debit_showbic"]==="") {
+        if (!$formData["mopt_payone__debit_bic"] && $formData["mopt_payone__debit_showbic"]=="1" ) {
             $paymentData['sErrorFlag']["mopt_payone__debit_bic"] = true;
         } else {
             $paymentData['formData']["mopt_payone__debit_bic"] = $formData["mopt_payone__debit_bic"];
@@ -257,7 +260,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']["mopt_payone__debit_bankcountry"] = $formData["mopt_payone__debit_bankcountry"];
         }
 
-        if ($paymentData['sErrorFlag']["mopt_payone__debit_iban"] && $paymentData['sErrorFlag']["mopt_payone__debit_bic"] && !$paymentData['sErrorFlag']["mopt_payone__debit_bankaccount"] && !$paymentData['sErrorFlag']["mopt_payone__debit_bankcode"]
+        if ($paymentData['sErrorFlag']["mopt_payone__debit_iban"] && ( $paymentData['sErrorFlag']["mopt_payone__debit_bic"] || $formData["mopt_payone__debit_showbic"]=="" ) && !$paymentData['sErrorFlag']["mopt_payone__debit_bankaccount"] && !$paymentData['sErrorFlag']["mopt_payone__debit_bankcode"]
         ) {
             unset($paymentData['sErrorFlag']["mopt_payone__debit_iban"]);
             unset($paymentData['sErrorFlag']["mopt_payone__debit_bic"]);
@@ -443,4 +446,59 @@ class Mopt_PayoneFormHandler
 
         return $paymentData;
     }
+    
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function proccessPayolutionInstallment($formData)
+    {
+        $paymentData = array();
+
+        if (!$formData["mopt_payone__payolution_installment_agreement"] || !in_array($formData["mopt_payone__payolution_installment_agreement"], array('on', true))) {
+            $paymentData['sErrorFlag']["mopt_payone__payolution_installment_agreement"] = true;
+        } else {
+            $paymentData['formData']["mopt_payone__payolution_installment_agreement"] = $formData["mopt_payone__payolution_installment_agreement"];
+        }
+
+        if ($formData[mopt_payone__payolution_installment_birthdaydate] !== "0000-00-00" && $formData[mopt_payone__payolution_b2bmode] !== "1") {
+            if (time() < strtotime('+18 years', strtotime($formData[mopt_payone__payolution_installment_birthdaydate]))) {
+                $paymentData['sErrorFlag']["mopt_payone__payolution_installment_birthday"] = true;
+                $paymentData['sErrorFlag']["mopt_payone__payolution_installment_birthmonth"] = true;
+                $paymentData['sErrorFlag']["mopt_payone__payolution_installment_birthyear"] = true;
+                $paymentData['formData']['mopt_save_birthday'] = false;
+            } else {
+                $paymentData['formData']["mopt_payone__payolution_birthdaydate"] = $formData["mopt_payone__payolution_installment_birthdaydate"];
+                $paymentData['formData']['mopt_save_birthday'] = true;
+            }
+        }
+        
+        if ($formData[mopt_payone__payolution_b2bmode] === "1") {
+
+            if (!$formData["mopt_payone__installment_company_trade_registry_number"]) {
+                $paymentData['sErrorFlag']["mopt_payone__installment_company_trade_registry_number"] = true;
+            } else {
+                $paymentData['formData']["mopt_payone__installment_company_trade_registry_number"] = $formData["mopt_payone__installment_company_trade_registry_number"];
+            }
+
+            $paymentData['formData']["mopt_payone__payolution_b2bmode"] = $formData["mopt_payone__payolution_b2bmode"];
+        }
+        
+        if ($formData['mopt_payone__payolution_installment_duration'] ==="") {
+            $paymentData['sErrorFlag']['mopt_payone__payolution_installment_duration'] = true;
+        } else {
+            $paymentData['formData']["mopt_payone__payolution_installment_duration"] = $formData["mopt_payone__payolution_installment_duration"];
+        }
+        
+        if ($formData['mopt_payone__payolution_installment_workorderid'] ==="") {
+            $paymentData['sErrorFlag']['mopt_payone__payolution_installment_workorderid'] = true;
+        } else {
+            $paymentData['formData']["mopt_payone__payolution_installment_workorderid"] = $formData["mopt_payone__payolution_installment_workorderid"];
+        }        
+        
+        return $paymentData;
+    }
+    
 }

@@ -124,7 +124,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 items: fieldsets,
                 renderTo: document.body,
                 width: 880,
-                height: 820
+                height: 980
             }];
     },
     activateField: function (me, field) {
@@ -159,13 +159,19 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(17).enable();
         }
         ;
-        if ( field === 'payolution_debitnote' || field === 'payolution_invoice') {
+        if ( field === 'payolution_debitnote' || field === 'payolution_invoice' || field === 'payolution_installment') {
             fieldset.items.getAt(19).enable();
             fieldset.items.getAt(20).enable();
+            fieldset.items.getAt(21).enable();
+            fieldset.items.getAt(22).enable();
+     
         } 
-        else {
+        else
+        {
             fieldset.items.getAt(19).disable();
             fieldset.items.getAt(20).disable();  
+            fieldset.items.getAt(21).disable();
+            fieldset.items.getAt(22).disable();
         }         
         ;  
     },
@@ -951,8 +957,25 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 allowBlank: false,
                 disabled: true,
                 labelWidth: 200
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name=fieldlabel/payolutionDraftUser}Payolution-Benutzername{/s}',
+                helpText: '{s name=fieldlabelhelp/payolutionDraftUser}Payolution HTTP-Benutzername{/s}',
+                name: 'payolutionDraftUser',
+                allowBlank: true,
+                disabled: true,
+                labelWidth: 200
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name=fieldlabel/payolutionDraftPassword}Payolution-Passwort{/s}',
+                helpText: '{s name=fieldlabelhelp/payolutionDraftPassword}Payolution HTTP-Passwort{/s}',
+                name: 'payolutionDraftPassword',
+                allowBlank: true,
+                disabled: true,
+                labelWidth: 200
             }
-            
         ];
     },
     getPaymentStatus: function () {

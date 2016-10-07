@@ -193,7 +193,12 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Payolution Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
                 'position' => 27,),
-        );
+            array(
+                'name' => 'mopt_payone__fin_payolution_installment',
+                'description' => 'PAYONE Payolution Ratenzahlung',
+                'template' => 'mopt_paymentmean_payolution_installment.tpl',
+                'position' => 28,),
+        );        
     }
 
     /**
@@ -429,6 +434,17 @@ class Mopt_PayoneInstallHelper
       ";
             Shopware()->Db()->query($sql);
         }
+        
+        // insert default values for creditcard config
+        $sql = 'SELECT id FROM s_plugin_mopt_payone_creditcard_config';
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "INSERT INTO `s_plugin_mopt_payone_creditcard_config` (`error_locale_id`, `shop_id`, `show_errors`, `is_default`, `integration_type`, `standard_input_css`, `standard_input_css_selected`, `standard_iframe_height`, `standard_iframe_width`, `cardno_input_chars`, `cardno_input_chars_max`, `cardno_input_css`, `cardno_custom_iframe`, `cardno_iframe_height`, `cardno_iframe_width`, `cardno_custom_style`, `cardno_field_type`, `cardcvc_input_chars`, `cardcvc_input_chars_max`, `cardcvc_input_css`, `cardcvc_custom_iframe`, `cardcvc_iframe_height`, `cardcvc_iframe_width`, `cardcvc_custom_style`, `cardcvc_field_type`, `cardmonth_input_chars`, `cardmonth_input_chars_max`, `cardmonth_input_css`, `cardmonth_custom_iframe`, `cardmonth_iframe_height`, `cardmonth_iframe_width`, `cardmonth_custom_style`, `cardmonth_field_type`, `cardyear_input_chars`, `cardyear_input_chars_max`, `cardyear_input_css`, `cardyear_custom_iframe`, `cardyear_iframe_height`, `cardyear_iframe_width`, `cardyear_custom_style`, `cardyear_field_type`, `merchant_id`, `portal_id`, `subaccount_id`, `api_key`, `live_mode`, `check_cc`, `creditcard_min_valid`) VALUES
+      (74, 1, 1, 1, 0, 'box-shadow:inset 0 1px 1px #dadae5;background:#f8f8fa;border:1px solid #dadae5;border-top-color:#cbcbdb;line-height:19px;font-size:.875rem;width:85%;padding:.625rem .625rem .5625rem .625rem;color:#8798a9;','box-shadow:inset 0 1px 1px #dadae5;background:#f8f8fa;border:1px solid #dadae5;border-top-color:#cbcbdb;line-height:19px;font-size:.875rem;width:85%;padding:.625rem .625rem .5625rem .625rem;color:#8798a9;', '20px', '80px', 20, 20, '', 0, '20px', '100px', 1, 'tel', 4, 4, '', 0, '20px', '100px', 1, 'tel', 4, 4, '', 0, '20px', '40px', 1, 'select', 4, 4, '', 0, '20px', '40px', 1, 'select', 0, 0, 0, '', 0, 1, 0);
+      ";
+            Shopware()->Db()->query($sql);
+        }          
     }
 
     /**
@@ -958,5 +974,24 @@ class Mopt_PayoneInstallHelper
                     . "ADD COLUMN default_translation_iframe_cvc VARCHAR(255) NULL;";
             $db->exec($sql);
         }
+    } 
+    
+ public function checkAndUpdateConfigModelPayolutionInstallmentExtension()
+    {
+        $db = Shopware()->Db();
+
+        $DBConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='payolution_draft_user'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+           $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `payolution_draft_user` VARCHAR(255) NULL AFTER `payolution_b2bmode`,
+                   ADD `payolution_draft_password` VARCHAR(255) NULL AFTER `payolution_draft_user`;";
+            $db->exec($sql);
+        }
     }    
+    
 }

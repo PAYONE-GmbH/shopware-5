@@ -1,7 +1,7 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
 <div class="payment--form-group">
-    {if ($fcPayolutionConfig.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfig.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
+    {if ($moptCreditCardCheckEnvironment.birthdayunderage === "1" || $fcPayolutionConfig.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfig.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
 
         <p class ="none">
             <label for="mopt_payone__payolution_invoice_birthday">
@@ -12,7 +12,7 @@
         <select name="moptPaymentData[mopt_payone__payolution_invoice_birthday]" 
                 id="mopt_payone__payolution_invoice_birthday" onchange="payolutionInvoiceDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="is--required{if $error_flags.mopt_payone__payolution_invoice_birthday} has--error{/if}">
+                class="is--required{if $error_flags.mopt_payone__payolution_invoice_birthday || $moptCreditCardCheckEnvironment.birthdayunderage === "1"} has--error{/if}">
             <option value="">--</option>
             {section name="birthdate" start=1 loop=32 step=1}
                 <option value="{$smarty.section.birthdate.index}" 
@@ -26,7 +26,7 @@
         <select name="moptPaymentData[mopt_payone__payolution_invoice_birthmonth]" 
                 id="mopt_payone__payolution_invoice_birthmonth" onchange="payolutionInvoiceDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="is--required {if $error_flags.mopt_payone__payolution_invoice_birthmonth} has--error{/if}">
+                class="is--required {if $error_flags.mopt_payone__payolution_invoice_birthmonth || $moptCreditCardCheckEnvironment.birthdayunderage === "1"} has--error{/if}">
             <option value="">--</option>
             {section name="birthmonth" start=1 loop=13 step=1}
                 <option value="{$smarty.section.birthmonth.index}" 
@@ -40,7 +40,7 @@
         <select name="moptPaymentData[mopt_payone__payolution_invoice_birthyear]" 
                 id="mopt_payone__payolution_invoice_birthyear" onchange="payolutionInvoiceDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="select--country is--required{if $error_flags.mopt_payone__payolution_invoice_birthyear} register--error-msg {/if}">
+                class="select--country is--required{if $error_flags.mopt_payone__payolution_invoice_birthyear || $moptCreditCardCheckEnvironment.birthdayunderage === "1"} register--error-msg {/if}">
             <option value="">----</option>
             {section name="birthyear" loop=2016 max=100 step=-1}
                 <option value="{$smarty.section.birthyear.index}" 
@@ -53,7 +53,7 @@
     {/if}  
 
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_invoice_birthdaydate]" id="mopt_payone__payolution_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">   
-    <div id="invoice-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>        
+    <div id="invoice-hint-18-years" class="{if $moptCreditCardCheckEnvironment.birthdayunderage !== "1"}is--hidden{/if} register--error-msg">{s namespace='frontend/MoptPaymentPayone/errorMessages' name="birthdayUnderageError"} Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können. {/s}</div>        
 
     {if $fcPayolutionConfig.payolutionB2bmode && $sUserData.billingaddress.company}
         <input type="text" name="moptPaymentData[mopt_payone__invoice_company_trade_registry_number]" 

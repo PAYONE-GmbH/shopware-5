@@ -198,7 +198,10 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
-            ));
+            ));         
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_trade_registry_number', 'data' => $params['vatid'])
+            ));              
             $request->setPaydata($paydata);
         }
         return $service->capture($request);
@@ -262,6 +265,17 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         if ($invoicing) {
             $request->setInvoicing($invoicing);
         }
+        
+        if ($params['payolution_b2b']== true) {
+            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_trade_registry_number', 'data' => $params['vatid'])
+            ));            
+            $request->setPaydata($paydata);
+        }       
 
         return $service->debit($request);
     }

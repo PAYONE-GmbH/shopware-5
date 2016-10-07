@@ -526,6 +526,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->moptInsertEmptyConfigIfNotExists();
         
         $this->getInstallHelper()->checkAndUpdateCreditcardModelIframeExtension();
+        
+        $this->getInstallHelper()->checkAndUpdateConfigModelPayolutionInstallmentExtension();
     }
 
     /**

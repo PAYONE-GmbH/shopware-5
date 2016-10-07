@@ -56,12 +56,7 @@ class Shopware_Controllers_Backend_MoptPayoneCreditcardConfig extends Shopware_C
         }
 
         if ($data['errorLocaleId'] === 0) {
-            $errors[] = array(
-                'property' => Shopware()->Snippets()->getNamespace('backend/mopt_payone_creditcard_config/main')
-                    ->get('language'),
-                'message' => Shopware()->Snippets()->getNamespace('backend/mopt_payone_creditcard_config/main')
-                    ->get('languageValidationError', 'Bitte eine Sprache auswählen', true)
-            );
+            $data['errorLocaleId'] = 74;
         }
 
         $sql = 'SELECT id FROM s_plugin_mopt_payone_creditcard_config WHERE shop_id = ?';

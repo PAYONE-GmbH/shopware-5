@@ -599,6 +599,21 @@ class Mopt_PayonePaymentHelper
             return false;
         }
     }
+    
+  /**
+   * check if given payment name is payone payolution installment
+   *
+   * @param string $paymentName
+   * @return boolean
+   */
+    public function isPayonePayolutionInstallment($paymentName)
+    {
+        if (preg_match('#mopt_payone__fin_payolution_installment#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }    
 
     /**
    * get online bank transfer type for api communication
@@ -736,7 +751,14 @@ class Mopt_PayonePaymentHelper
                 . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
                 . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInvoice();return false;">Einwilligung</a> '
                 . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
-
+                
+                
+                $information['consentInstallment'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
+                . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInstallment();return false;">Einwilligung</a> '
+                . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
+                
+                
                 $information['overlaycontent'] = $this->moptGetPayolutionAcceptanceText($companyname);
         
         
@@ -916,6 +938,9 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayonePayolutionInvoice($paymentShortName)) {
             return 'payolutioninvoice';
         }
+        if ($this->isPayonePayolutionInstallment($paymentShortName)) {
+            return 'payolutioninstallment';
+        }        
 
         if ($this->isPayoneFinance($paymentShortName)) {
             return 'finance';

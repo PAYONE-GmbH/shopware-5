@@ -283,7 +283,9 @@ class FrontendPostDispatch implements SubscriberInterface
             
             //prepare additional Payolution information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name'])
-                    || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name'])) {
+                    || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name'])
+                    || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInstallment($paymentMean['name'])
+                    ) {
                 $data['payolutionConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
@@ -304,6 +306,18 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__payolution_invoice_birthday'] = $birthday[2];
                 $data['mopt_payone__payolution_invoice_birthmonth'] = $birthday[1];
                 $data['mopt_payone__payolution_invoice_birthyear'] = $birthday[0];
+                $data['mopt_payone__payolution_installment_birthday'] = $birthday[2];
+                $data['mopt_payone__payolution_installment_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payolution_installment_birthyear'] = $birthday[0];
+
+                // Check if customer is older than 18 Years
+                if (time() < strtotime('+18 years', strtotime($userData['billingaddress']['birthday']))) {
+                    $data['birthdayunderage'] = "1";
+                }else {
+                    $data['birthdayunderage'] = "0";
+                }
+                
+                
             }
         }
         
