@@ -1,7 +1,7 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
 <div class="payment--form-group">
-    {if ($moptCreditCardCheckEnvironment.birthdayunderage === "1" || $fcPayolutionConfig.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfig.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
+    {if ($fcPayolutionConfig.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfig.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
 
         <p class ="none">
             <label for="mopt_payone__payolution_installment_birthday">
@@ -12,35 +12,35 @@
         <select name="moptPaymentData[mopt_payone__payolution_installment_birthday]" 
                 id="mopt_payone__payolution_installment_birthday" onchange="payolutionInstallmentDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="is--required{if $error_flags.mopt_payone__payolution_installment_birthday || $moptCreditCardCheckEnvironment.birthdayunderage === "1"} has--error{/if}">
+                class="is--required{if $error_flags.mopt_payone__payolution_installment_birthday} has--error{/if}">
             <option value="">--</option>
             {section name="birthdate" start=1 loop=32 step=1}
-                <option value="{$smarty.section.birthdate.index}" 
+                <option value="{if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}" 
                         {if $smarty.section.birthdate.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_installment_birthday}
                             selected
                         {/if}>
-                    {$smarty.section.birthdate.index}</option>
+                    {if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}</option>
                 {/section}
         </select>
 
         <select name="moptPaymentData[mopt_payone__payolution_installment_birthmonth]" 
                 id="mopt_payone__payolution_installment_birthmonth" onchange="payolutionInstallmentDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="is--required {if $error_flags.mopt_payone__payolution_installment_birthmonth || $moptCreditCardCheckEnvironment.birthdayunderage === "1"} has--error{/if}">
+                class="is--required {if $error_flags.mopt_payone__payolution_installment_birthmonth} has--error{/if}">
             <option value="">--</option>
             {section name="birthmonth" start=1 loop=13 step=1}
-                <option value="{$smarty.section.birthmonth.index}" 
+                <option value="{if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}" 
                         {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_installment_birthmonth}
                             selected
                         {/if}>
-                    {$smarty.section.birthmonth.index}</option>
-                {/section}
+                    {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
+            {/section}
         </select>
 
         <select name="moptPaymentData[mopt_payone__payolution_installment_birthyear]" 
                 id="mopt_payone__payolution_installment_birthyear" onchange="payolutionInstallmentDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="select--country is--required{if $error_flags.mopt_payone__payolution_installment_birthyear || $moptCreditCardCheckEnvironment.birthdayunderage === "1"} register--error-msg {/if}">
+                class="select--country is--required{if $error_flags.mopt_payone__payolution_installment_birthyear} register--error-msg {/if}">
             <option value="">----</option>
             {section name="birthyear" loop=2016 max=100 step=-1}
                 <option value="{$smarty.section.birthyear.index}" 
@@ -53,7 +53,7 @@
     {/if}  
 
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_installment_birthdaydate]" id="mopt_payone__payolution_installment_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">   
-    <div id="installment-hint-18-years" class="{if $moptCreditCardCheckEnvironment.birthdayunderage !== "1"}is--hidden{/if} register--error-msg">{s namespace='frontend/MoptPaymentPayone/errorMessages' name="birthdayUnderageError"} Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können. {/s}</div>        
+    <div id="installment-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>        
 
     {if $fcPayolutionConfig.payolutionB2bmode && $sUserData.billingaddress.company}
         <input type="text" name="moptPaymentData[mopt_payone__installment_company_trade_registry_number]" 
@@ -152,8 +152,6 @@
             success: function (data) {
                 response = $.parseJSON(data);
                 if (response.status === 'success') {
-                    console.log(response);
-
                     $.ajax({
                         url: call2,
                         type: 'POST',
