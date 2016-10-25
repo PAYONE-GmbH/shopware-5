@@ -18,15 +18,16 @@ After that, add the upstream, to be able to update:
     git remote add upstream https://github.com/PAYONE-GmbH/shopware-5.git
     git config branch.master.remote upstream
 
-Usually, you would create a feature branch for the feature you're adding.
+Usually, you would create a feature branch for the feature you're adding. You should give it a somewhat "speaking" name, so everybody knows what your branch is all about later. For bugfixes, you should use the `bugfix/` prefix instead. If your have a GitHub issue number, TPI-, or SW- ticket number, feel free to include it as well.
 
-    git checkout -b feature/new-payment-method
+    git checkout -b feature/your-awesome-feature-name
 
-As soon as you're done coding and your code has been tested locally, you're ready to push your changes to your fork:
+As soon as you're done coding and your code has been tested locally, you're ready to commit (here we're using the `-a` switch to add all changes to the commit but no new files; if this is not what you want, please refer to the manual of `git-commit(1)`) and push your changes to your fork:
 
-    git push origin feature/new-payment-method
+    git commit -a
+    git push origin feature/your-awesome-feature-name
 
-When you're satisfied with the results, feel free to open a pull request explaining what you've changed and why. We will review it and give you feedback.
+When you're satisfied with the results, feel free to open a pull request explaining what you've changed and why. We will review it, give you feedback, and eventually merge the pull request.
 
 ## Coding standards
 
