@@ -136,6 +136,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $moptPayoneData = $this->moptPayoneCheckEnvironment($controllerName);
             $view->assign('moptCreditCardCheckEnvironment', $moptPayoneData);
             $view->assign('fcPayolutionConfig', $moptPayoneData['payolutionConfig']);
+            $view->assign('moptRatepayConfig', $moptPayoneData['moptRatepayConfig']);
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
             $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
             $mpotPaymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
@@ -319,6 +320,32 @@ class FrontendPostDispatch implements SubscriberInterface
                 
                 
             }
+           
+            //prepare additional Ratepay information and retrieve birthday from user data
+                if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])) {
+                    $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+
+                    $data['moptRatepayConfig'] = $moptPayoneMain->getPaymentHelper()
+                       ->moptGetRatepayConfig($userData['additional']['country']['countryiso']);
+
+                    $data['moptRatepayConfig']['deviceFingerPrint'] = $moptPayoneMain->getPaymentHelper()
+                            ->moptGetRatepayDeviceFingerprint();
+
+                    $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                    if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                        if (!isset($userData['additional']['user']['birthday'])){
+                           $userData['billingaddress']['birthday'] = "0000-00-00";
+                        } else {
+                           $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                        }
+                    }
+                    $data['birthday'] = $userData['billingaddress']['birthday'];
+                    $birthday = explode('-', $userData['billingaddress']['birthday']);
+                    $data['mopt_payone__ratepay_invoice_birthday'] = $birthday[2];
+                    $data['mopt_payone__ratepay_invoice_birthmonth'] = $birthday[1];
+                    $data['mopt_payone__ratepay_invoice_birthyear'] = $birthday[0];
+                    $data['mopt_payone__ratepay_invoice_telephone'] = $userData['billingaddress']['phone'];
+                } 
         }
         
         $payoneParams = $moptPayoneMain->getParamBuilder()->getBasicParameters();

@@ -14,9 +14,9 @@
 
 {block name="content/main"}
     <div class="col-md-12">
-        <h3>{s name=global-form/fieldset2}Kontobasierte Einstellungen{/s}</h3>
+        <h3>{s name=global-form/fieldset2}Einstellungen für Finanzierungs-basierte Zahlarten{/s}</h3>
         <div>
-            Stellen Sie hier die Konfiguration zu den Zahlarten Lastschrift, Rechnung, Nachnahme und Vorkasse ein.
+            Stellen Sie hier die Konfiguration zu den Zahlarten Billsafe, Klarna, Payolution und Ratepay ein.
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -162,6 +162,17 @@
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>
         </div>
+
+        <a style="font-size: 28px" href="#" data-target="#ratepayconfigs">Konfiguration Ratepay</a>
+        <div id="ratepayconfigs" class="form-group" >
+            <form role="form" id="ajaxratepay" enctype="multipart/form-data">
+                <table class="table-condensed" id="ratepaytable">   
+                </table>
+
+                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" name ="downloadbtn" class="btn-payone btn " >Ratepay Konfiguration abrufen</button>
+            </form>                
+        </div>                
     </div>
 {/block}
 
@@ -171,8 +182,13 @@
     <script type="text/javascript">
 
         var form = $('#ajaxfinanceform');
+        var ratepayform = $('#ajaxratepay');
         var url = "{url controller=FcPayone action=ajaxgetFinanceConfig forceSecure}";
         var url_config = "{url controller=FcPayone action=ajaxgetGeneralConfig forceSecure}";
+        var ratepayurl = "{url controller=FcPayone action=ajaxgetRatepayConfig forceSecure}";
+        var ratepaydownloadurl = "{url controller=MoptPayoneRatepay action=downloadRatepayConfigs forceSecure}";
+        var ratepaysaveurl = "{url controller=MoptPayoneRatepay action=saveRatepayConfigs forceSecure}";
+        var ratepaydownloadbtn = $('#downloadbtn');
         var paymentid = null;
 
         $(document).ready(function ()
@@ -180,6 +196,8 @@
             var params = "paymentid=0";
             var call = url + '?' + params;
             var call_config = url_config + '?' + params;
+            var ratepaycall = ratepayurl;
+            var ratepaydata = "";
             form.validator('validate');
 
             $.ajax({
@@ -195,6 +213,37 @@
                     }
                 }
             });
+
+            $.ajax({
+                url: ratepaycall,
+                type: 'POST',
+                success: function (ratepaydata) {
+                    response = $.parseJSON(ratepaydata);
+                    console.log(response);
+                    if (response.status === 'success') {
+                        // populateForm(ratepayform, response.ratepaydata[0]);
+                        var header = ["<tr><th>id</th><th>Shopid</th><th>Currency</th></tr>"
+                        ];
+                        var footer = ["<tr><td><img id='newRow' onclick='addRow()' src='{link file='backend/_resources/images/add.png'}'></td></tr>"
+                        ];
+
+                        $.each(response.ratepaydata, function (i, item) {
+                            header.push("<tr id='row" + item.id + "'><td><input name='row[" + item.id + "][id] id='id_" + item.id + "' type='text' style='max-width:125px;' class='form-control' value='" + item.id + "' readonly='readonly'></td>");
+                            header.push("<td><input name='row[" + item.id + "][shopid]' id='shopid_" + item.id + "' type='text' style='max-width:125px;' class='form-control'value='" + item.shopid + "'></td>");
+                            header.push("<td><input name='row[" + item.id + "][currency] id='currency_" + item.id + "' type='text'  class='form-control' value='" + item.currency + "'></td>");
+                            header.push("<td role='button' name='delete' value='delete' onclick='removeRow(" + item.id + ");'><img id='delete_" + item.id + "' height='100%' src=" + "{link file="backend/_resources/images/delete.png"}" + "></td>");
+                            header.push("</tr>");
+                        });
+
+                        header.push(footer);
+                        $('#ratepaytable').html(header.join(""));
+
+                    }
+                    if (response.status === 'error') {
+                    }
+                }
+            });
+
             $.ajax({
                 url: call_config,
                 type: 'POST',
@@ -207,32 +256,7 @@
                     if (response.status === 'error') {
                     }
                 }
-            });            
-                        if(/mopt_payone__fin_klarna/.test(filterid)){
-                            $('#klarnastoreid').show();
-                            } else {
-                            $('#klarnastoreid').hide();
-                        } 
-                        if(/mopt_payone__fin_payolution/.test(filterid)){
-                            $('#payolutionCompanyName').show();
-                            } else {
-                            $('#payolutionCompanyName').hide();
-                        }    
-                        if(/mopt_payone__fin_payolution/.test(filterid)){
-                            $('#payolutionB2bmode').show();
-                            } else {
-                            $('#payolutionB2bmode').hide();
-                        }
-                        if(/mopt_payone__fin_payolution/.test(filterid)){
-                            $('#payolutionDraftUser').show();
-                            } else {
-                            $('#payolutionDraftUser').hide();
-                        } 
-                        if(/mopt_payone__fin_payolution/.test(filterid)){
-                            $('#payolutionDraftPassword').show();
-                            } else {
-                            $('#payolutionDraftPassword').hide();
-                        }                         
+            });
         });
 
         $(".dropdown-menu li a").click(function () {
@@ -281,7 +305,7 @@
                     }
                 }
             });
-$.ajax({
+            $.ajax({
                 url: call_config,
                 type: 'POST',
                 success: function (data) {
@@ -348,5 +372,57 @@ $.ajax({
                 showalert("Die Daten wurden gespeichert", "alert-success");
             });
         });
+
+        ratepayform.on("submit", function (event) {
+            event.preventDefault();
+            ratepayvalues = ratepayform.serialize();
+            var submitAction = $(this.id).context.activeElement.name;
+            console.log(submitAction);
+            console.log(ratepayvalues);
+            if (submitAction == 'downloadbtn') {
+                var url = ratepaydownloadurl;
+            } else {
+                var url = ratepaysaveurl;
+
+            }
+            console.log(url);
+
+            $.post(url, ratepayvalues, function (response) {
+                var data_array = $.parseJSON(response);
+                $('#ratepaytable tr').css('background-color','');
+                if (data_array.errorElem !== 'undefined' && data_array.errorElem.length > 0) {
+                    data_array.errorElem.forEach(markDownloadErrors);
+                    showalert("Das Abrufen von " + data_array.errorElem.length + " Konfigurationen ist fehlgeschlagen", "alert-danger");
+                } else {
+                    showalert("Die Daten wurden gespeichert", "alert-success");
+                }
+            });
+
+        });
+
+        function removeRow(rowId) {
+            console.log("removeRow");
+            console.log(rowId);
+            $('#row' + rowId).remove();
+        }
+        ;
+
+        function addRow() {
+            var len = $('#ratepaytable tbody tr').length;
+            var newRow = "<tr id='row" + len + "'><td><input name='row[" + len + "][id] id='id_" + len + "' type='text' style='max-width:125px;' class='form-control' value='" + len + "' readonly='readonly' ></td>" +
+                    "<td><input name='row[" + len + "][shopid] id='shopid_" + len + "' type='text' style='max-width:125px;' class='form-control'value=></td>" +
+                    "<td><input name='row[" + len + "][currency]' id='currency_" + len + "' type='text'  class='form-control' value=''></td>" +
+                    "<td role='button' name='delete' value='delete' onclick='removeRow(" + len + ");'><img id='delete_" + len + "' height='100%' src='{link file="backend/_resources/images/delete.png"}'></td>" +
+                    "</tr>";
+            console.log("addRow");
+            $('#ratepaytable > tbody:last-child').append(newRow);
+        }
+        ;
+
+        function markDownloadErrors(item, index) {
+            var d = document.getElementById('row' + item);
+            d.style.backgroundColor = "red";
+        }
+
     </script>
 {/block}

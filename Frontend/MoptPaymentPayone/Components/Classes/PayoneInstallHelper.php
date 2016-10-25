@@ -198,7 +198,12 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Payolution Ratenzahlung',
                 'template' => 'mopt_paymentmean_payolution_installment.tpl',
                 'position' => 28,),
-        );        
+            array(
+                'name' => 'mopt_payone__fin_ratepay_invoice',
+                'description' => 'PAYONE Ratepay sicherer Rechnungskauf',
+                'template' => 'mopt_paymentmean_ratepay_invoice.tpl',
+                'position' => 29,),
+        );
     }
 
     /**
@@ -976,7 +981,7 @@ class Mopt_PayoneInstallHelper
         }
     } 
     
- public function checkAndUpdateConfigModelPayolutionInstallmentExtension()
+    public function checkAndUpdateConfigModelPayolutionInstallmentExtension()
     {
         $db = Shopware()->Db();
 
@@ -992,6 +997,80 @@ class Mopt_PayoneInstallHelper
                    ADD `payolution_draft_password` VARCHAR(255) NULL AFTER `payolution_draft_user`;";
             $db->exec($sql);
         }
-    }    
-    
+    }
+
+    public function checkAndUpdateConfigModelRatepayExtension() {
+        $db = Shopware()->Db();
+
+        $DBConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_ratepay'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='id'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "CREATE TABLE IF NOT EXISTS `s_plugin_mopt_payone_ratepay`(
+            `shop_id` VARCHAR(32) NOT NULL,
+            `merchant_name` VARCHAR(32) NULL,
+            `merchant_status` TINYINT(2) NULL,
+            `shop_name` VARCHAR(32) NULL,
+            `name` VARCHAR(32) NULL,
+            `currency` VARCHAR(32) NULL,
+            `type` VARCHAR(32) NULL,
+            `activation_status_elv` TINYINT(2) NULL,
+            `activation_status_installment` TINYINT(2) NULL,
+            `activation_status_invoice` TINYINT(2) NULL,
+            `activation_status_prepayment` TINYINT(2) NULL,
+            `amount_min_longrun` DOUBLE NULL,
+            `b2b_pq_full` TINYINT(1) NULL,
+            `b2b_pq_light` TINYINT(1) NULL,
+            `b2b_elv` TINYINT(1) NULL,
+            `b2b_installment` TINYINT(1) NULL,
+            `b2b_invoice` TINYINT(1) NULL,
+            `b2b_prepayment` TINYINT(1) NULL,
+            `country_code_billing` VARCHAR(32) NULL,
+            `country_code_delivery` VARCHAR(32) NULL,
+            `delivery_address_pq_full` TINYINT(1) NULL,
+            `delivery_address_pq_light` TINYINT(1) NULL,
+            `delivery_address_elv` TINYINT(1) NULL,
+            `delivery_address_installment` TINYINT(1) NULL,
+            `delivery_address_invoice` TINYINT(1) NULL,
+            `delivery_address_prepayment` TINYINT(1) NULL,
+            `device_fingerprint_snippet_id` VARCHAR(32) NULL,
+            `eligibility_device_fingerprint` TINYINT(1) NULL,
+            `eligibility_ratepay_elv` TINYINT(1) NULL,
+            `eligibility_ratepay_installment` TINYINT(1) NULL,
+            `eligibility_ratepay_invoice` TINYINT(1) NULL,
+            `eligibility_ratepay_pq_full` TINYINT(1) NULL,
+            `eligibility_ratepay_pq_light` TINYINT(1) NULL,
+            `eligibility_ratepay_prepayment` TINYINT(1) NULL,
+            `interest_rate_merchant_towards_bank` DOUBLE NULL,
+            `interestrate_default` DOUBLE NULL,
+            `interestrate_max` DOUBLE NULL,
+            `interestrate_min` DOUBLE NULL,
+            `min_difference_dueday` TINYINT(2) NULL,
+            `month_allowed` VARCHAR(32) NULL,
+            `month_longrun` TINYINT(2) NULL,
+            `month_number_max` TINYINT(2) NULL,
+            `month_number_min` TINYINT(2) NULL,
+            `payment_amount` DOUBLE NULL,
+            `payment_firstday` TINYINT(2) NULL,
+            `payment_lastrate` DOUBLE NULL,
+            `rate_min_longrun` DOUBLE NULL,
+            `rate_min_normal` DOUBLE NULL,
+            `service_charge` DOUBLE NULL,
+            `tx_limit_elv_max` DOUBLE NULL,
+            `tx_limit_elv_min` DOUBLE NULL,
+            `tx_limit_installment_max` DOUBLE NULL,
+            `tx_limit_installment_min` DOUBLE NULL,
+            `tx_limit_invoice_max` DOUBLE NULL,
+            `tx_limit_invoice_min` DOUBLE NULL,
+            `tx_limit_prepayment_max` DOUBLE NULL,
+            `tx_limit_prepayment_min` DOUBLE NULL,
+            `valid_payment_firstdays` TINYINT(2) NULL;";
+            $db->exec($sql);
+        }
+    }
+
 }

@@ -15,24 +15,17 @@
  * @category        Payone
  * @package         Payone_Api
  * @subpackage      Enum
- * @author          Ronny Schröder
+ * @copyright       Copyright (c) 2016 <kontakt@fatchip.de> - www.fatchip.com
+ * @author          Robert Müller <robert.mueller@fatchip.de>
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.fatchip.com
  */
-class Payone_Api_Enum_GenericpaymentAction
+
+class Payone_Api_Enum_RatepayType
 {
-    /**
-     * initalize paypal express checkout process
-     */
-    const PAYPAL_ECS_SET_EXPRESSCHECKOUT='setexpresscheckout';
-    
-    /**
-     * get customer shipping address from paypal
-     */
-    const PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS='getexpresscheckoutdetails';
-    
-    const PAYOLUTION_PRE_CHECK = 'pre_check';
-    
-    const PAYOLUTION_CALCULATION = 'calculation';
-    
-    const RATEPAY_PROFILE = 'profile';
+    const RPV = 'RPV'; // Ratepay-Invoicing
+    const RPV_FULL = 'Ratepay-Invoicing'; // Ratepay-Invoicing
+    # const RPS = 'RPS'; // Ratepay-Installment
+    #const RPD = 'RPD'; // Ratepay-Debit not implemented yet
+    #const RPP = 'RPP'; // Ratepay-Prepayment not implemented yet
 }

@@ -20,11 +20,11 @@
                     </a>
                     <ul id="drilldown-1-1" class="nav collapse">
                         <li><a class="payone-submenu" href="{url controller="fcPayone" action="ajaxconfig"}">
-                                <span class="glyphicon glyphicon-arrow-right"></span>Verbindung</a></li>
+                                <span class="glyphicon glyphicon-arrow-right"></span>Verbindungstest</a></li>
                         <li><a class="payone-submenu" href="{url controller="fcPayone" action="ajaxtextblocks"}">
                                 <span class="glyphicon glyphicon-arrow-right"></span>Texte</a></li>
                         <li><a href="#" id="link-drilldown-1-4" class="box box-menu payone-menu"  data-toggle="collapse" data-target="#drilldown-1-4">
-                                <span class="glyphicon glyphicon-arrow-right"></span>Features<span class="glyphicon glyphicon-chevron-right"></span>
+                                <span class="glyphicon glyphicon-arrow-right"></span>Grundeinstellungen<span class="glyphicon glyphicon-chevron-right"></span>
                                 <span class="glyphicon glyphicon-chevron-down"></span>
                             </a>
                             <ul id="drilldown-1-4" class="nav collapse">

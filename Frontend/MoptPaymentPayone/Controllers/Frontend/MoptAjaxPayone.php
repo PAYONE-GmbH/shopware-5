@@ -481,7 +481,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     protected function buildAndCallPrecheck($config, $clearingType, $financetype, $paymenttype, $paymentData)
     {
         $paramBuilder = $this->moptPayoneMain->getParamBuilder();
-        $session = Shopware()->Session();
         $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';

@@ -63,6 +63,7 @@ class ControllerPath implements SubscriberInterface
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayonePaypal' => 'onGetBackendControllerPaypal',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneCreditcardConfig'
             => 'onGetBackendControllerCreditcardConfig',
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneRatepay' => 'onGetBackendControllerRatepay',            
         );
     }
     
@@ -191,4 +192,14 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Backend/MoptPayoneCreditcardConfig.php';
     }
+    
+  /**
+   * Returns the path to a backend controller for an event.
+   *
+   * @return string
+   */
+    public function onGetBackendControllerRatepay()
+    {
+        return $this->path . 'Controllers/Backend/MoptPayoneRatepay.php';
+    }    
 }

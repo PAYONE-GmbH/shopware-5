@@ -51,7 +51,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function getWhitelistedCSRFActions()
     {
-        return [
+        $returnArray = array(
             'index',
             'connectiontest',
             'ajaxgetTestResults',
@@ -92,7 +92,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             'ajaxSavePayoneConfig',
             'ajaxSaveIframeConfig',
             'ajaxSavePaypalConfig',
-        ];
+            'ajaxgetRatepayConfig',
+        );
+        return $returnArray;
     }
 
     public function indexAction()
@@ -759,6 +761,21 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         echo $encoded;
         exit(0);
     }
+    
+    public function ajaxgetRatepayConfigAction()
+    {
+        $data = array();
+        $this->Front()->Plugins()->Json()->setRenderer(true);
+
+        $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay');
+        $query = $this->getAllPaymentsQuery(null,null,$repository);
+        $ratepaydata = $query->getArrayResult();
+        $data['ratepaydata'] = $ratepaydata;
+        $data['status'] = 'success';
+        $encoded = json_encode($data);
+        echo $encoded;
+        exit(0);
+    }    
 
     public function ajaxdebitAction()
     {
@@ -1264,6 +1281,23 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         return $builder->getQuery();
     }
 
+    
+    public function getAllRatepayConfigQuery($filter = null, $order = null, $repository)
+    {
+        $builder = $repository->createQueryBuilder('p');
+        $builder->select(
+            array('p')
+        );
+        if ($filter !== null) {
+            $builder->addFilter($filter);
+        }
+        if ($order !== null) {
+            $builder->addOrderBy($order);
+        }
+
+        return $builder->getListQuery();
+    }
+    
     public function getAllPaymentsQuery($filter = null, $order = null, $repository)
     {
         $builder = $repository->createQueryBuilder('p');

@@ -111,6 +111,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig')));
         $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal')));
         $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig')));
+        $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')));
     }
 
     /**
@@ -469,6 +470,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         } catch (\Doctrine\ORM\Tools\ToolsException $e) {
             // ignore
         }
+        
+        try {
+            $schemaTool->createSchema(array(
+                $em->getClassMetadata('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay'),
+            ));
+        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+            // ignore
+        }        
 
         $this->getInstallHelper()->moptCreatePaymentDataTable();
         $this->getInstallHelper()->moptInsertDocumentsExtensionIntoDatabaseIfNotExist();
@@ -896,6 +905,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'active' => 1,
             'parent' => $item,
         ));
+        $this->createMenuItem(array(
+            'label' => 'Payone Ratepay',
+            'controller' => 'MoptPayoneRatepay',
+            'action' => 'Index',
+            'class' => 'sprite-locale',
+            'active' => 1,
+            'parent' => $item,
+        ));        
         $this->createMenuItem(array(
             'label' => 'Payone Kreditkartenkonfiguration',
             'controller' => 'MoptPayoneCreditcardConfig',

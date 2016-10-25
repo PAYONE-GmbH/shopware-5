@@ -614,6 +614,21 @@ class Mopt_PayonePaymentHelper
             return false;
         }
     }    
+    
+  /**
+   * check if given payment name is payone ratepay invoice
+   *
+   * @param string $paymentName
+   * @return boolean
+   */
+    public function isPayoneRatepayInvoice($paymentName)
+    {
+        if (preg_match('#mopt_payone__fin_ratepay_invoice#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }     
 
     /**
    * get online bank transfer type for api communication
@@ -771,6 +786,54 @@ class Mopt_PayonePaymentHelper
     
         return $information;
     }
+    
+    public function moptGetRatepayDeviceFingerprint()
+    {
+        
+        if(!Shopware()->Session()->moptRatepayFingerprint) {
+            $userId = $this->session->sUserId;
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            $fingerprint  = $userData['billingaddress']['firstname'];
+            $fingerprint .= $userData['billingaddress']['lastname'];
+            $fingerprint .= microtime();
+            $fingerprint = md5($fingerprint);
+            Shopware()->Session()->moptRatepayFingerprint = $fingerprint;
+        } else {
+            $fingerprint = Shopware()->Session()->moptRatepayFingerprint ;
+        }
+        return $fingerprint;
+    }  
+    
+    public function moptGetRatepayConfig($billingCountry)
+    {
+        /**
+         * @var $config \Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay 
+         */
+
+        // $config = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')->getRatepayConfigById('2');
+        $sTable = 's_plugin_mopt_payone_ratepay';
+        // $blAddressesAreEqual = $this->helper()->addressesAreEqual($oQuote->getBillingAddress(), $oQuote->getShippingAddress());
+
+      //get basket value
+        $basket      = Shopware()->Modules()->Basket()->sGetBasket();
+        $basketValue = $basket['AmountNumeric'];
+        $currency = Shopware()->Currency()->getShortName();
+
+        $sQuery = " SELECT
+                        shopid
+                    FROM
+                        {$sTable}
+                    WHERE 
+                        '{$basketValue}' BETWEEN tx_limit_invoice_min AND tx_limit_invoice_max AND
+                        currency = '{$currency}' AND
+                        country_code_billing = '{$billingCountry}'";
+        $sQuery .= " LIMIT 1";
+        $sShopId = Shopware()->Db()->fetchOne($sQuery);
+        if($sShopId) {
+            $config = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')->getRatepayConfigByShopId($sShopId);
+        } 
+        return $config;    
+    }      
   
     protected function _isUtf8EncodingNeeded($sString)
     {
@@ -839,6 +902,18 @@ class Mopt_PayonePaymentHelper
             } else {
                 $billing->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
             }
+        }
+        
+        if (isset($paymentData['formData']['mopt_payone__ratepay_birthdaydate'])) {
+            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_birthdaydate']);
+                Shopware()->Models()->persist($user);
+            } else {
+                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_birthdaydate']);
+            }
+        }
+        if (isset($paymentData['formData']['mopt_payone__ratepay_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_telephone']);
         }
  
         Shopware()->Models()->persist($billing);
@@ -940,6 +1015,9 @@ class Mopt_PayonePaymentHelper
         }
         if ($this->isPayonePayolutionInstallment($paymentShortName)) {
             return 'payolutioninstallment';
+        }   
+        if ($this->isPayoneRatepayInvoice($paymentShortName)) {
+            return 'ratepayinvoice';
         }        
 
         if ($this->isPayoneFinance($paymentShortName)) {

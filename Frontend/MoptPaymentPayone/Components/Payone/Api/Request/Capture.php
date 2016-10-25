@@ -76,6 +76,11 @@ class Payone_Api_Request_Capture extends Payone_Api_Request_Abstract
     protected $narrative_text = null;
 
     /**
+     * @var string
+     */
+    protected $capturemode = null;    
+
+     /**
      * @param int $amount
      */
     public function setAmount($amount)
@@ -217,4 +222,12 @@ class Payone_Api_Request_Capture extends Payone_Api_Request_Abstract
     {
         return $this->api_version;
     }
+    
+    public function getCapturemode() {
+        return $this->capturemode;
+    }
+
+    public function setCapturemode($capturemode) {
+        $this->capturemode = $capturemode;
+    }    
 }

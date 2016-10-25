@@ -94,11 +94,41 @@ class Payone_Api_Response_Genericpayment_Approved extends Payone_Api_Response_Ge
         foreach($this->getPayData()->getItems() as $item) {
             $sCorrectedKey = strtolower($item->getKey());
             $sCorrectedKey = str_replace('-', '_', $sCorrectedKey);
-            $aPayData[$sCorrectedKey] = $item->getData();
+            
+            // correct yes/no DataItems to bool
+            $correctedItem = $item->getData();
+            $correctedItem = $correctedItem === 'yes' ? 1 : $correctedItem;
+            $correctedItem = $correctedItem === 'no' ? 0 : $correctedItem;
+            $aPayData[$sCorrectedKey] = $correctedItem;
         }
         ksort($aPayData);
         return $aPayData;
     }
+    
+    /**
+     * 
+     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     */
+    public function getRatepayPayDataArray() {
+        $aPayData = array();
+        foreach($this->getPayData()->getItems() as $item) {
+            $sCorrectedKey = strtolower($item->getKey());
+            $sCorrectedKey = str_replace('-', '_', $sCorrectedKey);
+            
+            // make keys and values compatible to SW magic getter and setters
+            $sCorrectedKey = ucwords($sCorrectedKey, "_");            
+            $sCorrectedKey = str_replace('_', '', $sCorrectedKey);
+            $sCorrectedKey = lcfirst($sCorrectedKey);
+            
+            // correct yes/no DataItems to bool
+            $correctedItem = $item->getData();
+            $correctedItem = $correctedItem === 'yes' ? 1 : $correctedItem;
+            $correctedItem = $correctedItem === 'no' ? 0 : $correctedItem;
+            $aPayData[$sCorrectedKey] = $correctedItem;
+        }
+        ksort($aPayData);
+        return $aPayData;
+    }    
     
     public function getInstallmentData()
     {
@@ -122,6 +152,29 @@ class Payone_Api_Response_Genericpayment_Approved extends Payone_Api_Response_Ge
         }
         return false;
     }
+    
+    public function getRatepayInstallmentData()
+    {
+        $aInstallmentData = array();
+        
+        $aPayData = $this->getRatepayPayDataArray();
+        foreach ($aPayData as $sKey => $sValue) {
+            $aSplit = explode('_', $sKey);
+            for($i = count($aSplit); $i > 0; $i--) {
+                if($i == count($aSplit)) {
+                    $aTmp = array($aSplit[$i-1] => $sValue);
+                } else {
+                    $aTmp = array($aSplit[$i-1] => $aTmp);
+                }
+            }
+            $aInstallmentData = array_replace_recursive($aInstallmentData, $aTmp);
+        }
+        
+        if(isset($aInstallmentData['paymentdetails']) && count($aInstallmentData['paymentdetails']) > 0) {
+            return $aInstallmentData['paymentdetails'];
+        }
+        return false;
+    }    
 
 
 }
