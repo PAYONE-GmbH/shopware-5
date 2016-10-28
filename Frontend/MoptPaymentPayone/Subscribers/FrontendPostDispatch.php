@@ -235,6 +235,7 @@ class FrontendPostDispatch implements SubscriberInterface
         $data = array();
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $userId = Shopware()->Session()->sUserId;
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $shopLanguage = explode('_', Shopware()->Shop()->getLocale()->getLocale());
 
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
@@ -269,7 +270,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
                         ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
-                $userData = Shopware()->Modules()->Admin()->sGetUserData();
 		if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
 			$birthday = explode('-', $userData['additional']['user']['birthday']);
 		} else {
@@ -291,7 +291,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
                         ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
-                $userData = Shopware()->Modules()->Admin()->sGetUserData();
                 if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
                     if (!isset($userData['additional']['user']['birthday'])){
                        $userData['billingaddress']['birthday'] = "0000-00-00";
@@ -331,7 +330,6 @@ class FrontendPostDispatch implements SubscriberInterface
                     $data['moptRatepayConfig']['deviceFingerPrint'] = $moptPayoneMain->getPaymentHelper()
                             ->moptGetRatepayDeviceFingerprint();
 
-                    $userData = Shopware()->Modules()->Admin()->sGetUserData();
                     if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
                         if (!isset($userData['additional']['user']['birthday'])){
                            $userData['billingaddress']['birthday'] = "0000-00-00";

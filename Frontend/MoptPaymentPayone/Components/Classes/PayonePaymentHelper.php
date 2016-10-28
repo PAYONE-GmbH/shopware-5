@@ -806,28 +806,22 @@ class Mopt_PayonePaymentHelper
     
     public function moptGetRatepayConfig($billingCountry)
     {
-        /**
-         * @var $config \Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay 
-         */
-
-        // $config = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')->getRatepayConfigById('2');
         $sTable = 's_plugin_mopt_payone_ratepay';
-        // $blAddressesAreEqual = $this->helper()->addressesAreEqual($oQuote->getBillingAddress(), $oQuote->getShippingAddress());
-
-      //get basket value
+        
         $basket      = Shopware()->Modules()->Basket()->sGetBasket();
         $basketValue = $basket['AmountNumeric'];
-        $currency = Shopware()->Currency()->getShortName();
-
+        $currency = Shopware()->Shop()->getCurrency();
+        $currencyId  = $currency->getId();
+        
         $sQuery = " SELECT
                         shopid
                     FROM
                         {$sTable}
                     WHERE 
                         '{$basketValue}' BETWEEN tx_limit_invoice_min AND tx_limit_invoice_max AND
-                        currency = '{$currency}' AND
+                        currency_id = '{$currencyId}' AND
                         country_code_billing = '{$billingCountry}'";
-        $sQuery .= " LIMIT 1";
+        $sQuery .= " LIMIT 1;";
         $sShopId = Shopware()->Db()->fetchOne($sQuery);
         if($sShopId) {
             $config = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')->getRatepayConfigByShopId($sShopId);

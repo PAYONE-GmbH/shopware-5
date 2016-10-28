@@ -10,7 +10,18 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.detail.Config', {
                     title: 'Payone Ratepay Details',
                     layout: 'fit',
                     fields: {
-                    }
+                       shopid: {},
+                       currencyId: {
+                            fieldLabel: 'Währung',
+                            name: 'currencyId',
+                            allowBlank: false
+                        },
+                       
+                       countryCodeBilling: {
+                            label: 'Land',
+                            hidden: true
+                        }                       
+                    }                  
                 }]
         };
     }

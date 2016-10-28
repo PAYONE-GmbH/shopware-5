@@ -819,7 +819,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         if ($this->assertMinimumVersion('5.2')) {
             $this->get('shopware_attribute.crud_service')->update(
                     's_order_attributes', 'mopt_payone_payolution_clearing_reference', 'string', [
-                'label' => 'Payolution Clearing Reference:',
+                'label' => 'Clearing Reference:',
                 'helpText' => '',
                 'displayInBackend' => true,
                 'pluginId' => $this->getId()
@@ -827,7 +827,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             );
             $this->get('shopware_attribute.crud_service')->update(
                     's_order_attributes', 'mopt_payone_payolution_workorder_id', 'string', [
-                'label' => 'Payolution WorkOrderId:',
+                'label' => 'Workorder ID:',
                 'helpText' => '',
                 'displayInBackend' => true,
                 'pluginId' => $this->getId()

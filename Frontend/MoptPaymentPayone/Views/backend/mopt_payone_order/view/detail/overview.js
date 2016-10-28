@@ -112,7 +112,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
       var me = this;
       
       return Ext.create('Ext.panel.Panel', {
-        title: '{s name=overview/payolutiontitle}PAYONE Payolution Informationen:{/s}',
+        title: '{s name=overview/payolutiontitle}PAYONE Informationen:{/s}',
         bodyPadding: 10,
         flex: 1,
         paddingRight: 5,

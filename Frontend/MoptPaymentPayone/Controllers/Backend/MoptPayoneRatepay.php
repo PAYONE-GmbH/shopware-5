@@ -31,11 +31,15 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
 
     protected function getListQuery() {
         $builder = parent::getListQuery();
+        $builder->leftJoin('moptPayoneRatepay.currency', 'currency');
+        $builder->addSelect(array('currency'));        
         return $builder;
     }
 
     protected function getDetailQuery($id) {
         $builder = parent::getDetailQuery($id);
+        $builder->leftJoin('moptPayoneRatepay.currency', 'currency');
+        $builder->addSelect(array('currency'));       
         return $builder;
     }
     
@@ -57,7 +61,10 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
                             array('name' => 'mopt_payone__fin_ratepay_invoice')
                     )->getId();
             
-                    
+            $currencies = Shopware()->Models()->getRepository('Shopware\Models\Shop\Currency');
+            $currencyObj = $currencies->find($dataItem['currencyId']);
+            $dataItem['currency'] = $currencyObj->getCurrency();
+       
             $ratepayProfile = $this->requestRatePayConfigFromApi($dataItem['shopid'], $dataItem['currency'], $paymentRatepayId);
             if (!$ratepayProfile){
                 $errorElem[] = $dataItem['id'];
@@ -67,7 +74,9 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
              */
             $config = $this->getManager()->find(
                     $this->model, $dataItem['id']
-            );                
+            ); 
+            
+            unset($ratepayProfile['currency']);
             $config->fromArray($ratepayProfile);
             $this->getManager()->persist($config);
             $this->getManager()->flush($config);
@@ -78,6 +87,7 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
                 
             }
         }
+
         $data['errorElem'] = $errorElem;
         $data['status'] = 'success';
         $encoded = json_encode($data);
@@ -106,7 +116,10 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
             
             $ratepayProfile = array();
             $ratepayProfile['shopid'] = $dataset['shopid'];
-            $ratepayProfile['currency'] = $dataset['currency'];
+            $currencies = Shopware()->Models()->getRepository('Shopware\Models\Shop\Currency');
+            $currencyObj =$currencies->find($dataset['currency']);
+            $ratepayProfile['currency'] = $currencyObj;
+            $ratepayProfile['currencyId'] = $currencyObj->getId();
             $config->fromArray($ratepayProfile);
             $this->getManager()->persist($config);
             $this->getManager()->flush($config);            
@@ -119,7 +132,7 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
     }    
 
     public function downloadConfigAction() {
-        try {
+
             $params = $this->Request()->getParams();
             $configId = $this->Request()->getParam('configId');
 
@@ -139,18 +152,25 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
 
             $currency = $config->getCurrency();
             $shopid = $config->getShopid();
+            $currencyIso = $currency->getCurrency();
+            try {
+            	$ratepayProfile = $this->requestRatePayConfigFromApi($shopid, $currencyIso, $paymentRatepayId);
+            } catch (exception $e) {
+                $this->View()->assign(array(
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ));
+            }           
 
-            $ratepayProfile = $this->requestRatePayConfigFromApi($shopid, $currency, $paymentRatepayId);
-            $config->fromArray($ratepayProfile);
-            $this->getManager()->persist($config);
-            $this->getManager()->flush($config);
-            $this->View()->assign(array('success' => true));
-        } catch (Exception $e) {
-            $this->View()->assign(array(
-                'success' => false,
-                'error' => $e->getMessage()
-            ));
-        }
+           // currency is not used 
+           if  ($ratepayProfile) {
+              unset($ratepayProfile['currency']);
+              unset($ratepayProfile['currencyId']);
+              $config->fromArray($ratepayProfile);
+              $this->getManager()->persist($config);
+              $this->getManager()->flush($config);
+              $this->View()->assign(array('success' => true, 'error' => ''));
+           }
     }
 
     /**
@@ -174,16 +194,19 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         $config = $this->moptPayoneMain->getPayoneConfig($paymentRatepayId);
         $financeType = Payone_Api_Enum_RatepayType::RPV;
         $paymentType = Payone_Api_Enum_RatepayType::RPV_FULL;
-
-        $profileResponse = $this->buildAndCallRatepayProfile($config, 'fnc', $financeType, $paymentType, $ratePayShopId, $currency);
-
+        try {
+            $profileResponse = $this->buildAndCallRatepayProfile($config, 'fnc', $financeType, $paymentType, $ratePayShopId, $currency);
+        }
+        catch (Exception $e){
+        }
 
         if ($profileResponse instanceof Payone_Api_Response_Genericpayment_Ok) {
             $payData = $profileResponse->getRatepayPaydataArray();
             $payData['shop_id'] = $ratePayShopId;
             return $payData;
+        }  else {
+            throw new Exception("Shop-Id: " . $ratePayShopId ." ". $profileResponse->getErrorMessage());
         }
-        return false;
     }
 
     protected function buildAndCallRatepayProfile($config, $clearingType, $financetype, $paymenttype, $ratePayShopId, $currency) {

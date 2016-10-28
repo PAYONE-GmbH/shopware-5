@@ -200,7 +200,7 @@ class Mopt_PayoneInstallHelper
                 'position' => 28,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_invoice',
-                'description' => 'PAYONE Ratepay sicherer Rechnungskauf',
+                'description' => 'PAYONE Ratepay Rechnungskauf',
                 'template' => 'mopt_paymentmean_ratepay_invoice.tpl',
                 'position' => 29,),
         );
@@ -1016,7 +1016,7 @@ class Mopt_PayoneInstallHelper
             `merchant_status` TINYINT(2) NULL,
             `shop_name` VARCHAR(32) NULL,
             `name` VARCHAR(32) NULL,
-            `currency` VARCHAR(32) NULL,
+            `currency_id` INT NULL,
             `type` VARCHAR(32) NULL,
             `activation_status_elv` TINYINT(2) NULL,
             `activation_status_installment` TINYINT(2) NULL,

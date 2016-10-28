@@ -639,7 +639,7 @@ class Mopt_PayoneParamBuilder
         ));
         
                 
-        if (isset($userData['billingaddress']['company'])){
+        if (isset($params['company'])){
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                     array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
             ));     

@@ -770,6 +770,13 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay');
         $query = $this->getAllPaymentsQuery(null,null,$repository);
         $ratepaydata = $query->getArrayResult();
+        // replace currencyId field currency->name Field for Display
+        foreach($ratepaydata as $key => $ratepayconfig){
+            $currencies = Shopware()->Models()->getRepository('Shopware\Models\Shop\Currency');
+            $currencyId = $ratepayconfig['currencyId'];
+            $currency = $currencies->findOneBy(array('id' => $currencyId));
+            $ratepaydata[$key]['currency'] = $currency->getName();
+        }
         $data['ratepaydata'] = $ratepaydata;
         $data['status'] = 'success';
         $encoded = json_encode($data);
@@ -822,12 +829,19 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
         $query = $this->getAllPaymentsQuery(array('name' => 'mopt_payone__fin%'), null, $repository);
         $payonepaymentmethods = $query->getArrayResult();
+    
+        $currencyRepo = Shopware()->Models()->getRepository('Shopware\Models\Shop\Currency');
+        $currencies = $currencyRepo->findall();
+        $ratePayRepo = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay');
+        $ratepayConfigs = $ratePayRepo->findall();        
 
         $this->View()->assign(array(
             "payonepaymentmethods" => $payonepaymentmethods,
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
+            "currencies" => $currencies,
+            "ratepayconfigs" => $ratepayConfigs,
             ));
     }
 

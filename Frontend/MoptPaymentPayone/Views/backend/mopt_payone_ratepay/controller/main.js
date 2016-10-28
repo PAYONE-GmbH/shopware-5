@@ -45,7 +45,11 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.controller.Main', {
             },
             success: function(response, operation) {
                 callback(response, operation);
-            }
+            },
+            error: function(response, operation) {
+                callback(response, operation);
+            },
+            
         }); 
     }
 });

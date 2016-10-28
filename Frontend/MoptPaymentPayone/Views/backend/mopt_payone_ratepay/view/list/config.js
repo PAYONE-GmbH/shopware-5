@@ -9,6 +9,10 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.list.Config', {
         return {
             detailWindow: 'Shopware.apps.MoptPayoneRatepay.view.detail.Window',
             columns: {
+                shopid: { header: 'Shop ID' },  
+                currencyId: { header: 'Währung' },  
+                countryCodeBilling: { header: 'Land'}
+                
             }
         };
     },
