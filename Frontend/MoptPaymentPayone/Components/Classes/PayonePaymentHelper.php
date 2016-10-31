@@ -179,6 +179,23 @@ class Mopt_PayonePaymentHelper
    */
     public function extractPayolutionClearingDataFromResponse($response)
     {
+        if ($response instanceof Payone_Api_Response_Authorization_Approved){
+            $responseData = $response->toArray();
+
+            foreach ($responseData['rawResponse'] as $key => $value) {
+                if (strpos($key, 'clearing_') === false) {
+                    unset($responseData['rawResponse'][$key]);
+                }
+            }
+
+            if (empty($responseData['rawResponse'])) {
+                return false;
+            }
+            $responseData['rawResponse']['add_paydata[clearing_reference]'] = $responseData['rawResponse']['clearing_reference'];
+
+            return $responseData['rawResponse'];
+        }
+        
         if (!method_exists($response, 'getPaydata')) {
             return;
         }

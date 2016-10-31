@@ -44,6 +44,36 @@ class Payone_Api_Response_Authorization_Approved extends Payone_Api_Response_Aut
      * @var int
      */
     protected $clearing_amount = null;
+    
+    /**
+     * add_paydata[workorderid] = workorderid from payone
+     * add_paydata[...] = delivery data
+     * @var Payone_Api_Response_Parameter_Paydata_Paydata
+     */
+    protected $paydata = null;    
+    
+    /**
+     * @param array $params
+     */
+    function __construct(array $params = array())
+    {
+        parent::__construct($params);
+
+        $this->setRawResponse($params);
+        $this->initPaydata($params);
+    }
+
+    protected function initPaydata($param)
+    {
+
+        $payData = new Payone_Api_Response_Parameter_Paydata_Paydata($param);
+
+        if ($payData->hasItems()) {
+            $this->setPaydata($payData);
+        } else {
+            $this->setPaydata(null);
+        }
+    }    
 
     /**
      * @param string $creditorIdentifier
@@ -92,4 +122,15 @@ class Payone_Api_Response_Authorization_Approved extends Payone_Api_Response_Aut
     {
         return $this->clearing_amount;
     }
+    
+    public function getPaydata() {
+        return $this->paydata;
+    }
+
+    /**
+     * @param Payone_Api_Response_Parameter_Paydata_Paydata $paydata
+     */
+    public function setPaydata($paydata) {
+        $this->paydata = $paydata;
+    }    
 }

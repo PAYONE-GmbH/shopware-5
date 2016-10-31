@@ -549,7 +549,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if ($payolutionClearingData) {
             $payolutionClearingReference = $payolutionClearingData['add_paydata[clearing_reference]'];
             $payolutionWorkOrderId = $payolutionClearingData['add_paydata[workorderid]'];
-            $b2bMode = '1';
             $sql = 'UPDATE `s_order_attributes`' .
                     'SET mopt_payone_payolution_clearing_reference = ?, mopt_payone_payolution_workorder_id = ? WHERE orderID = ?';
             Shopware()->Db()->query($sql, array($payolutionClearingReference, $payolutionWorkOrderId, $orderId));
@@ -574,8 +573,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     protected function mopt_payone__handleDirectFeedback($response)
     {
         $session = Shopware()->Session();
-
-        if ($response->getStatus() == 'ERROR') {
+        $session->ratepayError = $response->getCustomermessage();
+        $paymentId = $this->getPaymentShortName();
+        if ($response->getStatus() == 'ERROR' && $paymentId === 'mopt_payone__fin_ratepay_invoice' ) {
+            $this->forward('ratepayError');
+        } elseif ($response->getStatus() == 'ERROR') {
             $this->View()->errormessage = $this->moptPayoneMain->getPaymentHelper()
                     ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
             $this->forward('error');
@@ -925,6 +927,16 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
              ->get('payolutionErrorMessage', 'Es ist ein Fehler aufgetreten');
     }    
+    
+    /**
+     *  this action is called when sth. goes wrong with ratepay payments
+     */
+    public function ratepayErrorAction()
+    {
+        $session = Shopware()->Session();
+        $errorMessage = $session->ratepayError;
+        $this->View()->errormessage = $errorMessage;
+    }     
 
     /**
      * retrieve payment data
