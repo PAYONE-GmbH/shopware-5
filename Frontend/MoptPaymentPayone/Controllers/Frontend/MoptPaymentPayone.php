@@ -573,9 +573,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     protected function mopt_payone__handleDirectFeedback($response)
     {
         $session = Shopware()->Session();
-        $session->ratepayError = $response->getCustomermessage();
         $paymentId = $this->getPaymentShortName();
         if ($response->getStatus() == 'ERROR' && $paymentId === 'mopt_payone__fin_ratepay_invoice' ) {
+            $session->ratepayError = $response->getCustomermessage();
             $this->forward('ratepayError');
         } elseif ($response->getStatus() == 'ERROR') {
             $this->View()->errormessage = $this->moptPayoneMain->getPaymentHelper()
