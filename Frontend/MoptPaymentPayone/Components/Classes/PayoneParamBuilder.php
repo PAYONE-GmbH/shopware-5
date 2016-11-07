@@ -147,7 +147,7 @@ class Mopt_PayoneParamBuilder
         $params = $this->getAuthParameters($order->getPayment()->getId());
         $params['txid'] = $order->getTransactionId();
         $params['sequencenumber'] = $this->getParamSequencenumber($order);
-        $params['amount'] = (string) array_sum($orderDetailParams);
+        $params['amount'] = $this->getParamCustomAmount($order, $orderDetailParams, $includeShipment);
         $params['currency'] = $order->getCurrency();
 
         //create business object (used for settleaccount param)
@@ -199,7 +199,7 @@ class Mopt_PayoneParamBuilder
     }
     
     /**
-     * build parameters for debit
+     * build parameters for debits with custom amounts
      *
      * @param object $order
      * @param array $orderDetailParams
@@ -211,11 +211,11 @@ class Mopt_PayoneParamBuilder
         $params = $this->getAuthParameters($order->getPayment()->getId());
         $params['txid'] = $order->getTransactionId();
         $params['sequencenumber'] = $this->getParamSequencenumber($order);
-        $params['amount'] = (string) array_sum($orderDetailParams);
+        $params['amount'] = -1 * ($this->getParamCustomAmount($order, $orderDetailParams, $includeShipment));
         $params['currency'] = $order->getCurrency();
 
         return $params;
-    }     
+    } 
 
     /**
      * increase last seq-number for non-auth'ed orders
@@ -344,7 +344,56 @@ class Mopt_PayoneParamBuilder
         $amount = round($amount, 2);
         return $amount;
     }
+    
+    
+    /**
+     * return amount to capture or refund from positions
+     *
+     * @param object $order
+     * @param array $orderDetailParams
+     * @param bool $includeShipment
+     * @return string
+     */
+    protected function getParamCustomAmount($order, $orderDetailParams, $includeShipment = false)
+    {
+        $amount = 0;
 
+        $blTaxFree = $order->getTaxFree();
+        $blNet = $order->getNet();
+        // check here if netto is set and it corresponds with taxfree flag
+        // if order is netto and taxfree is not set add taxes to all positions
+        $blDebitBrutto = (!$blTaxFree && $blNet);
+
+
+        foreach ($order->getDetails() as $position) {
+            if (!in_array($position->getId(), array_keys($orderDetailParams))) {
+                continue;
+            }
+
+            $flTaxRate = $position->getTaxRate();
+
+            if (!$blDebitBrutto) {
+                $amount += $orderDetailParams[$position->getId()];
+            } else {
+                $amount += ($orderDetailParams[$position->getId()] * ( 1 + ($flTaxRate / 100)));
+            }
+
+            if ($position->getArticleNumber() == 'SHIPPING') {
+                $includeShipment = false;
+            }
+        }
+
+        if ($includeShipment) {
+            if (!$blDebitBrutto) {
+                $amount += $order->getInvoiceShipping();
+            } else {
+                $amount += $order->getInvoiceShipping() * ( 1 + ($flTaxRate / 100));
+            }
+        }
+        $amount = round($amount, 2);
+        return $amount;
+    }
+    
     /**
      * build params for bankaccount check
      *
