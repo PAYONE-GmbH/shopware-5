@@ -1074,6 +1074,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         } catch (Exception $e) {
 
             echo "Exception: " . $e->getMessage();
+            return false;
         }
     }
 
@@ -1132,6 +1133,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         } catch (Exception $e) {
 
             echo "Exception: " . $e->getMessage();
+            return false;
         }
     }
 
