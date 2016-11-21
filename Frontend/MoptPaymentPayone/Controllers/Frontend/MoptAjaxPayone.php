@@ -2,7 +2,6 @@
 
 use Shopware\Components\CSRFWhitelistAware;
 
-namespace Shopware\Plugins\MoptPaymentPayone\Controllers\Frontend;
 
 /**
  * Integrate Payone protect and Ajax call handling
