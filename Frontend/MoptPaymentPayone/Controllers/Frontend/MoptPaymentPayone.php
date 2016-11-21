@@ -161,13 +161,13 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         $response = $this->mopt_payone__payolution();
         $this->mopt_payone__handlePayolutionFeedback($response);
-    }    
+    }
     
     public function ratepayinvoiceAction()
     {
         $response = $this->mopt_payone__ratepayinvoice();
         $this->mopt_payone__handleDirectFeedback($response);
-    }     
+    }
 
     /**
      * @return $response
@@ -420,12 +420,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $paymentData = Shopware()->Session()->moptPayment;
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $financeType = Payone_Api_Enum_RatepayType::RPV;
-        $paymentType = Payone_Api_Enum_RatepayType::RPV_FULL;
         
-        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentRatepayInvoice($financeType, $paymentData);       
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentRatepayInvoice($financeType, $paymentData);
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
-        return $response; 
-    }    
+        return $response;
+    }
+    
     /**
      * @return $response
      */
@@ -492,7 +492,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function errorAction()
     {
-        
     }
 
     /**
@@ -574,7 +573,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         $session = Shopware()->Session();
         $paymentId = $this->getPaymentShortName();
-        if ($response->getStatus() == 'ERROR' && $paymentId === 'mopt_payone__fin_ratepay_invoice' ) {
+        if ($response->getStatus() == 'ERROR' && $paymentId === 'mopt_payone__fin_ratepay_invoice') {
             $session->ratepayError = $response->getCustomermessage();
             $this->forward('ratepayError');
         } elseif ($response->getStatus() == 'ERROR') {
@@ -666,7 +665,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
                 'hash' => $session->paymentReference));
         }
-    }    
+    }
 
     /**
      * prepare and do payment server api call
@@ -700,7 +699,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         // Always use PreAuthorize for Payolution Payments
         if ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName)) {
-
             $session->moptIsAuthorized = false;
         }
 
@@ -926,8 +924,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
              ->get('payolutionErrorMessage', 'Es ist ein Fehler aufgetreten');
-    }    
-    
+    }
+        
     /**
      *  this action is called when sth. goes wrong with ratepay payments
      */
@@ -936,7 +934,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session = Shopware()->Session();
         $errorMessage = $session->ratepayError;
         $this->View()->errormessage = $errorMessage;
-    }     
+    }
 
     /**
      * retrieve payment data
