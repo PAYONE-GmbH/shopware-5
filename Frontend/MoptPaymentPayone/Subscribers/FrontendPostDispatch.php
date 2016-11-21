@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This class handles:
  * form submits for all PAYONE payment methods
@@ -101,7 +102,7 @@ class FrontendPostDispatch implements SubscriberInterface
         if (!$request->isDispatched() || $response->isException()) {
             return;
         }
-        
+
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config = $moptPayoneMain->getPayoneConfig();
 
@@ -161,7 +162,7 @@ class FrontendPostDispatch implements SubscriberInterface
         }
 
         if ($controllerName == 'account' && $request->getActionName() == 'payment') {
-            if ($_SESSION['moptConsumerScoreCheckNeedsUserAgreement']) {
+            if ($session->moptConsumerScoreCheckNeedsUserAgreement) {
                 $view->assign('moptConsumerScoreCheckNeedsUserAgreement', $session->moptConsumerScoreCheckNeedsUserAgreement);
             } else {
                 $view->assign('moptConsumerScoreCheckNeedsUserAgreement', false);
@@ -195,13 +196,13 @@ class FrontendPostDispatch implements SubscriberInterface
                 $session->moptShippingAddressCheckTarget = $request->getParam('moptShippingAddressCheckTarget');
                 $view->extendsTemplate('frontend/checkout/mopt_shipping_confirm' . $templateSuffix . '.tpl');
             }
-            
+
             if ($session->moptConsumerScoreCheckNeedsUserAgreement) {
                 $view->assign('moptConsumerScoreCheckNeedsUserAgreement', $session->moptConsumerScoreCheckNeedsUserAgreement);
                 $view->extendsTemplate('frontend/account/mopt_consumescore' . $templateSuffix . '.tpl');
             }
         }
-        
+
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
             unset($session->moptBarzahlenCode);
         }
@@ -255,7 +256,7 @@ class FrontendPostDispatch implements SubscriberInterface
         foreach ($paymentMeans as $paymentMean) {
             if ($paymentMean['id'] == 'mopt_payone_creditcard') {
                 $paymentMean['mopt_payone_credit_cards'] = $moptPayoneMain->getPaymentHelper()
-                        ->mapCardLetter($paymentMean['mopt_payone_credit_cards']);
+                    ->mapCardLetter($paymentMean['mopt_payone_credit_cards']);
                 $data['payment_mean'] = $paymentMean;
             }
 
@@ -269,33 +270,31 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPayoneMain->getPaymentHelper()->isPayoneKlarna($paymentMean['name'])) {
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
-                        ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
-		if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-			$birthday = explode('-', $userData['additional']['user']['birthday']);
-		} else {
-                	$birthday = explode('-', $userData['billingaddress']['birthday']);
-		}
+                    ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
+                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                    $birthday = explode('-', $userData['additional']['user']['birthday']);
+                } else {
+                    $birthday = explode('-', $userData['billingaddress']['birthday']);
+                }
                 $data['mopt_payone__klarna_birthday'] = $birthday[2];
                 $data['mopt_payone__klarna_birthmonth'] = $birthday[1];
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
                 $data['mopt_payone__klarna_telephone'] = $userData['billingaddress']['phone'];
             }
-            
-            
+
+
             //prepare additional Payolution information and retrieve birthday from user data
-            if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name'])
-                    || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name'])
-                    || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInstallment($paymentMean['name'])
-                    ) {
+            if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name']) || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name']) || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInstallment($paymentMean['name'])
+            ) {
                 $data['payolutionConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
-                
+
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
-                        ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
+                    ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
                 if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-                    if (!isset($userData['additional']['user']['birthday'])){
-                       $userData['billingaddress']['birthday'] = "0000-00-00";
+                    if (!isset($userData['additional']['user']['birthday'])) {
+                        $userData['billingaddress']['birthday'] = "0000-00-00";
                     } else {
-                       $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
                     }
                 }
                 $data['birthday'] = $userData['billingaddress']['birthday'];
@@ -313,39 +312,37 @@ class FrontendPostDispatch implements SubscriberInterface
                 // Check if customer is older than 18 Years
                 if (time() < strtotime('+18 years', strtotime($userData['billingaddress']['birthday']))) {
                     $data['birthdayunderage'] = "1";
-                }else {
+                } else {
                     $data['birthdayunderage'] = "0";
                 }
-                
-                
             }
-           
+
             //prepare additional Ratepay information and retrieve birthday from user data
-                if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])) {
-                    $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])) {
+                $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
-                    $data['moptRatepayConfig'] = $moptPayoneMain->getPaymentHelper()
-                       ->moptGetRatepayConfig($userData['additional']['country']['countryiso']);
+                $data['moptRatepayConfig'] = $moptPayoneMain->getPaymentHelper()
+                    ->moptGetRatepayConfig($userData['additional']['country']['countryiso']);
 
-                    $data['moptRatepayConfig']['deviceFingerPrint'] = $moptPayoneMain->getPaymentHelper()
-                            ->moptGetRatepayDeviceFingerprint();
+                $data['moptRatepayConfig']['deviceFingerPrint'] = $moptPayoneMain->getPaymentHelper()
+                    ->moptGetRatepayDeviceFingerprint();
 
-                    if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-                        if (!isset($userData['additional']['user']['birthday'])){
-                           $userData['billingaddress']['birthday'] = "0000-00-00";
-                        } else {
-                           $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
-                        }
+                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                    if (!isset($userData['additional']['user']['birthday'])) {
+                        $userData['billingaddress']['birthday'] = "0000-00-00";
+                    } else {
+                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
                     }
-                    $data['birthday'] = $userData['billingaddress']['birthday'];
-                    $birthday = explode('-', $userData['billingaddress']['birthday']);
-                    $data['mopt_payone__ratepay_invoice_birthday'] = $birthday[2];
-                    $data['mopt_payone__ratepay_invoice_birthmonth'] = $birthday[1];
-                    $data['mopt_payone__ratepay_invoice_birthyear'] = $birthday[0];
-                    $data['mopt_payone__ratepay_invoice_telephone'] = $userData['billingaddress']['phone'];
-                } 
+                }
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__ratepay_invoice_birthday'] = $birthday[2];
+                $data['mopt_payone__ratepay_invoice_birthmonth'] = $birthday[1];
+                $data['mopt_payone__ratepay_invoice_birthyear'] = $birthday[0];
+                $data['mopt_payone__ratepay_invoice_telephone'] = $userData['billingaddress']['phone'];
+            }
         }
-        
+
         $payoneParams = $moptPayoneMain->getParamBuilder()->getBasicParameters();
         $creditCardConfig = $this->getCreditcardConfig(); //retrieve additional creditcardconfig
 
@@ -353,7 +350,7 @@ class FrontendPostDispatch implements SubscriberInterface
         $payoneParams['portalid'] = $creditCardConfig['portal_id'];
         $payoneParams['key'] = $creditCardConfig['api_key'];
         $payoneParams['aid'] = $creditCardConfig['subaccount_id'];
-        
+
         if ($creditCardConfig['live_mode']) {
             $payoneParams['mode'] = 'live';
         } else {
@@ -361,7 +358,7 @@ class FrontendPostDispatch implements SubscriberInterface
         }
         $payoneParams['language'] = $shopLanguage[0];
         $payoneParams['errorMessages'] = json_encode($moptPayoneMain->getPaymentHelper()
-                        ->getCreditCardCheckErrorMessages());
+                ->getCreditCardCheckErrorMessages());
 
         $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
 
@@ -386,7 +383,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         $data['moptPayoneCheckCc'] = $creditCardConfig['check_cc'];
         $data['moptCreditcardMinValid'] = (int) $creditCardConfig['creditcard_min_valid'];
-        
+
         // remove the api key; only ['hash'] ist used
         $creditCardConfig['api_key'] = "";
         // to be safe also remove key in $payoneParams
@@ -398,7 +395,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         $data['moptCreditcardConfig'] = $creditCardConfig;
         $data['moptPayoneParams'] = $payoneParams;
-        
+
 
         if ($paymentData) {
             $data['sFormData'] = $paymentData;
@@ -420,7 +417,7 @@ class FrontendPostDispatch implements SubscriberInterface
         foreach ($paymentMeans as $paymentMean) {
             if ($moptPayoneMain->getPaymentHelper()->isPayoneDebitnote($paymentMean['name'])) {
                 $data['moptDebitCountries'] = $moptPayoneMain->getPaymentHelper()
-                        ->moptGetCountriesAssignedToPayment($paymentMean['id']);
+                    ->moptGetCountriesAssignedToPayment($paymentMean['id']);
 
                 $debitConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptShowBic'] = $debitConfig['showBic'];
@@ -465,7 +462,6 @@ class FrontendPostDispatch implements SubscriberInterface
         }
 
         if ($configData['show_errors']) {
-
             $langSql = 'SELECT locale FROM s_core_locales WHERE id = ?';
             $locale = Shopware()->Db()->fetchOne($langSql, $configData['error_locale_id']);
             $locale = explode('_', $locale);
