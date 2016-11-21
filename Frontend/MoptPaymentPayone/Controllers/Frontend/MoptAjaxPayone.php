@@ -1,9 +1,13 @@
 <?php
 
+use Shopware\Components\CSRFWhitelistAware;
+
+namespace Shopware\Plugins\MoptPaymentPayone\Controllers\Frontend;
+
 /**
- * integrate Payone protect and Ajax call handling
+ * Integrate Payone protect and Ajax call handling
  */
-class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Action
+class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Action implements CSRFWhitelistAware
 {
 
     /**
@@ -15,18 +19,21 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
     /**
      * PayoneMain
+     *
      * @var Mopt_PayoneMain
      */
     protected $moptPayoneMain = null;
 
     /**
      * PayoneMain
+     *
      * @var Mopt_PayonePaymentHelper
      */
     protected $moptPayonePaymentHelper = null;
 
     /**
      * PayOne Builder
+     *
      * @var PayoneBuilder
      */
     protected $payoneServiceBuilder = null;
@@ -34,7 +41,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     protected $session = null;
 
     /**
-     * init payment controller
+     * Init method that get called automatically
+     * Set class properties
+     *
+     * @return void
      */
     public function init()
     {
@@ -46,35 +56,27 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     }
 
     /**
-     * ask user wether to keep original submittted or corrected values
+     * Ask user wether to keep original submittted or corrected values
      */
     public function ajaxGetConsumerScoreUserAgreementAction()
     {
-        $session = Shopware()->Session();
-
-        //get config
-        if ($_SESSION['moptPaymentId']) {
-            $paymentId = $_SESSION['moptPaymentId'];
-        } else {
-            $paymentId = $session->moptPaymentId;
-        }
+        $paymentId = $this->session->moptPaymentId;
 
         $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
 
         //add custom texts to view
         if ($config['consumerscoreNoteActive']) {
             $this->View()->consumerscoreNoteMessage = Shopware()->Snippets()
-                    ->getNamespace('frontend/MoptPaymentPayone/messages')
-                    ->get('consumerscoreNoteMessage');
+                ->getNamespace('frontend/MoptPaymentPayone/messages')
+                ->get('consumerscoreNoteMessage');
         }
         if ($config['consumerscoreAgreementActive']) {
             $this->View()->consumerscoreAgreementMessage = Shopware()->Snippets()
-                    ->getNamespace('frontend/MoptPaymentPayone/messages')
-                    ->get('consumerscoreAgreementMessage');
+                ->getNamespace('frontend/MoptPaymentPayone/messages')
+                ->get('consumerscoreAgreementMessage');
         }
 
-        unset($session->moptConsumerScoreCheckNeedsUserAgreement);
-        unset($_SESSION['moptConsumerScoreCheckNeedsUserAgreement']);
+        unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
     }
 
     /**
@@ -90,25 +92,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function checkConsumerScoreAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $session = Shopware()->Session();
-        $userId = $session->sUserId;
+        $userId = $this->session->sUserId;
 
-        unset($session->moptConsumerScoreCheckNeedsUserAgreement);
-        unset($_SESSION['moptConsumerScoreCheckNeedsUserAgreement']);
+        unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
 
         //get config
-        if ($_SESSION['moptPaymentId']) {
-            $paymentId = $_SESSION['moptPaymentId'];
-        } else {
-            $paymentId = $session->moptPaymentId;
-        }
-
-        //get payment data
-        if ($_SESSION['moptPaymentData']) {
-            $paymentData = $_SESSION['moptPaymentData'];
-        } else {
-            $paymentData = $session->moptPaymentData;
-        }
+        $paymentId = $this->session->moptPaymentId;
+        $paymentData = $this->session->moptPaymentData;
 
         $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
         $user = $this->admin->sGetUserData();
@@ -116,11 +106,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $billingAddressData['country'] = $billingAddressData['countryID'];
         //perform consumerscorecheck
         $params = $this->moptPayoneMain->getParamBuilder()
-                ->getConsumerscoreCheckParams($billingAddressData, $paymentId);
+            ->getConsumerscoreCheckParams($billingAddressData, $paymentId);
         $service = $this->payoneServiceBuilder->buildServiceVerificationConsumerscore();
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
+        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'));
         $request = new Payone_Api_Request_Consumerscore($params);
 
         $billingAddressChecktype = 'NO';
@@ -132,16 +120,14 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         if ($response->getStatus() == 'VALID') {
             //save result
             $this->moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
-            unset($session->moptConsumerScoreCheckNeedsUserAgreement);
-            unset($_SESSION['moptConsumerScoreCheckNeedsUserAgreement']);
-            unset($session->moptPaymentId);
+            unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
+            unset($this->session->moptPaymentId);
             echo json_encode(true);
         } else {
             //save error
             $this->moptPayoneMain->getHelper()->saveConsumerScoreError($userId, $response);
-            unset($session->moptConsumerScoreCheckNeedsUserAgreement);
-            unset($_SESSION['moptConsumerScoreCheckNeedsUserAgreement']);
-            unset($session->moptPaymentId);
+            unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
+            unset($this->session->moptPaymentId);
             //choose next action according to config
             if ($config['consumerscoreFailureHandling'] == 0) {
                 //abort
@@ -159,19 +145,16 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function doNotCheckConsumerScoreAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $session = Shopware()->Session();
 
-        unset($session->moptConsumerScoreCheckNeedsUserAgreement);
-        unset($_SESSION['moptConsumerScoreCheckNeedsUserAgreement']);
+        unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
 
-        $userId = $session->sUserId;
-        $config = $this->moptPayoneMain->getPayoneConfig($session->moptPaymentId);
+        $userId = $this->session->sUserId;
+        $config = $this->moptPayoneMain->getPayoneConfig($this->session->moptPaymentId);
 
         $this->moptPayoneMain->getHelper()->saveConsumerScoreDenied($userId);
 
-        unset($session->moptConsumerScoreCheckNeedsUserAgreement);
-        unset($_SESSION['moptConsumerScoreCheckNeedsUserAgreement']);
-        unset($session->moptPaymentId);
+        unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
+        unset($this->session->moptPaymentId);
 
         if ($config['consumerscoreFailureHandling'] == 0) {
             //abort
@@ -188,77 +171,73 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function saveOriginalAddressAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $session = Shopware()->Session();
 
-        $userId = $session->sUserId;
-        $response = unserialize($session->moptAddressCheckCorrectedAddress);
+        $userId = $this->session->sUserId;
+        $response = unserialize($this->session->moptAddressCheckCorrectedAddress);
         $config = $this->moptPayoneMain->getPayoneConfig();
 
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()
-                ->getUserScoringValue($response->getPersonstatus(), $config);
+            ->getUserScoringValue($response->getPersonstatus(), $config);
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()->getUserScoringColorFromValue($mappedPersonStatus);
         $this->moptPayoneMain->getHelper()->saveAddressCheckResult('billing', $userId, $response, $mappedPersonStatus);
 
-        unset($session->moptAddressCheckNeedsUserVerification);
-        unset($session->moptAddressCheckOriginalAddress);
-        unset($session->moptAddressCheckCorrectedAddress);
+        unset($this->session->moptAddressCheckNeedsUserVerification);
+        unset($this->session->moptAddressCheckOriginalAddress);
+        unset($this->session->moptAddressCheckCorrectedAddress);
     }
 
     public function saveCorrectedAddressAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $session = Shopware()->Session();
-        $userId = $session->sUserId;
-        $response = unserialize($session->moptAddressCheckCorrectedAddress);
+        $userId = $this->session->sUserId;
+        $response = unserialize($this->session->moptAddressCheckCorrectedAddress);
         $config = $this->moptPayoneMain->getPayoneConfig();
 
         $this->moptPayoneMain->getHelper()->saveCorrectedBillingAddress($userId, $response);
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()
-                ->getUserScoringValue($response->getPersonstatus(), $config);
+            ->getUserScoringValue($response->getPersonstatus(), $config);
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()->getUserScoringColorFromValue($mappedPersonStatus);
         $this->moptPayoneMain->getHelper()->saveAddressCheckResult('billing', $userId, $response, $mappedPersonStatus);
 
-        unset($session->moptAddressCheckNeedsUserVerification);
-        unset($session->moptAddressCheckOriginalAddress);
-        unset($session->moptAddressCheckCorrectedAddress);
+        unset($this->session->moptAddressCheckNeedsUserVerification);
+        unset($this->session->moptAddressCheckOriginalAddress);
+        unset($this->session->moptAddressCheckCorrectedAddress);
     }
 
     public function saveOriginalShippingAddressAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $session = Shopware()->Session();
 
-        $userId = $session->sUserId;
-        $response = unserialize($session->moptShippingAddressCheckCorrectedAddress);
+        $userId = $this->session->sUserId;
+        $response = unserialize($this->session->moptShippingAddressCheckCorrectedAddress);
         $config = $this->moptPayoneMain->getPayoneConfig();
 
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()
-                ->getUserScoringValue($response->getPersonstatus(), $config);
+            ->getUserScoringValue($response->getPersonstatus(), $config);
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()->getUserScoringColorFromValue($mappedPersonStatus);
         $this->moptPayoneMain->getHelper()->saveAddressCheckResult('shipping', $userId, $response, $mappedPersonStatus);
 
-        unset($session->moptShippingAddressCheckNeedsUserVerification);
-        unset($session->moptShippingAddressCheckOriginalAddress);
-        unset($session->moptShippingAddressCheckCorrectedAddress);
+        unset($this->session->moptShippingAddressCheckNeedsUserVerification);
+        unset($this->session->moptShippingAddressCheckOriginalAddress);
+        unset($this->session->moptShippingAddressCheckCorrectedAddress);
     }
 
     public function saveCorrectedShippingAddressAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $session = Shopware()->Session();
-        $userId = $session->sUserId;
-        $response = unserialize($session->moptShippingAddressCheckCorrectedAddress);
+        $userId = $this->session->sUserId;
+        $response = unserialize($this->session->moptShippingAddressCheckCorrectedAddress);
         $config = $this->moptPayoneMain->getPayoneConfig();
 
         $this->moptPayoneMain->getHelper()->saveCorrectedShippingAddress($userId, $response);
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()
-                ->getUserScoringValue($response->getPersonstatus(), $config);
+            ->getUserScoringValue($response->getPersonstatus(), $config);
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()->getUserScoringColorFromValue($mappedPersonStatus);
         $this->moptPayoneMain->getHelper()->saveAddressCheckResult('shipping', $userId, $response, $mappedPersonStatus);
 
-        unset($session->moptShippingAddressCheckNeedsUserVerification);
-        unset($session->moptShippingAddressCheckOriginalAddress);
-        unset($session->moptShippingAddressCheckCorrectedAddress);
+        unset($this->session->moptShippingAddressCheckNeedsUserVerification);
+        unset($this->session->moptShippingAddressCheckOriginalAddress);
+        unset($this->session->moptShippingAddressCheckCorrectedAddress);
     }
 
     /**
@@ -266,13 +245,12 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     public function ajaxVerifyShippingAddressAction()
     {
-        $session = Shopware()->Session();
-        $response = unserialize($session->moptShippingAddressCheckCorrectedAddress);
-        $this->View()->moptShippingAddressCheckOriginalAddress = $session->moptShippingAddressCheckOriginalAddress;
+        $response = unserialize($this->session->moptShippingAddressCheckCorrectedAddress);
+        $this->View()->moptShippingAddressCheckOriginalAddress = $this->session->moptShippingAddressCheckOriginalAddress;
         $this->View()->moptShippingAddressCheckCorrectedAddress = $response->toArray();
 
-        if ($session->moptShippingAddressCheckTarget) {
-            $this->View()->moptShippingAddressCheckTarget = $session->moptShippingAddressCheckTarget;
+        if ($this->session->moptShippingAddressCheckTarget) {
+            $this->View()->moptShippingAddressCheckTarget = $this->session->moptShippingAddressCheckTarget;
         } else {
             $this->View()->moptShippingAddressCheckTarget = 'checkout';
         }
@@ -283,13 +261,12 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     public function ajaxVerifyAddressAction()
     {
-        $session = Shopware()->Session();
-        $response = unserialize($session->moptAddressCheckCorrectedAddress);
-        $this->View()->moptAddressCheckOriginalAddress = $session->moptAddressCheckOriginalAddress;
+        $response = unserialize($this->session->moptAddressCheckCorrectedAddress);
+        $this->View()->moptAddressCheckOriginalAddress = $this->session->moptAddressCheckOriginalAddress;
         $this->View()->moptAddressCheckCorrectedAddress = $response->toArray();
 
-        if ($session->moptAddressCheckTarget) {
-            $this->View()->moptAddressCheckTarget = $session->moptAddressCheckTarget;
+        if ($this->session->moptAddressCheckTarget) {
+            $this->View()->moptAddressCheckTarget = $this->session->moptAddressCheckTarget;
         } else {
             $this->View()->moptAddressCheckTarget = 'checkout';
         }
@@ -301,7 +278,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function savePseudoCardAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $userId = Shopware()->Session()->sUserId;
+        $userId = $this->session->sUserId;
 
         $paymentData['mopt_payone__cc_cardexpiredate'] = $this->Request()->getPost('mopt_payone__cc_cardexpiredate');
         $paymentData['mopt_payone__cc_truncatedcardpan'] = $this->Request()->getPost('mopt_payone__cc_truncatedcardpan');
@@ -317,7 +294,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $actualPaymentId = $paymentData['mopt_payone__cc_paymentid'];
 
         $sql = 'replace into `s_plugin_mopt_payone_payment_data`' .
-                '(`userId`,`moptPaymentData`) values (?,?)';
+            '(`userId`,`moptPaymentData`) values (?,?)';
         $paymentData = serialize($paymentData);
         Shopware()->Db()->query($sql, array($userId, $paymentData));
 
@@ -326,7 +303,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         if ($previousPayment['paymentTable']) {
             $deleteSQL = 'DELETE FROM ' . $previousPayment['paymentTable'] . ' WHERE userID=?';
-            Shopware()->Db()->query($deleteSQL, array(Shopware()->Session()->sUserId));
+            Shopware()->Db()->query($deleteSQL, array($this->session->sUserId));
         }
 
         $sqlPayment = "UPDATE s_user SET paymentID = ? WHERE id = ?";
@@ -340,7 +317,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     public function downloadMandateAction()
     {
-        if (!Shopware()->Session()->moptMandateDataDownload) {
+        if (!$this->session->moptMandateDataDownload) {
             $this->forward('downloadError');
             return;
         }
@@ -383,11 +360,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     protected function getPaymentId()
     {
-        return Shopware()->Session()->sOrderVariables['sUserData']['additional']['payment']['id'];
+        return $this->session->sOrderVariables['sUserData']['additional']['payment']['id'];
     }
-    
-    
-   /**
+
+    /**
      * get actual payment method id
      *
      * @return string
@@ -395,13 +371,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     protected function ajaxHandlePayolutionPreCheckAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $paymentData = Shopware()->Session()->moptPayment;
+        $paymentData = $this->session->moptPayment;
         $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getPost('hreg');
         $paymentData['dob'] = $this->Request()->getPost('dob');
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $financeType = Payone_Api_Enum_PayolutionType::PYS;
-        $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;        
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
+        $userData = $this->admin->sGetUserData();
         $paymentName = $userData['additional']['payment']['name'];
         if ($this->moptPayonePaymentHelper->isPayonePayolutionInstallment($paymentName)) {
             $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
@@ -409,25 +385,22 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $responseData = $precheckresponse->toArray();
                 $workorderId = $responseData['rawResponse']['workorderid'];
                 $calculation = $this->buildAndCallCalculate($config, 'fnc', $financeType, $paymentType, $paymentData, $workorderId);
-                $responseData = $calculation->getInstallmentData();
-                $data['data'] = $responseData;
+                $installmentData = $calculation->getInstallmentData();
+                $data['data'] = $installmentData;
                 $data['status'] = 'success';
-                $data['workorderid'] =  $workorderId;
-                $encoded = json_encode($data);               
+                $data['workorderid'] = $workorderId;
+                $encoded = json_encode($data);
                 echo $encoded;
-                exit(0);  
             } else {
                 $data['data'] = $precheckresponse;
                 $data['status'] = 'error';
-                $encoded = json_encode($data);  
+                $encoded = json_encode($data);
                 echo $encoded;
-                exit(0);
             }
         }
-        return false;
     }
-    
-     /**
+
+    /**
      * render the payolution installment deb container for frontend usage
      *
      * @return string
@@ -435,11 +408,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     protected function renderPayolutionInstallmentAction()
     {
         $installmentData = $this->Request()->getPost('data');
-        $this->View()->assign(array('InstallmentPlan' => $installmentData)
-                ); 
-    }  
-    
-     /**
+        $this->View()->assign(array('InstallmentPlan' => $installmentData));
+    }
+
+    /**
      * download the payolution installment info pdf for frontend usage
      *
      * @return string
@@ -454,21 +426,20 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             $user = $config['payolutionDraftUser'];
             $password = $config['payolutionDraftPassword'];
 
-            $downloadUrl = str_ireplace('https://', 'https://'.$user.':'.$password.'@', $url.'&duration='.$duration);
+            $downloadUrl = str_ireplace('https://', 'https://' . $user . ':' . $password . '@', $url . '&duration=' . $duration);
             // debug
             // $downloadUrl  = 'http://www.orimi.com/pdf-test.pdf';
             $content = file_get_contents($downloadUrl);
-            $filename= 'terms-of-payment.pdf';            
-            if($content) {
+            $filename = 'terms-of-payment.pdf';
+            if ($content) {
                 header("Content-Type: application/pdf");
                 header("Content-Disposition: attachment; filename=\"{$filename}\"");
                 echo $content;
-                exit;
             }
             echo "Es ist ein Fehler beim Download aufgetreten <br>Bitte versuchen Sie es später noch einmal.";
-        }  
-    }      
-    
+        }
+    }
+
     /**
      * prepare and do payment server api call
      *
@@ -476,23 +447,23 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param string $clearingType
      * @param string $financetype
      * @param string $paymenttype
+     * @param array $paymentdata
      * @return type $response
      */
     protected function buildAndCallPrecheck($config, $clearingType, $financetype, $paymenttype, $paymentData)
     {
         $paramBuilder = $this->moptPayoneMain->getParamBuilder();
-        $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
+        $personalData = $paramBuilder->getPersonalData($this->admin->sGetUserData());
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        $session = Shopware()->Session();
-        $orderVariables = $session['sOrderVariables']->getArrayCopy();        
+        $orderVariables = $this->session['sOrderVariables']->getArrayCopy();
         //create hash
         $orderHash = md5(serialize($orderVariables));
-        $session->moptOrderHash = $orderHash;
-        
+        $this->session->moptOrderHash = $orderHash;
+
         $request = new Payone_Api_Request_Genericpayment($params);
-        
+
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_PRE_CHECK)
@@ -519,24 +490,24 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->setZip($personalData->getZip());
         $request->setCity($personalData->getCity());
         $request->setCountry($personalData->getCountry());
-        if ($personalData->getBirthday() !== "00000000" && $personalData->getBirthday() !== ""){
+        if ($personalData->getBirthday() !== "00000000" && $personalData->getBirthday() !== "") {
             $request->setBirthday($personalData->getBirthday());
         } else {
             $request->setBirthday($paymentData['dob']);
         }
-        
+
         if ($paymentData && $paymentData['mopt_payone__payolution_b2bmode']) {
-           $request->setBirthday("");
-        }        
+            $request->setBirthday("");
+        }
         $request->setEmail($personalData->getEmail());
         $request->setIp($personalData->getIp());
-        $request->setLanguage($personalData->getLanguage());        
+        $request->setLanguage($personalData->getLanguage());
         $request->setClearingtype($clearingType);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
         $response = $this->service->request($request);
         return $response;
-    } 
-    
+    }
+
     /**
      * prepare and do payment server api call
      *
@@ -549,20 +520,18 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     protected function buildAndCallCalculate($config, $clearingType, $financetype, $paymenttype, $paymentData, $workorderId)
     {
         $paramBuilder = $this->moptPayoneMain->getParamBuilder();
-        $session = Shopware()->Session();
         $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        $params['workorderid'] = $workorderId;        
-        $session = Shopware()->Session();
-        $orderVariables = $session['sOrderVariables']->getArrayCopy();        
+        $params['workorderid'] = $workorderId;
+        $orderVariables = $this->session['sOrderVariables']->getArrayCopy();
         //create hash
         $orderHash = md5(serialize($orderVariables));
-        $session->moptOrderHash = $orderHash;
-        
+        $this->session->moptOrderHash = $orderHash;
+
         $request = new Payone_Api_Request_Genericpayment($params);
-        
+
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_CALCULATION)
@@ -593,13 +562,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->setEmail($personalData->getEmail());
         $request->setIp($personalData->getIp());
         $request->setLanguage($personalData->getLanguage());
-        
+
         $request->setClearingtype($clearingType);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
         $response = $this->service->request($request);
         return $response;
-    }     
-    
+    }
+
     /**
      * Return the full amount to pay.
      *
@@ -607,8 +576,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     public function getAmount()
     {
-        $session = Shopware()->Session();
-        $orderVariables = $session['sOrderVariables']->getArrayCopy();         
+        $orderVariables = $this->session->sOrderVariables->getArrayCopy();
         $basket = $orderVariables['sBasket'];
         return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
     }
@@ -621,6 +589,27 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function getCurrencyShortName()
     {
         return Shopware()->Currency()->getShortName();
-    }    
-    
+    }
+
+    public function getWhitelistedCSRFActions()
+    {
+        $returnArray = array(
+            'ajaxGetConsumerScoreUserAgreement',
+            'ajaxHandlePayolutionPreCheck',
+            'ajaxVerifyAddress',
+            'ajaxVerifyPayment',
+            'ajaxVerifyShippingAddress',
+            'checkConsumerScore',
+            'doNotCheckConsumerScore',
+            'downloadMandate',
+            'getPayolutionDraftUrl',
+            'renderPayolutionInstallment',
+            'saveCorrectedAddress',
+            'saveCorrectedShippingAddress',
+            'saveOriginalAddress',
+            'saveOriginalShippingAddress',
+            'savePseudoCard',
+        );
+        return $returnArray;
+    }
 }
