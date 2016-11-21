@@ -213,10 +213,6 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        //create hash
-        $orderVariables = $session['sOrderVariables'];
-        $orderHash = md5(serialize($orderVariables));
-        $session->moptOrderHash = $orderHash;
 
         $request = new Payone_Api_Request_Genericpayment($params);
 
