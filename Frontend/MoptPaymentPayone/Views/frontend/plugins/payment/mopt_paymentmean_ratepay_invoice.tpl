@@ -71,23 +71,24 @@
                class="is--required{if $error_flags.mopt_payone__ratepay_company_trade_registry_number} has--error{/if}">
     {/if}     
 </div>
-
-<script language="JavaScript">
-    var di = { t: '{$moptRatepayConfig.deviceFingerPrint}', v: '{ $moptRatepayConfig.deviceFingerprintSnippetId}', l: 'Checkout'};
-</script>
-<script type="text/javascript"
-src="//d.ratepay.com/{$moptRatepayConfig.deviceFingerprintSnippetId}/di.js"></script>
-<noscript><link rel="stylesheet" type="text/css"
-                href="//d.ratepay.com/di.css?t={$moptRatepayConfig.deviceFingerPrint}&v={$moptRatepayConfig.deviceFingerprintSnippetId}&l=Check
-                out"></noscript>
-<object type="application/x-shockwave-flash"
-        data="//d.ratepay.com/{$moptRatepayConfig.deviceFingerprintSnippetId}/c.swf" width="0" height="0">
-    <param name="movie" value="//d.ratepay.com/{$moptRatepayConfig.deviceFingerprintSnippetId}/c.swf" />
-    <param name="flashvars"
-           value="t={$moptRatepayConfig.deviceFingerPrint}&v={$moptRatepayConfig.deviceFingerprintSnippetId}"/><param
-           name="AllowScriptAccess" value="always"/>
-</object>         
-
+{if $moptRatepayConfig.deviceFingerPrint && $moptRatepayConfig.deviceFingerprintSnippetId}
+<!-- Only Include if moptRatepayConfig is configured in Backend to prevent 404 erorrs -->   
+    <script language="JavaScript">
+        var di = { t: '{$moptRatepayConfig.deviceFingerPrint}', v: '{ $moptRatepayConfig.deviceFingerprintSnippetId}', l: 'Checkout'};
+    </script>
+    <script type="text/javascript"
+    src="//d.ratepay.com/{$moptRatepayConfig.deviceFingerprintSnippetId}/di.js"></script>
+    <noscript><link rel="stylesheet" type="text/css"
+                    href="//d.ratepay.com/di.css?t={$moptRatepayConfig.deviceFingerPrint}&v={$moptRatepayConfig.deviceFingerprintSnippetId}&l=Check
+                    out"></noscript>
+    <object type="application/x-shockwave-flash"
+            data="//d.ratepay.com/{$moptRatepayConfig.deviceFingerprintSnippetId}/c.swf" width="0" height="0">
+        <param name="movie" value="//d.ratepay.com/{$moptRatepayConfig.deviceFingerprintSnippetId}/c.swf" />
+        <param name="flashvars"
+               value="t={$moptRatepayConfig.deviceFingerPrint}&v={$moptRatepayConfig.deviceFingerprintSnippetId}"/><param
+               name="AllowScriptAccess" value="always"/>
+    </object>         
+{/if}
 <script type="text/javascript">
 
     function ratepayInvoiceDobInput()
