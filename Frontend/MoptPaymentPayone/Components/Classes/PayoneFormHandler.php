@@ -26,7 +26,6 @@
  * @link            http://www.fatchip.com
  */
 
-namespace Shopware\Plugins\MoptPaymentPayone\Components\Classes;
 
 class Mopt_PayoneFormHandler
 {
