@@ -48,7 +48,7 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         $this->Front()->Plugins()->Json()->setRenderer(true);
         $builder = Shopware()->Models()->createQueryBuilder();
         $data = $builder->select('a')
-                ->from('\Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay a')
+                ->from('\Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay', 'a')
                 ->getQuery()->getArrayResult();
         
         foreach ($data as $dataItem){
@@ -102,7 +102,7 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         unset($params['controller']);
         unset($params['action']);
         
-        foreach ($params[row] as $dataset ){
+        foreach ($params['row'] as $dataset ){
             /**
              * @var $config \Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay 
              */
