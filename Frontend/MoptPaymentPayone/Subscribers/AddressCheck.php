@@ -497,6 +497,11 @@ class AddressCheck implements SubscriberInterface
                     $config['consumerscoreLifetime'],
                     $userConsumerScoreData['moptPayoneConsumerscoreDate']
                 );
+
+        $userScoreDenied = ($userConsumerScoreData['moptPayoneConsumerscoreResult'] === 'DENIED');
+        if ($userScoreDenied){
+            $needsRecompution = true;
+        }
         
         return $amountInInterval && $needsRecompution && $config['consumerscoreActive'];
     }
