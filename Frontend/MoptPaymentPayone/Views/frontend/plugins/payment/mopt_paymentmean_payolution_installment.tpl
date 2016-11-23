@@ -53,6 +53,7 @@
     {/if}  
 
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_installment_birthdaydate]" id="mopt_payone__payolution_installment_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">   
+        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_installment_shippingcosts]" id="mopt_payone__payolution_installment_shippingcosts" value="{$sShippingcosts}"> 
     <div id="installment-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>        
 
     {if $fcPayolutionConfig.payolutionB2bmode && $sUserData.billingaddress.company}
@@ -130,21 +131,24 @@
         var call2 = '{url controller="moptAjaxPayone" action="renderPayolutionInstallment" forceSecure}';
         var dob = document.getElementById("mopt_payone__payolution_installment_birthdaydate");
         var hreg = document.getElementById("mopt_payone__installment_company_trade_registry_number");
+        var shippingcosts = document.getElementById("mopt_payone__payolution_installment_shippingcosts");
         var myhreg; 
         var mydob;
         if ( hreg !== null){
             myhreg = hreg.value;
-            console.log(myhreg);
         }
         
         if (dob.value !== null){
             mydob = dob.value;
             mydob = mydob.replace(/-/g,"");
+        } 
+        if ( shippingcosts !== null){
+            myshippingcosts = shippingcosts.value;
         }        
         $.ajax({
             url: call,
             type: 'POST',
-            data: { dob: mydob, hreg: myhreg } ,
+            data: { dob: mydob, hreg: myhreg, shippingcosts: myshippingcosts } ,
             
             beforeSend: function() {
                 $.loadingIndicator.open();
