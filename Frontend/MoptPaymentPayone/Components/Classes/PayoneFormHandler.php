@@ -441,6 +441,9 @@ class Mopt_PayoneFormHandler
 
             $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_b2bmode'];
         }
+        
+        $paymentData['formData']['mopt_payone__payolution_installment_shippingcosts'] = $formData['mopt_payone__payolution_installment_shippingcosts'];
+        
         // set sessionflag to trigger precheck
         Shopware()->Session()->moptPayolutionPrecheck = "1";
 
