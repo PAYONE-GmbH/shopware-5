@@ -373,6 +373,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paymentData = $this->session->moptPayment;
         $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getPost('hreg');
         $paymentData['dob'] = $this->Request()->getPost('dob');
+        $paymentData['mopt_payone__payolution_installment_shippingcosts'] = $this->Request()->getPost('shippingcosts');
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $financeType = Payone_Api_Enum_PayolutionType::PYS;
         $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
@@ -456,9 +457,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        $orderVariables = $this->session['sOrderVariables']->getArrayCopy();
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
         //create hash
-        $orderHash = md5(serialize($orderVariables));
+        $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
 
         $request = new Payone_Api_Request_Genericpayment($params);
@@ -479,8 +480,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__installment_company_trade_registry_number'])
             ));
         }
+        $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
         $request->setPaydata($paydata);
-        $request->setAmount($this->getAmount());
+        $request->setAmount($amountWithShipping);
         $request->setCurrency($this->getCurrencyShortName());
         $request->setCompany($personalData->getCompany());
         $request->setFirstname($personalData->getFirstname());
@@ -524,9 +526,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
         $params['workorderid'] = $workorderId;
-        $orderVariables = $this->session['sOrderVariables']->getArrayCopy();
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
         //create hash
-        $orderHash = md5(serialize($orderVariables));
+        $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
 
         $request = new Payone_Api_Request_Genericpayment($params);
@@ -547,8 +549,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
             ));
         }
+        $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
         $request->setPaydata($paydata);
-        $request->setAmount($this->getAmount());
+        $request->setAmount($amountWithShipping);
         $request->setCurrency($this->getCurrencyShortName());
         $request->setCompany($personalData->getCompany());
         $request->setFirstname($personalData->getFirstname());
@@ -567,18 +570,16 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $response = $this->service->request($request);
         return $response;
     }
-
+    
     /**
      * Return the full amount to pay.
      *
      * @return float
      */
-    public function getAmount()
-    {
-        $orderVariables = $this->session->sOrderVariables->getArrayCopy();
-        $basket = $orderVariables['sBasket'];
+    public function getAmount(){
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
         return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
-    }
+    }    
 
     /**
      * Returns the current currency short name.
