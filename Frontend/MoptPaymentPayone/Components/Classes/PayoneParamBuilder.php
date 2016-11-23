@@ -616,9 +616,10 @@ class Mopt_PayoneParamBuilder
      * create payolution payment object
      *
      * @param string $financeType
+     * @param array $paymentData
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
      */
-    public function getPaymentPayolutionInstallment($financeType, $paymentData, $workorderId) {
+    public function getPaymentPayolutionInstallment($financeType, $paymentData) {
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
