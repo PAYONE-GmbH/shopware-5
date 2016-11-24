@@ -157,7 +157,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                     <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Fehlermeldung bitte über Einstellungen -> Textbausteine editieren (nach consumerscoreNoteMessage suchen)">                                                         
-                    <label for="consumerscoreNoteMessage" class="text-left col-md-3 control-label">{s name=fieldlabel/consumerscoreNote}Hinweistext{/s}</label>
+                    <label for="consumerscoreNoteMessage" class="text-left col-md-3 control-label">{s name=fieldlabel/consumerscoreNote}Hinweistext (nur bei Prüfung nach der Zahlartenauswahl){/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreNoteMessage" name="consumerscoreNoteMessage" aria-describedby="consumerscoreNoteMessage-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -177,7 +177,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                     <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Fehlermeldung bitte über Einstellungen -> Textbausteine editieren (nach consumerscoreAgreementMessage suchen)">                    
-                    <label for="consumerscoreAgreementMessage" class="text-left col-md-3 control-label">{s name=fieldlabel/consumerscoreAgreement}Zustimmungsfrage{/s}</label>
+                    <label for="consumerscoreAgreementMessage" class="text-left col-md-3 control-label">{s name=fieldlabel/consumerscoreAgreement}Zustimmungsfrage (nur bei Prüfung nach der Zahlartenauswahl){/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreAgreementMessage" name="consumerscoreAgreementMessage" aria-describedby="consumerscoreAgreementMessage-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>

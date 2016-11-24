@@ -424,7 +424,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 fieldLabel: '{s name=fieldlabel/adresscheckShippingCountries}Länder Lieferadresse{/s}',
                 name: 'adresscheckShippingCountries',
                 disabled: false,
-                helpText: '{s name=fieldlabelhelp/adresscheckCountries}Komme-getrennte ISO-Codes der Länder für die der Check ausgeführt werden soll. Z.b. DE,CH,AT{/s}',
+                helpText: '{s name=fieldlabelhelp/adresscheckCountries}Komma-getrennte ISO-Codes der Länder für die der Check ausgeführt werden soll. Z.B. DE,CH,AT{/s}',
                 allowBlank: true,
                 labelWidth: 200
             },
@@ -663,7 +663,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'fieldcontainer',
-                fieldLabel: '{s name=fieldlabel/consumerscoreNote}Hinweistext{/s}',
+                fieldLabel: '{s name=fieldlabel/consumerscoreNote}Hinweistext (nur bei Prüfung nach der Zahlartenauswahl){/s}',
                 labelWidth: 200,
                 layout: 'vbox',
                 items: [
@@ -683,7 +683,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'fieldcontainer',
-                fieldLabel: '{s name=fieldlabel/consumerscoreAgreement}Zustimmungsfrage{/s}',
+                fieldLabel: '{s name=fieldlabel/consumerscoreAgreement}Zustimmungsfrage (nur bei Prüfung nach der Zahlartenauswahl){/s}',
                 labelWidth: 200,
                 layout: 'vbox',
                 items: [
