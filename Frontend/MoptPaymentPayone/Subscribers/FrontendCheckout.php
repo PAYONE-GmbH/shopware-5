@@ -35,9 +35,43 @@ class FrontendCheckout implements SubscriberInterface
             // load stored payment data for payment method overview
             'Shopware_Controllers_Frontend_Checkout::getSelectedPayment::after' => 'onGetSelectedPayment',
             // save terms agreement handling
-            'Enlight_Controller_Action_PostDispatch_Frontend_Checkout' => 'moptExtendController_Frontend_Checkout'
+            'Enlight_Controller_Action_PostDispatch_Frontend_Checkout' => 'moptExtendController_Frontend_Checkout',
+            // only used for payolution installments for now
+            // redirects the customer back to shippingpayment for re-calculation of payment conditions
+    	    'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after'  => 'onBasketChangeConfirmPage',
+            'Shopware_Controllers_Frontend_Checkout::changeQuantityAction::after' => 'onBasketChangeConfirmPage',
         );
     }
+    
+    /**
+     * set redirect flag for redirecting to paymentshipping in case basket is changed
+     * only used for payolution installment to re-calculate payment conditions
+     * 
+     * @param \Enlight_Hook_HookArgs $arguments
+     * @return type
+     */
+    public function onBasketChangeConfirmPage(\Enlight_Hook_HookArgs $arguments)
+    {
+        $action = Shopware()->Modules()->Admin()->sSYSTEM->_GET['action'];
+        $sTargetAction = Shopware()->Modules()->Admin()->sSYSTEM->_GET['sTargetAction'];
+
+        if ($action !== 'addArticle' && $action !== 'changeQuantity' && $action !== 'deleteArticle') {
+            return;
+        }
+        if ($sTargetAction !== 'confirm') {
+            return;
+        }    
+        
+        $ret = $arguments->getReturn();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePayolutionInstallment($userData['additional']['payment']['name'])) {
+            return;
+        }
+        // Set redirect flag
+        Shopware()->Session()->moptBasketChanged = true;
+        $arguments->setReturn($ret);
+    }
+    
 
     /**
      * assign saved payment data to view

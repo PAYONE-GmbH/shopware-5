@@ -78,7 +78,15 @@
         <a href="#" onclick="removeOverlayInstallment();
                 return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
         {$moptCreditCardCheckEnvironment.moptPayolutionInformation.overlaycontent}                    
-    </div>    
+    </div>   
+    {if $moptBasketChanged}
+        <div id="payolution_overlay_installment_redirect_notice" class="js--modal content" style="width:40%; height:40%; opacity: 0.9; margin: 75px auto;">
+            <a href="#" onclick="removeOverlayInstallmentRedirectNotice();
+                    return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
+            {$moptOverlayRedirectNotice}                    
+        </div>       
+        <div id="payolution_overlay_installment_redirect_notice_bg" class="js--overlay is--open" style="opacity: 0.8;"></div>        
+    {/if}
     <div id="payolution_overlay_installment_bg" class="js--overlay is--open" style="opacity: 0.8; display: none"></div>        
     <input type="hidden" name="moptPaymentData[mopt_payone__payolution_installment_duration]" value="" id="payone_payolution_selected_installmentplan" autocomplete="off">    
     <input type="hidden" name="moptPaymentData[mopt_payone__payolution_installment_workorderid]" value="" id="payolution_installment_workorderid" autocomplete="off">    
@@ -98,6 +106,13 @@
     function displayOverlayInstallment() {
         document.getElementById('payolution_overlay_installment').style.display = "block";
         document.getElementById('payolution_overlay_installment_bg').style.display = "block";
+    }
+    function removeOverlayInstallmentRedirectNotice() {
+        document.getElementById('payolution_overlay_installment_redirect_notice').style.display = "none";
+        document.getElementById('payolution_overlay_installment_redirect_notice_bg').style.display = "none";
+        $('html, body').animate({
+            scrollTop: $("#mopt_payone__payolution_installment_agreement").offset().top
+        }, 1000);        
     }
     function removeOverlayInstallment() {
         document.getElementById('payolution_overlay_installment').style.display = "none";

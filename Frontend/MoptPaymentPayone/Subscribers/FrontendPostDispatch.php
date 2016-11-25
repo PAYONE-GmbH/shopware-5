@@ -98,6 +98,9 @@ class FrontendPostDispatch implements SubscriberInterface
         $request = $args->getSubject()->Request();
         $response = $args->getSubject()->Response();
         $view = $args->getSubject()->View();
+        /* @var $action Enlight_Controller_Action */
+        $action = $args->getSubject();
+
 
         if (!$request->isDispatched() || $response->isException()) {
             return;
@@ -209,6 +212,30 @@ class FrontendPostDispatch implements SubscriberInterface
         if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
             if ($session->moptBarzahlenCode) {
                 $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
+            }
+        }
+        
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
+            if ($session->moptBasketChanged) {
+                $action->redirect(
+                    array(
+                        'controller' => 'checkout',
+                        'action' => 'shippingPayment',
+                    )
+                );
+            }
+        }
+        
+        if (($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment')) {
+            if ($session->moptBasketChanged) {
+                unset($session->moptBasketChanged);
+                $redirectnotice =
+                    '<center><b>Payolution Ratenzahlung</b></center>'
+                    . 'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
+                    . 'Bitte rufen Sie Ihre aktuellen Ratenzahlungskonditionen ab und wählen Sie den gewünschten Zahlplan aus.<br>';
+                
+                $view->assign('moptBasketChanged', true);
+                $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
         }
     }
@@ -392,10 +419,8 @@ class FrontendPostDispatch implements SubscriberInterface
         $json_tmp = json_decode($creditCardConfig['jsonConfig'], true);
         unset($json_tmp['api_key']);
         $creditCardConfig['jsonConfig'] = json_encode($json_tmp);
-
         $data['moptCreditcardConfig'] = $creditCardConfig;
         $data['moptPayoneParams'] = $payoneParams;
-
 
         if ($paymentData) {
             $data['sFormData'] = $paymentData;
