@@ -119,14 +119,14 @@ class Mopt_PayoneParamBuilder
             }
         }
         
-        if ($paymentName == "mopt_payone__fin_ratepay_invoice") {
-            if ($finalize === true ) {
-                $params['capturemode'] = 'completed';
+        if ($this->payonePaymentHelper->isPayoneRatepayInvoice($paymentName)) {
+            if ($finalize === true) {
+                $params['capturemode'] = Payone_Api_Enum_CaptureMode::COMPLETED;
             } else {
-                $params['capturemode'] = 'not completed';
+                $params['capturemode'] = Payone_Api_Enum_CaptureMode::NOTCOMPLETED;
             }
             $params['shop_id'] = $this->getParamRatepayShopId($order);
-        }        
+        }
         
         return $params;
     }
@@ -168,7 +168,7 @@ class Mopt_PayoneParamBuilder
         }
 
         return $params;
-    }        
+    }
 
     /**
      * build parameters for debit
@@ -194,6 +194,11 @@ class Mopt_PayoneParamBuilder
                 $params['vatid'] = $order->getBilling()->getUstid();
             }
         }
+        
+        if ($paymentName == "mopt_payone__fin_ratepay_invoice") {
+            $params['shop_id'] = $this->getParamRatepayShopId($order);
+        }
+        
 
         return $params;
     }
@@ -215,7 +220,7 @@ class Mopt_PayoneParamBuilder
         $params['currency'] = $order->getCurrency();
 
         return $params;
-    } 
+    }
 
     /**
      * increase last seq-number for non-auth'ed orders
@@ -242,7 +247,7 @@ class Mopt_PayoneParamBuilder
         $attribute = $this->payoneHelper->getOrCreateAttribute($order);
         $paymentData = unserialize($attribute->getMoptPayonePaymentData());
         return $paymentData['mopt_payone__ratepay_shopid'];
-    }    
+    }
 
     /**
      * sum all positions that should be debited
@@ -464,9 +469,9 @@ class Mopt_PayoneParamBuilder
         $params['gender'] = ($billingAddress['salutation'] === 'mr') ? 'm' : 'f';
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
             if ($userData['additional']['user']['birthday'] !== '0000-00-00') {
-                $params['birthday'] = str_replace('-', '', $userData['additional']['user']['birthday']); //YYYYMMDD            
+                $params['birthday'] = str_replace('-', '', $userData['additional']['user']['birthday']); //YYYYMMDD
             }
-        }  else {     
+        } else {
             if ($billingAddress['birthday'] !== '0000-00-00') {
                 $params['birthday'] = str_replace('-', '', $billingAddress['birthday']); //YYYYMMDD
             }
@@ -587,7 +592,7 @@ class Mopt_PayoneParamBuilder
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
-        $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+            $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
         }
         
         if ($params['birthday'] == "00000000") {
@@ -619,7 +624,8 @@ class Mopt_PayoneParamBuilder
      * @param array $paymentData
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
      */
-    public function getPaymentPayolutionInstallment($financeType, $paymentData) {
+    public function getPaymentPayolutionInstallment($financeType, $paymentData)
+    {
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
@@ -637,15 +643,15 @@ class Mopt_PayoneParamBuilder
 
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'installment_duration', 'data' => $paymentData['mopt_payone__payolution_installment_duration'])
-            ));
+            array('key' => 'installment_duration', 'data' => $paymentData['mopt_payone__payolution_installment_duration'])
+        ));
         
         if ($paymentData['mopt_payone__payolution_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'b2b', 'data' => 'yes')
+                array('key' => 'b2b', 'data' => 'yes')
             ));
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__installment_company_trade_registry_number'])
+                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__installment_company_trade_registry_number'])
             ));
         }
         $payment->setPaydata($paydata);
@@ -673,31 +679,31 @@ class Mopt_PayoneParamBuilder
             unset($params['birthday']);
         }
         
-        $params['financingtype'] = $financeType;     
+        $params['financingtype'] = $financeType;
         $params['company'] = $userData['billingaddress']['company'];
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay($params);
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
+            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
         ));
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_device_fingerprint'])
+            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_device_fingerprint'])
         ));
         
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
         ));
         
                 
-        if (isset($params['company'])){
+        if (isset($params['company'])) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
-            ));     
+                array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
+            ));
         }
         $payment->setPaydata($paydata);
         $payment->setTelephonenumber($userData['billingaddress']['phone']);
         return $payment;
-    }    
+    }
 
     /**
      * create payolution payment object
@@ -705,7 +711,8 @@ class Mopt_PayoneParamBuilder
      * @param string $financeType
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
      */
-    public function getPaymentPayolutionDebitNotePreCheck($financeType, $paymentData) {
+    public function getPaymentPayolutionDebitNotePreCheck($financeType, $paymentData)
+    {
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
@@ -943,14 +950,11 @@ class Mopt_PayoneParamBuilder
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_CashOnDelivery();
 
         switch ($userData['additional']['countryShipping']['countryiso']) {
-            case 'DE': {
-                    $payment->setShippingprovider(Payone_Api_Enum_Shippingprovider::DHL); // DE:DHL / IT:BRT
-            }
+            case 'DE':
+                $payment->setShippingprovider(Payone_Api_Enum_Shippingprovider::DHL); // DE:DHL / IT:BRT
                 break;
-            case 'IT': {
-                    $payment->setShippingprovider(Payone_Api_Enum_Shippingprovider::BARTOLINI); // DE:DHL / IT:Bartolini
-            }
-
+            case 'IT':
+                $payment->setShippingprovider(Payone_Api_Enum_Shippingprovider::BARTOLINI); // DE:DHL / IT:Bartolini
                 break;
         }
 

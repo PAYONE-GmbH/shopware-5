@@ -198,10 +198,10 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
-            ));         
+            ));
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'company_trade_registry_number', 'data' => $params['vatid'])
-            ));              
+            ));
             $request->setPaydata($paydata);
         }
 
@@ -209,16 +209,14 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'shop_id', 'data' => $params['shop_id'])
-            ));         
-           
+            ));
         }
         
         if (isset($params['capturemode'])) {
-            //  $request->setCapturemode($params['capturemode']);
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'capturemode', 'data' => $params['capturemode'])
-            ));             
-        } 
+            ));
+        }
         $request->setPaydata($paydata);
         unset($params['data']);
 
@@ -294,10 +292,18 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             ));
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'company_trade_registry_number', 'data' => $params['vatid'])
-            ));            
+            ));
             $request->setPaydata($paydata);
-        }       
-
+        }
+        
+        if (isset($params['shop_id'])) {
+            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'shop_id', 'data' => $params['shop_id'])
+            ));
+            $request->setPaydata($paydata);
+        }
+        
         return $service->debit($request);
     }
 
