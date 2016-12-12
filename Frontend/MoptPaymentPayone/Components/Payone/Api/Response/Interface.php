@@ -97,4 +97,10 @@ interface Payone_Api_Response_Interface extends Payone_Protocol_Filter_Filterabl
 
     /** @param string $rawResponse */
     public function setRawResponse($rawResponse);
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    public function getValue($key);
 }
