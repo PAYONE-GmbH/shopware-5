@@ -67,6 +67,12 @@ class MoptPayoneApiLog extends ModelEntity
    */
     private $responseDetails;
 
+    /**
+     * @var string $transactionId
+     * @ORM\Column(name="transaction_id", length=255, type="string", nullable=true)
+     */
+    private $transactionId;
+
   /**
    * @var \Doctrine\Common\Collections\ArrayCollection
    */
@@ -198,5 +204,21 @@ class MoptPayoneApiLog extends ModelEntity
     public function setResponseDetails($responseDetails)
     {
         $this->responseDetails = $responseDetails;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTransactionId()
+    {
+        return $this->transactionId;
+    }
+
+    /**
+     * @param string $transactionId
+     */
+    public function setTransactionId($transactionId)
+    {
+        $this->transactionId = $transactionId;
     }
 }

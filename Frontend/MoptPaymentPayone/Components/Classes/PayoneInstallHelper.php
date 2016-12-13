@@ -1073,4 +1073,33 @@ class Mopt_PayoneInstallHelper
         }
     }
 
+    /**
+     * check if transaction id exist in api log table
+     * @return bool
+     */
+    public function payoneApiLogTransactionIdExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_api_log'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='transaction_id';";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * adding new field to database
+     */
+    public function extendPayoneApiLogTransactionId()
+    {
+        $sql = "ALTER TABLE `s_plugin_mopt_payone_api_log` "
+            . "ADD COLUMN transaction_id VARCHAR(255);";
+        Shopware()->Db()->exec($sql);
+    }
 }

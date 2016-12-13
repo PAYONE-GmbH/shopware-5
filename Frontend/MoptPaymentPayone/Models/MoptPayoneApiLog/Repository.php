@@ -46,6 +46,7 @@ class Repository extends ModelRepository implements \Payone_Api_Persistence_Inte
             $apiLog->setCreationDate(date('Y-m-d\TH:i:sP'));
             $apiLog->setRequestDetails($request->__toString());
             $apiLog->setResponseDetails($response->__toString());
+            $apiLog->setTransactionId($response->getValue('txid'));
         }
 
         Shopware()->Models()->persist($apiLog);
