@@ -745,7 +745,22 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             if (!$config['submitBasket'] &&  ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName))) {
                 // do nothing
             } else {
-                $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getShipment(), $this->getUserData()));
+                $orderId = $this->Request()->getParam('orderId');
+                if($orderId){  
+                    //request was triggered from backend (abocommerce)
+                    $order = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->find($orderId);
+                    $orderPositions = array();
+                    foreach ($order->getDetails() as $position) {
+                        $orderPositions[] = $position->getId();
+                    }
+
+
+                    $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
+                        ->getInvoicingFromOrder($order, $orderPositions, true, false, true);      
+                    $request->setInvoicing($invoicing);
+                } else { // request was triggered from fronted checkout
+                    $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getShipment(), $this->getUserData()));
+                }   
             }
         }
 
@@ -1003,7 +1018,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $action = 'mopt_payone__' . $this->moptPayonePaymentHelper
                         ->getActionFromPaymentName($this->getPaymentShortName());
-
+        
+        if ($action == 'mopt_payone__payolutiondebit' || $action == 'mopt_payone__payolutioninvoice' || $action == 'mopt_payone__payolutioninstallment' ) {
+            $action = 'mopt_payone__payolution';
+        }
+            
         $response = $this->$action();
         $errorMessage = false;
         if ($response->isRedirect()) {
