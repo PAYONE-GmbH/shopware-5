@@ -1134,7 +1134,7 @@ class Mopt_PayoneParamBuilder
             $params['de'] = substr($position->getArticleName(), 0, 100); // description
             
             // Check if article is a AboCommerce Discount
-            $isAboCommerceDiscount = (strpos($position->getArticlename(), 'ABO_DISCOUNT') == false) ? false : true;
+            $isAboCommerceDiscount = (strpos($position->getArticlename(), 'ABO_DISCOUNT') === false) ? false : true;
             if ($order->getTaxFree()) {
                 $params['va'] = 0;
             } elseif ($position->getTaxRate() == 0 && !$isAboCommerceDiscount) {
