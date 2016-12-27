@@ -1132,9 +1132,12 @@ class Mopt_PayoneParamBuilder
             }
             $params['no'] = $position->getQuantity(); // ordered quantity
             $params['de'] = substr($position->getArticleName(), 0, 100); // description
+            
+            // Check if article is a AboCommerce Discount
+            $isAboCommerceDiscount = (strpos($position->getArticlename(), 'ABO_DISCOUNT') === false) ? false : true;
             if ($order->getTaxFree()) {
                 $params['va'] = 0;
-            } elseif ($position->getTaxRate() == 0) {
+            } elseif ($position->getTaxRate() == 0 && !$isAboCommerceDiscount) {
                 $params['va'] = number_format($position->getTax()->getTax(), 0, '.', '');
             } else {
                 $params['va'] = number_format($position->getTaxRate(), 0, '.', ''); // vat
