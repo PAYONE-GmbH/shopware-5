@@ -64,7 +64,7 @@ class MoptPayoneRatepay extends ModelEntity
     
     
     /**
-     * @var Currency $currency
+     * @var \Shopware\Models\Shop\Currency $currency
      * @ORM\ManyToOne(targetEntity="Shopware\Models\Shop\Currency")
      * @ORM\JoinColumn(name="currency_id", referencedColumnName="id")
      */

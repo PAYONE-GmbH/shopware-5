@@ -831,9 +831,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $payonepaymentmethods = $query->getArrayResult();
     
         $currencyRepo = Shopware()->Models()->getRepository('Shopware\Models\Shop\Currency');
-        $currencies = $currencyRepo->findall();
+        $currencies = $currencyRepo->findAll();
         $ratePayRepo = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay');
-        $ratepayConfigs = $ratePayRepo->findall();        
+        $ratepayConfigs = $ratePayRepo->findAll();
 
         $this->View()->assign(array(
             "payonepaymentmethods" => $payonepaymentmethods,
