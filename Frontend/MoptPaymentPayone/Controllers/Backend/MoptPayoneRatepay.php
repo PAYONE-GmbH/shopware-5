@@ -122,7 +122,7 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
                     $configStillExists = true;
                 }
             }
-            if ($configStillExists == false) {
+            if ($configStillExists === false) {
                 $this->getManager()->remove($ratepayConfig);
             }
         }
