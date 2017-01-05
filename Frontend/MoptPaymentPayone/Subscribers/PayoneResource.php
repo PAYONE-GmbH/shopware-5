@@ -4,7 +4,7 @@ namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
 
-class Resource implements SubscriberInterface
+class PayoneResource implements SubscriberInterface
 {
 
     /**
