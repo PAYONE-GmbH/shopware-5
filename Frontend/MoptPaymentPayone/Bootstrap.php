@@ -523,7 +523,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->getInstallHelper()->fcExtendConfigShowBicDataTable();
         }
 
-        // config option for Sofortüberweisung
+        // config option for SOFORT Überweisung
         if (!$this->getInstallHelper()->fcPayoneConfigShowSofortIbanBicExtensionExist()) {
             $this->getInstallHelper()->fcExtendConfigShowSofortIbanBicDataTable();
         }
