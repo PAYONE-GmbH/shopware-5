@@ -783,7 +783,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             {
                 xtype: 'combobox',
                 fieldLabel: '{s name=fieldlabel/authorisationMethod}Autorisierung{/s}',
-                helpText: '{s name=fieldlabelhelp/authorisationMethod}Die Vorautorisation ist die Eröffnung eines Zahlvorgangs auf der PAYONE-Plattform. Wenn die Zahlart es zulässt wird eine Reservierung des Betrages durchgeführt. Bei Zahlarten wie Sofortüberweisung.de wird der Betrag sofort eingezogen weil dort keine Reservierung durchgeführt werden kann. Bei Zahlarten wie z.B. Vorkasse oder Rechnung wird der Zahlvorgang nur auf der PAYONE – Plattform angelegt. Wenn die Autorisation durchgeführt wird, dann wird wenn möglich der Betrag sofort eingezogen{/s}',
+                helpText: '{s name=fieldlabelhelp/authorisationMethod}Die Vorautorisation ist die Eröffnung eines Zahlvorgangs auf der PAYONE-Plattform. Wenn die Zahlart es zulässt wird eine Reservierung des Betrages durchgeführt. Bei Zahlarten wie Sofortueberweisung.de wird der Betrag sofort eingezogen weil dort keine Reservierung durchgeführt werden kann. Bei Zahlarten wie z.B. Vorkasse oder Rechnung wird der Zahlvorgang nur auf der PAYONE – Plattform angelegt. Wenn die Autorisation durchgeführt wird, dann wird wenn möglich der Betrag sofort eingezogen{/s}',
                 name: 'authorisationMethod',
                 store: me.data.auth,
                 queryMode: 'local',
@@ -857,8 +857,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=fieldlabel/showSofortIbanBic}Bei Sofortüberweisung IBAN und BIC abfragen?{/s}',
-                helpText: '{s name=fieldlabelhelp/showSofortIbanBic}Bei Sofortüberweisung IBAN und BIC abfragen?{/s}',
+                fieldLabel: '{s name=fieldlabel/showSofortIbanBic}Bei SOFORT Überweisung IBAN und BIC abfragen?{/s}',
+                helpText: '{s name=fieldlabelhelp/showSofortIbanBic}Bei SOFORT Überweisung IBAN und BIC abfragen?{/s}',
                 name: 'showSofortIbanBic',
                 store: me.data.yesno,
                 queryMode: 'local',
