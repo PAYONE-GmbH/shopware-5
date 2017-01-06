@@ -83,7 +83,7 @@ class Mopt_PayoneInstallHelper
                 'position' => 8,),
             array(
                 'name' => 'mopt_payone__ibt_sofortueberweisung',
-                'description' => 'PAYONE Sofortüberweisung',
+                'description' => 'PAYONE SOFORT Überweisung',
                 'template' => 'mopt_paymentmean_sofort.tpl',
                 'position' => 9,),
             array(
