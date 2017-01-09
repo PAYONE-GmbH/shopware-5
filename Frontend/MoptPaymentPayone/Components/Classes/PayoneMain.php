@@ -95,7 +95,7 @@ class Mopt_PayoneMain
   /**
    * param builder getter
    *
-   * @return type
+   * @return Mopt_PayoneParamBuilder
    */
     public function getParamBuilder()
     {
@@ -125,7 +125,7 @@ class Mopt_PayoneMain
   /**
    * getter method for helper
    *
-   * @return type
+   * @return Mopt_PayoneHelper
    */
     public function getHelper()
     {
@@ -138,7 +138,7 @@ class Mopt_PayoneMain
   /**
    * getter method for payment helper
    *
-   * @return type
+   * @return Mopt_PayonePaymentHelper
    */
     public function getPaymentHelper()
     {

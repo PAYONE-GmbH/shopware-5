@@ -33,7 +33,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     /**
      * PayOne Builder
      *
-     * @var PayoneBuilder
+     * @var Payone_Builder
      */
     protected $payoneServiceBuilder = null;
     protected $service = null;
