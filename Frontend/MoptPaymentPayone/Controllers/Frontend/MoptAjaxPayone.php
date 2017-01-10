@@ -97,7 +97,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         //get config
         $paymentId = $this->session->moptPaymentId;
-        $paymentData = $this->session->moptPaymentData;
 
         $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
         $user = $this->admin->sGetUserData();
@@ -114,19 +113,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->setAddresschecktype($billingAddressChecktype);
         $request->setConsumerscoretype($config['consumerscoreCheckMode']);
 
-        $response = $service->score($request);
+        try {
+            $response = $service->score($request);
+        } catch (\Exception $e) {
 
-        if ($response->getStatus() == 'VALID') {
-            //save result
-            $this->moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
             unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
             unset($this->session->moptPaymentId);
-            echo json_encode(true);
-        } else {
-            //save error
-            $this->moptPayoneMain->getHelper()->saveConsumerScoreError($userId, $response);
-            unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
-            unset($this->session->moptPaymentId);
+
             //choose next action according to config
             if ($config['consumerscoreFailureHandling'] == 0) {
                 //abort
@@ -134,10 +127,26 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $this->moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
                 $this->moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
                 echo json_encode(false);
+                return;
             } else {
                 //proceed
                 echo json_encode(true);
+                return;
             }
+        }                
+        
+        if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
+            //save result
+            $this->moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
+            unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
+            unset($this->session->moptPaymentId);
+            echo json_encode(true);
+        } else { /* INVALID */
+            $this->moptPayoneMain->getHelper()->saveConsumerScoreError($userId, $response);
+            unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
+            unset($this->session->moptPaymentId);            
+            
+            echo json_encode(false);          
         }
     }
 
@@ -145,26 +154,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
-        unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
-
         $userId = $this->session->sUserId;
-        $config = $this->moptPayoneMain->getPayoneConfig($this->session->moptPaymentId);
-
         $this->moptPayoneMain->getHelper()->saveConsumerScoreDenied($userId);
 
         unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
         unset($this->session->moptPaymentId);
 
-        if ($config['consumerscoreFailureHandling'] == 0) {
-            //abort
-            //delete payment data and set to p1 prepayment
-            $this->moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
-            $this->moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
-            echo json_encode(false);
-        } else {
-            //proceed
-            echo json_encode(true);
-        }
+        echo json_encode(false);
     }
 
     public function saveOriginalAddressAction()

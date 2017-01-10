@@ -74,7 +74,14 @@ class Payone_Api_Service_Verification_AddressCheck extends Payone_Api_Service_Ab
             $response = $this->getMapperResponse()->map($responseRaw);
 
             $this->protocol($request, $response);
-        } catch (Exception $e) {
+
+            // throw exception for testing of connection failures
+            if ($requestParams['firstname'] === 'Doris' && $requestParams['lastname'] === 'Beckmann'
+                && $requestParams['city'] === 'Boitzenburger Land' && $requestParams['zip'] === '17269') {
+                throw new Exception("ConnectionFailureException");
+            }
+
+        } catch (\Exception $e) {
             $this->protocolException($e, $request);
             throw $e;
         }
