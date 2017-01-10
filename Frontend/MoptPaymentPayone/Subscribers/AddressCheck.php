@@ -130,8 +130,18 @@ class AddressCheck implements SubscriberInterface
                 $config['consumerscoreCheckMoment'] == 0
             ) {
                 $userData = $user['additional']['user']; //get user data
-                $response = $this->performConsumerScoreCheck($config, $user['billingaddress'], $paymentID);
-                $userData['moptPayoneConsumerscoreResult'] = $response->getStatus(); // update userdata with result
+                try {
+                    $response = $this->performConsumerScoreCheck($config, $user['billingaddress'], $paymentID);
+                } catch (\Exception $e) {
+                    
+                    if ($config['consumerscoreFailureHandling'] === 0) {
+                        $arguments->setReturn(true);  
+                    } else {
+                        $arguments->setReturn(false);
+                    }   
+                    return;
+                }
+                $userData['moptPayoneConsumerscoreResult'] = $response->getStatus(); //update userdata with result
                 $userData['moptPayoneConsumerscoreDate'] = date('Y-m-d');
 
                 if (!$this->handleConsumerScoreCheckResult($response, $config, $userData['id'])) {
@@ -176,7 +186,12 @@ class AddressCheck implements SubscriberInterface
         $request->setMode($mopt_payone__main->getHelper()
             ->getApiModeFromId($config['adresscheckLiveMode']));
 
-        $response = $service->check($request);
+        try {
+            $response = $service->check($request);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
         return $response;
     }
 
@@ -204,7 +219,11 @@ class AddressCheck implements SubscriberInterface
         $request->setAddresschecktype($billingAddressChecktype);
         $request->setConsumerscoretype($config['consumerscoreCheckMode']);
 
-        $response = $service->score($request);
+        try {
+            $response = $service->score($request);
+        } catch (\Exception $e) {
+            throw $e;
+        }
         return $response;
     }
 
@@ -221,6 +240,7 @@ class AddressCheck implements SubscriberInterface
         $ret = [];
         /** @var \Mopt_PayoneMain $moptPayoneMain */
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
+        $session = Shopware()->Session();
 
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
             $secStatus = (int) $response->getSecstatus();
@@ -333,6 +353,8 @@ class AddressCheck implements SubscriberInterface
         $ret = [];
         /** @var \Mopt_PayoneMain $moptPayoneMain */
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
+        $session = Shopware()->Session();
+
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
             $secStatus = (int) $response->getSecstatus();
             $mappedPersonStatus = $moptPayoneMain->getHelper()
@@ -448,24 +470,14 @@ class AddressCheck implements SubscriberInterface
         // handle ERROR, VALID, INVALID
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
             // save result
-            $moptPayoneMain->getHelper()
-                ->saveConsumerScoreCheckResult($userId, $response);
-            return true;
+            $moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
+           return true;
         } else {
-            // save error
-            $moptPayoneMain->getHelper()
-                ->saveConsumerScoreError($userId, $response);
-            // choose next action according to config
-            if ($config['consumerscoreFailureHandling'] == 0) {
-                // cancel
-                return false;
-            } else {
-                // proceed
-                return true;
-            }
+            // save ERROR, INVALID
+            $moptPayoneMain->getHelper()->saveConsumerScoreError($userId, $response);
+            return false;
         }
     }
-
 
     /**
      * Perform risk checks
@@ -679,9 +691,9 @@ class AddressCheck implements SubscriberInterface
   /**
    * billingaddress addresscheck
    *
-   * @param \Enlight_Hook_HookArgs $arguments
+   * @param \Enlight_Event_EventArgs $arguments
    */
-    public function onValidateStep2(\Enlight_Hook_HookArgs $arguments)
+    public function onValidateStep2(\Enlight_Event_EventArgs $arguments)
     {
         $ret = $arguments->getReturn();
 
@@ -777,7 +789,7 @@ class AddressCheck implements SubscriberInterface
                     $arguments->setReturn($ret);
                     return;
                 }
-                if ($response->getStatus() == 'INVALID' || $response->getStatus() == 'ERROR') {
+                if ($response->getStatus() === \Payone_Api_Enum_ResponseType::INVALID || $response->getStatus() === \Payone_Api_Enum_ResponseType::ERROR) {
                     $moptPayoneMain->getHelper()->saveBillingAddressError($userId, $response);
                     $session->moptPayoneBillingAddresscheckResult = serialize($response);
 
@@ -859,10 +871,10 @@ class AddressCheck implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config         = $moptPayoneMain->getPayoneConfig();
 
-        if ($result->getStatus() === 'INVALID' || $result->getStatus() === 'ERROR') {
+        if ($result->getStatus() === \Payone_Api_Enum_ResponseType::INVALID || $result->getStatus() === \Payone_Api_Enum_ResponseType::ERROR) {
             $moptPayoneMain->getHelper()->saveBillingAddressError($userId, $result);
         } else {
-            if ($result->getStatus() === 'VALID' &&
+            if ($result->getStatus() === \Payone_Api_Enum_ResponseType::VALID &&
                 $result->getSecstatus() === '20' &&
                 $config['adresscheckAutomaticCorrection'] === 0 &&
                 Shopware()->Modules()->Admin()->sSYSTEM->_GET['action'] === 'saveRegister'
@@ -884,9 +896,9 @@ class AddressCheck implements SubscriberInterface
    *
    * shipmentaddress addresscheck
    *
-   * @param \Enlight_Hook_HookArgs $arguments
+   * @param \Enlight_Event_EventArgs $arguments
    */
-    public function onValidateStep2ShippingAddress(\Enlight_Hook_HookArgs $arguments)
+    public function onValidateStep2ShippingAddress(\Enlight_Event_EventArgs $arguments)
     {
         $ret = $arguments->getReturn();
 
@@ -933,7 +945,7 @@ class AddressCheck implements SubscriberInterface
                 $shippingAddressChecktype
             );
 
-            if ($response->getStatus() == 'VALID') {
+            if ($response->getStatus() === \Payone_Api_Enum_ResponseType::VALID) {
                 $secStatus = (int) $response->getSecstatus();
                 if ($secStatus === 10) {
                     // valid address returned, save result to session
@@ -966,7 +978,7 @@ class AddressCheck implements SubscriberInterface
                 $arguments->setReturn($ret);
                 return;
             }
-            if ($response->getStatus() == 'INVALID' || $response->getStatus() == 'ERROR') {
+            if ($response->getStatus() === \Payone_Api_Enum_ResponseType::INVALID || $response->getStatus() == \Payone_Api_Enum_ResponseType::ERROR) {
                 $ret['sErrorFlag']['mopt_payone_configured_message']     = true;
                 $ret['sErrorMessages']['mopt_payone_configured_message'] = $moptPayoneMain->getPaymentHelper()
                         ->moptGetErrorMessageFromErrorCodeViaSnippet('addresscheck', $response->getErrorcode());
@@ -1035,10 +1047,10 @@ class AddressCheck implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config         = $moptPayoneMain->getPayoneConfig();
 
-        if ($result->getStatus() == 'INVALID' || $result->getStatus() == 'ERROR') {
+        if ($result->getStatus() === \Payone_Api_Enum_ResponseType::INVALID || $result->getStatus() === \Payone_Api_Enum_ResponseType::ERROR) {
             $moptPayoneMain->getHelper()->saveShippingAddressError($userId, $result);
         } else {
-            if ($result->getStatus() === 'VALID' &&
+            if ($result->getStatus() === \Payone_Api_Enum_ResponseType::VALID &&
                 $result->getSecstatus() === '20' &&
                 $config['adresscheckAutomaticCorrection'] === 0 &&
                 Shopware()->Modules()->Admin()->sSYSTEM->_GET['action'] === 'saveRegister'
@@ -1158,7 +1170,22 @@ class AddressCheck implements SubscriberInterface
         if ($this->getCustomerCheckIsNeeded($config, $userId, $basketValue, false)) {
             // perform check if prechoice is configured
             if ($config['consumerscoreCheckMoment'] == 0) {
-                $response = $this->performConsumerScoreCheck($config, $billingAddressData, 0);
+                try {
+                    $response = $this->performConsumerScoreCheck($config, $billingAddressData, 0);
+                } catch (\Exception $e) {
+                    if ($config['consumerscoreFailureHandling'] == 0) {
+                        //abort
+                        //delete payment data and set to payone prepayment
+                        $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
+                        $moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
+                        $this->forward('payment', 'account', null, array('sTarget' => 'checkout'));
+                        return;
+                    } else {
+                        // continue
+                        $this->forward('payment', 'account', null, array('sTarget' => 'checkout'));
+                        return;
+                    }
+                }
                 if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
                     // cancel, redirect to payment choice
                     $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);

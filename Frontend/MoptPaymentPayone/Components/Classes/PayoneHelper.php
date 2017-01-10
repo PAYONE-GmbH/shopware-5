@@ -509,7 +509,9 @@ class Mopt_PayoneHelper
 
         $userAttribute->setMoptPayoneConsumerscoreDate(date('Y-m-d'));
         $userAttribute->setMoptPayoneConsumerscoreResult($response->getStatus());
-
+        // also set Score to "R" in case some previous check was "G"
+        $userAttribute->setMoptPayoneConsumerscoreColor('R');
+        
         Shopware()->Models()->persist($userAttribute);
         Shopware()->Models()->flush();
     }
@@ -531,6 +533,8 @@ class Mopt_PayoneHelper
 
         $userAttribute->setMoptPayoneConsumerscoreDate(date('Y-m-d'));
         $userAttribute->setMoptPayoneConsumerscoreResult('DENIED');
+        $userAttribute->setMoptPayoneConsumerscoreColor('R');
+        $userAttribute->setMoptPayoneConsumerscoreValue('100');        
 
         Shopware()->Models()->persist($userAttribute);
         Shopware()->Models()->flush();
@@ -655,19 +659,29 @@ class Mopt_PayoneHelper
    */
     public function getScoreFromUserAccordingToPaymentConfig($user, $config)
     {
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {   
+            $moptScoreColor = $user['additional']['user']['mopt_payone_consumerscore_color'];
+            $moptBillingColor = $user['billingaddress']['mopt_payone_consumerscore_color'];
+            $moptShipmentColor = $user['shippingaddress']['mopt_payone_consumerscore_color'];             
+        } else {
+            $moptScoreColor = $user['additional']['user']['moptPayoneConsumerscoreColor'];
+            $moptBillingColor = $user['billingaddress']['moptPayoneConsumerscoreColor'];
+            $moptShipmentColor = $user['shippingaddress']['moptPayoneConsumerscoreColor'];                  
+        }
+        
         $billingColor = $this->getSpecificScoreFromUser(
-            $user['billingaddress']['moptPayoneConsumerscoreColor'],
+            $moptBillingColor,
             $config['adresscheckActive'] && $config['adresscheckBillingAdress'] != 0
         );
         $shipmentColor = $this->getSpecificScoreFromUser(
-            $user['shippingaddress']['moptPayoneConsumerscoreColor'],
+            $moptShipmentColor,
             $config['adresscheckActive'] && $config['adresscheckShippingAdress'] != 0
         );
         $consumerScoreColor = $this->getSpecificScoreFromUser(
-            $user['additional']['user']['moptPayoneConsumerscoreColor'],
+            $moptScoreColor,
             $config['consumerscoreActive']
         );
-    
+
         $biggestScore = max($billingColor, $shipmentColor, $consumerScoreColor);
     
         if ($biggestScore == -1) {
