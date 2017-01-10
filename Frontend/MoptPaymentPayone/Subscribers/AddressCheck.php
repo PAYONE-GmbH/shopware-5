@@ -110,6 +110,7 @@ class AddressCheck implements SubscriberInterface
             );
         } else {
             $paymentID = Shopware()->Session()->moptRiskCheckPaymentId;
+            /** @var \Mopt_PayoneMain $moptPayoneMain */
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
             $config = $moptPayoneMain->getPayoneConfig($paymentID);
             
@@ -187,7 +188,7 @@ class AddressCheck implements SubscriberInterface
             ->getApiModeFromId($config['adresscheckLiveMode']));
 
         try {
-            $response = $service->check($request);
+            $response = $service->check($request, $config['liveMode']);
         } catch (\Exception $e) {
             throw $e;
         }
