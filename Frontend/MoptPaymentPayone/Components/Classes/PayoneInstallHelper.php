@@ -29,6 +29,215 @@
  */
 class Mopt_PayoneInstallHelper
 {
+    /**
+     * Type mapping from Shopware 5.2 to improve legacy compatibility,
+     * as engine/Shopware/Bundle/AttributeBundle/Service/TypeMapping.php
+     * is not present in Shopware versions < 5.2.0
+     */
+    const TYPE_STRING = 'string';
+    const TYPE_TEXT = 'text';
+    const TYPE_HTML = 'html';
+    const TYPE_INTEGER = 'integer';
+    const TYPE_FLOAT = 'float';
+    const TYPE_BOOLEAN = 'boolean';
+    const TYPE_DATE = 'date';
+    const TYPE_DATETIME = 'datetime';
+    const TYPE_COMBOBOX = 'combobox';
+    const TYPE_SINGLE_SELECTION = 'single_selection';
+    const TYPE_MULTI_SELECTION = 'multi_selection';
+
+    /**
+     * @var array
+     */
+    private $types = [
+        self::TYPE_STRING   => [
+            'sql' => 'VARCHAR(500)',
+            'dbal' => 'string',
+            'allowDefaultValue' => true,
+            'quoteDefaultValue' => true,
+            'elastic' => ['type' => 'string']
+        ],
+        self::TYPE_TEXT     => [
+            'sql' => 'TEXT',
+            'dbal' => 'text',
+            'allowDefaultValue' => false,
+            'quoteDefaultValue' => false,
+            'elastic' => ['type' => 'string']
+        ],
+        self::TYPE_HTML     => [
+            'sql' => 'MEDIUMTEXT',
+            'dbal' => 'text',
+            'allowDefaultValue' => false,
+            'quoteDefaultValue' => false,
+            'elastic' => ['type' => 'string']
+        ],
+        self::TYPE_INTEGER  => [
+            'sql' => 'INT(11)',
+            'dbal' => 'integer',
+            'allowDefaultValue' => true,
+            'quoteDefaultValue' => false,
+            'elastic' => ['type' => 'long']
+        ],
+        self::TYPE_FLOAT    => [
+            'sql' => 'DOUBLE',
+            'dbal' => 'float',
+            'allowDefaultValue' => true,
+            'quoteDefaultValue' => false,
+            'elastic' => ['type' => 'double']
+        ],
+        self::TYPE_BOOLEAN  => [
+            'sql' => 'INT(1)',
+            'dbal' => 'boolean',
+            'allowDefaultValue' => true,
+            'quoteDefaultValue' => false,
+            'elastic' => ['type' => 'boolean']
+        ],
+        self::TYPE_DATE     => [
+            'sql' => 'DATE',
+            'dbal' => 'date',
+            'allowDefaultValue' => true,
+            'quoteDefaultValue' => true,
+            'elastic' => ['type' => 'date', 'format' => 'yyyy-MM-dd']
+        ],
+        self::TYPE_DATETIME => [
+            'sql' => 'DATETIME',
+            'dbal' => 'datetime',
+            'allowDefaultValue' => true,
+            'quoteDefaultValue' => true,
+            'elastic' => ['type' => 'date', 'format' => 'yyyy-MM-dd HH:mm:ss']
+        ],
+        self::TYPE_COMBOBOX => [
+            'sql' => 'MEDIUMTEXT',
+            'dbal' => 'text',
+            'allowDefaultValue' => false,
+            'quoteDefaultValue' => false,
+            'elastic' => ['type' => 'string']
+        ],
+        self::TYPE_SINGLE_SELECTION => [
+            'sql' => 'VARCHAR(500)',
+            'dbal' => 'text',
+            'allowDefaultValue' => true,
+            'quoteDefaultValue' => true,
+            'elastic' => ['type' => 'string']
+        ],
+        self::TYPE_MULTI_SELECTION => [
+            'sql' => 'MEDIUMTEXT',
+            'dbal' => 'text',
+            'allowDefaultValue' => false,
+            'quoteDefaultValue' => false,
+            'elastic' => ['type' => 'string']
+        ]
+    ];
+
+    /**
+     * returns mapped SQL type from unified type string
+     *
+     * Type mapping from Shopware 5.2 to improve legacy compatibility,
+     * as engine/Shopware/Bundle/AttributeBundle/Service/TypeMapping.php
+     * is not present in Shopware versions < 5.2.0
+     *
+     * @param string $type
+     * @return string
+     */
+    public function unifiedToSQL($type)
+    {
+        $type = strtolower($type);
+        if (!isset($this->types[$type])) {
+            return $this->types['string']['sql'];
+        }
+        $mapping = $this->types[$type];
+        return $mapping['sql'];
+    }
+
+    /**
+     * - returns the definition for attribute table extensions
+     * - intended to be used with Shopware version >= 5.2.0
+     * - Shopware versions < 5.2.0 can use the definitions by mapping
+     * the types with unifiedToSQL() of this helper class
+     *
+     * @param int $pluginId
+     * @return array
+     */
+    public function moptAttributeExtensionsArray($pluginId)
+    {
+        return [
+            's_user_attributes' => [
+                'consumerscore_result'              => 'string',
+                'consumerscore_date'                => 'date',
+                'consumerscore_color'               => 'string',
+                'consumerscore_value'               => 'integer',
+            ],
+            's_user_billingaddress_attributes' => [
+                'addresscheck_result'               => 'string',
+                'addresscheck_date'                 => 'date',
+                'addresscheck_personstatus'         => 'string',
+                'consumerscore_result'              => 'string',
+                'consumerscore_date'                => 'date',
+                'consumerscore_color'               => 'string',
+                'consumerscore_value'               => 'integer',
+            ],
+            's_user_shippingaddress_attributes' => [
+                'addresscheck_result'               => 'string',
+                'addresscheck_date'                 => 'date',
+                'addresscheck_personstatus'         => 'string',
+                'consumerscore_color'               => 'string',
+                'consumerscore_value'               => 'integer',
+            ],
+            's_order_attributes' => [
+                'txid'                              => 'integer',
+                'status'                            => 'string',
+                'sequencenumber'                    => 'integer',
+                'is_authorized'                     => 'boolean',
+                'is_finally_captured'               => 'boolean',
+                'clearing_data'                     => 'text',
+                // since 2.1.4 - save shipping cost with order
+                'ship_captured'                     => ['float',
+                    [
+                        'label' => 'Versandkosten bisher eingezogen:',
+                        'helpText' => '',
+                        'displayInBackend' => true,
+                        'pluginId' => $pluginId
+                    ]
+                ],
+                'ship_debit'                        => ['float',
+                    [
+                        'label' => 'Versandkosten bisher gutgeschrieben:',
+                        'helpText' => '',
+                        'displayInBackend' => true,
+                        'pluginId' => $pluginId
+                    ]
+                ],
+                // since 2.3.0 - save payment data for abo commerce support
+                'payment_data'                      => 'text',
+                // since 2.5.2 - save order hash and payment reference
+                'payment_reference'                 => 'string',
+                'order_hash'                        => 'string',
+                // since 3.3.8 - Payolution Payment Order extensions
+                'payolution_workorder_id'           => ['string',
+                    [
+                        'label' => 'Workorder ID:',
+                        'helpText' => '',
+                        'displayInBackend' => true,
+                        'pluginId' => $pluginId
+                    ]
+                ],
+                'payolution_clearing_reference'     => ['string',
+                    [
+                        'label' => 'Clearing Reference:',
+                        'helpText' => '',
+                        'displayInBackend' => true,
+                        'pluginId' => $pluginId
+                    ]
+                ],
+            ],
+            's_order_details_attributes' => [
+                'payment_status'                    => 'string',
+                'shipment_date'                     => 'date',
+                'captured'                          => 'float',
+                'debit'                             => 'float',
+            ],
+        ];
+    }
 
     /**
      * returns array of PAYONE payment methods
@@ -325,17 +534,6 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
-     * add order attributes for order hash and generated payment reference
-     */
-    public function moptExtendOrderAttributes()
-    {
-        Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'payment_reference', 'VARCHAR(100)', true, null);
-        Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'order_hash', 'VARCHAR(255)', true, null);
-
-        Shopware()->Models()->generateAttributeModels(array('s_order_attributes'));
-    }
-
-    /**
      * insert document extensions (used to display additional PAYONE data) if not already stored in DB
      */
     public function moptInsertDocumentsExtensionIntoDatabaseIfNotExist()
@@ -450,218 +648,6 @@ class Mopt_PayoneInstallHelper
       ";
             Shopware()->Db()->query($sql);
         }          
-    }
-
-    /**
-     * check if user attributes are already extended
-     *
-     * @return boolean
-     */
-    public function moptUserAttributesExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_user_attributes'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_consumerscore_result'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * check if billing address attributes are already extended
-     *
-     * @return boolean
-     */
-    public function moptBillingAddressAttributesExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_user_billingaddress_attributes'
-               AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_addresscheck_result'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * check if shipping address attributes are already extended
-     *
-     * @return boolean
-     */
-    public function moptShippingAddressAttributesExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_user_shippingaddress_attributes'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_addresscheck_result'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * check if order attributes are already extended
-     *
-     * @return boolean
-     */
-    public function moptOrderAttributesExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_txid'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-
-        return true;
-    }
-    
-
-    /**
-     * check if order attributes for Payolution Payments are already extended
-     *
-     * @return boolean
-     */
-    public function moptPayolutionWorkOrderIdAttributeExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_payolution_workorder_id'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-        return true;
-    }
-    
-    /**
-     * check if order attributes for Payolution Payments are already extended
-     *
-     * @return boolean
-     */
-    public function moptPayolutionClearingReferenceAttributeExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_payolution_clearing_reference'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * check if order details attributes are already extended
-     *
-     * @return boolean
-     */
-    public function moptOrderDetailsAttributesExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_details_attributes'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_payment_status'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * check if 2nd order details attributes extension is already made
-     * needed to for new shipping costs handling
-     *
-     * @return boolean
-     */
-    public function moptOrderAttributesShippingCostsExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_ship_captured'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * check if 3rd order attributes extension is already made
-     * needed to for abo commerce support
-     *
-     * @return boolean
-     */
-    public function moptOrderAttributesPaymentDataExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_payment_data'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * check if 4th order attributes extension is already made
-     * needed to save orderhash
-     *
-     * @return boolean
-     */
-    public function moptOrderAttributesOrderHashExist()
-    {
-        $DBConfig = Shopware()->Db()->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_order_attributes'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='mopt_payone_order_hash'";
-        $result = Shopware()->Db()->query($sql);
-
-        if ($result->rowCount() === 0) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
