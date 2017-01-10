@@ -44,7 +44,7 @@ class Mopt_PayoneHelper
    * @param string $id
    * @param string $configuredCountriesForCheck
    * @param string $selectedCountry
-   * @return string
+   * @return string|boolean
    */
     public function getAddressChecktypeFromId($id, $configuredCountriesForCheck, $selectedCountry)
     {
@@ -56,15 +56,14 @@ class Mopt_PayoneHelper
         }
       
         switch ($id) {
-            case 0:
-                $checkType = false;
-                break;
             case 1:
                 $checkType = Payone_Api_Enum_AddressCheckType::BASIC;
                 break;
             case 2:
                 $checkType = Payone_Api_Enum_AddressCheckType::PERSON;
                 break;
+            default:
+                $checkType = false;
         }
 
         return $checkType;
@@ -147,7 +146,7 @@ class Mopt_PayoneHelper
             $selectedCountry
         );
 
-        return $billingAddressChecktype;
+        return ($billingAddressChecktype !== false);
     }
 
   /**
@@ -165,14 +164,14 @@ class Mopt_PayoneHelper
             return false;
         }
 
-      //check if seperate shipping address is saved
+        // check if seperate shipping address is saved
         $sql        = 'SELECT `id` FROM `s_user_shippingaddress` WHERE userID = ?';
         $shippingId = Shopware()->Db()->fetchOne($sql, $userId);
         if (!$shippingId) {
             return false;
         }
 
-      //no check when basket value outside configured values
+        // no check when basket value outside configured values
         if ($basketValue < $config['adresscheckMinBasket'] || $basketValue > $config['adresscheckMaxBasket']) {
             return false;
         }
@@ -183,7 +182,7 @@ class Mopt_PayoneHelper
             $selectedCountry
         );
 
-        return $shippingAddressChecktype;
+        return ($shippingAddressChecktype !== false);
     }
 
   /**
@@ -207,7 +206,7 @@ class Mopt_PayoneHelper
 
         $shippingAddressChecktype = $this->getConsumerScoreChecktypeFromId($config['consumerscoreCheckMode']);
 
-        return $shippingAddressChecktype;
+        return ($shippingAddressChecktype !== false);
     }
 
   /**

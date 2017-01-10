@@ -523,7 +523,7 @@ class AddressCheck implements SubscriberInterface
             );
 
         if ($session->moptAddressCheckNeedsUserVerification) {
-            $billingAddressChecktype     = false;
+            $billingAddressChecktype = false;
         }
         $userBillingAddressCheckData = $moptPayoneMain->getHelper()
             ->getBillingAddresscheckDataFromUserId($userId);
@@ -754,7 +754,7 @@ class AddressCheck implements SubscriberInterface
                 );
 
                 // @TODO refactor, extract methods
-                if ($response->getStatus() == 'VALID') {
+                if ($response instanceof \Payone_Api_Response_AddressCheck_Valid) {
                     $session   = Shopware()->Session();
                     $secStatus = (int) $response->getSecstatus();
                     // check secstatus and config
@@ -789,7 +789,7 @@ class AddressCheck implements SubscriberInterface
                     $arguments->setReturn($ret);
                     return;
                 }
-                if ($response->getStatus() === \Payone_Api_Enum_ResponseType::INVALID || $response->getStatus() === \Payone_Api_Enum_ResponseType::ERROR) {
+                if ($response instanceof \Payone_Api_Response_AddressCheck_Invalid || $response instanceof \Payone_Api_Response_Error) {
                     $moptPayoneMain->getHelper()->saveBillingAddressError($userId, $response);
                     $session->moptPayoneBillingAddresscheckResult = serialize($response);
 
@@ -945,7 +945,7 @@ class AddressCheck implements SubscriberInterface
                 $shippingAddressChecktype
             );
 
-            if ($response->getStatus() === \Payone_Api_Enum_ResponseType::VALID) {
+            if ($response instanceof \Payone_Api_Response_AddressCheck_Valid) {
                 $secStatus = (int) $response->getSecstatus();
                 if ($secStatus === 10) {
                     // valid address returned, save result to session
@@ -978,7 +978,7 @@ class AddressCheck implements SubscriberInterface
                 $arguments->setReturn($ret);
                 return;
             }
-            if ($response->getStatus() === \Payone_Api_Enum_ResponseType::INVALID || $response->getStatus() == \Payone_Api_Enum_ResponseType::ERROR) {
+            if ($response instanceof \Payone_Api_Response_AddressCheck_Invalid || $response instanceof \Payone_Api_Response_Error) {
                 $ret['sErrorFlag']['mopt_payone_configured_message']     = true;
                 $ret['sErrorMessages']['mopt_payone_configured_message'] = $moptPayoneMain->getPaymentHelper()
                         ->moptGetErrorMessageFromErrorCodeViaSnippet('addresscheck', $response->getErrorcode());
