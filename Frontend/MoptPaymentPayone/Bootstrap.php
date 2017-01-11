@@ -507,6 +507,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 if ($this->assertMinimumVersion('5.2')) {
                     $attributeService->update($table, $prefix . '_' . $attribute, $type, $data);
                 } else {
+                    $type = $this->getInstallHelper()->unifiedToSQL($type);
                     /** @noinspection PhpDeprecationInspection */
                     Shopware()->Models()->addAttribute($table, $prefix, $attribute, $type, true, null);
                 }
