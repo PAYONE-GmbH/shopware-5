@@ -191,7 +191,6 @@ class Mopt_PayoneParamBuilder
         if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
             if ($order->getBilling()->getCompany()) {
                 $params['payolution_b2b'] = true;
-                $params['vatid'] = $order->getBilling()->getUstid();
             }
         }
         
