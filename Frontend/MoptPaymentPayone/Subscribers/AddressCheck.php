@@ -38,11 +38,11 @@ class AddressCheck implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            //risk management:Frontend extend sAdmin prepare payone risk checks
+            // risk management:Frontend extend sAdmin prepare payone risk checks
             'sAdmin::sManageRisks::before' => 'sAdmin__sManageRisks__before',
-            //risk management:Frontend extend sAdmin clean up payone risk checks
+            // risk management:Frontend extend sAdmin clean up payone risk checks
             'sAdmin::sManageRisks::after' => 'sAdmin__sManageRisks__after',
-            //risk management:Frontend extend sAdmin - check payone risks
+            // risk management:Frontend extend sAdmin - check payone risks
             'sAdmin::executeRiskRule::replace' => 'sAdmin__executeRiskRule',
             // check if addresscheck is valid if activated and group creditcards
             'Shopware_Controllers_Frontend_Checkout::confirmAction::after' => 'onConfirmAction',
@@ -166,6 +166,7 @@ class AddressCheck implements SubscriberInterface
      * @param \Mopt_PayoneMain $mopt_payone__main
      * @param string $billingAddressChecktype
      * @return \Payone_Api_Response_AddressCheck_Invalid|\Payone_Api_Response_AddressCheck_Valid|\Payone_Api_Response_Error
+     * @throws \Exception
      */
     protected function performAddressCheck(
         array $config,
@@ -201,6 +202,7 @@ class AddressCheck implements SubscriberInterface
      * @param array $addressData
      * @param int $paymentID
      * @return \Payone_Api_Response_Consumerscore_Invalid|\Payone_Api_Response_Consumerscore_Valid|\Payone_Api_Response_Error
+     * @throws \Exception
      */
     protected function performConsumerScoreCheck(array $config, array $addressData, $paymentID = 0)
     {
@@ -406,11 +408,9 @@ class AddressCheck implements SubscriberInterface
                         // add error message
                         $ret['sErrorFlag']['mopt_payone_configured_message'] = true;
                         $ret['sErrorFlag']['mopt_payone_corrected_message'] = true;
-                        $ret['sErrorMessages']['mopt_payone_configured_message'] =
-                            $moptPayoneMain->getPaymentHelper()
+                        $ret['sErrorMessages']['mopt_payone_configured_message'] = $moptPayoneMain->getPaymentHelper()
                             ->moptGetErrorMessageFromErrorCodeViaSnippet('addresscheck');
-                        $ret['sErrorMessages']['mopt_payone_corrected_message'] =
-                            $moptPayoneMain->getPaymentHelper()
+                        $ret['sErrorMessages']['mopt_payone_corrected_message'] = $moptPayoneMain->getPaymentHelper()
                             ->moptGetErrorMessageFromErrorCodeViaSnippet('addresscheck', 'corrected');
                         // add decisionbox to template
                         $session->moptShippingAddressCheckNeedsUserVerification = true;
@@ -434,7 +434,7 @@ class AddressCheck implements SubscriberInterface
             $moptPayoneMain->getHelper()->saveShippingAddressError($userId, $response);
 
             switch ($config['adresscheckFailureHandling']) {
-                case 0: //cancel transaction -> redirect to payment choice
+                case 0: // cancel transaction -> redirect to payment choice
                     $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
                     break;
 
@@ -472,7 +472,7 @@ class AddressCheck implements SubscriberInterface
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
             // save result
             $moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
-           return true;
+            return true;
         } else {
             // save ERROR, INVALID
             $moptPayoneMain->getHelper()->saveConsumerScoreError($userId, $response);
@@ -504,7 +504,7 @@ class AddressCheck implements SubscriberInterface
         }
     
         $paymentId                      = $subject->View()->sPayment['id'];
-        $config                         = $moptPayoneMain->getPayoneConfig($paymentId); //get config by payment id
+        $config                         = $moptPayoneMain->getPayoneConfig($paymentId); // get config by payment id
         $basketValue                    = $subject->View()->sAmount;
         $userData                       = $subject->View()->sUserData;
         $billingAddressData             = $userData['billingaddress'];
@@ -790,7 +790,9 @@ class AddressCheck implements SubscriberInterface
                     $arguments->setReturn($ret);
                     return;
                 }
-                if ($response instanceof \Payone_Api_Response_AddressCheck_Invalid || $response instanceof \Payone_Api_Response_Error) {
+                if ($response instanceof \Payone_Api_Response_AddressCheck_Invalid ||
+                    $response instanceof \Payone_Api_Response_Error
+                ) {
                     $moptPayoneMain->getHelper()->saveBillingAddressError($userId, $response);
                     $session->moptPayoneBillingAddresscheckResult = serialize($response);
 
@@ -872,7 +874,9 @@ class AddressCheck implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config         = $moptPayoneMain->getPayoneConfig();
 
-        if ($result->getStatus() === \Payone_Api_Enum_ResponseType::INVALID || $result->getStatus() === \Payone_Api_Enum_ResponseType::ERROR) {
+        if ($result->getStatus() === \Payone_Api_Enum_ResponseType::INVALID ||
+            $result->getStatus() === \Payone_Api_Enum_ResponseType::ERROR
+        ) {
             $moptPayoneMain->getHelper()->saveBillingAddressError($userId, $result);
         } else {
             if ($result->getStatus() === \Payone_Api_Enum_ResponseType::VALID &&
@@ -979,8 +983,10 @@ class AddressCheck implements SubscriberInterface
                 $arguments->setReturn($ret);
                 return;
             }
-            if ($response instanceof \Payone_Api_Response_AddressCheck_Invalid || $response instanceof \Payone_Api_Response_Error) {
-                $ret['sErrorFlag']['mopt_payone_configured_message']     = true;
+            if ($response instanceof \Payone_Api_Response_AddressCheck_Invalid ||
+                $response instanceof \Payone_Api_Response_Error
+            ) {
+                $ret['sErrorFlag']['mopt_payone_configured_message'] = true;
                 $ret['sErrorMessages']['mopt_payone_configured_message'] = $moptPayoneMain->getPaymentHelper()
                         ->moptGetErrorMessageFromErrorCodeViaSnippet('addresscheck', $response->getErrorcode());
 
@@ -1048,7 +1054,9 @@ class AddressCheck implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config         = $moptPayoneMain->getPayoneConfig();
 
-        if ($result->getStatus() === \Payone_Api_Enum_ResponseType::INVALID || $result->getStatus() === \Payone_Api_Enum_ResponseType::ERROR) {
+        if ($result->getStatus() === \Payone_Api_Enum_ResponseType::INVALID ||
+            $result->getStatus() === \Payone_Api_Enum_ResponseType::ERROR
+        ) {
             $moptPayoneMain->getHelper()->saveShippingAddressError($userId, $result);
         } else {
             if ($result->getStatus() === \Payone_Api_Enum_ResponseType::VALID &&
@@ -1175,15 +1183,14 @@ class AddressCheck implements SubscriberInterface
                     $response = $this->performConsumerScoreCheck($config, $billingAddressData, 0);
                 } catch (\Exception $e) {
                     if ($config['consumerscoreFailureHandling'] == 0) {
-                        //abort
-                        //delete payment data and set to payone prepayment
+                        // abort and delete payment data and set to payone prepayment
                         $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
                         $moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
-                        $this->forward('payment', 'account', null, array('sTarget' => 'checkout'));
+                        $this->forward('payment', 'account', null, ['sTarget' => 'checkout']);
                         return;
                     } else {
                         // continue
-                        $this->forward('payment', 'account', null, array('sTarget' => 'checkout'));
+                        $this->forward('payment', 'account', null, ['sTarget' => 'checkout']);
                         return;
                     }
                 }
