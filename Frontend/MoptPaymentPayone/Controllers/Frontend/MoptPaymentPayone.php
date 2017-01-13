@@ -492,6 +492,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function errorAction()
     {
+        $session = Shopware()->Session();
+        $this->View()->errormessage = $session->payoneErrorMessage;        
     }
 
     /**
@@ -577,7 +579,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $session->ratepayError = $response->getCustomermessage();
             $this->forward('ratepayError');
         } elseif ($response->getStatus() == 'ERROR') {
-            $this->View()->errormessage = $this->moptPayoneMain->getPaymentHelper()
+            $session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()
                     ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
             $this->forward('error');
         } else {
@@ -623,12 +625,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     protected function mopt_payone__handleRedirectFeedback($response)
     {
+        $session = Shopware()->Session();
         if ($response->getStatus() == 'ERROR') {
-            $this->View()->errormessage = $this->moptPayoneMain->getPaymentHelper()
+            $session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()
                     ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
             $this->forward('error');
         } else {
-            $session = Shopware()->Session();
             $session->txId = $response->getTxid();
             $session->txStatus = $response->getStatus();
             $this->redirect($response->getRedirecturl());
