@@ -236,39 +236,43 @@ class Mopt_PayoneHelper
     {
         switch ($personStatus) {
             case Payone_Api_Enum_AddressCheckPersonstatus::NONE:
-            {
                 return $config['mapPersonCheck'];
-            }
-            case Payone_Api_Enum_AddressCheckPersonstatus::PPB:
-            {
-                return $config['mapKnowPreLastname'];
-            }
-            case Payone_Api_Enum_AddressCheckPersonstatus::PHB:
-            {
-                return $config['mapKnowLastname'];
-            }
-            case Payone_Api_Enum_AddressCheckPersonstatus::PAB:
-            {
-                return $config['mapNotKnowPreLastname'];
-            }
-            case Payone_Api_Enum_AddressCheckPersonstatus::PKI:
-            {
-                return $config['mapMultiNameToAdress'];
-            }
-            case Payone_Api_Enum_AddressCheckPersonstatus::PNZ:
-            {
-                return $config['mapUndeliverable'];
-            }
-            case Payone_Api_Enum_AddressCheckPersonstatus::PPV:
-            {
-                return $config['mapPersonDead'];
-            }
-            case Payone_Api_Enum_AddressCheckPersonstatus::PPF:
-            {
-                return $config['mapWrongAdress'];
-            }
 
-            break;
+            case Payone_Api_Enum_AddressCheckPersonstatus::PPB:
+                return $config['mapKnowPreLastname'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::PHB:
+                return $config['mapKnowLastname'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::PAB:
+                return $config['mapNotKnowPreLastname'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::PKI:
+                return $config['mapMultiNameToAdress'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::PNZ:
+                return $config['mapUndeliverable'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::PPV:
+                return $config['mapPersonDead'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::PPF:
+                return $config['mapWrongAdress'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::PNP:
+                return $config['mapAddressCheckNotPossible'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::PUG:
+                return $config['mapAddressOkayBuildingUnknown'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::PUZ:
+                return $config['mapPersonMovedAddressUnknown'];
+
+            case Payone_Api_Enum_AddressCheckPersonstatus::UKN:
+                return $config['mapUnknownReturnValue'];
+
+            default:
+                return '';
         }
     }
 

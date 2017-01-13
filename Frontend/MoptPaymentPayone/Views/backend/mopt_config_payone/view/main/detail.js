@@ -567,6 +567,50 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 valueField: 'value',
                 allowBlank: false,
                 labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/mapAddressCheckNotPossible}Überprüfung nicht möglich (z.B. Fakename){/s}',
+                name: 'mapAddressCheckNotPossible',
+                store: me.data.signal,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/mapAddressOkayBuildingUnknown}Adresse korrekt, aber Gebäude unbekannt{/s}',
+                name: 'mapAddressOkayBuildingUnknown',
+                store: me.data.signal,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/mapPersonMovedAddressUnknown}Person umgezogen, Adresse nicht korrigiert{/s}',
+                name: 'mapPersonMovedAddressUnknown',
+                store: me.data.signal,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/mapUnknownReturnValue}Rückgabewert der Überprüfung unbekannt{/s}',
+                name: 'mapUnknownReturnValue',
+                store: me.data.signal,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                labelWidth: 200
             }
         ];
     },

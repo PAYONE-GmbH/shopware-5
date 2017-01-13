@@ -1,13 +1,13 @@
 {
     "label": {
-        "de": "%%NAME%%",
-        "en": "%%NAME%%"
+        "de": "PAYONE Payment Plugin",
+        "en": "PAYONE Payment Plugin"
     },
     "author": "FATCHIP GmbH",
     "copyright": "Copyright © 2015, FATCHIP GmbH",
     "link": "http://www.fatchip.de/",
     "support": "support@fatchip.de",    
-    "currentVersion": "%%VERSION%%",
+    "currentVersion": "3.4.7",
     "solution_name": "fatchip",
     
     "changelogs": {
