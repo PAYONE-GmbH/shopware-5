@@ -431,6 +431,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->getInstallHelper()->moptExtendConfigDataTable();
         }
 
+        // payone config address check extension
+        if (!$this->getInstallHelper()->moptPayoneConfigAddressCheckExtensionExist()) {
+            $this->getInstallHelper()->moptExtendConfigAddressCheckDataTable();
+        }
+
         // payone config klarna extension
         if (!$this->getInstallHelper()->moptPayoneConfigKlarnaExtensionExist()) {
             $this->getInstallHelper()->moptExtendConfigKlarnaDataTable();

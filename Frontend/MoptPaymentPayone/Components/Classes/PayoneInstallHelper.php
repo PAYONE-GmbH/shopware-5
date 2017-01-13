@@ -438,6 +438,19 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
+     * extend config data table with extended address check attributes
+     */
+    public function moptExtendConfigAddressCheckDataTable()
+    {
+        $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+            . "ADD COLUMN map_address_check_not_possible INT(11) NOT NULL DEFAULT 0,"
+            . "ADD COLUMN map_address_okay_building_unknown INT(11) NOT NULL DEFAULT 0,"
+            . "ADD COLUMN map_person_moved_address_unknown INT(11) NOT NULL DEFAULT 0,"
+            . "ADD COLUMN map_unknown_return_value INT(11) NOT NULL DEFAULT 0;";
+        Shopware()->Db()->exec($sql);
+    }
+
+    /**
      * extend config data table with klarna config coloumn
      */
     public function moptExtendConfigKlarnaDataTable()
@@ -662,6 +675,27 @@ class Mopt_PayoneInstallHelper
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
                 AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
                 AND COLUMN_NAME ='show_accountnumber'";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * check if payone configuration is already extended for new address check codes
+     *
+     * @return boolean
+     */
+    public function moptPayoneConfigAddressCheckExtensionExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='map_unknown_return_value'";
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
