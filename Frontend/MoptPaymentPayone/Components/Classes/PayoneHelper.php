@@ -336,7 +336,10 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
-        if ($moptPayoneAddresscheckDate->getTimestamp() < strtotime('-' . $adresscheckLifetime . ' days')) {
+        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
+            return false;
+        }
+        if ($moptPayoneAddresscheckDate->getTimestamp() <= strtotime('-' . $adresscheckLifetime . ' days')) {
             return false;
         }
 
@@ -360,8 +363,10 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
-
-        if ($moptPayoneAddresscheckDate->getTimestamp() < strtotime('-' . $adresscheckLifetime . ' days')) {
+        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
+            return false;
+        }
+        if ($moptPayoneAddresscheckDate->getTimestamp() <= strtotime('-' . $adresscheckLifetime . ' days')) {
             return false;
         }
 

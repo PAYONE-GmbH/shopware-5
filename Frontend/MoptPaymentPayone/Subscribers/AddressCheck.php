@@ -178,6 +178,7 @@ class AddressCheck implements SubscriberInterface
     {
         $ret = array();
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
+        $session = Shopware()->Session();
 
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
             $secStatus          = (int) $response->getSecstatus();
@@ -229,7 +230,15 @@ class AddressCheck implements SubscriberInterface
                 break;
                 case 1: // reenter address -> redirect to address form
                 {
-                    $caller->forward('billing', 'account', null, array('sTarget' => 'checkout'));
+                    if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                        $caller->forward('edit', 'address', null, [
+                            'id' => $billingAddressData['id'],
+                            'sTarget' => 'checkout',
+                            'sTargetAction' => 'confirm'
+                        ]);
+                    } else {
+                        $caller->forward('billing', 'account', null, ['sTarget' => 'checkout']);
+                    }
                 }
                 break;
                 case 2: // perform consumerscore check
@@ -248,6 +257,8 @@ class AddressCheck implements SubscriberInterface
     {
         $ret = array();
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
+        $session = Shopware()->Session();
+
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
             $secStatus          = (int) $response->getSecstatus();
             $mappedPersonStatus = $moptPayoneMain->getHelper()->getUserScoringValue($response->getPersonstatus(), $config);
@@ -309,7 +320,15 @@ class AddressCheck implements SubscriberInterface
                 break;
                 case 1: // reenter address -> redirect to address form
                 {
-                    $subject->forward('shipping', 'account', null, array('sTarget' => 'checkout'));
+                    if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                        $subject->forward('edit', 'address', null, [
+                            'id'            => $shippingAddressData['id'],
+                            'sTarget'       => 'checkout',
+                            'sTargetAction' => 'confirm'
+                        ]);
+                    } else {
+                        $subject->forward('shipping', 'account', null, ['sTarget' => 'checkout']);
+                    }
                 }
                 break;
                 case 2: // perform consumerscore check
