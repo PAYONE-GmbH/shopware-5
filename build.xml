@@ -43,12 +43,10 @@
   
   <target name="buildTarget" depends="init" description="copy the files, do the zip" >
         <!-- Create the build directory structure-->
-        <mkdir dir="${build}"/>
-        <!-- somehow this seems necessary -->
-	<delete dir=".idea" />
+        <mkdir dir="${build}"/> 
         <!-- copy module to build folder excluding git files -->
         <copy todir="${build}" overwrite="true" encoding="UTF-8" outputencoding="UTF-8" >
-            <fileset dir="${srcShopware5}" excludes=".* README.md CONTRIBUTING.md build.xml composer.json .idea composer.lock" />
+            <fileset dir="${srcShopware5}" excludes=".* README.md CONTRIBUTING.md build.xml composer.json .idea/ composer.lock" />
         </copy>
 
 
