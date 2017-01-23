@@ -44,7 +44,7 @@ class Mopt_PayoneHelper
    * @param string $id
    * @param string $configuredCountriesForCheck
    * @param string $selectedCountry
-   * @return string
+   * @return string|boolean
    */
     public function getAddressChecktypeFromId($id, $configuredCountriesForCheck, $selectedCountry)
     {
@@ -56,15 +56,14 @@ class Mopt_PayoneHelper
         }
       
         switch ($id) {
-            case 0:
-                $checkType = false;
-                break;
             case 1:
                 $checkType = Payone_Api_Enum_AddressCheckType::BASIC;
                 break;
             case 2:
                 $checkType = Payone_Api_Enum_AddressCheckType::PERSON;
                 break;
+            default:
+                $checkType = false;
         }
 
         return $checkType;
@@ -147,7 +146,7 @@ class Mopt_PayoneHelper
             $selectedCountry
         );
 
-        return $billingAddressChecktype;
+        return ($billingAddressChecktype !== false);
     }
 
   /**
@@ -165,14 +164,14 @@ class Mopt_PayoneHelper
             return false;
         }
 
-      //check if seperate shipping address is saved
+        // check if seperate shipping address is saved
         $sql        = 'SELECT `id` FROM `s_user_shippingaddress` WHERE userID = ?';
         $shippingId = Shopware()->Db()->fetchOne($sql, $userId);
         if (!$shippingId) {
             return false;
         }
 
-      //no check when basket value outside configured values
+        // no check when basket value outside configured values
         if ($basketValue < $config['adresscheckMinBasket'] || $basketValue > $config['adresscheckMaxBasket']) {
             return false;
         }
@@ -183,7 +182,7 @@ class Mopt_PayoneHelper
             $selectedCountry
         );
 
-        return $shippingAddressChecktype;
+        return ($shippingAddressChecktype !== false);
     }
 
   /**
@@ -207,7 +206,7 @@ class Mopt_PayoneHelper
 
         $shippingAddressChecktype = $this->getConsumerScoreChecktypeFromId($config['consumerscoreCheckMode']);
 
-        return $shippingAddressChecktype;
+        return ($shippingAddressChecktype !== false);
     }
 
   /**
@@ -518,7 +517,9 @@ class Mopt_PayoneHelper
 
         $userAttribute->setMoptPayoneConsumerscoreDate(date('Y-m-d'));
         $userAttribute->setMoptPayoneConsumerscoreResult($response->getStatus());
-
+        // also set Score to "R" in case some previous check was "G"
+        $userAttribute->setMoptPayoneConsumerscoreColor('R');
+        
         Shopware()->Models()->persist($userAttribute);
         Shopware()->Models()->flush();
     }
@@ -540,6 +541,32 @@ class Mopt_PayoneHelper
 
         $userAttribute->setMoptPayoneConsumerscoreDate(date('Y-m-d'));
         $userAttribute->setMoptPayoneConsumerscoreResult('DENIED');
+        $userAttribute->setMoptPayoneConsumerscoreColor('R');
+        $userAttribute->setMoptPayoneConsumerscoreValue('100');        
+
+        Shopware()->Models()->persist($userAttribute);
+        Shopware()->Models()->flush();
+    }
+
+    /**
+     * save check denied
+     *
+     * @param string $userId
+     * @return mixed
+     */
+    public function saveConsumerScoreApproved($userId)
+    {
+        if (!$userId) {
+            return;
+        }
+
+        $user          = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
+        $userAttribute = $this->getOrCreateUserAttribute($user);
+
+        $userAttribute->setMoptPayoneConsumerscoreDate(date('Y-m-d'));
+        $userAttribute->setMoptPayoneConsumerscoreResult('APPROVED');
+        $userAttribute->setMoptPayoneConsumerscoreColor('G');
+        $userAttribute->setMoptPayoneConsumerscoreValue('550');
 
         Shopware()->Models()->persist($userAttribute);
         Shopware()->Models()->flush();
@@ -664,19 +691,29 @@ class Mopt_PayoneHelper
    */
     public function getScoreFromUserAccordingToPaymentConfig($user, $config)
     {
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {   
+            $moptScoreColor = $user['additional']['user']['mopt_payone_consumerscore_color'];
+            $moptBillingColor = $user['billingaddress']['mopt_payone_consumerscore_color'];
+            $moptShipmentColor = $user['shippingaddress']['mopt_payone_consumerscore_color'];             
+        } else {
+            $moptScoreColor = $user['additional']['user']['moptPayoneConsumerscoreColor'];
+            $moptBillingColor = $user['billingaddress']['moptPayoneConsumerscoreColor'];
+            $moptShipmentColor = $user['shippingaddress']['moptPayoneConsumerscoreColor'];                  
+        }
+        
         $billingColor = $this->getSpecificScoreFromUser(
-            $user['billingaddress']['moptPayoneConsumerscoreColor'],
+            $moptBillingColor,
             $config['adresscheckActive'] && $config['adresscheckBillingAdress'] != 0
         );
         $shipmentColor = $this->getSpecificScoreFromUser(
-            $user['shippingaddress']['moptPayoneConsumerscoreColor'],
+            $moptShipmentColor,
             $config['adresscheckActive'] && $config['adresscheckShippingAdress'] != 0
         );
         $consumerScoreColor = $this->getSpecificScoreFromUser(
-            $user['additional']['user']['moptPayoneConsumerscoreColor'],
+            $moptScoreColor,
             $config['consumerscoreActive']
         );
-    
+
         $biggestScore = max($billingColor, $shipmentColor, $consumerScoreColor);
     
         if ($biggestScore == -1) {
