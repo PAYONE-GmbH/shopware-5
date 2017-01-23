@@ -19,7 +19,7 @@ class Repository extends ModelRepository
     {
         $builder = $this->getEntityManager()->createQueryBuilder();
         $builder->select('c')
-            ->from('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig c')
+            ->from('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig', 'c')
             ->where('c.paymentId = ?1')
             ->setParameter(1, $paymentId);
 

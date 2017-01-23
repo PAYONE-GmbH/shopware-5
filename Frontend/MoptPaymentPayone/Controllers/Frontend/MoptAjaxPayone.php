@@ -132,6 +132,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 return;
             } else {
                 //proceed
+                $this->moptPayoneMain->getHelper()->saveConsumerScoreApproved($userId);
                 echo json_encode(true);
                 return;
             }

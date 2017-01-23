@@ -539,6 +539,30 @@ class Mopt_PayoneHelper
         Shopware()->Models()->flush();
     }
 
+    /**
+     * save check denied
+     *
+     * @param string $userId
+     * @return mixed
+     */
+    public function saveConsumerScoreApproved($userId)
+    {
+        if (!$userId) {
+            return;
+        }
+
+        $user          = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
+        $userAttribute = $this->getOrCreateUserAttribute($user);
+
+        $userAttribute->setMoptPayoneConsumerscoreDate(date('Y-m-d'));
+        $userAttribute->setMoptPayoneConsumerscoreResult('APPROVED');
+        $userAttribute->setMoptPayoneConsumerscoreColor('G');
+        $userAttribute->setMoptPayoneConsumerscoreValue('550');
+
+        Shopware()->Models()->persist($userAttribute);
+        Shopware()->Models()->flush();
+    }
+
   /**
    * save corrected billing address
    *

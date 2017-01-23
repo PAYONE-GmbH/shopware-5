@@ -335,8 +335,12 @@ class AddressCheck implements SubscriberInterface
                     break;
 
                 case 2: // perform consumerscore check
-                    $response = $this->performConsumerScoreCheck($config, $billingAddressData, $config['paymentId']);
-                    $this->handleConsumerScoreCheckResult($response, $config, $userId);
+                    try {
+                        $response = $this->performConsumerScoreCheck($config, $billingAddressData, $config['paymentId']);
+                        $this->handleConsumerScoreCheckResult($response, $config, $userId);
+                    } catch (\Exception $e){
+                    }
+
                     break;
             }
         }
@@ -443,9 +447,13 @@ class AddressCheck implements SubscriberInterface
                     break;
 
                 case 2: // perform consumerscore check
-                    $response = $this->performConsumerScoreCheck($config, $shippingAddressData, $config['paymentId']);
-                    if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
-                        $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                    try {
+                        $response = $this->performConsumerScoreCheck($config, $shippingAddressData, $config['paymentId']);
+
+                        if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
+                            $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        }
+                    } catch (\Exception $e) {
                     }
                     break;
 
@@ -631,10 +639,13 @@ class AddressCheck implements SubscriberInterface
         if ($this->getCustomerCheckIsNeeded($config, $userId, $basketValue, $subject->View()->sPayment['name'])) {
             // perform check if prechoice is configured
             if ($config['consumerscoreCheckMoment'] == 0) {
-                $response = $this->performConsumerScoreCheck($config, $billingAddressData, $paymentId);
-                if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
-                    // cancel, redirect to payment choice
-                    $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                try {
+                    $response = $this->performConsumerScoreCheck($config, $billingAddressData, $paymentId);
+                    if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
+                        // cancel, redirect to payment choice
+                        $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                    }
+                } catch (\Exception $e){
                 }
             } else {
                 // set sessionflag if after paymentchoice is configured
@@ -825,12 +836,17 @@ class AddressCheck implements SubscriberInterface
 
                         case 2: // perform consumerscore check
                             $billingFormData['countryID'] = $billingFormData['country'];
-                            $response = $this->performConsumerScoreCheck($config, $billingFormData);
-                            if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
-                                $this->forward($request, 'billing', 'account', null, ['sTarget' => 'checkout']);
-                                return;
+                            try{
+                                $response = $this->performConsumerScoreCheck($config, $billingFormData);
+
+                                if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
+                                    $this->forward($request, 'billing', 'account', null, ['sTarget' => 'checkout']);
+                                    return;
+                                }
+                                break;
+                            } catch (\Exception $e){
+
                             }
-                            break;
 
                         case 3: // proceed
                             return;
@@ -1013,16 +1029,22 @@ class AddressCheck implements SubscriberInterface
 
                     case 2: // perform consumerscore check
                         $shippingFormData['countryID'] = $shippingFormData['country'];
-                        $response = $this->performConsumerScoreCheck($config, $shippingFormData);
-                        if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
-                        //cancel transaction
-                            $arguments->setReturn($ret);
-                            $this->forward($request, 'index', 'account', null, ['sTarget' => 'checkout']);
+                        try{
+                            $response = $this->performConsumerScoreCheck($config, $shippingFormData);
+
+                            if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
+                                //cancel transaction
+                                $arguments->setReturn($ret);
+                                $this->forward($request, 'index', 'account', null, ['sTarget' => 'checkout']);
+                                return;
+                            }
+                            unset($ret['sErrorFlag']['mopt_payone_addresscheck']);
+                            unset($ret['sErrorMessages']['mopt_payone_addresscheck']);
                             return;
+
+                        } catch (\Exception $e) {
+
                         }
-                        unset($ret['sErrorFlag']['mopt_payone_addresscheck']);
-                        unset($ret['sErrorMessages']['mopt_payone_addresscheck']);
-                        return;
 
                     case 3: // proceed
                         return;
@@ -1203,6 +1225,7 @@ class AddressCheck implements SubscriberInterface
                 $session->moptConsumerScoreCheckNeedsUserAgreement = true;
                 $session->moptPaymentId = $subject->View()->sPayment['id'];
             }
+
         }
     }
 }
