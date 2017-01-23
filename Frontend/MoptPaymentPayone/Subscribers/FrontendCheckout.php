@@ -207,7 +207,7 @@ class FrontendCheckout implements SubscriberInterface
 
         $builder = Shopware()->Models()->createQueryBuilder();
         $builder->select('button.image')
-                ->from('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal button')
+                ->from('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal', 'button')
                 ->where('button.localeId = ?1')
                 ->setParameter(1, $localeId);
 
@@ -216,7 +216,7 @@ class FrontendCheckout implements SubscriberInterface
         if (!$result) {
             $builder->resetDQLParts();
             $builder->select('button.image')
-                    ->from('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal button')
+                    ->from('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal', 'button')
                     ->where('button.isDefault = ?1')
                     ->setParameter(1, true);
 
