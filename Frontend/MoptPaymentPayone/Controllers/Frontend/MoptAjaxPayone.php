@@ -128,6 +128,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 //delete payment data and set to payone prepayment
                 $this->moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
                 $this->moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
+                $this->moptPayoneMain->getHelper()->saveConsumerScoreDenied($userId);
                 echo json_encode(false);
                 return;
             } else {
