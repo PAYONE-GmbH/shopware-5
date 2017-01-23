@@ -136,14 +136,13 @@ class AddressCheck implements SubscriberInterface
                         //abort
                         $arguments->setReturn(true);
                         return;
-                    }                    
+                    }
                 } catch (\Exception $e) {
-                    
                     if ($config['consumerscoreFailureHandling'] === 0) {
-                        $arguments->setReturn(true);  
+                        $arguments->setReturn(true);
                     } else {
                         $arguments->setReturn(false);
-                    }   
+                    }
                     return;
                 }
             }
@@ -185,7 +184,7 @@ class AddressCheck implements SubscriberInterface
             ->getApiModeFromId($config['adresscheckLiveMode']));
 
         try {
-            $response = $service->check($request, $config['liveMode']);
+            $response = $service->check($request);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -327,16 +326,22 @@ class AddressCheck implements SubscriberInterface
                     break;
 
                 case 1: // reenter address -> redirect to address form
-                    $caller->forward('billing', 'account', null, ['sTarget' => 'checkout']);
+                    if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                        $caller->forward('edit', 'address', null, [
+                            'id' => $billingAddressData['id'],
+                            'sTarget' => 'checkout',
+                            'sTargetAction' => 'confirm'
+                        ]);
+                    } else {
+                        $caller->forward('billing', 'account', null, ['sTarget' => 'checkout']);
+                    }
                     break;
-
                 case 2: // perform consumerscore check
                     try {
                         $response = $this->performConsumerScoreCheck($config, $billingAddressData, $config['paymentId']);
                         $this->handleConsumerScoreCheckResult($response, $config, $userId);
-                    } catch (\Exception $e){
+                    } catch (\Exception $e) {
                     }
-
                     break;
             }
         }
@@ -439,9 +444,16 @@ class AddressCheck implements SubscriberInterface
                     break;
 
                 case 1: // reenter address -> redirect to address form
-                    $subject->forward('shipping', 'account', null, ['sTarget' => 'checkout']);
+                    if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                        $subject->forward('edit', 'address', null, [
+                            'id'            => $shippingAddressData['id'],
+                            'sTarget'       => 'checkout',
+                            'sTargetAction' => 'confirm'
+                        ]);
+                    } else {
+                        $subject->forward('shipping', 'account', null, ['sTarget' => 'checkout']);
+                    }
                     break;
-
                 case 2: // perform consumerscore check
                     try {
                         $response = $this->performConsumerScoreCheck($config, $shippingAddressData, $config['paymentId']);
@@ -641,7 +653,7 @@ class AddressCheck implements SubscriberInterface
                         // cancel, redirect to payment choice
                         $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
                     }
-                } catch (\Exception $e){
+                } catch (\Exception $e) {
                 }
             } else {
                 // set sessionflag if after paymentchoice is configured
@@ -695,12 +707,13 @@ class AddressCheck implements SubscriberInterface
         
         return $amountInInterval && $needsRecompution && $config['consumerscoreActive'];
     }
-  
-  /**
-   * billingaddress addresscheck
-   *
-   * @param \Enlight_Event_EventArgs $arguments
-   */
+
+
+    /**
+     * billingaddress addresscheck
+     *
+     * @param \Enlight_Event_EventArgs $arguments
+     */
     public function onValidateStep2(\Enlight_Event_EventArgs $arguments)
     {
         $ret = $arguments->getReturn();
@@ -832,7 +845,7 @@ class AddressCheck implements SubscriberInterface
 
                         case 2: // perform consumerscore check
                             $billingFormData['countryID'] = $billingFormData['country'];
-                            try{
+                            try {
                                 $response = $this->performConsumerScoreCheck($config, $billingFormData);
 
                                 if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
@@ -840,9 +853,9 @@ class AddressCheck implements SubscriberInterface
                                     return;
                                 }
                                 break;
-                            } catch (\Exception $e){
-
+                            } catch (\Exception $e) {
                             }
+                            break;
 
                         case 3: // proceed
                             return;
@@ -858,22 +871,22 @@ class AddressCheck implements SubscriberInterface
     }
 
 
-  /**
-   * save addresscheck result
-   *
-   * @param \Enlight_Hook_HookArgs $arguments
-   */
+    /**
+     * save addresscheck result
+     *
+     * @param \Enlight_Hook_HookArgs $arguments
+     */
     public function onSaveRegister(\Enlight_Hook_HookArgs $arguments)
     {
         $this->onUpdateBilling($arguments);
         $this->onUpdateShipping($arguments);
     }
   
-  /**
-   * save addresscheck result
-   *
-   * @param \Enlight_Hook_HookArgs $arguments
-   */
+    /**
+     * save addresscheck result
+     *
+     * @param \Enlight_Hook_HookArgs $arguments
+     */
     public function onUpdateBilling(\Enlight_Hook_HookArgs $arguments)
     {
         $session = Shopware()->Session();
@@ -909,12 +922,12 @@ class AddressCheck implements SubscriberInterface
         unset($session->moptPayoneBillingAddresscheckResult);
     }
 
-  /**
-   *
-   * shipmentaddress addresscheck
-   *
-   * @param \Enlight_Event_EventArgs $arguments
-   */
+    /**
+     *
+     * shipmentaddress addresscheck
+     *
+     * @param \Enlight_Event_EventArgs $arguments
+     */
     public function onValidateStep2ShippingAddress(\Enlight_Event_EventArgs $arguments)
     {
         $ret = $arguments->getReturn();
@@ -924,14 +937,14 @@ class AddressCheck implements SubscriberInterface
             return;
         }
 
-      //get config data from main
+        // get config data from main
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config         = $moptPayoneMain->getPayoneConfig();
         $postData       = $arguments->get('post');
         $shippingAddressCountry = $moptPayoneMain->getHelper()
             ->getAddressCountryFromUserData($postData, true);
     
-      //check if addresscheck is enabled
+        // check if addresscheck is enabled
         if ($config['adresscheckActive']) {
             $shippingAddressChecktype = $moptPayoneMain->getHelper()
               ->getAddressChecktypeFromId(
@@ -940,7 +953,7 @@ class AddressCheck implements SubscriberInterface
                   $shippingAddressCountry
               );
 
-          //return if shipping address checkmode is set to "no check"
+            // return if shipping address checkmode is set to "no check"
             if (!$shippingAddressChecktype) {
                 return;
             }
@@ -1025,7 +1038,7 @@ class AddressCheck implements SubscriberInterface
 
                     case 2: // perform consumerscore check
                         $shippingFormData['countryID'] = $shippingFormData['country'];
-                        try{
+                        try {
                             $response = $this->performConsumerScoreCheck($config, $shippingFormData);
 
                             if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
@@ -1039,8 +1052,8 @@ class AddressCheck implements SubscriberInterface
                             return;
 
                         } catch (\Exception $e) {
-
                         }
+                        break;
 
                     case 3: // proceed
                         return;
@@ -1055,11 +1068,11 @@ class AddressCheck implements SubscriberInterface
         return;
     }
 
-  /**
-   * save addresscheck result
-   *
-   * @param \Enlight_Hook_HookArgs $arguments
-   */
+    /**
+     * save addresscheck result
+     *
+     * @param \Enlight_Hook_HookArgs $arguments
+     */
     public function onUpdateShipping(\Enlight_Hook_HookArgs $arguments)
     {
         $session = Shopware()->Session();
@@ -1202,7 +1215,7 @@ class AddressCheck implements SubscriberInterface
                     if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
                         // cancel, redirect to payment choice
                         $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
-                    }                    
+                    }
                 } catch (\Exception $e) {
                     if ($config['consumerscoreFailureHandling'] == 0) {
                         // abort and delete payment data and set to payone prepayment

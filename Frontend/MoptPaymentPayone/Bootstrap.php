@@ -121,89 +121,33 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     protected function removeAttributes()
     {
-        Shopware()->Models()->removeAttribute('s_user_attributes', 'mopt_payone', 'consumerscore_result');
-        Shopware()->Models()->removeAttribute('s_user_attributes', 'mopt_payone', 'consumerscore_date');
-        Shopware()->Models()->removeAttribute('s_user_attributes', 'mopt_payone', 'consumerscore_color');
-        Shopware()->Models()->removeAttribute('s_user_attributes', 'mopt_payone', 'consumerscore_value');
-        Shopware()->Models()->removeAttribute(
-            's_user_billingaddress_attributes',
-            'mopt_payone',
-            'addresscheck_result'
-        );
-        Shopware()->Models()->removeAttribute('s_user_billingaddress_attributes', 'mopt_payone', 'addresscheck_date');
-        Shopware()->Models()->removeAttribute(
-            's_user_billingaddress_attributes',
-            'mopt_payone',
-            'addresscheck_personstatus'
-        );
-        Shopware()->Models()->removeAttribute(
-            's_user_billingaddress_attributes',
-            'mopt_payone',
-            'consumerscore_result'
-        );
-        Shopware()->Models()->removeAttribute(
-            's_user_billingaddress_attributes',
-            'mopt_payone',
-            'consumerscore_date'
-        );
-        Shopware()->Models()->removeAttribute(
-            's_user_billingaddress_attributes',
-            'mopt_payone',
-            'consumerscore_color'
-        );
-        Shopware()->Models()->removeAttribute(
-            's_user_billingaddress_attributes',
-            'mopt_payone',
-            'consumerscore_value'
-        );
-        Shopware()->Models()->removeAttribute(
-            's_user_shippingaddress_attributes',
-            'mopt_payone',
-            'addresscheck_result'
-        );
-        Shopware()->Models()->removeAttribute(
-            's_user_shippingaddress_attributes',
-            'mopt_payone',
-            'addresscheck_date'
-        );
-        Shopware()->Models()->removeAttribute(
-            's_user_shippingaddress_attributes',
-            'mopt_payone',
-            'addresscheck_personstatus'
-        );
-        Shopware()->Models()->removeAttribute(
-            's_user_shippingaddress_attributes',
-            'mopt_payone',
-            'consumerscore_color'
-        );
-        Shopware()->Models()->removeAttribute(
-            's_user_shippingaddress_attributes',
-            'mopt_payone',
-            'consumerscore_value'
-        );
-        Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'txid');
-        Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'status');
-        Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'sequencenumber');
-        Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'is_authorized');
-        Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'is_finally_captured');
-        Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'clearing_data', 'text');
-        Shopware()->Models()->removeAttribute('s_order_details_attributes', 'mopt_payone', 'payment_status');
-        Shopware()->Models()->removeAttribute('s_order_details_attributes', 'mopt_payone', 'shipment_date');
-        Shopware()->Models()->removeAttribute('s_order_details_attributes', 'mopt_payone', 'captured');
-        Shopware()->Models()->removeAttribute('s_order_details_attributes', 'mopt_payone', 'debit');
-        Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'payolution_workorder_id');
-        Shopware()->Models()->removeAttribute('s_order_attributes', 'mopt_payone', 'payolution_clearing_reference');
+        $prefix = 'mopt_payone';
 
-        Shopware()->Models()->generateAttributeModels(
-            array(
-                's_user_attributes',
-                's_core_paymentmeans_attributes',
-                's_user_billingaddress_attributes',
-                's_user_shippingaddress_attributes',
-                's_order_attributes',
-                's_order_details_attributes',
-            )
-        );
+        $tables = $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
+
+        $attributeService = $this->assertMinimumVersion('5.2') ?
+            Shopware()->Container()->get('shopware_attribute.crud_service') : null;
+
+        foreach ($tables as $table => $attributes) {
+            foreach ($attributes as $attribute => $options) {
+                if ($this->assertMinimumVersion('5.2')) {
+                    try {
+                        $attributeService->delete($table, $prefix . '_' . $attribute);
+                    } catch (\Exception $e) {
+                        continue; // if table or column does not exist
+                    }
+                } else {
+                    try {
+                        /** @noinspection PhpDeprecationInspection */
+                        Shopware()->Models()->removeAttribute($table, $prefix, $attribute);
+                    } catch (\InvalidArgumentException $e) {
+                        continue; // if table or column does not exist
+                    }
+                }
+            }
+        }
+
+        Shopware()->Models()->generateAttributeModels(array_keys($tables));
     }
 
     /**
@@ -477,7 +421,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             ));
         } catch (\Doctrine\ORM\Tools\ToolsException $e) {
             // ignore
-        }        
+        }
 
         $this->getInstallHelper()->moptCreatePaymentDataTable();
         $this->getInstallHelper()->moptInsertDocumentsExtensionIntoDatabaseIfNotExist();
@@ -485,6 +429,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // payone config sepa extension
         if (!$this->getInstallHelper()->moptPayoneConfigExtensionExist()) {
             $this->getInstallHelper()->moptExtendConfigDataTable();
+        }
+
+        // payone config address check extension
+        if (!$this->getInstallHelper()->moptPayoneConfigAddressCheckExtensionExist()) {
+            $this->getInstallHelper()->moptExtendConfigAddressCheckDataTable();
         }
 
         // payone config klarna extension
@@ -549,312 +498,28 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     protected function addAttributes()
     {
-        $models = array();
+        $prefix = 'mopt_payone';
 
-        if (!$this->getInstallHelper()->moptUserAttributesExist()) {
-            Shopware()->Models()->addAttribute(
-                's_user_attributes',
-                'mopt_payone',
-                'consumerscore_result',
-                'VARCHAR(100)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_attributes',
-                'mopt_payone',
-                'consumerscore_date',
-                'date',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_attributes',
-                'mopt_payone',
-                'consumerscore_color',
-                'VARCHAR(1)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_attributes',
-                'mopt_payone',
-                'consumerscore_value',
-                'integer',
-                true,
-                null
-            );
+        $tables = $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
 
-            $models[] = 's_user_attributes';
+        $attributeService = $this->assertMinimumVersion('5.2') ?
+            Shopware()->Container()->get('shopware_attribute.crud_service') : null;
+
+        foreach ($tables as $table => $attributes) {
+            foreach ($attributes as $attribute => $options) {
+                $type = is_array($options) ? $options[0] : $options;
+                $data = is_array($options) ? $options[1] : [];
+                if ($this->assertMinimumVersion('5.2')) {
+                    $attributeService->update($table, $prefix . '_' . $attribute, $type, $data);
+                } else {
+                    $type = $this->getInstallHelper()->unifiedToSQL($type);
+                    /** @noinspection PhpDeprecationInspection */
+                    Shopware()->Models()->addAttribute($table, $prefix, $attribute, $type, true, null);
+                }
+            }
         }
 
-        if (!$this->getInstallHelper()->moptBillingAddressAttributesExist()) {
-            Shopware()->Models()->addAttribute(
-                's_user_billingaddress_attributes',
-                'mopt_payone',
-                'addresscheck_result',
-                'VARCHAR(100)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_billingaddress_attributes',
-                'mopt_payone',
-                'addresscheck_date',
-                'date',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_billingaddress_attributes',
-                'mopt_payone',
-                'addresscheck_personstatus',
-                'VARCHAR(100)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_billingaddress_attributes',
-                'mopt_payone',
-                'consumerscore_result',
-                'VARCHAR(100)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_billingaddress_attributes',
-                'mopt_payone',
-                'consumerscore_date',
-                'date',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_billingaddress_attributes',
-                'mopt_payone',
-                'consumerscore_color',
-                'VARCHAR(1)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_billingaddress_attributes',
-                'mopt_payone',
-                'consumerscore_value',
-                'integer',
-                true,
-                null
-            );
-
-            $models[] = 's_user_billingaddress_attributes';
-        }
-
-        if (!$this->getInstallHelper()->moptShippingAddressAttributesExist()) {
-            Shopware()->Models()->addAttribute(
-                's_user_shippingaddress_attributes',
-                'mopt_payone',
-                'addresscheck_result',
-                'VARCHAR(100)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_shippingaddress_attributes',
-                'mopt_payone',
-                'addresscheck_date',
-                'date',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_shippingaddress_attributes',
-                'mopt_payone',
-                'addresscheck_personstatus',
-                'VARCHAR(100)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_shippingaddress_attributes',
-                'mopt_payone',
-                'consumerscore_color',
-                'VARCHAR(1)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_user_shippingaddress_attributes',
-                'mopt_payone',
-                'consumerscore_value',
-                'integer',
-                true,
-                null
-            );
-
-            $models[] = 's_user_shippingaddress_attributes';
-        }
-
-        if (!$this->getInstallHelper()->moptOrderAttributesExist()) {
-            Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'txid', 'integer', true, null);
-            Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'status', 'VARCHAR(100)', true, null);
-            Shopware()->Models()->addAttribute(
-                's_order_attributes',
-                'mopt_payone',
-                'sequencenumber',
-                'int(11)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_order_attributes',
-                'mopt_payone',
-                'is_authorized',
-                'TINYINT(1)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_order_attributes',
-                'mopt_payone',
-                'is_finally_captured',
-                'TINYINT(1)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'clearing_data', 'text', true, null);
-
-
-            $models[] = 's_order_attributes';
-        }
-
-        if (!$this->getInstallHelper()->moptOrderDetailsAttributesExist()) {
-            Shopware()->Models()->addAttribute(
-                's_order_details_attributes',
-                'mopt_payone',
-                'payment_status',
-                'VARCHAR(100)',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_order_details_attributes',
-                'mopt_payone',
-                'shipment_date',
-                'date',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_order_details_attributes',
-                'mopt_payone',
-                'captured',
-                'double',
-                true,
-                null
-            );
-            Shopware()->Models()->addAttribute(
-                's_order_details_attributes',
-                'mopt_payone',
-                'debit',
-                'double',
-                true,
-                null
-            );
-
-            $models[] = 's_order_details_attributes';
-        }
-
-        if (!empty($models)) {
-            Shopware()->Models()->generateAttributeModels($models);
-        }
-
-        // 2nd order extension since 2.1.4 - save shipping cost with order
-        if (!$this->getInstallHelper()->moptOrderAttributesShippingCostsExist()) {
-            Shopware()->Models()->addAttribute(
-                's_order_attributes',
-                'mopt_payone',
-                'ship_captured',
-                'double',
-                true,
-                0.00
-            );
-            Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'ship_debit', 'double', true, 0.00);
-
-            Shopware()->Models()->generateAttributeModels(array('s_order_attributes'));
-        }
-
-        // 3rd order extension since 2.3.0 - save payment data for abo commerce support
-        if (!$this->getInstallHelper()->moptOrderAttributesPaymentDataExist()) {
-            Shopware()->Models()->addAttribute('s_order_attributes', 'mopt_payone', 'payment_data', 'text', true, null);
-
-            Shopware()->Models()->generateAttributeModels(array('s_order_attributes'));
-        }
-
-        // 4th order extension since 2.5.2 - save order hash and payment reference
-        if (!$this->getInstallHelper()->moptOrderAttributesOrderHashExist()) {
-            $this->getInstallHelper()->moptExtendOrderAttributes();
-        }
-
-        // 5th order extension since 3.3.8 - Payolution Payment Order extensions
-
-        if (!$this->getInstallHelper()->moptPayolutionWorkOrderIdAttributeExist()) {
-            Shopware()->Models()->addAttribute(
-                's_order_attributes',
-                'mopt_payone',
-                'payolution_workorder_id',
-                'VARCHAR(64)',
-                true,
-                null
-            );
-            Shopware()->Models()->generateAttributeModels(array('s_order_attributes'));
-        }
-
-        if (!$this->getInstallHelper()->moptPayolutionClearingReferenceAttributeExist()) {
-            Shopware()->Models()->addAttribute(
-                's_order_attributes',
-                'mopt_payone',
-                'payolution_clearing_reference',
-                'VARCHAR(64)',
-                true,
-                null
-            );
-            Shopware()->Models()->generateAttributeModels(array('s_order_attributes'));
-        }
-        
-        if ($this->assertMinimumVersion('5.2')) {
-            $this->get('shopware_attribute.crud_service')->update(
-                    's_order_attributes', 'mopt_payone_payolution_clearing_reference', 'string', [
-                'label' => 'Clearing Reference:',
-                'helpText' => '',
-                'displayInBackend' => true,
-                'pluginId' => $this->getId()
-                    ]
-            );
-            $this->get('shopware_attribute.crud_service')->update(
-                    's_order_attributes', 'mopt_payone_payolution_workorder_id', 'string', [
-                'label' => 'Workorder ID:',
-                'helpText' => '',
-                'displayInBackend' => true,
-                'pluginId' => $this->getId()
-                    ]
-            );
-            $this->get('shopware_attribute.crud_service')->update(
-                    's_order_attributes', 'mopt_payone_ship_captured', 'string', [
-                'label' => 'Versandkosten Bisher eingezogen:',
-                'helpText' => '',
-                'displayInBackend' => true,
-                'pluginId' => $this->getId()
-                    ]
-            );
-            $this->get('shopware_attribute.crud_service')->update(
-                    's_order_attributes', 'mopt_payone_ship_debit', 'string', [
-                'label' => 'Versandkosten Bisher gutgeschrieben:',
-                'helpText' => '',
-                'displayInBackend' => true,
-                'pluginId' => $this->getId()
-                    ]
-            );
-        }                       
+        Shopware()->Models()->generateAttributeModels(array_keys($tables));
     }
 
     /**

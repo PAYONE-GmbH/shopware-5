@@ -32,12 +32,18 @@
  */
 class Payone_Api_Enum_AddressCheckPersonstatus
 {
-    const NONE = 'NONE'; //NONE: no verification of personal data carried out
-    const PPB = 'PPB'; //PPB: first name & surname unknown
-    const PHB = 'PHB'; //PHB: surname known
-    const PAB = 'PAB'; //PAB: first name & surname unknown
-    const PKI = 'PKI'; //PKI: ambiguity in name and address
-    const PNZ = 'PNZ'; //PNZ: cannot be delivered (any longer)
-    const PPV = 'PPV'; //PPV: person deceased
-    const PPF = 'PPF'; //PPF: postal address details incorrect
+    const NONE = 'NONE'; // NONE: no verification of personal data carried out
+    const PPB = 'PPB';   // PPB:  first name & surname unknown
+    const PHB = 'PHB';   // PHB:  surname known
+    const PAB = 'PAB';   // PAB:  first name & surname unknown
+    const PKI = 'PKI';   // PKI:  ambiguity in name and address
+    const PNZ = 'PNZ';   // PNZ:  cannot be delivered (any longer)
+    const PPV = 'PPV';   // PPV:  person deceased
+    const PPF = 'PPF';   // PPF:  postal address details incorrect
+
+    // Address check extension
+    const PNP = 'PNP';   // PNP:  address cannot be checked, e.g. fake name used
+    const PUG = 'PUG';   // PUG:  postal address details correct but building unknown
+    const PUZ = 'PUZ';   // PUZ:  person has moved, address not corrected
+    const UKN = 'UKN';   // UKN:  unknown return values are mapped to UKN
 }
