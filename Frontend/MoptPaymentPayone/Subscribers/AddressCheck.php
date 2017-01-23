@@ -133,6 +133,14 @@ class AddressCheck implements SubscriberInterface
                 $userData = $user['additional']['user']; //get user data
                 try {
                     $response = $this->performConsumerScoreCheck($config, $user['billingaddress'], $paymentID);
+                    $userData['moptPayoneConsumerscoreResult'] = $response->getStatus(); //update userdata with result
+                    $userData['moptPayoneConsumerscoreDate'] = date('Y-m-d');
+
+                    if (!$this->handleConsumerScoreCheckResult($response, $config, $userData['id'])) {
+                        //abort
+                        $arguments->setReturn(true);
+                        return;
+                    }                    
                 } catch (\Exception $e) {
                     
                     if ($config['consumerscoreFailureHandling'] === 0) {
@@ -140,14 +148,6 @@ class AddressCheck implements SubscriberInterface
                     } else {
                         $arguments->setReturn(false);
                     }   
-                    return;
-                }
-                $userData['moptPayoneConsumerscoreResult'] = $response->getStatus(); //update userdata with result
-                $userData['moptPayoneConsumerscoreDate'] = date('Y-m-d');
-
-                if (!$this->handleConsumerScoreCheckResult($response, $config, $userData['id'])) {
-                    //abort
-                    $arguments->setReturn(true);
                     return;
                 }
             }
@@ -162,7 +162,7 @@ class AddressCheck implements SubscriberInterface
     /**
      * @param array $config
      * @param array $params
-     * @param \Payone_Api_Factory $payoneServiceBuilder
+     * @param \Payone_Builder  $payoneServiceBuilder
      * @param \Mopt_PayoneMain $mopt_payone__main
      * @param string $billingAddressChecktype
      * @return \Payone_Api_Response_AddressCheck_Invalid|\Payone_Api_Response_AddressCheck_Valid|\Payone_Api_Response_Error
@@ -171,7 +171,7 @@ class AddressCheck implements SubscriberInterface
     protected function performAddressCheck(
         array $config,
         array $params,
-        \Payone_Api_Factory $payoneServiceBuilder,
+        \Payone_Builder  $payoneServiceBuilder,
         \Mopt_PayoneMain $mopt_payone__main,
         $billingAddressChecktype
     ) {
@@ -1203,6 +1203,10 @@ class AddressCheck implements SubscriberInterface
             if ($config['consumerscoreCheckMoment'] == 0) {
                 try {
                     $response = $this->performConsumerScoreCheck($config, $billingAddressData, 0);
+                    if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
+                        // cancel, redirect to payment choice
+                        $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                    }                    
                 } catch (\Exception $e) {
                     if ($config['consumerscoreFailureHandling'] == 0) {
                         // abort and delete payment data and set to payone prepayment
@@ -1215,10 +1219,6 @@ class AddressCheck implements SubscriberInterface
                         $this->forward('payment', 'account', null, ['sTarget' => 'checkout']);
                         return;
                     }
-                }
-                if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
-                    // cancel, redirect to payment choice
-                    $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
                 }
             } else {
                 // set sessionflag if after paymentchoice is configured
