@@ -72,8 +72,6 @@ class AddressCheck implements SubscriberInterface
     public function sAdmin__sManageRisks__before(\Enlight_Hook_HookArgs $arguments)
     {
         Shopware()->Session()->moptRiskCheckPaymentId = $arguments->get('paymentID');
-
-        return 0;
     }
   
   /**
@@ -85,8 +83,6 @@ class AddressCheck implements SubscriberInterface
     public function sAdmin__sManageRisks__after(\Enlight_Hook_HookArgs $arguments)
     {
         unset(Shopware()->Session()->moptRiskCheckPaymentId);
-
-        return 0;
     }
   
     /**
