@@ -327,18 +327,23 @@ class Mopt_PayoneHelper
    *
    * @param int $adresscheckLifetime
    * @param string $moptPayoneAddresscheckResult
-   * @param date $moptPayoneAddresscheckDate
+   * @param DateTime $moptPayoneAddresscheckDate
    * @return boolean
    */
-    public function isBillingAddressCheckValid($adresscheckLifetime, $moptPayoneAddresscheckResult, $moptPayoneAddresscheckDate)
-    {
+    public function isBillingAddressCheckValid(
+        $adresscheckLifetime,
+        $moptPayoneAddresscheckResult,
+        $moptPayoneAddresscheckDate
+    ) {
+        $minDelayInSeconds = 5; // avoid multiple checks if max age is zero days
+        $maxAgeTimestamp = strtotime('-' . $adresscheckLifetime . ' days');
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
         if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
             return false;
         }
-        if ($moptPayoneAddresscheckDate->getTimestamp() <= strtotime('-' . $adresscheckLifetime . ' days')) {
+        if ($moptPayoneAddresscheckDate->getTimestamp() < ($maxAgeTimestamp - $minDelayInSeconds)) {
             return false;
         }
 
@@ -350,7 +355,7 @@ class Mopt_PayoneHelper
    *
    * @param string $adresscheckLifetime
    * @param string $moptPayoneAddresscheckResult
-   * @param date $moptPayoneAddresscheckDate
+   * @param DateTime $moptPayoneAddresscheckDate
    * @return boolean
    */
     public function isShippingAddressCheckValid(
@@ -358,14 +363,15 @@ class Mopt_PayoneHelper
         $moptPayoneAddresscheckResult,
         $moptPayoneAddresscheckDate
     ) {
-    
+        $minDelayInSeconds = 5; // avoid multiple checks if max age is zero days
+        $maxAgeTimestamp = strtotime('-' . $adresscheckLifetime . ' days');
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
         if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
             return false;
         }
-        if ($moptPayoneAddresscheckDate->getTimestamp() <= strtotime('-' . $adresscheckLifetime . ' days')) {
+        if ($moptPayoneAddresscheckDate->getTimestamp() < ($maxAgeTimestamp - $minDelayInSeconds)) {
             return false;
         }
 
@@ -381,11 +387,12 @@ class Mopt_PayoneHelper
    */
     public function isConsumerScoreCheckValid($consumerScoreCheckLifetime, $moptPayoneConsumerScoreCheckDate)
     {
+        $minDelayInSeconds = 5; // avoid multiple checks if max age is zero days
+        $maxAgeTimestamp = strtotime('-' . $consumerScoreCheckLifetime . ' days');
         if (!$moptPayoneConsumerScoreCheckDate) {
             return false;
         }
-
-        if ($moptPayoneConsumerScoreCheckDate->getTimestamp() < strtotime('-' . $consumerScoreCheckLifetime . ' days')) {
+        if ($moptPayoneConsumerScoreCheckDate->getTimestamp() < ($maxAgeTimestamp - $minDelayInSeconds)) {
             return false;
         }
 
@@ -542,7 +549,7 @@ class Mopt_PayoneHelper
         $userAttribute->setMoptPayoneConsumerscoreDate(date('Y-m-d'));
         $userAttribute->setMoptPayoneConsumerscoreResult('DENIED');
         $userAttribute->setMoptPayoneConsumerscoreColor('R');
-        $userAttribute->setMoptPayoneConsumerscoreValue('100');        
+        $userAttribute->setMoptPayoneConsumerscoreValue('100');
 
         Shopware()->Models()->persist($userAttribute);
         Shopware()->Models()->flush();
@@ -685,20 +692,37 @@ class Mopt_PayoneHelper
   /**
    * get consumer score
    *
-   * @param array $user
+   * @param array $userArray
    * @param array $config
    * @return int
    */
-    public function getScoreFromUserAccordingToPaymentConfig($user, $config)
+    public function getScoreFromUserAccordingToPaymentConfig($userArray, $config)
     {
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {   
-            $moptScoreColor = $user['additional']['user']['mopt_payone_consumerscore_color'];
-            $moptBillingColor = $user['billingaddress']['mopt_payone_consumerscore_color'];
-            $moptShipmentColor = $user['shippingaddress']['mopt_payone_consumerscore_color'];             
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $repository = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer');
+            $userID = $userArray['additional']['user']['userID'];
+
+            $userObject = !empty($userID) ?
+                $repository->find($userID) : null;
+            $billingLegacyAddress = !empty($userObject) ?
+                $userObject->getBilling() : null;
+            $billingLegacyAttribute = !empty($billingLegacyAddress) ?
+                $this->getOrCreateBillingAttribute($billingLegacyAddress) : null;
+            $moptBillingColor = !empty($billingLegacyAttribute) ?
+                $billingLegacyAttribute->getMoptPayoneConsumerscoreColor() : null;
+
+            $shippingLegacyAddress = !empty($userObject) ?
+                $userObject->getShipping() : null;
+            $shippingLegacyAttribute = !empty($shippingLegacyAddress) ?
+                $this->getOrCreateShippingAttribute($shippingLegacyAddress) : null;
+            $moptShipmentColor = !empty($shippingLegacyAttribute) ?
+                $shippingLegacyAttribute->getMoptPayoneConsumerscoreColor() : null;
+
+            $moptScoreColor = $userArray['additional']['user']['mopt_payone_consumerscore_color'];
         } else {
-            $moptScoreColor = $user['additional']['user']['moptPayoneConsumerscoreColor'];
-            $moptBillingColor = $user['billingaddress']['moptPayoneConsumerscoreColor'];
-            $moptShipmentColor = $user['shippingaddress']['moptPayoneConsumerscoreColor'];                  
+            $moptBillingColor = $userArray['billingaddress']['moptPayoneConsumerscoreColor'];
+            $moptShipmentColor = $userArray['shippingaddress']['moptPayoneConsumerscoreColor'];
+            $moptScoreColor = $userArray['additional']['user']['moptPayoneConsumerscoreColor'];
         }
         
         $billingColor = $this->getSpecificScoreFromUser(
@@ -764,7 +788,7 @@ class Mopt_PayoneHelper
    */
     public function getOrCreateAttribute($object)
     {
-        if ($attribute = $object->getAttribute()) {
+        if (!empty($object) && $attribute = $object->getAttribute()) {
             return $attribute;
         }
 
@@ -789,13 +813,13 @@ class Mopt_PayoneHelper
   /**
    * get or create attribute data for given object
    *
-   * @param Billing $object
+   * @param \Shopware\Models\Customer\Billing $object
    * @return \Shopware\Models\Attribute\CustomerBilling
    * @throws Exception
    */
     public function getOrCreateBillingAttribute($object)
     {
-        if ($attribute = $object->getAttribute()) {
+        if (!empty($object) && $attribute = $object->getAttribute()) {
             return $attribute;
         }
 
@@ -815,13 +839,13 @@ class Mopt_PayoneHelper
   /**
    * get or create attribute data for given object
    *
-   * @param Shipping $object
+   * @param \Shopware\Models\Customer\Shipping $object
    * @return \Shopware\Models\Attribute\CustomerShipping
    * @throws Exception
    */
     public function getOrCreateShippingAttribute($object)
     {
-        if ($attribute = $object->getAttribute()) {
+        if (!empty($object) && $attribute = $object->getAttribute()) {
             return $attribute;
         }
 
@@ -847,7 +871,7 @@ class Mopt_PayoneHelper
    */
     public function getOrCreateUserAttribute($object)
     {
-        if ($attribute = $object->getAttribute()) {
+        if (!empty($object) && $attribute = $object->getAttribute()) {
             return $attribute;
         }
 

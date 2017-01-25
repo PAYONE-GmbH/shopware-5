@@ -125,6 +125,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $tables = $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
 
+        /** @var \Shopware\Bundle\AttributeBundle\Service\CrudService $attributeService */
         $attributeService = $this->assertMinimumVersion('5.2') ?
             Shopware()->Container()->get('shopware_attribute.crud_service') : null;
 
@@ -502,6 +503,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $tables = $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
 
+        /** @var \Shopware\Bundle\AttributeBundle\Service\CrudService $attributeService */
         $attributeService = $this->assertMinimumVersion('5.2') ?
             Shopware()->Container()->get('shopware_attribute.crud_service') : null;
 
