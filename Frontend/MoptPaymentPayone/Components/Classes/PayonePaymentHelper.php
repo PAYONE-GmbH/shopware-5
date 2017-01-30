@@ -132,6 +132,10 @@ class Mopt_PayonePaymentHelper
     {
         $responseData = $response->toArray();
 
+        if ($responseData['txid']) {
+            $responseData['clearing_txid'] = $responseData['txid'];
+        }
+
         foreach ($responseData as $key => $value) {
             if (strpos($key, 'clearing_') === false) {
                 unset($responseData[$key]);
