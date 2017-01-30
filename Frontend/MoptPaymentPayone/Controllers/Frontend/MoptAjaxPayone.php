@@ -105,6 +105,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         //perform consumerscorecheck
         $params = $this->moptPayoneMain->getParamBuilder()
             ->getConsumerscoreCheckParams($billingAddressData, $paymentId);
+        /** @var Payone_Api_Service_Verification_Consumerscore $service */
         $service = $this->payoneServiceBuilder->buildServiceVerificationConsumerscore();
         $service->getServiceProtocol()->addRepository(
             Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog')
@@ -377,13 +378,15 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $financeType = Payone_Api_Enum_PayolutionType::PYS;
         $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
         $userData = $this->admin->sGetUserData();
+        $data = [];
         $paymentName = $userData['additional']['payment']['name'];
         if ($this->moptPayonePaymentHelper->isPayonePayolutionInstallment($paymentName)) {
             $precheckResponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
             if ($precheckResponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
                 $responseData = $precheckResponse->toArray();
                 $workorderId = $responseData['rawResponse']['workorderid'];
-                $calculationResponse = $this->buildAndCallCalculate($config, 'fnc', $financeType, $paymentType, $paymentData, $workorderId);
+                $calculationResponse = $this
+                    ->buildAndCallCalculate($config, 'fnc', $financeType, $paymentType, $paymentData, $workorderId);
                 if ($calculationResponse instanceof \Payone_Api_Response_Genericpayment_Approved) {
                     $installmentData = $calculationResponse->getInstallmentData();
                     $data['data'] = $installmentData;

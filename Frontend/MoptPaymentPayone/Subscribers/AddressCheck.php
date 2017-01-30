@@ -194,10 +194,7 @@ class AddressCheck implements SubscriberInterface
                     $billingAddressData
                 );
                 if (!empty($errors['sErrorFlag'])) {
-                    $ret['sErrorFlag']     = $errors['sErrorFlag'];
-                    $ret['sErrorMessages'] = $errors['sErrorMessages'];
-
-                    $arguments->setReturn($ret);
+                    $arguments->setReturn(true);
                     return;
                 }
             }
@@ -242,10 +239,7 @@ class AddressCheck implements SubscriberInterface
                     $shippingAddressData
                 );
                 if (!empty($errors['sErrorFlag'])) {
-                    $ret['sErrorFlag']     = $errors['sErrorFlag'];
-                    $ret['sErrorMessages'] = $errors['sErrorMessages'];
-
-                    $arguments->setReturn($ret);
+                    $arguments->setReturn(true);
                     return;
                 }
             }
@@ -404,6 +398,7 @@ class AddressCheck implements SubscriberInterface
                 $billingAddressData
             );
             if (!empty($errors['sErrorFlag'])) {
+                $ret = [];
                 $ret['sErrorFlag']     = $errors['sErrorFlag'];
                 $ret['sErrorMessages'] = $errors['sErrorMessages'];
 
@@ -469,6 +464,7 @@ class AddressCheck implements SubscriberInterface
                 $shippingAddressData
             );
             if (!empty($errors['sErrorFlag'])) {
+                $ret = [];
                 $ret['sErrorFlag']     = $errors['sErrorFlag'];
                 $ret['sErrorMessages'] = $errors['sErrorMessages'];
 
@@ -615,9 +611,9 @@ class AddressCheck implements SubscriberInterface
                             $this->forward($request, 'billing', 'account', null, ['sTarget' => 'checkout']);
                             $arguments->setReturn($ret);
                             return;
-                            break;
 
-                        case 1: // reenter address -> redirect to address form
+                        // reenter address -> redirect to address form
+                        case 1:
                             $ret['sErrorFlag']['mopt_payone_configured_message'] = true;
                             $ret['sErrorMessages']['mopt_payone_configured_message'] =
                                 $moptPayoneMain->getPaymentHelper()
@@ -634,9 +630,9 @@ class AddressCheck implements SubscriberInterface
                                 $arguments->setReturn($ret);
                                 return;
                             }
-                            break;
 
-                        case 2: // perform consumerscore check
+                        // perform consumerscore check
+                        case 2:
                             $billingFormData['countryID'] = $billingFormData['country'];
                             try {
                                 $response = $this->performConsumerScoreCheck($config, $billingFormData);
@@ -647,10 +643,11 @@ class AddressCheck implements SubscriberInterface
                                 }
                                 break;
                             } catch (\Exception $e) {
+                                break;
                             }
-                            break;
 
-                        case 3: // proceed
+                        // proceed
+                        case 3:
                             return;
                     }
 
@@ -760,12 +757,14 @@ class AddressCheck implements SubscriberInterface
                 $session->moptPayoneShippingAddresscheckResult = serialize($response);
 
                 switch ($config['adresscheckFailureHandling']) {
-                    case 0: // cancel transaction -> redirect to payment choice
+                    // cancel transaction -> redirect to payment choice
+                    case 0:
                         $arguments->setReturn($ret);
                         $this->forward($request, 'index', 'account', null, ['sTarget' => 'checkout']);
                         return;
 
-                    case 1: // reenter address -> redirect to address form
+                    // reenter address -> redirect to address form
+                    case 1:
                         if ($arguments->getSubject()->sCheckUser()) {
                             $this->forward($request, 'billing', 'account', null, ['sTarget' => 'checkout']);
                             $arguments->setReturn($ret);
@@ -775,9 +774,9 @@ class AddressCheck implements SubscriberInterface
                             $arguments->setReturn($ret);
                             return;
                         }
-                        break;
 
-                    case 2: // perform consumerscore check
+                    // perform consumerscore check
+                    case 2:
                         $shippingFormData['countryID'] = $shippingFormData['country'];
                         try {
                             $response = $this->performConsumerScoreCheck($config, $shippingFormData);
@@ -793,10 +792,11 @@ class AddressCheck implements SubscriberInterface
                             return;
 
                         } catch (\Exception $e) {
+                            break;
                         }
-                        break;
 
-                    case 3: // proceed
+                    // proceed
+                    case 3:
                         return;
                 }
 
@@ -1047,6 +1047,7 @@ class AddressCheck implements SubscriberInterface
         \Mopt_PayoneMain $mopt_payone__main,
         $billingAddressChecktype
     ) {
+        /** @var \Payone_Api_Service_Verification_AddressCheck $service */
         $service = $payoneServiceBuilder->buildServiceVerificationAddressCheck();
         $service->getServiceProtocol()->addRepository(
             Shopware()->Models()->getRepository(

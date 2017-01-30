@@ -31,6 +31,8 @@
 // needed for CSRF Protection compatibility SW versions < 5.2
 require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
+use \Doctrine\ORM\Tools\ToolsException;
+
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
     /**
@@ -380,7 +382,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
@@ -388,7 +390,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
@@ -396,7 +398,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
@@ -404,7 +406,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
@@ -412,7 +414,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
         
@@ -420,7 +422,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
