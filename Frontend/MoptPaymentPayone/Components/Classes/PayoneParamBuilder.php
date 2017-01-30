@@ -1061,22 +1061,24 @@ class Mopt_PayoneParamBuilder
         }
 
         //add shipment as position
-        $params = array();
-        $params['id'] = substr($shipment['name'], 0, 100); //article number
-        if ($taxFree) {
-            $params['pr'] = $basket['sShippingcosts'];
-        } else {
-            $params['pr'] = round($basket['sShippingcostsWithTax'], 2); //price
+        if ($shipment) {
+            $params = array();
+            $params['id'] = substr($shipment['name'], 0, 100); //article number
+            if ($taxFree) {
+                $params['pr'] = $basket['sShippingcosts'];
+            } else {
+                $params['pr'] = round($basket['sShippingcostsWithTax'], 2); //price
+            }
+
+            $params['no'] = 1; // ordered quantity
+            $params['de'] = substr($shipment['name'], 0, 100); // description check length
+            $params['va'] = $taxFree ? 0 : number_format($basket['sShippingcostsTax'], 0, '.', ''); // vat
+            $params['va'] = round($params['va'] * 100);
+            $params['it'] = Payone_Api_Enum_InvoicingItemType::SHIPMENT;
+            $params = array_map('utf8_encode', $params);
+
+            $items[] = $params;
         }
-
-        $params['no'] = 1; // ordered quantity
-        $params['de'] = substr($shipment['name'], 0, 100); // description check length
-        $params['va'] = $taxFree ? 0 : number_format($basket['sShippingcostsTax'], 0, '.', ''); // vat
-        $params['va'] = round($params['va'] * 100);
-        $params['it'] = Payone_Api_Enum_InvoicingItemType::SHIPMENT;
-        $params = array_map('utf8_encode', $params);
-
-        $items[] = $params;
 
         return $items;
     }
