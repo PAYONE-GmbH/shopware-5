@@ -4,6 +4,7 @@ namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
 use Shopware\Components\DependencyInjection\Container;
+use Shopware\Models\Customer\Customer;
 
 /**
  * Class AddressCheck
@@ -128,14 +129,39 @@ class AddressCheck implements SubscriberInterface
             $shippingAddressData['country'] = $billingAddressData['countryId'];
             $basketAmount = $basket['AmountNumeric'];
 
-            // perform billingAddressCheck if configured
+            /* We need to skip both address checks if the risk rules were executed in
+             * an early stage, that does not provide the Billing & Shipping objects.
+             */
+            $isBillingAttribWriteable = function (\Mopt_PayoneMain $main, Customer $customer) {
+                try {
+                    $billingObject = $customer->getBilling();
+                    $main->getHelper()->getOrCreateBillingAttribute($billingObject);
+                } catch (\Exception $e) {
+                    return false;
+                }
+                return true;
+            };
+            $isShippingAttribWriteable = function (\Mopt_PayoneMain $main, Customer $customer) {
+                try {
+                    $shippingObject = $customer->getShipping();
+                    $main->getHelper()->getOrCreateShippingAttribute($shippingObject);
+                } catch (\Exception $e) {
+                    return false;
+                }
+                return true;
+            };
+            $userObject = $userId ? Shopware()->Models()
+                ->getRepository('Shopware\Models\Customer\Customer')
+                ->find($userId) : null;
+
+            // perform billingAddressCheck if configured and required
             if ($this->getBillingAddressCheckIsNeeded(
                 $config,
                 $userId,
                 $basketAmount,
                 $paymentName,
                 $billingAddressData['country']
-            )) {
+            ) && $isBillingAttribWriteable($moptPayoneMain, $userObject)) {
                 // perform check
                 $params = $moptPayoneMain
                     ->getParamBuilder()
@@ -176,14 +202,14 @@ class AddressCheck implements SubscriberInterface
                 }
             }
 
-            // perform shippingAddressCheck if configured
+            // perform shippingAddressCheck if configured and required
             if ($this->getShippingAddressCheckIsNeeded(
                 $config,
                 $userId,
                 $basketAmount,
                 $paymentName,
                 $shippingAddressData['country']
-            )) {
+            ) && $isShippingAttribWriteable($moptPayoneMain, $userObject)) {
                 // perform check
                 $params = $moptPayoneMain
                     ->getParamBuilder()

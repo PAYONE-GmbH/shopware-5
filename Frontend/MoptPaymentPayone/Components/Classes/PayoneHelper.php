@@ -335,7 +335,8 @@ class Mopt_PayoneHelper
         $moptPayoneAddresscheckResult,
         $moptPayoneAddresscheckDate
     ) {
-        $minDelayInSeconds = 5; // avoid multiple checks if max age is zero days
+        // avoid multiple checks; if allowed age is zero days, set to one day
+        $adresscheckLifetime = ($adresscheckLifetime > 0) ? $adresscheckLifetime : 1;
         $maxAgeTimestamp = strtotime('-' . $adresscheckLifetime . ' days');
         if (!$moptPayoneAddresscheckDate) {
             return false;
@@ -343,7 +344,7 @@ class Mopt_PayoneHelper
         if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
             return false;
         }
-        if ($moptPayoneAddresscheckDate->getTimestamp() < ($maxAgeTimestamp - $minDelayInSeconds)) {
+        if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
             return false;
         }
 
@@ -363,7 +364,8 @@ class Mopt_PayoneHelper
         $moptPayoneAddresscheckResult,
         $moptPayoneAddresscheckDate
     ) {
-        $minDelayInSeconds = 5; // avoid multiple checks if max age is zero days
+        // avoid multiple checks; if allowed age is zero days, set to one day
+        $adresscheckLifetime = ($adresscheckLifetime > 0) ? $adresscheckLifetime : 1;
         $maxAgeTimestamp = strtotime('-' . $adresscheckLifetime . ' days');
         if (!$moptPayoneAddresscheckDate) {
             return false;
@@ -371,7 +373,7 @@ class Mopt_PayoneHelper
         if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
             return false;
         }
-        if ($moptPayoneAddresscheckDate->getTimestamp() < ($maxAgeTimestamp - $minDelayInSeconds)) {
+        if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
             return false;
         }
 
