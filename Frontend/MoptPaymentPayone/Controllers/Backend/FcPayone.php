@@ -537,7 +537,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         $builder = Shopware()->Models()->createQueryBuilder();
         $builder->select('log')
-            ->from('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog log');
+            ->from('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog', 'log');
 
         $order = (array) $this->Request()->getParam('sort', array());
 
@@ -577,7 +577,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         $builder = Shopware()->Models()->createQueryBuilder();
         $data = $builder->select('a.id, a.description')
-                ->from('Shopware\Models\Order\Status a')
+                ->from('Shopware\Models\Order\Status', 'a')
                 ->where('a.group = \'payment\'')
                 ->getQuery()->getArrayResult();
 

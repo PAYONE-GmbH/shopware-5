@@ -198,7 +198,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     {
         $builder = Shopware()->Models()->createQueryBuilder();
         $data = $builder->select('a.id, a.description, a.name')
-                        ->from('Shopware\Models\Payment\Payment a')
+                        ->from('Shopware\Models\Payment\Payment', 'a')
                         ->where('a.name LIKE \'mopt_payone__%\'')
                         ->getQuery()->getArrayResult();
 
@@ -240,7 +240,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     {
         $builder = Shopware()->Models()->createQueryBuilder();
         $data = $builder->select('a.id, a.description')
-                        ->from('Shopware\Models\Order\Status a')
+                        ->from('Shopware\Models\Order\Status', 'a')
                         ->where('a.group = \'payment\'')
                         ->getQuery()->getArrayResult();
 
@@ -263,7 +263,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
         //getPaymentName
         $builder = Shopware()->Models()->createQueryBuilder();
         $paymentData = $builder->select('a.name')
-                        ->from('Shopware\Models\Payment\Payment a')
+                        ->from('Shopware\Models\Payment\Payment', 'a')
                         ->where('a.id = ?1')
                         ->setParameter(1, $paymentId)
                         ->getQuery()->getOneOrNullResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
