@@ -685,7 +685,43 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         return $this->Path().'Controllers/Backend/FcPayone.php';
     }
-    
+
+    /**
+     * This Method can be used to capture orderpositions from your own plugins
+     *
+     * <b>Example: Method implementation to capture orderpositions</b>
+     * <pre>
+     * public function myOrderCapture()
+     *{
+     *  $moptPaymentPlugin = $this->get('plugins')->Frontend()->MoptPaymentPayone();
+     *  // orderDetail is an array of orderDetail id's and amounts to capture
+     *  // you can get these values from the table s_order_details
+     *  // all orderDetail id's have to belong to a single order
+     *  // also note that the amount can be lower than the full position amount
+     *  // in this case you can repeat partial captures until you set $finalize to true
+     *  $orderDetails = [
+     *  [
+     *    'id' => 1,
+     *    'amount' => 3.0
+     *    ],
+     *    [
+     *    'id' => 2,
+     *    'amount' => 5
+     *    ],
+     *  ];
+     *  try {
+     *    $return = $plugin->captureOrder($orderDetails, true, true);
+     *  } catch (Exception $e){
+     *    echo "Exception:" . $e->getMessage();
+     *  }
+     *}</pre>
+     *
+     * @param $orderDetailParams array of orderdetail id's and amounts to capture, see example above
+     * @param bool $finalize set to true on your last capture, afterwards captures are no longer possible
+     * @param bool $includeShipment set to true to include shipping costs in capture, set to false if shipping costs have their own order position
+     * @return bool
+     * @throws Exception
+     */
     public function captureOrder($orderDetailParams, $finalize = false, $includeShipment = false)
     {
 
@@ -752,6 +788,42 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         }
     }
 
+    /**
+     * This Method can be used to refund orderpositions from your own plugins
+     *
+     * <b>Example: Method implementation to refund orderpositions</b>
+     * <pre>
+     * public function myOrderRefund()
+     *{
+     *  $moptPaymentPlugin = $this->get('plugins')->Frontend()->MoptPaymentPayone();
+     *  // orderDetail is an array of orderDetail id's and amounts to refund
+     *  // you can get these values from the table s_order_details
+     *  // all orderDetail id's have to belong to a single order
+     *  // also note that the amount can be lower than the full position amount
+     *  // in this case you can repeat partial refunds until you set $finalize to true
+     *  $orderDetails = [
+     *  [
+     *    'id' => 1,
+     *    'amount' => 3.0
+     *    ],
+     *    [
+     *    'id' => 2,
+     *    'amount' => 5
+     *    ],
+     *  ];
+     *  try {
+     *    return = $plugin->refundOrder($orderDetails, true, true);
+     *  } catch (Exception $e){
+     *    echo "Exception:" . $e->getMessage();
+     *  }
+     *}</pre>
+     *
+     * @param $orderDetailParams array of orderdetail id's and amounts to refund, see example above
+     * @param bool $finalize set to true on your last refund, afterwards refunds are no longer possible
+     * @param bool $includeShipment set to true to include shipping costs in refunds, set to false if shipping costs have their own order position
+     * @return bool
+     * @throws Exception
+     */
     public function refundOrder($orderDetailParams, $finalize = false, $includeShipment = false)
     {
 
