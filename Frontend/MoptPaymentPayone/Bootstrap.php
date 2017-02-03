@@ -720,6 +720,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $params = Mopt_PayoneMain::getInstance()->getParamBuilder()
                     ->buildCustomOrderCapture($order, $orderParams, $finalize, $includeShipment);
 
+            $invoicing = null;
+
             if ($config['submitBasket'] || Mopt_PayoneMain::getInstance()->getPaymentHelper()->isPayoneBillsafe($paymentName)) {
                 $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
                         ->getInvoicingFromOrder($order, array_column($orderDetailParams, 'id'), $finalize, false, $includeShipment);
@@ -784,6 +786,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
             //fetch params
             $params = Mopt_PayoneMain::getInstance()->getParamBuilder()->buildCustomOrderDebit($order, $orderParams, $includeShipment);
+
+            $invoicing = null;
 
             if ($config['submitBasket'] || Mopt_PayoneMain::getInstance()->getPaymentHelper()->isPayoneBillsafe($paymentName)) {
                 $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
