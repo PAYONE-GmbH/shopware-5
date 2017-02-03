@@ -64,7 +64,6 @@ class Payone_Api_Service_Verification_AddressCheck extends Payone_Api_Service_Ab
      */
     public function check(Payone_Api_Request_AddressCheck $request)
     {
-        try {
             $this->validateRequest($request);
 
             $requestParams = $request->toArray();
@@ -74,10 +73,6 @@ class Payone_Api_Service_Verification_AddressCheck extends Payone_Api_Service_Ab
             $response = $this->getMapperResponse()->map($responseRaw);
 
             $this->protocol($request, $response);
-        } catch (Exception $e) {
-            $this->protocolException($e, $request);
-            throw $e;
-        }
 
         return $response;
     }

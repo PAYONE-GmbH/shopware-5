@@ -14,8 +14,8 @@ class Mopt_PayoneMain
     const TRAFFIC_LIGHT__RED    = 3;
 
   /**
-   * MoptPayoneMain instance
-   * @var MoptPayoneMain
+   * Mopt_PayoneMain instance
+   * @var Mopt_PayoneMain
    */
     static protected $instance = null;
 
@@ -23,7 +23,7 @@ class Mopt_PayoneMain
    * Payone Config
    * @var array
    */
-    protected $payoneConfig = array();
+    protected $payoneConfig = [];
 
   /**
    * Payone ParamBuilder
@@ -52,7 +52,7 @@ class Mopt_PayoneMain
   /**
    * singleton accessor
    *
-   * @return type
+   * @return Mopt_PayoneMain
    */
     public static function getInstance()
     {
@@ -66,7 +66,7 @@ class Mopt_PayoneMain
    * returns config according to submitted payment id
    * returns global config if no payment id is submitted
    *
-   * @param string $paymentId
+   * @param int $paymentId
    * @param bool $forceReload
    * @param bool $asArray
    * @return array
@@ -81,6 +81,7 @@ class Mopt_PayoneMain
             return $this->payoneConfig[$paymentId];
         }
 
+        /** @var \Shopware\CustomModels\MoptPayoneConfig\Repository $repository */
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig');
         $data       = $repository->getConfigByPaymentId($paymentId, $asArray);
 
@@ -95,7 +96,7 @@ class Mopt_PayoneMain
   /**
    * param builder getter
    *
-   * @return type
+   * @return Mopt_PayoneParamBuilder
    */
     public function getParamBuilder()
     {
@@ -112,7 +113,7 @@ class Mopt_PayoneMain
   /**
    * getter method for feedback handler
    *
-   * @return type
+   * @return Mopt_PayoneFormHandler
    */
     public function getFormHandler()
     {
@@ -125,7 +126,7 @@ class Mopt_PayoneMain
   /**
    * getter method for helper
    *
-   * @return type
+   * @return Mopt_PayoneHelper
    */
     public function getHelper()
     {
@@ -138,7 +139,7 @@ class Mopt_PayoneMain
   /**
    * getter method for payment helper
    *
-   * @return type
+   * @return Mopt_PayonePaymentHelper
    */
     public function getPaymentHelper()
     {

@@ -33,11 +33,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     /**
      * PayOne Builder
      *
-     * @var PayoneBuilder
+     * @var Payone_Builder
      */
-    protected $payoneServiceBuilder = null;
+    protected $payoneServiceBuilder;
     protected $service = null;
-    protected $session = null;
+    protected $session;
 
     /**
      * Init method that get called automatically
@@ -97,7 +97,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         //get config
         $paymentId = $this->session->moptPaymentId;
-        $paymentData = $this->session->moptPaymentData;
 
         $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
         $user = $this->admin->sGetUserData();
@@ -106,27 +105,24 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         //perform consumerscorecheck
         $params = $this->moptPayoneMain->getParamBuilder()
             ->getConsumerscoreCheckParams($billingAddressData, $paymentId);
+        /** @var Payone_Api_Service_Verification_Consumerscore $service */
         $service = $this->payoneServiceBuilder->buildServiceVerificationConsumerscore();
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'));
+        $service->getServiceProtocol()->addRepository(
+            Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog')
+        );
         $request = new Payone_Api_Request_Consumerscore($params);
 
         $billingAddressChecktype = 'NO';
         $request->setAddresschecktype($billingAddressChecktype);
         $request->setConsumerscoretype($config['consumerscoreCheckMode']);
 
-        $response = $service->score($request);
+        try {
+            $response = $service->score($request);
+        } catch (\Exception $e) {
 
-        if ($response->getStatus() == 'VALID') {
-            //save result
-            $this->moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
             unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
             unset($this->session->moptPaymentId);
-            echo json_encode(true);
-        } else {
-            //save error
-            $this->moptPayoneMain->getHelper()->saveConsumerScoreError($userId, $response);
-            unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
-            unset($this->session->moptPaymentId);
+
             //choose next action according to config
             if ($config['consumerscoreFailureHandling'] == 0) {
                 //abort
@@ -134,10 +130,27 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $this->moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
                 $this->moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
                 echo json_encode(false);
+                return;
             } else {
                 //proceed
+                $this->moptPayoneMain->getHelper()->saveConsumerScoreApproved($userId);
                 echo json_encode(true);
+                return;
             }
+        }                
+        
+        if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
+            //save result
+            $this->moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
+            unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
+            unset($this->session->moptPaymentId);
+            echo json_encode(true);
+        } else { /* INVALID */
+            $this->moptPayoneMain->getHelper()->saveConsumerScoreError($userId, $response);
+            unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
+            unset($this->session->moptPaymentId);            
+            
+            echo json_encode(false);          
         }
     }
 
@@ -145,26 +158,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
-        unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
-
         $userId = $this->session->sUserId;
-        $config = $this->moptPayoneMain->getPayoneConfig($this->session->moptPaymentId);
-
         $this->moptPayoneMain->getHelper()->saveConsumerScoreDenied($userId);
 
         unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
         unset($this->session->moptPaymentId);
 
-        if ($config['consumerscoreFailureHandling'] == 0) {
-            //abort
-            //delete payment data and set to p1 prepayment
-            $this->moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
-            $this->moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
-            echo json_encode(false);
-        } else {
-            //proceed
-            echo json_encode(true);
-        }
+        echo json_encode(false);
     }
 
     public function saveOriginalAddressAction()
@@ -378,21 +378,30 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $financeType = Payone_Api_Enum_PayolutionType::PYS;
         $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
         $userData = $this->admin->sGetUserData();
+        $data = [];
         $paymentName = $userData['additional']['payment']['name'];
         if ($this->moptPayonePaymentHelper->isPayonePayolutionInstallment($paymentName)) {
-            $precheckresponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
-            if ($precheckresponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
-                $responseData = $precheckresponse->toArray();
+            $precheckResponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
+            if ($precheckResponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
+                $responseData = $precheckResponse->toArray();
                 $workorderId = $responseData['rawResponse']['workorderid'];
-                $calculation = $this->buildAndCallCalculate($config, 'fnc', $financeType, $paymentType, $paymentData, $workorderId);
-                $installmentData = $calculation->getInstallmentData();
-                $data['data'] = $installmentData;
-                $data['status'] = 'success';
-                $data['workorderid'] = $workorderId;
-                $encoded = json_encode($data);
-                echo $encoded;
+                $calculationResponse = $this
+                    ->buildAndCallCalculate($config, 'fnc', $financeType, $paymentType, $paymentData, $workorderId);
+                if ($calculationResponse instanceof \Payone_Api_Response_Genericpayment_Approved) {
+                    $installmentData = $calculationResponse->getInstallmentData();
+                    $data['data'] = $installmentData;
+                    $data['status'] = 'success';
+                    $data['workorderid'] = $workorderId;
+                    $encoded = json_encode($data);
+                    echo $encoded;
+                } else {
+                    $data['data'] = $calculationResponse;
+                    $data['status'] = 'error';
+                    $encoded = json_encode($data);
+                    echo $encoded;
+                }
             } else {
-                $data['data'] = $precheckresponse;
+                $data['data'] = $precheckResponse;
                 $data['status'] = 'error';
                 $encoded = json_encode($data);
                 echo $encoded;
@@ -516,7 +525,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param string $clearingType
      * @param string $financetype
      * @param string $paymenttype
-     * @return type $response
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
      */
     protected function buildAndCallCalculate($config, $clearingType, $financetype, $paymenttype, $paymentData, $workorderId)
     {

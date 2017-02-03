@@ -31,6 +31,8 @@
 // needed for CSRF Protection compatibility SW versions < 5.2
 require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
+use \Doctrine\ORM\Tools\ToolsException;
+
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
     /**
@@ -125,6 +127,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $tables = $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
 
+        /** @var \Shopware\Bundle\AttributeBundle\Service\CrudService $attributeService */
         $attributeService = $this->assertMinimumVersion('5.2') ?
             Shopware()->Container()->get('shopware_attribute.crud_service') : null;
 
@@ -379,7 +382,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
@@ -387,7 +390,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
@@ -395,7 +398,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
@@ -403,7 +406,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
@@ -411,7 +414,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
         
@@ -419,7 +422,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay'),
             ));
-        } catch (\Doctrine\ORM\Tools\ToolsException $e) {
+        } catch (ToolsException $e) {
             // ignore
         }
 
@@ -429,6 +432,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // payone config sepa extension
         if (!$this->getInstallHelper()->moptPayoneConfigExtensionExist()) {
             $this->getInstallHelper()->moptExtendConfigDataTable();
+        }
+
+        // payone config address check extension
+        if (!$this->getInstallHelper()->moptPayoneConfigAddressCheckExtensionExist()) {
+            $this->getInstallHelper()->moptExtendConfigAddressCheckDataTable();
         }
 
         // payone config klarna extension
@@ -497,6 +505,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $tables = $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
 
+        /** @var \Shopware\Bundle\AttributeBundle\Service\CrudService $attributeService */
         $attributeService = $this->assertMinimumVersion('5.2') ?
             Shopware()->Container()->get('shopware_attribute.crud_service') : null;
 

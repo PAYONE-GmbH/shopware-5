@@ -16,7 +16,7 @@ class Shopware_Controllers_Backend_MoptPayoneTransactionLog extends Shopware_Con
 
         $builder = Shopware()->Models()->createQueryBuilder();
         $builder->select('log')
-            ->from('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog log');
+            ->from('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog', 'log');
 
         $order = (array) $this->Request()->getParam('sort', array());
 
@@ -71,7 +71,7 @@ class Shopware_Controllers_Backend_MoptPayoneTransactionLog extends Shopware_Con
 
         $builder = Shopware()->Models()->createQueryBuilder();
         $builder->select('log')
-            ->from('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog log');
+            ->from('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog', 'log');
 
         foreach ($filters as $filter) {
             if ($filter['property'] == 'search' && !empty($filter['value'])) {
