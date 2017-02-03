@@ -818,7 +818,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     protected function callPayoneCaptureService($params, $invoicing = null)
     {
         $service = Shopware()->Plugins()->Frontend()
-                        ->MoptPaymentPayone()->Application()->MoptPayoneBuilder()->buildServicePaymentCapture();
+                        ->MoptPaymentPayone()->get('MoptPayoneBuilder')->buildServicePaymentCapture();
+            // Application()->MoptPayoneBuilder()->buildServicePaymentCapture();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
                         'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
