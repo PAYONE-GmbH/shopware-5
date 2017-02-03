@@ -887,7 +887,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         $service = Shopware()->Plugins()->Frontend()
                         ->MoptPaymentPayone()->get('MoptPayoneBuilder')->buildServicePaymentCapture();
-            // Application()->MoptPayoneBuilder()->buildServicePaymentCapture();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
                         'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));

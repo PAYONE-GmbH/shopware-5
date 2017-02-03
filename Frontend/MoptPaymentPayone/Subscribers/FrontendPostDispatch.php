@@ -106,8 +106,6 @@ class FrontendPostDispatch implements SubscriberInterface
             return;
         }
 
-        $moptPayoneMain = $this->container->get('MoptPayoneMain');
-
         $controllerName = $request->getControllerName();
 
         $this->setCorrectViewsFolder();
