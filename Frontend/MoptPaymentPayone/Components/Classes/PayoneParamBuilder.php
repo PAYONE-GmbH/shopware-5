@@ -344,7 +344,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
             } else {
-                $amount += $order->getInvoiceShipping();
+                $amount += $order->getInvoiceShipping() ;
             }
         }
         $amount = round($amount, 2);
@@ -393,7 +393,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
             } else {
-                $amount += $order->getInvoiceShipping() * ( 1 + ($flTaxRate / 100));
+                $amount += $order->getInvoiceShipping();
             }
         }
         $amount = round($amount, 2);
