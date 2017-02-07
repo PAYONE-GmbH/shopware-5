@@ -366,8 +366,8 @@ $.plugin('moptPayoneCreditcardPrepare', {
             Payone.ClientApi.Language[fcpolang].placeholders.cardpan =  me.opts.moptCreditcardConfig.default_translation_iframe_cardpan;
         }
         if (me.opts.moptCreditcardConfig.default_translation_iframe_cvc && me.opts.moptCreditcardConfig.check_cc === '1' ){
-        Payone.ClientApi.Language[fcpolang].placeholders.cvc =  me.opts.moptCreditcardConfig.default_translation_iframe_cvc;        
-    	}
+        Payone.ClientApi.Language[fcpolang].placeholders.cvc =  me.opts.moptCreditcardConfig.default_translation_iframe_cvc;
+        }
                    
 
 
