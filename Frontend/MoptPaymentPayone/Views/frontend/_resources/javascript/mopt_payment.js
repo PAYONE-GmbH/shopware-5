@@ -106,7 +106,6 @@ $.plugin('moptPayoneSubmitPaymentForm', {
     init: function () {
         var me = this;
 
-        console.log("moptPayoneSubmitPaymentForm");
         if (typeof $('#mopt_payone_creditcard_form') !== "undefined")
         {
             $('#mopt_payone_creditcard_form').moptPayoneCreditcardPrepare();
