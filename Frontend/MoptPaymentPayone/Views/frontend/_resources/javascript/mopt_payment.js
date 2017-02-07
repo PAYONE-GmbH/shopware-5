@@ -126,15 +126,13 @@ $.plugin('moptPayoneSubmitPaymentForm', {
                     }
                     else if ($('#payment_meanmopt_payone_creditcard').is(":checked")
                             && creditcardCheckType === '0'
-                            && $('#mopt_payone__cc_hostediframesubmit').val() === '1'
-                            && $('#mopt_payone__cc_truncatedcardpan_hidden').val() !== '') {
+                            && $('#mopt_payone__cc_hostediframesubmit').val() === '1') {
                         e.preventDefault();
                         if (typeof $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck') !== 'undefined') {
                             $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
                         }
                         $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
                     } else {
-                        console.log("creditcardCheck not Triggered");
                         return true;
                     }
                     ;
@@ -169,7 +167,6 @@ $.plugin('moptPayoneCreditcardPrepare', {
     init: function () {
         var me = this;
         me.applyDataAttributes();
-        console.log("moptPayoneCreditcardPrepare Init");
 
         if (typeof window.Payone !== "undefined") {
             if (me.opts.moptCreditcardIntegration === 1) {
@@ -221,8 +218,6 @@ $.plugin('moptPayoneCreditcardPrepare', {
     prepareIframeCreditcardCheck: function () {
         var me = this;
         var request, config;
-
-        console.log("prepareIframeCreditcardCheck Init");
 
         if (me.opts.mopt_payone__cc_paymentid) {
             $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_paymentid').val());
@@ -373,7 +368,7 @@ $.plugin('moptPayoneCreditcardPrepare', {
         }
         if (me.opts.moptCreditcardConfig.default_translation_iframe_cvc && me.opts.moptCreditcardConfig.check_cc === '1' ){
         Payone.ClientApi.Language[fcpolang].placeholders.cvc =  me.opts.moptCreditcardConfig.default_translation_iframe_cvc;
-    	}
+        }
                    
 
 
@@ -424,7 +419,6 @@ $.plugin('moptPayoneCreditcardCheck', {
     init: function () {
         var me = this;
         me.applyDataAttributes();
-        console.log("moptPayoneCreditcardCheck Init");
         me.checkCreditCard();
     },
     checkCreditCard: function () {
@@ -476,22 +470,10 @@ $.plugin('moptPayoneCreditcardCheck', {
 
 $.plugin('moptPayoneIframeCreditcardCheck', {
     init: function () {
-        // only trigger CC check if trunctedcardnumber_hidden is not set
-        if ($('#mopt_payone__cc_truncatedcardpan_hidden').val() === '' ) {
-
-            if (iframes.isComplete()) {
-                iframes.creditCardCheck('processPayoneIframeResponse');
-            } else {
-                moptShowGeneralIFrameError();
-            }
+        if (iframes.isComplete()) {
+            iframes.creditCardCheck('processPayoneIframeResponse');
         } else {
-            if ($('#mopt_payone__cc_truncated_hidden').val() === '1') {
-                console.log("CC check not triggered, returning");
-                return true;
-            }else {
-                console.log("CC check not triggered, submitting");
-                submitForm();
-            }
+            moptShowGeneralIFrameError();
         }
     },
     destroy: function () {

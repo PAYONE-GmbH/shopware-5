@@ -146,18 +146,15 @@
     <input name="moptPaymentData[mopt_payone__cc_hostediframesubmit]" type="hidden" 
            id="mopt_payone__cc_hostediframesubmit" 
            value="1"/>
-    <input name="moptPaymentData[mopt_payone__cc_truncatedcardpan_hidden]" type=""
+    <input name="moptPaymentData[mopt_payone__cc_truncatedcardpan_hidden]" type="hidden"
            id="mopt_payone__cc_truncatedcardpan_hidden"
            value="{$form_data.mopt_payone__cc_truncatedcardpan_hidden|escape}"/>
-    <input name="moptPaymentData[mopt_payone__cc_cardexpiredate]" type=""
+    <input name="moptPaymentData[mopt_payone__cc_cardexpiredate]" type="hidden"
            id="mopt_payone__cc_cardexpiredate" 
            value="{$form_data.mopt_payone__cc_cardexpiredate|escape}"/>
-    <input name="moptPaymentData[payment_meanmopt_payone_creditcard_hidden]" type=""
+    <input name="moptPaymentData[payment_meanmopt_payone_creditcard_hidden]" type="hidden"
            id="payment_meanmopt_payone_creditcard_hidden"
            value="{$form_data.payment_meanmopt_payone_creditcard_hidden|escape}"/>
-    <input name="mopt_payone__cc_truncated_hidden" type=""
-           id="mopt_payone__cc_truncated_hidden"
-           value="{$form_data.mopt_payone__cc_truncated_hidden|escape}"/>
     <br />
 </div>
 
@@ -232,7 +229,6 @@
                             var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
                             var diff = selectedDate.getTime() - minValidDate.getTime();
                             if (diff > 0){
-                                console.log("Submit nach Post");
                                 $("#shippingPaymentForm").submit();
                                 $('form[name="frmRegister"]').submit();
                             } else {
@@ -258,11 +254,5 @@
         alert("Bitte füllen Sie alle Formularfelder vollständig aus");
     };
 
-    function submitForm() {
-        console.log("submitted");
-        $('#mopt_payone__cc_truncated_hidden').val('1');
-        $("#shippingPaymentForm").submit();
-        $('form[name="frmRegister"]').submit();
-    };
 //]]>
 </script>           
