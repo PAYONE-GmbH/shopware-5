@@ -98,16 +98,13 @@ class FrontendPostDispatch implements SubscriberInterface
         $request = $args->getSubject()->Request();
         $response = $args->getSubject()->Response();
         $view = $args->getSubject()->View();
-        /* @var $action Enlight_Controller_Action */
+        /* @var $action \Enlight_Controller_Action */
         $action = $args->getSubject();
 
 
         if (!$request->isDispatched() || $response->isException()) {
             return;
         }
-
-        $moptPayoneMain = $this->container->get('MoptPayoneMain');
-        $config = $moptPayoneMain->getPayoneConfig();
 
         $controllerName = $request->getControllerName();
 
@@ -310,6 +307,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
 
 
+            $data['moptPayolutionInformation'] = null;
             //prepare additional Payolution information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name']) || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name']) || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInstallment($paymentMean['name'])
             ) {
@@ -344,6 +342,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
             }
 
+            $data['moptRatepayConfig'] = null;
             //prepare additional Ratepay information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])) {
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
@@ -397,8 +396,8 @@ class FrontendPostDispatch implements SubscriberInterface
             'mode' => $payoneParams['mode'],
             'encoding' => 'UTF-8',
             'language' => $payoneParams['language'],
-            'solution_version' => \Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap::getVersion(),
-            'solution_name' => \Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap::getSolutionName(),
+            'solution_version' => Shopware()->Plugins()->Frontend()->MoptPaymentPayone()->getVersion(),
+            'solution_name' => Shopware()->Plugins()->Frontend()->MoptPaymentPayone()->getSolutionName(),
             'integrator_version' => Shopware()->Config()->Version,
             'integrator_name' => 'Shopware',
             'storecarddata' => 'yes',

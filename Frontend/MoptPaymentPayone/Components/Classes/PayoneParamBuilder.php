@@ -160,10 +160,11 @@ class Mopt_PayoneParamBuilder
         }
 
         $params['business'] = $business;
+        $params['payolution_b2b'] = false;
 
         if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
             if ($order->getBilling()->getCompany()) {
-                $params['payolution_b2b']= true;
+                $params['payolution_b2b'] = true;
             }
         }
 
@@ -342,7 +343,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
             } else {
-                $amount += $order->getInvoiceShipping();
+                $amount += $order->getInvoiceShipping() ;
             }
         }
         $amount = round($amount, 2);
@@ -391,7 +392,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
             } else {
-                $amount += $order->getInvoiceShipping() * ( 1 + ($flTaxRate / 100));
+                $amount += $order->getInvoiceShipping();
             }
         }
         $amount = round($amount, 2);

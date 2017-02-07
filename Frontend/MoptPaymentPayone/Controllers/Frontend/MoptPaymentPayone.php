@@ -39,8 +39,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     public function init()
     {
         $this->admin = Shopware()->Modules()->Admin();
-        $this->payoneServiceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
-        $this->moptPayoneMain = $this->Plugin()->Application()->MoptPayoneMain();
+        $this->payoneServiceBuilder = $this->Plugin()->get('MoptPayoneBuilder');
+        $this->moptPayoneMain = $this->Plugin()->get('MoptPayoneMain');
         $this->moptPayonePaymentHelper = $this->moptPayoneMain->getPaymentHelper();
         $this->session = Shopware()->Session();
     }
