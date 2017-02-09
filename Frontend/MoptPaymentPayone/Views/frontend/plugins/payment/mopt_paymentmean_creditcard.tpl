@@ -37,14 +37,14 @@
            class="payment--field is--required{if $error_flags.mopt_payone__cc_accountholder} has--error{/if}" />
 
     <p class="none">
-        <select name="moptPaymentData[mopt_payone__cc_cardtype]" 
-                id="mopt_payone__cc_cardtype" 
+        <select name="moptPaymentData[mopt_payone__cc_cardtype]"
+                id="mopt_payone__cc_cardtype"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="select--country is--required{if $error_flags.mopt_payone__cc_cardtype} has--error{/if}">
             <option disabled="disabled" value="" selected="selected">{s name='creditCardType'}Kartentyp{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
             {foreach from=$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards item=credit_card}
-                <option value="{$credit_card.short}" 
-                        {if $form_data.mopt_payone__cc_paymentname == $credit_card.name}selected="selected"{/if} 
+                <option value="{$credit_card.short}"
+                        {if $form_data.mopt_payone__cc_paymentname == $credit_card.name}selected="selected"{/if}
                         mopt_payone__cc_paymentname="{$credit_card.name}" mopt_payone__cc_paymentid="{$credit_card.id}">
                     {$credit_card.description}
                 </option>
@@ -58,8 +58,8 @@
            id="mopt_payone__cc_truncatedcardpan"
            {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
            placeholder="{s name='creditCardNumber'}Kartennummer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-           value="{$form_data.mopt_payone__cc_truncatedcardpan|escape}" 
-           data-moptNumberErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="numberFormField"}Dieses Feld darf nur Zahlen enthalten{/s}" 
+           value="{$form_data.mopt_payone__cc_truncatedcardpan|escape}"
+           data-moptNumberErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="numberFormField"}Dieses Feld darf nur Zahlen enthalten{/s}"
            class="payment--field is--required{if $error_flags.mopt_payone__cc_truncatedcardpan} has--error{/if} moptPayoneNumber" />
     {else}
         <p class="none">
@@ -67,10 +67,21 @@
                 {s name='creditCardNumber'}Kartennummer{/s}
             </label>
         </p>
-       <span class="inputIframe" id="mopt_payone__cc_truncatedcardpan">
-        <input name="moptPaymentData[mopt_payone__cc_truncatedcardpan_hidden]" type="text" style="display:none"
+       <span class="inputIframe" id="mopt_payone__cc_truncatedcardpan"></span>
+
+       <span class="hiddenCCFields" style="display: none">
+        <input name="moptPaymentData[mopt_payone__cc_truncatedcardpan_hidden]" type="text"
                id="mopt_payone__cc_truncatedcardpan_hidden"
-               value="{$form_data.mopt_payone__cc_truncatedcardpan_hidden|escape}"  readonly />
+               value="{$form_data.mopt_payone__cc_truncatedcardpan_hidden|escape}"  readonly
+               style="height: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardno_iframe_height};
+                      width: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardno_iframe_width} ! important;
+                      {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.cardno_input_css !== ''}
+                            {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardno_input_css}
+                      {else}
+                            {$moptCreditCardCheckEnvironment.moptCreditcardConfig.standard_input_css}
+                      {/if}
+                     "
+        />
        </span>
         <BR><BR>
     {/if}
@@ -81,8 +92,8 @@
     </p>
     <p class="none">
         {if $moptIsAjax}
-        <select name="moptPaymentData[mopt_payone__cc_month]" 
-                id="mopt_payone__cc_month"  
+        <select name="moptPaymentData[mopt_payone__cc_month]"
+                id="mopt_payone__cc_month"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="select--country is--required{if $error_flags.mopt_payone__cc_month} has--error{/if}">
             <option {if $form_data.mopt_payone__cc_month == '01'}selected="selected"{/if} value="01">01</option>
@@ -98,20 +109,44 @@
             <option {if $form_data.mopt_payone__cc_month == '11'}selected="selected"{/if} value="11">11</option>
             <option {if $form_data.mopt_payone__cc_month == '12'}selected="selected"{/if} value="12">12</option>
         </select>
-        {html_select_date prefix='mopt_payone__cc_' end_year='+10' display_days=false 
+        {html_select_date prefix='mopt_payone__cc_' end_year='+10' display_days=false
   display_months=false year_extra='id="mopt_payone__cc_Year" class="select--country is--required"'}
         {else}
              <span id="expireInput" class="inputIframe">
-             <span id="mopt_payone__cc_month">
-                <input name="moptPaymentData[mopt_payone__cc_cardexpiremonth_hidden]" type="text" style="display:none"
-                    id="mopt_payone__cc_cardexpiremonth_hidden"
-                       value="{$form_data.mopt_payone__cc_cardexpiremonth_hidden|escape}"  readonly />
-             </span>
+             <span id="mopt_payone__cc_month"></span>
              <span id="mopt_payone__cc_Year"></span>
-                <input name="moptPaymentData[mopt_payone__cc_cardexpireyear_hidden]" type="text" style="display:none"
+             </span>
+
+             <span class="hiddenCCFields" style="display: none">
+                <input name="moptPaymentData[mopt_payone__cc_cardexpiremonth_hidden]" type="text"
+                       id="mopt_payone__cc_cardexpiremonth_hidden"
+                       value="{$form_data.mopt_payone__cc_cardexpiremonth_hidden|escape}"  readonly
+                       style="height: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardmonth_iframe_height};
+                               width: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardmonth_iframe_width} ! important;
+                       {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.cardmonth_input_css !== ''}
+                           {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardmonth_input_css}
+                       {else}
+                           {$moptCreditCardCheckEnvironment.moptCreditcardConfig.standard_input_css}
+                       {/if}
+                               "
+
+
+                />
+             </span>
+             <span class="hiddenCCFields" style="display: none">
+                <input name="moptPaymentData[mopt_payone__cc_cardexpireyear_hidden]" type="text"
                        id="mopt_payone__cc_cardexpireyear_hidden"
-                       value="{$form_data.mopt_payone__cc_cardexpireyear_hidden|escape}"  readonly />
-             </span> 
+                       value="{$form_data.mopt_payone__cc_cardexpireyear_hidden|escape}"  readonly
+                       style="height: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardyear_iframe_height};
+                               width: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardyear_iframe_width} ! important;
+                       {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.cardyear_input_css !== ''}
+                           {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardyear_input_css}
+                       {else}
+                           {$moptCreditCardCheckEnvironment.moptCreditcardConfig.standard_input_css}
+                       {/if}
+                               "
+                />
+             </span>
         {/if}
     </p>
 
@@ -119,29 +154,29 @@
     <p class="none" {if !$moptCreditCardCheckEnvironment.moptPayoneCheckCc}style="display:none;"{/if}>
         <input name="mopt_payone__cc_cvc"
                type="text"
-               id="mopt_payone__cc_cvc" 
-               data-moptNumberErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="numberFormField"}Dieses Feld darf nur Zahlen enthalten{/s}" 
+               id="mopt_payone__cc_cvc"
+               data-moptNumberErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="numberFormField"}Dieses Feld darf nur Zahlen enthalten{/s}"
                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                placeholder="{s name='creditCardCvc'}Prüfziffer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
                class="payment--field is--required{if $error_flags.mopt_payone__cc_cvc} has--error{/if} moptPayoneNumber" />
     </p>
     {elseif $moptCreditCardCheckEnvironment.moptPayoneCheckCc}
         <p class="none" id="label_mopt_payone__cc_cvc">
-            <label for="mopt_payone__cc_cvc">
+            <label for="mopt_payone__cc_cvc" class="inputIframe">
                 {s name='creditCardCvc'}Prüfziffer{/s}
             </label>
         </p>
         <span id="mopt_payone__cc_cvc" class="inputIframe"></span>
     {/if}
-    
+
     {if $moptIsAjax}
     <p class="none">
-        <span id="mopt_payone__cc_show_saved_hint" style="display:none;font-weight: bold;color: #e1540f;">    
+        <span id="mopt_payone__cc_show_saved_hint" style="display:none;font-weight: bold;color: #e1540f;">
             {s namespace='frontend/MoptPaymentPayone/payment' name='ccShowSavedHint'}Platzhalter ccShowSavedHint{/s}
         </span>
-    </p>      
+    </p>
     {/if}
-    
+
 
     <div id="errorOutput"></div>
 
@@ -265,30 +300,27 @@
     function showhiddenCCFields() {
         var selectedYear = '20'+ $('#mopt_payone__cc_cardexpiredate').val().substring(0,2);
         var selectedMonth = $('#mopt_payone__cc_cardexpiredate').val().substring(2,4);
-        console.log("Year");
-        console.log(selectedYear);
-        console.log("Month");
-        console.log(selectedMonth);
-        $('#mopt_payone__cc_cardexpireyear_hidden').val(selectedYear);
-        $('#mopt_payone__cc_cardexpiremonth_hidden').val(selectedMonth);
-        $('#mopt_payone__cc_truncatedcardpan_hidden').show();
-        $('#mopt_payone__cc_cardexpireyear_hidden').show();
-        $('#mopt_payone__cc_cardexpiremonth_hidden').show();
-        $('#showiframelink').show();
-        $('#label_mopt_payone__cc_cvc').css('display','none');
+        // hide Iframe Fields
+        $('.inputIframe').hide();
+        // show fields with already validated CC Data
+        $('.hiddenCCFields').show();
+
         $('#mopt_payone__cc_accountholder').attr('readonly', true);
         $('#mopt_payone__cc_cardtype').attr('disabled', true);
+        $('#mopt_payone__cc_cardexpireyear_hidden').val(selectedYear);
+        $('#mopt_payone__cc_cardexpiremonth_hidden').val(selectedMonth);
 
-        // fill fields for validation
-        $('#mopt_payone__cc_paymentdescription').val($('#mopt_payone__cc_cardtype option:selected').text());
-        $('#mopt_payone__cc_truncatedcardpan').val($('#mopt_payone__cc_truncatedcardpan_hidden').val());
-        $('#mopt_payone__cc_paymentid').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
-        $('#mopt_payone__cc_paymentname').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'));
-        $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
+        $('#showiframelink').show();
+
     };
 
     function showIframe() {
         $('#mopt_payone__cc_truncatedcardpan_hidden').val('');
+        $('.hiddenCCFields').hide();
+        $('#mopt_payone__cc_accountholder').attr('readonly', false);
+        $('#mopt_payone__cc_cardtype').attr('disabled', false);
+        $('.inputIframe').show();
+
 
     };
 //]]>

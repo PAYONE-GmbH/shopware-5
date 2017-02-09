@@ -108,17 +108,13 @@ $.plugin('moptPayoneSubmitPaymentForm', {
 
         if (typeof $('#mopt_payone_creditcard_form') !== "undefined")
         {
+            $('#mopt_payone_creditcard_form').moptPayoneCreditcardPrepare();
             // prepare and show Iframe or Display already checked and validated CreditcardData
             if ($('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") > 0){
                 showhiddenCCFields();
-
-            } else {
-                $('#mopt_payone_creditcard_form').moptPayoneCreditcardPrepare();
             }
 
             var creditcardCheckType = $('#mopt_payone_creditcard_form').attr('data-moptCreditcardIntegration');
-            console.log("CCCheckType:");
-            console.log(creditcardCheckType);
             if (typeof $('#mopt_payone_creditcard_form') !== "undefined")
             {
                 me.$el.bind('submit', function (e) {
@@ -140,10 +136,8 @@ $.plugin('moptPayoneSubmitPaymentForm', {
                         if (typeof $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck') !== 'undefined') {
                             $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
                         }
-                        console.log("Ifrmae CCCheck triggered");
                         $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
                     } else {
-                        console.log("Ifrmae CCCheck returned true");
                         return true;
                     }
                     ;
@@ -183,7 +177,6 @@ $.plugin('moptPayoneCreditcardPrepare', {
             if (me.opts.moptCreditcardIntegration === 1) {
                 me.prepareAjaxCreditcardCheck();
             } else {
-                console.log("Preparing CC CHeck");
                 me.prepareIframeCreditcardCheck();
             }
         } else {
@@ -236,8 +229,6 @@ $.plugin('moptPayoneCreditcardPrepare', {
         } else {
             $('#payment_meanmopt_payone_creditcard').val(me.opts.mopt_payone_credit_cards_id);
         }
-
-        console.log("prepareIframeCreditcardCheck");
 
         config = {
             fields: {
@@ -319,7 +310,7 @@ $.plugin('moptPayoneCreditcardPrepare', {
         }
         
         var fcpolang = me.opts.moptPayoneParamsLanguage;
-        console.log("Lang:" + fcpolang);
+
         if (me.opts.moptCreditcardConfig.default_translation_iframe_month1){
             Payone.ClientApi.Language[fcpolang].months.month1 = me.opts.moptCreditcardConfig.default_translation_iframe_month1;
         }
