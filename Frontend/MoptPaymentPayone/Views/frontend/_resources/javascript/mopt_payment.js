@@ -488,19 +488,9 @@ $.plugin('moptPayoneIframeCreditcardCheck', {
     }
 });
 
-//define global iframe var
-var iframes;
-
-//call the plugins
-$('.moptPayoneIbanBic').moptPayoneIbanBicValidator();
-$('.moptPayoneNumber').moptPayoneNumberValidator();
-$('.moptPayoneBankcode').moptPayoneBankcodeValidator();
-$('#shippingPaymentForm').moptPayoneSubmitPaymentForm();
-$('form[name="frmRegister"]').moptPayoneSubmitPaymentForm();
 
 function poBindDispatchChange() {
     $("input[name='sDispatch']").on('click', function (e) {
-
         var creditcardCheckType = $('#mopt_payone_creditcard_form').attr('data-moptCreditcardIntegration');
         $('#mopt_payone_creditcard_form').moptPayoneCreditcardPrepare();
         // prepare and show Iframe or Display already checked and validated CreditcardData
@@ -516,6 +506,7 @@ function poBindDispatchChange() {
             if (typeof $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck') !== 'undefined') {
                 $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
             }
+            console.log("Checking CreditCard");
             $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
 
         } else {
@@ -524,4 +515,23 @@ function poBindDispatchChange() {
         ;
     });
 }
+
+$.subscribe("plugin/swShippingPayment/onInputChanged", function(event, me) {
+    poBindDispatchChange();
+});
+
+
+//define global iframe var
+var iframes;
+
+//call the plugins
 poBindDispatchChange();
+
+$('.moptPayoneIbanBic').moptPayoneIbanBicValidator();
+$('.moptPayoneNumber').moptPayoneNumberValidator();
+$('.moptPayoneBankcode').moptPayoneBankcodeValidator();
+$('#shippingPaymentForm').moptPayoneSubmitPaymentForm();
+$('form[name="frmRegister"]').moptPayoneSubmitPaymentForm();
+
+
+
