@@ -251,7 +251,6 @@
                             $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
                             $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
                             $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
-
                                     var data = {
                             mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
                             mopt_payone__cc_cardtype: $('#mopt_payone__cc_cardtype').val(),
@@ -300,7 +299,6 @@
     function showhiddenCCFields() {
         var selectedYear = '20'+ $('#mopt_payone__cc_cardexpiredate').val().substring(0,2);
         var selectedMonth = $('#mopt_payone__cc_cardexpiredate').val().substring(2,4);
-        // hide Iframe Fields
         $('.inputIframe').hide();
         // show fields with already validated CC Data
         $('.hiddenCCFields').show();
@@ -309,7 +307,6 @@
         $('#mopt_payone__cc_cardtype').attr('disabled', true);
         $('#mopt_payone__cc_cardexpireyear_hidden').val(selectedYear);
         $('#mopt_payone__cc_cardexpiremonth_hidden').val(selectedMonth);
-
         $('#showiframelink').show();
 
     };
@@ -319,9 +316,8 @@
         $('.hiddenCCFields').hide();
         $('#mopt_payone__cc_accountholder').attr('readonly', false);
         $('#mopt_payone__cc_cardtype').attr('disabled', false);
+        $('#mopt_payone__cc_cardtype').parents('.js--fancy-select').removeClass('is--disabled');
         $('.inputIframe').show();
-
-
     };
 //]]>
 </script>           
