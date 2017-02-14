@@ -507,23 +507,22 @@ function poBindDispatchChange() {
         if ($('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") > 0){
             showhiddenCCFields();
         }
-        alert("clicked");
-            if ($('#payment_meanmopt_payone_creditcard').is(":checked")
-                && creditcardCheckType === '0'
-                && $('#mopt_payone__cc_hostediframesubmit').val() === '1'
-                && $('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") <= 0
-            ) {
-                e.preventDefault();
-                if (typeof $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck') !== 'undefined') {
-                    $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
-                }
-                $('#mopt_payone__cc_truncatedcardpan_hidden').val('');
-                $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
-
-            } else {
-                return true;
+        if ($('#payment_meanmopt_payone_creditcard').is(":checked")
+            && creditcardCheckType === '0'
+            && $('#mopt_payone__cc_hostediframesubmit').val() === '1'
+            && $('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") <= 0
+        ) {
+            e.preventDefault();
+            if (typeof $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck') !== 'undefined') {
+                $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
             }
-            ;
-        });
+            $('#mopt_payone__cc_truncatedcardpan_hidden').val('');
+            $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
+
+        } else {
+            return true;
+        }
+        ;
+    });
 }
 poBindDispatchChange();
