@@ -516,7 +516,6 @@ function poBindDispatchChange() {
             if (typeof $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck') !== 'undefined') {
                 $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
             }
-            $('#mopt_payone__cc_truncatedcardpan_hidden').val('');
             $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
 
         } else {
