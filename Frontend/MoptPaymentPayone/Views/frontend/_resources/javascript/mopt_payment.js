@@ -135,6 +135,7 @@ $.plugin('moptPayoneSubmitPaymentForm', {
                         e.preventDefault();
                         if (typeof $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck') !== 'undefined') {
                             $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
+                            return undefined;
                         }
                         $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
                     } else {
@@ -520,6 +521,7 @@ function poBindDispatchChange() {
                     $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
                 }
                 $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheckWithoutSubmit();
+                return undefined;
 
             } else {
                 return true;
@@ -528,7 +530,7 @@ function poBindDispatchChange() {
     });
 }
 
-$.subscribe("plugin/swShippingPayment/onInputChanged", function(event, me) {
+$.subscribe("plugin/swShippingPayment/onInputChanged", function() {
     poBindDispatchChange();
 });
 
