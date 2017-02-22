@@ -166,13 +166,22 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         }
     }
 
+    /**
+     * @return string
+     */
+    public function getFutureExpiredate() {
+        $future = new DateTime();
+        $future->modify("+2 years");
+        return $future->format("ym");
+    }
+
     public function creditcardCheckVisa($ecommercemode = null)
     {
         $this->aMinimumParams = array('clearingtype' => 'cc',
             'amount' => '2099', 'currency' => 'EUR',
             'firstname' => 'Timo', 'lastname' => 'Tester', 'country' => 'DE',
             'cardpan' => '4111111111111111', 'cardtype' => 'V',
-            'pseudocardpan' => '5500000000099999', 'cardexpiredate' => '1701'
+            'pseudocardpan' => '5500000000099999', 'cardexpiredate' => $this->getFutureExpiredate()
         );
         
         $this->payoneServiceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
@@ -232,7 +241,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             'amount' => '2099', 'currency' => 'EUR',
             'firstname' => 'Timo', 'lastname' => 'Tester', 'country' => 'DE',
             'cardpan' => '5500000000000004', 'cardtype' => 'M',
-            'pseudocardpan' => '5500000000099999', 'cardexpiredate' => '1701'
+            'pseudocardpan' => '5500000000099999', 'cardexpiredate' => $this->getFutureExpiredate()
         );
 
         $this->payoneServiceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
