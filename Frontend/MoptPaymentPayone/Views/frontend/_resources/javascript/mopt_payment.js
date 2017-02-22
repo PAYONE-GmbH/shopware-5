@@ -375,8 +375,6 @@ $.plugin('moptPayoneCreditcardPrepare', {
         Payone.ClientApi.Language[fcpolang].placeholders.cvc =  me.opts.moptCreditcardConfig.default_translation_iframe_cvc;
         }
                    
-
-
         request = {
             request: 'creditcardcheck',
             responsetype: 'JSON',
@@ -488,31 +486,45 @@ $.plugin('moptPayoneIframeCreditcardCheck', {
     }
 });
 
+$.plugin('moptPayoneIframeCreditcardCheckWithoutSubmit', {
+    init: function () {
+        if (iframes.isComplete()) {
+            iframes.creditCardCheck('processPayoneIframeResponseWithoutSubmit');
+        } else {
+            moptShowGeneralIFrameError();
+        }
+    },
+    destroy: function () {
+        var me = this;
+        me._destroy();
+
+    }
+});
+
 
 function poBindDispatchChange() {
     $("input[name='sDispatch']").on('change', function (e) {
-        var creditcardCheckType = $('#mopt_payone_creditcard_form').attr('data-moptCreditcardIntegration');
-        $('#mopt_payone_creditcard_form').moptPayoneCreditcardPrepare();
-        // prepare and show Iframe or Display already checked and validated CreditcardData
-        if ($('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") > 0){
-            showhiddenCCFields();
-        }
-        if ($('#payment_meanmopt_payone_creditcard').is(":checked")
-            && creditcardCheckType === '0'
-            && $('#mopt_payone__cc_hostediframesubmit').val() === '1'
-            && $('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") <= 0
-        ) {
-            e.preventDefault();
-            if (typeof $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck') !== 'undefined') {
-                $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
+            var creditcardCheckType = $('#mopt_payone_creditcard_form').attr('data-moptCreditcardIntegration');
+            $('#mopt_payone_creditcard_form').moptPayoneCreditcardPrepare();
+            // prepare and show Iframe or Display already checked and validated CreditcardData
+            if ($('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") > 0) {
+                showhiddenCCFields();
             }
-            console.log("Checking CreditCard");
-            $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
+            if ($('#payment_meanmopt_payone_creditcard').is(":checked")
+                && creditcardCheckType === '0'
+                && $('#mopt_payone__cc_hostediframesubmit').val() === '1'
+                && $('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") <= 0
+            ) {
+                e.preventDefault();
+                if (typeof $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck') !== 'undefined') {
+                    $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
+                }
+                $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheckWithoutSubmit();
 
-        } else {
-            return true;
-        }
-        ;
+            } else {
+                return true;
+            }
+            ;
     });
 }
 

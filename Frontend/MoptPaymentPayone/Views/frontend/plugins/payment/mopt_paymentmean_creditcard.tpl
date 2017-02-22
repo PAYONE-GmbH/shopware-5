@@ -214,78 +214,133 @@
             $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
             $('#mopt_payone__cc_cvc').val("{s name='creditCardCvcProcessed'}Kartenprüfziffer wurde verarbeitet{/s}");
             $('#mopt_payone__cc_show_saved_hint').show();
-                        var data = {
-                            mopt_payone__cc_truncatedcardpan: response.get('truncatedcardpan'),
-                            mopt_payone__cc_month: $('#mopt_payone__cc_month').val(),
-                            mopt_payone__cc_year: $('#mopt_payone__cc_Year').val(),
-                            mopt_payone__cc_cardtype: $('#mopt_payone__cc_cardtype').val(),
-                            mopt_payone__cc_accountholder: $('#mopt_payone__cc_accountholder').val(),
-                            mopt_payone__cc_pseudocardpan: response.get('pseudocardpan'),
-                            mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
-                            mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
-                            mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text()
-                        };
-                        jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
-                        {
-                            $("#shippingPaymentForm").submit();
-                            $('form[name="frmRegister"]').submit();
-                        });
-                    } else {
-                        var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
-                        if (response && (response.get('errorcode') in errorMessages[0])) {
-                            alert(errorMessages[0][response.get('errorcode')]);
-                        } else {
-                            alert(errorMessages[0].general);
-                        }
-                    }
+            var data = {
+                mopt_payone__cc_truncatedcardpan: response.get('truncatedcardpan'),
+                mopt_payone__cc_month: $('#mopt_payone__cc_month').val(),
+                mopt_payone__cc_year: $('#mopt_payone__cc_Year').val(),
+                mopt_payone__cc_cardtype: $('#mopt_payone__cc_cardtype').val(),
+                mopt_payone__cc_accountholder: $('#mopt_payone__cc_accountholder').val(),
+                mopt_payone__cc_pseudocardpan: response.get('pseudocardpan'),
+                mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
+                mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
+                mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text()
+            };
+            jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
+            {
+                $("#shippingPaymentForm").submit();
+                $('form[name="frmRegister"]').submit();
+            });
+        } else {
+            var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
+            if (response && (response.get('errorcode') in errorMessages[0])) {
+                alert(errorMessages[0][response.get('errorcode')]);
+            } else {
+                alert(errorMessages[0].general);
+            }
+        }
                 }
                 ;
                 
     function processPayoneIframeResponse(response) {
         if (response.status === "VALID") {
-                            $('#mopt_payone__cc_hostediframesubmit').val('0');
-                            $('#mopt_payone__cc_paymentdescription').val($('#mopt_payone__cc_cardtype option:selected').text());
-                            $('#mopt_payone__cc_pseudocardpan').val(response.pseudocardpan);
-                            $('#mopt_payone__cc_paymentid').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
-                            $('#mopt_payone__cc_paymentname').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'));
-                            $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
-                            $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
-                            $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
-                                    var data = {
-                            mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
-                            mopt_payone__cc_cardtype: $('#mopt_payone__cc_cardtype').val(),
-                            mopt_payone__cc_accountholder: $('#mopt_payone__cc_accountholder').val(),
-                            mopt_payone__cc_pseudocardpan: response.pseudocardpan,
-                            mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
-                            mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
-                            mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
-                            mopt_payone__cc_cardexpiredate: response.cardexpiredate
-                        };
-                        jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
-                        {
-                            var today = new Date();
-                            var configuredDays = {$moptCreditCardCheckEnvironment.moptCreditcardMinValid};
-                            var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + configuredDays);
-                            var selectedYear = '20'+response.cardexpiredate.substring(0,2);
-                            var selectedMonth = response.cardexpiredate.substring(2,4);
-                            var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
-                            var diff = selectedDate.getTime() - minValidDate.getTime();
-                            if (diff > 0){
-                                $("#shippingPaymentForm").submit();
-                                $('form[name="frmRegister"]').submit();
-                            } else {
-                              alert("Das Ablaufdatum ihrer Kreditkarte ist unzureichend!");
-                            }
-                        });
+            $('#mopt_payone__cc_hostediframesubmit').val('0');
+            $('#mopt_payone__cc_paymentdescription').val($('#mopt_payone__cc_cardtype option:selected').text());
+            $('#mopt_payone__cc_pseudocardpan').val(response.pseudocardpan);
+            $('#mopt_payone__cc_paymentid').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
+            $('#mopt_payone__cc_paymentname').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'));
+            $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
+            $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
+            $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
+
+            var data = {
+                mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
+                mopt_payone__cc_truncatedcardpan_hidden: response.truncatedcardpan,
+                mopt_payone__cc_cardtype: $('#mopt_payone__cc_cardtype').val(),
+                mopt_payone__cc_accountholder: $('#mopt_payone__cc_accountholder').val(),
+                mopt_payone__cc_pseudocardpan: response.pseudocardpan,
+                mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
+                mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
+                mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
+            mopt_payone__cc_cardexpiredate: response.cardexpiredate
+        };
+        jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
+        {
+            var today = new Date();
+            var configuredDays = {$moptCreditCardCheckEnvironment.moptCreditcardMinValid};
+            var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + configuredDays);
+            var selectedYear = '20'+response.cardexpiredate.substring(0,2);
+            var selectedMonth = response.cardexpiredate.substring(2,4);
+            var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
+            var diff = selectedDate.getTime() - minValidDate.getTime();
+            if (diff > 0){
+                $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
+                //$('.hiddenCCFields').show();
+                $("#shippingPaymentForm").submit();
+                $('form[name="frmRegister"]').submit();
+            } else {
+              alert("Das Ablaufdatum ihrer Kreditkarte ist unzureichend!");
+            }
+        });
         } else {
 
                         if (response && response.errormessage) {
-                            alert(response.errormessage);                        
+                            alert(response.errormessage);
                         } else {
                             moptShowGeneralIFrameError();
                         }
         }
     };
+
+    function processPayoneIframeResponseWithoutSubmit(response) {
+        if (response.status === "VALID") {
+            $('#mopt_payone__cc_hostediframesubmit').val('0');
+            $('#mopt_payone__cc_paymentdescription').val($('#mopt_payone__cc_cardtype option:selected').text());
+            $('#mopt_payone__cc_pseudocardpan').val(response.pseudocardpan);
+            $('#mopt_payone__cc_paymentid').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
+            $('#mopt_payone__cc_paymentname').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'));
+            $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
+            $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
+            $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
+
+            var data = {
+                mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
+                mopt_payone__cc_truncatedcardpan_hidden: response.truncatedcardpan,
+                mopt_payone__cc_cardtype: $('#mopt_payone__cc_cardtype').val(),
+                mopt_payone__cc_accountholder: $('#mopt_payone__cc_accountholder').val(),
+                mopt_payone__cc_pseudocardpan: response.pseudocardpan,
+                mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
+                mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
+                mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
+                mopt_payone__cc_cardexpiredate: response.cardexpiredate
+            };
+            jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
+            {
+                var today = new Date();
+                var configuredDays = {$moptCreditCardCheckEnvironment.moptCreditcardMinValid};
+                var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + configuredDays);
+                var selectedYear = '20'+response.cardexpiredate.substring(0,2);
+                var selectedMonth = response.cardexpiredate.substring(2,4);
+                var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
+                var diff = selectedDate.getTime() - minValidDate.getTime();
+                if (diff > 0){
+
+                    location.reload();
+
+                } else {
+                    alert("Das Ablaufdatum ihrer Kreditkarte ist unzureichend!");
+                }
+            });
+        } else {
+
+            if (response && response.errormessage) {
+                alert(response.errormessage);
+            } else {
+                console.log("ErrorWithoutsubmit");
+                moptShowGeneralIFrameError();
+            }
+        }
+    };
+
     
     function moptShowGeneralError() {
         var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
@@ -302,7 +357,6 @@
         $('.inputIframe').hide();
         // show fields with already validated CC Data
         $('.hiddenCCFields').show();
-
         $('#mopt_payone__cc_accountholder').attr('readonly', true);
         $('#mopt_payone__cc_cardtype').attr('disabled', true);
         $('#mopt_payone__cc_cardexpireyear_hidden').val(selectedYear);
