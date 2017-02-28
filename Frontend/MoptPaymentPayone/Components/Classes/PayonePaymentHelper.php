@@ -649,7 +649,22 @@ class Mopt_PayonePaymentHelper
         } else {
             return false;
         }
-    }     
+    }
+
+    /**
+     * check if given payment name is payone ratepay installment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneRatepayInstallment($paymentName)
+    {
+        if (preg_match('#mopt_payone__fin_ratepay_installment#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
    * get online bank transfer type for api communication

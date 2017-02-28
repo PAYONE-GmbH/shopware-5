@@ -580,7 +580,85 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $response = $this->service->request($request);
         return $response;
     }
-    
+
+    /**
+     * prepare and do payment server api call
+     *
+     * @param array $config
+     * @param string $clearingType
+     * @param string $financetype
+     * @param string $paymenttype
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     */
+    protected function buildAndCallCalculateRatepay($config, $clearingType, $financetype, $calculation_type, $paymentData, $rateValue = false, $shopId, $rateMonth = false)
+    {
+        $paramBuilder = $this->moptPayoneMain->getParamBuilder();
+        $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        $params['financingtype'] = $financetype;
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        //create hash
+        $orderHash = md5(serialize($basket));
+        $this->session->moptOrderHash = $orderHash;
+
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::RATEPAY_REQUEST_TYPE_CALCULATION)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'calculation_type', 'data' => $calculation_type)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
+        ));
+        if ($rateValue){
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'rate', 'data' => $rateValue)
+            ));
+        }
+        if ($rateMonth) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'month', 'data' => $rateMonth)
+            ));
+        }
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'shop_id', 'data' => $shopId)
+        ));
+
+
+        if ($paymentData && $paymentData['mopt_payone__ratepayinstallment_b2bmode']) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
+            ));
+        }
+        $amountWithShipping = 100 * $this->getAmount();
+        $request->setPaydata($paydata);
+        $request->setAmount($amountWithShipping);
+        $request->setCurrency($this->getCurrencyShortName());
+        $request->setCompany($personalData->getCompany());
+        $request->setFirstname($personalData->getFirstname());
+        $request->setLastname($personalData->getLastname());
+        $request->setStreet($personalData->getStreet());
+        $request->setZip($personalData->getZip());
+        $request->setCity($personalData->getCity());
+        $request->setCountry($personalData->getCountry());
+        $request->setBirthday($paymentData['dob']);
+        $request->setEmail($personalData->getEmail());
+        $request->setIp($personalData->getIp());
+        $request->setLanguage($personalData->getLanguage());
+
+        $request->setClearingtype($clearingType);
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $response = $this->service->request($request);
+        return $response;
+    }
+
     /**
      * Return the full amount to pay.
      *
@@ -619,7 +697,245 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             'saveOriginalAddress',
             'saveOriginalShippingAddress',
             'savePseudoCard',
+            'rate',
+            'runtime'
         );
         return $returnArray;
     }
+
+    /**
+     * Calculates the rates by from user defined rate
+     * called from an ajax request with ratePay parameters (ratepay.js)
+     * map RatePay API parameters and request the payone API
+     *
+     */
+    public function rateAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $html = '';
+        $calcValue = $this->Request()->getParam('calcValue') * 100;
+        $ratePayShopId = $this->Request()->getParam('ratePayshopId');
+        $device_token = $this->Request()->getParam('ratepayDeviceToken');
+        $paymentData = $this->session->moptPayment;
+        $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getPost('hreg');
+        $paymentData['dob'] = $this->Request()->getPost('dob');
+        $paymentData['mopt_payone__payolution_installment_shippingcosts'] = $this->Request()->getPost('shippingcosts');
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = \Payone_Api_Enum_RatepayType::RPS;
+
+        try {
+            if (preg_match('/^[0-9]+(\.[0-9][0-9][0-9])?(,[0-9]{1,2})?$/', $calcValue)) {
+                $calcValue = str_replace(".", "", $calcValue);
+                $calcValue = str_replace(",", ".", $calcValue);
+
+                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-rate', $paymentData, $calcValue, $ratePayShopId, $device_token);
+
+                if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
+                    $responseData = $result->getPayData()->toAssocArray();
+                    $html = $this->showRateResultHtml($responseData);
+                    $debugbreakpoint = 1;
+                    //set payone Session Data
+                    // $this->setSessionData($responseData, $paymentMethod);
+
+                } else {
+                    if($result instanceof Payone_Api_Response_Error) {
+                        $html = "<div class='ratepay-result rateError'>" . $result->getCustomermessage() . "</div>";
+                    }
+                }
+            } else {
+                $html = "<div class='ratepay-result rateError'>" . "lang_error" . ":<br/>" . "lang_wrong_value" . "</div>";
+            }
+        } catch (Exception $e) {
+        }
+        echo $html;
+        return;
+    }
+
+    /**
+     * Calculates the rates by from user defined runtime
+     * called from an ajax request with ratePay parameters (ratepay.js)
+     * map RatePay API parameters and request the payone API
+     */
+    public function runtimeAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $html = '';
+        $calcValue = $this->Request()->getParam('calcValue');
+        $ratePayShopId = $this->Request()->getParam('ratePayshopId');
+        $device_token = $this->Request()->getParam('ratepayDeviceToken');
+        $paymentData = $this->session->moptPayment;
+        $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getPost('hreg');
+        $paymentData['dob'] = $this->Request()->getPost('dob');
+        $paymentData['mopt_payone__payolution_installment_shippingcosts'] = $this->Request()->getPost('shippingcosts');
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = \Payone_Api_Enum_RatepayType::RPS;
+
+        try {
+            if (preg_match('/^[0-9]{1,5}$/', $calcValue)) {
+
+                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-time', $paymentData, false , $ratePayShopId, $calcValue);
+
+                if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
+                    $responseData = $result->getPayData()->toAssocArray();
+                    $html = $this->showRateResultHtml($responseData);
+                    $debugbreakpoint = 1;
+                    //set payone Session Data
+                    // $this->setSessionData($responseData, $paymentMethod);
+
+                } else {
+                    if($result instanceof Payone_Api_Response_Error) {
+                        $html = "<div class='rateError'>" . $result->getCustomermessage() . "</div>";
+                    }
+                }
+            } else {
+                $html = "<div class='rateError'>" . "lang_error" . ":<br/>" . "lang_wrong_value" . "</div>";
+            }
+        } catch (Exception $e) {
+        }
+        echo $html;
+        return;
+    }
+
+
+    /**
+     * show calculated installmentplan
+     * @param $result
+     * @return string
+     */
+    public function showRateResultHtml($result)
+    {
+
+        $numberOfRates = $result['last-rate']?$result['number-of-rates']-1:$result['number-of-rates'];
+        $html = '
+        <h2 class="ratepay-mid-heading"><b>' . 'lang_individual_rate_calculation' . '</b></h2>
+        <table id="ratepay-InstallmentTerms" cellspacing="0">
+            <tr>
+                <th>
+                    <div class="ratepay-InfoDiv">
+                        <div class="ratepay-InfoImgDiv"><img class="ratepay-InfoImg" src="' . '/sw5218-payone/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png' .'"/></div>
+                        <div class="ratepay-FloatLeft">' . 'lang_cash_payment_price' . ':</div>
+                        <div class="ratepay-RelativePosition">
+                            <div class="ratepay-MouseoverInfo" id="ratepayMouseoverInfoPaymentPrice">' . 'lang_mouseover_cash_payment_price' . '</div>
+                         </div>
+                     </div>
+                </th>
+                <td>&nbsp;' . $result['amount'] . '</td>
+                <td class="ratepay-TextAlignLeft">&euro;</td>
+            </tr>
+            <tr class="piTableHr">
+                <th>
+                    <div class="ratepay-InfoDiv">
+                        <div class="ratepay-InfoImgDiv"><img class="ratepay-InfoImg" src="' . '/sw5218-payone/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png' .'"/></div>
+                         <div class="ratepay-FloatLeft">' . 'lang_service_charge' . ':</div>
+                        <div class="ratepay-RelativePosition">
+                            <div class="ratepay-MouseoverInfo" id="ratepayMouseoverInfoServiceCharge">' . 'lang_mouseover_service_charge' . '</div>
+                        </div>
+                    </div>
+                </th>
+                <td>&nbsp;' . $result['service-charge'] . '</td>
+                <td class="ratepay-TextAlignLeft">&euro;</td>
+            </tr>
+            <tr class="piPriceSectionHead">
+                <th class="ratepay-PercentWidth">
+                    <div class="ratepay-InfoDiv">
+                        <div class="ratepay-InfoImgDiv"><img class="ratepay-InfoImg" src="' . '/sw5218-payone/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png' . '"/></div>
+                        <div class="ratepay-FloatLeft">' . 'lang_effective_rate' . ':</div>
+                        <div class="ratepay-RelativePosition">
+                            <div class="ratepay-MouseoverInfo" id="ratepayMouseoverInfoEffectiveRate">' . 'lang_mouseover_effective_rate' . ':</div>
+                        </div>
+                    </div>
+                </th>
+                <td colspan="2"><div class="ratepay-FloatLeft">&nbsp;<div class="ratepay-PercentWith">' . $result['annual-percentage-rate'] . '%</div></div></td>
+            </tr>
+            <tr class="piTableHr">
+                <th>
+                    <div class="ratepay-InfoDiv">
+                        <div class="ratepay-InfoImgDiv"><img class="ratepay-InfoImg" src="' . '/sw5218-payone/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png' . '"/></div>
+                        <div class="ratepay-FloatLeft">' . 'lang_interestrate_default' . ':</div>
+                        <div class="ratepay-RelativePosition">
+                            <div class="ratepay-MouseoverInfo" id="ratepayMouseoverInfoDebitRate">' . 'lang_mouseover_debit_rate' . ':</div>
+                        </div>
+                    </div>
+                 </th>
+                <td colspan="2"><div class="ratepay-FloatLeft">&nbsp;<div class="ratepay-PercentWith">' . $result['interest-rate'] . '%</div></div></td>
+            </tr>
+            <tr>
+                <th>
+                    <div class="ratepay-InfoDiv">
+                        <div class="ratepay-InfoImgDiv"><img class="ratepay-InfoImg" src="' . '/sw5218-payone/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png' . '"/></div>
+                        <div class="ratepay-FloatLeft">' . 'lang_interest_amount' . ':</div>
+                        <div class="ratepay-RelativePosition">
+                            <div class="ratepay-MouseoverInfo" id="ratepayMouseoverInfoInterestAmount">' . 'lang_mouseover_interest_amount' . ':</div>
+                        </div>
+                    </div>
+                </th>
+                <td>&nbsp;' . $result['interest-amount'] . '</td>
+                <td class="ratepay-TextAlignLeft">&euro;</td>
+            </tr>
+            <tr>
+                <th>
+                    <div class="ratepay-InfoDiv">
+                        <div class="ratepay-InfoImgDiv"><img class="ratepay-InfoImg" src="' . '/sw5218-payone/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png' . '"/></div>
+                        <div class="ratepay-FloatLeft"><b>' . 'lang_total_amount' . ':</b></div>
+                        <div class="ratepay-RelativePosition">
+                            <div class="ratepay-MouseoverInfo" id="ratepayMouseoverInfoTotalAmount">' . 'lang_mouseover_total_amount' . '</div>
+                        </div>
+                    </div>
+                </th>
+                <td><b>&nbsp;' . $result['total-amount'] . '</b></td>
+                <td class="ratepay-TextAlignLeft"><b>&euro;</b></td>
+            </tr>
+            <tr>
+                <td colspan="2"><div class="ratepay-FloatLeft">&nbsp;<div></td>
+            </tr>
+            <tr>
+                <td colspan="2"><div class="ratepay-FloatLeft">' . 'lang_calulation_result_text' . '<div></td>
+            </tr>
+             <tr class="ratepay-result piPriceSectionHead">
+                <th class="ratepay-PaddingTop">
+                    <div class="ratepay-InfoDiv">
+                        <div class="ratepay-InfoImgDiv"><img class="ratepay-InfoImg" src="' . '/sw5218-payone/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png' . '"/></div>
+                        <div class="ratepay-FloatLeft"><b>' . 'lang_duration_time' . ':</b></div>
+                        <div class="ratepay-RelativePosition">
+                            <div class="ratepay-MouseoverInfo" id="ratepayMouseoverInfoDurationTime">' . 'lang_mouseover_duration_time' . '</div>
+                        </div>
+                    </div>
+                </th>
+                <td><b>&nbsp;' . $result['number-of-rates'] .'lang_months' . '</b></td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr class="ratepay-result">
+                <th>
+                    <div class="ratepay-InfoDiv">
+                        <div class="ratepay-InfoImgDiv"><img class="ratepay-InfoImg" src="' . '/sw5218-payone/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png' . '"/></div>
+                        <div class="ratepay-FloatLeft piRpPaddingLeft"><b>' . $numberOfRates  . '' . 'lang_duration_month' . ':</b></div>
+                        <div class="ratepay-RelativePosition">
+                            <div class="ratepay-MouseoverInfo" id="ratepayMouseoverInfoDurationMonth">' . 'lang_mouseover_duration_month' . '</div>
+                        </div>
+                    </div>
+                </th>
+                <td><b>&nbsp;' . $result['rate'] . '</b></td>
+                <td class="ratepay-PaddingRight"><b>&euro;</b></td>
+            </tr>
+            <tr class="ratepay-result piRpPaddingBottom">
+                <th class="ratepay-PaddingBottom">
+                    <div class="ratepay-InfoDiv">
+                        <div class="ratepay-InfoImgDiv"><img class="ratepay-InfoImg" src="' . '/sw5218-payone/engine/Shopware/Plugins/Local/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png' . '"/></div>
+                        <div class="ratepay-FloatLeft piRpPaddingLeft"><b>' . 'lang_last_rate' . ':</b></div>
+                        <div class="ratepay-RelativePosition">
+                            <div class="ratepay-MouseoverInfo" id="ratepayMouseoverInfoLastRate">' . 'lang_mouseover_last_rate' . '</div>
+                        </div>
+                    </div>
+                </th>
+                <td class="ratepay-PaddingBottom"><b>&nbsp;' . $result['last-rate'] . '</b></td>
+                <td class="ratepay-PaddingRight piRpPaddingBottom"><b>&euro;</b></td>
+            </tr>
+            <tr>
+                <td colspan="2"><div class="ratepay-CalculationText ">' . 'lang_calulation_example' . '</div></td>
+            </tr>
+        </table>';
+
+        return $html;
+    }
+
 }

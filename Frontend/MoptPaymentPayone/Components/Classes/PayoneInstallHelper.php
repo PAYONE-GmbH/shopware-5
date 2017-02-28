@@ -412,6 +412,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Ratepay Rechnungskauf',
                 'template' => 'mopt_paymentmean_ratepay_invoice.tpl',
                 'position' => 29,),
+            array(
+                'name' => 'mopt_payone__fin_ratepay_installment',
+                'description' => 'PAYONE Ratepay Ratenkauf',
+                'template' => 'mopt_paymentmean_ratepay_installment.tpl',
+                'position' => 30,),
         );
     }
 

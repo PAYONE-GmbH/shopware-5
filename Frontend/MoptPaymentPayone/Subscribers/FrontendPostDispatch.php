@@ -140,8 +140,8 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('moptRatepayConfig', $moptPayoneData['moptRatepayConfig']);
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
             $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-            $mpotPaymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
-            if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($mpotPaymentName)) {
+            $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
+            if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($moptPaymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_creditcard';
             }
             $view->assign('sFormData', $moptPayoneFormData);
@@ -344,7 +344,8 @@ class FrontendPostDispatch implements SubscriberInterface
 
             $data['moptRatepayConfig'] = null;
             //prepare additional Ratepay information and retrieve birthday from user data
-            if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])) {
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])
+                || $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentMean['name'])) {
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPaymentHelper()
