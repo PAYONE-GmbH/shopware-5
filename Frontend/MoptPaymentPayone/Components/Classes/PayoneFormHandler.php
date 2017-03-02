@@ -81,6 +81,9 @@ class Mopt_PayoneFormHandler
         if ($paymentHelper->isPayoneRatepayInvoice($paymentId)) {
             return $this->proccessRatepayInvoice($formData);
         }
+        if ($paymentHelper->isPayoneRatepayInstallment($paymentId)) {
+            return $this->proccessRatepayInstallment($formData);
+        }
         
         return array();
     }
@@ -535,4 +538,38 @@ class Mopt_PayoneFormHandler
 
         return $paymentData;
     }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function proccessRatepayInstallment($formData)
+    {
+        $paymentData = array();
+
+        if ($formData['mopt_payone__ratepay_installment_birthdaydate'] !== "0000-00-00" && $formData['mopt_payone__ratepay_b2bmode'] !== "1") {
+            if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__ratepay_installment_birthdaydate']))) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_birthday'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_birthmonth'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_birthyear'] = true;
+                $paymentData['formData']['mopt_save_birthday'] = false;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_birthdaydate'] = $formData['mopt_payone__ratepay_installment_birthdaydate'];
+                $paymentData['formData']['mopt_save_birthday'] = true;
+            }
+        }
+
+        if (!$formData['mopt_payone__ratepay_installment_telephone']) {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_telephone'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__ratepay_telephone'] = $formData['mopt_payone__ratepay_installment_telephone'];
+        }
+        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_shopid'];
+        $paymentData['formData']['mopt_payone__ratepay_device_fingerprint'] = $formData['mopt_payone__ratepay_device_fingerprint'];
+
+        return $paymentData;
+    }
+
 }
