@@ -1,5 +1,4 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
-
 <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/ratepay.css"}" />
 <div class="payment--form-group">
     {if ! $sUserData.billingaddress.company}
@@ -29,7 +28,7 @@
             <option value="">--</option>
             {section name="birthmonth" start=1 loop=13 step=1}
                 <option value="{if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}"
-                    {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__ratepay_invoice_birthmonth}
+                    {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__ratepay_installment_birthmonth}
                         selected
                     {/if}>
                     {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
@@ -39,7 +38,7 @@
         <select name="moptPaymentData[mopt_payone__ratepay_installment_birthyear]"
                 id="mopt_payone__ratepay_installment_birthyear" onchange="ratepayInstallmentDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="select--country is--required{if $error_flags.mopt_payone__ratepay_Installment_birthyear} register--error-msg {/if}">
+                class="select--country is--required{if $error_flags.mopt_payone__ratepay_installment_birthyear} register--error-msg {/if}">
             <option value="">----</option>
             {section name="birthyear" loop=2016 max=100 step=-1}
                 <option value="{$smarty.section.birthyear.index}"
@@ -56,7 +55,7 @@
     <input id="ratePayShopId" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_shopid]" value="{$moptRatepayConfig.shopid}"/>
     <input id="ratepayDeviceToken" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_device_fingerprint]" value="{$moptRatepayConfig.deviceFingerPrint}"/>
 
-    <input id="ratePayCurrency" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_shopid]" value="EUR"/>
+    <input id="ratePayCurrency" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_currency]" value="EUR"/>
 
     <input name="moptPaymentData[mopt_payone__ratepay_installment_telephone]"
            type="text"
@@ -99,8 +98,8 @@
     <div id="ratepay-ContentSwitch">
         <div class="ratepay-ChooseRuntime">
             {s name='cashPaymentPricePartOne'}Bitte entscheiden Sie sich nun, wie der Bestellwert von{/s}
-            <input type="hidden" id="amount" value="121.90">
-            <span><b>smarty_amount</b></span>
+            <input type="hidden" id="amount" value="{$sAmount}">
+            <span><b>{$sAmount|number_format:2:",":"."}</b></span>
             {s name='cashPaymentPricePartTwo'}auf die monatlichen Raten verteilt werden soll. Hierzu haben Sie zwei M&ouml;glichkeiten:{/s}
             <br />
             <label for="firstInput" style="width:100%;">
@@ -113,7 +112,7 @@
 
                 <br class="ratepay-ClearFix" />
                 <div class="ratepay-MarginTop">
-                    <span class="ratepay-VertAlignMiddle">{s name='please'}Bitte{/s}{s name='insertWishrate'}Wunschrate eingeben{/s}</span>
+                    <span class="ratepay-VertAlignMiddle">{s name='please'}Bitte&nbsp{/s}{s name='insertWishrate'}Wunschrate eingeben{/s}</span>
                     <input id="{$sFormData.payment}-rate" class="ratepay-Input-amount" type="text">
                     <span class="ratepay-Currency"> &euro;</span>
                     <input onclick="ratepayRateCalculatorAction('rate', '{$sFormData.payment}', 'http://localhost/sw5218-payone/moptAjaxPayone/rate');" value="{s name='calculateRuntime'}Laufzeit jetzt berechnen{/s}" id="{$sFormData.payment}_Input-button" class="ratepay-Input-button" type="button">
@@ -124,32 +123,25 @@
                 <div class="ratepay-ChooseInput" id="{$sFormData.payment}_ChooseInputRuntime">
                     <input id="secondInput" class="ratepay-FloatLeft" type="radio" name="Zahlmethode" value="runtime" onClick="switchRateOrRuntime('runtime', '{$sFormData.payment}');">
                 </div>
-                <div class="ratepay-NintyPercentWidth ratepay-FloatLeft" style="color: black;">{s name='chooseRuntime'}Laufzeit ausw&auml;hlen{/s}</div>
+                <div class="ratepay-NintyPercentWidth ratepay-FloatLeft" style="color: black;">{s name='chooseRuntime'}<B>Laufzeit ausw&auml;hlen</B>{/s}</div>
             </label>
             <div id="{$sFormData.payment}_ContentRuntime" class="ratepay-Content" style="display: block;">
-
-                <div id="{$sFormData.payment}_DueDate" class="ratepay-DueDate">
-                    <div class="ratepay-DueText">{s name='dueDate'}Gew&uuml;nschter Tag der Abbuchung: {/s}</div>
-                    <span style="float: right;">
-                    </span>
-                </div>
-
                 <br class="ratepay-ClearFix" />
                 <div class="ratepay-MarginTop">
-                    <span class="ratepay-VertAlignMiddle" style="float: left;">{s name='please'}Bitte{/s}{s name='insertRuntime'}Laufzeit w&auml;hlen{/s}</span>
-                    <select id="{$sFormData.payment}-runtime">
-                        <option value="3"  selected="selected">3 month</option>
-                        <option value="6"  selected="selected">6 month</option>
-                        <option value="9"  selected="selected">9 month</option>
-                        <option value="12" selected="selected">12 month</option>
-                        <option value="24" selected="selected">24 month</option>
-                        <option value="36" selected="selected">36 month</option>
-                    </select>
+                    <span class="ratepay-VertAlignMiddle" style="float: left;">{s name='please'}Bitte&nbsp{/s}{s name='insertRuntime'}Laufzeit w&auml;hlen{/s}</span>
+                        <select id="{$sFormData.payment}-runtime">
+                            <option value="3"  selected="selected">{s name='3months'}3 months{/s}</option>
+                            <option value="6"  selected="selected">{s name='6months'}6 months{/s}</option>
+                            <option value="9"  selected="selected">{s name='9months'}9 months{/s}</option>
+                            <option value="12" selected="selected">{s name='12months'}12 months{/s}</option>
+                            <option value="24" selected="selected">{s name='24months'}24 months{/s}</option>
+                            <option value="36" selected="selected">{s name='36months'}36 months{/s}</option>
+                        </select>
                     <input name="" onclick="ratepayRateCalculatorAction('runtime', '{$sFormData.payment}', 'http://localhost/sw5218-payone/moptAjaxPayone/runtime');" value="{s name='calculateRate'}Rate jetzt berechnen{/s}" type="button" id="{$sFormData.payment}_Input-buttonRuntime"  class="ratepay-Input-button2">
                 </div>
             </div>
             <br class="ratepay-ClearFix" />
-            <div class="ratepay-ContentSwitchDiv" id="{$sFormData.payment}_SwitchToTerm" class="ratepay-Active" style="display: block">
+<!--            <div class="ratepay-ContentSwitchDiv" id="{$sFormData.payment}_SwitchToTerm" class="ratepay-Active" style="display: block">
                             <span id="{$sFormData.payment}_spanrate">
                                 {s name='insertWishrate'}Wunschrate eingeben{/s} {s name='calculateRuntime'}Laufzeit jetzt berechnen{/s}
                             </span>
@@ -157,10 +149,11 @@
             </div>
             <div class="ratepay-ContentSwitchDiv"  id="{$sFormData.payment}_SwitchToRuntime" style="display: block">
                             <span id="{$sFormData.payment}_spanruntime" class="ratepay-active">
-                                {s name='chooseRuntime'}Laufzeit ausw&auml;hlen{/s} {s name='calculateRate'}Rate jetzt berechnen{/s}
+                                {s name='chooseRuntime'}<B>Laufzeit ausw&auml;hlen</B>{/s} {s name='calculateRate'}Rate jetzt berechnen{/s}
                             </span>
                 <input name="" value="{s name='calculateRate'}Rate jetzt berechnen{/s}" type="button" class="ratepay-Input-button ratepay-ContentSwitchInput ">
             </div>
+            -->
             <div id="{$sFormData.payment}_ResultContainer">
 
             </div>

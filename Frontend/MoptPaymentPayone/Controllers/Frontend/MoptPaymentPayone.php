@@ -169,6 +169,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
+    public function ratepayinstallmentAction()
+    {
+        $response = $this->mopt_payone__ratepayinstallment();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
     /**
      * @return $response
      */
@@ -422,6 +428,20 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $financeType = Payone_Api_Enum_RatepayType::RPV;
         
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentRatepayInvoice($financeType, $paymentData);
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment);
+        return $response;
+    }
+
+    /**
+     * @return $response
+     */
+    protected function mopt_payone__ratepayinstallment()
+    {
+        $paymentData = Shopware()->Session()->moptPayment;
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = Payone_Api_Enum_RatepayType::RPS;
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentRatepayInstallment($financeType, $paymentData);
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
         return $response;
     }

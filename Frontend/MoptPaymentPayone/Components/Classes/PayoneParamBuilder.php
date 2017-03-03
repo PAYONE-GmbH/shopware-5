@@ -658,14 +658,14 @@ class Mopt_PayoneParamBuilder
         
         return $payment;
     }
-    
+
     /**
      * create ratepay payment object
      *
      * @param string $financeType
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
      */
-    public function getPaymentRatepayInvoice($financeType, $paymentData, $workorderId)
+    public function getPaymentRatepayInstallment($financeType, $paymentData, $workorderId)
     {
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
@@ -678,7 +678,7 @@ class Mopt_PayoneParamBuilder
         if ($params['birthday'] == "00000000") {
             unset($params['birthday']);
         }
-        
+
         $params['financingtype'] = $financeType;
         $params['company'] = $userData['billingaddress']['company'];
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay($params);
@@ -689,12 +689,37 @@ class Mopt_PayoneParamBuilder
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_device_fingerprint'])
         ));
-        
+
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
         ));
-        
-                
+
+        //toDo direct Debit
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'debit_paytype', 'data' => 'BANK-TRANSFER')
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'installment_amount', 'data' => $paymentData['mopt_payone__ratepay_installment_amount'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'installment_number', 'data' => $paymentData['mopt_payone__ratepay_installment_number'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'last_installment_amount', 'data' => $paymentData['mopt_payone__ratepay_last_installment_amount'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'interest_rate', 'data' => $paymentData['mopt_payone__ratepay_interest_rate'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amount', 'data' => $paymentData['mopt_payone__ratepay_installment_total'])
+        ));
+
+
         if (isset($params['company'])) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])

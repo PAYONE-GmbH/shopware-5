@@ -1037,18 +1037,26 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayoneKlarna($paymentShortName)) {
             return 'klarna';
         }
+
         if ($this->isPayonePayolutionDebitNote($paymentShortName)) {
             return 'payolutiondebit';
         }
+
         if ($this->isPayonePayolutionInvoice($paymentShortName)) {
             return 'payolutioninvoice';
         }
+
         if ($this->isPayonePayolutionInstallment($paymentShortName)) {
             return 'payolutioninstallment';
-        }   
+        }
+
         if ($this->isPayoneRatepayInvoice($paymentShortName)) {
             return 'ratepayinvoice';
-        }        
+        }
+
+        if ($this->isPayoneRatepayInstallment($paymentShortName)) {
+            return 'ratepayinstallment';
+        }
 
         if ($this->isPayoneFinance($paymentShortName)) {
             return 'finance';

@@ -733,7 +733,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
                     $responseData = $result->getPayData()->toAssocArray();
-                    $html = $this->showRateResultHtmlAction($responseData);
+                    $html = $this->renderRatepayInstallment($responseData);
                     $debugbreakpoint = 1;
                     //set payone Session Data
                     // $this->setSessionData($responseData, $paymentMethod);
@@ -778,7 +778,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
                     $responseData = $result->getPayData()->toAssocArray();
-                    $html = $this->showRateResultHtml($responseData);
+                    $html = $this->renderRatepayInstallment($responseData);
                     $debugbreakpoint = 1;
                     //set payone Session Data
                     // $this->setSessionData($responseData, $paymentMethod);
@@ -803,10 +803,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param $result
      * @return string
      */
-    public function showRateResultHtmlAction($result)
+    public function renderRatepayInstallment($result)
     {
         $numberOfRates = $result['last-rate']?$result['number-of-rates']-1:$result['number-of-rates'];
+        $this->View()->addTemplateDir(dirname(__FILE__) . "/../../Views/");
+        $this->View()->loadTemplate("frontend/mopt_ajax_payone/render_ratepay_installment.tpl");
         $this->View()->assign(array('numberOfRates' => $numberOfRates));
+        $this->View()->assign(array('result' => $result));
         return $this->View()->render();
     }
 

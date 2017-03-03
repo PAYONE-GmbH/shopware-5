@@ -169,7 +169,6 @@ div#ratepay-ContentSwitch {
 #ratepay-main-cont .ratepay-Content select, #ratepay-main-cont .ratepay-Content input.ratepay-Input-amount {
     border: 1px solid #D1DFE0;
     text-align: right;
-    position: relative;
     top: -7px;
 }
 
@@ -423,6 +422,7 @@ table#ratepay-InstallmentTerms {
 
 #ratepay-main-cont .ratepay-VertAlignMiddle{
     vertical-align: middle;
+    padding-right: 10px;
 }
 
 #ratepay-InstallmentTerms .ratepay-PercentWith{
