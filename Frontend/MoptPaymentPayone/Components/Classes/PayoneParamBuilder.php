@@ -700,7 +700,7 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'installment_amount', 'data' => $paymentData['mopt_payone__ratepay_installment_amount'])
+            array('key' => 'installment_amount', 'data' => $paymentData['mopt_payone__ratepay_installment_amount'] * 100)
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
@@ -708,15 +708,15 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'last_installment_amount', 'data' => $paymentData['mopt_payone__ratepay_last_installment_amount'])
+            array('key' => 'last_installment_amount', 'data' => $paymentData['mopt_payone__ratepay_last_installment_amount'] * 100)
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'interest_rate', 'data' => $paymentData['mopt_payone__ratepay_interest_rate'])
+            array('key' => 'interest_rate', 'data' => $paymentData['mopt_payone__ratepay_interest_rate'] * 100 )
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amount', 'data' => $paymentData['mopt_payone__ratepay_installment_total'])
+            array('key' => 'amount', 'data' => $paymentData['mopt_payone__ratepay_installment_total'] * 100 )
         ));
 
 

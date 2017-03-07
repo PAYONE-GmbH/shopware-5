@@ -64,7 +64,8 @@ function ratepayRateCalculatorAction(mode, paymentMethod, url)
         html,
         ratePayshopId,
         amount,
-        ratePayCurrency
+        ratePayCurrency,
+        dob
 
 
     if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -73,9 +74,10 @@ function ratepayRateCalculatorAction(mode, paymentMethod, url)
         xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
     }
 
-    amount = document.getElementById('amount').value;
+    amount = document.getElementById('mopt_payone__ratepay_amount').value;
     ratePayshopId = document.getElementById('ratePayShopId').value;
     ratePayCurrency = document.getElementById('ratePayCurrency').value;
+    dob = document.getElementById('mopt_payone__ratepay_installment_birthdaydate').value;
     if (mode == 'rate') {
         calcValue = document.getElementById(paymentMethod + '-rate').value;
 
@@ -108,6 +110,7 @@ function ratepayRateCalculatorAction(mode, paymentMethod, url)
         "paymentMethod=" + paymentMethod + "&calcValue=" + calcValue + "&calcMethod=" + calcMethod + "&dueDate=" + dueDate
                  + "&notification=" + notification
                  + "&ratePayshopId=" + ratePayshopId + "&ratePayCurrency=" + ratePayCurrency + "&amount=" + amount
+                 + "&dob=" + dob
     );
 
     if (xmlhttp.responseText != null) {

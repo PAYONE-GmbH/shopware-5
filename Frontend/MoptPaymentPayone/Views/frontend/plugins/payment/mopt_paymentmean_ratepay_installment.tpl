@@ -49,7 +49,8 @@
             {/section}
         </select>
     {/if}
-    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_birthdaydate]" id="mopt_payone__ratepay_installment_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
+
+    <input id="mopt_payone__ratepay_installment_birthdaydate" class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_birthdaydate]" value="{$moptCreditCardCheckEnvironment.birthday}"/>
     <div id="ratepay-installment-hint-18-years" class="is--hidden">{s name='birthdayUnderageError'}Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.{/s}</div>
 
     <input id="ratePayShopId" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_shopid]" value="{$moptRatepayConfig.shopid}"/>
@@ -98,7 +99,7 @@
     <div id="ratepay-ContentSwitch">
         <div class="ratepay-ChooseRuntime">
             {s name='cashPaymentPricePartOne'}Bitte entscheiden Sie sich nun, wie der Bestellwert von{/s}
-            <input type="hidden" id="amount" value="{$sAmount}">
+            <input type="hidden" id="mopt_payone__ratepay_amount" name="moptPaymentData[mopt_payone__ratepay_amount]" value="{$sAmount}"/>
             <span><b>{$sAmount|number_format:2:",":"."}</b></span>
             {s name='cashPaymentPricePartTwo'}auf die monatlichen Raten verteilt werden soll. Hierzu haben Sie zwei M&ouml;glichkeiten:{/s}
             <br />
