@@ -64,7 +64,25 @@
                class="is--required{if $error_flags.mopt_payone__installment_company_trade_registry_number} has--error{/if}">
 
         <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_b2bmode]" id="moptPaymentData[mopt_payone__payolution_b2bmode]" value="1">   
-    {/if}         
+    {/if}
+
+    <input name="moptPaymentData[mopt_payone__payolution_installment_iban]"
+           type="text"
+           id="mopt_payone__payolution_installment_iban"
+           {if $moptRequired}required="required" aria-required="true"{/if}
+           placeholder="{s name='bankIBAN'}IBAN{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+           value="{$form_data.mopt_payone__payolution_installment_iban|escape}"
+           data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
+           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_installment_iban} has--error{/if} moptPayoneIbanBic" />
+
+    <input name="moptPaymentData[mopt_payone__payolution_installment_bic]"
+           type="text"
+           id="mopt_payone__payolution_installment_bic"
+           {if $moptRequired}required="required" aria-required="true"{/if}
+           placeholder="{s name='bankBIC'}BIC{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+           value="{$form_data.mopt_payone__payolution_installment_bic|escape}"
+           data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
+           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_installment_bic} has--error{/if} moptPayoneIbanBic" />
 
     <p class="none clearfix">
         <input name="moptPaymentData[mopt_payone__payolution_installment_agreement]" type="checkbox" id="mopt_payone__payolution_installment_agreement" value="true"
