@@ -639,6 +639,8 @@ class Mopt_PayoneParamBuilder
             unset($params['birthday']);
         }
         $params['financingtype'] = $financeType;
+        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_installment_iban']);
+        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_installment_bic']);
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
 
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
