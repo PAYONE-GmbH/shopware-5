@@ -16,6 +16,11 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.detail.Config', {
                             name: 'currencyId',
                             allowBlank: false
                         },
+                        ratepayInstallmentMode: {
+                            fieldLabel: 'Ratenkauf Modus',
+                            name: 'ratepayInstallmentMode',
+                            allowBlank: false
+                        },
                        
                        countryCodeBilling: {
                             label: 'Land',

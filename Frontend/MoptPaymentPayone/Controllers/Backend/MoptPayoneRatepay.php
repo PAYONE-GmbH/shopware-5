@@ -157,7 +157,6 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
 
     public function downloadConfigAction()
     {
-        $params = $this->Request()->getParams();
         $configId = $this->Request()->getParam('configId');
 
         /**

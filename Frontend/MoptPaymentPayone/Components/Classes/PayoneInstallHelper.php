@@ -509,6 +509,16 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
+     * extend config data table with showSofortIbanBic config column
+     */
+    public function fcExtendConfigRatepayInstallmentModeDataTable()
+    {
+        $sql = "ALTER TABLE `s_plugin_mopt_payone_ratepay` "
+            . "ADD COLUMN ratepay_installment_mode TINYINT(1) NOT NULL DEFAULT 0;";
+        Shopware()->Db()->exec($sql);
+    }
+
+    /**
      * extend config data table with save terms coloumn
      */
     public function moptExtendConfigSaveTermsDataTable()
@@ -785,6 +795,27 @@ class Mopt_PayoneInstallHelper
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
                 AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
                 AND COLUMN_NAME ='show_sofort_iban_bic';";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * check if payone configuration is already extended for show_ratepay_installment_mode config option
+     *
+     * @return boolean
+     */
+    public function fcPayoneConfigRatepayInstallmentModeExtensionExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_ratepay'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='ratepay_installment_mode';";
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {

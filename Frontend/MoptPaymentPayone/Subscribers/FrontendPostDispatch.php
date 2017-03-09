@@ -367,6 +367,10 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__ratepay_invoice_birthmonth'] = $birthday[1];
                 $data['mopt_payone__ratepay_invoice_birthyear'] = $birthday[0];
                 $data['mopt_payone__ratepay_invoice_telephone'] = $userData['billingaddress']['phone'];
+                $data['mopt_payone__ratepay_installment_birthday'] = $birthday[2];
+                $data['mopt_payone__ratepay_installment_birthmonth'] = $birthday[1];
+                $data['mopt_payone__ratepay_installment_birthyear'] = $birthday[0];
+                $data['mopt_payone__ratepay_installment_telephone'] = $userData['billingaddress']['phone'];
             }
         }
 

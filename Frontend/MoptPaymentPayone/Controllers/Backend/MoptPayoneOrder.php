@@ -193,9 +193,10 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         if ($invoicing) {
             $request->setInvoicing($invoicing);
         }
-    
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+
         if ($params['payolution_b2b']== true) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
             ));
@@ -206,7 +207,6 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         }
 
         if (isset($params['shop_id'])) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'shop_id', 'data' => $params['shop_id'])
             ));

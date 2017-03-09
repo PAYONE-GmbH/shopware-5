@@ -616,7 +616,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         ));
         if ($rateValue){
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'rate', 'data' => intval($rateValue))
+                array('key' => 'rate', 'data' => floatval($rateValue *100  ))
             ));
         }
         if ($rateMonth) {
@@ -728,7 +728,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $calcValue = str_replace(".", "", $calcValue);
                 $calcValue = str_replace(",", ".", $calcValue);
 
-                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-rate', $paymentData, $calcValue, $ratePayShopId, $amount);
+                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-rate', $paymentData, $calcValue, $ratePayShopId,false, $amount);
 
 
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {

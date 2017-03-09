@@ -52,8 +52,8 @@
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__ratepay_invoice_birthdaydate]" id="mopt_payone__ratepay_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
     <div id="ratepay-invoice-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>
 
-    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_shopid]" value="{$moptRatepayConfig.shopid}"/>
-    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_device_fingerprint]" value="{$moptRatepayConfig.deviceFingerPrint}"/>
+    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_invoice_shopid]" value="{$moptRatepayConfig.shopid}"/>
+    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_invoice_device_fingerprint]" value="{$moptRatepayConfig.deviceFingerPrint}"/>
 
     <input name="moptPaymentData[mopt_payone__ratepay_invoice_telephone]"
            type="text"

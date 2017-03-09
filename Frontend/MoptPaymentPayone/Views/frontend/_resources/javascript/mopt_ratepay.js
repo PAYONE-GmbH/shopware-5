@@ -74,7 +74,7 @@ function ratepayRateCalculatorAction(mode, paymentMethod, url)
         xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
     }
 
-    amount = document.getElementById('mopt_payone__ratepay_amount').value;
+    amount = document.getElementById('mopt_payone__ratepay_installment_amount').value;
     ratePayshopId = document.getElementById('ratePayShopId').value;
     ratePayCurrency = document.getElementById('ratePayCurrency').value;
     dob = document.getElementById('mopt_payone__ratepay_installment_birthdaydate').value;

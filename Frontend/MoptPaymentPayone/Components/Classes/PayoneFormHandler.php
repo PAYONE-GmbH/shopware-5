@@ -523,7 +523,7 @@ class Mopt_PayoneFormHandler
                 $paymentData['sErrorFlag']['mopt_payone__ratepay_invoice_birthyear'] = true;
                 $paymentData['formData']['mopt_save_birthday'] = false;
             } else {
-                $paymentData['formData']['mopt_payone__ratepay_birthdaydate'] = $formData['mopt_payone__ratepay_invoice_birthdaydate'];
+                $paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate'] = $formData['mopt_payone__ratepay_invoice_birthdaydate'];
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
@@ -531,10 +531,10 @@ class Mopt_PayoneFormHandler
         if (!$formData['mopt_payone__ratepay_invoice_telephone']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_invoice_telephone'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__ratepay_telephone'] = $formData['mopt_payone__ratepay_invoice_telephone'];
+            $paymentData['formData']['mopt_payone__ratepay_invoice_telephone'] = $formData['mopt_payone__ratepay_invoice_telephone'];
         }
-        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_shopid'];
-        $paymentData['formData']['mopt_payone__ratepay_device_fingerprint'] = $formData['mopt_payone__ratepay_device_fingerprint'];
+        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_invoice_shopid'];
+        $paymentData['formData']['mopt_payone__ratepay_invoice_device_fingerprint'] = $formData['mopt_payone__ratepay_invoice_device_fingerprint'];
 
         return $paymentData;
     }
@@ -556,7 +556,7 @@ class Mopt_PayoneFormHandler
                 $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_birthyear'] = true;
                 $paymentData['formData']['mopt_save_birthday'] = false;
             } else {
-                $paymentData['formData']['mopt_payone__ratepay_birthdaydate'] = $formData['mopt_payone__ratepay_installment_birthdaydate'];
+                $paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'] = $formData['mopt_payone__ratepay_installment_birthdaydate'];
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
@@ -564,18 +564,24 @@ class Mopt_PayoneFormHandler
         if (!$formData['mopt_payone__ratepay_installment_telephone']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_telephone'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__ratepay_telephone'] = $formData['mopt_payone__ratepay_installment_telephone'];
+            $paymentData['formData']['mopt_payone__ratepay_installment_telephone'] = $formData['mopt_payone__ratepay_installment_telephone'];
         }
-        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_shopid'];
-        $paymentData['formData']['mopt_payone__ratepay_device_fingerprint'] = $formData['mopt_payone__ratepay_device_fingerprint'];
 
-        $paymentData['formData']['mopt_payone__ratepay_installment_amount'] = $formData['mopt_payone__ratepay_installment_amount'];
+        if ($formData['mopt_payone__ratepay_installment_iban']) {
+            $paymentData['formData']['mopt_payone__ratepay_installment_iban'] = $formData['mopt_payone__ratepay_installment_iban'];
+        }
+
+        if ($formData['mopt_payone__ratepay_installment_bic']) {
+            $paymentData['formData']['mopt_payone__ratepay_installment_bic'] = $formData['mopt_payone__ratepay_installment_bic'];
+        }
+
+        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_installment_shopid'];
+        $paymentData['formData']['mopt_payone__ratepay_installment_device_fingerprint'] = $formData['mopt_payone__ratepay_installment_device_fingerprint'];
+        $paymentData['formData']['mopt_payone__ratepay_installment_installment_amount'] = $formData['mopt_payone__ratepay_installment_amount'];
         $paymentData['formData']['mopt_payone__ratepay_installment_total'] = $formData['mopt_payone__ratepay_installment_total'];
         $paymentData['formData']['mopt_payone__ratepay_installment_number'] = $formData['mopt_payone__ratepay_installment_number'];
-        $paymentData['formData']['mopt_payone__ratepay_last_installment_amount'] = $formData['mopt_payone__ratepay_installment_last_installment_amount'];
-        $paymentData['formData']['mopt_payone__ratepay_interest_rate'] = $formData['mopt_payone__ratepay_installment_interest_rate'];
-        $paymentData['formData']['mopt_payone__ratepay_amount'] = $formData['mopt_payone__ratepay_amount'];
-
+        $paymentData['formData']['mopt_payone__ratepay_installment_last_installment_amount'] = $formData['mopt_payone__ratepay_installment_last_installment_amount'];
+        $paymentData['formData']['mopt_payone__ratepay_installment_interest_rate'] = $formData['mopt_payone__ratepay_installment_interest_rate'];
 
         return $paymentData;
     }

@@ -380,9 +380,14 @@ class MoptPayoneRatepay extends ModelEntity
      * @var
      * @ORM\Column(name="valid_payment_firstdays", type="integer", nullable=true)
      */
-    protected $validPaymentFirstdays;         
-    
- 
+    protected $validPaymentFirstdays;
+
+    /**
+     * @var
+     * @ORM\Column(name="ratepay_installment_mode", type="boolean", nullable=false)
+     */
+    protected $ratepayInstallmentMode;
+
 
     public function getId() {
         return $this->id;
@@ -630,6 +635,10 @@ class MoptPayoneRatepay extends ModelEntity
 
     public function getValidPaymentFirstdays() {
         return $this->validPaymentFirstdays;
+    }
+
+    public function getRatepayInstallmentMode() {
+        return $this->ratepayInstallmentMode;
     }
     
     public function setId($id) {
@@ -882,5 +891,9 @@ class MoptPayoneRatepay extends ModelEntity
 
     public function setValidPaymentFirstdays($validPaymentFirstdays) {
         $this->validPaymentFirstdays = $validPaymentFirstdays;
-    }    
+    }
+
+    public function setRatepayInstallmentMode($ratepayInstallmentMode) {
+        $this->ratepayInstallmentMode = $ratepayInstallmentMode;
+    }
 }

@@ -480,6 +480,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->getInstallHelper()->fcExtendConfigShowSofortIbanBicDataTable();
         }
 
+        // config option for Ratepay installment mode
+        if (!$this->getInstallHelper()->fcPayoneConfigRatepayInstallmentModeExtensionExist()) {
+            $this->getInstallHelper()->fcExtendConfigRatepayInstallmentModeDataTable();
+        }
+
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModel($this->getPayoneLogger());
 
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModelExtension();

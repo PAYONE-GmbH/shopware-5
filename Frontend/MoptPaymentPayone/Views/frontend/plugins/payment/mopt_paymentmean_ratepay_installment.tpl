@@ -50,13 +50,34 @@
         </select>
     {/if}
 
+    {if $moptRatepayConfig.ratepayInstallmentMode}
+
+        <input name="moptPaymentData[mopt_payone__ratepay_installment_iban]"
+               type="text"
+               id="mopt_payone__ratepay_installment_iban"
+               required="required" aria-required="true"
+               placeholder="{s name='bankIBAN'}IBAN{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+               value="{$form_data.mopt_payone__ratepay_installment_iban|escape}"
+               data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
+               class="payment--field is--required{if $error_flags.mopt_payone__ratepay_installment_iban} has--error{/if} moptPayoneIbanBic" />
+
+        <input name="moptPaymentData[mopt_payone__ratepay_installment_bic]"
+               type="text"
+               id="mopt_payone__ratepay_installment_bic"
+               required="required" aria-required="true"
+               placeholder="{s name='bankBIC'}BIC{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+               value="{$form_data.mopt_payone__ratepay_installment_bic|escape}"
+               data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
+               class="payment--field is--required{if $error_flags.mopt_payone__ratepay_installment_bic} has--error{/if} moptPayoneIbanBic" />
+    {/if}
+
     <input id="mopt_payone__ratepay_installment_birthdaydate" class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_birthdaydate]" value="{$moptCreditCardCheckEnvironment.birthday}"/>
     <div id="ratepay-installment-hint-18-years" class="is--hidden">{s name='birthdayUnderageError'}Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.{/s}</div>
 
-    <input id="ratePayShopId" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_shopid]" value="{$moptRatepayConfig.shopid}"/>
-    <input id="ratepayDeviceToken" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_device_fingerprint]" value="{$moptRatepayConfig.deviceFingerPrint}"/>
+    <input id="ratePayShopId" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_shopid]" value="{$moptRatepayConfig.shopid}"/>
+    <input id="ratepayDeviceToken" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_device_fingerprint]" value="{$moptRatepayConfig.deviceFingerPrint}"/>
 
-    <input id="ratePayCurrency" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_currency]" value="EUR"/>
+    <input id="ratePayCurrency" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_currency]" value="EUR"/>
 
     <input name="moptPaymentData[mopt_payone__ratepay_installment_telephone]"
            type="text"
@@ -99,15 +120,15 @@
     <div id="ratepay-ContentSwitch">
         <div class="ratepay-ChooseRuntime">
             {s name='cashPaymentPricePartOne'}Bitte entscheiden Sie sich nun, wie der Bestellwert von{/s}
-            <input type="hidden" id="mopt_payone__ratepay_amount" name="moptPaymentData[mopt_payone__ratepay_amount]" value="{$sAmount}"/>
+            <input type="hidden" id="mopt_payone__ratepay_installment_amount" name="moptPaymentData[mopt_payone__ratepay_installment_amount]" value="{$sAmount}"/>
             <span><b>{$sAmount|number_format:2:",":"."}</b></span>
             {s name='cashPaymentPricePartTwo'}auf die monatlichen Raten verteilt werden soll. Hierzu haben Sie zwei M&ouml;glichkeiten:{/s}
-            <br />
             <label for="firstInput" style="width:100%;">
+                <BR>
                 <div class="ratepay-ChooseInput" id="_ChooseInputRate">
                     <input id="firstInput" class="ratepay-FloatLeft" type="radio" name="Zahlmethode" value="wishrate"  onClick="switchRateOrRuntime('rate', '{$sFormData.payment}');" checked="checked">
                 </div>
-                <div class="ratepay-NintyPercentWidth ratepay-FloatLeft" style="color: black; width: 390px;">{s name='paymentTextWishrate'}<b>Monatliche Rate</b> angeben und die sich daraus ergebende Laufzeit berechnen lassen.{/s}</div>
+                <div id="{$sFormData.payment}_SwitchToTerm" class="ratepay-NintyPercentWidth" style="color: black; width: 390px;">{s name='paymentTextWishrate'}<b>Monatliche Rate</b> angeben und die sich daraus ergebende Laufzeit berechnen lassen.{/s}</div>
             </label>
             <div id="{$sFormData.payment}_ContentTerm" class="ratepay-Content" style="display: block;">
 
@@ -124,9 +145,9 @@
                 <div class="ratepay-ChooseInput" id="{$sFormData.payment}_ChooseInputRuntime">
                     <input id="secondInput" class="ratepay-FloatLeft" type="radio" name="Zahlmethode" value="runtime" onClick="switchRateOrRuntime('runtime', '{$sFormData.payment}');">
                 </div>
-                <div class="ratepay-NintyPercentWidth ratepay-FloatLeft" style="color: black;">{s name='chooseRuntime'}<B>Laufzeit ausw&auml;hlen</B>{/s}</div>
+                <div id="{$sFormData.payment}_SwitchToRuntime" class="ratepay-NintyPercentWidth ratepay-FloatLeft" style="color: black;">{s name='paymentTextRuntime'}<b>Laufzeit</b> angeben und die sich daraus ergebende monatliche Rate berechnen lassen.{/s}</div>
             </label>
-            <div id="{$sFormData.payment}_ContentRuntime" class="ratepay-Content" style="display: block;">
+            <div id="{$sFormData.payment}_ContentRuntime" class="ratepay-Content" style="display: none;">
                 <br class="ratepay-ClearFix" />
                 <div class="ratepay-MarginTop">
                     <span class="ratepay-VertAlignMiddle" style="float: left;">{s name='please'}Bitte&nbsp{/s}{s name='insertRuntime'}Laufzeit w&auml;hlen{/s}</span>
