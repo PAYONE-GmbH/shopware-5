@@ -118,7 +118,6 @@ function ratepayRateCalculatorAction(mode, paymentMethod, url)
         document.getElementById(paymentMethod + '_ResultContainer').innerHTML = html;
         document.getElementById(paymentMethod + '_ResultContainer').style.display = 'block';
         document.getElementById(paymentMethod + '_ResultContainer').style.padding = '3px 0 0 0';
-        document.getElementById(paymentMethod + '_SwitchToTerm').style.display = 'none';
     }
 
 }

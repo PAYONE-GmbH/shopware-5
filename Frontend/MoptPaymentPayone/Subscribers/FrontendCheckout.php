@@ -64,7 +64,9 @@ class FrontendCheckout implements SubscriberInterface
         
         $ret = $arguments->getReturn();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePayolutionInstallment($userData['additional']['payment']['name'])) {
+        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePayolutionInstallment($userData['additional']['payment']['name'])
+            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])
+            ) {
             return;
         }
         // Set redirect flag

@@ -12,7 +12,7 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.list.Config', {
                 shopid: { header: 'Shop ID' },  
                 currencyId: { header: 'Währung' },
                 ratepayInstallmentMode: {
-                    header: 'Ratenkauf Modus'
+                    header: 'Ratenkauf Modus',
                 },
                 countryCodeBilling: { header: 'Land'}
                 

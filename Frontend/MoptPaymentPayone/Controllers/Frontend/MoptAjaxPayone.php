@@ -806,8 +806,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function renderRatepayInstallment($result)
     {
         $numberOfRates = $result['last-rate']?$result['number-of-rates']-1:$result['number-of-rates'];
+        $picturePath = $this->Request()->getBaseUrl() . "/engine/Shopware/Plugins/Community/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png";
         $this->View()->addTemplateDir(dirname(__FILE__) . "/../../Views/");
         $this->View()->loadTemplate("frontend/mopt_ajax_payone/render_ratepay_installment.tpl");
+        $this->View()->assign(array('picturePath' => $picturePath));
         $this->View()->assign(array('numberOfRates' => $numberOfRates));
         $this->View()->assign(array('result' => $result));
         return $this->View()->render();

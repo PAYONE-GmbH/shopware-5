@@ -19,6 +19,10 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.detail.Config', {
                         ratepayInstallmentMode: {
                             fieldLabel: 'Ratenkauf Modus',
                             name: 'ratepayInstallmentMode',
+                            xtype: 'combobox',
+                            queryMode: 'local',
+                            displayField: 'display',
+                            valueField: 'value',
                             allowBlank: false
                         },
                        

@@ -36,7 +36,7 @@
 
 #ratepay-main-cont {
     color: black!important;
-    width: 472px !important;
+    width: 572px !important;
     vertical-align: middle;
 }
 
@@ -91,6 +91,8 @@
 #ratepay-Header img {
     float: left;
     margin-bottom: 3px;
+    max-height:400% !important;
+    max-width:400% !important;
 }
 
 #ratepay-Header span {
@@ -294,10 +296,11 @@ div#ratepay-ContentSwitch {
 }
 
 table#ratepay-InstallmentTerms {
-    color: black;
+    color: white;
     margin: 0 auto;
     padding: 5px 3px;
     width: 415px !important;
+    border: none;
 }
 
 #ratepay-main-cont .ratepay-H2{
@@ -342,7 +345,7 @@ table#ratepay-InstallmentTerms {
 
 
 #ratepay-main-cont .ratepay-ChooseInput Input{
-    margin-top: 13px;
+    margin-right: 10px;
 }
 
 #debitSelect{
@@ -406,6 +409,7 @@ table#ratepay-InstallmentTerms {
 
 #ratepay-InstallmentTerms .ratepay-PaddingLeft{
     padding-left: 10px;
+    color: white;
 }
 
 #ratepay-InstallmentTerms .ratepay-PaddingTop{

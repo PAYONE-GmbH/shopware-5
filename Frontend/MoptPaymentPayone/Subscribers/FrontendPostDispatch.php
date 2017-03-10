@@ -211,7 +211,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
             }
         }
-        
+
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
             if ($session->moptBasketChanged) {
                 $action->redirect(
@@ -222,15 +222,15 @@ class FrontendPostDispatch implements SubscriberInterface
                 );
             }
         }
-        
+
         if (($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment')) {
             if ($session->moptBasketChanged) {
                 unset($session->moptBasketChanged);
                 $redirectnotice =
-                    '<center><b>Payolution Ratenzahlung</b></center>'
+                    '<center><b>Ratenzahlung</b></center>'
                     . 'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
                     . 'Bitte rufen Sie Ihre aktuellen Ratenzahlungskonditionen ab und wählen Sie den gewünschten Zahlplan aus.<br>';
-                
+
                 $view->assign('moptBasketChanged', true);
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
