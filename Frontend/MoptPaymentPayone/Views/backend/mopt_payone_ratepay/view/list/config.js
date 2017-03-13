@@ -13,19 +13,18 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.list.Config', {
                 currencyId: { header: 'Währung' },
                 ratepayInstallmentMode: {
                     header: 'Ratenkauf Modus',
+                    renderer: function (value) {
+                        if (value == false) {
+                            return 'Vorkasse';
+                        } else {
+                            return 'Lastschrift'
+                        }
+                    }
                 },
                 countryCodeBilling: { header: 'Land'}
                 
             }
         };
-    },
-
-    modeRenderer: function(value) {
-        if (value == false) {
-            return 'Vorkasse';
-        } else {
-            return 'Lastschrift'
-        }
     },
 
     createToolbarItems: function() {

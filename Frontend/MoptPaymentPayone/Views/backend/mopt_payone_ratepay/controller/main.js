@@ -4,12 +4,6 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.controller.Main', {
     init: function() {
         var me = this;
 
-       me.data = {
-            ratepayInstallmentMode: Ext.create('Shopware.apps.MoptPayoneRatepay.store.ComboInstallmentMode')
-        };
-
-
-        
         me.control({
             'mopt-payone-ratepay-listing-grid': {
                 'download-config': me.displayProcessWindow
