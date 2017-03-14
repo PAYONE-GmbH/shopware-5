@@ -1,4 +1,4 @@
-
+{namespace name='frontend/MoptPaymentPayone/payment'}
 <h2 class="ratepay-mid-heading"><b>
         {s name='individualRateCalculation'}Individuelle Ratenberechnung*{/s}</b></h2>
 <table id="ratepay-InstallmentTerms" cellspacing="0">
