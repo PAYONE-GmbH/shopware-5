@@ -56,6 +56,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             return $this->redirect(array('controller' => 'checkout'));
         }
 
+        if ($this->session->moptFormSubmitted) {
+            unset($this->session->moptFormSubmitted);
+        }
+
         $action = $this->moptPayonePaymentHelper->getActionFromPaymentName($this->getPaymentShortName());
 
         if ($action === 'debitnote') {

@@ -213,7 +213,7 @@ class FrontendPostDispatch implements SubscriberInterface
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
-            if ($session->moptBasketChanged) {
+            if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                 $action->redirect(
                     array(
                         'controller' => 'checkout',
