@@ -632,7 +632,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         ));
 
 
-        if ($paymentData && $paymentData['mopt_payone__ratepayinstallment_b2bmode']) {
+        if ( !empty($paymentData) && $paymentData['mopt_payone__ratepayinstallment_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
             ));
