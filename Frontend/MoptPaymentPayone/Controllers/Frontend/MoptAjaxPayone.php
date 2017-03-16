@@ -437,8 +437,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             $password = $config['payolutionDraftPassword'];
 
             $downloadUrl = str_ireplace('https://', 'https://' . $user . ':' . $password . '@', $url . '&duration=' . $duration);
-            // debug
-            // $downloadUrl  = 'http://www.orimi.com/pdf-test.pdf';
             $content = file_get_contents($downloadUrl);
             $filename = 'terms-of-payment.pdf';
             if ($content) {
@@ -587,7 +585,12 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param array $config
      * @param string $clearingType
      * @param string $financetype
-     * @param string $paymenttype
+     * @param string $calculation_type
+     * @param array $paymentData
+     * @param mixed $rateValue
+     * @param string $shopId
+     * @param mixed $rateMonth
+     * @param string $amount
      * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
      */
     protected function buildAndCallCalculateRatepay($config, $clearingType, $financetype, $calculation_type, $paymentData, $rateValue = false, $shopId, $rateMonth = false, $amount)
@@ -713,7 +716,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $html = '';
-        $debugParams = $this->Request()->getParams();
         $calcValue = $this->Request()->getParam('calcValue');
         $ratePayShopId = $this->Request()->getParam('ratePayshopId');
         $amount = $this->Request()->getParam('amount');
@@ -728,16 +730,12 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $calcValue = str_replace(".", "", $calcValue);
                 $calcValue = str_replace(",", ".", $calcValue);
 
-                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-rate', $paymentData, $calcValue, $ratePayShopId,false, $amount);
+                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-rate', $paymentData, $calcValue, $ratePayShopId, false, $amount);
 
 
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
                     $responseData = $result->getPayData()->toAssocArray();
                     $html = $this->renderRatepayInstallment($responseData);
-                    $debugbreakpoint = 1;
-                    //set payone Session Data
-                    // $this->setSessionData($responseData, $paymentMethod);
-
                 } else {
                     if($result instanceof Payone_Api_Response_Error) {
                         $html = "<div class='ratepay-result rateError'>" . $result->getCustomermessage() . "</div>";
@@ -762,7 +760,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $html = '';
         $calcValue = $this->Request()->getParam('calcValue');
-        $debugParams = $this->Request()->getParams();
         $ratePayShopId = $this->Request()->getParam('ratePayshopId');
         $amount = $this->Request()->getParam('amount');
         $paymentData = $this->session->moptPayment;
@@ -779,10 +776,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
                     $responseData = $result->getPayData()->toAssocArray();
                     $html = $this->renderRatepayInstallment($responseData);
-                    $debugbreakpoint = 1;
-                    //set payone Session Data
-                    // $this->setSessionData($responseData, $paymentMethod);
-
                 } else {
                     if($result instanceof Payone_Api_Response_Error) {
                         $html = "<div class='rateError'>" . $result->getCustomermessage() . "</div>";
