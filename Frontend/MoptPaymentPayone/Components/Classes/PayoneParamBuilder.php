@@ -667,6 +667,52 @@ class Mopt_PayoneParamBuilder
      * @param string $financeType
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
      */
+    public function getPaymentRatepayInvoice($financeType, $paymentData)
+    {
+        $params = array();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $params['api_version'] = '3.10';
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
+        } else {
+            $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        }
+        if ($params['birthday'] == "00000000") {
+            unset($params['birthday']);
+        }
+
+        $params['financingtype'] = $financeType;
+        $params['company'] = $userData['billingaddress']['company'];
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay($params);
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_device_fingerprint'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
+        ));
+
+
+        if (isset($params['company'])) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
+            ));
+        }
+        $payment->setPaydata($paydata);
+        $payment->setTelephonenumber($userData['billingaddress']['phone']);
+        return $payment;
+    }
+
+    /**
+     * create ratepay payment object
+     *
+     * @param string $financeType
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
+     */
     public function getPaymentRatepayInstallment($financeType, $paymentData)
     {
         $params = array();
