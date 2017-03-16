@@ -1,11 +1,12 @@
 //{namespace name=backend/mopt_payone_ratepay/main}
+/** global: Ext */
 Ext.define('Shopware.apps.MoptPayoneRatepay.view.detail.Config', {
     extend: 'Shopware.model.Container',
     padding: 20,
 
     configure: function () {
         var me = this;
-
+        /** global: Ext */
         me.customStore =  Ext.create('Ext.data.Store', {
             fields: [
                 { type: 'boolean', name: 'value' },
