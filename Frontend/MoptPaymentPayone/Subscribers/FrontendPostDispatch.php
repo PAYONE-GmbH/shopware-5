@@ -213,13 +213,18 @@ class FrontendPostDispatch implements SubscriberInterface
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
-            if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
-                $action->redirect(
-                    array(
-                        'controller' => 'checkout',
-                        'action' => 'shippingPayment',
-                    )
-                );
+            $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($userData['additional']['payment']['id']);
+            if ($moptPaymentHelper->isPayonePaymentMethod($moptPaymentName)) {
+                if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
+                    $action->redirect(
+                        array(
+                            'controller' => 'checkout',
+                            'action' => 'shippingPayment',
+                        )
+                    );
+                }
             }
         }
 
