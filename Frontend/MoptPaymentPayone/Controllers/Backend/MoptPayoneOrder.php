@@ -45,7 +45,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
                 $includeShipment = false;
             }
       
-            $config          = Mopt_PayoneMain::getInstance()->getPayoneConfig($payment->getId());
+            $config = Mopt_PayoneMain::getInstance()->getPayoneConfig($payment->getId());
           //positions ?
             $positionIds = $request->get('positionIds') ? json_decode($request->get('positionIds')) : array();
 
@@ -196,7 +196,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
-        if ($params['payolution_b2b']== true) {
+        if ($params['payolution_b2b'] == true) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
             ));
@@ -285,7 +285,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             $request->setInvoicing($invoicing);
         }
         
-        if ($params['payolution_b2b']== true) {
+        if ($params['payolution_b2b'] == true) {
             $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
@@ -335,7 +335,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 
     protected function moptPayoneSaveClearingData($order, $clearingData)
     {
-        $attribute    = $this->moptPayone__helper->getOrCreateAttribute($order);
+        $attribute = $this->moptPayone__helper->getOrCreateAttribute($order);
         $attribute->setMoptPayoneClearingData(json_encode($clearingData));
 
         Shopware()->Models()->persist($attribute);
