@@ -49,7 +49,7 @@ class Paymentfilter implements SubscriberInterface
         $ratepayconfig = $moptPayoneMain->getPaymentHelper()
             ->moptGetRatepayConfig($country);
 
-        if (!$ratepayconfig){
+        if (!$ratepayconfig) {
             return $result;
         }
 
@@ -57,10 +57,10 @@ class Paymentfilter implements SubscriberInterface
         $removeInvoice = false;
 
         foreach ($result as $index=>$payment) {
-            if ( $payment['name'] === 'mopt_payone__fin_ratepay_installment') {
+            if ($payment['name'] === 'mopt_payone__fin_ratepay_installment') {
                 $installmentIndex = $index;
             }
-            if ( $payment['name'] === 'mopt_payone__fin_ratepay_invoice'){
+            if ($payment['name'] === 'mopt_payone__fin_ratepay_invoice') {
                 $invoiceIndex = $index;
             }
         }
@@ -76,11 +76,11 @@ class Paymentfilter implements SubscriberInterface
         }
 
         // check basket amounts
-        $basketAmount = str_replace(',','.',$basketAmount);
-        if ( $basketAmount < $ratepayconfig['txLimitInstallmentMin'] || $basketAmount > $ratepayconfig['txLimitInstallmentMax']){
+        $basketAmount = str_replace(',','.', $basketAmount);
+        if ($basketAmount < $ratepayconfig['txLimitInstallmentMin'] || $basketAmount > $ratepayconfig['txLimitInstallmentMax']) {
             $removeInstallment = true;
         }
-        if ($basketAmount < $ratepayconfig['txLimitInvoiceMin'] || $basketAmount > $ratepayconfig['txLimitInvoiceMax']){
+        if ($basketAmount < $ratepayconfig['txLimitInvoiceMin'] || $basketAmount > $ratepayconfig['txLimitInvoiceMax']) {
             $removeInstallment = true;
         }
 
