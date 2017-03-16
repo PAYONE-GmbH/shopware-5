@@ -30,9 +30,9 @@ class Mopt_PayoneParamBuilder
 
     /**
      * constructor, sets config and helper class
-     *
      * @param array $payoneConfig
-     * @param object $payoneHelper
+     * @param Mopt_PayoneHelper $payoneHelper
+     * @param Mopt_PayonePaymentHelper $payonePaymentHelper
      */
     public function __construct($payoneConfig, $payoneHelper, $payonePaymentHelper)
     {
@@ -44,7 +44,7 @@ class Mopt_PayoneParamBuilder
     /**
      * returns auth-parameters for API-calls
      *
-     * @param string $paymentId
+     * @param integer $paymentId
      * @return array
      */
     protected function getAuthParameters($paymentId = 0)
@@ -227,8 +227,8 @@ class Mopt_PayoneParamBuilder
     /**
      * increase last seq-number for non-auth'ed orders
      *
-     * @param type $order
-     * @return type
+     * @param object $order
+     * @return integer
      * @throws Exception
      */
     protected function getParamSequencenumber($order)
@@ -241,7 +241,7 @@ class Mopt_PayoneParamBuilder
     /**
      * get Ratepay shopid
      *
-     * @param type $order
+     * @param object $order
      * @return string
      */
     protected function getParamRatepayShopid($order)
@@ -306,7 +306,7 @@ class Mopt_PayoneParamBuilder
      * @param object $order
      * @param array $positionIds
      * @param bool $includeShipment
-     * @return string
+     * @return double
      */
     protected function getParamCaptureAmount($order, $positionIds, $includeShipment = false)
     {
@@ -359,7 +359,7 @@ class Mopt_PayoneParamBuilder
      * @param object $order
      * @param array $orderDetailParams
      * @param bool $includeShipment
-     * @return string
+     * @return double
      */
     protected function getParamCustomAmount($order, $orderDetailParams, $includeShipment = false)
     {
@@ -665,7 +665,7 @@ class Mopt_PayoneParamBuilder
      * create ratepay payment object
      *
      * @param string $financeType
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
      */
     public function getPaymentRatepayInstallment($financeType, $paymentData)
     {
@@ -745,7 +745,8 @@ class Mopt_PayoneParamBuilder
      * create payolution payment object
      *
      * @param string $financeType
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     * @param array $paymentData
+     * @return \Payone_Api_Request_Genericpayment
      */
     public function getPaymentPayolutionDebitNotePreCheck($financeType, $paymentData)
     {
@@ -1126,8 +1127,8 @@ class Mopt_PayoneParamBuilder
      * @param object $order
      * @param array $positionIds
      * @param mixed $finalize
-     * @param bool $debit
-     * @param bool $includeShipment
+     * @param boolean $debit
+     * @param boolean $includeShipment
      * @return \Payone_Api_Request_Parameter_Capture_Invoicing_Transaction
      */
     public function getInvoicingFromOrder(
@@ -1246,7 +1247,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param array $addressFormData
      * @param array $personalFormData
-     * @param string $paymentId
+     * @param integer $paymentId
      * @return array
      */
     public function getAddressCheckParams($addressFormData, $personalFormData, $paymentId = 0)
@@ -1325,7 +1326,8 @@ class Mopt_PayoneParamBuilder
     /**
      * get state from id
      *
-     * @param string $id
+     * @param integer $stateId
+     * @param string $countryIso
      * @return string
      */
     protected function getStateFromId($stateId, $countryIso)
