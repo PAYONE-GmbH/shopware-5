@@ -934,16 +934,30 @@ class Mopt_PayonePaymentHelper
             }
         }
         
-        if (isset($paymentData['formData']['mopt_payone__ratepay_birthdaydate'])) {
+        if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate'])) {
             if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_birthdaydate']);
+                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
                 Shopware()->Models()->persist($user);
             } else {
-                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_birthdaydate']);
+                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
             }
         }
-        if (isset($paymentData['formData']['mopt_payone__ratepay_telephone'])) {
-            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_telephone']);
+
+        if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_invoice_telephone']);
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'])) {
+            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate']);
+                Shopware()->Models()->persist($user);
+            } else {
+                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate']);
+            }
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__ratepay_installment_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_installment_telephone']);
         }
  
         Shopware()->Models()->persist($billing);
