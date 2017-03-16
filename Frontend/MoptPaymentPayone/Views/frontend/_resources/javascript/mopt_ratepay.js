@@ -33,7 +33,6 @@
  *
  * @param mode
  * @param paymentMethod
- * @param url
  */
 function switchRateOrRuntime(mode, paymentMethod)
 {
@@ -84,6 +83,7 @@ function ratepayRateCalculatorAction(mode, paymentMethod, url)
     dueDate = '';
     calcMethod = '';
     calcValue = '';
+    notification = '';
 
     if (mode == 'rate') {
         calcValue = document.getElementById(paymentMethod + '-rate').value;
