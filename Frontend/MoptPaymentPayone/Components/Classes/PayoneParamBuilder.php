@@ -115,7 +115,7 @@ class Mopt_PayoneParamBuilder
 
         if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
             if ($order->getBilling()->getCompany()) {
-                $params['payolution_b2b']= true;
+                $params['payolution_b2b'] = true;
             }
         }
         
@@ -197,7 +197,7 @@ class Mopt_PayoneParamBuilder
         }
         
         if ($paymentName == "mopt_payone__fin_ratepay_invoice"
-            || $paymentName == "mopt_payone__fin_ratepay_installment" ) {
+            || $paymentName == "mopt_payone__fin_ratepay_installment") {
             $params['shop_id'] = $this->getParamRatepayShopId($order);
         }
         
@@ -281,7 +281,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += ($positionPrice * $position->getQuantity());
             } else {
-                $amount += (($positionPrice * $position->getQuantity()) * ( 1 + ($flTaxRate / 100)));
+                $amount += (($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100)));
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {
@@ -293,7 +293,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
             } else {
-                $amount += $order->getInvoiceShipping() * ( 1 + ($flTaxRate / 100));
+                $amount += $order->getInvoiceShipping() * (1 + ($flTaxRate / 100));
             }
         }
 
@@ -333,7 +333,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += ($positionPrice * $position->getQuantity()) - $alreadyCapturedAmount;
             } else {
-                $amount += (($positionPrice * $position->getQuantity()) * ( 1 + ($flTaxRate / 100))) - $alreadyCapturedAmount;
+                $amount += (($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100))) - $alreadyCapturedAmount;
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {
@@ -681,7 +681,7 @@ class Mopt_PayoneParamBuilder
             unset($params['birthday']);
         }
 
-        if (!empty($paymentData['mopt_payone__ratepay_installment_iban'])){
+        if (!empty($paymentData['mopt_payone__ratepay_installment_iban'])) {
             $debit_paytype = 'DIRECT-DEBIT';
         } else {
             $debit_paytype = 'BANK-TRANSFER';
@@ -721,11 +721,11 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'interest_rate', 'data' => $paymentData['mopt_payone__ratepay_installment_interest_rate'] * 100 )
+            array('key' => 'interest_rate', 'data' => $paymentData['mopt_payone__ratepay_installment_interest_rate'] * 100)
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amount', 'data' => $paymentData['mopt_payone__ratepay_installment_total'] * 100 )
+            array('key' => 'amount', 'data' => $paymentData['mopt_payone__ratepay_installment_total'] * 100)
         ));
 
 
@@ -1080,7 +1080,7 @@ class Mopt_PayoneParamBuilder
             if ($taxFree) {
                 $params['pr'] = $article['priceNumeric']; //price
             } else {
-                $params['pr'] = round($article['netprice'] * (1 + ( $article['tax_rate'] / 100)), 2); //price
+                $params['pr'] = round($article['netprice'] * (1 + ($article['tax_rate'] / 100)), 2); //price
             }
             $params['no'] = $article['quantity']; // ordered quantity
             $params['de'] = substr($article['articlename'], 0, 100); // description
@@ -1163,7 +1163,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $params['pr'] = $position->getPrice(); //price
             } else {
-                $params['pr'] = $position->getPrice() * ( 1 + ($flTaxRate / 100));
+                $params['pr'] = $position->getPrice() * (1 + ($flTaxRate / 100));
             }
 
             if ($debit) {
@@ -1515,7 +1515,7 @@ class Mopt_PayoneParamBuilder
         $params['request'] = $this->getParamAuthorizationMethod($payoneConfig);
         $params['clearingtype'] = 'cc';
         $params['currency'] = Shopware()->Currency()->getShortName();
-        $params['amount'] = (int) round(($this->getParamAmount($basket, $userData) * 100));
+        $params['amount'] = (int)round(($this->getParamAmount($basket, $userData) * 100));
         $params['reference'] = $this->getParamPaymentReference();
         $params['targetwindow'] = 'top';
         $params['param'] = $this->getCustomSessionParameters();
