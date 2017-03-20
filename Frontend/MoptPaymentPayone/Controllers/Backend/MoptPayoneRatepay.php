@@ -144,6 +144,7 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
             $currencyObj =$currencies->find($dataset['currency']);
             $ratepayProfile['currency'] = $currencyObj;
             $ratepayProfile['currencyId'] = $currencyObj->getId();
+            $ratepayProfile['ratepayInstallmentMode'] = $dataset['ratepayInstallmentMode'];
             $config->fromArray($ratepayProfile);
             $this->getManager()->persist($config);
             $this->getManager()->flush($config);
