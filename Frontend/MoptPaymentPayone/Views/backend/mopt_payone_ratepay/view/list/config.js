@@ -10,12 +10,23 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.list.Config', {
             detailWindow: 'Shopware.apps.MoptPayoneRatepay.view.detail.Window',
             columns: {
                 shopid: { header: 'Shop ID' },  
-                currencyId: { header: 'Währung' },  
+                currencyId: { header: 'Währung' },
+                ratepayInstallmentMode: {
+                    header: 'Ratenkauf Modus',
+                    renderer: function (value) {
+                        if (value == false) {
+                            return 'Vorkasse';
+                        } else {
+                            return 'Lastschrift'
+                        }
+                    }
+                },
                 countryCodeBilling: { header: 'Land'}
                 
             }
         };
     },
+
     createToolbarItems: function() {
         var me = this,
             items = me.callParent(arguments);

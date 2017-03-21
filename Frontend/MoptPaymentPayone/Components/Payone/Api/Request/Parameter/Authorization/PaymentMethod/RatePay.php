@@ -60,6 +60,17 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
      */
     protected $ratePayType = NULL;
 
+    /**
+     * @var string
+     */
+    protected $iban = null;
+
+    /**
+     * @var string
+     */
+    protected $bic = null;
+
+
 
     public function setApiVersion()
     {
@@ -161,6 +172,38 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
 
     public function setShop_id($shop_id) {
         $this->shop_id = $shop_id;
+    }
+
+    /**
+     * @param string $iban
+     */
+    public function setIban($iban)
+    {
+        $this->iban = $iban;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIban()
+    {
+        return $this->iban;
+    }
+
+    /**
+     * @param string $bic
+     */
+    public function setBic($bic)
+    {
+        $this->bic = $bic;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBic()
+    {
+        return $this->bic;
     }
 
 

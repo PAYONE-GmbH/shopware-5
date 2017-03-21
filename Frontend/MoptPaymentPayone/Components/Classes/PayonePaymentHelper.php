@@ -649,7 +649,22 @@ class Mopt_PayonePaymentHelper
         } else {
             return false;
         }
-    }     
+    }
+
+    /**
+     * check if given payment name is payone ratepay installment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneRatepayInstallment($paymentName)
+    {
+        if (preg_match('#mopt_payone__fin_ratepay_installment#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
    * get online bank transfer type for api communication
@@ -919,16 +934,30 @@ class Mopt_PayonePaymentHelper
             }
         }
         
-        if (isset($paymentData['formData']['mopt_payone__ratepay_birthdaydate'])) {
+        if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate'])) {
             if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_birthdaydate']);
+                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
                 Shopware()->Models()->persist($user);
             } else {
-                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_birthdaydate']);
+                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
             }
         }
-        if (isset($paymentData['formData']['mopt_payone__ratepay_telephone'])) {
-            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_telephone']);
+
+        if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_invoice_telephone']);
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'])) {
+            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate']);
+                Shopware()->Models()->persist($user);
+            } else {
+                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate']);
+            }
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__ratepay_installment_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_installment_telephone']);
         }
  
         Shopware()->Models()->persist($billing);
@@ -1022,18 +1051,26 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayoneKlarna($paymentShortName)) {
             return 'klarna';
         }
+
         if ($this->isPayonePayolutionDebitNote($paymentShortName)) {
             return 'payolutiondebit';
         }
+
         if ($this->isPayonePayolutionInvoice($paymentShortName)) {
             return 'payolutioninvoice';
         }
+
         if ($this->isPayonePayolutionInstallment($paymentShortName)) {
             return 'payolutioninstallment';
-        }   
+        }
+
         if ($this->isPayoneRatepayInvoice($paymentShortName)) {
             return 'ratepayinvoice';
-        }        
+        }
+
+        if ($this->isPayoneRatepayInstallment($paymentShortName)) {
+            return 'ratepayinstallment';
+        }
 
         if ($this->isPayoneFinance($paymentShortName)) {
             return 'finance';

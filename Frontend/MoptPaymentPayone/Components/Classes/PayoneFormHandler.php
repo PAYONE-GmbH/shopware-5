@@ -81,6 +81,9 @@ class Mopt_PayoneFormHandler
         if ($paymentHelper->isPayoneRatepayInvoice($paymentId)) {
             return $this->proccessRatepayInvoice($formData);
         }
+        if ($paymentHelper->isPayoneRatepayInstallment($paymentId)) {
+            return $this->proccessRatepayInstallment($formData);
+        }
         
         return array();
     }
@@ -139,6 +142,10 @@ class Mopt_PayoneFormHandler
 
         $paymentData['formData']['mopt_payone__sofort_bankcountry'] = $formData['mopt_payone__sofort_bankcountry'];
 
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
         return $paymentData;
     }
 
@@ -171,6 +178,10 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::GIROPAY;
         $paymentData['formData']['mopt_payone__giropay_bankcountry'] = 'DE';
 
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
         return $paymentData;
     }
 
@@ -192,6 +203,10 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__eps_bankcountry'] = 'AT';
         }
 
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
         return $paymentData;
     }
 
@@ -212,6 +227,10 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::IDEAL;
             $paymentData['formData']['mopt_payone__ideal_bankcountry'] = 'NL';
         }
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
 
         return $paymentData;
     }
@@ -274,6 +293,10 @@ class Mopt_PayoneFormHandler
             unset($paymentData['sErrorFlag']['mopt_payone__debit_bankcode']);
         }
 
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
         return $paymentData;
     }
 
@@ -287,6 +310,11 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
         $paymentData['formData'] = $formData;
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
         return $paymentData;
     }
 
@@ -334,6 +362,10 @@ class Mopt_PayoneFormHandler
         if ($paymentData['sErrorFlag']['mopt_payone__klarna_telephone'] || $paymentData['sErrorFlag']['mopt_payone__klarna_birthyear'] || $paymentData['sErrorFlag']['mopt_payone__klarna_birthmonth'] || $paymentData['sErrorFlag']['mopt_payone__klarna_birthday']) {
             $paymentData['formData']['mopt_save_birthday_and_phone'] = false;
         }
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
 
         return $paymentData;
     }
@@ -401,6 +433,10 @@ class Mopt_PayoneFormHandler
         // set sessionflag to trigger precheck
         Shopware()->Session()->moptPayolutionPrecheck = "1";
 
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
         return $paymentData;
     }
 
@@ -446,6 +482,10 @@ class Mopt_PayoneFormHandler
         
         // set sessionflag to trigger precheck
         Shopware()->Session()->moptPayolutionPrecheck = "1";
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
 
         return $paymentData;
     }
@@ -500,6 +540,10 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__payolution_installment_workorderid'] = $formData['mopt_payone__payolution_installment_workorderid'];
         }
 
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
         return $paymentData;
     }
 
@@ -520,7 +564,7 @@ class Mopt_PayoneFormHandler
                 $paymentData['sErrorFlag']['mopt_payone__ratepay_invoice_birthyear'] = true;
                 $paymentData['formData']['mopt_save_birthday'] = false;
             } else {
-                $paymentData['formData']['mopt_payone__ratepay_birthdaydate'] = $formData['mopt_payone__ratepay_invoice_birthdaydate'];
+                $paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate'] = $formData['mopt_payone__ratepay_invoice_birthdaydate'];
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
@@ -528,11 +572,74 @@ class Mopt_PayoneFormHandler
         if (!$formData['mopt_payone__ratepay_invoice_telephone']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_invoice_telephone'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__ratepay_telephone'] = $formData['mopt_payone__ratepay_invoice_telephone'];
+            $paymentData['formData']['mopt_payone__ratepay_invoice_telephone'] = $formData['mopt_payone__ratepay_invoice_telephone'];
         }
-        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_shopid'];
-        $paymentData['formData']['mopt_payone__ratepay_device_fingerprint'] = $formData['mopt_payone__ratepay_device_fingerprint'];
+        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_invoice_shopid'];
+        $paymentData['formData']['mopt_payone__ratepay_invoice_device_fingerprint'] = $formData['mopt_payone__ratepay_invoice_device_fingerprint'];
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
 
         return $paymentData;
     }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function proccessRatepayInstallment($formData)
+    {
+
+        $paymentData = array();
+
+        if ($formData['mopt_payone__ratepay_installment_birthdaydate'] !== "0000-00-00" && $formData['mopt_payone__ratepay_b2bmode'] !== "1") {
+            if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__ratepay_installment_birthdaydate']))) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_birthday'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_birthmonth'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_birthyear'] = true;
+                $paymentData['formData']['mopt_save_birthday'] = false;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'] = $formData['mopt_payone__ratepay_installment_birthdaydate'];
+                $paymentData['formData']['mopt_save_birthday'] = true;
+            }
+        }
+
+        if (!$formData['mopt_payone__ratepay_installment_telephone']) {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_telephone'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__ratepay_installment_telephone'] = $formData['mopt_payone__ratepay_installment_telephone'];
+        }
+
+        if ($formData['mopt_payone__ratepay_installment_iban']) {
+            $paymentData['formData']['mopt_payone__ratepay_installment_iban'] = $formData['mopt_payone__ratepay_installment_iban'];
+        }
+
+        if ($formData['mopt_payone__ratepay_installment_bic']) {
+            $paymentData['formData']['mopt_payone__ratepay_installment_bic'] = $formData['mopt_payone__ratepay_installment_bic'];
+        }
+
+        if (!$formData['mopt_payone__ratepay_installment_number']) {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_number'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__ratepay_installment_number'] = $formData['mopt_payone__ratepay_installment_number'];
+        }
+
+
+        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_installment_shopid'];
+        $paymentData['formData']['mopt_payone__ratepay_installment_device_fingerprint'] = $formData['mopt_payone__ratepay_installment_device_fingerprint'];
+        $paymentData['formData']['mopt_payone__ratepay_installment_installment_amount'] = $formData['mopt_payone__ratepay_installment_amount'];
+        $paymentData['formData']['mopt_payone__ratepay_installment_total'] = $formData['mopt_payone__ratepay_installment_total'];
+        $paymentData['formData']['mopt_payone__ratepay_installment_last_installment_amount'] = $formData['mopt_payone__ratepay_installment_last_installment_amount'];
+        $paymentData['formData']['mopt_payone__ratepay_installment_interest_rate'] = $formData['mopt_payone__ratepay_installment_interest_rate'];
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
+        return $paymentData;
+    }
+
 }

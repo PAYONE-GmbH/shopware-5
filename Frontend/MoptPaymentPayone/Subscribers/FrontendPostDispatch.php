@@ -140,8 +140,8 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('moptRatepayConfig', $moptPayoneData['moptRatepayConfig']);
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
             $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-            $mpotPaymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
-            if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($mpotPaymentName)) {
+            $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
+            if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($moptPaymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_creditcard';
             }
             $view->assign('sFormData', $moptPayoneFormData);
@@ -211,26 +211,31 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
             }
         }
-        
+
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
-            if ($session->moptBasketChanged) {
-                $action->redirect(
-                    array(
-                        'controller' => 'checkout',
-                        'action' => 'shippingPayment',
-                    )
-                );
+            $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($userData['additional']['payment']['id']);
+            if ($moptPaymentHelper->isPayonePaymentMethod($moptPaymentName)) {
+                if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
+                    $action->redirect(
+                        array(
+                            'controller' => 'checkout',
+                            'action' => 'shippingPayment',
+                        )
+                    );
+                }
             }
         }
-        
+
         if (($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment')) {
             if ($session->moptBasketChanged) {
                 unset($session->moptBasketChanged);
                 $redirectnotice =
-                    '<center><b>Payolution Ratenzahlung</b></center>'
+                    '<center><b>Ratenzahlung</b></center>'
                     . 'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
                     . 'Bitte rufen Sie Ihre aktuellen Ratenzahlungskonditionen ab und wählen Sie den gewünschten Zahlplan aus.<br>';
-                
+
                 $view->assign('moptBasketChanged', true);
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
@@ -344,7 +349,8 @@ class FrontendPostDispatch implements SubscriberInterface
 
             $data['moptRatepayConfig'] = null;
             //prepare additional Ratepay information and retrieve birthday from user data
-            if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])) {
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])
+                || $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentMean['name'])) {
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPaymentHelper()
@@ -366,6 +372,10 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__ratepay_invoice_birthmonth'] = $birthday[1];
                 $data['mopt_payone__ratepay_invoice_birthyear'] = $birthday[0];
                 $data['mopt_payone__ratepay_invoice_telephone'] = $userData['billingaddress']['phone'];
+                $data['mopt_payone__ratepay_installment_birthday'] = $birthday[2];
+                $data['mopt_payone__ratepay_installment_birthmonth'] = $birthday[1];
+                $data['mopt_payone__ratepay_installment_birthyear'] = $birthday[0];
+                $data['mopt_payone__ratepay_installment_telephone'] = $userData['billingaddress']['phone'];
             }
         }
 

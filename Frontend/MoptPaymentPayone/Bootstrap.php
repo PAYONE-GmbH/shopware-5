@@ -318,6 +318,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $subscribers = array(
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\PayoneResource(),
+            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\Paymentfilter($container),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\ControllerPath($this->Path()),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\AddressCheck($container),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\EMail($container),
@@ -478,6 +479,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // config option for SOFORT Überweisung
         if (!$this->getInstallHelper()->fcPayoneConfigShowSofortIbanBicExtensionExist()) {
             $this->getInstallHelper()->fcExtendConfigShowSofortIbanBicDataTable();
+        }
+
+        // config option for Ratepay installment mode
+        if (!$this->getInstallHelper()->fcPayoneConfigRatepayInstallmentModeExtensionExist()) {
+            $this->getInstallHelper()->fcExtendConfigRatepayInstallmentModeDataTable();
         }
 
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModel($this->getPayoneLogger());

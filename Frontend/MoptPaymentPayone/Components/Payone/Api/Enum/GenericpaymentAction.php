@@ -35,4 +35,6 @@ class Payone_Api_Enum_GenericpaymentAction
     const PAYOLUTION_CALCULATION = 'calculation';
     
     const RATEPAY_PROFILE = 'profile';
+
+    const RATEPAY_REQUEST_TYPE_CALCULATION = "calculation";
 }

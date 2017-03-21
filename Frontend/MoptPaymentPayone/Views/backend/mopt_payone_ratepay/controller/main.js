@@ -3,7 +3,7 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.controller.Main', {
  
     init: function() {
         var me = this;
-        
+
         me.control({
             'mopt-payone-ratepay-listing-grid': {
                 'download-config': me.displayProcessWindow

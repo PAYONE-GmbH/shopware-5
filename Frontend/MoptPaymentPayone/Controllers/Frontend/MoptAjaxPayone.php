@@ -437,8 +437,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             $password = $config['payolutionDraftPassword'];
 
             $downloadUrl = str_ireplace('https://', 'https://' . $user . ':' . $password . '@', $url . '&duration=' . $duration);
-            // debug
-            // $downloadUrl  = 'http://www.orimi.com/pdf-test.pdf';
             $content = file_get_contents($downloadUrl);
             $filename = 'terms-of-payment.pdf';
             if ($content) {
@@ -559,7 +557,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
             ));
         }
-        $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        $amountWithShipping = 100 * ($this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts']);
         $request->setPaydata($paydata);
         $request->setAmount($amountWithShipping);
         $request->setCurrency($this->getCurrencyShortName());
@@ -580,7 +578,90 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $response = $this->service->request($request);
         return $response;
     }
-    
+
+    /**
+     * prepare and do payment server api call
+     *
+     * @param array $config
+     * @param string $clearingType
+     * @param string $financetype
+     * @param string $calculation_type
+     * @param array $paymentData
+     * @param mixed $rateValue
+     * @param string $shopId
+     * @param mixed $rateMonth
+     * @param string $amount
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     */
+    protected function buildAndCallCalculateRatepay($config, $clearingType, $financetype, $calculation_type, $paymentData, $rateValue = false, $shopId, $rateMonth = false, $amount)
+    {
+        $paramBuilder = $this->moptPayoneMain->getParamBuilder();
+        $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        $params['financingtype'] = $financetype;
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        //create hash
+        $orderHash = md5(serialize($basket));
+        $this->session->moptOrderHash = $orderHash;
+
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::RATEPAY_REQUEST_TYPE_CALCULATION)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'calculation_type', 'data' => $calculation_type)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
+        ));
+        if ($rateValue){
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'rate', 'data' => floatval($rateValue *100  ))
+            ));
+        }
+        if ($rateMonth) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'month', 'data' => $rateMonth)
+            ));
+        }
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'shop_id', 'data' => $shopId)
+        ));
+
+
+        if ( !empty($paymentData) && $paymentData['mopt_payone__ratepayinstallment_b2bmode']) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'b2b', 'data' => 'yes')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
+            ));
+        }
+        $amountWithShipping = $amount; // Docs state "smallest currency Unit???
+        $request->setPaydata($paydata);
+        $request->setAmount($amountWithShipping);
+        $request->setCurrency($this->getCurrencyShortName());
+        $request->setCompany($personalData->getCompany());
+        $request->setFirstname($personalData->getFirstname());
+        $request->setLastname($personalData->getLastname());
+        $request->setStreet($personalData->getStreet());
+        $request->setZip($personalData->getZip());
+        $request->setCity($personalData->getCity());
+        $request->setCountry($personalData->getCountry());
+        $request->setBirthday($paymentData['mopt_payone__ratepay_birthdaydate']);
+        $request->setEmail($personalData->getEmail());
+        $request->setIp($personalData->getIp());
+        $request->setLanguage($personalData->getLanguage());
+
+        $request->setClearingtype($clearingType);
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $response = $this->service->request($request);
+        return $response;
+    }
+
     /**
      * Return the full amount to pay.
      *
@@ -619,7 +700,112 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             'saveOriginalAddress',
             'saveOriginalShippingAddress',
             'savePseudoCard',
+            'rate',
+            'runtime'
         );
         return $returnArray;
     }
+
+    /**
+     * Calculates the rates by from user defined rate
+     * called from an ajax request with ratePay parameters (ratepay.js)
+     * map RatePay API parameters and request the payone API
+     *
+     */
+    public function rateAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $html = '';
+        $calcValue = $this->Request()->getParam('calcValue');
+        $ratePayShopId = $this->Request()->getParam('ratePayshopId');
+        $amount = $this->Request()->getParam('amount');
+        $paymentData = $this->session->moptPayment;
+        $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getParam('hreg');
+        $paymentData['mopt_payone__ratepay_birthdaydate'] = str_replace("-", "", $this->Request()->getParam('dob'));
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = \Payone_Api_Enum_RatepayType::RPS;
+
+        try {
+            if (preg_match('/^[0-9]+(\.[0-9][0-9][0-9])?(,[0-9]{1,2})?$/', $calcValue)) {
+                $calcValue = str_replace(".", "", $calcValue);
+                $calcValue = str_replace(",", ".", $calcValue);
+
+                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-rate', $paymentData, $calcValue, $ratePayShopId, false, $amount);
+
+
+                if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
+                    $responseData = $result->getPayData()->toAssocArray();
+                    $html = $this->renderRatepayInstallment($responseData);
+                } else {
+                    if($result instanceof Payone_Api_Response_Error) {
+                        $html = "<div class='ratepay-result rateError'>" . $result->getCustomermessage() . "</div>";
+                    }
+                }
+            } else {
+                $html = "<div class='ratepay-result rateError'>" . "lang_error" . ":<br/>" . "lang_wrong_value" . "</div>";
+            }
+        } catch (Exception $e) {
+        }
+        echo $html;
+        return;
+    }
+
+    /**
+     * Calculates the rates by from user defined runtime
+     * called from an ajax request with ratePay parameters (ratepay.js)
+     * map RatePay API parameters and request the payone API
+     */
+    public function runtimeAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $html = '';
+        $calcValue = $this->Request()->getParam('calcValue');
+        $ratePayShopId = $this->Request()->getParam('ratePayshopId');
+        $amount = $this->Request()->getParam('amount');
+        $paymentData = $this->session->moptPayment;
+        $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getParam('hreg');
+        $paymentData['mopt_payone__ratepay_birthdaydate'] = str_replace("-", "", $this->Request()->getParam('dob'));
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = \Payone_Api_Enum_RatepayType::RPS;
+
+        try {
+            if (preg_match('/^[0-9]{1,5}$/', $calcValue)) {
+
+                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-time', $paymentData, false, $ratePayShopId, $calcValue , $amount);;
+
+                if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
+                    $responseData = $result->getPayData()->toAssocArray();
+                    $html = $this->renderRatepayInstallment($responseData);
+                } else {
+                    if($result instanceof Payone_Api_Response_Error) {
+                        $html = "<div class='rateError'>" . $result->getCustomermessage() . "</div>";
+                    }
+                }
+            } else {
+                $html = "<div class='rateError'>" . "lang_error" . ":<br/>" . "lang_wrong_value" . "</div>";
+            }
+        } catch (Exception $e) {
+        }
+        echo $html;
+        return;
+    }
+
+
+    /**
+     * show calculated installmentplan
+     * @param $result
+     * @return string
+     */
+    public function renderRatepayInstallment($result)
+    {
+        $numberOfRates = $result['last-rate']?$result['number-of-rates']-1:$result['number-of-rates'];
+        $picturePath = $this->Request()->getBaseUrl() . "/engine/Shopware/Plugins/Community/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png";
+        $this->View()->addTemplateDir(dirname(__FILE__) . "/../../Views/");
+        $this->View()->loadTemplate("frontend/mopt_ajax_payone/render_ratepay_installment.tpl");
+        $this->View()->assign(array('picturePath' => $picturePath));
+        $this->View()->assign(array('numberOfRates' => $numberOfRates));
+        $this->View()->assign(array('result' => $result));
+        return $this->View()->render();
+    }
+
 }

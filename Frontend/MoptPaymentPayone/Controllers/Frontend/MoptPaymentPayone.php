@@ -56,6 +56,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             return $this->redirect(array('controller' => 'checkout'));
         }
 
+        if ($this->session->moptFormSubmitted) {
+            unset($this->session->moptFormSubmitted);
+        }
+
         $action = $this->moptPayonePaymentHelper->getActionFromPaymentName($this->getPaymentShortName());
 
         if ($action === 'debitnote') {
@@ -169,8 +173,14 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
+    public function ratepayinstallmentAction()
+    {
+        $response = $this->mopt_payone__ratepayinstallment();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__creditcard()
     {
@@ -190,7 +200,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__barzahlen()
     {
@@ -202,7 +212,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__instanttransfer()
     {
@@ -221,7 +231,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__paypal()
     {
@@ -254,7 +264,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__paydirekt()
     {
@@ -280,7 +290,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return redirect
+     * @return Payone_Api_Response_Authorization_Redirect|Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Invalid $redirect
      */
     public function paypalRecurringSuccessAction()
     {
@@ -297,7 +307,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return redirect
+     * @return Payone_Api_Response_Authorization_Redirect|Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Invalid $redirect
      */
     public function paydirektRecurringSuccessAction()
     {
@@ -312,7 +322,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__debitnote()
     {
@@ -326,7 +336,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__standard()
     {
@@ -345,7 +355,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__cashondel()
     {
@@ -357,7 +367,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__klarna()
     {
@@ -372,7 +382,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__payolution()
     {
@@ -413,7 +423,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__ratepayinvoice()
     {
@@ -425,9 +435,23 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
         return $response;
     }
+
+    /**
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__ratepayinstallment()
+    {
+        $paymentData = Shopware()->Session()->moptPayment;
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = Payone_Api_Enum_RatepayType::RPS;
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentRatepayInstallment($financeType, $paymentData);
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment);
+        return $response;
+    }
     
     /**
-     * @return $response
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__finance()
     {
@@ -508,7 +532,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $txId = $this->Request()->getParam('txid');
         $moptPaymentReference = $this->Request()->getParam('hash');
         $session = Shopware()->Session();
-        $paymentData = Shopware()->Session()->moptPayment;
 
         if (!$this->isOrderFinished($txId)) {
             $orderHash = md5(serialize($session['sOrderVariables']));
@@ -569,7 +592,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * handle direct feedback
      * on success save order
      *
-     * @param type $response
+     * @param Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
     protected function mopt_payone__handleDirectFeedback($response)
     {
@@ -641,7 +664,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * handle direct feedback
      * on success save order
      *
-     * @param type $response
+     * @param Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error $response
      */
     protected function mopt_payone__handlePayolutionFeedback($response)
     {

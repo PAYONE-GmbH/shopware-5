@@ -30,9 +30,9 @@ class Mopt_PayoneParamBuilder
 
     /**
      * constructor, sets config and helper class
-     *
      * @param array $payoneConfig
-     * @param object $payoneHelper
+     * @param Mopt_PayoneHelper $payoneHelper
+     * @param Mopt_PayonePaymentHelper $payonePaymentHelper
      */
     public function __construct($payoneConfig, $payoneHelper, $payonePaymentHelper)
     {
@@ -44,7 +44,7 @@ class Mopt_PayoneParamBuilder
     /**
      * returns auth-parameters for API-calls
      *
-     * @param string $paymentId
+     * @param integer $paymentId
      * @return array
      */
     protected function getAuthParameters($paymentId = 0)
@@ -115,11 +115,12 @@ class Mopt_PayoneParamBuilder
 
         if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
             if ($order->getBilling()->getCompany()) {
-                $params['payolution_b2b']= true;
+                $params['payolution_b2b'] = true;
             }
         }
         
-        if ($this->payonePaymentHelper->isPayoneRatepayInvoice($paymentName)) {
+        if ($this->payonePaymentHelper->isPayoneRatepayInvoice($paymentName)
+            || $this->payonePaymentHelper->isPayoneRatepayInstallment($paymentName)) {
             if ($finalize === true) {
                 $params['capturemode'] = Payone_Api_Enum_CaptureMode::COMPLETED;
             } else {
@@ -195,7 +196,8 @@ class Mopt_PayoneParamBuilder
             }
         }
         
-        if ($paymentName == "mopt_payone__fin_ratepay_invoice") {
+        if ($paymentName == "mopt_payone__fin_ratepay_invoice"
+            || $paymentName == "mopt_payone__fin_ratepay_installment") {
             $params['shop_id'] = $this->getParamRatepayShopId($order);
         }
         
@@ -225,8 +227,8 @@ class Mopt_PayoneParamBuilder
     /**
      * increase last seq-number for non-auth'ed orders
      *
-     * @param type $order
-     * @return type
+     * @param object $order
+     * @return integer
      * @throws Exception
      */
     protected function getParamSequencenumber($order)
@@ -239,7 +241,7 @@ class Mopt_PayoneParamBuilder
     /**
      * get Ratepay shopid
      *
-     * @param type $order
+     * @param object $order
      * @return string
      */
     protected function getParamRatepayShopid($order)
@@ -279,7 +281,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += ($positionPrice * $position->getQuantity());
             } else {
-                $amount += (($positionPrice * $position->getQuantity()) * ( 1 + ($flTaxRate / 100)));
+                $amount += (($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100)));
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {
@@ -291,7 +293,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
             } else {
-                $amount += $order->getInvoiceShipping() * ( 1 + ($flTaxRate / 100));
+                $amount += $order->getInvoiceShipping() * (1 + ($flTaxRate / 100));
             }
         }
 
@@ -304,7 +306,7 @@ class Mopt_PayoneParamBuilder
      * @param object $order
      * @param array $positionIds
      * @param bool $includeShipment
-     * @return string
+     * @return double
      */
     protected function getParamCaptureAmount($order, $positionIds, $includeShipment = false)
     {
@@ -331,7 +333,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += ($positionPrice * $position->getQuantity()) - $alreadyCapturedAmount;
             } else {
-                $amount += (($positionPrice * $position->getQuantity()) * ( 1 + ($flTaxRate / 100))) - $alreadyCapturedAmount;
+                $amount += (($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100))) - $alreadyCapturedAmount;
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {
@@ -357,7 +359,7 @@ class Mopt_PayoneParamBuilder
      * @param object $order
      * @param array $orderDetailParams
      * @param bool $includeShipment
-     * @return string
+     * @return double
      */
     protected function getParamCustomAmount($order, $orderDetailParams, $includeShipment = false)
     {
@@ -658,14 +660,14 @@ class Mopt_PayoneParamBuilder
         
         return $payment;
     }
-    
+
     /**
      * create ratepay payment object
      *
      * @param string $financeType
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
      */
-    public function getPaymentRatepayInvoice($financeType, $paymentData, $workorderId)
+    public function getPaymentRatepayInvoice($financeType, $paymentData)
     {
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
@@ -678,7 +680,7 @@ class Mopt_PayoneParamBuilder
         if ($params['birthday'] == "00000000") {
             unset($params['birthday']);
         }
-        
+
         $params['financingtype'] = $financeType;
         $params['company'] = $userData['billingaddress']['company'];
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay($params);
@@ -689,12 +691,12 @@ class Mopt_PayoneParamBuilder
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_device_fingerprint'])
         ));
-        
+
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
         ));
-        
-                
+
+
         if (isset($params['company'])) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
@@ -706,10 +708,91 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
+     * create ratepay payment object
+     *
+     * @param string $financeType
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
+     */
+    public function getPaymentRatepayInstallment($financeType, $paymentData)
+    {
+        $params = array();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $params['api_version'] = '3.10';
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
+        } else {
+            $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        }
+        if ($params['birthday'] == "00000000") {
+            unset($params['birthday']);
+        }
+
+        if (!empty($paymentData['mopt_payone__ratepay_installment_iban'])) {
+            $debit_paytype = 'DIRECT-DEBIT';
+        } else {
+            $debit_paytype = 'BANK-TRANSFER';
+        }
+
+
+        $params['financingtype'] = $financeType;
+        $params['company'] = $userData['billingaddress']['company'];
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay($params);
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_installment_device_fingerprint'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
+        ));
+
+        //toDo direct Debit
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'debit_paytype', 'data' => $debit_paytype)
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'installment_amount', 'data' => $paymentData['mopt_payone__ratepay_installment_installment_amount'] * 100)
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'installment_number', 'data' => $paymentData['mopt_payone__ratepay_installment_number'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'last_installment_amount', 'data' => $paymentData['mopt_payone__ratepay_installment_last_installment_amount'] * 100)
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'interest_rate', 'data' => $paymentData['mopt_payone__ratepay_installment_interest_rate'] * 100)
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amount', 'data' => $paymentData['mopt_payone__ratepay_installment_total'] * 100)
+        ));
+
+
+        if (isset($params['company'])) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
+            ));
+        }
+        $payment->setPaydata($paydata);
+        $payment->setIban($this->removeWhitespaces($paymentData['mopt_payone__ratepay_installment_iban']));
+        $payment->setBic($this->removeWhitespaces($paymentData['mopt_payone__ratepay_installment_bic']));
+        $payment->setTelephonenumber($userData['billingaddress']['phone']);
+        return $payment;
+    }
+
+    /**
      * create payolution payment object
      *
      * @param string $financeType
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     * @param array $paymentData
+     * @return \Payone_Api_Request_Genericpayment
      */
     public function getPaymentPayolutionDebitNotePreCheck($financeType, $paymentData)
     {
@@ -1043,7 +1126,7 @@ class Mopt_PayoneParamBuilder
             if ($taxFree) {
                 $params['pr'] = $article['priceNumeric']; //price
             } else {
-                $params['pr'] = round($article['netprice'] * (1 + ( $article['tax_rate'] / 100)), 2); //price
+                $params['pr'] = round($article['netprice'] * (1 + ($article['tax_rate'] / 100)), 2); //price
             }
             $params['no'] = $article['quantity']; // ordered quantity
             $params['de'] = substr($article['articlename'], 0, 100); // description
@@ -1090,8 +1173,8 @@ class Mopt_PayoneParamBuilder
      * @param object $order
      * @param array $positionIds
      * @param mixed $finalize
-     * @param bool $debit
-     * @param bool $includeShipment
+     * @param boolean $debit
+     * @param boolean $includeShipment
      * @return \Payone_Api_Request_Parameter_Capture_Invoicing_Transaction
      */
     public function getInvoicingFromOrder(
@@ -1126,7 +1209,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $params['pr'] = $position->getPrice(); //price
             } else {
-                $params['pr'] = $position->getPrice() * ( 1 + ($flTaxRate / 100));
+                $params['pr'] = $position->getPrice() * (1 + ($flTaxRate / 100));
             }
 
             if ($debit) {
@@ -1210,7 +1293,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param array $addressFormData
      * @param array $personalFormData
-     * @param string $paymentId
+     * @param integer $paymentId
      * @return array
      */
     public function getAddressCheckParams($addressFormData, $personalFormData, $paymentId = 0)
@@ -1289,7 +1372,8 @@ class Mopt_PayoneParamBuilder
     /**
      * get state from id
      *
-     * @param string $id
+     * @param integer $stateId
+     * @param string $countryIso
      * @return string
      */
     protected function getStateFromId($stateId, $countryIso)
@@ -1477,7 +1561,7 @@ class Mopt_PayoneParamBuilder
         $params['request'] = $this->getParamAuthorizationMethod($payoneConfig);
         $params['clearingtype'] = 'cc';
         $params['currency'] = Shopware()->Currency()->getShortName();
-        $params['amount'] = (int) round(($this->getParamAmount($basket, $userData) * 100));
+        $params['amount'] = (int)round(($this->getParamAmount($basket, $userData) * 100));
         $params['reference'] = $this->getParamPaymentReference();
         $params['targetwindow'] = 'top';
         $params['param'] = $this->getCustomSessionParameters();
