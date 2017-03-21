@@ -500,18 +500,6 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__payolution_installment_workorderid'] = $formData['mopt_payone__payolution_installment_workorderid'];
         }
 
-        if (!$formData['mopt_payone__payolution_installment_iban']) {
-            $paymentData['sErrorFlag']['mopt_payone__payolution_installment_iban'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__payolution_installment_iban'] = $formData['mopt_payone__payolution_installment_iban'];
-        }
-
-        if (!$formData['mopt_payone__payolution_installment_bic']) {
-            $paymentData['sErrorFlag']['mopt_payone__payolution_installment_bic'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__payolution_installment_bic'] = $formData['mopt_payone__payolution_installment_bic'];
-        }
-
         return $paymentData;
     }
 
