@@ -273,6 +273,8 @@ class FrontendPostDispatch implements SubscriberInterface
 
         $paymentMeans = Shopware()->Modules()->Admin()->sGetPaymentMeans();
         $groupedPaymentMeans = false;
+        $data['moptPayolutionInformation'] = null;
+        $data['moptRatepayConfig'] = null;
 
         if ($controllerName && $controllerName === 'checkout') {
             $groupedPaymentMeans = $moptPayoneMain->getPaymentHelper()->groupCreditcards($paymentMeans);
@@ -312,7 +314,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
 
 
-            $data['moptPayolutionInformation'] = null;
+
             //prepare additional Payolution information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name']) || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name']) || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInstallment($paymentMean['name'])
             ) {
@@ -347,7 +349,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
             }
 
-            $data['moptRatepayConfig'] = null;
             //prepare additional Ratepay information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])
                 || $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentMean['name'])) {
