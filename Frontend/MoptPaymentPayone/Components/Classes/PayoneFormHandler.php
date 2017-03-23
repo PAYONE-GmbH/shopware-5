@@ -84,6 +84,12 @@ class Mopt_PayoneFormHandler
         if ($paymentHelper->isPayoneRatepayInstallment($paymentId)) {
             return $this->proccessRatepayInstallment($formData);
         }
+
+        if ($paymentHelper->isPayonePaymentMethod($paymentId)) {
+            // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+            $session = Shopware()->Session();
+            $session->offsetSet('moptFormSubmitted', true);
+        }
         
         return array();
     }
