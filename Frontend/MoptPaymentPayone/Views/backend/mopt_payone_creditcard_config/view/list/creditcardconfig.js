@@ -1,4 +1,4 @@
-//{namespace name=backend/mopt_payone_creditccard_config/main}
+//{namespace name=backend/mopt_payone_creditcard_config/main}
 Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.view.list.Creditcardconfig', {
     extend: 'Shopware.grid.Panel',
     alias: 'widget.mopt-payone-creditcard-config-listing-grid',
