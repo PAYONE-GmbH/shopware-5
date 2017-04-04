@@ -702,7 +702,7 @@ class Mopt_PayoneHelper
     {
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
             $repository = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer');
-            $userID = $userArray['additional']['user']['userID'];
+            $userID = $userArray['additional']['user']['id'];
 
             $userObject = !empty($userID) ?
                 $repository->find($userID) : null;
