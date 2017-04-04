@@ -4,24 +4,31 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.list.Config', {
     alias: 'widget.mopt-payone-ratepay-listing-grid',
     region: 'center',
     snippets: {
+        currency: '{s name=currency}Währung{/s}',
+        ratepaybutton: '{s name=ratepaybutton}Ratepay Konfiguration abrufen{/s}',
+        ratepaymode: '{s name=ratepaymode}Ratenkauf Modus{/s}',
+        country: '{s name=country}Land{/s}',
+        vorkasse: '{s name=vorkasse}Vorkasse{/s}',
+        lastschrift: '{s name=lastschrift}Lastschrift{/s}'
     },
     configure: function () {
+        var me = this;
         return {
             detailWindow: 'Shopware.apps.MoptPayoneRatepay.view.detail.Window',
             columns: {
                 shopid: { header: 'Shop ID' },  
-                currencyId: { header: 'Währung' },
+                currencyId: { header: me.snippets.currency },
                 ratepayInstallmentMode: {
-                    header: 'Ratenkauf Modus',
+                    header: me.snippets.ratepaymode,
                     renderer: function (value) {
                         if (value == false) {
-                            return 'Vorkasse';
+                            return me.snippets.vorkasse;
                         } else {
-                            return 'Lastschrift'
+                            return me.snippets.lastschrift;
                         }
                     }
                 },
-                countryCodeBilling: { header: 'Land'}
+                countryCodeBilling: { header: me.snippets.country}
                 
             }
         };
@@ -43,7 +50,7 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.list.Config', {
     createToolbarButton: function() {
         var me = this;
         return Ext.create('Ext.button.Button', {
-            text: 'Ratepay Konfiguration abrufen',
+            text: me.snippets.ratepaybutton,
             handler: function() {
                 me.fireEvent('download-config', me);
             }
