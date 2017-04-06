@@ -84,6 +84,9 @@ class Mopt_PayoneFormHandler
         if ($paymentHelper->isPayoneRatepayInstallment($paymentId)) {
             return $this->proccessRatepayInstallment($formData);
         }
+        if ($paymentHelper->isPayoneRatepayDirectDebit($paymentId)) {
+            return $this->proccessRatepayDirectDebit($formData);
+        }
 
         if ($paymentHelper->isPayonePaymentMethod($paymentId)) {
             // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
@@ -640,6 +643,59 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__ratepay_installment_total'] = $formData['mopt_payone__ratepay_installment_total'];
         $paymentData['formData']['mopt_payone__ratepay_installment_last_installment_amount'] = $formData['mopt_payone__ratepay_installment_last_installment_amount'];
         $paymentData['formData']['mopt_payone__ratepay_installment_interest_rate'] = $formData['mopt_payone__ratepay_installment_interest_rate'];
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
+        return $paymentData;
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function proccessRatepayDirectDebit($formData)
+    {
+        $paymentData = array();
+
+        if ($formData['mopt_payone__ratepay_direct_debit_birthdaydate'] !== "0000-00-00" && $formData['mopt_payone__ratepay_b2bmode'] !== "1") {
+            if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__ratepay_direct_debit_birthdaydate']))) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_birthday'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_birthmonth'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_birthyear'] = true;
+                $paymentData['formData']['mopt_save_birthday'] = false;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate'] = $formData['mopt_payone__ratepay_direct_debit_birthdaydate'];
+                $paymentData['formData']['mopt_save_birthday'] = true;
+            }
+        }
+
+        if (!$formData['mopt_payone__ratepay_direct_debit_telephone']) {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_telephone'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'] = $formData['mopt_payone__ratepay_direct_debit_telephone'];
+        }
+
+        if (!$formData['mopt_payone__ratepay_direct_debit_bankaccountholder']) {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_bankaccountholder'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__ratepay_direct_debit_bankaccountholder'] = $formData['mopt_payone__ratepay_direct_debit_bankaccountholder'];
+        }
+
+        // iban bic are already validated by js in frontend
+        if ($formData['mopt_payone__ratepay_direct_debit_iban']) {
+            $paymentData['formData']['mopt_payone__ratepay_direct_debit_iban'] = $formData['mopt_payone__ratepay_direct_debit_iban'];
+        }
+
+        if ($formData['mopt_payone__ratepay_direct_debit_bic']) {
+            $paymentData['formData']['mopt_payone__ratepay_direct_debit_bic'] = $formData['mopt_payone__ratepay_direct_debit_bic'];
+        }
+
+        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_direct_debit_shopid'];
+        $paymentData['formData']['mopt_payone__ratepay_direct_debit_device_fingerprint'] = $formData['mopt_payone__ratepay_direct_debit_device_fingerprint'];
 
         // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
         $session = Shopware()->Session();

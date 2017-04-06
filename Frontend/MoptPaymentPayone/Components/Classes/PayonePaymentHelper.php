@@ -667,6 +667,21 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone ratepay direct debit
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneRatepayDirectDebit($paymentName)
+    {
+        if (preg_match('#mopt_payone__fin_ratepay_direct_debit#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
    * get online bank transfer type for api communication
    *
    * @param string $paymentName
