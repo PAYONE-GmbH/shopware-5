@@ -49,6 +49,16 @@
             {/section}
         </select>
     {/if}
+    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__ratepay_direct_debit_birthdaydate]" id="mopt_payone__ratepay_direct_debit_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
+    <div id="ratepay-direct_debit-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>
+
+    <input name="moptPaymentData[mopt_payone__ratepay_direct_debit_bankaccountholder]"
+           type="text"
+           id="mopt_payone__ratepay_direct_debit_bankaccountholder"
+           required="required" aria-required="true"
+           placeholder="{s name='bankAccoutHolder'}Kontoinhaber{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+           value="{$form_data.mopt_payone__debit_bankaccountholder|escape}"
+           class="payment--field is--required{if $error_flags.mopt_payone__ratepay_direct_debit_bankaccountholder} has--error{/if}" />
 
     <input name="moptPaymentData[mopt_payone__ratepay_direct_debit_iban]"
            type="text"
@@ -67,9 +77,6 @@
            value="{$form_data.mopt_payone__ratepay_direct_debit_bic|escape}"
            data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
            class="payment--field is--required{if $error_flags.mopt_payone__ratepay_direct_debit_bic} has--error{/if} moptPayoneIbanBic" />
-
-    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__ratepay_direct_debit_birthdaydate]" id="mopt_payone__ratepay_direct_debit_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
-    <div id="ratepay-direct_debit-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>
 
     <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_direct_debit_shopid]" value="{$moptRatepayConfig.shopid}"/>
     <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_direct_debit_device_fingerprint]" value="{$moptRatepayConfig.deviceFingerPrint}"/>
