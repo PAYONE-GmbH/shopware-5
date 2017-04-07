@@ -669,7 +669,6 @@ class Mopt_PayoneFormHandler
                 $paymentData['formData']['mopt_save_birthday'] = false;
             } else {
                 $paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate'] = $formData['mopt_payone__ratepay_direct_debit_birthdaydate'];
-                $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
 
@@ -678,6 +677,8 @@ class Mopt_PayoneFormHandler
         } else {
             $paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'] = $formData['mopt_payone__ratepay_direct_debit_telephone'];
         }
+
+        $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
 
         if (!$formData['mopt_payone__ratepay_direct_debit_bankaccountholder']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_bankaccountholder'] = true;

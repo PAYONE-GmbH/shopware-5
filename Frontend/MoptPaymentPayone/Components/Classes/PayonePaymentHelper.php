@@ -974,6 +974,19 @@ class Mopt_PayonePaymentHelper
         if (isset($paymentData['formData']['mopt_payone__ratepay_installment_telephone'])) {
             $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_installment_telephone']);
         }
+
+        if (isset($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate'])) {
+            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']);
+                Shopware()->Models()->persist($user);
+            } else {
+                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']);
+            }
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone']);
+        }
  
         Shopware()->Models()->persist($billing);
         Shopware()->Models()->flush();
@@ -1085,6 +1098,10 @@ class Mopt_PayonePaymentHelper
 
         if ($this->isPayoneRatepayInstallment($paymentShortName)) {
             return 'ratepayinstallment';
+        }
+
+        if ($this->isPayoneRatepayDirectDebit($paymentShortName)) {
+            return 'ratepaydirectdebit';
         }
 
         if ($this->isPayoneFinance($paymentShortName)) {

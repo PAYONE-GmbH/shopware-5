@@ -351,7 +351,8 @@ class FrontendPostDispatch implements SubscriberInterface
 
             //prepare additional Ratepay information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])
-                || $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentMean['name'])) {
+                || $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentMean['name'])
+                || $moptPayoneMain->getPaymentHelper()->isPayoneRatepayDirectDebit($paymentMean['name'])) {
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPaymentHelper()
@@ -377,6 +378,10 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__ratepay_installment_birthmonth'] = $birthday[1];
                 $data['mopt_payone__ratepay_installment_birthyear'] = $birthday[0];
                 $data['mopt_payone__ratepay_installment_telephone'] = $userData['billingaddress']['phone'];
+                $data['mopt_payone__ratepay_direct_debit_birthday'] = $birthday[2];
+                $data['mopt_payone__ratepay_direct_debit_birthmonth'] = $birthday[1];
+                $data['mopt_payone__ratepay_direct_debit_birthyear'] = $birthday[0];
+                $data['mopt_payone__ratepay_direct_debit_telephone'] = $userData['billingaddress']['phone'];
             }
         }
 
