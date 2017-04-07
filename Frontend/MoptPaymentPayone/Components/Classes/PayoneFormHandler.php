@@ -577,6 +577,16 @@ class Mopt_PayoneFormHandler
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
+
+        if ($formData['mopt_payone__ratepay_b2bmode'] === "1") {
+            if (!$formData['mopt_payone__ratepay_invoice_company_trade_registry_number']) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_invoice_company_trade_registry_number'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_invoice_company_trade_registry_number'] = $formData['mopt_payone__ratepay_invoice_company_trade_registry_number'];
+            }
+
+            $paymentData['formData']['mopt_payone__ratepay_b2bmode'] = $formData['mopt_payone__ratepay_b2bmode'];
+        }
           
         if (!$formData['mopt_payone__ratepay_invoice_telephone']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_invoice_telephone'] = true;
@@ -614,6 +624,16 @@ class Mopt_PayoneFormHandler
                 $paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'] = $formData['mopt_payone__ratepay_installment_birthdaydate'];
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
+        }
+
+        if ($formData['mopt_payone__ratepay_b2bmode'] === "1") {
+            if (!$formData['mopt_payone__ratepay_installment_company_trade_registry_number']) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_company_trade_registry_number'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_installment_company_trade_registry_number'] = $formData['mopt_payone__ratepay_installment_company_trade_registry_number'];
+            }
+
+            $paymentData['formData']['mopt_payone__ratepay_b2bmode'] = $formData['mopt_payone__ratepay_b2bmode'];
         }
 
         if (!$formData['mopt_payone__ratepay_installment_telephone']) {
@@ -672,19 +692,34 @@ class Mopt_PayoneFormHandler
             }
         }
 
+        if ($formData['mopt_payone__ratepay_b2bmode'] === "1") {
+            if (!$formData['mopt_payone__ratepay_direct_debit_company_trade_registry_number']) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_company_trade_registry_number'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_direct_debit_company_trade_registry_number'] = $formData['mopt_payone__ratepay_direct_debit_company_trade_registry_number'];
+            }
+
+            $paymentData['formData']['mopt_payone__ratepay_b2bmode'] = $formData['mopt_payone__ratepay_b2bmode'];
+        }
+
         if (!$formData['mopt_payone__ratepay_direct_debit_telephone']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_telephone'] = true;
         } else {
             $paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'] = $formData['mopt_payone__ratepay_direct_debit_telephone'];
         }
 
-        $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
+        if (!empty($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']) && !empty($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'])){
+            $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
+        }
 
+        /*
+        temporaily removed in template api because bankaccountholder field in api is not working
         if (!$formData['mopt_payone__ratepay_direct_debit_bankaccountholder']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_bankaccountholder'] = true;
         } else {
             $paymentData['formData']['mopt_payone__ratepay_direct_debit_bankaccountholder'] = $formData['mopt_payone__ratepay_direct_debit_bankaccountholder'];
         }
+        */
 
         // iban bic are already validated by js in frontend
         if ($formData['mopt_payone__ratepay_direct_debit_iban']) {

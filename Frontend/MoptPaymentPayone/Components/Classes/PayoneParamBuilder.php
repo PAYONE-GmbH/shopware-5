@@ -120,7 +120,8 @@ class Mopt_PayoneParamBuilder
         }
         
         if ($this->payonePaymentHelper->isPayoneRatepayInvoice($paymentName)
-            || $this->payonePaymentHelper->isPayoneRatepayInstallment($paymentName)) {
+            || $this->payonePaymentHelper->isPayoneRatepayInstallment($paymentName)
+            || $this->payonePaymentHelper->isPayoneRatepayDirectDebit($paymentName)) {
             if ($finalize === true) {
                 $params['capturemode'] = Payone_Api_Enum_CaptureMode::COMPLETED;
             } else {
@@ -704,6 +705,9 @@ class Mopt_PayoneParamBuilder
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
             ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_id', 'data' => $paymentData['mopt_payone__ratepay_invoice_company_trade_registry_number'])
+            ));
         }
         $payment->setPaydata($paydata);
         $payment->setTelephonenumber($userData['billingaddress']['phone']);
@@ -783,6 +787,9 @@ class Mopt_PayoneParamBuilder
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
             ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_id', 'data' => $paymentData['mopt_payone__ratepay_installment_company_trade_registry_number'])
+            ));
         }
         $payment->setPaydata($paydata);
         $payment->setIban($this->removeWhitespaces($paymentData['mopt_payone__ratepay_installment_iban']));
@@ -832,9 +839,9 @@ class Mopt_PayoneParamBuilder
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
             ));
-        } else {
-            unset ($params['vatid']);
-
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_id', 'data' => $paymentData['mopt_payone__ratepay_direct_debit_company_trade_registry_number'])
+            ));
         }
         // $params['bankaccountholder'] = $paymentData['mopt_payone__ratepay_direct_debit_bankaccountholder'];
         $payment->setPaydata($paydata);
