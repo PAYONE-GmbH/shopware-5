@@ -220,9 +220,6 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         $request->setPaydata($paydata);
         unset($params['data']);
 
-        
-        
-
         return $service->capture($request);
     }
 

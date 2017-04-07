@@ -98,6 +98,19 @@
         <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_b2bmode]" id="mopt_payone__ratepay_b2bmode" value="1">
 
     {/if}
+
+    <p></p>
+    <div id="mopt_payone__ratepay_direct_debit_mandate"
+         style="border: 1px solid; border-color:#101010;color: color: #5f7285;background: #e9e9f0; list-style-type: none; display: block;">
+        <center><strong>SEPA Mandatsinformation</strong></center><BR>
+        <div style="font-size:.875rem; border-top: 1px solid; border-color:#101010; margin: inherit">
+            <ul>
+                Wirecard Bank AG, Einsteinring 35, 85609 Aschheim<BR>
+                Gläubiger-ID: DE49ZZZ00000002773<BR>
+                Mandatsreferenz: (wird nach Kaufabschluss übermittelt)<BR>
+            </ul>
+        </div>
+    </div>
 </div>
 {if $moptRatepayConfig.deviceFingerPrint && $moptRatepayConfig.deviceFingerprintSnippetId}
     <!-- Only Include if moptRatepayConfig is configured in Backend to prevent 404 erorrs -->

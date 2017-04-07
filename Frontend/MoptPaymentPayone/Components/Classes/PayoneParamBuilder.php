@@ -196,12 +196,13 @@ class Mopt_PayoneParamBuilder
                 $params['payolution_b2b'] = true;
             }
         }
-        
-        if ($paymentName == "mopt_payone__fin_ratepay_invoice"
-            || $paymentName == "mopt_payone__fin_ratepay_installment") {
+
+        if ($this->payonePaymentHelper->isPayoneRatepayInvoice($paymentName)
+            || $this->payonePaymentHelper->isPayoneRatepayInstallment($paymentName)
+            || $this->payonePaymentHelper->isPayoneRatepayDirectDebit($paymentName)) {
+
             $params['shop_id'] = $this->getParamRatepayShopId($order);
         }
-        
 
         return $params;
     }
