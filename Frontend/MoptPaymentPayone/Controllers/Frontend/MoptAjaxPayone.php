@@ -557,7 +557,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
             ));
         }
-        $amountWithShipping = 100 * ($this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts']);
+        $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
         $request->setPaydata($paydata);
         $request->setAmount($amountWithShipping);
         $request->setCurrency($this->getCurrencyShortName());
