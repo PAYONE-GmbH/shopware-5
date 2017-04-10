@@ -1,73 +1,32 @@
 # PAYMENT FOR YOUR SHOPWARE-SHOP
+The PAYONE payment extension for Shopware is already certified by shoplupe for its Usability, but we are willing to do an even better job in questions of functions, security or quality of code. The community here on Github is a great help for that and we are happy about your participation. Take a look at our released version and send us commits or other feedback to take care for the best possible solution.
 
-Are you looking for the ideal payment solution for your online shop?
-With PAYONE, you process all of your payment transactions through a single partner - even international payments. From the acceptance of new payment methods through risk management to payment flow control, you get payment processing and all financial services with just one contract. At the same time, you benefit from the highest security standards since PAYONE, as a PCI DSS certified and BaFin regulated payment institution, processes all payment services via insolvency-proof escrow accounts. One solution. All the possibilities.
+## Important functions for Shopware
+*	Very wide range of functions, simple and comprehensible supported by detailed online help
+*	Central configuration and management options on the Shopware Backend
+*	Integrates via AJAX into the existing Shopware eShop; checkout without redirection to third-party websites
+*	Credit assessments with dynamic payment option control in the checkout section depending on the consumer's credit rating
+*	Export function of the configuration in XML format to facilitate the technical support
+*	Optional multi-partial capture for partial deliveries
+*	Supports simplified PCI DSS conformity in accordance with SAQ A
+*	Find all currently supported payment methods on http://www.payone.de/shopware
 
-##Payment with PAYONE convinces
-
-
-###Simple & efficient
-One Partner. One contract. One payment.
-
-* All payment methods: 
-All relevant payment methods through a central plattform. National and international.
-
-* Integrated risk management: 
-Minimise your payment defaults and prevent fraud. For more profitability.
-
-* Automation of all payment processes: 
-Automation of the entire payment process chain from payment processing through to all financial services.
-
-* Genuine plug'n pay: 
-Quick and seamless integration into your e-commerce system thanks to software as a service solution.
-
-* Modular solutions: 
-Thanks to the modular structure, the payment solution can be flexibly tailored to your business model.
-
-* Proficient customer service: 
-Our experts are there for you and support you with your e-commerce project.
-
-* Payment competence: 
-More than 12 years of know-how. More than 3,000 customers. More than 100 dedicated employees. 
-
-
-
-##Important functions for Shopware
-
-* Very wide range of functions, simple and comprehensible supported by detailed online help
-* Central configuration and management options on the Shopware Backend
-* Export function of the configuration in XML format to facilitate the technical support
-* Optional multi-partial capture for partial deliveries
-* Supports simplified PCI DSS conformity in accordance with SAQ A
-
-
-
-##More information
-
+## More information
 Documentation for Shopware: https://www.payone.de/uploads/media/PAYONE_Dokumentation_Shopware-Payment-Plugin.pdf
 
 Videoguide: Installation and configuration: https://www.youtube.com/watch?v=P3Q7Gt1opsI
 
 More information about Shopware on https://www.payone.de/shopware
 
-##Contact
+## Contact
+PAYONE GmbH Fraunhoferstraße 2–4 24118 Kiel, Germany
+Phone +49 431 25968-400 Fax +49 431 25968-1400
+shopware@payone.de www.payone.de/shopware
 
-PAYONE GmbH
-Fraunhoferstraße 2–4
-24118 Kiel, Germany
-
-Phone +49 431 25968-400
-Fax +49 431 25968-1400
-
-shopware@payone.de
-www.payone.de/shopware
-
-##License
-
+## License
 See our License Agreement at: https://www.payone.de/fileadmin/downloads/sonstiges/PAYONE_Haftungs_und_Lizenzvereinbarung_Extensions.pdf
 
-##About PAYONE
+## About PAYONE
+PAYONE provides business solutions for comprehensive automated processing of all payments in e-commerce. The payment service provider is part of the Sparkassen-Finanzgruppe and authorised as a credit institution by the German Federal Financial Supervisory Authority. PAYONE's service portfolio includes acceptance and processing for national and international payment methods, plus all payment services. Standardised interfaces and extensions allow simple integration into existing e-commerce and IT-systems whilst maintaining strict security standards.
 
-PAYONE, with headquarters in Kiel, is one of the leading payment services providers in Europe and ranks among the 50 fastest-growing technology companies in Germany. With its modular platform, PAYONE offers a software-as-a-service solution (SaaS) to companies for fully automated and comprehensive processing of all payments in e-commerce. The range of services includes the processing of payments from over 30 national and international payment methods with integrated risk management to minimise defaults in payment and fraud. Additional product modules make it possible to outsource the management of accounts receivable, the issuing of invoices as well as the processing of subscriptions. Standardised interfaces allow for a straightforward integration into existing IT and mobile system environments. Extensions can also be easily integrated into e-commerce systems.
-
-PAYONE is a company of the Saving Banks Finance Group and ist registered as a Payment Institute. Its clients include over 3,000 e-commerce companies from a variety of sectors and countries, including well-known companies such as Immonet, Globetrotter Ausrüstung, HD PLUS, Fujitsu, Zalando, Hawesko, Sony Music and Hallhuber. PAYONE has more than 100 employees.
+PAYONE ranks amongst the 50 fastest-growing technology companies in Germany and serves over 4.000 e-commerce clients from a variety of sectors and countries, including well-known companies such as Immonet, Globetrotter Ausrüstung, HD PLUS, Fujitsu, Zalando, Hawesko, Sony Music and Hallhuber. PAYONE employs a workforce of over 150.
