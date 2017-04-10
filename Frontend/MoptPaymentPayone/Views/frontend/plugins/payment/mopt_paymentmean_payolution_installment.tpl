@@ -1,7 +1,7 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
 <div class="payment--form-group">
-    {if ($fcPayolutionConfig.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfig.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
+    {if ($fcPayolutionConfigInstallment.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfigInstallment.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
 
         <p class ="none">
             <label for="mopt_payone__payolution_installment_birthday">
@@ -56,15 +56,15 @@
     <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_installment_shippingcosts]" id="mopt_payone__payolution_installment_shippingcosts" value="{$sShippingcosts}">
     <div id="installment-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>        
 
-    {if $fcPayolutionConfig.payolutionB2bmode && $sUserData.billingaddress.company}
+    {if $fcPayolutionConfigInstallment.payolutionB2bmode && $sUserData.billingaddress.company}
         <input type="text" name="moptPaymentData[mopt_payone__installment_company_trade_registry_number]" 
                id="mopt_payone__installment_company_trade_registry_number" 
                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                placeholder="{s name='companyTradeRegistryNumber'}Handelsregisternummer*{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"                
                class="is--required{if $error_flags.mopt_payone__installment_company_trade_registry_number} has--error{/if}">
 
-        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_b2bmode]" id="moptPaymentData[mopt_payone__payolution_b2bmode]" value="1">   
-    {/if}
+        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_installment_b2bmode]" id="moptPaymentData[mopt_payone__payolution_installment_b2bmode]" value="1">
+    {/if}       
 
     {if $sUserData.additional.country.countryiso !== 'CH' && $sUserData.additional.country.countryiso !== 'GB'
         && $sBasket.sCurrencyName !== 'GBP' && $sBasket.sCurrencyName !== 'CHF' }
@@ -86,8 +86,8 @@
                value="{$form_data.mopt_payone__payolution_installment_bic|escape}"
                data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
                class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_installment_bic} has--error{/if} moptPayoneIbanBic" />
-
     {/if}
+    
     <p class="none clearfix">
         <input name="moptPaymentData[mopt_payone__payolution_installment_agreement]" type="checkbox" id="mopt_payone__payolution_installment_agreement" value="true"
                {if $form_data.mopt_payone__payolution_installment_agreement eq "on"}

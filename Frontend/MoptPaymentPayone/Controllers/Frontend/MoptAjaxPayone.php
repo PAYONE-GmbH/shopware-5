@@ -372,7 +372,12 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentData = $this->session->moptPayment;
-        $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getPost('hreg');
+        $paymentData['mopt_payone__company_trade_registry_number'] = $this->Request()->getPost('hreg');
+        if (!empty($paymentData['mopt_payone__company_trade_registry_number'])){
+            $paymentData['mopt_payone__payolution_b2bmode'] = 1;
+        } else{
+            $paymentData['mopt_payone__payolution_b2bmode'] = 0;
+        }
         $paymentData['dob'] = $this->Request()->getPost('dob');
         $paymentData['mopt_payone__payolution_installment_shippingcosts'] = $this->Request()->getPost('shippingcosts');
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
@@ -485,7 +490,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'b2b', 'data' => 'yes')
             ));
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__installment_company_trade_registry_number'])
+                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__company_trade_registry_number'])
             ));
         }
         $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
