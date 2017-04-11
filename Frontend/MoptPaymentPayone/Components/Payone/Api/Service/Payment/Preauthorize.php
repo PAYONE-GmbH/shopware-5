@@ -71,7 +71,6 @@ class Payone_Api_Service_Payment_Preauthorize extends Payone_Api_Service_Payment
             $this->validateRequest($request);
 
             $requestParams = $this->getMapperRequest()->map($request);
-            unset($requestParams['company']);
             $responseRaw = $this->getAdapter()->request($requestParams);
 
             $response = $this->getMapperResponse()->map($responseRaw);
