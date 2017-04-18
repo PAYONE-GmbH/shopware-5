@@ -236,11 +236,11 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
             $oldUserData = $this->admin->sGetUserData();
             $personalData['billing']['phone'] = $oldUserData['billingaddress']['phone'];
         }
-        $updated = $this->updateBillingAddress($personalData, $session, $paymentId);
+        $updated = $this->updateBillingAddress($personalData, $session);
         if (!$updated) {
             return null;
         }
-        $updated = $this->updateShippingAddress($personalData, $session, $paymentId);
+        $updated = $this->updateShippingAddress($personalData, $session);
         if (!$updated) {
             return null;
         }        
@@ -395,8 +395,9 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $registerService->register($shop, $customer, $address, $address);
 
         // get updated password; it is md5 randomized after register
-	$getUser = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->findOneBy(
-		array('email' =>  $data['auth']['email'])
+        // make sure user is the last created user in case of already registered email addresses
+	    $getUser = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->findOneBy(
+		    array('email' =>  $data['auth']['email']), array('lastLogin' => 'DESC')
 		);
         // Update PaymentId 
         $getUser->setPaymentId($paymentId);
