@@ -250,7 +250,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         return $personalData;
     }
   
-    protected function updateBillingAddress($personalData, $session, $paymentId)
+    protected function updateBillingAddress($personalData, $session)
     {
         $userId = $session->offsetGet('sUserId');
         $countryData = $this->admin->sGetCountryList();
@@ -285,7 +285,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         }
     }
   
-    protected function updateShippingAddress($personalData, $session, $paymentId)
+    protected function updateShippingAddress($personalData, $session)
     {
         $userId = $session->offsetGet('sUserId');
         $rules = array(
@@ -328,6 +328,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
             $register['billing']['stateID']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['shipping_state']);
         }
         $register['billing']['street']         = $personalData['shipping_street'];
+        $register['billing']['additionalAddressLine1'] = $personalData['shipping_addressaddition'];
         $register['billing']['zipcode']        = $personalData['shipping_zip'];
         $register['billing']['firstname']      = $personalData['shipping_firstname'];
         $register['billing']['lastname']       = $personalData['shipping_lastname'];
@@ -347,6 +348,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $register['shipping']['firstname']    = $register['billing']['firstname'];
         $register['shipping']['lastname']     = $register['billing']['lastname'];
         $register['shipping']['street']       = $register['billing']['street'];
+        $register['shipping']['additionalAddressLine1'] = $personalData['shipping_addressaddition'];
         $register['shipping']['zipcode']      = $register['billing']['zipcode'];
         $register['shipping']['city']         = $register['billing']['city'];
         $register['shipping']['country']      = $register['billing']['country'];
@@ -370,7 +372,6 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
     private function saveUser($data, $paymentId)
     {
 
-        $builder = Shopware()->Models()->createQueryBuilder();
         $plain = array_merge($data['auth'], $data['billing']);
 
         //Create forms and validate the input
@@ -427,7 +428,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $address = $customer->getDefaultBillingAddress();
         
          /** @var \Shopware\Models\Country\Country $country */
-        $country = $address->getCountry();
+        // $country = $address->getCountry();
+        $country = $em->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $billingData['country'] ));
         $billingData['country'] = $country;
         $address->fromArray($billingData);
 
@@ -452,7 +454,9 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $address = $customer->getDefaultShippingAddress();
         
          /** @var \Shopware\Models\Country\Country $country */
-        $country = $address->getCountry();
+//      $country = $address->getCountry();
+        $country = $em->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $shippingData['country'] ));
+
         $shippingData['country'] = $country;
         $address->fromArray($shippingData);
 
