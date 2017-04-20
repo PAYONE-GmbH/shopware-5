@@ -629,6 +629,7 @@ class Mopt_PayoneFormHandler
 
         if (!$formData['mopt_payone__ratepay_installment_number']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_number'] = true;
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_amount'] = true;
         } else {
             $paymentData['formData']['mopt_payone__ratepay_installment_number'] = $formData['mopt_payone__ratepay_installment_number'];
         }
