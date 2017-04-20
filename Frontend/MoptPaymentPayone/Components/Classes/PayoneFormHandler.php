@@ -260,7 +260,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__debit_iban'] = $formData['mopt_payone__debit_iban'];
         }
 
-        if ((!$formData['mopt_payone__debit_bic'] && $formData['mopt_payone__debit_showbic']=="1") || !$this->isValidIbanBic($formData['mopt_payone__debit_bic'])) {
+        if ((!$formData['mopt_payone__debit_bic'] && $formData['mopt_payone__debit_showbic']=="1") && !$this->isValidIbanBic($formData['mopt_payone__debit_bic'])) {
             $paymentData['sErrorFlag']['mopt_payone__debit_bic'] = true;
         } else {
             $paymentData['formData']['mopt_payone__debit_bic'] = $formData['mopt_payone__debit_bic'];
