@@ -152,7 +152,9 @@
                 <br class="ratepay-ClearFix" />
                 <div class="ratepay-MarginTop">
                     <span class="ratepay-VertAlignMiddle">{s name='please'}Bitte&nbsp{/s}{s name='insertWishrate'}Wunschrate eingeben{/s}</span>
-                    <input id="{$sFormData.payment}-rate" class="ratepay-Input-amount {if $error_flags.mopt_payone__ratepay_installment_amount} has--error{/if}" type="text">
+                    <input id="{$sFormData.payment}-rate" class="ratepay-Input-amount" type="text"
+                     {if $error_flags.mopt_payone__ratepay_installment_amount}style="background:#e74c3c"{/if}
+                    >
                     <span class="ratepay-Currency"> &euro;</span>
                     <input onclick="ratepayRateCalculatorAction('rate', '{$sFormData.payment}', '{url controller='moptAjaxPayone' action='rate'}');" value="{s name='calculateRuntime'}Laufzeit jetzt berechnen{/s}" id="{$sFormData.payment}_Input-button" class="ratepay-Input-button" type="button">
                 </div>
