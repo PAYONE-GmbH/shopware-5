@@ -119,16 +119,24 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__sofort_bankcode'] = $formData['mopt_payone__sofort_bankcode'];
         }
 
-        if ((!$formData['mopt_payone__sofort_iban'] && !$formData['mopt_payone__debit_show_sofort_iban_bic']==="") || !$this->isValidIbanBic($formData['mopt_payone__sofort_iban'])) {
+        if (!$formData['mopt_payone__sofort_iban'] && !$formData['mopt_payone__debit_show_sofort_iban_bic']==="") {
             $paymentData['sErrorFlag']['mopt_payone__sofort_iban'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__sofort_iban'] = $formData['mopt_payone__sofort_iban'];
+            if ($formData['mopt_payone__sofort_iban'] && !$this->isValidIbanBic($formData['mopt_payone__sofort_iban'])){
+                $paymentData['sErrorFlag']['mopt_payone__sofort_iban'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__sofort_iban'] = $formData['mopt_payone__sofort_iban'];
+            }
         }
 
-        if ((!$formData['mopt_payone__sofort_bic'] && !$formData['mopt_payone__debit_show_sofort_iban_bic']==="") || !$this->isValidIbanBic($formData['mopt_payone__sofort_bic'])) {
+        if (!$formData['mopt_payone__sofort_bic'] && !$formData['mopt_payone__debit_show_sofort_iban_bic']==="") {
             $paymentData['sErrorFlag']['mopt_payone__sofort_bic'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__sofort_bic'] = $formData['mopt_payone__sofort_bic'];
+            if ($formData['mopt_payone__sofort_bic'] && !$this->isValidIbanBic($formData['mopt_payone__sofort_bic'])){
+                $paymentData['sErrorFlag']['mopt_payone__sofort_bic'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__sofort_bic'] = $formData['mopt_payone__sofort_bic'];
+            }
         }
 
         if ($paymentData['sErrorFlag']['mopt_payone__sofort_iban'] && $paymentData['sErrorFlag']['mopt_payone__sofort_bic'] && !$paymentData['sErrorFlag']['mopt_payone__sofort_bankaccount'] && !$paymentData['sErrorFlag']['mopt_payone__sofort_bankcode']
