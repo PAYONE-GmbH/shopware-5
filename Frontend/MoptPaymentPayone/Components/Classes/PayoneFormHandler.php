@@ -260,10 +260,14 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__debit_iban'] = $formData['mopt_payone__debit_iban'];
         }
 
-        if ((!$formData['mopt_payone__debit_bic'] && $formData['mopt_payone__debit_showbic']=="1") && !$this->isValidIbanBic($formData['mopt_payone__debit_bic'])) {
+        if (!$formData['mopt_payone__debit_bic'] && $formData['mopt_payone__debit_showbic']=="1") {
             $paymentData['sErrorFlag']['mopt_payone__debit_bic'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__debit_bic'] = $formData['mopt_payone__debit_bic'];
+            if ($formData['mopt_payone__debit_bic'] && !$this->isValidIbanBic($formData['mopt_payone__debit_bic'])){
+                $paymentData['sErrorFlag']['mopt_payone__debit_bic'] = true;
+            }else {
+                $paymentData['formData']['mopt_payone__debit_bic'] = $formData['mopt_payone__debit_bic'];
+            }
         }
 
         if (!$formData['mopt_payone__debit_bankaccount']) {
@@ -716,15 +720,6 @@ class Mopt_PayoneFormHandler
         if (!empty($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']) && !empty($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'])){
             $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
         }
-
-        /*
-        temporaily removed in template api because bankaccountholder field in api is not working
-        if (!$formData['mopt_payone__ratepay_direct_debit_bankaccountholder']) {
-            $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_bankaccountholder'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__ratepay_direct_debit_bankaccountholder'] = $formData['mopt_payone__ratepay_direct_debit_bankaccountholder'];
-        }
-        */
 
         if ($formData['mopt_payone__ratepay_direct_debit_iban'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_direct_debit_iban'])) {
             $paymentData['formData']['mopt_payone__ratepay_direct_debit_iban'] = $formData['mopt_payone__ratepay_direct_debit_iban'];
