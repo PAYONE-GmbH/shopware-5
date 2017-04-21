@@ -1,6 +1,6 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
-{if $payment_mean.id == $form_data.payment}
+{if $payment_mean.id == $form_data.payment && $moptRatepayConfig.ratepayInstallmentMode}
     {assign var="moptRequired" value=1}
 {else}
     {assign var="moptRequired" value=0}

@@ -656,11 +656,15 @@ class Mopt_PayoneFormHandler
 
         if ($formData['mopt_payone__ratepay_installment_iban'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_installment_iban'])) {
             $paymentData['formData']['mopt_payone__ratepay_installment_iban'] = $formData['mopt_payone__ratepay_installment_iban'];
+        } elseif (!$formData['mopt_payone__ratepay_installment_iban']){
+            $paymentData['formData']['mopt_payone__ratepay_installment_iban'] = $formData['mopt_payone__ratepay_installment_iban'];
         } else {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_iban'] = true;
         }
 
         if ($formData['mopt_payone__ratepay_installment_bic'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_installment_bic'])) {
+            $paymentData['formData']['mopt_payone__ratepay_installment_bic'] = $formData['mopt_payone__ratepay_installment_bic'];
+        } elseif (!$formData['mopt_payone__ratepay_installment_bic']) {
             $paymentData['formData']['mopt_payone__ratepay_installment_bic'] = $formData['mopt_payone__ratepay_installment_bic'];
         } else {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_bic'] = true;
