@@ -133,6 +133,9 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
         if (!field) {
             fieldset.items.getAt(8).enable();
             fieldset.items.getAt(9).disable();
+            fieldset.items.getAt(10).disable();
+            fieldset.items.getAt(11).disable();
+            fieldset.items.getAt(12).disable();
         }
         else
         if (field === 'debit') {

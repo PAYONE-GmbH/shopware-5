@@ -469,7 +469,7 @@ class FrontendPostDispatch implements SubscriberInterface
         //get country via user object
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
 
-        $data['moptShowAccountnumber'] = (bool) ($config['showAccountnumber'] && $userData['additional']['country']['countryiso'] === 'DE');
+        $data['moptShowAccountnumber'] = (bool) ($debitConfig['showAccountnumber'] && $userData['additional']['country']['countryiso'] === 'DE');
         if (Shopware()->Config()->currency === 'CHF' && $userData['additional']['country']['countryiso'] === 'CH') {
             $data['moptIsSwiss'] = true;
         } else {
