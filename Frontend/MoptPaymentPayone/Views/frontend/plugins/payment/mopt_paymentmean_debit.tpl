@@ -60,7 +60,7 @@
     {if $moptPaymentConfigParams.moptShowAccountnumber}
         <p class="none">
             {s namespace='frontend/MoptPaymentPayone/payment' name='debitDescription'}
-            oder bezahlen Sie wie gewohnt mit Ihren bekannten Kontodaten(nur für Deutsche Kontoverbindungen).{/s}
+            oder bezahlen Sie wie gewohnt mit Ihren bekannten Kontodaten (nur für Deutsche Kontoverbindungen).{/s}
         </p>
         <input name="moptPaymentData[mopt_payone__debit_bankaccount]"
                type="text"
