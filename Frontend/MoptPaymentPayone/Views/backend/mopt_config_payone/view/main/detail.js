@@ -136,9 +136,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(10).disable();
             fieldset.items.getAt(11).disable();
             fieldset.items.getAt(12).disable();
-        }
-        else
-        if (field === 'debit') {
+        } else if (field === 'debit') {
             fieldset.items.getAt(8).disable();
             fieldset.items.getAt(9).enable();
             fieldset.items.getAt(10).enable();
@@ -152,14 +150,14 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
         ;
         if (field === 'klarna') {
             fieldset.items.getAt(15).enable();
-        }
-        else
-        {
+        } else {
             fieldset.items.getAt(15).disable();
         }
         ;
         if (field === 'paypal') {
             fieldset.items.getAt(17).enable();
+        } else {
+            fieldset.items.getAt(17).disable();
         }
         ;
         if ( field === 'payolution_debitnote' || field === 'payolution_invoice' || field === 'payolution_installment') {
@@ -168,26 +166,19 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(21).enable();
             fieldset.items.getAt(22).enable();
      
-        } 
-        else
-        {
+        } else {
             fieldset.items.getAt(19).disable();
             fieldset.items.getAt(20).disable();  
             fieldset.items.getAt(21).disable();
             fieldset.items.getAt(22).disable();
         }         
         ;
-        alert(field);
         if (field === 'sofort') {
             fieldset.items.getAt(12).enable();
-        }
-        else
-        {
+        } else {
             fieldset.items.getAt(12).disable();
         }
         ;
-
-
     },
     /**
      * creates form child elements
