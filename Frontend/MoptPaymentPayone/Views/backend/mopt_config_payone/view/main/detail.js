@@ -176,7 +176,18 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(21).disable();
             fieldset.items.getAt(22).disable();
         }         
-        ;  
+        ;
+        alert(field);
+        if (field === 'sofort') {
+            fieldset.items.getAt(12).enable();
+        }
+        else
+        {
+            fieldset.items.getAt(12).disable();
+        }
+        ;
+
+
     },
     /**
      * creates form child elements
