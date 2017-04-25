@@ -9,12 +9,12 @@ The PAYONE payment extension for Shopware is already certified by shoplupe for i
 *	Export function of the configuration in XML format to facilitate the technical support
 *	Optional multi-partial capture for partial deliveries
 *	Supports simplified PCI DSS conformity in accordance with SAQ A
-*	Find all currently supported payment methods on http://www.payone.de/shopware
+*	Find all currently supported payment methods on http://www.payone.com/shopware
 
 ## More information
-Documentation for Shopware: https://www.payone.de/uploads/media/PAYONE_Dokumentation_Shopware-Payment-Plugin.pdf<br>
+Documentation for Shopware: https://www.payone.com/uploads/media/PAYONE_Dokumentation_Shopware-Payment-Plugin.pdf<br>
 Videoguide: Installation and configuration: https://www.youtube.com/watch?v=P3Q7Gt1opsI<br>
-More information about Shopware on https://www.payone.de/shopware<br>
+More information about Shopware on https://www.payone.com/shopware<br>
 
 ## Contact
 PAYONE GmbH<br>
@@ -22,11 +22,11 @@ Fraunhoferstraße 2–4<br>
 24118 Kiel, Germany<br>
 Phone +49 431 25968-400<br>
 Fax +49 431 25968-1400<br>
-shopware@payone.de<br>
-www.payone.de/shopware
+shopware@payone.com<br>
+www.payone.com/shopware
 
 ## License
-See our License Agreement at: https://www.payone.de/fileadmin/downloads/sonstiges/PAYONE_Haftungs_und_Lizenzvereinbarung_Extensions.pdf
+See our License Agreement at: https://www.payone.com/fileadmin/downloads/sonstiges/PAYONE_Haftungs_und_Lizenzvereinbarung_Extensions.pdf
 
 ## About PAYONE
 PAYONE provides business solutions for comprehensive automated processing of all payments in e-commerce. The payment service provider is part of the Sparkassen-Finanzgruppe and authorised as a credit institution by the German Federal Financial Supervisory Authority. PAYONE's service portfolio includes acceptance and processing for national and international payment methods, plus all payment services. Standardised interfaces and extensions allow simple integration into existing e-commerce and IT-systems whilst maintaining strict security standards.<br>
