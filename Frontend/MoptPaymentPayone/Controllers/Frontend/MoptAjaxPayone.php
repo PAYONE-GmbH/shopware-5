@@ -747,7 +747,24 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                     }
                 }
             } else {
-                $html = "<div class='ratepay-result rateError'>" . "lang_error" . ":<br/>" . "lang_wrong_value" . "</div>";
+                /** @var \Shopware\Models\Shop\Shop $shop */
+                $shop = Shopware()->Shop();
+                $locale = $shop->getLocale();
+                $localeId = $locale->getId();
+                // get translation snippet
+                $builder = Shopware()->Models()->createQueryBuilder();
+                $builder->select('snippets')
+                    ->from('Shopware\Models\Snippet\Snippet', 'snippets');
+                $builder->Where('snippets.localeId = :localeId')
+                    ->setParameter('localeId', $localeId);
+                $builder->andWhere('snippets.namespace = :namespace1')
+                    ->setParameter('namespace1', 'frontend/MoptPaymentPayone/payment');
+                $builder->andWhere('snippets.name = :name1')
+                    ->setParameter('name1', 'wrongValue');
+                $snippet = $builder->getQuery()->getResult();
+                $snippetText =$snippet[0]->getValue();
+
+                $html = "<div class='rateError'>" . "$snippetText" . "</div>";
             }
         } catch (Exception $e) {
         }
@@ -787,7 +804,24 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                     }
                 }
             } else {
-                $html = "<div class='rateError'>" . "lang_error" . ":<br/>" . "lang_wrong_value" . "</div>";
+                /** @var \Shopware\Models\Shop\Shop $shop */
+                $shop = Shopware()->Shop();
+                $locale = $shop->getLocale();
+                $localeId = $locale->getId();
+                // get translation snippet
+                $builder = Shopware()->Models()->createQueryBuilder();
+                $builder->select('snippets')
+                    ->from('Shopware\Models\Snippet\Snippet', 'snippets');
+                $builder->Where('snippets.localeId = :localeId')
+                    ->setParameter('localeId', $localeId);
+                $builder->andWhere('snippets.namespace = :namespace1')
+                    ->setParameter('namespace1', 'frontend/MoptPaymentPayone/payment');
+                $builder->andWhere('snippets.name = :name1')
+                    ->setParameter('name1', 'wrongValue');
+                $snippet = $builder->getQuery()->getResult();
+                $snippetText =$snippet[0]->getValue();
+
+                $html = "<div class='rateError'>" . "$snippetText" . "</div>";
             }
         } catch (Exception $e) {
         }
