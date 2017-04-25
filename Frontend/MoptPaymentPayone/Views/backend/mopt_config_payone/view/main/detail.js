@@ -132,10 +132,9 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
         fieldset = tabs.items.getAt(0);
         if (!field) {
             fieldset.items.getAt(8).enable();
-            fieldset.items.getAt(9).disable();
-            fieldset.items.getAt(10).disable();
-            fieldset.items.getAt(11).disable();
-            fieldset.items.getAt(12).disable();
+            fieldset.items.getAt(9).enable();
+            fieldset.items.getAt(10).enable();
+            fieldset.items.getAt(11).enable();
         } else if (field === 'debit') {
             fieldset.items.getAt(8).disable();
             fieldset.items.getAt(9).enable();
@@ -154,7 +153,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(15).disable();
         }
         ;
-        if (field === 'paypal') {
+        if (field === 'paypal' || !field) {
             fieldset.items.getAt(17).enable();
         } else {
             fieldset.items.getAt(17).disable();
@@ -173,7 +172,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(22).disable();
         }         
         ;
-        if (field === 'sofort') {
+        if (field === 'sofort' || !field ) {
             fieldset.items.getAt(12).enable();
         } else {
             fieldset.items.getAt(12).disable();
