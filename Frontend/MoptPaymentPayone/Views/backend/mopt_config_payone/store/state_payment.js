@@ -1,7 +1,3 @@
-/**
- * $Id: $
- */
-
 //{block name="backend/mopt_config_payone/store/state_payment"}
 Ext.define('Shopware.apps.MoptConfigPayone.store.StatePayment', {
   /**

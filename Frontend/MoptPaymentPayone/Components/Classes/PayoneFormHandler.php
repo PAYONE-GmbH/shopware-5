@@ -441,14 +441,14 @@ class Mopt_PayoneFormHandler
             unset($paymentData['sErrorFlag']['mopt_payone__debit_bic']);
         }
 
-        if ($formData[mopt_payone__payolution_b2bmode] === "1") {
+        if ($formData['mopt_payone__payolution_debitnote_b2bmode'] === "1") {
             if (!$formData['mopt_payone__debitnote_company_trade_registry_number']) {
                 $paymentData['sErrorFlag']['mopt_payone__debitnote_company_trade_registry_number'] = true;
             } else {
-                $paymentData['formData']['mopt_payone__debitnote_company_trade_registry_number'] = $formData['mopt_payone__debitnote_company_trade_registry_number'];
+                $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__debitnote_company_trade_registry_number'];
             }
 
-            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_b2bmode'];
+            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_debitnote_b2bmode'];
         }
 
         // set sessionflag to trigger precheck
@@ -489,17 +489,15 @@ class Mopt_PayoneFormHandler
             }
         }
         
-        if ($formData['mopt_payone__payolution_b2bmode'] === "1") {
+        if ($formData['mopt_payone__payolution_invoice_b2bmode'] === "1") {
             if (!$formData['mopt_payone__invoice_company_trade_registry_number']) {
                 $paymentData['sErrorFlag']['mopt_payone__invoice_company_trade_registry_number'] = true;
             } else {
-                $paymentData['formData']['mopt_payone__invoice_company_trade_registry_number'] = $formData['mopt_payone__invoice_company_trade_registry_number'];
+                $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__invoice_company_trade_registry_number'];
             }
 
-            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_b2bmode'];
+            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_invoice_b2bmode'];
         }
-        
-        $paymentData['formData']['mopt_payone__payolution_installment_shippingcosts'] = $formData['mopt_payone__payolution_installment_shippingcosts'];
         
         // set sessionflag to trigger precheck
         Shopware()->Session()->moptPayolutionPrecheck = "1";
@@ -539,14 +537,14 @@ class Mopt_PayoneFormHandler
             }
         }
         
-        if ($formData['mopt_payone__payolution_b2bmode'] === "1") {
+        if ($formData['mopt_payone__payolution_installment_b2bmode'] === "1") {
             if (!$formData['mopt_payone__installment_company_trade_registry_number']) {
                 $paymentData['sErrorFlag']['mopt_payone__installment_company_trade_registry_number'] = true;
             } else {
-                $paymentData['formData']['mopt_payone__installment_company_trade_registry_number'] = $formData['mopt_payone__installment_company_trade_registry_number'];
+                $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__installment_company_trade_registry_number'];
             }
 
-            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_b2bmode'];
+            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_installment_b2bmode'];
         }
         
         if ($formData['mopt_payone__payolution_installment_duration'] ==="") {
@@ -560,6 +558,8 @@ class Mopt_PayoneFormHandler
         } else {
             $paymentData['formData']['mopt_payone__payolution_installment_workorderid'] = $formData['mopt_payone__payolution_installment_workorderid'];
         }
+
+        $paymentData['formData']['mopt_payone__payolution_installment_shippingcosts'] = $formData['mopt_payone__payolution_installment_shippingcosts'];
 
         // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
         $session = Shopware()->Session();
@@ -672,6 +672,7 @@ class Mopt_PayoneFormHandler
 
         if (!$formData['mopt_payone__ratepay_installment_number']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_number'] = true;
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_amount'] = true;
         } else {
             $paymentData['formData']['mopt_payone__ratepay_installment_number'] = $formData['mopt_payone__ratepay_installment_number'];
         }

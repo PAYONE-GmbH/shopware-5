@@ -1,9 +1,4 @@
-/**
-* $Id: $
- */
-
-//{namespace name=backend/mopt_export_payone/view/main}
-
+//{namespace name=backend/mopt_export_payone/main}
 //{block name="backend/mopt_export_payone/view/main/window"}
 Ext.define('Shopware.apps.MoptExportPayone.view.main.Window', {
     extend: 'Enlight.app.Window',

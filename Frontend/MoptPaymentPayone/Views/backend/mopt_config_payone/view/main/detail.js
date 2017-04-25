@@ -480,7 +480,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 fieldLabel: '{s name=fieldlabel/adresscheckFailureMessage}Fehlermeldung{/s}',
                 name: 'adresscheckFailureMessage',
                 disabled: true,
-                helpText: '{s name=fieldlabelhelp/adresscheckFailureMessage}Fehlermeldung bitte über Einstellungen -> Textbausteine editieren (nach addrescheckErrorMessage suchen){/s}',
+                helpText: '{s name=fieldlabelhelp/adresscheckFailureMessage}Fehlermeldung bitte über Einstellungen -> Textbausteine editieren (nach addresscheckErrorMessage suchen){/s}',
                 allowBlank: true,
                 labelWidth: 200
             },
