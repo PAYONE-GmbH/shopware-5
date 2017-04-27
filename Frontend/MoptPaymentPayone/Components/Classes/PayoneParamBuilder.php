@@ -120,7 +120,8 @@ class Mopt_PayoneParamBuilder
         }
         
         if ($this->payonePaymentHelper->isPayoneRatepayInvoice($paymentName)
-            || $this->payonePaymentHelper->isPayoneRatepayInstallment($paymentName)) {
+            || $this->payonePaymentHelper->isPayoneRatepayInstallment($paymentName)
+            || $this->payonePaymentHelper->isPayoneRatepayDirectDebit($paymentName)) {
             if ($finalize === true) {
                 $params['capturemode'] = Payone_Api_Enum_CaptureMode::COMPLETED;
             } else {
@@ -195,12 +196,13 @@ class Mopt_PayoneParamBuilder
                 $params['payolution_b2b'] = true;
             }
         }
-        
-        if ($paymentName == "mopt_payone__fin_ratepay_invoice"
-            || $paymentName == "mopt_payone__fin_ratepay_installment") {
+
+        if ($this->payonePaymentHelper->isPayoneRatepayInvoice($paymentName)
+            || $this->payonePaymentHelper->isPayoneRatepayInstallment($paymentName)
+            || $this->payonePaymentHelper->isPayoneRatepayDirectDebit($paymentName)) {
+
             $params['shop_id'] = $this->getParamRatepayShopId($order);
         }
-        
 
         return $params;
     }
@@ -667,6 +669,7 @@ class Mopt_PayoneParamBuilder
      * create ratepay payment object
      *
      * @param string $financeType
+     * @param array $paymentData
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
      */
     public function getPaymentRatepayInvoice($financeType, $paymentData)
@@ -691,7 +694,7 @@ class Mopt_PayoneParamBuilder
             array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
         ));
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_device_fingerprint'])
+            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_invoice_device_fingerprint'])
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
@@ -703,6 +706,9 @@ class Mopt_PayoneParamBuilder
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
             ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_id', 'data' => $paymentData['mopt_payone__ratepay_invoice_company_trade_registry_number'])
+            ));
         }
         $payment->setPaydata($paydata);
         $payment->setTelephonenumber($userData['billingaddress']['phone']);
@@ -713,6 +719,7 @@ class Mopt_PayoneParamBuilder
      * create ratepay payment object
      *
      * @param string $financeType
+     * @param array $paymentData
      * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
      */
     public function getPaymentRatepayInstallment($financeType, $paymentData)
@@ -781,11 +788,67 @@ class Mopt_PayoneParamBuilder
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
             ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_id', 'data' => $paymentData['mopt_payone__ratepay_installment_company_trade_registry_number'])
+            ));
         }
         $payment->setPaydata($paydata);
         $payment->setIban($this->removeWhitespaces($paymentData['mopt_payone__ratepay_installment_iban']));
         $payment->setBic($this->removeWhitespaces($paymentData['mopt_payone__ratepay_installment_bic']));
         $payment->setTelephonenumber($userData['billingaddress']['phone']);
+        return $payment;
+    }
+
+    /**
+     * create ratepay payment object
+     *
+     * @param string $financeType
+     * @param array $paymentData
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
+     */
+    public function getPaymentRatepayDirectDebit($financeType, $paymentData)
+    {
+        $params = array();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $params['api_version'] = '3.10';
+        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
+        } else {
+            $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
+        }
+        if ($params['birthday'] == "00000000") {
+            unset($params['birthday']);
+        }
+
+        $params['financingtype'] = $financeType;
+        $params['company'] = $userData['billingaddress']['company'];
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay($params);
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_direct_debit_device_fingerprint'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
+        ));
+
+
+        if (isset($params['company'])) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'company_id', 'data' => $paymentData['mopt_payone__ratepay_direct_debit_company_trade_registry_number'])
+            ));
+        }
+        // $params['bankaccountholder'] = $paymentData['mopt_payone__ratepay_direct_debit_bankaccountholder'];
+        $payment->setPaydata($paydata);
+        $payment->setTelephonenumber($userData['billingaddress']['phone']);
+        $payment->setIban($this->removeWhitespaces($paymentData['mopt_payone__ratepay_direct_debit_iban']));
+        $payment->setBic($this->removeWhitespaces($paymentData['mopt_payone__ratepay_direct_debit_bic']));
         return $payment;
     }
 

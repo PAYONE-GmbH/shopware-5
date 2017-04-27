@@ -26,6 +26,6 @@ class Payone_Api_Enum_RatepayType
     const RPV = 'RPV'; // Ratepay-Invoicing
     const RPV_FULL = 'Ratepay-Invoicing'; // Ratepay-Invoicing
     const RPS = 'RPS'; // Ratepay-Installment
-    #const RPD = 'RPD'; // Ratepay-Debit not implemented yet
+    const RPD = 'RPD'; // Ratepay-Direct-Debit
     #const RPP = 'RPP'; // Ratepay-Prepayment not implemented yet
 }

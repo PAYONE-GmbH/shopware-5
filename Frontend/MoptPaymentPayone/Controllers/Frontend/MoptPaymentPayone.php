@@ -179,6 +179,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
+    public function ratepaydirectdebitAction()
+    {
+        $response = $this->mopt_payone__ratepaydirectdebit();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
     /**
      * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
@@ -446,6 +452,20 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $financeType = Payone_Api_Enum_RatepayType::RPS;
 
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentRatepayInstallment($financeType, $paymentData);
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment);
+        return $response;
+    }
+
+    /**
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__ratepaydirectdebit()
+    {
+        $paymentData = Shopware()->Session()->moptPayment;
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = Payone_Api_Enum_RatepayType::RPD;
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentRatepayDirectDebit($financeType, $paymentData);
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
         return $response;
     }
