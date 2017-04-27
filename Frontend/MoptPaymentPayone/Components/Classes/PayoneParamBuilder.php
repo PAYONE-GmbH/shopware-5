@@ -694,7 +694,7 @@ class Mopt_PayoneParamBuilder
             array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
         ));
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_device_fingerprint'])
+            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__ratepay_invoice_device_fingerprint'])
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
