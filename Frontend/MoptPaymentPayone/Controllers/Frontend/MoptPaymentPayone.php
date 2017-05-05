@@ -341,6 +341,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     protected function mopt_payone__standard()
     {
         $paymentId = $this->getPaymentShortName();
+        $clearingSubType = false;
 
         if ($this->moptPayonePaymentHelper->isPayoneInvoice($paymentId)) {
             $clearingType = Payone_Enum_ClearingType::INVOICE;
@@ -352,7 +353,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
 
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
-        $response = $this->buildAndCallPayment($config, $clearingType, null, $clearingsubType, false, false, false, $clearingSubType);
+        $response = $this->buildAndCallPayment($config, $clearingType, null, false, false, false, false, $clearingSubType);
 
         return $response;
     }
@@ -769,7 +770,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $request->setClearingtype($clearingType);
 
-        $request->setClearingsubtype($clearingSubType);
+        if ($clearingSubType !== false) {
+            $request->setClearingsubtype($clearingSubType);
+        }
 
         if (!$isPaypalRecurringInitialRequest && ($config['submitBasket'] || $clearingType === 'fnc')) {
             // although payolution is clearingtype fnc respect submitBasket setting in Backend
