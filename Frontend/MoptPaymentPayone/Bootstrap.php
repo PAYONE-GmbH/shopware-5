@@ -867,7 +867,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
             if ($config['submitBasket'] || Mopt_PayoneMain::getInstance()->getPaymentHelper()->isPayoneBillsafe($paymentName)) {
                 $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
-                        ->getInvoicingFromOrder($order, array_column($orderDetailParams, 'id'), $finalize, false, $includeShipment);
+                        ->getInvoicingFromOrder($order, array_column($orderDetailParams, 'id'), $finalize, true, $includeShipment);
             }
             //call capture service
 
