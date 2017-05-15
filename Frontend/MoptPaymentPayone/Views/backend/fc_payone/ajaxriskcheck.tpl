@@ -82,6 +82,7 @@
                         <option value="IH">Infoscore (harte Kriterien)</option>
                         <option value="IA">Infoscore (alle Merkmale)</option>
                         <option value="IB">Infoscore (alle Merkmale + Boniscore)</option>
+                        <option value="CE">Boniversum VERITA Score</option>
                         </select>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="consumerscoreCheckMode-status" class="sr-only">(success)</span>

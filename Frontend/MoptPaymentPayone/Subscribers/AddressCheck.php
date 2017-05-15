@@ -171,11 +171,7 @@ class AddressCheck implements SubscriberInterface
                         $paymentID
                     );
                 $billingAddressChecktype = $moptPayoneMain->getHelper()
-                    ->getAddressChecktypeFromId(
-                        $config['adresscheckBillingAdress'],
-                        $config['adresscheckBillingCountries'],
-                        $billingAddressData['country']
-                    );
+                    ->getAddressChecktype($config, 'billing', $billingAddressData['country']);
                 $response = $this->performAddressCheck(
                     $config,
                     $params,
@@ -216,11 +212,7 @@ class AddressCheck implements SubscriberInterface
                         $paymentID
                     );
                 $shippingAddressChecktype = $moptPayoneMain->getHelper()
-                    ->getAddressChecktypeFromId(
-                        $config['adresscheckShippingAdress'],
-                        $config['adresscheckShippingCountries'],
-                        $shippingAddressData['country']
-                    );
+                    ->getAddressChecktype($config, 'shipping', $shippingAddressData['country']);
                 $response = $this->performAddressCheck(
                     $config,
                     $params,
@@ -375,11 +367,7 @@ class AddressCheck implements SubscriberInterface
                     $paymentId
                 );
             $billingAddressChecktype = $moptPayoneMain->getHelper()
-                ->getAddressChecktypeFromId(
-                    $config['adresscheckBillingAdress'],
-                    $config['adresscheckBillingCountries'],
-                    $billingAddressData['country']
-                );
+                ->getAddressChecktype($config, 'billing', $billingAddressData['country']);
             $response = $this->performAddressCheck(
                 $config,
                 $params,
@@ -441,11 +429,7 @@ class AddressCheck implements SubscriberInterface
                     $paymentId
                 );
             $shippingAddressChecktype = $moptPayoneMain->getHelper()
-                ->getAddressChecktypeFromId(
-                    $config['adresscheckShippingAdress'],
-                    $config['adresscheckShippingCountries'],
-                    $shippingAddressData['country']
-                );
+                ->getAddressChecktype($config, 'shipping', $shippingAddressData['country']);
             $response = $this->performAddressCheck(
                 $config,
                 $params,
@@ -550,11 +534,7 @@ class AddressCheck implements SubscriberInterface
                         $personalFormData
                     );
                 $billingAddressChecktype = $moptPayoneMain->getHelper()
-                    ->getAddressChecktypeFromId(
-                        $config['adresscheckBillingAdress'],
-                        $config['adresscheckBillingCountries'],
-                        $postData['register']['billing']['country']
-                    );
+                    ->getAddressChecktype($config, 'billing', $postData['register']['billing']['country']);
                 $response = $this->performAddressCheck(
                     $config,
                     $params,

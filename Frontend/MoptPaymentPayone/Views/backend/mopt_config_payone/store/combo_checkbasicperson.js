@@ -15,6 +15,14 @@ Ext.define('Shopware.apps.MoptConfigPayone.store.ComboCheckbasicperson', {
     {
       display: '{s name=fieldvalue/person}Person{/s}',
       value: '2'
+    },
+    {
+      display: '{s name=fieldvalue/boniversum_basic}Boniversum Basic{/s}',
+      value: '3'
+    },
+    {
+      display: '{s name=fieldvalue/boniversum_person}Boniversum Person{/s}',
+      value: '4'
     }
   ]
 });
