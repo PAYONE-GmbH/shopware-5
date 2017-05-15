@@ -1070,7 +1070,11 @@ class AddressCheck implements SubscriberInterface
             'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         $request = new \Payone_Api_Request_Consumerscore($params);
-        $request->setAddresschecktype(\Payone_Api_Enum_AddressCheckType::NONE);
+        $request->setAddresschecktype(
+            ($config['consumerscoreCheckMode'] === \Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) ?
+                \Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON :
+                \Payone_Api_Enum_AddressCheckType::NONE
+        );
         $request->setConsumerscoretype($config['consumerscoreCheckMode']);
 
         try {
