@@ -196,6 +196,7 @@ class Payment implements SubscriberInterface
 
             if ($config['consumerscoreActive'] && $config['consumerscoreCheckMoment'] == 1) {
                 //check if consumerscore is still valid or needs to be checked
+                $checkDate = new \DateTime($userData['mopt_payone_consumerscore_date']);
                 if (!$moptPayoneMain->getHelper()->isConsumerScoreCheckValid($config['consumerscoreLifetime'], $checkDate)) {
                     // add flag and data to session
                     $session->moptConsumerScoreCheckNeedsUserAgreement = true;
