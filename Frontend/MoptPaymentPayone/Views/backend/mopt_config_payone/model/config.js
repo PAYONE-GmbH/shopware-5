@@ -41,6 +41,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'consumerscoreCheckMoment', type: 'int'},
     { name: 'consumerscoreCheckMode', type: 'string'},
     { name: 'consumerscoreDefault', type: 'int'},
+    { name: 'consumerscoreBoniversumUnknown', type: 'int'},
     { name: 'consumerscoreLifetime', type: 'int'},
     { name: 'consumerscoreMinBasket', type: 'int'},
     { name: 'consumerscoreMaxBasket', type: 'int'},

@@ -666,6 +666,29 @@ class Mopt_PayoneHelper
         return $checkType;
     }
 
+    /**
+     * get score color from config
+     *
+     * @param array $config
+     * @return string
+     */
+    public function getScoreColor($config)
+    {
+        switch ($config['consumerscoreBoniversumUnknown']) {
+            case 0:
+                $color = 'R';
+                break;
+            case 1:
+                $color = 'Y';
+                break;
+            case 2:
+                $color = 'G';
+                break;
+        }
+
+        return $color;
+    }
+
   /**
    * get consumer score
    *

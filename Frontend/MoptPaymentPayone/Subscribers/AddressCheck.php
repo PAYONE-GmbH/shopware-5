@@ -1389,6 +1389,11 @@ class AddressCheck implements SubscriberInterface
 
         // handle ERROR, VALID, INVALID
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
+
+            // in case Boniversum returns unknown set response to backend user-defined value
+            if ($response->getScore() === 'U'){
+                $response->setScore($moptPayoneMain->getHelper()->getScoreColor($config));
+            }
             // save result
             $moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
             return true;
