@@ -69,6 +69,8 @@
                             <option value="0">nicht prüfen</option>
                             <option value="1">Basic</option>
                             <option value="2">Person</option>
+                            <option value="3">Boniversum Basic</option>
+                            <option value="4">Boniversum Person</option>
                         </select>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="adresscheckBillingAdress-status" class="sr-only">(success)</span>
@@ -93,6 +95,8 @@
                             <option value="0">nicht prüfen</option>
                             <option value="1">Basic</option>
                             <option value="2">Person</option>
+                            <option value="3">Boniversum Basic</option>
+                            <option value="4">Boniversum Person</option>
                         </select>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="adresscheckShippingAdress-status" class="sr-only">(success)</span>
