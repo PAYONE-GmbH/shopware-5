@@ -64,7 +64,7 @@ class Payment implements SubscriberInterface
         $post['mopt_payone__klarna_Day'] = $postData['mopt_payone__klarna_Day'];
 
         $paymentName = $returnValues['paymentData']['name'];
-        $paymentId = $postData['register']['payment'];
+        $paymentId = $postData['payment'] ? $postData['payment'] : $postData['register']['payment'];
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config = $moptPayoneMain->getPayoneConfig($paymentId);
         $session = Shopware()->Session();
@@ -86,7 +86,7 @@ class Payment implements SubscriberInterface
         }
 
         //@TODO check if still used
-        if ($postData['register']['payment'] === 'mopt_payone_creditcard') {
+        if ($postData['register'] && $postData['register']['payment'] === 'mopt_payone_creditcard') {
             $paymentName = $postData['register']['payment'];
         }
 
@@ -96,7 +96,7 @@ class Payment implements SubscriberInterface
         if (isset($paymentData['formData']['mopt_save_birthday_and_phone']) && $paymentData['formData']['mopt_save_birthday_and_phone']) {
             $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
         }
-        
+
         if (isset($paymentData['formData']['mopt_save_birthday']) && $paymentData['formData']['mopt_save_birthday']) {
             $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
         }
