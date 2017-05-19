@@ -143,6 +143,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }                
         
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
+            if ($response->getScore() === 'U'){
+                $response->setScore($this->moptPayoneMain->getHelper()->getScoreColor($config));
+            }
             //save result
             $this->moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
             unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
