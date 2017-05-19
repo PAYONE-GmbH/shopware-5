@@ -111,9 +111,12 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog')
         );
         $request = new Payone_Api_Request_Consumerscore($params);
+        $request->setAddresschecktype(
+            ($config['consumerscoreCheckMode'] == \Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) ?
+                \Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON :
+                \Payone_Api_Enum_AddressCheckType::NONE
+        );
 
-        $billingAddressChecktype = 'NO';
-        $request->setAddresschecktype($billingAddressChecktype);
         $request->setConsumerscoretype($config['consumerscoreCheckMode']);
 
         try {
@@ -140,6 +143,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }                
         
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
+            if ($response->getScore() === 'U'){
+                $response->setScore($this->moptPayoneMain->getHelper()->getScoreColor($config));
+            }
             //save result
             $this->moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
             unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);

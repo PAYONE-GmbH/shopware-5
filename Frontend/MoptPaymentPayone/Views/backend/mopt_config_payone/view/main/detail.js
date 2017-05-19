@@ -678,6 +678,17 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 labelWidth: 200
             },
             {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/consumerscoreBoniversumUnknown}Boniversum unbekannt{/s}',
+                store: me.data.signal,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                name: 'consumerscoreBoniversumUnknown',
+                allowBlank: false,
+                labelWidth: 200
+            },
+            {
                 xtype: 'numberfield',
                 name: 'consumerscoreLifetime',
                 fieldLabel: '{s name=fieldlabel/lifetime}Gültigkeit{/s}',

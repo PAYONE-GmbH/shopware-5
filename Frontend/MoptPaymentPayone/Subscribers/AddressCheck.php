@@ -171,11 +171,7 @@ class AddressCheck implements SubscriberInterface
                         $paymentID
                     );
                 $billingAddressChecktype = $moptPayoneMain->getHelper()
-                    ->getAddressChecktypeFromId(
-                        $config['adresscheckBillingAdress'],
-                        $config['adresscheckBillingCountries'],
-                        $billingAddressData['country']
-                    );
+                    ->getAddressChecktype($config, 'billing', $billingAddressData['country']);
                 $response = $this->performAddressCheck(
                     $config,
                     $params,
@@ -216,11 +212,7 @@ class AddressCheck implements SubscriberInterface
                         $paymentID
                     );
                 $shippingAddressChecktype = $moptPayoneMain->getHelper()
-                    ->getAddressChecktypeFromId(
-                        $config['adresscheckShippingAdress'],
-                        $config['adresscheckShippingCountries'],
-                        $shippingAddressData['country']
-                    );
+                    ->getAddressChecktype($config, 'shipping', $shippingAddressData['country']);
                 $response = $this->performAddressCheck(
                     $config,
                     $params,
@@ -375,11 +367,7 @@ class AddressCheck implements SubscriberInterface
                     $paymentId
                 );
             $billingAddressChecktype = $moptPayoneMain->getHelper()
-                ->getAddressChecktypeFromId(
-                    $config['adresscheckBillingAdress'],
-                    $config['adresscheckBillingCountries'],
-                    $billingAddressData['country']
-                );
+                ->getAddressChecktype($config, 'billing', $billingAddressData['country']);
             $response = $this->performAddressCheck(
                 $config,
                 $params,
@@ -441,11 +429,7 @@ class AddressCheck implements SubscriberInterface
                     $paymentId
                 );
             $shippingAddressChecktype = $moptPayoneMain->getHelper()
-                ->getAddressChecktypeFromId(
-                    $config['adresscheckShippingAdress'],
-                    $config['adresscheckShippingCountries'],
-                    $shippingAddressData['country']
-                );
+                ->getAddressChecktype($config, 'shipping', $shippingAddressData['country']);
             $response = $this->performAddressCheck(
                 $config,
                 $params,
@@ -550,11 +534,7 @@ class AddressCheck implements SubscriberInterface
                         $personalFormData
                     );
                 $billingAddressChecktype = $moptPayoneMain->getHelper()
-                    ->getAddressChecktypeFromId(
-                        $config['adresscheckBillingAdress'],
-                        $config['adresscheckBillingCountries'],
-                        $postData['register']['billing']['country']
-                    );
+                    ->getAddressChecktype($config, 'billing', $postData['register']['billing']['country']);
                 $response = $this->performAddressCheck(
                     $config,
                     $params,
@@ -1090,7 +1070,11 @@ class AddressCheck implements SubscriberInterface
             'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         $request = new \Payone_Api_Request_Consumerscore($params);
-        $request->setAddresschecktype(\Payone_Api_Enum_AddressCheckType::NONE);
+        $request->setAddresschecktype(
+            ($config['consumerscoreCheckMode'] === \Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) ?
+                \Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON :
+                \Payone_Api_Enum_AddressCheckType::NONE
+        );
         $request->setConsumerscoretype($config['consumerscoreCheckMode']);
 
         try {
@@ -1405,6 +1389,11 @@ class AddressCheck implements SubscriberInterface
 
         // handle ERROR, VALID, INVALID
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
+
+            // in case Boniversum returns unknown set response to backend user-defined value
+            if ($response->getScore() === 'U'){
+                $response->setScore($moptPayoneMain->getHelper()->getScoreColor($config));
+            }
             // save result
             $moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
             return true;

@@ -82,6 +82,7 @@
                         <option value="IH">Infoscore (harte Kriterien)</option>
                         <option value="IA">Infoscore (alle Merkmale)</option>
                         <option value="IB">Infoscore (alle Merkmale + Boniscore)</option>
+                        <option value="CE">Boniversum VERITA Score</option>
                         </select>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="consumerscoreCheckMode-status" class="sr-only">(success)</span>
@@ -99,6 +100,20 @@
                         </select>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="consumerscoreDefault-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+
+                    <label for="consumerscoreBoniversumUnknown" class="text-left col-md-3 control-label">{s name=fieldlabel/consumerscoreBoniversumUnknown}Boniversum unbekannt{/s}</label>
+                    <div class="col-md-6">
+                        <select type="" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreDefault" name="consumerscoreBoniversumUnknown" aria-describedby="consumerscoreBoniversumUnknown-status" >
+                            <option value="0">Rot</option>
+                            <option value="1">Gelb</option>
+                            <option value="2">Grün</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="consumerscoreBoniversumUnknown-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>

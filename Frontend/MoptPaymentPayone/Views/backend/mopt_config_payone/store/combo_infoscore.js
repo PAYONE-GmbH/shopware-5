@@ -15,6 +15,10 @@ Ext.define('Shopware.apps.MoptConfigPayone.store.ComboInfoscore', {
     {
       display: '{s name=fieldvalue/IB}Infoscore (alle Merkmale + Boniscore){/s}',
       value: 'IB'
+    },
+    {
+      display: '{s name=fieldvalue/CE}Boniversum VERITA Score{/s}',
+      value: 'CE'
     }
   ]
 });

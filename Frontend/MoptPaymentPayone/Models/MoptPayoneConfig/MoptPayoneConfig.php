@@ -216,6 +216,15 @@ class MoptPayoneConfig extends ModelEntity
     private $consumerscoreDefault;
 
     /**
+     * 0 = red
+     * 1= yello
+     * 2 = green
+     *
+     * @ORM\Column(name="consumerscore_boniversum_unknown", type="integer", precision=0, scale=0, nullable=false, unique=false)
+     */
+    private $consumerscoreBoniversumUnknown;
+
+    /**
      * @ORM\Column(name="consumerscore_lifetime", type="integer", precision=0, scale=0, nullable=false, unique=false)
      */
     private $consumerscoreLifetime;
@@ -860,6 +869,22 @@ class MoptPayoneConfig extends ModelEntity
     public function setConsumerscoreDefault($consumerscoreDefault)
     {
         $this->consumerscoreDefault = $consumerscoreDefault;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConsumerscoreBoniversumUnknown()
+    {
+        return $this->consumerscoreBoniversumUnknown;
+    }
+
+    /**
+     * @param $consumerscoreDefault
+     */
+    public function setConsumerscoreBoniversumUnknown($consumerscoreBoniversumUnknown)
+    {
+        $this->consumerscoreBoniversumUnknown = $consumerscoreBoniversumUnknown;
     }
 
     /**
