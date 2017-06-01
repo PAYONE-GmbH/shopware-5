@@ -103,7 +103,7 @@
                 </div>
             </div>
         </th>
-        <td><b>{$numberOfRates}{s name='months'} Monate{/s}</b></td>
+        <td><b>{$result.{"number-of-rates"}}{s name='months'} Monate{/s}</b></td>
         <input id="ratePayInstallmentNumber" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_number]" value="{$result.{"number-of-rates"}}"/>
         <td>&nbsp;</td>
     </tr>
