@@ -108,12 +108,30 @@
                 Wirecard Bank AG, Einsteinring 35, 85609 Aschheim<BR>
                 Gläubiger-ID: DE49ZZZ00000002773<BR>
                 Mandatsreferenz: (wird nach Kaufabschluss übermittelt)<BR>
+                <a id="ratepayMandateAgreement" href="#" onclick="displayRatepayOverlayDebit();return false;">Einwilligungserklärung zum SEPA-Mandat lesen</a>
             </ul>
         </div>
     </div>
+
+    <div id="ratepay_overlay_debit" class="js--modal content" style="width:50%; height:auto; display: none; opacity: 0.9; margin: 0 auto;">
+        <a href="#" onclick="removeRatepayOverlayDebit();return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
+        <center><b>Einwilligungserklärung zum SEPA-Mandat</b></center><BR>
+        Ich willige hiermit in die Weiterleitung meiner Daten an RatePAY GmbH,
+        Schlüterstr. 39, 10629 Berlin gemäß <a href="https://www.ratepay.com/zusaetzliche-geschaeftsbedingungen-und-datenschutzhinweis-dach/">RatePAY-Datenschutzerklärung</a> ein und ermächtige
+        diese, mit diesem Kaufvertrag in Zusammenhang stehende Zahlungen von meinem o.a.
+        Konto mittels Lastschrift einzuziehen.<BR> Zugleich weise ich mein Kreditinstitut an, die von
+        RatePAY GmbH auf mein Konto gezogenen Lastschriften einzulösen.<BR>
+        Hinweis:<BR>
+        Nach Zustandekommen des Vertrags wird mir die Mandatsreferenz von RatePAY
+        mitgeteilt.<BR> Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum,
+        die Erstattung des belasteten Betrages verlangen.<BR>
+        Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.
+    </div>
+    <div id="ratepay_overlay_debit_bg" class="js--overlay is--open" style="opacity: 0.8; display: none"></div>
+
 </div>
 {if $moptRatepayConfig.deviceFingerPrint && $moptRatepayConfig.deviceFingerprintSnippetId}
-    <!-- Only Include if moptRatepayConfig is configured in Backend to prevent 404 erorrs -->
+    <!-- Only Include if moptRatepayConfig is configured in Backend to prevent 404 errors -->
     <script language="JavaScript">
         var di = { t: '{$moptRatepayConfig.deviceFingerPrint}', v: '{ $moptRatepayConfig.deviceFingerprintSnippetId}', l: 'Checkout'};
     </script>
@@ -155,6 +173,15 @@
             hiddenDobHint.className = "is--hidden";
             return;
         }
+    }
+
+    function displayRatepayOverlayDebit() {
+        document.getElementById('ratepay_overlay_debit').style.display = "block";
+        document.getElementById('ratepay_overlay_debit_bg').style.display = "block";
+    }
+    function removeRatepayOverlayDebit() {
+        document.getElementById('ratepay_overlay_debit').style.display = "none";
+        document.getElementById('ratepay_overlay_debit_bg').style.display = "none";
     }
 
 </script>
