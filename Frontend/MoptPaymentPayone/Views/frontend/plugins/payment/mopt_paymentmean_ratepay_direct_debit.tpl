@@ -105,8 +105,6 @@
         <center><strong>SEPA Mandatsinformation</strong></center><BR>
         <div style="font-size:.875rem; border-top: 1px solid; border-color:#101010; margin: inherit">
             <ul>
-                Wirecard Bank AG, Einsteinring 35, 85609 Aschheim<BR>
-                Gläubiger-ID: DE49ZZZ00000002773<BR>
                 Mandatsreferenz: (wird nach Kaufabschluss übermittelt)<BR>
                 <a id="ratepayMandateAgreement" href="#" onclick="displayRatepayOverlayDebit();return false;">Einwilligungserklärung zum SEPA-Mandat lesen</a>
             </ul>
@@ -117,7 +115,7 @@
         <a href="#" onclick="removeRatepayOverlayDebit();return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
         <center><b>Einwilligungserklärung zum SEPA-Mandat</b></center><BR>
         Ich willige hiermit in die Weiterleitung meiner Daten an RatePAY GmbH,
-        Schlüterstr. 39, 10629 Berlin gemäß <a href="https://www.ratepay.com/zusaetzliche-geschaeftsbedingungen-und-datenschutzhinweis-dach/">RatePAY-Datenschutzerklärung</a> ein und ermächtige
+        Schlüterstr. 39, 10629 Berlin gemäß <a target="_blank" href="https://www.ratepay.com/zusaetzliche-geschaeftsbedingungen-und-datenschutzhinweis-dach/">RatePAY-Datenschutzerklärung</a> ein und ermächtige
         diese, mit diesem Kaufvertrag in Zusammenhang stehende Zahlungen von meinem o.a.
         Konto mittels Lastschrift einzuziehen.<BR> Zugleich weise ich mein Kreditinstitut an, die von
         RatePAY GmbH auf mein Konto gezogenen Lastschriften einzulösen.<BR>
