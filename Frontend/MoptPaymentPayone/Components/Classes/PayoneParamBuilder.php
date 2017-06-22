@@ -484,6 +484,10 @@ class Mopt_PayoneParamBuilder
 
         $personalData = new Payone_Api_Request_Parameter_Authorization_PersonalData($params);
 
+        // # SW-95: remove userid and customerid
+        unset($personalData->customerid);
+        unset($personalData->userid);
+
         return $personalData;
     }
 
