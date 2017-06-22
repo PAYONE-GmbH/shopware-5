@@ -105,6 +105,8 @@
         <center><strong>SEPA Mandatsinformation</strong></center><BR>
         <div style="font-size:.875rem; border-top: 1px solid; border-color:#101010; margin: inherit">
             <ul>
+                RatePAY GmbH, Schlüterstr. 39, 10629 Berlin<BR>
+                Gläubiger-ID: DE39RPY00000568463<BR>
                 Mandatsreferenz: (wird nach Kaufabschluss übermittelt)<BR>
                 <a id="ratepayMandateAgreement" href="#" onclick="displayRatepayOverlayDebit();return false;">Einwilligungserklärung zum SEPA-Mandat lesen</a>
             </ul>
