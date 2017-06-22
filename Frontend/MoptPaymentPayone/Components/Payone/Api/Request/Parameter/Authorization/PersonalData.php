@@ -147,12 +147,14 @@ class Payone_Api_Request_Parameter_Authorization_PersonalData extends Payone_Api
         return $this->country;
     }
 
+
+    // #SW-95 remove customerid for better compatibility
     /**
      * @param string $customerid
      */
     public function setCustomerid($customerid)
     {
-        $this->customerid = $customerid;
+        $this->customerid = null;
     }
 
     /**
@@ -301,12 +303,14 @@ class Payone_Api_Request_Parameter_Authorization_PersonalData extends Payone_Api
         return $this->title;
     }
 
+    // #SW-95 remove userid for better compatibility
+
     /**
      * @param string $userid
      */
     public function setUserid($userid)
     {
-        $this->userid = $userid;
+        $this->userid = null;
     }
 
     /**
@@ -316,6 +320,7 @@ class Payone_Api_Request_Parameter_Authorization_PersonalData extends Payone_Api
     {
         return $this->userid;
     }
+
 
     public function setVatid($vatid)
     {
