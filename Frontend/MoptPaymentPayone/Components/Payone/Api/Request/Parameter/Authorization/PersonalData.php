@@ -147,12 +147,14 @@ class Payone_Api_Request_Parameter_Authorization_PersonalData extends Payone_Api
         return $this->country;
     }
 
+
+    // #SW-95 remove customerid for better compatibility
     /**
      * @param string $customerid
      */
     public function setCustomerid($customerid)
     {
-        $this->customerid = $customerid;
+        $this->customerid = null;
     }
 
     /**
@@ -235,12 +237,14 @@ class Payone_Api_Request_Parameter_Authorization_PersonalData extends Payone_Api
         return $this->lastname;
     }
 
+    // #SW-95 remove personalid for better compatibility
+
     /**
      * @param string $personalid
      */
     public function setPersonalid($personalid)
     {
-        $this->personalid = $personalid;
+        $this->personalid = null;
     }
 
     /**
