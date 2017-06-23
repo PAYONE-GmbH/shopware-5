@@ -691,6 +691,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session = Shopware()->Session();
 
         if ($response->getStatus() == 'ERROR') {
+            $session->payolutionErrorCode = $response->getErrorcode();
+            $session->payolutionErrorMsg = $response->getCustomermessage();
             $this->forward('payolutionError');
         } else {
             //extract possible clearing data
@@ -982,8 +984,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function payolutionErrorAction()
     {
-        $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-             ->get('payolutionErrorMessage', 'Es ist ein Fehler aufgetreten');
+        $session = Shopware()->Session();
+        $errorCode = $session->payolutionErrorCode;
+        $errorMessage = $session->payolutionErrorMsg;
+        $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage'.$errorCode, $errorMessage.' (Fehler '.$session->payolutionErrorCode.')', true);
     }
 
     /**
