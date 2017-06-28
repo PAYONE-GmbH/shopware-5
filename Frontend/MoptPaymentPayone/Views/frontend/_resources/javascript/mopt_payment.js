@@ -106,11 +106,11 @@ $.plugin('moptPayoneSubmitPaymentForm', {
     init: function () {
         var me = this;
 
-        if (typeof $('#mopt_payone_creditcard_form') !== "undefined")
+        if ($('#mopt_payone_creditcard_form').length > 0)
         {
             $('#mopt_payone_creditcard_form').moptPayoneCreditcardPrepare();
             // prepare and show Iframe or Display already checked and validated CreditcardData
-            if ($('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") > 0){
+            if (typeof $('#mopt_payone__cc_truncatedcardpan_hidden').val() !== 'undefined' && $('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") > 0){
                 showhiddenCCFields();
             }
 

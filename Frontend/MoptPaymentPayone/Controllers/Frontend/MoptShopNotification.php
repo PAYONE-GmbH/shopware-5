@@ -138,7 +138,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             $saveOrderHash = true;
         }
 
-        if ($clearingData) {
+        if ($clearingData && !$this->clearingDataExists($order)) {
             $attributeData['mopt_payone_clearing_data'] = json_encode($clearingData);
             $saveClearingData = true;
         }
@@ -387,6 +387,29 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 'different shop active, submitted id, new shopid',
                 array($activeShopId, $shopId, Shopware()->Shop()->getId())
             );
+        }
+    }
+
+    /**
+     * check if clearingData already exists in DB
+     *
+     * @param array $order
+     * @return boolean
+     */
+    protected function clearingDataExists($order)
+    {
+
+        $sql = 'SELECT mopt_payone_clearing_data FROM s_order_attributes WHERE orderID=?';
+        $params[] = $order['id'];
+
+        $clearingData = Shopware()->Db()->query($sql, $params);
+
+        if (empty($clearingData)) {
+            $this->logger->debug('clearingdata is empty');
+            return false;
+        } else {
+            $this->logger->debug('clearingdata already exists');
+            return true;
         }
     }
 }

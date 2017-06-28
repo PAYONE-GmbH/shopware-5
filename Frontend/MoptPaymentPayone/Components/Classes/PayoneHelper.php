@@ -37,59 +37,48 @@ class Mopt_PayoneHelper
       //not deactivated => activated
         return true;
     }
-    
-  /**
-   * returns Payone API value for selected addresschecktype
-   *
-   * @param string $id
-   * @param string $configuredCountriesForCheck
-   * @param string $selectedCountry
-   * @return string|boolean
-   */
-    public function getAddressChecktypeFromId($id, $configuredCountriesForCheck, $selectedCountry)
+
+    /**
+     * returns Payone API value for selected addresschecktype
+     *
+     * @param array  $config
+     * @param string $addressType
+     * @param string $selectedCountry
+     * @return bool|string
+     */
+    public function getAddressChecktype($config, $addressType, $selectedCountry)
     {
-        if (!empty($configuredCountriesForCheck)) {
-            $countries = explode(',', $configuredCountriesForCheck);
+        if (strtolower($addressType) === 'billing') {
+            $type = 'Billing';
+        } elseif (strtolower($addressType) === 'shipping') {
+            $type = 'Shipping';
+        } else {
+            throw new \InvalidArgumentException('Invalid address type given');
+        }
+
+        if (!empty($config["adresscheck{$type}Countries"])) {
+            $countries = explode(',', $config["adresscheck{$type}Countries"]);
             if (!in_array($selectedCountry, $countries)) {
                 return false;
             }
         }
+
+        if ($config['consumerscoreCheckMode'] === Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) {
+            return Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON;
+        }
       
-        switch ($id) {
+        switch ($config["adresscheck{$type}Adress"]) {
             case 1:
-                $checkType = Payone_Api_Enum_AddressCheckType::BASIC;
-                break;
+                return Payone_Api_Enum_AddressCheckType::BASIC;
             case 2:
-                $checkType = Payone_Api_Enum_AddressCheckType::PERSON;
-                break;
+                return Payone_Api_Enum_AddressCheckType::PERSON;
+            case 3:
+                return Payone_Api_Enum_AddressCheckType::BONIVERSUM_BASIC;
+            case 4:
+                return Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON;
             default:
-                $checkType = false;
+                return false;
         }
-
-        return $checkType;
-    }
-
-  /**
-   * returns Payone API value for selected addresschecktype
-   *
-   * @param string $id
-   * @return string
-   */
-    public function getConsumerScoreChecktypeFromId($id)
-    {
-        switch ($id) {
-            case 0:
-                $checkType = Payone_Api_Enum_ConsumerscoreType::INFOSCORE_HARD;
-                break;
-            case 1:
-                $checkType = Payone_Api_Enum_ConsumerscoreType::INFOSCORE_ALL;
-                break;
-            case 2:
-                $checkType = Payone_Api_Enum_ConsumerscoreType::INFOSCORE_ALL_BONI;
-                break;
-        }
-
-        return $checkType;
     }
 
   /**
@@ -111,13 +100,9 @@ class Mopt_PayoneHelper
             return false;
         }
 
-        $billingAddressChecktype = $this->getAddressChecktypeFromId(
-            $config['adresscheckBillingAdress'],
-            $config['adresscheckBillingCountries'],
-            $selectedCountry
-        );
+        $billingAddressChecktype = $this->getAddressChecktype($config, 'billing', $selectedCountry);
 
-        return $billingAddressChecktype;
+        return ($billingAddressChecktype !== false);
     }
 
   /**
@@ -140,11 +125,7 @@ class Mopt_PayoneHelper
             return false;
         }
 
-        $billingAddressChecktype = $this->getAddressChecktypeFromId(
-            $config['adresscheckBillingAdress'],
-            $config['adresscheckBillingCountries'],
-            $selectedCountry
-        );
+        $billingAddressChecktype = $this->getAddressChecktype($config, 'billing', $selectedCountry);
 
         return ($billingAddressChecktype !== false);
     }
@@ -176,11 +157,7 @@ class Mopt_PayoneHelper
             return false;
         }
 
-        $shippingAddressChecktype = $this->getAddressChecktypeFromId(
-            $config['adresscheckShippingAdress'],
-            $config['adresscheckShippingCountries'],
-            $selectedCountry
-        );
+        $shippingAddressChecktype = $this->getAddressChecktype($config, 'shipping', $selectedCountry);
 
         return ($shippingAddressChecktype !== false);
     }
@@ -199,14 +176,12 @@ class Mopt_PayoneHelper
             return false;
         }
 
-      //no check when basket value outside configured values
+        // no check when basket value outside configured values
         if ($basketValue < $config['consumerscoreMinBasket'] || $basketValue > $config['consumerscoreMaxBasket']) {
             return false;
         }
 
-        $shippingAddressChecktype = $this->getConsumerScoreChecktypeFromId($config['consumerscoreCheckMode']);
-
-        return ($shippingAddressChecktype !== false);
+        return is_string($config['consumerscoreCheckMode']);
     }
 
   /**
@@ -689,6 +664,29 @@ class Mopt_PayoneHelper
         }
 
         return $checkType;
+    }
+
+    /**
+     * get score color from config
+     *
+     * @param array $config
+     * @return string
+     */
+    public function getScoreColor($config)
+    {
+        switch ($config['consumerscoreBoniversumUnknown']) {
+            case 0:
+                $color = 'R';
+                break;
+            case 1:
+                $color = 'Y';
+                break;
+            case 2:
+                $color = 'G';
+                break;
+        }
+
+        return $color;
     }
 
   /**

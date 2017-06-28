@@ -8,7 +8,7 @@
 
 <div class="payment--form-group">
 
-    {if ($fcPayolutionConfig.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfig.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
+    {if ($fcPayolutionConfigDebitnote.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfigDebitnote.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
         <p class ="none">
             <label for="mopt_payone__payolution_debitnote_birthday">
                 {s name='birthdate'}Geburtsdatum{/s}
@@ -62,13 +62,13 @@
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_debitnote_birthdaydate]" id="mopt_payone__payolution_debitnote_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">   
     <div id="debitnote-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>        
 
-    {if $fcPayolutionConfig.payolutionB2bmode && $sUserData.billingaddress.company}
+    {if $fcPayolutionConfigDebitnote.payolutionB2bmode && $sUserData.billingaddress.company}
         <input type="text" name="moptPaymentData[mopt_payone__debitnote_company_trade_registry_number]" 
                id="mopt_payone__debitnote_company_trade_registry_number" 
                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                placeholder="{s name='companyTradeRegistryNumber'}Handelsregisternummer*{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"                
                class="payment--field is--required {if $error_flags.mopt_payone__debitnote_company_trade_registry_number} has--error{/if}" />
-        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_b2bmode]" id="moptPaymentData[mopt_payone__payolution_b2bmode]" value="1">   
+        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_debitnote_b2bmode]" id="moptPaymentData[mopt_payone__payolution_debitnote_b2bmode]" value="1">
     {/if}    
 
     <input name="moptPaymentData[mopt_payone__payolution_debitnote_iban]"

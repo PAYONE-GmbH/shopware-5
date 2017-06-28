@@ -496,6 +496,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         
         $this->getInstallHelper()->checkAndUpdateConfigModelPayolutionInstallmentExtension();
 
+        $this->getInstallHelper()->checkAndUpdateBoniversumConfigModelExtension();
+
         // adding transaction id in log table
         if (!$this->getInstallHelper()->payoneApiLogTransactionIdExist()) {
             $this->getInstallHelper()->extendPayoneApiLogTransactionId();
@@ -716,7 +718,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      *    ],
      *  ];
      *  try {
-     *    $return = $plugin->captureOrder($orderDetails, true, true);
+     *    $return $moptPaymentPlugin->captureOrder($orderDetails, true, true);
      *  } catch (Exception $e){
      *    echo "Exception:" . $e->getMessage();
      *  }
@@ -802,7 +804,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      * public function myOrderRefund()
      *{
      *  $moptPaymentPlugin = $this->get('plugins')->Frontend()->MoptPaymentPayone();
-     *  // orderDetail is an array of orderDetail id's and amounts to refund
+     *  // orderDetail is an array of orderDetail id's , amounts and item quantities to refund
      *  // you can get these values from the table s_order_details
      *  // all orderDetail id's have to belong to a single order
      *  // also note that the amount can be lower than the full position amount
@@ -810,21 +812,23 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      *  $orderDetails = [
      *  [
      *    'id' => 1,
-     *    'amount' => 3.0
+     *    'amount' => 3.0,
+     *    'quantity' => 2
      *    ],
      *    [
      *    'id' => 2,
-     *    'amount' => 5
+     *    'amount' => 5,
+     *    'quantity' => '1'
      *    ],
      *  ];
      *  try {
-     *    return = $plugin->refundOrder($orderDetails, true, true);
+     *    return $moptPaymentPlugin->refundOrder($orderDetails, true, true);
      *  } catch (Exception $e){
      *    echo "Exception:" . $e->getMessage();
      *  }
      *}</pre>
      *
-     * @param $orderDetailParams array of orderdetail id's and amounts to refund, see example above
+     * @param $orderDetailParams array of orderdetail id's and amounts and item quantities to refund, see example above
      * @param bool $finalize set to true on your last refund, afterwards refunds are no longer possible
      * @param bool $includeShipment set to true to include shipping costs in refunds, set to false if shipping costs have their own order position
      * @return bool
@@ -832,7 +836,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     public function refundOrder($orderDetailParams, $finalize = false, $includeShipment = false)
     {
-
+        $quantities= array_combine(array_column($orderDetailParams, 'id'), array_column($orderDetailParams, 'quantity'));
         $orderParams = array_combine(array_column($orderDetailParams, 'id'), array_column($orderDetailParams, 'amount'));
 
         try {
@@ -867,7 +871,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
             if ($config['submitBasket'] || Mopt_PayoneMain::getInstance()->getPaymentHelper()->isPayoneBillsafe($paymentName)) {
                 $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
-                        ->getInvoicingFromOrder($order, array_column($orderDetailParams, 'id'), $finalize, false, $includeShipment);
+                        ->getInvoicingFromOrder($order, array_column($orderDetailParams, 'id'), $finalize, true, $includeShipment, $quantities);
             }
             //call capture service
 

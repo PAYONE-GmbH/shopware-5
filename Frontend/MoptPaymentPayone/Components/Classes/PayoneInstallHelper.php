@@ -924,6 +924,30 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
+     * check if payone configuration is already extended boniversum config for risk checks
+     *
+     * @return void
+     */
+    public function checkAndUpdateBoniversumConfigModelExtension()
+    {
+        $db = Shopware()->Db();
+
+        $DBConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='consumerscore_boniversum_unknown'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN consumerscore_boniversum_unknown INT(11) NOT NULL DEFAULT 2;";
+
+            $db->exec($sql);
+        }
+    }
+
+    /**
      * check if the old PAYONE plugin is active and rename label to prevent errors
      *
      * @return string

@@ -136,7 +136,9 @@ class FrontendPostDispatch implements SubscriberInterface
         if (in_array($controllerName, array('account', 'checkout', 'register'))) {
             $moptPayoneData = $this->moptPayoneCheckEnvironment($controllerName);
             $view->assign('moptCreditCardCheckEnvironment', $moptPayoneData);
-            $view->assign('fcPayolutionConfig', $moptPayoneData['payolutionConfig']);
+            $view->assign('fcPayolutionConfigDebitnote', $moptPayoneData['payolutionConfigDebitnote']);
+            $view->assign('fcPayolutionConfigInvoice', $moptPayoneData['payolutionConfigInvoice']);
+            $view->assign('fcPayolutionConfigInstallment', $moptPayoneData['payolutionConfigInstallment']);
             $view->assign('moptRatepayConfig', $moptPayoneData['moptRatepayConfig']);
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
             $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
@@ -316,12 +318,12 @@ class FrontendPostDispatch implements SubscriberInterface
 
 
             //prepare additional Payolution information and retrieve birthday from user data
-            if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name']) || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name']) || $moptPayoneMain->getPaymentHelper()->isPayonePayolutionInstallment($paymentMean['name'])
+            if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name'])
             ) {
-                $data['payolutionConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+                $data['payolutionConfigDebitnote'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
-                    ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
+                    ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfigDebitnote']['payolutionCompanyName']);
                 if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
                     if (!isset($userData['additional']['user']['birthday'])) {
                         $userData['billingaddress']['birthday'] = "0000-00-00";
@@ -334,13 +336,60 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__payolution_debitnote_birthday'] = $birthday[2];
                 $data['mopt_payone__payolution_debitnote_birthmonth'] = $birthday[1];
                 $data['mopt_payone__payolution_debitnote_birthyear'] = $birthday[0];
+                // Check if customer is older than 18 Years
+                if (time() < strtotime('+18 years', strtotime($userData['billingaddress']['birthday']))) {
+                    $data['birthdayunderage'] = "1";
+                } else {
+                    $data['birthdayunderage'] = "0";
+                }
+            }
+
+            //prepare additional Payolution information and retrieve birthday from user data
+            if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name'])
+            ) {
+                $data['payolutionConfigInvoice'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+
+                $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
+                    ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
+                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                    if (!isset($userData['additional']['user']['birthday'])) {
+                        $userData['billingaddress']['birthday'] = "0000-00-00";
+                    } else {
+                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                    }
+                }
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__payolution_invoice_birthday'] = $birthday[2];
                 $data['mopt_payone__payolution_invoice_birthmonth'] = $birthday[1];
                 $data['mopt_payone__payolution_invoice_birthyear'] = $birthday[0];
+                // Check if customer is older than 18 Years
+                if (time() < strtotime('+18 years', strtotime($userData['billingaddress']['birthday']))) {
+                    $data['birthdayunderage'] = "1";
+                } else {
+                    $data['birthdayunderage'] = "0";
+                }
+            }
+
+            //prepare additional Payolution information and retrieve birthday from user data
+            if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionInstallment($paymentMean['name'])
+            ) {
+                $data['payolutionConfigInstallment'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+
+                $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
+                    ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
+                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                    if (!isset($userData['additional']['user']['birthday'])) {
+                        $userData['billingaddress']['birthday'] = "0000-00-00";
+                    } else {
+                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                    }
+                }
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__payolution_installment_birthday'] = $birthday[2];
                 $data['mopt_payone__payolution_installment_birthmonth'] = $birthday[1];
-                $data['mopt_payone__payolution_installment_birthyear'] = $birthday[0];
-
+                $data['mopt_payone__payolution_installment_birthday'] = $birthday[0];
                 // Check if customer is older than 18 Years
                 if (time() < strtotime('+18 years', strtotime($userData['billingaddress']['birthday']))) {
                     $data['birthdayunderage'] = "1";
@@ -351,7 +400,8 @@ class FrontendPostDispatch implements SubscriberInterface
 
             //prepare additional Ratepay information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentMean['name'])
-                || $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentMean['name'])) {
+                || $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentMean['name'])
+                || $moptPayoneMain->getPaymentHelper()->isPayoneRatepayDirectDebit($paymentMean['name'])) {
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPaymentHelper()
@@ -377,6 +427,10 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__ratepay_installment_birthmonth'] = $birthday[1];
                 $data['mopt_payone__ratepay_installment_birthyear'] = $birthday[0];
                 $data['mopt_payone__ratepay_installment_telephone'] = $userData['billingaddress']['phone'];
+                $data['mopt_payone__ratepay_direct_debit_birthday'] = $birthday[2];
+                $data['mopt_payone__ratepay_direct_debit_birthmonth'] = $birthday[1];
+                $data['mopt_payone__ratepay_direct_debit_birthyear'] = $birthday[0];
+                $data['mopt_payone__ratepay_direct_debit_telephone'] = $userData['billingaddress']['phone'];
             }
         }
 
@@ -464,7 +518,7 @@ class FrontendPostDispatch implements SubscriberInterface
         //get country via user object
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
 
-        $data['moptShowAccountnumber'] = (bool) ($config['showAccountnumber'] && $userData['additional']['country']['countryiso'] === 'DE');
+        $data['moptShowAccountnumber'] = (bool) ($debitConfig['showAccountnumber'] && $userData['additional']['country']['countryiso'] === 'DE');
         if (Shopware()->Config()->currency === 'CHF' && $userData['additional']['country']['countryiso'] === 'CH') {
             $data['moptIsSwiss'] = true;
         } else {

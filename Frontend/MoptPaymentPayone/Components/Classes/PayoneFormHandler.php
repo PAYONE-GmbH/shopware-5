@@ -84,6 +84,9 @@ class Mopt_PayoneFormHandler
         if ($paymentHelper->isPayoneRatepayInstallment($paymentId)) {
             return $this->proccessRatepayInstallment($formData);
         }
+        if ($paymentHelper->isPayoneRatepayDirectDebit($paymentId)) {
+            return $this->proccessRatepayDirectDebit($formData);
+        }
 
         if ($paymentHelper->isPayonePaymentMethod($paymentId)) {
             // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
@@ -119,13 +122,21 @@ class Mopt_PayoneFormHandler
         if (!$formData['mopt_payone__sofort_iban'] && !$formData['mopt_payone__debit_show_sofort_iban_bic']==="") {
             $paymentData['sErrorFlag']['mopt_payone__sofort_iban'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__sofort_iban'] = $formData['mopt_payone__sofort_iban'];
+            if ($formData['mopt_payone__sofort_iban'] && !$this->isValidIbanBic($formData['mopt_payone__sofort_iban'])){
+                $paymentData['sErrorFlag']['mopt_payone__sofort_iban'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__sofort_iban'] = $formData['mopt_payone__sofort_iban'];
+            }
         }
 
         if (!$formData['mopt_payone__sofort_bic'] && !$formData['mopt_payone__debit_show_sofort_iban_bic']==="") {
             $paymentData['sErrorFlag']['mopt_payone__sofort_bic'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__sofort_bic'] = $formData['mopt_payone__sofort_bic'];
+            if ($formData['mopt_payone__sofort_bic'] && !$this->isValidIbanBic($formData['mopt_payone__sofort_bic'])){
+                $paymentData['sErrorFlag']['mopt_payone__sofort_bic'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__sofort_bic'] = $formData['mopt_payone__sofort_bic'];
+            }
         }
 
         if ($paymentData['sErrorFlag']['mopt_payone__sofort_iban'] && $paymentData['sErrorFlag']['mopt_payone__sofort_bic'] && !$paymentData['sErrorFlag']['mopt_payone__sofort_bankaccount'] && !$paymentData['sErrorFlag']['mopt_payone__sofort_bankcode']
@@ -165,13 +176,13 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
-        if (!$formData['mopt_payone__giropay_iban']) {
+        if (!$formData['mopt_payone__giropay_iban'] || !$this->isValidIbanBic($formData['mopt_payone__giropay_iban'])) {
             $paymentData['sErrorFlag']['mopt_payone__giropay_iban'] = true;
         } else {
             $paymentData['formData']['mopt_payone__giropay_iban'] = $formData['mopt_payone__giropay_iban'];
         }
 
-        if (!$formData['mopt_payone__giropay_bic']) {
+        if (!$formData['mopt_payone__giropay_bic'] || !$this->isValidIbanBic($formData['mopt_payone__giropay_bic']) ) {
             $paymentData['sErrorFlag']['mopt_payone__giropay_bic'] = true;
         } else {
             $paymentData['formData']['mopt_payone__giropay_bic'] = $formData['mopt_payone__giropay_bic'];
@@ -251,7 +262,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
-        if (!$formData['mopt_payone__debit_iban']) {
+        if (!$formData['mopt_payone__debit_iban'] || !$this->isValidIbanBic($formData['mopt_payone__debit_iban'])) {
             $paymentData['sErrorFlag']['mopt_payone__debit_iban'] = true;
         } else {
             $paymentData['formData']['mopt_payone__debit_iban'] = $formData['mopt_payone__debit_iban'];
@@ -260,7 +271,11 @@ class Mopt_PayoneFormHandler
         if (!$formData['mopt_payone__debit_bic'] && $formData['mopt_payone__debit_showbic']=="1") {
             $paymentData['sErrorFlag']['mopt_payone__debit_bic'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__debit_bic'] = $formData['mopt_payone__debit_bic'];
+            if ($formData['mopt_payone__debit_bic'] && !$this->isValidIbanBic($formData['mopt_payone__debit_bic'])){
+                $paymentData['sErrorFlag']['mopt_payone__debit_bic'] = true;
+            }else {
+                $paymentData['formData']['mopt_payone__debit_bic'] = $formData['mopt_payone__debit_bic'];
+            }
         }
 
         if (!$formData['mopt_payone__debit_bankaccount']) {
@@ -409,13 +424,13 @@ class Mopt_PayoneFormHandler
             }
         }
 
-        if (!$formData['mopt_payone__payolution_debitnote_iban']) {
+        if (!$formData['mopt_payone__payolution_debitnote_iban'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_debitnote_iban'])) {
             $paymentData['sErrorFlag']['mopt_payone__payolution_debitnote_iban'] = true;
         } else {
             $paymentData['formData']['mopt_payone__payolution_debitnote_iban'] = $formData['mopt_payone__payolution_debitnote_iban'];
         }
 
-        if (!$formData['mopt_payone__payolution_debitnote_bic']) {
+        if (!$formData['mopt_payone__payolution_debitnote_bic'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_debitnote_bic'])) {
             $paymentData['sErrorFlag']['mopt_payone__payolution_debitnote_bic'] = true;
         } else {
             $paymentData['formData']['mopt_payone__payolution_debitnote_bic'] = $formData['mopt_payone__payolution_debitnote_bic'];
@@ -426,14 +441,14 @@ class Mopt_PayoneFormHandler
             unset($paymentData['sErrorFlag']['mopt_payone__debit_bic']);
         }
 
-        if ($formData[mopt_payone__payolution_b2bmode] === "1") {
+        if ($formData['mopt_payone__payolution_debitnote_b2bmode'] === "1") {
             if (!$formData['mopt_payone__debitnote_company_trade_registry_number']) {
                 $paymentData['sErrorFlag']['mopt_payone__debitnote_company_trade_registry_number'] = true;
             } else {
-                $paymentData['formData']['mopt_payone__debitnote_company_trade_registry_number'] = $formData['mopt_payone__debitnote_company_trade_registry_number'];
+                $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__debitnote_company_trade_registry_number'];
             }
 
-            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_b2bmode'];
+            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_debitnote_b2bmode'];
         }
 
         // set sessionflag to trigger precheck
@@ -474,17 +489,15 @@ class Mopt_PayoneFormHandler
             }
         }
         
-        if ($formData['mopt_payone__payolution_b2bmode'] === "1") {
+        if ($formData['mopt_payone__payolution_invoice_b2bmode'] === "1") {
             if (!$formData['mopt_payone__invoice_company_trade_registry_number']) {
                 $paymentData['sErrorFlag']['mopt_payone__invoice_company_trade_registry_number'] = true;
             } else {
-                $paymentData['formData']['mopt_payone__invoice_company_trade_registry_number'] = $formData['mopt_payone__invoice_company_trade_registry_number'];
+                $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__invoice_company_trade_registry_number'];
             }
 
-            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_b2bmode'];
+            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_invoice_b2bmode'];
         }
-        
-        $paymentData['formData']['mopt_payone__payolution_installment_shippingcosts'] = $formData['mopt_payone__payolution_installment_shippingcosts'];
         
         // set sessionflag to trigger precheck
         Shopware()->Session()->moptPayolutionPrecheck = "1";
@@ -524,14 +537,14 @@ class Mopt_PayoneFormHandler
             }
         }
         
-        if ($formData['mopt_payone__payolution_b2bmode'] === "1") {
+        if ($formData['mopt_payone__payolution_installment_b2bmode'] === "1") {
             if (!$formData['mopt_payone__installment_company_trade_registry_number']) {
                 $paymentData['sErrorFlag']['mopt_payone__installment_company_trade_registry_number'] = true;
             } else {
-                $paymentData['formData']['mopt_payone__installment_company_trade_registry_number'] = $formData['mopt_payone__installment_company_trade_registry_number'];
+                $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__installment_company_trade_registry_number'];
             }
 
-            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_b2bmode'];
+            $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_installment_b2bmode'];
         }
         
         if ($formData['mopt_payone__payolution_installment_duration'] ==="") {
@@ -545,6 +558,8 @@ class Mopt_PayoneFormHandler
         } else {
             $paymentData['formData']['mopt_payone__payolution_installment_workorderid'] = $formData['mopt_payone__payolution_installment_workorderid'];
         }
+
+        $paymentData['formData']['mopt_payone__payolution_installment_shippingcosts'] = $formData['mopt_payone__payolution_installment_shippingcosts'];
 
         // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
         $session = Shopware()->Session();
@@ -573,6 +588,16 @@ class Mopt_PayoneFormHandler
                 $paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate'] = $formData['mopt_payone__ratepay_invoice_birthdaydate'];
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
+        }
+
+        if ($formData['mopt_payone__ratepay_b2bmode'] === "1") {
+            if (!$formData['mopt_payone__ratepay_invoice_company_trade_registry_number']) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_invoice_company_trade_registry_number'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_invoice_company_trade_registry_number'] = $formData['mopt_payone__ratepay_invoice_company_trade_registry_number'];
+            }
+
+            $paymentData['formData']['mopt_payone__ratepay_b2bmode'] = $formData['mopt_payone__ratepay_b2bmode'];
         }
           
         if (!$formData['mopt_payone__ratepay_invoice_telephone']) {
@@ -613,22 +638,41 @@ class Mopt_PayoneFormHandler
             }
         }
 
+        if ($formData['mopt_payone__ratepay_b2bmode'] === "1") {
+            if (!$formData['mopt_payone__ratepay_installment_company_trade_registry_number']) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_company_trade_registry_number'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_installment_company_trade_registry_number'] = $formData['mopt_payone__ratepay_installment_company_trade_registry_number'];
+            }
+
+            $paymentData['formData']['mopt_payone__ratepay_b2bmode'] = $formData['mopt_payone__ratepay_b2bmode'];
+        }
+
         if (!$formData['mopt_payone__ratepay_installment_telephone']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_telephone'] = true;
         } else {
             $paymentData['formData']['mopt_payone__ratepay_installment_telephone'] = $formData['mopt_payone__ratepay_installment_telephone'];
         }
 
-        if ($formData['mopt_payone__ratepay_installment_iban']) {
+        if ($formData['mopt_payone__ratepay_installment_iban'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_installment_iban'])) {
             $paymentData['formData']['mopt_payone__ratepay_installment_iban'] = $formData['mopt_payone__ratepay_installment_iban'];
+        } elseif (!$formData['mopt_payone__ratepay_installment_iban']){
+            $paymentData['formData']['mopt_payone__ratepay_installment_iban'] = $formData['mopt_payone__ratepay_installment_iban'];
+        } else {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_iban'] = true;
         }
 
-        if ($formData['mopt_payone__ratepay_installment_bic']) {
+        if ($formData['mopt_payone__ratepay_installment_bic'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_installment_bic'])) {
             $paymentData['formData']['mopt_payone__ratepay_installment_bic'] = $formData['mopt_payone__ratepay_installment_bic'];
+        } elseif (!$formData['mopt_payone__ratepay_installment_bic']) {
+            $paymentData['formData']['mopt_payone__ratepay_installment_bic'] = $formData['mopt_payone__ratepay_installment_bic'];
+        } else {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_bic'] = true;
         }
 
         if (!$formData['mopt_payone__ratepay_installment_number']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_number'] = true;
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_amount'] = true;
         } else {
             $paymentData['formData']['mopt_payone__ratepay_installment_number'] = $formData['mopt_payone__ratepay_installment_number'];
         }
@@ -646,6 +690,89 @@ class Mopt_PayoneFormHandler
         $session->offsetSet('moptFormSubmitted', true);
 
         return $paymentData;
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function proccessRatepayDirectDebit($formData)
+    {
+        $paymentData = array();
+
+        if ($formData['mopt_payone__ratepay_direct_debit_birthdaydate'] !== "0000-00-00" && $formData['mopt_payone__ratepay_b2bmode'] !== "1") {
+            if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__ratepay_direct_debit_birthdaydate']))) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_birthday'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_birthmonth'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_birthyear'] = true;
+                $paymentData['formData']['mopt_save_birthday'] = false;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate'] = $formData['mopt_payone__ratepay_direct_debit_birthdaydate'];
+            }
+        }
+
+        if ($formData['mopt_payone__ratepay_b2bmode'] === "1") {
+            if (!$formData['mopt_payone__ratepay_direct_debit_company_trade_registry_number']) {
+                $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_company_trade_registry_number'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__ratepay_direct_debit_company_trade_registry_number'] = $formData['mopt_payone__ratepay_direct_debit_company_trade_registry_number'];
+            }
+
+            $paymentData['formData']['mopt_payone__ratepay_b2bmode'] = $formData['mopt_payone__ratepay_b2bmode'];
+        }
+
+        if (!$formData['mopt_payone__ratepay_direct_debit_telephone']) {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_telephone'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'] = $formData['mopt_payone__ratepay_direct_debit_telephone'];
+            $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
+        }
+
+        if (!empty($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']) && !empty($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'])){
+            $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
+        }
+
+        if ($formData['mopt_payone__ratepay_direct_debit_iban'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_direct_debit_iban'])) {
+            $paymentData['formData']['mopt_payone__ratepay_direct_debit_iban'] = $formData['mopt_payone__ratepay_direct_debit_iban'];
+        } else {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_iban'] = true;
+        }
+
+
+        if ($formData['mopt_payone__ratepay_direct_debit_bic'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_direct_debit_bic'])) {
+            $paymentData['formData']['mopt_payone__ratepay_direct_debit_bic'] = $formData['mopt_payone__ratepay_direct_debit_bic'];
+        } else {
+            $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_bic'] = true;
+        }
+
+        $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_direct_debit_shopid'];
+        $paymentData['formData']['mopt_payone__ratepay_direct_debit_device_fingerprint'] = $formData['mopt_payone__ratepay_direct_debit_device_fingerprint'];
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
+        return $paymentData;
+    }
+
+    /**
+     * validates IBAN/BIC fields
+     *
+     * @param string $ibanbic
+     * @return boolean
+     */
+    private function isValidIbanBic($ibanbic) {
+
+        if (!preg_match('/^[A-Z0-9 ]+$/',
+            $ibanbic)) {
+
+            return false;
+        }
+        else {
+           return true;
+        }
     }
 
 }

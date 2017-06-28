@@ -34,15 +34,18 @@ class Payone_Api_Request_Parameter_Authorization_PersonalData extends Payone_Api
 {
     /**
      * Merchant's customer ID (Permitted symbols: 0-9, a-z, A-Z, .,-,_,/)
+     * this attribute is public, so it can be unset easily see Mopt_PayoneParamBuilder->getPersonalData()
      * @var string
      */
-    protected $customerid = null;
+    public $customerid = null;
     /**
      * PAYONE debtor ID
      *
      * @var int
      */
-    protected $userid = null;
+    // this attribute is public, so it can be unset easily see Mopt_PayoneParamBuilder->getPersonalData()
+    public $userid = null;
+
     protected $salutation = null;
     protected $title = null;
     protected $firstname = null;

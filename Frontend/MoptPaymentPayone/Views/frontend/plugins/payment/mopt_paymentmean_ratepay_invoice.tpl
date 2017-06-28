@@ -64,11 +64,11 @@
            class="payment--field is--required{if $error_flags.mopt_payone__ratepay_invoice_telephone} has--error{/if}"
     />
     {if $sUserData.billingaddress.company}
-        <input type="text" name="moptPaymentData[mopt_payone__ratepay_company_trade_registry_number]"
-               id="mopt_payone__ratepay_company_trade_registry_number"
+        <input type="text" name="moptPaymentData[mopt_payone__ratepay_invoice_company_trade_registry_number]"
+               id="mopt_payone__ratepay_invoice_company_trade_registry_number"
                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                placeholder="{s name='companyTradeRegistryNumber'}Handelsregisternummer*{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-               class="is--required{if $error_flags.mopt_payone__ratepay_company_trade_registry_number} has--error{/if}">
+               class="is--required{if $error_flags.mopt_payone__ratepay_invoice_company_trade_registry_number} has--error{/if}">
 
         <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_b2bmode]" id="mopt_payone__ratepay_b2bmode" value="1">
 
