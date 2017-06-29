@@ -178,7 +178,7 @@
                             <option value="12" selected="selected">{s name='12months'}12 months{/s}</option>
                             <option value="24" selected="selected">{s name='24months'}24 months{/s}</option>
                         </select>
-                    <input name="" onclick="ratepayRateCalculatorAction('runtime', '{$sFormData.payment}', '{url controller='moptAjaxPayone' action='rate'}');" value="{s name='calculateRate'}Rate jetzt berechnen{/s}" type="button" id="{$sFormData.payment}_Input-buttonRuntime"  class="ratepay-Input-button2">
+                    <input name="" onclick="ratepayRateCalculatorAction('runtime', '{$sFormData.payment}', '{url controller='moptAjaxPayone' action='runtime'}');" value="{s name='calculateRate'}Rate jetzt berechnen{/s}" type="button" id="{$sFormData.payment}_Input-buttonRuntime"  class="ratepay-Input-button2">
                 </div>
             </div>
             <br class="ratepay-ClearFix" />
