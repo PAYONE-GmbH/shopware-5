@@ -927,7 +927,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
 
         $system = Shopware()->System();
-        $userData = $this->admin->sGetUserData();
+        $orderVariables =  Shopware()->Session()->sOrderVariables;
+        $userData = $orderVariables['sUserData'];
         if (!empty($userData['additional']['countryShipping'])) {
             $sTaxFree = false;
             if (!empty($userData['additional']['countryShipping']['taxfree'])) {
