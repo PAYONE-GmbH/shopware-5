@@ -559,6 +559,18 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__payolution_installment_workorderid'] = $formData['mopt_payone__payolution_installment_workorderid'];
         }
 
+        if (!$formData['mopt_payone__payolution_installment_iban'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_installment_iban'])) {
+            $paymentData['sErrorFlag']['mopt_payone__payolution_installment_iban'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__payolution_installment_iban'] = $formData['mopt_payone__payolution_installment_iban'];
+        }
+
+        if (!$formData['mopt_payone__payolution_installment_bic'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_installment_bic'])) {
+            $paymentData['sErrorFlag']['mopt_payone__payolution_installment_bic'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__payolution_installment_bic'] = $formData['mopt_payone__payolution_installment_bic'];
+        }
+
         $paymentData['formData']['mopt_payone__payolution_installment_shippingcosts'] = $formData['mopt_payone__payolution_installment_shippingcosts'];
 
         // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before

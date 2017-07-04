@@ -207,6 +207,7 @@
                 }
                 if (response.status == 'error') {
                     alert("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es noch einmal");
+                    $.loadingIndicator.close();
                 }
             },
         });
