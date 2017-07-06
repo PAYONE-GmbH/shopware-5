@@ -49,6 +49,8 @@ class ControllerPath implements SubscriberInterface
             => 'moptRegisterController_Frontend_MoptPaymentEcs',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptAjaxPayone'
             => 'moptRegisterController_Frontend_MoptAjaxPayone',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptPaymentAmazon'
+            => 'moptRegisterController_Frontend_MoptPaymentAmazon',
             //Backend
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptConfigPayone' => 'onGetConfigControllerBackend',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptApilogPayone' => 'onGetApilogControllerBackend',
@@ -107,6 +109,16 @@ class ControllerPath implements SubscriberInterface
     public function moptRegisterController_Frontend_MoptShopNotification()
     {
         return $this->path . 'Controllers/Frontend/MoptShopNotification.php';
+    }
+
+    /**
+     * controller callback, return path to controller file
+     *
+     * @return string
+     */
+    public function moptRegisterController_Frontend_MoptPaymentAmazon()
+    {
+        return $this->path . 'Controllers/Frontend/MoptPaymentAmazon.php';
     }
 
     /**

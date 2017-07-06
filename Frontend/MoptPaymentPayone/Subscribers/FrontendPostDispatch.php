@@ -208,16 +208,25 @@ class FrontendPostDispatch implements SubscriberInterface
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
             unset($session->moptBarzahlenCode);
         }
-        if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
+
+        $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($userData['additional']['payment']['id']);
+
+        // for amazon Pay redirect directly to finish instead of confirm
+
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay') ) {
+            $session->offsetSet('moptFormSubmitted', true);
+            $action->forward('finish', 'moptPaymentAmazon' , null , array('sAGB' => 'on'));
+        }
+
+                if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
             if ($session->moptBarzahlenCode) {
                 $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
             }
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
-            $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-            $userData = Shopware()->Modules()->Admin()->sGetUserData();
-            $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($userData['additional']['payment']['id']);
             if ($moptPaymentHelper->isPayonePaymentMethod($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     $action->redirect(
@@ -241,6 +250,31 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->assign('moptBasketChanged', true);
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
+
+            // remove AmazonPay from Payment List
+            $payments = $view->getAssign('sPayments');
+
+            foreach ($payments as $index=>$payment) {
+                if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
+                    $amazonPayIndex = $index;
+                }
+            }
+            unset ($payments[$amazonPayIndex]);
+            $view->assign('sPayments', $payments);
+        }
+
+        if (($controllerName == 'account' && $request->getActionName() == 'payment')) {
+
+            // remove AmazonPay from Payment List
+            $payments = $view->getAssign('sPaymentMeans');
+
+            foreach ($payments as $index=>$payment) {
+                if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
+                    $amazonPayIndex = $index;
+                }
+            }
+            unset ($payments[$amazonPayIndex]);
+            $view->assign('sPaymentMeans', $payments);
         }
     }
 

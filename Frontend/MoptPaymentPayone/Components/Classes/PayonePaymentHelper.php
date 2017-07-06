@@ -1182,4 +1182,17 @@ class Mopt_PayonePaymentHelper
 
         return $paymentMeans;
     }
+
+    /**
+     * Fetches and returns amazon payment instance.
+     *
+     * @return \Shopware\Models\Payment\Payment
+     */
+    public function getPaymentAmazonPay()
+    {
+        $paymentAmazonPay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_amazon_pay']
+        );
+        return $paymentAmazonPay;
+    }
 }

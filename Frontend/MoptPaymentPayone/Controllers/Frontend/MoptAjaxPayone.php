@@ -858,4 +858,109 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $this->View()->render();
     }
 
+    /**
+     * get actual payment method id
+     *
+     * @return string
+     */
+    protected function getOrderReferenceDetailsAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $postData = $this->Request()->getParams();
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $paymentData = $this->session->moptPayment;
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $clearingType = \Payone_Enum_ClearingType::WALLET;
+        $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
+        $data = [];
+        $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $postData['referenceId'], $postData['access_token'] );
+
+
+        if ($response->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
+            // create User from Address Data
+
+            $moptPayoneMain = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneMain');
+            $payoneUserHelper = $moptPayoneMain->getUserHelper();
+            $payonePaymentHelper = $moptPayoneMain->getPaymentHelper();
+
+            // obtain addressData from get Todo use getamazonpayid
+
+            $payoneUserHelper->createrOrUpdateAndForwardUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId() , $this->session);
+
+            $responseData = $response->toArray();
+            $responseAddress = $response->getPaydata()->toAssocArray();
+
+            // Initial: DE:
+            $session = Shopware()->Session();
+            if (!$session->moptCountry){
+                $data['countryChanged'] = true;
+                $session->moptCountry = $responseAddress['shipping_country'];
+            } else {
+
+                if ($session->moptCountry == $responseAddress['shipping_country']) {
+                $data['countryChanged'] = false;
+                $session->moptCountry = $responseAddress['shipping_country'];
+                } else {                $data['countryChanged'] = true;
+                    $session->moptCountry = $responseAddress['shipping_country'];
+            }
+            }
+
+            $workorderId = $responseData['rawResponse']['workorderid'];
+            $data['data'] = $responseData['rawResponse'];
+            $data['status'] = 'success';
+            $data['workorderid'] = $workorderId;
+            $encoded = json_encode($data);
+            echo $encoded;
+        } else {
+            $data['data'] = $response;
+            $data['status'] = 'error';
+            $encoded = json_encode($data);
+            echo $encoded;
+        }
+    }
+
+    /**
+     * prepare and do payment server api call
+     *
+     * @param array $config
+     * @param string $clearingType
+     * @param string $walletType
+     * @param array $paymentData
+     * @param string $amazonReferenceId
+     * @param array $amazonAddressToken
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     */
+    protected function buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $amazonReferenceId, $amazonAddressToken)
+    {
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        //create hash
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $orderHash = md5(serialize($basket));
+        $this->session->moptOrderHash = $orderHash;
+
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::AMAZON_GETORDERREFERENCEDETAILS)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amazon_reference_id', 'data' => $amazonReferenceId)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amazon_address_token', 'data' => $amazonAddressToken)
+        ));
+
+        $request->setPaydata($paydata);
+        $request->setClearingtype($clearingType);
+        $request->setWallettype($walletType);
+        // Todo: Check Currency and Amount
+        $request->setCurrency("EUR");
+        $request->setAmount($basket['AmountNumeric']);
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $response = $this->service->request($request);
+        return $response;
+    }
+
 }
