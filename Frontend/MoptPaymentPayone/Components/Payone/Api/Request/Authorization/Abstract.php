@@ -106,7 +106,28 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     protected $customer_is_present = 'yes';
     
     protected $recurrence = null;
-    
+
+    protected $wallettype = null;
+
+    protected $api_version = null;
+
+    /**
+     * Mandatory for Amazon Pay
+     * Alphanumeric max 16 chars
+     * @var string
+     */
+    protected $successurl = null;
+
+    protected $errorurl = null;
+
+    protected $backurl = null;
+
+    /**
+     * Mandatory for Amazon Pay:
+     * @var Payone_Api_Request_Parameter_Paydata_Paydata
+     */
+    protected $paydata = null;
+
     /**
      * @param int $aid
      */
@@ -139,12 +160,55 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
         return $this->amount;
     }
 
+    function getApiVersion()
+    {
+        return $this->api_version;
+    }
+
+    function setApiVersion($api_version)
+    {
+        $this->api_version = $api_version;
+    }
+
     /**
      * @param string $clearingtype
      */
     public function setClearingtype($clearingtype)
     {
         $this->clearingtype = $clearingtype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWallettype()
+    {
+        return $this->wallettype;
+    }
+
+    /**
+     * @param string $clearingtype
+     */
+    public function setWallettype($wallettype)
+    {
+        $this->wallettype = $wallettype;
+    }
+
+    /**
+     * @param Payone_Api_Request_Parameter_Paydata_Paydata $paydata
+     */
+    public function setPaydata($paydata)
+    {
+        $this->paydata = $paydata;
+    }
+
+    /**
+     *
+     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     */
+    public function getPaydata()
+    {
+        return $this->paydata;
     }
 
     /**
@@ -315,7 +379,55 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     {
         $this->workorderid = $workorderid;
     }
-    
+
+    /**
+     * @return string
+     */
+    function getSuccessurl()
+    {
+        return $this->successurl;
+    }
+
+    /**
+     * @param string $successurl
+     */
+    function setSuccessurl($successurl)
+    {
+        $this->successurl = $successurl;
+    }
+
+    /**
+     * @return string
+     */
+    function getBackurl()
+    {
+        return $this->backurl;
+    }
+
+    /**
+     * @param string $backurl
+     */
+    function setBackurl($backurl)
+    {
+        $this->backurl = $backurl;
+    }
+
+    /**
+     * @return string
+     */
+    function getErrorurl()
+    {
+        return $this->errorurl;
+    }
+
+    /**
+     * @param string $backurl
+     */
+    function setErrorurl($errorurl)
+    {
+        $this->errorurl = $errorurl;
+    }
+
     function getCustomerIsPresent()
     {
         return $this->customer_is_present;

@@ -93,6 +93,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             'ajaxSaveIframeConfig',
             'ajaxSavePaypalConfig',
             'ajaxgetRatepayConfig',
+            'ajaxgetAmazonConfig',
         );
         return $returnArray;
     }
@@ -791,7 +792,22 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $encoded = json_encode($data);
         echo $encoded;
         exit(0);
-    }    
+    }
+
+    public function ajaxgetAmazonConfigAction()
+    {
+        $data = array();
+        $this->Front()->Plugins()->Json()->setRenderer(true);
+
+        $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay');
+        $query = $this->getAllPaymentsQuery(null,null,$repository);
+        $amazondata = $query->getArrayResult();
+        $data['amazondata'] = $amazondata;
+        $data['status'] = 'success';
+        $encoded = json_encode($data);
+        echo $encoded;
+        exit(0);
+    }
 
     public function ajaxdebitAction()
     {
@@ -915,12 +931,15 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
         $query = $this->getAllPaymentsQuery(array('name' => 'mopt_payone__ewallet%'), null, $repository);
         $payonepaymentmethods = $query->getArrayResult();
+        $amazonpayRepo = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay');
+        $amazonpayConfigs = $amazonpayRepo->findAll();
 
         $this->View()->assign(array(
             "payonepaymentmethods" => $payonepaymentmethods,
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
+            "amazonpayconfigs" => $amazonpayConfigs,
             ));
     }
 

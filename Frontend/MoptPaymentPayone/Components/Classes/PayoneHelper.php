@@ -1178,4 +1178,18 @@ class Mopt_PayoneHelper
         }
         return true;
     }
+
+    public function getPayoneAmazonPayConfig()
+    {
+        /**
+         * @var $config \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay
+         */
+        $config =  Shopware()->Models()->find(
+            'Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay',
+            1
+        );
+        return $config;
+    }
+
+
 }

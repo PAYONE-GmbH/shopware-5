@@ -309,14 +309,14 @@ $.plugin('moptPayoneCreditcardPrepare', {
             config.fields.cardexpireyear.iframe.width = me.opts.moptCreditcardConfig.cardyear_iframe_width;
             config.fields.cardexpireyear.iframe.height = me.opts.moptCreditcardConfig.cardyear_iframe_height;
         }
-        
+
         var fcpolang = me.opts.moptPayoneParamsLanguage;
 
         if (me.opts.moptCreditcardConfig.default_translation_iframe_month1){
             Payone.ClientApi.Language[fcpolang].months.month1 = me.opts.moptCreditcardConfig.default_translation_iframe_month1;
         }
         if (me.opts.moptCreditcardConfig.default_translation_iframe_month2){
-            Payone.ClientApi.Language[fcpolang].months.month2 = me.opts.moptCreditcardConfig.default_translation_iframe_month2; 
+            Payone.ClientApi.Language[fcpolang].months.month2 = me.opts.moptCreditcardConfig.default_translation_iframe_month2;
         }
         if (me.opts.moptCreditcardConfig.default_translation_iframe_month3){
             Payone.ClientApi.Language[fcpolang].months.month3 = me.opts.moptCreditcardConfig.default_translation_iframe_month3;
@@ -367,7 +367,7 @@ $.plugin('moptPayoneCreditcardPrepare', {
             Payone.ClientApi.Language[fcpolang].invalidIssueNumber = me.opts.moptCreditcardConfig.default_translation_iframeinvalidIssueNumber;
         }
         if (me.opts.moptCreditcardConfig.default_translation_iframetransactionRejected && me.opts.moptCreditcardConfig.show_errors === '1'){
-            Payone.ClientApi.Language[fcpolang].transactionRejected = me.opts.moptCreditcardConfig.default_translation_iframetransactionRejected;  
+            Payone.ClientApi.Language[fcpolang].transactionRejected = me.opts.moptCreditcardConfig.default_translation_iframetransactionRejected;
         }
         if (me.opts.moptCreditcardConfig.default_translation_iframe_cardpan){
             Payone.ClientApi.Language[fcpolang].placeholders.cardpan =  me.opts.moptCreditcardConfig.default_translation_iframe_cardpan;
@@ -375,7 +375,7 @@ $.plugin('moptPayoneCreditcardPrepare', {
         if (me.opts.moptCreditcardConfig.default_translation_iframe_cvc && me.opts.moptCreditcardConfig.check_cc === '1' ){
         Payone.ClientApi.Language[fcpolang].placeholders.cvc =  me.opts.moptCreditcardConfig.default_translation_iframe_cvc;
         }
-                   
+
         request = {
             request: 'creditcardcheck',
             responsetype: 'JSON',

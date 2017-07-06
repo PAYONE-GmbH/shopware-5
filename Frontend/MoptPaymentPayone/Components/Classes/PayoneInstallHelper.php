@@ -422,6 +422,12 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Ratepay Lastschrift',
                 'template' => 'mopt_paymentmean_ratepay_direct_debit.tpl',
                 'position' => 31,),
+            array(
+                'name' => 'mopt_payone__ewallet_amazon_pay',
+                'description' => 'PAYONE Amazon Pay',
+                'template' => 'mopt_paymentmean_amazon_ewallet.tpl',
+                'position' => 32,),
+
         );
     }
 

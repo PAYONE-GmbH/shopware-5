@@ -13,14 +13,14 @@ use Enlight\Event\SubscriberInterface;
  */
 class ControllerPath implements SubscriberInterface
 {
-    
+
     /**
      * path to plugin files
      *
      * @var string
      */
     private $path;
-    
+
     /**
      * inject path to plugin files
      *
@@ -30,7 +30,7 @@ class ControllerPath implements SubscriberInterface
     {
         $this->path = $path;
     }
-    
+
     /**
      * return array with all subsribed events
      *
@@ -39,7 +39,7 @@ class ControllerPath implements SubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-    
+
             //Frontend
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptPaymentPayone'
             => 'onGetControllerPathFrontendMoptPaymentPayone',
@@ -63,10 +63,11 @@ class ControllerPath implements SubscriberInterface
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayonePaypal' => 'onGetBackendControllerPaypal',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneCreditcardConfig'
             => 'onGetBackendControllerCreditcardConfig',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneRatepay' => 'onGetBackendControllerRatepay',            
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneRatepay' => 'onGetBackendControllerRatepay',
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneAmazonPay' => 'onGetBackendControllerAmazonPay',
         );
     }
-    
+
     /**
     * Returns the path to a frontend controller for an event.
     *
@@ -77,17 +78,17 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . '/Controllers/Frontend/MoptPaymentPayone.php';
     }
-    
+
     /**
-    * controller callback, return path to controller file
-    *
-    * @return string
-    */
+     * controller callback, return path to controller file
+     *
+     * @return string
+     */
     public function moptRegisterController_Frontend_MoptPaymentEcs()
     {
         return $this->path . 'Controllers/Frontend/MoptPaymentEcs.php';
     }
-    
+
     /**
     * controller callback, return path to controller file
     *
@@ -97,7 +98,7 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Frontend/MoptAjaxPayone.php';
     }
-    
+
     /**
     * controller callback, return path to controller file
     *
@@ -107,7 +108,7 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Frontend/MoptShopNotification.php';
     }
-    
+
     /**
     * Returns the path to a backend controller for an event.
     *
@@ -117,8 +118,8 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Backend/MoptConfigPayone.php';
     }
-    
-      /**
+
+   /**
    * Returns the path to a backend controller for an event.
    *
    * @return string
@@ -152,7 +153,7 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Backend/MoptExportPayone.php';
     }
-  
+
     /**
    * controller callback, return path to controller file
    *
@@ -172,7 +173,7 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Backend/MoptPayonePayment.php';
     }
-  
+
   /**
    * Returns the path to a backend controller for an event.
    *
@@ -182,7 +183,7 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Backend/MoptPayonePaypal.php';
     }
-  
+
   /**
    * Returns the path to a backend controller for an event.
    *
@@ -192,8 +193,8 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Backend/MoptPayoneCreditcardConfig.php';
     }
-    
-  /**
+
+   /**
    * Returns the path to a backend controller for an event.
    *
    * @return string
@@ -201,5 +202,15 @@ class ControllerPath implements SubscriberInterface
     public function onGetBackendControllerRatepay()
     {
         return $this->path . 'Controllers/Backend/MoptPayoneRatepay.php';
-    }    
+    }
+
+    /**
+     * Returns the path to a backend controller for an event.
+     *
+     * @return string
+     */
+    public function onGetBackendControllerAmazonPay()
+    {
+        return $this->path . 'Controllers/Backend/MoptPayoneAmazonPay.php';
+    }
 }
