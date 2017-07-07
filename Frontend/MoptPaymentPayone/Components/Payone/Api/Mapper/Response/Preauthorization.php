@@ -49,7 +49,7 @@ class Payone_Api_Mapper_Response_Preauthorization extends Payone_Api_Mapper_Resp
         } elseif ($this->isError()) {
             $response = new Payone_Api_Response_Error($params);
         } elseif ($this->isPending()) {
-            $response = new Payone_Api_Response_Error($params);
+            $response = new Payone_Api_Response_Preauthorization_Approved($params);
         } else {
             throw new Payone_Api_Exception_UnknownStatus();
         }

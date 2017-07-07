@@ -505,6 +505,7 @@ $.plugin('moptPayoneIframeCreditcardCheckWithoutSubmit', {
 
 function poBindDispatchChange() {
     $("input[name='sDispatch']").on('change', function (e) {
+        if ($('#mopt_payone_creditcard_form').length > 0) {
             var creditcardCheckType = $('#mopt_payone_creditcard_form').attr('data-moptCreditcardIntegration');
             $('#mopt_payone_creditcard_form').moptPayoneCreditcardPrepare();
             // prepare and show Iframe or Display already checked and validated CreditcardData
@@ -527,6 +528,7 @@ function poBindDispatchChange() {
                 return true;
             }
             ;
+        }
     });
 }
 

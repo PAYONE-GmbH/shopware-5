@@ -866,46 +866,43 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     protected function getOrderReferenceDetailsAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+
+        $payoneUserHelper = $this->moptPayoneMain->getUserHelper();
+        $payonePaymentHelper = $this->moptPayoneMain->getPaymentHelper();
         $postData = $this->Request()->getParams();
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
         $paymentData = $this->session->moptPayment;
-        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $config = $this->moptPayoneMain->getPayoneConfig($payonePaymentHelper->getPaymentAmazonPay()->getId());
         $clearingType = \Payone_Enum_ClearingType::WALLET;
         $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
+        $this->session->moptPayoneAmazonReferenceId = $postData['referenceId'];
         $data = [];
-        $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $postData['referenceId'], $postData['access_token'] );
+        $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $postData['referenceId'], $this->session->moptPayoneAmazonAccessToken );
 
 
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
             // create User from Address Data
 
-            $moptPayoneMain = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneMain');
-            $payoneUserHelper = $moptPayoneMain->getUserHelper();
-            $payonePaymentHelper = $moptPayoneMain->getPaymentHelper();
-
-            // obtain addressData from get Todo use getamazonpayid
-
-            $payoneUserHelper->createrOrUpdateAndForwardUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId() , $this->session);
+            $payoneUserHelper->createrOrUpdateUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId() , $this->session);
 
             $responseData = $response->toArray();
             $responseAddress = $response->getPaydata()->toAssocArray();
 
-            // Initial: DE:
-            $session = Shopware()->Session();
-            if (!$session->moptCountry){
+            if (!$this->session->moptCountry){
                 $data['countryChanged'] = true;
-                $session->moptCountry = $responseAddress['shipping_country'];
+                $this->session->moptCountry = $responseAddress['shipping_country'];
             } else {
 
-                if ($session->moptCountry == $responseAddress['shipping_country']) {
+                if ($this->session->moptCountry == $responseAddress['shipping_country']) {
                 $data['countryChanged'] = false;
-                $session->moptCountry = $responseAddress['shipping_country'];
-                } else {                $data['countryChanged'] = true;
-                    $session->moptCountry = $responseAddress['shipping_country'];
-            }
+                $this->session->moptCountry = $responseAddress['shipping_country'];
+                } else {
+                    $data['countryChanged'] = true;
+                    $this->session->moptCountry = $responseAddress['shipping_country'];
+                }
             }
 
             $workorderId = $responseData['rawResponse']['workorderid'];
+            $this->session->moptPayoneAmazonWorkOrderId  =  $workorderId;
             $data['data'] = $responseData['rawResponse'];
             $data['status'] = 'success';
             $data['workorderid'] = $workorderId;
@@ -955,10 +952,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->setPaydata($paydata);
         $request->setClearingtype($clearingType);
         $request->setWallettype($walletType);
-        // Todo: Check Currency and Amount
         $request->setCurrency("EUR");
         $request->setAmount($basket['AmountNumeric']);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        /*$this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+        */
         $response = $this->service->request($request);
         return $response;
     }

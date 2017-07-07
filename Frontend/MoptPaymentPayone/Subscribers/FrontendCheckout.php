@@ -156,7 +156,7 @@ class FrontendCheckout implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
         }
 
-        if ($templateSuffix === '' && $this->isAmazonPayActive()
+        if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
             && ($payoneAmazonPayConfig = $this->container->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
         ) {
             $view->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
@@ -203,18 +203,6 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         return false;
-    }
-
-
-    /*
-     * ToDo: put this in Paymenthelper Class
-     */
-    protected function isAmazonPayActive()
-    {
-        // $payoneMain = $this->container->get('MoptPayoneMain');
-        //$payonePaymentHelper = $payoneMain->getPaymentHelper();
-
-        return true;
     }
 
     /**
