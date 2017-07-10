@@ -38,7 +38,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
     public function indexAction()
     {
-        $debug = $this->Request()->getParams();
         if (!empty($this->Request()->getParam("access_token"))) {
             $this->session->moptPayoneAmazonAccessToken = $this->Request()->getParam("access_token");
         }
@@ -46,12 +45,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
             && ($payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
         ) {
-
-
-            if ( $this->Request()->getParam("sDispatch")) {
-
-                $this->setDispatch($this->Request()->getParam("sDispatch"), Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
-            }
 
             $basket = $this->get('modules')->Basket()->sGetBasket();
             $userData = $this->getUserData();
@@ -61,6 +54,13 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $userAdditionalArray['additional']['payment']['id'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $userAdditionalArray['additional']['countryShipping'] = $userData['additional']['countryShipping'];
             $this->View()->assign('sUserData', $userAdditionalArray);
+
+
+            if ( $this->Request()->getParam("sDispatch")) {
+                $this->setDispatch($this->Request()->getParam("sDispatch"), Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
+            }
+
+
             $this->View()->sDispatches = $this->getDispatches(Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
             $this->View()->sAmount = $basket['Amount'];
             $this->View()->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
