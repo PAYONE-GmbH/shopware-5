@@ -366,7 +366,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     protected function getPaymentId()
     {
-        return $this->session->sOrderVariables['sUserData']['additional']['payment']['id'];
+        $userData = $this->admin->sGetUserData();
+        $paymentId = $userData['additional']['payment']['id'];
+        return $paymentId;
     }
 
     /**
@@ -586,6 +588,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $request->setClearingtype($clearingType);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
         $response = $this->service->request($request);
         return $response;
     }
