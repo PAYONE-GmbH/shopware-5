@@ -203,6 +203,7 @@
                             moptAmazonCountryChanged = responseData.countryChanged;
                             // Reload the site, to update dispatches in case country changed
                             if (moptAmazonCountryChanged) {
+                                $.loadingIndicator.open();
                                 location.reload(true);
                             } else {
                                 $('#moptAmazonPayButton').removeAttr("disabled");
