@@ -13,7 +13,9 @@
     {/block}
 {/block}
 
-
+{* used by SW 5.1 *}
+{block name='frontend_checkout_confirm_tos_panel'}
+{/block}
 
 {block name='frontend_index_content_top'}
     <style type="text/css">
@@ -86,6 +88,38 @@
 {/block}
 
 {block name='frontend_checkout_confirm_product_table'}
+    <form id="confirm--form" method="post" action="{url action='finish'}">
+        <div class="tos--panel panel has--border">
+            <div class="panel--title primary is--underline">
+                {s name="ConfirmHeadlineAGBandRevocation"  namespace="frontend/checkout/confirm"}{/s}
+            </div>
+            <div class="panel--body is--wide">
+                {if {config name=revocationnotice}}
+                    <div class="body--revocation" data-modalbox="true" data-targetSelector="a" data-mode="ajax" data-height="500" data-width="750">
+                        {s name="ConfirmTextRightOfRevocationNew"}<p>Bitte beachten Sie bei Ihrer Bestellung auch unsere <a href="{url controller=custom sCustom=8 forceSecure}" data-modal-height="500" data-modal-width="800">Widerrufsbelehrung</a>.</p>{/s}
+                    </div>
+                {/if}
+
+                <ul class="list--checkbox list--unstyled">
+
+                    {* Terms of service *}
+                    <li class="block-group row--tos">
+                        {* Terms of service checkbox *}
+                        <span class="block column--checkbox">
+                                            {if !{config name='IgnoreAGB'}}
+                                                <input type="checkbox" required="required" aria-required="true" id="sAGB" name="sAGB"{if $sAGBChecked} checked="checked"{/if} />
+                                            {/if}
+                                        </span>
+                        {* AGB label *}
+                        <span class="block column--label">
+                                            <label for="sAGB"{if $sAGBError} class="has--error"{/if} data-modalbox="true" data-targetSelector="a" data-mode="ajax" data-height="500" data-width="750">{s name="ConfirmTerms" namespace="frontend/checkout/confirm"}{/s}</label>
+                                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </form>
+
     <div class="finish--table product--table">
         <div class="panel has--border">
             <div class="panel--body is--rounded">
@@ -112,9 +146,9 @@
     {* Jetzt Bestellen Button *}
     <div class="register--action">
         <button
-            id="moptAmazonPayButton" type="submit" class="btn is--primary is--large right is--icon-right" name="Submit"
-            onclick="window.location.href='{url controller="moptPaymentAmazon" action="finish" forceSecure}'"
-            disabled="disabled">{s name='ConfirmActionSubmit' namespace="frontend/checkout/confirm"}{/s} <i class="icon--arrow-right"></i>
+                id="moptAmazonPayButton" class="btn is--primary is--large right is--icon-right" name="Submit"
+                form="confirm--form"
+        disabled="disabled">{s name='ConfirmActionSubmit' namespace="frontend/checkout/confirm"}{/s} <i class="icon--arrow-right"></i>
         </button>
     </div>
     <script>
@@ -192,7 +226,7 @@
     </script>
 {/block}
 
-{* remove SW 5.1 billing panel *}
+{* remove SW 5.1 billing panel and use it for dispatches *}
 {block name='frontend_checkout_confirm_billing_address_panel'}
     <div class="confirm--outer-container">
         <form method="POST" action="{url controller="moptPaymentAmazon" action="index"}" class="payment">
