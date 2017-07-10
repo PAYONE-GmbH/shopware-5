@@ -153,7 +153,12 @@ class Mopt_PayoneUserHelper
         $register['shipping']['zipcode']      = $personalData['shipping_zip'];
         $register['shipping']['city']         = $personalData['shipping_city'];
         $register['shipping']['country']      = $this->moptPayone__helper->getCountryIdFromIso($personalData['shipping_country']);
-        $register['shipping']['company']      = $personalData['shipping_company'];
+        if (isset($personalData['shipping_company']) && !empty($personalData['shipping_company'])) {
+            $register['shipping']['company']        = $personalData['shipping_company'];
+        } else {
+            $register['shipping']['company']        = '';
+            $register['personal']['customer_type'] = 'private';
+        }
         $register['shipping']['department']   = '';
         $register['shipping']['phone']       = $personalData['shipping_telephonenumber'];
         $register['auth']['email']            = $personalData['email'];

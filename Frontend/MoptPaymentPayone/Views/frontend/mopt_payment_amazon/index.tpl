@@ -63,6 +63,8 @@
     </div>
 {/block}
 
+
+{* SW5.2 *}
 {block name='frontend_checkout_confirm_information_wrapper'}
 <div class="confirm--outer-container">
     <form method="POST" action="{url controller="moptPaymentAmazon" action="index"}" class="payment">
@@ -81,7 +83,6 @@
             {/if}
     </form>
 </div>
-
 {/block}
 
 {block name='frontend_checkout_confirm_product_table'}
@@ -191,5 +192,33 @@
     </script>
 {/block}
 
+{* remove SW 5.1 billing panel *}
+{block name='frontend_checkout_confirm_billing_address_panel'}
+    <div class="confirm--outer-container">
+        <form method="POST" action="{url controller="moptPaymentAmazon" action="index"}" class="payment">
+
+            {* Action top *}
+            {block name='frontend_checkout_shipping_payment_core_buttons'}
+            {/block}
+
+            {* Payment and shipping information *}
+            {if $sDispatches}
+                <div class="confirm--inner-container">
+                    {block name='frontend_checkout_shipping_payment_core_shipping_fields'}
+                        {include file="frontend/mopt_payment_amazon/change_shipping.tpl"}
+                    {/block}
+                </div>
+            {/if}
+        </form>
+    </div>
+{/block}
+
+{* remove SW 5.1 shipping panel *}
+{block name='frontend_checkout_confirm_shipping_address_panel'}
+{/block}
+
+{* remove SW 5.1 payment method delivery panel *}
+{block name='frontend_checkout_confirm_payment_method_panel'}
+{/block}
 
 

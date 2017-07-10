@@ -79,7 +79,9 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 ) + floatval(
                     str_replace(',', '.', $shippingCosts['brutto'])
                 );
-            $basket['AmountNetNumeric'] = floatval(str_replace(',', '.', $basket['AmountNet']));
+            $basket['AmountNetNumeric'] = floatval($basket['AmountNetNumeric']) + floatval($shippingConsts['netto']);
+
+                //floatval(str_replace(',', '.', $basket['AmountNet']));
             $basket['sAmountNet'] = floatval($basket['AmountNetNumeric']) + floatval($shippingConsts['netto']);
             $basket['sTaxRates'] = $this->getTaxRates($basket);
 
@@ -266,6 +268,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->session->payoneErrorMessage = $moptPayoneMain->getPaymentHelper()
                 ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
             $this->forward('error', 'MoptPaymentPayone');
+
+            // ToDo Cleanup Amazon Session?
             return;
         }
 
@@ -279,10 +283,12 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         // unset payoneAmazonPayConfig for debug Module compatibility
         unset($orderVariables['payoneAmazonPayConfig']);
 
+        // ToDO temp disable SW 5.1 Problem is this neccessary?
+/*
         $orderVariables['sAddresses']['billing'] = $this->getOrderAddress($orderVariables['sOrderNumber'], 'billing');
         $orderVariables['sAddresses']['shipping'] = $this->getOrderAddress($orderVariables['sOrderNumber'], 'shipping');
         $orderVariables['sAddresses']['equal'] = $this->areAddressesEqual($orderVariables['sAddresses']['billing'], $orderVariables['sAddresses']['shipping']);
-
+*/
         $this->View()->assign($orderVariables);
 
         // unset session Vars
