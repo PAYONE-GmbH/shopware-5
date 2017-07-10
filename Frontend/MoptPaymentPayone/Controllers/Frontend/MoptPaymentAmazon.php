@@ -295,6 +295,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         unset($this->session->moptPayoneAmazonAccessToken);
         unset($this->session->moptPayoneAmazonReferenceId);
         unset($this->session->moptPayoneAmazonWorkOrderId);
+        // reset basket
+        unset($this->session['sBasketQuantity']);
+        unset($this->session['sBasketAmount']);
+
+
     }
 
     /**
@@ -680,6 +685,24 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         }
 
         return count(array_diff($addressA, $addressB)) == 0;
+    }
+
+    /**
+     * Add voucher to cart
+     *
+     * At failure view variable sVoucherError will give further information
+     * At success return to cart / confirm view
+     */
+    public function addVoucherAction()
+    {
+        $basketObj = $this->get('modules')->Basket();
+        if ($this->Request()->isPost()) {
+            $voucher = $basketObj->sAddVoucher($this->Request()->getParam('sVoucher'));
+            if (!empty($voucher['sErrorMessages'])) {
+                $this->View()->assign('sVoucherError', $voucher['sErrorMessages'], null, Smarty::SCOPE_ROOT);
+            }
+        }
+        $this->forward('index');
     }
 
 

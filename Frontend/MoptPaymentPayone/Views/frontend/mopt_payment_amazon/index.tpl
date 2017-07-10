@@ -93,6 +93,23 @@
 {/block}
 
 {block name='frontend_checkout_confirm_product_table'}
+    <div class="feature--voucher">
+        <form method="post" action="{url action='addVoucher' sTargetAction=$sTargetAction}" class="table--add-voucher add-voucher--form">
+
+            {block name='frontend_checkout_confirm_add_voucher_field'}
+                <input type="text" class="add-voucher--field block" name="sVoucher" placeholder="{"{s name='CheckoutFooterAddVoucherLabelInline' namespace='frontend/checkout/cart_footer'}{/s}"|escape}" />
+            {/block}
+
+            {block name='frontend_checkout_confirm_add_voucher_button'}
+                <button type="submit" class="add-voucher--button btn is--primary is--small block">
+                    <i class="icon--arrow-right"></i>
+                </button>
+            {/block}
+        </form>
+    </div>
+
+
+
     <form id="confirm--form" method="post" action="{url action='finish'}">
         <div class="tos--panel panel has--border">
             <div class="panel--title primary is--underline">
