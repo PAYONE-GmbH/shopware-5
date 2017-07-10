@@ -13,9 +13,14 @@
     {/block}
 {/block}
 
-{* used by SW 5.1 *}
+{* disable standard "Agb" Box, used by SW 5.1 *}
 {block name='frontend_checkout_confirm_tos_panel'}
 {/block}
+
+{* disable additional features, used by SW 5.1 *}
+{block name='frontend_checkout_confirm_additional_features'}
+{/block}
+
 
 {block name='frontend_index_content_top'}
     <style type="text/css">
