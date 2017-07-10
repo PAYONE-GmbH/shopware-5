@@ -79,9 +79,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 ) + floatval(
                     str_replace(',', '.', $shippingCosts['brutto'])
                 );
-            $basket['AmountNetNumeric'] = floatval($basket['AmountNetNumeric']) + floatval($shippingCosts['netto']);
-
-                //floatval(str_replace(',', '.', $basket['AmountNet']));
+            $basket['AmountNetNumeric'] = floatval(str_replace(',', '.', $basket['AmountNet']));
             $basket['sAmountNet'] = floatval($basket['AmountNetNumeric']) + floatval($shippingCosts['netto']);
             $basket['sTaxRates'] = $this->getTaxRates($basket);
 
