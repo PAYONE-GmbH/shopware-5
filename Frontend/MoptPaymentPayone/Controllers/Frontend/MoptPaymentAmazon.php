@@ -38,8 +38,14 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
     public function indexAction()
     {
+
+        $debug = $this->Request()->getParams();
         if (!empty($this->Request()->getParam("access_token"))) {
             $this->session->moptPayoneAmazonAccessToken = $this->Request()->getParam("access_token");
+        }
+
+        if (!empty($this->Request()->getParam("moptAmazonError"))) {
+            $this->View()->moptPayoneAmazonError = $this->Request()->getParam("moptAmazonError");
         }
 
         if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
@@ -180,15 +186,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getSelectedDispatch(), $this->getUserData()));
         }
 
-
         if ($config['authorisationMethod'] === 'Autorisierung') {
             $response = $service->authorize($request);
         } else {
             $response = $service->preauthorize($request);
         }
-
-        // ToDo: check for errorCode 980 (Transaction Timeout => repeat request with add_paydata[amazon_timeout] )
-
 
         if ($response->getStatus() === Payone_Api_Enum_ResponseType::ERROR) {
 
@@ -227,10 +229,9 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                     return;
                 }
 
-            } elseif ($response->getErrorCode() === '981') {
-
+            } elseif ($response->getErrorCode() === '981' || $response->getErrorCode() === '109') {
                 // redirect to checkout so customer can choose a new payment method
-                $this->forward('index', 'MoptPaymentAmazon');
+                $this->forward('index', 'MoptPaymentAmazon', null, array('moptAmazonError' => 'declined', 'sTarget' => 'index'));
                 return;
             }
 
@@ -266,8 +267,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->session->payoneErrorMessage = $moptPayoneMain->getPaymentHelper()
                 ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
             $this->forward('error', 'MoptPaymentPayone');
-
-            // ToDo Cleanup Amazon Session?
             return;
         }
 

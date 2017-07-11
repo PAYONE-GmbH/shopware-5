@@ -73,6 +73,13 @@
 
 {* SW5.2 *}
 {block name='frontend_checkout_confirm_information_wrapper'}
+{* Error Messages *}
+<div>
+    {if $moptPayoneAmazonError}
+        {include file="frontend/_includes/messages.tpl" type="error" content="{s name='amazonDeclined ' namespace='frontend/MoptPaymentPayone/errorMessages'}{/s}" bold=false}
+    {/if}
+</div>
+
 <div class="confirm--outer-container">
     <form method="POST" action="{url controller="moptPaymentAmazon" action="index"}" class="payment">
 
