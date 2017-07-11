@@ -131,7 +131,6 @@ class Mopt_PayoneUserHelper
         $register['billing']['zipcode']        = $personalData['billing_zip'];
         $register['billing']['firstname']      = $personalData['billing_firstname'];
         $register['billing']['lastname']       = $personalData['billing_lastname'];
-        // Todo no billing_phone number from api Response??
         $register['billing']['phone']       = $personalData['shipping_telephonenumber'];
         $register['billing']['salutation']     = 'mr';
         if (isset($personalData['billing_company']) && !empty($personalData['billing_company'])) {

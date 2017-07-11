@@ -39,7 +39,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
     public function indexAction()
     {
 
-        $debug = $this->Request()->getParams();
         if (!empty($this->Request()->getParam("access_token"))) {
             $this->session->moptPayoneAmazonAccessToken = $this->Request()->getParam("access_token");
         }
@@ -62,7 +61,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->assign('sUserData', $userAdditionalArray);
 
 
-            if ( $this->Request()->getParam("sDispatch")) {
+            if ($this->Request()->getParam("sDispatch")) {
                 $this->setDispatch($this->Request()->getParam("sDispatch"), Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
             }
 
@@ -90,9 +89,9 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $basket['sTaxRates'] = $this->getTaxRates($basket);
 
             $this->View()->sShippingcosts = $shippingCosts['brutto'];
-            $this->View()->sShippingcostsWithTax =  $shippingCosts['brutto'];
-            $this->View()->sShippingcostsNet =$shippingCosts['netto'];
-            $this->View()->sShippingcostsTax =$shippingCosts['tax'];
+            $this->View()->sShippingcostsWithTax = $shippingCosts['brutto'];
+            $this->View()->sShippingcostsNet = $shippingCosts['netto'];
+            $this->View()->sShippingcostsTax = $shippingCosts['tax'];
             $this->View()->sAmount = $basket['AmountWithTaxNumeric'];
             $this->View()->sAmountNet = $basket['sAmountNet'];
             $this->View()->sAmountTax = $basket['sAmountTax'];
@@ -163,7 +162,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $request->setPersonalData($personalData);
         $deliveryData = $paramBuilder->getDeliveryData($userData);
         $request->setDeliveryData($deliveryData);
-        // ToDo SuccessUrl etc is mandatory??? Check this
 
         $router = $this->Front()->Router();
         $successurl = $router->assemble(array('action' => 'success',
@@ -176,11 +174,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $request->setSuccessurl($successurl);
         $request->setBackurl($errorurl);
         $request->setErrorurl($backurl);
-
-        //$orderVarsDebug = $this->session['sOrderVariables']->getArrayCopy();
         $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
-
-        $debugtest = $this->getSelectedDispatch();
 
         if ($config['submitBasket'] === true) {
             $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getSelectedDispatch(), $this->getUserData()));
@@ -237,12 +231,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
         }
 
-        if ($response->getStatus() === Payone_Api_Enum_ResponseType::APPROVED || $response->getStatus() === 'PENDING' ) {
+        if ($response->getStatus() === Payone_Api_Enum_ResponseType::APPROVED || $response->getStatus() === 'PENDING') {
 
             // Save Clearing Reference as Attribute (set in session )
             $this->session->paymentReference = $request->getReference();
 
-            $test = $this->getUserData();
             Shopware()->Session()->sOrderVariables['sUserData'] = $this->getUserData();
             $txid = $response->getTxid();
             $orderNumber = $this->saveOrder(
@@ -255,12 +248,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $orderId = Shopware()->Db()->fetchOne($sql, $txid);
 
             // save fields as Order Attribute
-            // ToDo check orderhash (see finishOrder in MoptPaymentPayone)
             $sql = 'UPDATE `s_order_attributes` ' .
                 'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, mopt_payone_payment_reference=?, '
                 . 'mopt_payone_order_hash=?, mopt_payone_payolution_workorder_id=?,  mopt_payone_payolution_clearing_reference=?  WHERE orderID = ?';
             Shopware()->Db()->query($sql, array($txid, $this->session->moptIsAuthorized,
-                $this->session->paymentReference, $this->session->moptOrderHash, $this->session->moptPayoneAmazonWorkOrderId,  $this->session->moptPayoneAmazonReferenceId, $orderId));
+                $this->session->paymentReference, $this->session->moptOrderHash, $this->session->moptPayoneAmazonWorkOrderId, $this->session->moptPayoneAmazonReferenceId, $orderId));
         } else {
 
             // redirect back to checkout or show error message
@@ -321,7 +313,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
     {
         $session = Shopware()->Session();
         if (!empty($this->View()->sUserData['additional']['stateShipping'])) {
-            $session['sState'] = (int) $this->View()->sUserData['additional']['stateShipping']['id'];
+            $session['sState'] = (int)$this->View()->sUserData['additional']['stateShipping']['id'];
             return $this->View()->sUserData['additional']['stateShipping'];
         }
         return ["id" => $session['sState']];
@@ -378,8 +370,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
     public function getSelectedDispatch()
     {
         $session = Shopware()->Session();
-        $debug = $session['sDispatch'];
-        $debug2 = $session['sCountry'];
         if (empty($session['sCountry'])) {
             return false;
         }
@@ -396,7 +386,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             }
         }
         $dispatch = reset($dispatches);
-        $session['sDispatch'] = (int) $dispatch['id'];
+        $session['sDispatch'] = (int)$dispatch['id'];
         return $dispatch;
     }
 
@@ -408,7 +398,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
     {
 
         if ($this->Request()->getPost('sCountry')) {
-            $this->session['sCountry'] = (int) $this->Request()->getPost('sCountry');
+            $this->session['sCountry'] = (int)$this->Request()->getPost('sCountry');
             $this->session["sState"] = 0;
             $this->session["sArea"] = Shopware()->Db()->fetchOne("
             SELECT areaID FROM s_core_countries WHERE id = ?
@@ -416,15 +406,15 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         }
 
         if ($this->Request()->getPost('sPayment')) {
-            $this->session['sPaymentID'] = (int) $this->Request()->getPost('sPayment');
+            $this->session['sPaymentID'] = (int)$this->Request()->getPost('sPayment');
         }
 
         if ($this->Request()->getPost('sDispatch')) {
-            $this->session['sDispatch'] = (int) $this->Request()->getPost('sDispatch');
+            $this->session['sDispatch'] = (int)$this->Request()->getPost('sDispatch');
         }
 
         if ($this->Request()->getPost('sState')) {
-            $this->session['sState'] = (int) $this->Request()->getPost('sState');
+            $this->session['sState'] = (int)$this->Request()->getPost('sState');
         }
 
         // We might change the shop context here so we need to initialize it again
@@ -446,10 +436,10 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $country = $this->getSelectedCountry();
         $payment = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay();
         if (empty($country) || empty($payment)) {
-            return ['brutto' =>0, 'netto' =>0];
+            return ['brutto' => 0, 'netto' => 0];
         }
         $shippingcosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts($country);
-        return empty($shippingcosts) ? ['brutto' =>0, 'netto' =>0] : $shippingcosts;
+        return empty($shippingcosts) ? ['brutto' => 0, 'netto' => 0] : $shippingcosts;
     }
 
     /**
@@ -570,8 +560,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $session = Shopware()->Session();
 
         if (!empty($this->View()->sUserData['additional']['countryShipping'])) {
-            $session['sCountry'] = (int) $this->View()->sUserData['additional']['countryShipping']['id'];
-            $session['sArea'] = (int) $this->View()->sUserData['additional']['countryShipping']['areaID'];
+            $session['sCountry'] = (int)$this->View()->sUserData['additional']['countryShipping']['id'];
+            $session['sArea'] = (int)$this->View()->sUserData['additional']['countryShipping']['areaID'];
 
             return $this->View()->sUserData['additional']['countryShipping'];
         }
@@ -581,8 +571,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             return false;
         }
         $country = reset($countries);
-        $session['sCountry'] = (int) $country['id'];
-        $session['sArea'] = (int) $country['areaID'];
+        $session['sCountry'] = (int)$country['id'];
+        $session['sArea'] = (int)$country['areaID'];
         $this->View()->sUserData['additional']['countryShipping'] = $country;
         return $country;
     }
