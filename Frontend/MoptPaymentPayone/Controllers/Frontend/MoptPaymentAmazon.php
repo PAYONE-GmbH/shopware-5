@@ -223,7 +223,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                     return;
                 }
 
-            } elseif ($response->getErrorCode() === '981' || $response->getErrorCode() === '109') {
+            } elseif ($response->getErrorCode() === '981') {
                 // redirect to checkout so customer can choose a new payment method
                 $this->forward('index', 'MoptPaymentAmazon', null, array('moptAmazonError' => 'declined', 'sTarget' => 'index'));
                 return;
