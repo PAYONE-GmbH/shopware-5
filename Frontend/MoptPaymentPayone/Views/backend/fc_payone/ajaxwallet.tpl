@@ -132,8 +132,8 @@
             </form>
         </div>
        
-        <a style="font-size: 28px" href="#" data-toggle="collapse" data-target="#payonetable">Konfiguration PayPal ECS Logos</a>
-        <div id="payonetable" class="collapse">
+        <a style="font-size: 28px" href="#"  data-target="#payonetable">Konfiguration PayPal ECS Logos</a>
+        <div id="payonetable">
             <form role="form" id="ajaxpaypalecs" enctype="multipart/form-data">
                 <table class="table-condensed">
                     <tr>
