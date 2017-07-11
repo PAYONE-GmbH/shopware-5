@@ -190,8 +190,6 @@
 
         payolutionInstallmentAgree = $("#mopt_payone__payolution_installment_agreement").prop('checked');
 
-        alert(payolutionInstallmentAgree);
-        alert(payolutionInstallmentDob);
         // only make the api call when dob is ok and user agreement is checked
         if (payolutionInstallmentDob && payolutionInstallmentAgree){
             $.ajax({
