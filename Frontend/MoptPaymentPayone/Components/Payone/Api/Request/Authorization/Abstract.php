@@ -43,6 +43,10 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
      */
     protected $clearingtype = null;
     /**
+     * @var string
+     */
+    protected $clearingsubtype = null;
+    /**
      * Merchant reference number for the payment process. (Permitted symbols: 0-9, a-z, A-Z, .,-,_,/)
      *
      * @var string
@@ -148,11 +152,27 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     }
 
     /**
+     * @param string $clearingsubtype
+     */
+    public function setClearingsubtype($clearingsubtype)
+    {
+        $this->clearingsubtype = $clearingsubtype;
+    }
+
+    /**
      * @return string
      */
     public function getClearingtype()
     {
         return $this->clearingtype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClearingsubtype()
+    {
+        return $this->clearingsubtype;
     }
 
     /**
