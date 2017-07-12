@@ -421,10 +421,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         if ($this->moptPayonePaymentHelper->isPayonePayolutionInstallment($this->getPaymentShortName())) {
             $financeType = Payone_Api_Enum_PayolutionType::PYS;
-            $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
+            $workorderId = $paymentData['mopt_payone__payolution_installment_workorderid'];
             $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayolutionInstallment($financeType, $paymentData);
         }
-        $response = $this->buildAndCallPayment($config, 'fnc', $payment);
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment, $workorderId);
         return $response;
     }
 

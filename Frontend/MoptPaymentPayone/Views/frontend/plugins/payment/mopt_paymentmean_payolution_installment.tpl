@@ -90,7 +90,7 @@
     
     <p class="none clearfix">
         <input name="moptPaymentData[mopt_payone__payolution_installment_agreement]" type="checkbox" id="mopt_payone__payolution_installment_agreement" value="true"
-               {if $form_data.mopt_payone__payolution_installment_agreement eq "on"}
+               {if $form_data.mopt_payone__payolution_installment_agreement}
                    checked="checked"
                {/if}
                class="checkbox"/>
@@ -125,6 +125,10 @@
 </div>
 
 <script type="text/javascript">
+
+    var payolutionInstallmentDob = false;
+    var payolutionInstallmentAgree = false;
+
     function displayOverlayInstallment() {
         document.getElementById('payolution_overlay_installment').style.display = "block";
         document.getElementById('payolution_overlay_installment_bg').style.display = "block";
@@ -159,6 +163,7 @@
             hiddenDobHint.className = "register--error-msg";
         } else {
             hiddenDobHint.className = "is--hidden";
+            payolutionInstallmentDob = true;
             return;
         }
     }
@@ -181,35 +186,42 @@
         } 
         if ( shippingcosts !== null){
             myshippingcosts = shippingcosts.value;
-        }        
-        $.ajax({
-            url: call,
-            type: 'POST',
-            data: { dob: mydob, hreg: myhreg, shippingcosts: myshippingcosts } ,
-            
-            beforeSend: function() {
-                $.loadingIndicator.open();
-            },            
-            success: function (data) {
-                response = $.parseJSON(data);
-                if (response.status === 'success') {
-                    $.ajax({
-                        url: call2,
-                        type: 'POST',
-                        dataType: 'html',
-                        data: $.parseJSON(data),
-                        success: function (data3) {
-                            $.loadingIndicator.close();
-                            $('#showresults').html(data3);
-                            $('#payolution_installment_workorderid').val(response.workorderid);
-                        }
-                    });
-                }
-                if (response.status == 'error') {
-                    alert("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es noch einmal");
-                }
-            },
-        });
+        }
+
+        payolutionInstallmentAgree = $("#mopt_payone__payolution_installment_agreement").prop('checked');
+
+        // only make the api call when dob is ok and user agreement is checked
+        if (payolutionInstallmentDob && payolutionInstallmentAgree){
+            $.ajax({
+                url: call,
+                type: 'POST',
+                data: { dob: mydob, hreg: myhreg, shippingcosts: myshippingcosts },
+
+                beforeSend: function () {
+                    $.loadingIndicator.open();
+                },
+                success: function (data) {
+                    response = $.parseJSON(data);
+                    if (response.status === 'success') {
+                        $.ajax({
+                            url: call2,
+                            type: 'POST',
+                            dataType: 'html',
+                            data: $.parseJSON(data),
+                            success: function (data3) {
+                                $.loadingIndicator.close();
+                                $('#showresults').html(data3);
+                                $('#payolution_installment_workorderid').val(response.workorderid);
+                            }
+                        });
+                    }
+                    if (response.status == 'error') {
+                        alert("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es noch einmal");
+                        $.loadingIndicator.close();
+                    }
+                },
+            });
+        }
     }
 
 

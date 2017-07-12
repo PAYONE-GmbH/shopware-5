@@ -638,7 +638,6 @@ class Mopt_PayoneParamBuilder
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
-        $params['workorderid'] = $paymentData['mopt_payone__payolution_installment_workorderid'];
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
