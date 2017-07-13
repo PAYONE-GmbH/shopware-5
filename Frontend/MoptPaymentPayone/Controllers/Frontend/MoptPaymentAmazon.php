@@ -47,6 +47,10 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->moptPayoneAmazonError = $this->Request()->getParam("moptAmazonError");
         }
 
+        if (!empty($this->Request()->getParam("moptAmazonReadonly"))) {
+            $this->View()->payoneAmazonReadOnly = 'true';
+        }
+
         if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
             && ($payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
         ) {
@@ -225,7 +229,12 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             } elseif ($response->getErrorCode() === '981') {
                 // redirect to checkout so customer can choose a new payment method
-                $this->forward('index', 'MoptPaymentAmazon', null, array('moptAmazonError' => 'declined', 'sTarget' => 'index'));
+                $this->redirect([
+                    'controller' => 'MoptPaymentAmazon',
+                    'action' => 'index',
+                    'moptAmazonError' => 'declined',
+                    'moptAmazonReadonly' => 'true',
+                ]);
                 return;
             }
 

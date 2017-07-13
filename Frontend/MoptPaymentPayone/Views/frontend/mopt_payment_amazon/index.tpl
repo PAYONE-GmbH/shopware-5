@@ -23,7 +23,9 @@
 
 
 {block name='frontend_index_content_top'}
+
     <style type="text/css">
+
         /*
         Please include the min-width, max-width, min-height
         and max-height if you plan to use a relative CSS unit
@@ -37,6 +39,10 @@
             min-height: 228px;
             height: 240px;
             max-height: 400px;
+        {if $payoneAmazonReadOnly}
+            displayMode: "Read";
+        {/if}
+
         }
         #walletWidgetDiv {
             min-width: 300px;
@@ -46,6 +52,7 @@
             height: 240px;
             max-height: 400px;
         }
+
 
         /* override standard Shopware style sheet for table alignments
         */
@@ -60,6 +67,8 @@
                 width: 33%;
             }
         }
+
+
     </style>
 
     <div id="amazonContentWrapper" class="content confirm--content content-main--inner" style="margin-top:2%;margin-bottom: 0px; padding-bottom: 1%;">
@@ -191,6 +200,9 @@
             new OffAmazonPayments.Widgets.AddressBook({
                 sellerId: "{$payoneAmazonPayConfig->getSellerId()}",
                 scope: 'profile payments:widget payments:shipping_address payments:billing_address',
+                {if $payoneAmazonReadOnly}
+                displayMode: "Read",
+                {/if}
                 onOrderReferenceCreate: function (orderReference) {
                     moptAmazonReferenceId = orderReference.getAmazonOrderReferenceId();
                 },
