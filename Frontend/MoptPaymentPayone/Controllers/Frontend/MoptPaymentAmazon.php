@@ -298,6 +298,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         }
 
         $this->View()->assign($orderVariables);
+        // TransactionID
+        $this->View()->sTransactionumber = $txid;
+        $this->View()->sPayment = array('description' => Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getDescription());
+        $this->View()->sDispatch =  $orderVariables['sDispatch'];
+
 
         // unset session Vars
         unset($this->session->moptPayoneAmazonAccessToken);
