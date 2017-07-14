@@ -88,6 +88,10 @@ class Mopt_PayoneFormHandler
             return $this->proccessRatepayDirectDebit($formData);
         }
 
+        if ($paymentHelper->isPayoneSafeInvoice($paymentId)) {
+            return $this->proccessPayoneSafeInvoice($formData);
+        }
+
         if ($paymentHelper->isPayonePaymentMethod($paymentId)) {
             // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
             $session = Shopware()->Session();
@@ -761,6 +765,35 @@ class Mopt_PayoneFormHandler
 
         $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_direct_debit_shopid'];
         $paymentData['formData']['mopt_payone__ratepay_direct_debit_device_fingerprint'] = $formData['mopt_payone__ratepay_direct_debit_device_fingerprint'];
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
+        return $paymentData;
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function proccessPayoneSafeInvoice($formData)
+    {
+        $paymentData = array();
+
+         if ($formData['mopt_payone__payone_safe_invoice_birthdaydate'] !== "0000-00-00") {
+            if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__payone_safe_invoice_birthdaydate']))) {
+                $paymentData['sErrorFlag']['mopt_payone__payone_safe_invoice_birthday'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__payone_safe_invoice_birthmonth'] = true;
+                $paymentData['sErrorFlag']['mopt_payone__payone_safe_invoice_birthyear'] = true;
+                $paymentData['formData']['mopt_save_birthday'] = false;
+            } else {
+                $paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate'] = $formData['mopt_payone__payone_safe_invoice_birthdaydate'];
+                $paymentData['formData']['mopt_save_birthday'] = true;
+            }
+        }
 
         // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
         $session = Shopware()->Session();

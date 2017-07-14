@@ -8,7 +8,7 @@
 
 <div class="payment--form-group">
 
-    {if ($moptCreditCardCheckEnvironment.birthday == "0000-00-00") }
+    {if ($moptCreditCardCheckEnvironment.birthday == "0000-00-00" || $moptCreditCardCheckEnvironment.birthday =="") }
         <p class ="none">
             <label for="mopt_payone__payone_safe_invoice_birthday">
                 {s name='birthdate'}Geburtsdatum{/s}
@@ -18,7 +18,7 @@
         <select name="moptPaymentData[mopt_payone__payone_safe_invoice_birthday]"
                 id="mopt_payone__payone_safe_invoice_birthday" onchange="payoneSafeInvoiceDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="payment--field {if $error_flags.mopt_payone__mopt_payone__payone_safe_invoice_birthday} has--error{/if}">
+                class="payment--field {if $error_flags.mopt_payone__payone_safe_invoice_birthday} has--error{/if}">
             <option value="">--</option>
             {section name="birthdate" start=1 loop=32 step=1}
                 <option value="{if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}" 
@@ -56,7 +56,7 @@
                     {$smarty.section.birthyear.index}</option>
                 {/section}
         </select>        
-    {/if}
+      {/if}
 
 
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payone_safe_invoice_birthdaydate]" id="mopt_payone__payone_safe_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
@@ -67,14 +67,14 @@
 
     function payoneSafeInvoiceDobInput()
     {
-        var daySelect = document.getElementById("[mopt_payone__payone_safe_invoice_birthday");
-        var monthSelect = document.getElementById("[mopt_payone__payone_safe_invoice_birthmonth");
-        var yearSelect = document.getElementById('[mopt_payone__payone_safe_invoice_birthyear');
-        var hiddenDobFull = document.getElementById("[mopt_payone__payone_safe_invoice_birthdaydate");
+        var daySelect = document.getElementById("mopt_payone__payone_safe_invoice_birthday");
+        var monthSelect = document.getElementById("mopt_payone__payone_safe_invoice_birthmonth");
+        var yearSelect = document.getElementById('mopt_payone__payone_safe_invoice_birthyear');
+        var hiddenDobFull = document.getElementById("mopt_payone__payone_safe_invoice_birthdaydate");
         var hiddenDobHint = document.getElementById("safeinvoice-hint-18-years");
 
         if (daySelect.value == "" || monthSelect.value == "" || yearSelect.value == ""
-                || hiddenDobFull.value == "" || daySelect == undefined) {
+                 || daySelect == undefined) {
             return;
         }
         hiddenDobFull.value = yearSelect.value + "-" + monthSelect.value + "-" + daySelect.value;

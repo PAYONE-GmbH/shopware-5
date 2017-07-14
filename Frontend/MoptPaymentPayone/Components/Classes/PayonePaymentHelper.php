@@ -1002,6 +1002,15 @@ class Mopt_PayonePaymentHelper
         if (isset($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'])) {
             $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone']);
         }
+
+        if (isset($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate'])) {
+            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+                $user->setBirthday($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate']);
+                Shopware()->Models()->persist($user);
+            } else {
+                $billing->setBirthday($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate']);
+            }
+        }
  
         Shopware()->Models()->persist($billing);
         Shopware()->Models()->flush();
