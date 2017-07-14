@@ -202,6 +202,7 @@
                 scope: 'profile payments:widget payments:shipping_address payments:billing_address',
                 {if $payoneAmazonReadOnly}
                 displayMode: "Read",
+                amazonOrderReferenceId: "{$payoneAmazonReadOnly}",
                 {/if}
                 onOrderReferenceCreate: function (orderReference) {
                     moptAmazonReferenceId = orderReference.getAmazonOrderReferenceId();

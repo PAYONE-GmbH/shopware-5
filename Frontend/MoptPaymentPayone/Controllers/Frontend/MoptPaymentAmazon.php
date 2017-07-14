@@ -48,22 +48,23 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         }
 
         if (!empty($this->Request()->getParam("moptAmazonReadonly"))) {
-            $this->View()->payoneAmazonReadOnly = 'true';
+            $this->View()->payoneAmazonReadOnly = $this->Request()->getParam("moptAmazonReadonly");
         }
 
         if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
             && ($payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
         ) {
 
-            $basket = $this->get('modules')->Basket()->sGetBasket();
-            $userData = $this->getUserData();
-
+            $this->session['sPaymentID'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
+            $this->View()->sPayment = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $userAdditionalArray = [];
             $userAdditionalArray['additional']['charge_vat'] = 1;
-            $userAdditionalArray['additional']['payment']['id'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
+            $userAdditionalArray['additional']['payment'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay();
+            $userData = $this->getUserData();
             $userAdditionalArray['additional']['countryShipping'] = $userData['additional']['countryShipping'];
             $this->View()->assign('sUserData', $userAdditionalArray);
 
+            $basket = $this->get('modules')->Basket()->sGetBasket();
 
             if ($this->Request()->getParam("sDispatch")) {
                 $this->setDispatch($this->Request()->getParam("sDispatch"), Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
@@ -233,7 +234,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                     'controller' => 'MoptPaymentAmazon',
                     'action' => 'index',
                     'moptAmazonError' => 'declined',
-                    'moptAmazonReadonly' => 'true',
+                    'moptAmazonReadonly' => $this->session->moptPayoneAmazonReferenceId,
+                    'moptAmazonWorkOrderId' => $this->session->moptPayoneAmazonWorkOrderId,
                 ]);
                 return;
             }
@@ -265,6 +267,12 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         } else {
 
             // redirect back to checkout or show error message
+
+            unset($this->session->moptPayoneAmazonAccessToken);
+            unset($this->session->moptPayoneAmazonReferenceId);
+            unset($this->session->moptPayoneAmazonWorkOrderId);
+            $this->session->sUserId = null;
+
             $this->session->payoneErrorMessage = $moptPayoneMain->getPaymentHelper()
                 ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
             $this->forward('error', 'MoptPaymentPayone');
@@ -614,6 +622,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 $userData['additional']['show_net'] = !empty($system->sUSERGROUPDATA['tax']);
                 Shopware()->Session()->sOutputNet = empty($system->sUSERGROUPDATA['tax']);
             }
+            $userData['additional']['user']['paymentID'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
         }
 
         return $userData;

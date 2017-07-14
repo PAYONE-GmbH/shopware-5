@@ -874,7 +874,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $config = $this->moptPayoneMain->getPayoneConfig($payonePaymentHelper->getPaymentAmazonPay()->getId());
         $clearingType = \Payone_Enum_ClearingType::WALLET;
         $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
-        $this->session->moptPayoneAmazonReferenceId = $postData['referenceId'];
+        if (empty($this->session->moptPayoneAmazonReferenceId)) {
+            $this->session->moptPayoneAmazonReferenceId = $postData['referenceId'];
+        }
         $data = [];
         $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $postData['referenceId'], $this->session->moptPayoneAmazonAccessToken );
 
@@ -901,11 +903,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 }
             }
 
-            $workorderId = $responseData['rawResponse']['workorderid'];
-            $this->session->moptPayoneAmazonWorkOrderId  =  $workorderId;
+            if (empty( $this->session->moptPayoneAmazonWorkOrderId)) {
+                $this->session->moptPayoneAmazonWorkOrderId  =  $responseData['workorderid'];
+            }
+
             $data['data'] = $responseData['rawResponse'];
             $data['status'] = 'success';
-            $data['workorderid'] = $workorderId;
+            $data['workorderid'] = $this->session->moptPayoneAmazonWorkOrderId;
             $encoded = json_encode($data);
             echo $encoded;
         } else {
