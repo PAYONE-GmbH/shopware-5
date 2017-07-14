@@ -59,7 +59,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->sPayment = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $userAdditionalArray = [];
             $userAdditionalArray['additional']['charge_vat'] = 1;
-            $userAdditionalArray['additional']['payment'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay();
+            $userAdditionalArray['additional']['payment']['id'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $userData = $this->getUserData();
             $userAdditionalArray['additional']['countryShipping'] = $userData['additional']['countryShipping'];
             $this->View()->assign('sUserData', $userAdditionalArray);

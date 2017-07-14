@@ -248,9 +248,9 @@ class Mopt_PayoneUserHelper
             array('id' =>  $userId)
         );
         $customer->fromArray($data);
-        $customer->setPaymentId($paymentId);
         Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
-    }
+        $this->savePayment($paymentId);
+     }
 
     protected function updateUserAddresses($personalData, $session, $paymentId)
     {
@@ -351,6 +351,7 @@ class Mopt_PayoneUserHelper
         $user['sUserData']['additional']['user']['paymentID'] = $paymentId;
         $user['additional']['charge_vat'] = true;
         $user['additional']['user']['paymentID'] = $paymentId;
+        $user['additional']['user']['payment']['id'] = $paymentId;
     }
 
     protected function isUserLoggedIn($session)
