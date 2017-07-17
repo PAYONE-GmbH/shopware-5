@@ -425,7 +425,7 @@ class Mopt_PayoneInstallHelper
             array(
                 'name' => 'mopt_payone__acc_payone_safe_invoice',
                 'description' => 'PAYONE Rechnung mit Zahlungsgarantie',
-                'template' => null,
+                'template' => 'mopt_paymentmean_payone_safe_invoice.tpl',
                 'position' => 32,),
         );
     }
