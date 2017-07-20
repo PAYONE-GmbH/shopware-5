@@ -1,7 +1,7 @@
 {extends file="frontend/account/payment.tpl"}
 
 {block name="frontend_index_header_javascript_jquery" append}
-    <script src="{link file='frontend/_resources/javascript/mopt_account.js'}"></script>
+    <script defer src="{link file='frontend/_resources/javascript/mopt_account.js'}"></script>
 {/block}
 
 {block name="frontend_index_content" append}
