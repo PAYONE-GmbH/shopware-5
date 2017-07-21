@@ -393,33 +393,30 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
         $userData = $this->admin->sGetUserData();
         $data = [];
-        $paymentName = $userData['additional']['payment']['name'];
-        if ($this->moptPayonePaymentHelper->isPayonePayolutionInstallment($paymentName)) {
-            $precheckResponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
-            if ($precheckResponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
-                $responseData = $precheckResponse->toArray();
-                $workorderId = $responseData['rawResponse']['workorderid'];
-                $calculationResponse = $this
-                    ->buildAndCallCalculate($config, 'fnc', $financeType, $paymentType, $paymentData, $workorderId);
-                if ($calculationResponse instanceof \Payone_Api_Response_Genericpayment_Approved) {
-                    $installmentData = $calculationResponse->getInstallmentData();
-                    $data['data'] = $installmentData;
-                    $data['status'] = 'success';
-                    $data['workorderid'] = $workorderId;
-                    $encoded = json_encode($data);
-                    echo $encoded;
-                } else {
-                    $data['data'] = $calculationResponse;
-                    $data['status'] = 'error';
-                    $encoded = json_encode($data);
-                    echo $encoded;
-                }
+        $precheckResponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
+        if ($precheckResponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
+            $responseData = $precheckResponse->toArray();
+            $workorderId = $responseData['rawResponse']['workorderid'];
+            $calculationResponse = $this
+                ->buildAndCallCalculate($config, 'fnc', $financeType, $paymentType, $paymentData, $workorderId);
+            if ($calculationResponse instanceof \Payone_Api_Response_Genericpayment_Approved) {
+                $installmentData = $calculationResponse->getInstallmentData();
+                $data['data'] = $installmentData;
+                $data['status'] = 'success';
+                $data['workorderid'] = $workorderId;
+                $encoded = json_encode($data);
+                echo $encoded;
             } else {
-                $data['data'] = $precheckResponse;
+                $data['errorMessage'] = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage'.$calculationResponse->getErrorcode(), $calculationResponse->getErrorMessage().' (Fehler '.$calculationResponse->getErrorcode().')', true);
                 $data['status'] = 'error';
                 $encoded = json_encode($data);
                 echo $encoded;
             }
+        } else {
+            $data['errorMessage'] = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage'.$precheckResponse->getErrorcode(), $precheckResponse->getErrorMessage().' (Fehler '.$precheckResponse->getErrorcode().')', true);
+            $data['status'] = 'error';
+            $encoded = json_encode($data);
+            echo $encoded;
         }
     }
 

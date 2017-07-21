@@ -172,6 +172,18 @@
         var call = '{url controller="moptAjaxPayone" action="ajaxHandlePayolutionPreCheck" forceSecure}';
         var call2 = '{url controller="moptAjaxPayone" action="renderPayolutionInstallment" forceSecure}';
         var dob = document.getElementById("mopt_payone__payolution_installment_birthdaydate");
+        var hiddenDobHint = document.getElementById("installment-hint-18-years");
+
+        var oBirthDate = new Date(dob.value);
+        var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
+        if (oBirthDate > oMinDate) {
+            hiddenDobHint.className = "register--error-msg";
+            return;
+        } else {
+            hiddenDobHint.className = "is--hidden";
+            payolutionInstallmentDob = true;
+        }
+
         var hreg = document.getElementById("mopt_payone__installment_company_trade_registry_number");
         var shippingcosts = document.getElementById("mopt_payone__payolution_installment_shippingcosts");
         var myhreg; 
@@ -216,7 +228,7 @@
                         });
                     }
                     if (response.status == 'error') {
-                        alert("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es noch einmal");
+                        alert(response.errorMessage);
                         $.loadingIndicator.close();
                     }
                 },
