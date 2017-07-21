@@ -137,6 +137,12 @@ class FrontendCheckout implements SubscriberInterface
         if ($request->getActionName() === 'shippingPayment') {
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment_core.tpl');
+
+            // in SW 5.2.3 -5.2.9 js functions are not found, possible theme compiler problem?
+            // for now simply use the javascript files directly
+            if ( version_compare(\Shopware::VERSION, '5.2.9', '<=') || version_compare(\Shopware::VERSION, '5.2.3', '>=')) {
+               $view->assign('moptFixJavascript', true);
+            }
         }
         
         if ($request->getActionName() === 'cart') {
