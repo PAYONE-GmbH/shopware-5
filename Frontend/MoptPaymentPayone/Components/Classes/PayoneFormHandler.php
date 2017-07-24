@@ -48,6 +48,10 @@ class Mopt_PayoneFormHandler
             return $this->proccessSofortueberweisung($formData);
         }
 
+        if ($paymentHelper->isPayoneBancontact($paymentId)) {
+            return $this->proccessBancontact($formData);
+        }
+
         if ($paymentHelper->isPayoneGiropay($paymentId)) {
             return $this->proccessGiropay($formData);
         }
@@ -158,6 +162,51 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::INSTANT_MONEY_TRANSFER;
 
         $paymentData['formData']['mopt_payone__sofort_bankcountry'] = $formData['mopt_payone__sofort_bankcountry'];
+
+        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
+        $session = Shopware()->Session();
+        $session->offsetSet('moptFormSubmitted', true);
+
+        return $paymentData;
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function proccessBancontact($formData)
+    {
+        $paymentData = array();
+
+        if (!$formData['mopt_payone__bancontact_iban']) {
+            $paymentData['sErrorFlag']['mopt_payone__bancontact_iban'] = true;
+        } else {
+            if ($formData['mopt_payone__bancontact_iban'] && !$this->isValidIbanBic($formData['mopt_payone__bancontact_iban'])){
+                $paymentData['sErrorFlag']['mopt_payone__bancontact_iban'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__bancontact_iban'] = $formData['mopt_payone__bancontact_iban'];
+            }
+        }
+
+        if (!$formData['mopt_payone__bancontact_bic']) {
+            $paymentData['sErrorFlag']['mopt_payone__bancontact_bic'] = true;
+        } else {
+            if ($formData['mopt_payone__bancontact_bic'] && !$this->isValidIbanBic($formData['mopt_payone__bancontact_bic'])){
+                $paymentData['sErrorFlag']['mopt_payone__bancontact_bic'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__bancontact_bic'] = $formData['mopt_payone__bancontact_bic'];
+            }
+        }
+
+        $paymentData['formData']['mopt_payone__bancontact_bankcountry'] = $formData['mopt_payone__bancontact_bankcountry'];
+
+        if (count($paymentData['sErrorFlag'])) {
+            return $paymentData;
+        }
+
+        $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::BANCONTACT;
 
         // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
         $session = Shopware()->Session();
