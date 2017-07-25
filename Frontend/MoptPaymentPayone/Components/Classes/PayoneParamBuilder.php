@@ -981,8 +981,6 @@ class Mopt_PayoneParamBuilder
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'BCT') {
             $params['onlinebanktransfertype'] = 'BCT';
             $params['bankcountry'] = $paymentData['mopt_payone__bancontact_bankcountry'];
-            $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__bancontact_iban']);
-            $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__bancontact_bic']);
             $params['successurl'] = $router->assemble(array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => true));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',

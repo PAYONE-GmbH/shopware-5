@@ -180,26 +180,6 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
-        if (!$formData['mopt_payone__bancontact_iban']) {
-            $paymentData['sErrorFlag']['mopt_payone__bancontact_iban'] = true;
-        } else {
-            if ($formData['mopt_payone__bancontact_iban'] && !$this->isValidIbanBic($formData['mopt_payone__bancontact_iban'])){
-                $paymentData['sErrorFlag']['mopt_payone__bancontact_iban'] = true;
-            } else {
-                $paymentData['formData']['mopt_payone__bancontact_iban'] = $formData['mopt_payone__bancontact_iban'];
-            }
-        }
-
-        if (!$formData['mopt_payone__bancontact_bic']) {
-            $paymentData['sErrorFlag']['mopt_payone__bancontact_bic'] = true;
-        } else {
-            if ($formData['mopt_payone__bancontact_bic'] && !$this->isValidIbanBic($formData['mopt_payone__bancontact_bic'])){
-                $paymentData['sErrorFlag']['mopt_payone__bancontact_bic'] = true;
-            } else {
-                $paymentData['formData']['mopt_payone__bancontact_bic'] = $formData['mopt_payone__bancontact_bic'];
-            }
-        }
-
         $paymentData['formData']['mopt_payone__bancontact_bankcountry'] = $formData['mopt_payone__bancontact_bankcountry'];
 
         if (count($paymentData['sErrorFlag'])) {
