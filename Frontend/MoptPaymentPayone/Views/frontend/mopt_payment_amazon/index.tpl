@@ -204,9 +204,11 @@
                 displayMode: "Read",
                 amazonOrderReferenceId: "{$payoneAmazonReadOnly}",
                 {/if}
+                {if !$payoneAmazonReadOnly}
                 onOrderReferenceCreate: function (orderReference) {
                     moptAmazonReferenceId = orderReference.getAmazonOrderReferenceId();
                 },
+                {/if}
                 onAddressSelect: function (orderReference) {
 
                     $('#moptAmazonPayButton').attr("disabled", "disabled");

@@ -137,6 +137,13 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             array('key' => 'amazon_reference_id', 'data' => $this->session->moptPayoneAmazonReferenceId)
         ));
 
+        // Comment out for some special Payone API Testcases
+        /*
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'authorization_note_for_testing', 'data' =>
+            '{"SandboxSimulation": {"State":"Declined", "ReasonCode":"InvalidPaymentMethod", "SoftDecline":"false"}}')
+        ));
+        */
         // sync / async mode according to backend configuration
         $payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig();
 
