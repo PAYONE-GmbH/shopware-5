@@ -7,7 +7,7 @@ before_script:
 - git clone https://github.com/shopware/shopware.git /tmp/shopware
 - cd ..
 - cd /tmp/shopware
-- ant -f build/build.xml -Ddb.user=travis -Ddb.host=127.0.0.1 -Ddb.name=shopware build-unit
+- ant -f build/build.xml -Ddb.user=root -Ddb.host=127.0.0.1 -Ddb.name=shopware build-unit
 - cp -R /home/travis/build/PAYONE-GmbH/shopware-5/Frontend/MoptPaymentPayone /tmp/shopware/engine/Shopware/Plugins/Default/Frontend
 - cd /tmp/shopware
 - ls engine/Shopware/Plugins/Default/Frontend
