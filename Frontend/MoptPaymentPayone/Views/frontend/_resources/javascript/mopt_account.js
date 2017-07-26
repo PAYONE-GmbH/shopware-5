@@ -66,7 +66,10 @@ $.plugin('moptConsumerScoreCheckNeedsUserAgreement', {
         me._destroy();
     }
 });
+document.asyncReady(function() {
+    // do your magic here
 
 $('#moptAddressCheckNeedsUserVerification').moptAddressCheckNeedsUserVerification();
 $('#moptShippingAddressCheckNeedsUserVerification').moptShippingAddressCheckNeedsUserVerification();
 $('#moptConsumerScoreCheckNeedsUserAgreement').moptConsumerScoreCheckNeedsUserAgreement();
+});

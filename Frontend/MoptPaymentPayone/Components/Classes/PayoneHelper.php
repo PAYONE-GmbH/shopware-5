@@ -564,15 +564,27 @@ class Mopt_PayoneHelper
    */
     public function saveCorrectedBillingAddress($userId, $response)
     {
-        $sql = 'UPDATE `s_user_billingaddress` SET street=?, zipcode=?, city=?  WHERE userID = ?';
-        Shopware()->Db()->query(
-            $sql,
-            array(
-            $response->getStreet(),
-            $response->getZip(),
-            $response->getCity(),
-            $userId)
-        );
+        if (\Shopware::VERSION === '___VERSION___' ||
+            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+        ) {
+            $orderVariables =  Shopware()->Session()->sOrderVariables;
+            $aOrderVars = $orderVariables->getArrayCopy();
+            $addressId  = $aOrderVars['sUserData']['billingaddress']['id'];
+            // overwrite of $userID is intentional
+            $userId = $addressId;
+            $sql = 'UPDATE `s_user_addresses` SET street=?, zipcode=?, city=?  WHERE id= ?';
+        } else {
+            $sql = 'UPDATE `s_user_billingaddress` SET street=?, zipcode=?, city=?  WHERE userID = ?';
+        }
+            Shopware()->Db()->query(
+                $sql,
+                array(
+                    $response->getStreet(),
+                    $response->getZip(),
+                    $response->getCity(),
+                    $userId)
+            );
+
     }
 
   /**
@@ -583,7 +595,18 @@ class Mopt_PayoneHelper
    */
     public function saveCorrectedShippingAddress($userId, $response)
     {
-        $sql = 'UPDATE `s_user_shippingaddress` SET street=?, zipcode=?, city=?  WHERE userID = ?';
+        if (\Shopware::VERSION === '___VERSION___' ||
+            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+        ) {
+            $orderVariables =  Shopware()->Session()->sOrderVariables;
+            $orderVars = $orderVariables->getArrayCopy();
+            $addressId  = $orderVars['sUserData']['shippingaddress']['id'];
+            // overwrite of $userID is intentional
+            $userId = $addressId;
+            $sql = 'UPDATE `s_user_addresses` SET street=?, zipcode=?, city=?  WHERE id= ?';
+        } else {
+            $sql = 'UPDATE `s_user_shippingaddress` SET street=?, zipcode=?, city=?  WHERE userID = ?';
+        }
         Shopware()->Db()->query(
             $sql,
             array(

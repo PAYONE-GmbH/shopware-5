@@ -31,7 +31,12 @@
         {
             if (response === 'true')
             {
-                window.location = "{url controller=account action=savePayment sTarget=checkout forceSecure}";
+                // SW < 5.3
+                //window.location = "{url controller=account action=savePayment sTarget=checkout forceSecure}";
+                // SW > 5.3 ?
+                //window.location = "{url controller=checkout action=saveShippingPayment sTarget=checkout sTargetAction=confirm forceSecure}";
+                // only Post Requests allowed
+                $.post('{url controller="checkout" action="saveShippingPayment" forceSecure}', { payment: {$paymentid} });
             }
             else
             {

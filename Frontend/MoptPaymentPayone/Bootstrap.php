@@ -303,6 +303,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_checkout.js',
             $this->Path() . 'Views/frontend/_resources/javascript/client_api.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_payment.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_account.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
     }   

@@ -1192,11 +1192,19 @@ class AddressCheck implements SubscriberInterface
             if ($forwardOnError) {
                 switch ($config['adresscheckFailureHandling']) {
                     case 0: // cancel transaction -> redirect to payment choice
-                        $caller->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        $caller->forward('shippingPayment', 'checkout', null);
                         break;
 
                     case 1: // reenter address -> redirect to address form
                         if (\Shopware::VERSION === '___VERSION___' ||
+                            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        ) {
+                            $caller->forward('edit', 'moptaddresspayone', null, [
+                                'id'            => $billingAddressData['id'],
+                                'sTarget'       => 'checkout',
+                                'sTargetAction' => 'confirm'
+                            ]);
+                        }elseif (\Shopware::VERSION === '___VERSION___' ||
                             version_compare(\Shopware::VERSION, '5.2.0', '>=')
                         ) {
                             $caller->forward('edit', 'address', null, [
