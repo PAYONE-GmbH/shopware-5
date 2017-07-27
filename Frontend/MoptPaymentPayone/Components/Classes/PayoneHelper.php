@@ -565,17 +565,23 @@ class Mopt_PayoneHelper
     public function saveCorrectedBillingAddress($userId, $response)
     {
         if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.3.0', '>=')
-        ) {
+            version_compare(\Shopware::VERSION, '5.3.0', '>='))
+        {
             $orderVariables =  Shopware()->Session()->sOrderVariables;
             $aOrderVars = $orderVariables->getArrayCopy();
             $addressId  = $aOrderVars['sUserData']['billingaddress']['id'];
-            // overwrite of $userID is intentional
-            $userId = $addressId;
-            $sql = 'UPDATE `s_user_addresses` SET street=?, zipcode=?, city=?  WHERE id= ?';
+            // Update Model and Flush for SW 5.3; when using sql like below this does not happen
+            $address             = Shopware()->Models()->getRepository('Shopware\Models\Customer\Address')->find($addressId);
+            $address->setStreet($response->getStreet());
+            $address->setZipcode($response->getZip());
+            $address->setCity($response->getCity());
+            Shopware()->Models()->persist($address);
+            Shopware()->Models()->flush($address);
+            $session = Shopware()->Session();
+            $session->offsetSet('moptAddressCorrected', true);
         } else {
             $sql = 'UPDATE `s_user_billingaddress` SET street=?, zipcode=?, city=?  WHERE userID = ?';
-        }
+
             Shopware()->Db()->query(
                 $sql,
                 array(
@@ -584,6 +590,7 @@ class Mopt_PayoneHelper
                     $response->getCity(),
                     $userId)
             );
+        }
 
     }
 
@@ -599,22 +606,28 @@ class Mopt_PayoneHelper
             version_compare(\Shopware::VERSION, '5.3.0', '>=')
         ) {
             $orderVariables =  Shopware()->Session()->sOrderVariables;
-            $orderVars = $orderVariables->getArrayCopy();
-            $addressId  = $orderVars['sUserData']['shippingaddress']['id'];
-            // overwrite of $userID is intentional
-            $userId = $addressId;
-            $sql = 'UPDATE `s_user_addresses` SET street=?, zipcode=?, city=?  WHERE id= ?';
+            $aOrderVars = $orderVariables->getArrayCopy();
+            $addressId  = $aOrderVars['sUserData']['shippingaddress']['id'];
+            // Update Model and Flush for SW 5.3; when using sql like below this does not happen
+            $address             = Shopware()->Models()->getRepository('Shopware\Models\Customer\Address')->find($addressId);
+            $address->setStreet($response->getStreet());
+            $address->setZipcode($response->getZip());
+            $address->setCity($response->getCity());
+            Shopware()->Models()->persist($address);
+            Shopware()->Models()->flush($address);
+            $session = Shopware()->Session();
+            $session->offsetSet('moptAddressCorrected', true);
         } else {
             $sql = 'UPDATE `s_user_shippingaddress` SET street=?, zipcode=?, city=?  WHERE userID = ?';
+            Shopware()->Db()->query(
+                $sql,
+                array(
+                    $response->getStreet(),
+                    $response->getZip(),
+                    $response->getCity(),
+                    $userId)
+            );
         }
-        Shopware()->Db()->query(
-            $sql,
-            array(
-            $response->getStreet(),
-            $response->getZip(),
-            $response->getCity(),
-            $userId)
-        );
     }
 
   /**

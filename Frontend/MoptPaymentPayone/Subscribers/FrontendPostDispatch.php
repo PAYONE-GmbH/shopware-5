@@ -242,6 +242,14 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
         }
+
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
+            if ($session->get('moptAddressCorrected')) {
+                unset($session->moptAddressCorrected);
+                // refresh View Vars after automatic address correction (SW 5.3)
+                $view->sUserData = Shopware()->Modules()->Admin()->sGetUserData();
+            }
+        }
     }
 
     /**
