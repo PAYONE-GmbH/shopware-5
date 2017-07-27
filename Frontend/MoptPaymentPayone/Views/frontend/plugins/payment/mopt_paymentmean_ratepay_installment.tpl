@@ -176,8 +176,9 @@
 
             <div id="{$sFormData.payment}_ContentRuntime" class="ratepay-Content" style="display: none;">
                 <br class="ratepay-ClearFix" />
-                <div class="ratepay-MarginTop select-field">
+                <div class="ratepay-MarginTop">
                     <span class="ratepay-VertAlignMiddle" style="float: left;">{s name='please'}Bitte&nbsp{/s}{s name='insertRuntime'}Laufzeit w&auml;hlen{/s}</span>
+                    <div class="select-field">
                         <select id="{$sFormData.payment}-runtime">
                             <option value="3"  selected="selected">{s name='3months'}3 months{/s}</option>
                             <option value="6"  selected="selected">{s name='6months'}6 months{/s}</option>
@@ -185,6 +186,7 @@
                             <option value="12" selected="selected">{s name='12months'}12 months{/s}</option>
                             <option value="24" selected="selected">{s name='24months'}24 months{/s}</option>
                         </select>
+                    </div>
                     <input name="" onclick="ratepayRateCalculatorAction('runtime', '{$sFormData.payment}', '{url controller='moptAjaxPayone' action='runtime'}');" value="{s name='calculateRate'}Rate jetzt berechnen{/s}" type="button" id="{$sFormData.payment}_Input-buttonRuntime"  class="ratepay-Input-button2">
                 </div>
             </div>
