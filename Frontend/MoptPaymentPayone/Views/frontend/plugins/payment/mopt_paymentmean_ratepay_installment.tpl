@@ -14,6 +14,8 @@
                 {s name='birthdate'}Geburtsdatum{/s}
             </label>
         </p>
+
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_installment_birthday]"
                 id="mopt_payone__ratepay_installment_birthday" onchange="ratepayInstallmentDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -27,7 +29,9 @@
                     {$smarty.section.birthdate.index}</option>
             {/section}
         </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_installment_birthmonth]"
             id="mopt_payone__ratepay_installment_birthmonth" onchange="ratepayInstallmentDobInput()"
             {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -41,7 +45,9 @@
                     {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
             {/section}
         </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_installment_birthyear]"
                 id="mopt_payone__ratepay_installment_birthyear" onchange="ratepayInstallmentDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -55,6 +61,7 @@
                     {$smarty.section.birthyear.index}</option>
             {/section}
         </select>
+    </div>
     {/if}
 
     {if $moptRatepayConfig.ratepayInstallmentMode}
@@ -169,7 +176,7 @@
 
             <div id="{$sFormData.payment}_ContentRuntime" class="ratepay-Content" style="display: none;">
                 <br class="ratepay-ClearFix" />
-                <div class="ratepay-MarginTop">
+                <div class="ratepay-MarginTop select-field">
                     <span class="ratepay-VertAlignMiddle" style="float: left;">{s name='please'}Bitte&nbsp{/s}{s name='insertRuntime'}Laufzeit w&auml;hlen{/s}</span>
                         <select id="{$sFormData.payment}-runtime">
                             <option value="3"  selected="selected">{s name='3months'}3 months{/s}</option>

@@ -16,6 +16,7 @@
         </label>
     </p>
 
+    <div class="select-field">
     <select name="moptPaymentData[mopt_payone__klarna_birthday]" 
             id="mopt_payone__klarna_birthday" 
             {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -29,7 +30,9 @@
                 {$smarty.section.birthdate.index}</option>
             {/section}
     </select>
+    </div>
 
+    <div class="select-field">
     <select name="moptPaymentData[mopt_payone__klarna_birthmonth]" 
             id="mopt_payone__klarna_birthmonth" 
             {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -43,7 +46,9 @@
                 {$smarty.section.birthmonth.index}</option>
             {/section}
     </select>
+    </div>
 
+    <div class="select-field">
     <select name="moptPaymentData[mopt_payone__klarna_birthyear]" 
             id="mopt_payone__klarna_birthyear" 
             {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -57,6 +62,7 @@
                 {$smarty.section.birthyear.index}</option>
             {/section}
     </select>
+    </div>
 
     <p class="none clearfix">
         <input name="moptPaymentData[mopt_payone__klarna_agreement]" type="checkbox" id="mopt_payone__klarna_agreement" value="true"

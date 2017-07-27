@@ -1,7 +1,7 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
 <div class="payment--form-group">
-    <p class="none">
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ideal_bankgrouptype]" 
                 id="mopt_payone__ideal_bankgrouptype" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -18,5 +18,5 @@
             <option value="KNAB_BANK" {if $form_data.mopt_payone__ideal_bankgrouptype == 'KNAB_BANK'}selected="selected"{/if}>Knab</option>
             <option value="VAN_LANSCHOT_BANKIERS" {if $form_data.mopt_payone__ideal_bankgrouptype == 'VAN_LANSCHOT_BANKIERS'}selected="selected"{/if}>van Lanschot</option>
         </select>
-    </p>
+    </div>
 </div>
