@@ -52,6 +52,13 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function indexAction()
     {
+        // check Basket Quantities before redirect
+        $basket = Shopware()->Modules()->Basket();
+        $checkQuantities = $basket->sCheckBasketQuantities();
+        if (!empty($checkQuantities['hideBasket'])) {
+            return $this->redirect(array('controller' => 'checkout'));
+        }
+
         if ($this->session->moptConsumerScoreCheckNeedsUserAgreement) {
             return $this->redirect(array('controller' => 'checkout'));
         }
