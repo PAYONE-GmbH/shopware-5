@@ -240,6 +240,27 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
+     * - returns the definition for attribute table extensions
+     * - intended to be used with Shopware version >= 5.3.0
+     *
+     * @return array
+     */
+    public function moptAttributeExtensionsArray53()
+    {
+        return [
+            's_user_addresses_attributes' => [
+                'addresscheck_result'               => 'string',
+                'addresscheck_date'                 => 'date',
+                'addresscheck_personstatus'         => 'string',
+                'consumerscore_result'              => 'string',
+                'consumerscore_date'                => 'date',
+                'consumerscore_color'               => 'string',
+                'consumerscore_value'               => 'integer',
+            ]
+        ];
+    }
+
+    /**
      * returns array of PAYONE payment methods
      *
      * payment types are grouped

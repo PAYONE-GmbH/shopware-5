@@ -965,7 +965,6 @@ class AddressCheck implements SubscriberInterface
             // perform check if prechoice is configured
             if ($config['consumerscoreCheckMoment'] == 0) {
                 try {
-                    throw new  Exception ('Test');
                     $response = $this->performConsumerScoreCheck($config, $billingAddressData, 0);
                     if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
                         // cancel, redirect to payment choice
@@ -1223,7 +1222,7 @@ class AddressCheck implements SubscriberInterface
                                 'sTarget'       => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
-                        }elseif (\Shopware::VERSION === '___VERSION___' ||
+                        } elseif (\Shopware::VERSION === '___VERSION___' ||
                             version_compare(\Shopware::VERSION, '5.2.0', '>=')
                         ) {
                             $caller->forward('edit', 'address', null, [
@@ -1363,15 +1362,21 @@ class AddressCheck implements SubscriberInterface
             if ($forwardOnError) {
                 switch ($config['adresscheckFailureHandling']) {
                     case 0: // cancel transaction -> redirect to payment choice
-                        // Todo try shippingpayment checkout here in SW 5.1 5.2 and 5.3
-                        $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        if (\Shopware::VERSION === '___VERSION___' ||
+                            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        ) {
+                            $subject->forward('shippingPayment', 'checkout', null);
+
+                        } else {
+                            $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        }
                         break;
 
                     case 1: // reenter address -> redirect to address form
                         if (\Shopware::VERSION === '___VERSION___' ||
                             version_compare(\Shopware::VERSION, '5.2.0', '>=')
                         ) {
-                            $subject->forward('edit', 'address', null, [
+                            $subject->forward('edit', 'moptaddresspayone', null, [
                                 'id'            => $shippingAddressData['id'],
                                 'sTarget'       => 'checkout',
                                 'sTargetAction' => 'confirm'

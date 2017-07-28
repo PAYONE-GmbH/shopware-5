@@ -246,7 +246,7 @@ class FrontendPostDispatch implements SubscriberInterface
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
             if ($session->get('moptAddressCorrected')) {
                 unset($session->moptAddressCorrected);
-                // refresh View Vars after automatic address correction (SW 5.3)
+                // refresh View Vars after automatic address correction (currently only used by SW 5.3)
                 $view->sUserData = Shopware()->Modules()->Admin()->sGetUserData();
                 // and update order variables in session
                 $session['sOrderVariables'] = new \ArrayObject($view->getAssign(), \ArrayObject::ARRAY_AS_PROPS);

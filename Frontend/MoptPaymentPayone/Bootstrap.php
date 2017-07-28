@@ -531,8 +531,25 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 }
             }
         }
-
         Shopware()->Models()->generateAttributeModels(array_keys($tables));
+
+        // SW 5.3 Use Address Table instead of shipping and billing tables
+        if (\Shopware::VERSION === '___VERSION___' ||
+            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+        ) {
+
+            $tables = $this->getInstallHelper()->moptAttributeExtensionsArray53();
+            $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
+
+            foreach ($tables as $table => $attributes) {
+                foreach ($attributes as $attribute => $options) {
+                    $type = is_array($options) ? $options[0] : $options;
+                    $data = is_array($options) ? $options[1] : [];
+                    $attributeService->update($table, $prefix . '_' . $attribute, $type, $data);
+                }
+            }
+            Shopware()->Models()->generateAttributeModels(array_keys($tables));
+        }
     }
 
     /**
