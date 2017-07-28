@@ -464,7 +464,14 @@ class AddressCheck implements SubscriberInterface
                     $response = $this->performConsumerScoreCheck($config, $billingAddressData, $paymentId);
                     if ($forwardOnError && !$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
                         // cancel, redirect to payment choice
-                        $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        if (\Shopware::VERSION === '___VERSION___' ||
+                            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        ){
+                            $subject->forward('shippingpayment', 'checkout', null);
+
+                        } else {
+                            $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        }
                     }
                 } catch (\Exception $e) {
                 }
@@ -958,21 +965,33 @@ class AddressCheck implements SubscriberInterface
             // perform check if prechoice is configured
             if ($config['consumerscoreCheckMoment'] == 0) {
                 try {
+                    throw new  Exception ('Test');
                     $response = $this->performConsumerScoreCheck($config, $billingAddressData, 0);
                     if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
                         // cancel, redirect to payment choice
-                        $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        if (version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        ) {
+                            $subject->forward('shippingPayment', 'checkout');
+                        } else {
+                            $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        }
                     }
                 } catch (\Exception $e) {
                     if ($config['consumerscoreFailureHandling'] == 0) {
                         // abort and delete payment data and set to payone prepayment
                         $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
                         $moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
-                        $this->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        if (version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        ) {
+                            $subject->forward('shippingPayment', 'checkout', null);
+                        } else {
+                            $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                        }
                         return;
                     } else {
                         // continue
-                        $this->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+
+                        //$subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
                         return;
                     }
                 }
@@ -1344,6 +1363,7 @@ class AddressCheck implements SubscriberInterface
             if ($forwardOnError) {
                 switch ($config['adresscheckFailureHandling']) {
                     case 0: // cancel transaction -> redirect to payment choice
+                        // Todo try shippingpayment checkout here in SW 5.1 5.2 and 5.3
                         $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
                         break;
 
@@ -1369,7 +1389,13 @@ class AddressCheck implements SubscriberInterface
                             );
 
                             if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
-                                $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                                if (\Shopware::VERSION === '___VERSION___' ||
+                                    version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                                ){
+                                    $subject->forward('shippingpayment', 'checkout', null);
+                                } else {
+                                    $subject->forward('payment', 'account', null, ['sTarget' => 'checkout']);
+                                }
                             }
                         } catch (\Exception $e) {
                         }
