@@ -1,48 +1,50 @@
-$.plugin('moptAddressCheckNeedsUserVerification', {
-    defaults: {
-        moptAddressCheckNeedsUserVerification: false,
-        moptAddressCheckVerificationUrl: false
-    },
-    init: function () {
-        var me = this;
-        me.applyDataAttributes();
+document.asyncReady(function() {
+    $.plugin('moptAddressCheckNeedsUserVerification', {
+        defaults: {
+            moptAddressCheckNeedsUserVerification: false,
+            moptAddressCheckVerificationUrl: false
+        },
+        init: function () {
+            var me = this;
+            me.applyDataAttributes();
 
-        if (me.opts.moptAddressCheckNeedsUserVerification && me.opts.moptAddressCheckVerificationUrl) {
-            $(document).ready(function () {
-                $.post(me.opts.moptAddressCheckVerificationUrl, function (data) {
-                    $('.content-main').prepend(data);
+            if (me.opts.moptAddressCheckNeedsUserVerification && me.opts.moptAddressCheckVerificationUrl) {
+                $(document).ready(function () {
+                    $.post(me.opts.moptAddressCheckVerificationUrl, function (data) {
+                        $('.content-main').prepend(data);
+                    });
                 });
-            });
+            }
+        },
+        destroy: function () {
+            var me = this;
+            me._destroy();
         }
-    },
-    destroy: function () {
-        var me = this;
-        me._destroy();
-    }
-});
+    });
 
-$.plugin('moptShippingAddressCheckNeedsUserVerification', {
-    defaults: {
-        moptShippingAddressCheckNeedsUserVerification: false,
-        moptShippingAddressCheckVerificationUrl: false
-    },
-    init: function () {
-        var me = this;
-        me.applyDataAttributes();
 
-        if (me.opts.moptAddressCheckNeedsUserVerification && me.opts.moptShippingAddressCheckVerificationUrl) {
-            $(document).ready(function () {
-                $.post(me.opts.moptShippingAddressCheckVerificationUrl, function (data) {
-                    $('.content-main').prepend(data);
+    $.plugin('moptShippingAddressCheckNeedsUserVerification', {
+        defaults: {
+            moptShippingAddressCheckNeedsUserVerification: false,
+            moptShippingAddressCheckVerificationUrl: false
+        },
+        init: function () {
+            var me = this;
+            me.applyDataAttributes();
+
+            if (me.opts.moptAddressCheckNeedsUserVerification && me.opts.moptShippingAddressCheckVerificationUrl) {
+                $(document).ready(function () {
+                    $.post(me.opts.moptShippingAddressCheckVerificationUrl, function (data) {
+                        $('.content-main').prepend(data);
+                    });
                 });
-            });
+            }
+        },
+        destroy: function () {
+            var me = this;
+            me._destroy();
         }
-    },
-    destroy: function () {
-        var me = this;
-        me._destroy();
-    }
-});
+    });
 
 $.plugin('moptConsumerScoreCheckNeedsUserAgreement', {
     defaults: {
@@ -66,8 +68,6 @@ $.plugin('moptConsumerScoreCheckNeedsUserAgreement', {
         me._destroy();
     }
 });
-document.asyncReady(function() {
-    // do your magic here
 
 $('#moptAddressCheckNeedsUserVerification').moptAddressCheckNeedsUserVerification();
 $('#moptShippingAddressCheckNeedsUserVerification').moptShippingAddressCheckNeedsUserVerification();

@@ -34,18 +34,30 @@ class Shopware_Controllers_Frontend_MoptAccountPayone extends Shopware_Controlle
     public function getWhitelistedCSRFActions()
     {
         return [
-            'savePayment'
+            'savePayment',
+            'payment'
         ];
     }
 
     /**
-     * Save shipping action
+     * Save paqyment action
      *
-     * Save shipping address data
+     * Save payment data
      */
     public function savePaymentAction()
     {
       parent::savePaymentAction();
     }
+
+    /**
+     * Payment action method
+     *
+     * Read and change payment mean and payment data
+     */
+    public function paymentAction()
+    {
+        parent::paymentAction();
+    }
+
 
 }
