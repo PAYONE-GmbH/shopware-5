@@ -33,7 +33,7 @@
 class Payone_Api_Enum_AddressCheckPersonstatus
 {
     const NONE = 'NONE'; // NONE: no verification of personal data carried out
-    const PPB = 'PPB';   // PPB:  first name & surname unknown
+    const PPB = 'PPB';   // PPB:  the person can be confirmed for this address
     const PHB = 'PHB';   // PHB:  surname known
     const PAB = 'PAB';   // PAB:  first name & surname unknown
     const PKI = 'PKI';   // PKI:  ambiguity in name and address
