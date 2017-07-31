@@ -251,6 +251,17 @@ class FrontendPostDispatch implements SubscriberInterface
                 // and update order variables in session
                 $session['sOrderVariables'] = new \ArrayObject($view->getAssign(), \ArrayObject::ARRAY_AS_PROPS);
             }
+            // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
+
+        }
+
+        if ($controllerName == 'moptAjaxPayone' ) {
+            // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
+            if (version_compare(\Shopware::VERSION, '5.3.0', '>=')
+            ) {
+                $view->assign('useMoptAccountController', true);
+            }
+
         }
     }
 

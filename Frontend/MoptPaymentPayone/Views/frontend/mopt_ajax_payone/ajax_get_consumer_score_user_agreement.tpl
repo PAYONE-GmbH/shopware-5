@@ -31,16 +31,19 @@
         {
             if (response === 'true')
             {
-                // SW < 5.3
-                //window.location = "{url controller=account action=savePayment sTarget=checkout forceSecure}";
-                // SW > 5.3 ?
-                //window.location = "{url controller=checkout action=saveShippingPayment sTarget=checkout sTargetAction=confirm forceSecure}";
-                // only Post Requests allowed
-                $.post('{url controller="checkout" action="saveShippingPayment" forceSecure}', { payment: {$paymentid} });
+                {if isset($useMoptAccountController)}
+                    window.location = "{url controller=MoptAccountPayone action=savePayment sTarget=checkout forceSecure}";
+                {else}
+                    window.location = "{url controller=account action=savePayment sTarget=checkout forceSecure}";
+                {/if}
             }
             else
             {
-                window.location = "{url controller=account action=payment sTarget=checkout forceSecure}";
+                {if $useMoptAccountController}
+                    window.location = "{url controller=MoptAccountPayone action=payment sTarget=checkout forceSecure}";
+                {else}
+                    window.location = "{url controller=account action=payment sTarget=checkout forceSecure}";
+                {/if}
             }
         });
     }
