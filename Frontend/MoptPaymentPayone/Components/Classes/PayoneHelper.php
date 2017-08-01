@@ -395,7 +395,7 @@ class Mopt_PayoneHelper
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
 
         if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+            version_compare(\Shopware::VERSION, '5.2.0', '>=')
         ) {
             if ($addressType === 'billing') {
                 $billing   = $user->getDefaultBillingAddress();
