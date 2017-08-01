@@ -595,8 +595,17 @@ class Mopt_PayoneHelper
             version_compare(\Shopware::VERSION, '5.3.0', '>='))
         {
             $orderVariables =  Shopware()->Session()->sOrderVariables;
-            $aOrderVars = $orderVariables->getArrayCopy();
-            $addressId  = $aOrderVars['sUserData']['billingaddress']['id'];
+
+            // ordervariables are null until shippingPayment view
+            if ($orderVariables !== null){
+                $aOrderVars = $orderVariables->getArrayCopy();
+                $addressId  = $aOrderVars['sUserData']['billingaddress']['id'];
+            } else {
+                $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                $addressId  = $userData['billingaddress']['id'];
+
+            }
+
             // Update Model and Flush for SW 5.3; when using sql like below this does not happen
             $address             = Shopware()->Models()->getRepository('Shopware\Models\Customer\Address')->find($addressId);
             $address->setStreet($response->getStreet());
@@ -633,8 +642,15 @@ class Mopt_PayoneHelper
             version_compare(\Shopware::VERSION, '5.3.0', '>=')
         ) {
             $orderVariables =  Shopware()->Session()->sOrderVariables;
-            $aOrderVars = $orderVariables->getArrayCopy();
-            $addressId  = $aOrderVars['sUserData']['shippingaddress']['id'];
+
+            if ($orderVariables !== null){
+                $aOrderVars = $orderVariables->getArrayCopy();
+                $addressId  = $aOrderVars['sUserData']['shippingaddress']['id'];
+            } else {
+                $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                $addressId  = $userData['shippingaddress']['id'];
+
+            }
             // Update Model and Flush for SW 5.3; when using sql like below this does not happen
             $address             = Shopware()->Models()->getRepository('Shopware\Models\Customer\Address')->find($addressId);
             $address->setStreet($response->getStreet());
