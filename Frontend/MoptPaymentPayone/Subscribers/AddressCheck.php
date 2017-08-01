@@ -1222,7 +1222,7 @@ class AddressCheck implements SubscriberInterface
                                 'sTarget'       => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
-                        } elseif (\Shopware::VERSION === '___VERSION___' ||
+                        } elseif (
                             version_compare(\Shopware::VERSION, '5.2.0', '>=')
                         ) {
                             $caller->forward('edit', 'address', null, [
