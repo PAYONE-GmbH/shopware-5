@@ -21,8 +21,6 @@ class Shopware_Controllers_Frontend_MoptAddressPayone extends Shopware_Controlle
     {
         $this->admin = Shopware()->Modules()->Admin();
 
-        $session = $this->container->get('session');
-
         $this->addressRepository = $this->get('models')->getRepository(Shopware\Models\Customer\Address::class);
         $this->addressService = $this->get('shopware_account.address_service');
 
@@ -32,7 +30,6 @@ class Shopware_Controllers_Frontend_MoptAddressPayone extends Shopware_Controlle
             return $this->forward('index', 'register', 'frontend', $this->getForwardParameters());
         }
 
-        $this->View()->assign('userInfo', $this->get('shopware_account.store_front_greeting_service')->fetch());
         $this->View()->assign('sUserData', $this->admin->sGetUserData());
         $this->View()->assign('sAction', $this->Request()->getActionName());
     }
