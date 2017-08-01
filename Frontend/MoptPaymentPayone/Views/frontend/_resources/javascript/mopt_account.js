@@ -1,4 +1,6 @@
-$.plugin('moptAddressCheckNeedsUserVerification', {
+function moptAccountReady() {
+
+    $.plugin('moptAddressCheckNeedsUserVerification', {
     defaults: {
         moptAddressCheckNeedsUserVerification: false,
         moptAddressCheckVerificationUrl: false
@@ -66,10 +68,22 @@ $.plugin('moptConsumerScoreCheckNeedsUserAgreement', {
         me._destroy();
     }
 });
-document.asyncReady(function() {
-    // do your magic here
+
 
 $('#moptAddressCheckNeedsUserVerification').moptAddressCheckNeedsUserVerification();
 $('#moptShippingAddressCheckNeedsUserVerification').moptShippingAddressCheckNeedsUserVerification();
 $('#moptConsumerScoreCheckNeedsUserAgreement').moptConsumerScoreCheckNeedsUserAgreement();
+
+}
+
+$(document).ready(function(){
+    moptAccountReady();
 });
+
+if (typeof document.asyncReady !== "undefined") {
+
+
+    document.asyncReady(function () {
+        moptAccountReady();
+    });
+}
