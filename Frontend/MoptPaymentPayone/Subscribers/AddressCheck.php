@@ -1222,7 +1222,7 @@ class AddressCheck implements SubscriberInterface
                                 'sTarget'       => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
-                        } elseif (\Shopware::VERSION === '___VERSION___' ||
+                        } elseif (
                             version_compare(\Shopware::VERSION, '5.2.0', '>=')
                         ) {
                             $caller->forward('edit', 'address', null, [
@@ -1374,7 +1374,7 @@ class AddressCheck implements SubscriberInterface
 
                     case 1: // reenter address -> redirect to address form
                         if (\Shopware::VERSION === '___VERSION___' ||
-                            version_compare(\Shopware::VERSION, '5.2.0', '>=')
+                            version_compare(\Shopware::VERSION, '5.3.0', '>=')
                         ) {
                             $subject->forward('edit', 'moptaddresspayone', null, [
                                 'id'            => $shippingAddressData['id'],
