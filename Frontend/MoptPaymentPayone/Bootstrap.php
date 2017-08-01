@@ -533,12 +533,12 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         }
         Shopware()->Models()->generateAttributeModels(array_keys($tables));
 
-        // SW 5.3 Use Address Table instead of shipping and billing tables
+        // SW 5.2 Use Address Table instead of shipping and billing tables
         if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+            version_compare(\Shopware::VERSION, '5.2.0', '>=')
         ) {
 
-            $tables = $this->getInstallHelper()->moptAttributeExtensionsArray53();
+            $tables = $this->getInstallHelper()->moptAttributeExtensionsArray52();
             $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
 
             foreach ($tables as $table => $attributes) {

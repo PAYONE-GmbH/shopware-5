@@ -241,11 +241,11 @@ class Mopt_PayoneInstallHelper
 
     /**
      * - returns the definition for attribute table extensions
-     * - intended to be used with Shopware version >= 5.3.0
+     * - intended to be used with Shopware version >= 5.2.0
      *
      * @return array
      */
-    public function moptAttributeExtensionsArray53()
+    public function moptAttributeExtensionsArray52()
     {
         return [
             's_user_addresses_attributes' => [
