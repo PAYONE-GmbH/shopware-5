@@ -592,7 +592,7 @@ class Mopt_PayoneHelper
     public function saveCorrectedBillingAddress($userId, $response)
     {
         if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.3.0', '>='))
+            version_compare(\Shopware::VERSION, '5.2.0', '>='))
         {
             $orderVariables =  Shopware()->Session()->sOrderVariables;
 
@@ -639,7 +639,7 @@ class Mopt_PayoneHelper
     public function saveCorrectedShippingAddress($userId, $response)
     {
         if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+            version_compare(\Shopware::VERSION, '5.2.0', '>=')
         ) {
             $orderVariables =  Shopware()->Session()->sOrderVariables;
 
