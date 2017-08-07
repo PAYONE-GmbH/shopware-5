@@ -161,6 +161,7 @@ class FrontendCheckout implements SubscriberInterface
         ) {
             $view->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
             $view->extendsTemplate('frontend/checkout/ajax_cart_amazon.tpl');
+            $view->extendsTemplate('frontend/checkout/mopt_cart_amazon.tpl');
         }
 
         if (!empty($userData['additional']['payment']['id'])) {
