@@ -195,6 +195,9 @@
 
         window.onAmazonLoginReady = function () {
             amazon.Login.setClientId("{$payoneAmazonPayConfig->getClientId()}");
+            $('#moptAmazonPayButton').attr("disabled", "disabled");
+            $.loadingIndicator.open();
+
         };
         window.onAmazonPaymentsReady = function () {
             new OffAmazonPayments.Widgets.AddressBook({
@@ -212,6 +215,7 @@
                 onAddressSelect: function (orderReference) {
 
                     $('#moptAmazonPayButton').attr("disabled", "disabled");
+                    $.loadingIndicator.open();
 
                     var call = '{url controller="moptAjaxPayone" action="getOrderReferenceDetails" forceSecure}';
                     $.ajax({
@@ -228,6 +232,7 @@
                                 $.loadingIndicator.open();
                                 location.reload(true);
                             } else {
+                                $.loadingIndicator.close();
                                 $('#moptAmazonPayButton').removeAttr("disabled");
                             }
 
