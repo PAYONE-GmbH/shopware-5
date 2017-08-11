@@ -877,6 +877,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         if (empty($this->session->moptPayoneAmazonReferenceId)) {
             $this->session->moptPayoneAmazonReferenceId = $postData['referenceId'];
         }
+
+
         $data = [];
         $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $postData['referenceId'], $this->session->moptPayoneAmazonAccessToken );
 
@@ -884,34 +886,43 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
             // create User from Address Data
 
-            $payoneUserHelper->createrOrUpdateUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId() , $this->session);
+                $responseData = $response->toArray();
+                $responseAddress = $response->getPaydata()->toAssocArray();
 
-            $responseData = $response->toArray();
-            $responseAddress = $response->getPaydata()->toAssocArray();
+            if ($this->isShippingAddressSupported($responseAddress['shipping_country']) === false) {
+                $data['data'] = $response;
+                $data['status'] = 'error';
+                $encoded = json_encode($data);
+                echo $encoded;
 
-            if (!$this->session->moptCountry){
-                $data['countryChanged'] = true;
-                $this->session->moptCountry = $responseAddress['shipping_country'];
             } else {
+                $payoneUserHelper->createrOrUpdateUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId(), $this->session);
 
-                if ($this->session->moptCountry == $responseAddress['shipping_country']) {
-                $data['countryChanged'] = false;
-                $this->session->moptCountry = $responseAddress['shipping_country'];
-                } else {
+                if (!$this->session->moptCountry) {
                     $data['countryChanged'] = true;
                     $this->session->moptCountry = $responseAddress['shipping_country'];
+                } else {
+
+                    if ($this->session->moptCountry == $responseAddress['shipping_country']) {
+                        $data['countryChanged'] = false;
+                        $this->session->moptCountry = $responseAddress['shipping_country'];
+                    } else {
+                        $data['countryChanged'] = true;
+                        $this->session->moptCountry = $responseAddress['shipping_country'];
+                    }
                 }
+
+                if (empty($this->session->moptPayoneAmazonWorkOrderId)) {
+                    $this->session->moptPayoneAmazonWorkOrderId = $responseData['workorderid'];
+                }
+
+                $data['data'] = $responseData['rawResponse'];
+                $data['status'] = 'success';
+                $data['workorderid'] = $this->session->moptPayoneAmazonWorkOrderId;
+                $encoded = json_encode($data);
+                echo $encoded;
             }
 
-            if (empty( $this->session->moptPayoneAmazonWorkOrderId)) {
-                $this->session->moptPayoneAmazonWorkOrderId  =  $responseData['workorderid'];
-            }
-
-            $data['data'] = $responseData['rawResponse'];
-            $data['status'] = 'success';
-            $data['workorderid'] = $this->session->moptPayoneAmazonWorkOrderId;
-            $encoded = json_encode($data);
-            echo $encoded;
         } else {
             $data['data'] = $response;
             $data['status'] = 'error';
@@ -965,6 +976,47 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         */
         $response = $this->service->request($request);
         return $response;
+    }
+
+
+    protected function isShippingAddressSupported($country){
+
+        $paymentMeans = Shopware()->Modules()->Admin()->sGetPaymentMeans();
+        foreach ($paymentMeans as $paymentMean) {
+            if ($this->moptPayoneMain->getPaymentHelper()->isPayoneAmazonPay($paymentMean['name'])) {
+                $countries = $this->moptPayoneMain->getPaymentHelper()
+                    ->moptGetCountriesAssignedToPayment($paymentMean['id']);
+                break;
+            }
+        }
+
+        if (in_array($country, $countries)) {
+
+            $blubs = true;
+        } else {
+            $bla =false;https://payments-de-sandbox.amazon.com/gp/widgets/widgets
+        }
+
+        $sql = "SELECT id FROM s_core_countries WHERE countryiso =? ";
+        $result = Shopware()->Db()->fetchOne($sql, $country);
+
+        if ($result == false){
+            return false;
+        }
+
+        $dispatches = Shopware()->Modules()->Admin()->sGetPremiumDispatches($result, $paymentMean['id'], null);
+        $breakpoint = 1;
+
+        return false;
+/*
+        if (){
+
+            return true;
+        } else {
+            return false;
+        }
+        */
+
     }
 
 }

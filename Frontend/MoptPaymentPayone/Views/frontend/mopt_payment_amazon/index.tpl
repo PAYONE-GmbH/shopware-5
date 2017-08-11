@@ -191,7 +191,6 @@
     </div>
     <script>
         var moptAmazonReferenceId = null;
-        var moptAmazonCountryChanged = null;
 
         window.onAmazonLoginReady = function () {
             amazon.Login.setClientId("{$payoneAmazonPayConfig->getClientId()}");
@@ -225,8 +224,9 @@
                     })
                         .success(function(response){
 
-                            responseData = $.parseJSON(response);
-                            moptAmazonCountryChanged = responseData.countryChanged;
+                            var responseData = $.parseJSON(response);
+
+                            var moptAmazonCountryChanged = responseData.countryChanged;
                             // Reload the site, to update dispatches in case country changed
                             if (moptAmazonCountryChanged) {
                                 $.loadingIndicator.open();
