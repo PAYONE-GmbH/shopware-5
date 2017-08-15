@@ -180,6 +180,7 @@
                                 <option value="DarkGray" {if $amazonpayconfig->getButtonColor() == 'DarkGray'}selected="selected"{/if}>{s name=amazon_buttoncolor_darkgray}Dark gray{/s}</option>
                             </select>
                         </td>
+                        <!--
                         <td>
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][buttonLanguage]" id="amazonpayButtonLanguage_{$amazonpayconfig->getId()}">
                                 <option value="none" {if $amazonpayconfig->getButtonLanguage() == 'none'}selected="selected"{/if}>{s name=amazon_buttonlanguage_autodetect}Autodetect (default){/s}</option>
@@ -190,6 +191,7 @@
                                 <option value="es-ES" {if $amazonpayconfig->getButtonLanguage() == 'es-ES'}selected="selected"{/if}>{s name=amazon_buttonlanguage_es-ES}Spanish (Spain){/s}</option>
                             </select>
                         </td>
+                        -->
                         <td>
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][amazonMode]" id="amazonpayAmazonMode_{$amazonpayconfig->getId()}">
                                 <option value="sync" {if $amazonpayconfig->getAmazonMode() == 'sync'}selected="selected"{/if}>{s name=amazon_mode_always_sync}Always Synchronous{/s}</option>

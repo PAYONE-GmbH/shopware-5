@@ -15,7 +15,9 @@
                         type: "{$payoneAmazonPayConfig->getButtonType()}",
                         color: "{$payoneAmazonPayConfig->getButtonColor()}",
                         size: 'medium',
-                        language: "{$payoneAmazonPayConfig->getButtonLanguage()}",
+                        //language: "{$payoneAmazonPayConfig->getButtonLanguage()}",
+                        language: "{$Locale|replace:"_":"-"}",
+
                         authorization: function () {
                             loginOptions = {
                                 scope: 'profile payments:widget payments:shipping_address payments:billing_address',

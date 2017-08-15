@@ -223,21 +223,27 @@
                         data: { referenceId: moptAmazonReferenceId}
                     })
                         .success(function(response){
-
                             var responseData = $.parseJSON(response);
 
-                            var moptAmazonCountryChanged = responseData.countryChanged;
-                            // Reload the site, to update dispatches in case country changed
-                            if (moptAmazonCountryChanged) {
-                                $.loadingIndicator.open();
-                                location.reload(true);
-                            } else {
+                            if (responseData.status == "error"){
+
                                 $.loadingIndicator.close();
-                                $('#moptAmazonPayButton').removeAttr("disabled");
+                                alert(responseData.errormessage);
+
+                            } else {
+
+                                var moptAmazonCountryChanged = responseData.countryChanged;
+
+                                // Reload the site, to update dispatches in case country changed
+                                if (moptAmazonCountryChanged) {
+                                    $.loadingIndicator.open();
+                                    location.reload(true);
+                                } else {
+                                    $.loadingIndicator.close();
+                                    $('#moptAmazonPayButton').removeAttr("disabled");
+                                }
                             }
-
-                        });
-
+                        })
                 },
                 design: {
                     designMode: 'responsive'

@@ -115,6 +115,10 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $paramBuilder = $moptPayoneMain->getParamBuilder();
         $userData = $this->getUserData();
 
+        // pre-reserve Shop Order Number
+        $my_sOrder = new sOrder();
+        $myOrdernum = $my_sOrder->sGetOrderNumber();
+
         $config = $moptPayoneMain->getPayoneConfig($paymentId);;
 
         $params = $moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
@@ -168,8 +172,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $request->setClearingtype(Payone_Enum_ClearingType::WALLET);
         $request->setWorkorderId($this->session->moptPayoneAmazonWorkOrderId);
         $request->setWallettype(Payone_Api_Enum_WalletType::AMAZONPAY);
-        $request->setReference($paramBuilder->getParamPaymentReference());
-
+        $request->setReference($myOrdernum);
         $personalData = $paramBuilder->getPersonalData($userData);
         $request->setPersonalData($personalData);
         $deliveryData = $paramBuilder->getDeliveryData($userData);
@@ -261,6 +264,13 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 $this->session->paymentReference
             );
 
+            // replace the new order number with the already reserved one, which is already sent to amazon
+            $sql = 'UPDATE  `s_order` SET ordernumber = ? WHERE transactionID = ?';
+            Shopware()->Db()->query($sql, array($myOrdernum,$txid));
+
+            // also update Ordernumber in Session
+            $this->session['sOrderVariables']->sOrderNumber = $myOrdernum;
+
             // get orderId for attribute Saving
             $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
             $orderId = Shopware()->Db()->fetchOne($sql, $txid);
@@ -271,14 +281,10 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 . 'mopt_payone_order_hash=?, mopt_payone_payolution_workorder_id=?,  mopt_payone_payolution_clearing_reference=?  WHERE orderID = ?';
             Shopware()->Db()->query($sql, array($txid, $this->session->moptIsAuthorized,
                 $this->session->paymentReference, $this->session->moptOrderHash, $this->session->moptPayoneAmazonWorkOrderId, $this->session->moptPayoneAmazonReferenceId, $orderId));
+
         } else {
 
             // redirect back to checkout or show error message
-
-            unset($this->session->moptPayoneAmazonAccessToken);
-            unset($this->session->moptPayoneAmazonReferenceId);
-            unset($this->session->moptPayoneAmazonWorkOrderId);
-            $this->session->sUserId = null;
 
             $this->session->payoneErrorMessage = $moptPayoneMain->getPaymentHelper()
                 ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
@@ -304,6 +310,16 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $orderVariables['sAddresses']['equal'] = $this->areAddressesEqual($orderVariables['sAddresses']['billing'], $orderVariables['sAddresses']['shipping']);
         }
 
+        // If auth was set to async display an additional message
+
+        $payData = $request->getPaydata()->toArray();
+
+        if ($payData['add_paydata[amazon_timeout]'] == 1440){
+            $this->View()->moptAmazonAsyncAuthMessage = Shopware()->Snippets()
+                ->getNamespace('frontend/MoptPaymentPayone/messages')
+                ->get('amazonAsyncAuthMessage');
+        }
+
         $this->View()->assign($orderVariables);
         // TransactionID
         $this->View()->sTransactionumber = $txid;
@@ -319,7 +335,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         unset($this->session['sBasketQuantity']);
         unset($this->session['sBasketAmount']);
         // logout user to prevent autoforward to checkout/confirm when placing a second "normal" order
-        $this->session->sUserId = null;
+        $this->admin->logout();
     }
 
     /**
@@ -552,31 +568,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         return $result;
     }
 
-    /**
-     * Create temporary order in s_order_basket on confirm page
-     * Used to track failed / aborted orders
-     */
-    public function saveTemporaryOrder()
-    {
-        $order = Shopware()->Modules()->Order();
-        $session = Shopware()->Session();
-
-        $order->sUserData = $this->View()->sUserData;
-        $order->sComment = isset($session['sComment']) ? $session['sComment'] : '';
-        $order->sBasketData = $this->View()->sBasket;
-        $order->sAmount = $this->View()->sBasket['sAmount'];
-        $order->sAmountWithTax = !empty($this->View()->sBasket['AmountWithTaxNumeric']) ? $this->View()->sBasket['AmountWithTaxNumeric'] : $this->View()->sBasket['AmountNumeric'];
-        $order->sAmountNet = $this->View()->sBasket['AmountNetNumeric'];
-        $order->sShippingcosts = $this->View()->sBasket['sShippingcosts'];
-        $order->sShippingcostsNumeric = $this->View()->sBasket['sShippingcostsWithTax'];
-        $order->sShippingcostsNumericNet = $this->View()->sBasket['sShippingcostsNet'];
-        $order->dispatchId = $session['sDispatch'];
-        $order->sNet = !$this->View()->sUserData['additional']['charge_vat'];
-        $order->deviceType = $this->Request()->getDeviceType();
-
-        $order->sDeleteTemporaryOrder();    // Delete previous temporary orders
-        $order->sCreateTemporaryOrder();    // Create new temporary order
-    }
 
     /**
      * Get current selected country - if no country is selected, choose first one from list

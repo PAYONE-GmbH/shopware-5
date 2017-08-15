@@ -749,9 +749,9 @@ class Mopt_PayonePaymentHelper
     public function moptGetShippingCountriesAssignedToPayment($paymentId)
     {
         $sql    = 'SELECT s_premium_dispatch_countries.countryID, s_core_countries.countryname, s_core_countries.countryiso '
-            . 'FROM s_premium_dispatch_countries, s_core_countries '
-            . 'WHERE s_core_paymentmeans_countries.paymentID = ? '
-            . 'AND s_core_countries.id = s_core_paymentmeans_countries.countryID;';
+            . 'FROM s_premium_dispatch_countries, s_core_countries, s_premium_dispatch_paymentmeans '
+            . 'WHERE s_premium_dispatch_countries.countryID = s_core_countries.id AND s_premium_dispatch_paymentmeans.paymentID = ? '
+            . 'AND s_premium_dispatch_paymentmeans.dispatchID = s_premium_dispatch_countries.dispatchID;';
         $paymentCountries = Shopware()->Db()->fetchAll($sql, $paymentId);
 
         return $paymentCountries;

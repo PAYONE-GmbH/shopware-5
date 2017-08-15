@@ -889,13 +889,29 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $responseData = $response->toArray();
                 $responseAddress = $response->getPaydata()->toAssocArray();
 
-            if ($this->isShippingAddressSupported($responseAddress['shipping_country']) === false) {
-                $data['data'] = $response;
+            // check if billing country is active for amazon
+
+            if (!$this->isBillingAddressSupported($responseAddress['billing_country'])) {
+                $data['errormessage'] = Shopware()->Snippets()
+                    ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                    ->get('amazonBillingAddressNotSupported');
                 $data['status'] = 'error';
                 $encoded = json_encode($data);
                 echo $encoded;
+                return;
+            }
 
-            } else {
+            if (!$this->isShippingAddressSupported($responseAddress['shipping_country'])) {
+                $data['errormessage'] = Shopware()->Snippets()
+                    ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                    ->get('amazonShippingAddressNotSupported');
+                $data['status'] = 'error';
+                $encoded = json_encode($data);
+                echo $encoded;
+                return;
+
+            }
+
                 $payoneUserHelper->createrOrUpdateUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId(), $this->session);
 
                 if (!$this->session->moptCountry) {
@@ -921,7 +937,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $data['workorderid'] = $this->session->moptPayoneAmazonWorkOrderId;
                 $encoded = json_encode($data);
                 echo $encoded;
-            }
 
         } else {
             $data['data'] = $response;
@@ -978,45 +993,37 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $response;
     }
 
+    protected function isBillingAddressSupported($country){
 
-    protected function isShippingAddressSupported($country){
+        $countries = $this->moptPayoneMain->getPaymentHelper()
+            ->moptGetCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
 
-        $paymentMeans = Shopware()->Modules()->Admin()->sGetPaymentMeans();
-        foreach ($paymentMeans as $paymentMean) {
-            if ($this->moptPayoneMain->getPaymentHelper()->isPayoneAmazonPay($paymentMean['name'])) {
-                $countries = $this->moptPayoneMain->getPaymentHelper()
-                    ->moptGetCountriesAssignedToPayment($paymentMean['id']);
-                break;
-            }
+        if (count($countries) == 0){
+            return true;
         }
 
-        if (in_array($country, $countries)) {
-
-            $blubs = true;
-        } else {
-            $bla =false;https://payments-de-sandbox.amazon.com/gp/widgets/widgets
-        }
-
-        $sql = "SELECT id FROM s_core_countries WHERE countryiso =? ";
-        $result = Shopware()->Db()->fetchOne($sql, $country);
-
-        if ($result == false){
-            return false;
-        }
-
-        $dispatches = Shopware()->Modules()->Admin()->sGetPremiumDispatches($result, $paymentMean['id'], null);
-        $breakpoint = 1;
-
-        return false;
-/*
-        if (){
-
+        if (in_array($country, array_column($countries, 'countryiso'))) {
             return true;
         } else {
             return false;
         }
-        */
+    }
 
+
+    protected function isShippingAddressSupported($country){
+
+        $countries = $this->moptPayoneMain->getPaymentHelper()
+            ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
+
+        if (count($countries) == 0){
+            return true;
+        }
+
+        if (in_array($country, array_column($countries, 'countryiso'))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
