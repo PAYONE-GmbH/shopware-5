@@ -121,6 +121,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
         $config = $moptPayoneMain->getPayoneConfig($paymentId);;
 
+        $response = $this->buildAndCallSetOrderReferenceDetails($config);
+
         $params = $moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
 
         if ($config['authorisationMethod'] === 'Autorisierung') {
@@ -713,6 +715,53 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             }
         }
         $this->forward('index');
+    }
+
+    /**
+     * prepare and do payment server api call
+     *
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     */
+    protected function buildAndCallSetOrderReferenceDetails($config)
+    {
+        $session = Shopware()->Session();
+        $clearingType = \Payone_Enum_ClearingType::WALLET;
+        $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
+        $data = [];
+        $params = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
+        $params['api_version'] = '3.10';
+        //create hash
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $orderHash = md5(serialize($basket));
+        $session->moptOrderHash = $orderHash;
+
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::AMAZON_SETORDERREFERENCEDETAILS)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amazon_reference_id', 'data' => $session->moptPayoneAmazonReferenceId)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amazon_address_token', 'data' => $session->moptPayoneAmazonAccessToken)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'storename', 'data' => Shopware()->Shop()->getName())
+        ));
+
+        $request->setPaydata($paydata);
+        $request->setClearingtype($clearingType);
+        $request->setWallettype($walletType);
+        $request->setCurrency("EUR");
+        $request->setAmount($basket['AmountNumeric']);
+        $request->setWorkorderId($session->moptPayoneAmazonWorkOrderId);
+
+        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $response = $service->request($request);
+        return $response;
     }
 
 

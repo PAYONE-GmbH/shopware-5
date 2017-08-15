@@ -41,4 +41,6 @@ class Payone_Api_Enum_GenericpaymentAction
     const AMAZON_GETCONFIGURATION = "getconfiguration";
 
     const AMAZON_GETORDERREFERENCEDETAILS = "getorderreferencedetails";
+
+    const AMAZON_SETORDERREFERENCEDETAILS = "setorderreferencedetails";
 }
