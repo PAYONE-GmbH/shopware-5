@@ -205,7 +205,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
         if ($response->getStatus() === Payone_Api_Enum_ResponseType::ERROR) {
 
-            if ($response->getErrorCode() === '980') {
+            if ($response->getErrorCode() === '980' && !$payoneAmazonPayConfig->getAmazonMode() === 'sync') {
                 // retry transaction in async mode
 
                 $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();

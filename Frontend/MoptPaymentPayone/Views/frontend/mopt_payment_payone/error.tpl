@@ -50,6 +50,7 @@
   </script>
   <script>
       window.onAmazonLoginReady = function () {
+          // console.log("Amazon Logout");
           amazon.Login.logout();
       };
   </script>
