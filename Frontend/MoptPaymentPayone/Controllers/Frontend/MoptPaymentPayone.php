@@ -354,15 +354,19 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     protected function mopt_payone__standard()
     {
         $paymentId = $this->getPaymentShortName();
+        $clearingSubType = false;
 
         if ($this->moptPayonePaymentHelper->isPayoneInvoice($paymentId)) {
             $clearingType = Payone_Enum_ClearingType::INVOICE;
-        } else {
+        } elseif ($this->moptPayonePaymentHelper->isPayonePayInAdvance($paymentId)) {
             $clearingType = Payone_Enum_ClearingType::ADVANCEPAYMENT;
+        } elseif ($this->moptPayonePaymentHelper->isPayoneSafeInvoice($paymentId)) {
+            $clearingType = Payone_Enum_ClearingType::INVOICE;
+            $clearingSubType = Payone_Enum_ClearingSubType::SAFEINVOICE;
         }
 
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
-        $response = $this->buildAndCallPayment($config, $clearingType, null);
+        $response = $this->buildAndCallPayment($config, $clearingType, null, false, false, false, false, $clearingSubType);
 
         return $response;
     }
@@ -731,9 +735,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param bool $isPaypalRecurring
      * @param bool $isPaypalRecurringInitialRequest
      * @param bool $forceAuthorize
+     * @param string $clearingSubType;
      * @return type $response
      */
-    protected function buildAndCallPayment($config, $clearingType, $payment, $workerId = false, $isPaypalRecurring = false, $isPaypalRecurringInitialRequest = false, $forceAuthorize = false)
+    protected function buildAndCallPayment($config, $clearingType, $payment, $workerId = false, $isPaypalRecurring = false, $isPaypalRecurringInitialRequest = false, $forceAuthorize = false, $clearingSubType = false)
     {
         $paramBuilder = $this->moptPayoneMain->getParamBuilder();
         $session = Shopware()->Session();
@@ -793,6 +798,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $request->setDeliveryData($deliveryData);
 
         $request->setClearingtype($clearingType);
+
+        if ($clearingSubType !== false) {
+            $request->setClearingsubtype($clearingSubType);
+        }
 
         if (!$isPaypalRecurringInitialRequest && ($config['submitBasket'] || $clearingType === 'fnc')) {
             // although payolution is clearingtype fnc respect submitBasket setting in Backend

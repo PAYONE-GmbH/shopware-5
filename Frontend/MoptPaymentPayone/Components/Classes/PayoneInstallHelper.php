@@ -423,6 +423,11 @@ class Mopt_PayoneInstallHelper
                 'template' => 'mopt_paymentmean_ratepay_direct_debit.tpl',
                 'position' => 31,),
             array(
+                 'name' => 'mopt_payone__acc_payone_safe_invoice',
+                 'description' => 'PAYONE Rechnung mit Zahlungsgarantie',
+                 'template' => null,
+                 'position' => 32,),
+            array(
                 'name' => 'mopt_payone__ibt_bancontact',
                 'description' => 'PAYONE Bancontact',
                 'template' => 'mopt_paymentmean_bancontact.tpl',

@@ -475,6 +475,21 @@ class Mopt_PayonePaymentHelper
         }
     }
 
+    /**
+     * check if given payment name is payone safe invoice payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneSafeInvoice($paymentName)
+    {
+        if (preg_match('#mopt_payone__acc_payone_safe_invoice#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
   /**
    * check if given payment name is payone pay in advance payment
    *
@@ -1088,6 +1103,10 @@ class Mopt_PayonePaymentHelper
         }
 
         if ($this->isPayoneInvoice($paymentShortName) || $this->isPayonePayInAdvance($paymentShortName)) {
+            return 'standard';
+        }
+
+        if ($this->isPayoneSafeInvoice($paymentShortName)) {
             return 'standard';
         }
 
