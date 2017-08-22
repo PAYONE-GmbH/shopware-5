@@ -9,6 +9,7 @@
             </label>
         </p>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payolution_invoice_birthday]" 
                 id="mopt_payone__payolution_invoice_birthday" onchange="payolutionInvoiceDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -22,7 +23,9 @@
                     {if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}</option>
                 {/section}
         </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payolution_invoice_birthmonth]" 
                 id="mopt_payone__payolution_invoice_birthmonth" onchange="payolutionInvoiceDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -36,7 +39,9 @@
                     {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
                 {/section}
         </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payolution_invoice_birthyear]" 
                 id="mopt_payone__payolution_invoice_birthyear" onchange="payolutionInvoiceDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -50,6 +55,7 @@
                     {$smarty.section.birthyear.index}</option>
                 {/section}
         </select>
+    </div>
     {/if}  
 
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_invoice_birthdaydate]" id="mopt_payone__payolution_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">   

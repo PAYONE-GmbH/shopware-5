@@ -7,6 +7,8 @@
                 {s name='birthdate'}Geburtsdatum{/s}
             </label>
         </p>
+
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_direct_debit_birthday]"
                 id="mopt_payone__ratepay_direct_debit_birthday" onchange="ratepayDirectDebitDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -20,7 +22,9 @@
                     {$smarty.section.birthdate.index}</option>
             {/section}
         </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_direct_debit_birthmonth]"
             id="mopt_payone__ratepay_direct_debit_birthmonth" onchange="ratepayDirectDebitDobInput()"
             {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -35,6 +39,9 @@
             {/section}
         </select>
 
+    </div>
+
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_direct_debit_birthyear]"
                 id="mopt_payone__ratepay_direct_debit_birthyear" onchange="ratepayDirectDebitDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -48,6 +55,7 @@
                     {$smarty.section.birthyear.index}</option>
             {/section}
         </select>
+    </div>
     {/if}
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__ratepay_direct_debit_birthdaydate]" id="mopt_payone__ratepay_direct_debit_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
     <div id="ratepay-direct_debit-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>

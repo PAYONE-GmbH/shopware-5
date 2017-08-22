@@ -303,6 +303,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_checkout.js',
             $this->Path() . 'Views/frontend/_resources/javascript/client_api.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_payment.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_account.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
     }   
@@ -530,8 +531,25 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 }
             }
         }
-
         Shopware()->Models()->generateAttributeModels(array_keys($tables));
+
+        // SW 5.2 Use Address Table instead of shipping and billing tables
+        if (\Shopware::VERSION === '___VERSION___' ||
+            version_compare(\Shopware::VERSION, '5.2.0', '>=')
+        ) {
+
+            $tables = $this->getInstallHelper()->moptAttributeExtensionsArray52();
+            $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
+
+            foreach ($tables as $table => $attributes) {
+                foreach ($attributes as $attribute => $options) {
+                    $type = is_array($options) ? $options[0] : $options;
+                    $data = is_array($options) ? $options[1] : [];
+                    $attributeService->update($table, $prefix . '_' . $attribute, $type, $data);
+                }
+            }
+            Shopware()->Models()->generateAttributeModels(array_keys($tables));
+        }
     }
 
     /**

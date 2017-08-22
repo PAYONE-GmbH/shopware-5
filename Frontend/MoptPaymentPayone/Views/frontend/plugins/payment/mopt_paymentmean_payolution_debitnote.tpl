@@ -15,34 +15,39 @@
             </label>
         </p>
 
-        <select name="moptPaymentData[mopt_payone__payolution_debitnote_birthday]" 
-                id="mopt_payone__payolution_debitnote_birthday" onchange="payolutionDebitNoteDobInput()"
-                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="payment--field {if $error_flags.mopt_payone__payolution_debitnote_birthday} has--error{/if}">
-            <option value="">--</option>
-            {section name="birthdate" start=1 loop=32 step=1}
-                <option value="{if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}" 
-                        {if $smarty.section.birthdate.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_debitnote_birthday}
-                            selected
-                        {/if}>
-                    {if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}</option>
-                {/section}
-        </select>
+        <div class="select-field">
+            <select name="moptPaymentData[mopt_payone__payolution_debitnote_birthday]"
+                    id="mopt_payone__payolution_debitnote_birthday" onchange="payolutionDebitNoteDobInput()"
+                    {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
+                    class="payment--field {if $error_flags.mopt_payone__payolution_debitnote_birthday} has--error{/if}">
+                <option value="">--</option>
+                {section name="birthdate" start=1 loop=32 step=1}
+                    <option value="{if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}"
+                            {if $smarty.section.birthdate.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_debitnote_birthday}
+                                selected
+                            {/if}>
+                        {if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}</option>
+                    {/section}
+            </select>
+        </div>
 
-        <select name="moptPaymentData[mopt_payone__payolution_debitnote_birthmonth]" 
-                id="mopt_payone__payolution_debitnote_birthmonth" onchange="payolutionDebitNoteDobInput()"
-                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="payment--field {if $error_flags.mopt_payone__payolution_debitnote_birthmonth} has--error{/if}">
-            <option value="">--</option>
-            {section name="birthmonth" start=1 loop=13 step=1}
-                <option value="{if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}" 
-                        {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_debitnote_birthmonth}
-                            selected
-                        {/if}>
-                    {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
-                {/section}
-        </select>
+    <div class="select-field">
+            <select name="moptPaymentData[mopt_payone__payolution_debitnote_birthmonth]"
+                    id="mopt_payone__payolution_debitnote_birthmonth" onchange="payolutionDebitNoteDobInput()"
+                    {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
+                    class="payment--field {if $error_flags.mopt_payone__payolution_debitnote_birthmonth} has--error{/if}">
+                <option value="">--</option>
+                {section name="birthmonth" start=1 loop=13 step=1}
+                    <option value="{if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}"
+                            {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_debitnote_birthmonth}
+                                selected
+                            {/if}>
+                        {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
+                    {/section}
+            </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payolution_debitnote_birthyear]" 
                 id="mopt_payone__payolution_debitnote_birthyear" onchange="payolutionDebitNoteDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -55,7 +60,8 @@
                         {/if}>
                     {$smarty.section.birthyear.index}</option>
                 {/section}
-        </select>        
+        </select>
+    </div>
     {/if}
 
 

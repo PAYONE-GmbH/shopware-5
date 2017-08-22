@@ -38,7 +38,9 @@
     {
         $.post('{url controller="moptAjaxPayone" action="saveOriginalAddress" forceSecure}', function ()
         {
-            window.location = "{url controller=account action=saveBilling sTarget=$moptAddressCheckTarget forceSecure}";
+            // Check this for SW 5.2 and 5.3 saveBilling is gone
+            // why redirect to account controller anway? Straight to checkout !
+            window.location = "{url controller=checkout forceSecure}";
         });
     }
 
@@ -46,7 +48,8 @@
     {
         $.post('{url controller="moptAjaxPayone" action="saveCorrectedAddress" forceSecure}', function ()
         {
-            window.location = "{url controller=account action=saveBilling sTarget=$moptAddressCheckTarget forceSecure}";
+            // Cceck this for SW 5.2 and 5.3 saveBilling is gone
+            window.location = "{url controller=checkout forceSecure}";
         });
     }
     // -->

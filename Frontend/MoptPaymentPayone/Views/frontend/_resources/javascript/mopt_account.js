@@ -1,4 +1,6 @@
-$.plugin('moptAddressCheckNeedsUserVerification', {
+function moptAccountReady() {
+
+    $.plugin('moptAddressCheckNeedsUserVerification', {
     defaults: {
         moptAddressCheckNeedsUserVerification: false,
         moptAddressCheckVerificationUrl: false
@@ -67,6 +69,21 @@ $.plugin('moptConsumerScoreCheckNeedsUserAgreement', {
     }
 });
 
+
 $('#moptAddressCheckNeedsUserVerification').moptAddressCheckNeedsUserVerification();
 $('#moptShippingAddressCheckNeedsUserVerification').moptShippingAddressCheckNeedsUserVerification();
 $('#moptConsumerScoreCheckNeedsUserAgreement').moptConsumerScoreCheckNeedsUserAgreement();
+
+}
+
+$(document).ready(function(){
+    moptAccountReady();
+});
+
+if (typeof document.asyncReady !== "undefined") {
+
+
+    document.asyncReady(function () {
+        moptAccountReady();
+    });
+}

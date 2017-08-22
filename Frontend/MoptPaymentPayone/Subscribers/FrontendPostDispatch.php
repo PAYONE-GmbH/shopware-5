@@ -242,6 +242,27 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
         }
+
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
+            if ($session->get('moptAddressCorrected')) {
+                unset($session->moptAddressCorrected);
+                // refresh View Vars after automatic address correction (currently only used by SW 5.3)
+                $view->sUserData = Shopware()->Modules()->Admin()->sGetUserData();
+                // and update order variables in session
+                $session['sOrderVariables'] = new \ArrayObject($view->getAssign(), \ArrayObject::ARRAY_AS_PROPS);
+            }
+            // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
+
+        }
+
+        if ($controllerName == 'moptAjaxPayone' ) {
+            // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
+            if (version_compare(\Shopware::VERSION, '5.3.0', '>=')
+            ) {
+                $view->assign('useMoptAccountController', true);
+            }
+
+        }
     }
 
     /**
@@ -431,6 +452,23 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__ratepay_direct_debit_birthmonth'] = $birthday[1];
                 $data['mopt_payone__ratepay_direct_debit_birthyear'] = $birthday[0];
                 $data['mopt_payone__ratepay_direct_debit_telephone'] = $userData['billingaddress']['phone'];
+            }
+
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneSafeInvoice($paymentMean['name'])
+            ) {
+
+                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                    if (!isset($userData['additional']['user']['birthday'])) {
+                        $userData['billingaddress']['birthday'] = "0000-00-00";
+                    } else {
+                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                    }
+                }
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__payone_safe_invoice_birthday'] = $birthday[2];
+                $data['mopt_payone__payone_safe_invoice__birthmonth'] = $birthday[1];
+                $data['mopt_payone__payone_safe_invoice__birthyear'] = $birthday[0];
             }
         }
 
