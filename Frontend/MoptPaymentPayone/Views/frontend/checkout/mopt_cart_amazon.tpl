@@ -2,7 +2,7 @@
 
 {block name="frontend_checkout_actions_confirm" append}
     {if !$sMinimumSurcharge && !$sDispatchNoOrder}
-        <div class="button--container">
+        <div class="button--container right" style="margin-right: 10px">
             <div id="LoginWithAmazon"></div>
             <div class="clear"></div>
             <script>
