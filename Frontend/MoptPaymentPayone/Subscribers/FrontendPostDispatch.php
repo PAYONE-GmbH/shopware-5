@@ -371,7 +371,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['payolutionConfigInvoice'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
-                    ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
+                    ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfigInvoice']['payolutionCompanyName']);
                 if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
                     if (!isset($userData['additional']['user']['birthday'])) {
                         $userData['billingaddress']['birthday'] = "0000-00-00";
@@ -398,7 +398,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['payolutionConfigInstallment'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
-                    ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfig']['payolutionCompanyName']);
+                    ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfigInstallment']['payolutionCompanyName']);
                 if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
                     if (!isset($userData['additional']['user']['birthday'])) {
                         $userData['billingaddress']['birthday'] = "0000-00-00";
