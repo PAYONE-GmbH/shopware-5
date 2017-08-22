@@ -880,7 +880,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
 
         $data = [];
-        $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $postData['referenceId'], $this->session->moptPayoneAmazonAccessToken );
+        $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $this->session->moptPayoneAmazonReferenceId, $this->session->moptPayoneAmazonAccessToken );
 
 
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
@@ -986,10 +986,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->setCurrency("EUR");
         $request->setAmount($basket['AmountNumeric']);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
-        /*$this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
             'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
-        */
+
         $response = $this->service->request($request);
         return $response;
     }
