@@ -102,6 +102,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $response = $service->request($request);
         
         if ($response->getStatus() === Payone_Api_Enum_ResponseType::OK) {
+            $session = Shopware()->Session();
+            $session->offsetSet('moptFormSubmitted', true);
             $this->createrOrUpdateAndForwardUser($response, $paymentId, $session);
         } elseif ($response->getStatus() === Payone_Api_Enum_ResponseType::REDIRECT) {
             $session->moptPaypalEcsWorkerId = $response->getWorkorderId();
