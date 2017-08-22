@@ -88,6 +88,16 @@
         {include file="frontend/_includes/messages.tpl" type="error" content="{s name='amazonDeclined ' namespace='frontend/MoptPaymentPayone/errorMessages'}{/s}" bold=false}
     {/if}
 </div>
+{* Error Messages Javascript*}
+<div id="jsErrors" style="display:none">
+    <div class="alert is--error is--rounded">
+        <div class="alert--icon">
+            <i class="icon--element icon--cross"></i>
+        </div>
+        <div id="jsErrorContent" class="alert--content">
+        </div>
+    </div>
+</div>
 
 <div class="confirm--outer-container">
     <form method="POST" action="{url controller="moptPaymentAmazon" action="index"}" class="payment">
@@ -226,14 +236,15 @@
                             var responseData = $.parseJSON(response);
 
                             if (responseData.status == "error"){
-
                                 $.loadingIndicator.close();
-                                alert(responseData.errormessage);
+                                $('#jsErrors').show();
+                                $('#jsErrorContent').html(responseData.errormessage);
+
 
                             } else {
 
                                 var moptAmazonCountryChanged = responseData.countryChanged;
-
+                                $('#jsErrors').hide();
                                 // Reload the site, to update dispatches in case country changed
                                 if (moptAmazonCountryChanged) {
                                     $.loadingIndicator.open();

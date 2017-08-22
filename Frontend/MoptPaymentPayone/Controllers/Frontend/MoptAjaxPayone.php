@@ -940,6 +940,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         } else {
             $data['data'] = $response;
+            $data['errormessage'] = $response->getErrormessage();
             $data['status'] = 'error';
             $encoded = json_encode($data);
             echo $encoded;
