@@ -1381,8 +1381,10 @@ class AddressCheck implements SubscriberInterface
                                 'sTarget'       => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
+                        } elseif ( version_compare(\Shopware::VERSION, '5.2.0', '>=')){
+
                         } else {
-                            $subject->forward('shipping', 'account', null, ['sTarget' => 'checkout']);
+                            $subject->forward('edit', 'address', null, ['sTarget' => 'checkout']);
                         }
                         break;
                     case 2: // perform consumerscore check
