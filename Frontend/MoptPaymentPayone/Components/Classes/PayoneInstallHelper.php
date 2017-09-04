@@ -240,6 +240,27 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
+     * - returns the definition for attribute table extensions
+     * - intended to be used with Shopware version >= 5.2.0
+     *
+     * @return array
+     */
+    public function moptAttributeExtensionsArray52()
+    {
+        return [
+            's_user_addresses_attributes' => [
+                'addresscheck_result'               => 'string',
+                'addresscheck_date'                 => 'date',
+                'addresscheck_personstatus'         => 'string',
+                'consumerscore_result'              => 'string',
+                'consumerscore_date'                => 'date',
+                'consumerscore_color'               => 'string',
+                'consumerscore_value'               => 'integer',
+            ]
+        ];
+    }
+
+    /**
      * returns array of PAYONE payment methods
      *
      * payment types are grouped
@@ -423,10 +444,20 @@ class Mopt_PayoneInstallHelper
                 'template' => 'mopt_paymentmean_ratepay_direct_debit.tpl',
                 'position' => 31,),
             array(
+                 'name' => 'mopt_payone__acc_payone_safe_invoice',
+                 'description' => 'PAYONE Rechnung mit Zahlungsgarantie',
+                 'template' => null,
+                 'position' => 32,),
+            array(
+                'name' => 'mopt_payone__ibt_bancontact',
+                'description' => 'PAYONE Bancontact',
+                'template' => 'mopt_paymentmean_bancontact.tpl',
+                'position' => 33,),
+            array(
                 'name' => 'mopt_payone__ewallet_amazon_pay',
                 'description' => 'PAYONE Amazon Pay',
                 'template' => 'mopt_paymentmean_amazon_ewallet.tpl',
-                'position' => 32,),
+                'position' => 34,),
 
         );
     }

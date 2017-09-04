@@ -31,24 +31,40 @@
         {
             if (response === 'true')
             {
-                window.location = "{url controller=account action=savePayment sTarget=checkout forceSecure}";
+                {if isset($useMoptAccountController)}
+                    window.location = "{url controller=MoptAccountPayone action=savePayment sTarget=checkout forceSecure}";
+                {else}
+                    window.location = "{url controller=account action=savePayment sTarget=checkout forceSecure}";
+                {/if}
             }
             else
             {
-                window.location = "{url controller=account action=payment sTarget=checkout forceSecure}";
+                {if $useMoptAccountController}
+                    window.location = "{url controller=checkout action=shippingPayment forceSecure}";
+                {else}
+                    window.location = "{url controller=account action=payment sTarget=checkout forceSecure}";
+                {/if}
             }
         });
     }
 
     function doNotCheckConsumerScore() {
         jQuery.post('{url controller="moptAjaxPayone" action="doNotCheckConsumerScore" forceSecure}', function (response) {
-            if (response == 'true')
+            if (response === 'true')
             {
+                {if isset($useMoptAccountController)}
+                window.location = "{url controller=MoptAccountPayone action=savePayment sTarget=checkout forceSecure}";
+                {else}
                 window.location = "{url controller=account action=savePayment sTarget=checkout forceSecure}";
+                {/if}
             }
             else
             {
+                {if $useMoptAccountController}
+                window.location = "{url controller=checkout action=shippingPayment forceSecure}";
+                {else}
                 window.location = "{url controller=account action=payment sTarget=checkout forceSecure}";
+                {/if}
             }
         });
     }

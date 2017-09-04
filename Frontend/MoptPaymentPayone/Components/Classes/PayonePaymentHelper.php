@@ -295,6 +295,21 @@ class Mopt_PayonePaymentHelper
         }
     }
 
+    /**
+     * check if given payment name is payone sofortueberweisung payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneBancontact($paymentName)
+    {
+        if (preg_match('#mopt_payone__ibt_bancontact#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
   /**
    * check if given payment name is payone barzahlen payment
    *
@@ -454,6 +469,21 @@ class Mopt_PayonePaymentHelper
     public function isPayoneInvoice($paymentName)
     {
         if (preg_match('#mopt_payone__acc_invoice#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * check if given payment name is payone safe invoice payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneSafeInvoice($paymentName)
+    {
+        if (preg_match('#mopt_payone__acc_payone_safe_invoice#', $paymentName)) {
             return true;
         } else {
             return false;
@@ -706,6 +736,10 @@ class Mopt_PayonePaymentHelper
     {
         if ($this->isPayoneSofortuerberweisung($paymentName)) {
             return Payone_Api_Enum_OnlinebanktransferType::INSTANT_MONEY_TRANSFER;
+        }
+
+        if ($this->isPayoneBancontact($paymentName)) {
+            return Payone_Api_Enum_OnlinebanktransferType::BANCONTACT;
         }
 
         if ($this->isPayoneGiropay($paymentName)) {
@@ -1013,6 +1047,15 @@ class Mopt_PayonePaymentHelper
         if (isset($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'])) {
             $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone']);
         }
+
+        if (isset($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate'])) {
+            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+                $user->setBirthday($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate']);
+                Shopware()->Models()->persist($user);
+            } else {
+                $billing->setBirthday($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate']);
+            }
+        }
  
         Shopware()->Models()->persist($billing);
         Shopware()->Models()->flush();
@@ -1095,6 +1138,10 @@ class Mopt_PayonePaymentHelper
         }
 
         if ($this->isPayoneInvoice($paymentShortName) || $this->isPayonePayInAdvance($paymentShortName)) {
+            return 'standard';
+        }
+
+        if ($this->isPayoneSafeInvoice($paymentShortName)) {
             return 'standard';
         }
 

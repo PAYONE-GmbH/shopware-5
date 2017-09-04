@@ -36,7 +36,7 @@
            value="{$form_data.mopt_payone__cc_accountholder|escape}"
            class="payment--field is--required{if $error_flags.mopt_payone__cc_accountholder} has--error{/if}" />
 
-    <p class="none">
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__cc_cardtype]"
                 id="mopt_payone__cc_cardtype"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -50,7 +50,7 @@
                 </option>
             {/foreach}
         </select>
-    </p>
+    </div>
 
     {if $moptIsAjax}
     <input name="moptPaymentData[mopt_payone__cc_truncatedcardpan]"
@@ -90,7 +90,7 @@
             {s name='creditCardValidUntil'}Gültig Bis{/s}
         </label>
     </p>
-    <p class="none">
+    <div class="select field">
         {if $moptIsAjax}
         <select name="moptPaymentData[mopt_payone__cc_month]"
                 id="mopt_payone__cc_month"
@@ -148,7 +148,7 @@
                 />
              </span>
         {/if}
-    </p>
+    </div>
 
     {if $moptIsAjax}
     <p class="none" {if !$moptCreditCardCheckEnvironment.moptPayoneCheckCc}style="display:none;"{/if}>

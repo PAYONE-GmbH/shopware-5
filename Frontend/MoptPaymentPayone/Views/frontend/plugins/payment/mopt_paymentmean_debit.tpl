@@ -13,7 +13,7 @@
 {/if}
 
 <div class="payment--form-group">
-    <p class="none">
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__debit_bankcountry]" 
                 id="mopt_payone__debit_bankcountry" 
                 {if $moptRequired}required="required" aria-required="true"{/if}
@@ -26,7 +26,7 @@
                 </option>
             {/foreach}
         </select>
-    </p>
+    </div>
 
     <input name="moptPaymentData[mopt_payone__debit_bankaccountholder]"
            type="text"

@@ -14,6 +14,8 @@
                 {s name='birthdate'}Geburtsdatum{/s}
             </label>
         </p>
+
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_installment_birthday]"
                 id="mopt_payone__ratepay_installment_birthday" onchange="ratepayInstallmentDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -27,7 +29,9 @@
                     {$smarty.section.birthdate.index}</option>
             {/section}
         </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_installment_birthmonth]"
             id="mopt_payone__ratepay_installment_birthmonth" onchange="ratepayInstallmentDobInput()"
             {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -41,7 +45,9 @@
                     {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
             {/section}
         </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_installment_birthyear]"
                 id="mopt_payone__ratepay_installment_birthyear" onchange="ratepayInstallmentDobInput()"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -55,6 +61,7 @@
                     {$smarty.section.birthyear.index}</option>
             {/section}
         </select>
+    </div>
     {/if}
 
     {if $moptRatepayConfig.ratepayInstallmentMode}
@@ -171,6 +178,7 @@
                 <br class="ratepay-ClearFix" />
                 <div class="ratepay-MarginTop">
                     <span class="ratepay-VertAlignMiddle" style="float: left;">{s name='please'}Bitte&nbsp{/s}{s name='insertRuntime'}Laufzeit w&auml;hlen{/s}</span>
+                    <div class="select-field">
                         <select id="{$sFormData.payment}-runtime">
                             <option value="3"  selected="selected">{s name='3months'}3 months{/s}</option>
                             <option value="6"  selected="selected">{s name='6months'}6 months{/s}</option>
@@ -178,6 +186,7 @@
                             <option value="12" selected="selected">{s name='12months'}12 months{/s}</option>
                             <option value="24" selected="selected">{s name='24months'}24 months{/s}</option>
                         </select>
+                    </div>
                     <input name="" onclick="ratepayRateCalculatorAction('runtime', '{$sFormData.payment}', '{url controller='moptAjaxPayone' action='runtime'}');" value="{s name='calculateRate'}Rate jetzt berechnen{/s}" type="button" id="{$sFormData.payment}_Input-buttonRuntime"  class="ratepay-Input-button2">
                 </div>
             </div>

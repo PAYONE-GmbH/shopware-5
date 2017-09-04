@@ -9,6 +9,7 @@
             </label>
         </p>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payolution_installment_birthday]" 
                 id="mopt_payone__payolution_installment_birthday" onchange="payolutionInstallmentDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -22,7 +23,9 @@
                     {if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}</option>
                 {/section}
         </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payolution_installment_birthmonth]" 
                 id="mopt_payone__payolution_installment_birthmonth" onchange="payolutionInstallmentDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -36,7 +39,9 @@
                     {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
             {/section}
         </select>
+    </div>
 
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payolution_installment_birthyear]" 
                 id="mopt_payone__payolution_installment_birthyear" onchange="payolutionInstallmentDobInput()" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -50,6 +55,7 @@
                     {$smarty.section.birthyear.index}</option>
                 {/section}
         </select>
+    </div>
     {/if}  
 
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_installment_birthdaydate]" id="mopt_payone__payolution_installment_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">   
@@ -90,7 +96,7 @@
     
     <p class="none clearfix">
         <input name="moptPaymentData[mopt_payone__payolution_installment_agreement]" type="checkbox" id="mopt_payone__payolution_installment_agreement" value="true"
-               {if $form_data.mopt_payone__payolution_installment_agreement eq "on"}
+               {if $form_data.mopt_payone__payolution_installment_agreement}
                    checked="checked"
                {/if}
                class="checkbox"/>
@@ -125,6 +131,10 @@
 </div>
 
 <script type="text/javascript">
+
+    var payolutionInstallmentDob = false;
+    var payolutionInstallmentAgree = false;
+
     function displayOverlayInstallment() {
         document.getElementById('payolution_overlay_installment').style.display = "block";
         document.getElementById('payolution_overlay_installment_bg').style.display = "block";
@@ -159,6 +169,7 @@
             hiddenDobHint.className = "register--error-msg";
         } else {
             hiddenDobHint.className = "is--hidden";
+            payolutionInstallmentDob = true;
             return;
         }
     }
@@ -167,6 +178,18 @@
         var call = '{url controller="moptAjaxPayone" action="ajaxHandlePayolutionPreCheck" forceSecure}';
         var call2 = '{url controller="moptAjaxPayone" action="renderPayolutionInstallment" forceSecure}';
         var dob = document.getElementById("mopt_payone__payolution_installment_birthdaydate");
+        var hiddenDobHint = document.getElementById("installment-hint-18-years");
+
+        var oBirthDate = new Date(dob.value);
+        var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
+        if (oBirthDate > oMinDate) {
+            hiddenDobHint.className = "register--error-msg";
+            return;
+        } else {
+            hiddenDobHint.className = "is--hidden";
+            payolutionInstallmentDob = true;
+        }
+
         var hreg = document.getElementById("mopt_payone__installment_company_trade_registry_number");
         var shippingcosts = document.getElementById("mopt_payone__payolution_installment_shippingcosts");
         var myhreg; 
@@ -181,35 +204,42 @@
         } 
         if ( shippingcosts !== null){
             myshippingcosts = shippingcosts.value;
-        }        
-        $.ajax({
-            url: call,
-            type: 'POST',
-            data: { dob: mydob, hreg: myhreg, shippingcosts: myshippingcosts } ,
-            
-            beforeSend: function() {
-                $.loadingIndicator.open();
-            },            
-            success: function (data) {
-                response = $.parseJSON(data);
-                if (response.status === 'success') {
-                    $.ajax({
-                        url: call2,
-                        type: 'POST',
-                        dataType: 'html',
-                        data: $.parseJSON(data),
-                        success: function (data3) {
-                            $.loadingIndicator.close();
-                            $('#showresults').html(data3);
-                            $('#payolution_installment_workorderid').val(response.workorderid);
-                        }
-                    });
-                }
-                if (response.status == 'error') {
-                    alert("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es noch einmal");
-                }
-            },
-        });
+        }
+
+        payolutionInstallmentAgree = $("#mopt_payone__payolution_installment_agreement").prop('checked');
+
+        // only make the api call when dob is ok and user agreement is checked
+        if (payolutionInstallmentDob && payolutionInstallmentAgree){
+            $.ajax({
+                url: call,
+                type: 'POST',
+                data: { dob: mydob, hreg: myhreg, shippingcosts: myshippingcosts },
+
+                beforeSend: function () {
+                    $.loadingIndicator.open();
+                },
+                success: function (data) {
+                    response = $.parseJSON(data);
+                    if (response.status === 'success') {
+                        $.ajax({
+                            url: call2,
+                            type: 'POST',
+                            dataType: 'html',
+                            data: $.parseJSON(data),
+                            success: function (data3) {
+                                $.loadingIndicator.close();
+                                $('#showresults').html(data3);
+                                $('#payolution_installment_workorderid').val(response.workorderid);
+                            }
+                        });
+                    }
+                    if (response.status == 'error') {
+                        alert(response.errorMessage);
+                        $.loadingIndicator.close();
+                    }
+                },
+            });
+        }
     }
 
 

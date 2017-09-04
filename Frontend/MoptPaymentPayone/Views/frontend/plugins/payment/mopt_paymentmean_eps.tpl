@@ -1,7 +1,7 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
 <div class="payment--form-group">
-    <p class="none">
+    <div class="select-field">
         <select name="moptPaymentData[mopt_payone__eps_bankgrouptype]" 
                 id="mopt_payone__eps_bankgrouptype" 
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -31,5 +31,5 @@
             <option value="HRAC_SLB" {if $form_data.mopt_payone__eps_bankgrouptype == 'HRAC_SLB'}selected="selected"{/if}>Hypo Salzburg</option>
             <option value="HRAC_STM" {if $form_data.mopt_payone__eps_bankgrouptype == 'HRAC_STM'}selected="selected"{/if}>Hypo Steiermark</option>
         </select>
-    </p>
+    </div>
 </div>

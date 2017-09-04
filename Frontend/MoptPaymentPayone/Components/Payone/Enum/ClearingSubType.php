@@ -13,31 +13,13 @@
  * needs please refer to http://www.payone.de for more information.
  *
  * @category        Payone
- * @package         Payone_Api
- * @subpackage      Enum
+ * @package         Payone_Enum
  * @copyright       Copyright (c) 2012 <info@noovias.com> - www.noovias.com
  * @author          Matthias Walter <info@noovias.com>
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.noovias.com
  */
-
-/**
- *
- * @category        Payone
- * @package         Payone_Api
- * @subpackage      Enum
- * @copyright       Copyright (c) 2012 <info@noovias.com> - www.noovias.com
- * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
- * @link            http://www.noovias.com
- */
-class Payone_Api_Enum_OnlinebanktransferType
+class Payone_Enum_ClearingSubType
 {
-    const INSTANT_MONEY_TRANSFER = 'PNT';
-    const GIROPAY = 'GPY';
-    const EPS_ONLINE_BANK_TRANSFER = 'EPS';
-    const POSTFINANCE_EFINANCE = 'PFF';
-    const POSTFINANCE_CARD  = 'PFC';
-    const IDEAL = 'IDL';
-    const P24 = 'P24';
-    const BANCONTACT = 'BCT';
+    const SAFEINVOICE = 'POV';
 }
