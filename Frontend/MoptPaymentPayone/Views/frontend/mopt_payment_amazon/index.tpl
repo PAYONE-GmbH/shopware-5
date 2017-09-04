@@ -323,3 +323,14 @@
 {/block}
 
 
+    {block name="frontend_index_header_javascript_jquery" append}
+        {if $moptAmazonLogout === true}
+        <script>
+            window.onAmazonLoginReady = function () {
+                amazon.Login.logout();
+                console.log("Amazon Logout");
+            };
+        </script>
+        {/if}
+    {/block}
+

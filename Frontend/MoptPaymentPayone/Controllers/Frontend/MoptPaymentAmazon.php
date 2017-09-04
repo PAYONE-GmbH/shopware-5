@@ -205,8 +205,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
         if ($response->getStatus() === Payone_Api_Enum_ResponseType::ERROR) {
 
-            if ($response->getErrorCode() === '980' && !$payoneAmazonPayConfig->getAmazonMode() === 'sync') {
-                // retry transaction in async mode
+            if ($response->getErrorCode() === '980' && $payoneAmazonPayConfig->getAmazonMode() === 'firstsync'){
+                // repeat Request in async mode and handle errors afterwards as usual
 
                 $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
                 $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
@@ -232,29 +232,14 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 } else {
                     $response = $service->preauthorize($request);
                 }
-
-                if ($response->getStatus() === Payone_Api_Enum_ResponseType::ERROR) {
-
-                    // redirect User to normal payment selection
-                    $this->forward('shippingPayment', 'checkout');
-                    return;
-                }
-
-            } elseif ($response->getErrorCode() === '981') {
-                // redirect to checkout so customer can choose a new payment method
-                $this->redirect([
-                    'controller' => 'MoptPaymentAmazon',
-                    'action' => 'index',
-                    'moptAmazonError' => 'declined',
-                    'moptAmazonReadonly' => $this->session->moptPayoneAmazonReferenceId,
-                    'moptAmazonWorkOrderId' => $this->session->moptPayoneAmazonWorkOrderId,
-                ]);
-                return;
             }
-
         }
 
-        if ($response->getStatus() === Payone_Api_Enum_ResponseType::APPROVED || $response->getStatus() === 'PENDING') {
+        if ($response->getStatus() === Payone_Api_Enum_ResponseType::ERROR) {
+
+            $this->handleAmazonError($response);
+
+        } elseif ($response->getStatus() === Payone_Api_Enum_ResponseType::APPROVED || $response->getStatus() === 'PENDING') {
 
             // Save Clearing Reference as Attribute (set in session )
             $this->session->paymentReference = $request->getReference();
@@ -268,7 +253,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             // replace the new order number with the already reserved one, which is already sent to amazon
             $sql = 'UPDATE  `s_order` SET ordernumber = ? WHERE transactionID = ?';
-            Shopware()->Db()->query($sql, array($myOrdernum,$txid));
+            Shopware()->Db()->query($sql, array($myOrdernum, $txid));
 
             // also update Ordernumber in Session
             $this->session['sOrderVariables']->sOrderNumber = $myOrdernum;
@@ -284,61 +269,158 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             Shopware()->Db()->query($sql, array($txid, $this->session->moptIsAuthorized,
                 $this->session->paymentReference, $this->session->moptOrderHash, $this->session->moptPayoneAmazonWorkOrderId, $this->session->moptPayoneAmazonReferenceId, $orderId));
 
-        } else {
 
-            // redirect back to checkout or show error message
+            // Register Custom Template
+            $this->View()->loadTemplate("frontend/checkout/finish.tpl");
 
-            $this->session->payoneErrorMessage = $moptPayoneMain->getPaymentHelper()
-                ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
-            $this->forward('error', 'MoptPaymentPayone');
-            return;
+            // Fill in Order Addresses
+
+            $orderVariables = $this->session['sOrderVariables']->getArrayCopy();
+
+            // unset payoneAmazonPayConfig for debug Module compatibility
+            unset($orderVariables['payoneAmazonPayConfig']);
+
+            // add addresses for SW > 5.2
+
+            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+                $orderVariables['sAddresses']['billing'] = $this->getOrderAddress($orderVariables['sOrderNumber'], 'billing');
+                $orderVariables['sAddresses']['shipping'] = $this->getOrderAddress($orderVariables['sOrderNumber'], 'shipping');
+                $orderVariables['sAddresses']['equal'] = $this->areAddressesEqual($orderVariables['sAddresses']['billing'], $orderVariables['sAddresses']['shipping']);
+            }
+
+            // If auth was set to async display an additional message
+
+            $payData = $request->getPaydata()->toArray();
+
+            if ($payData['add_paydata[amazon_timeout]'] == 1440) {
+                $this->View()->moptAmazonAsyncAuthMessage = Shopware()->Snippets()
+                    ->getNamespace('frontend/MoptPaymentPayone/messages')
+                    ->get('amazonAsyncAuthMessage');
+            }
+
+            $this->View()->assign($orderVariables);
+            // TransactionID
+            $this->View()->sTransactionumber = $txid;
+            $this->View()->sPayment = array('description' => Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getDescription());
+            $this->View()->sDispatch = $orderVariables['sDispatch'];
+
+
+            // unset session Vars
+            unset($this->session->moptPayoneAmazonAccessToken);
+            unset($this->session->moptPayoneAmazonReferenceId);
+            unset($this->session->moptPayoneAmazonWorkOrderId);
+            // reset basket
+            unset($this->session['sBasketQuantity']);
+            unset($this->session['sBasketAmount']);
+            // logout user to prevent autoforward to checkout/confirm when placing a second "normal" order
+            $this->admin->logout();
         }
-
-        // Register Custom Template
-        $this->View()->loadTemplate("frontend/checkout/finish.tpl");
-
-        // Fill in Order Addresses
-
-        $orderVariables = $this->session['sOrderVariables']->getArrayCopy();
-
-        // unset payoneAmazonPayConfig for debug Module compatibility
-        unset($orderVariables['payoneAmazonPayConfig']);
-
-        // add addresses for SW > 5.2
-
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-            $orderVariables['sAddresses']['billing'] = $this->getOrderAddress($orderVariables['sOrderNumber'], 'billing');
-            $orderVariables['sAddresses']['shipping'] = $this->getOrderAddress($orderVariables['sOrderNumber'], 'shipping');
-            $orderVariables['sAddresses']['equal'] = $this->areAddressesEqual($orderVariables['sAddresses']['billing'], $orderVariables['sAddresses']['shipping']);
-        }
-
-        // If auth was set to async display an additional message
-
-        $payData = $request->getPaydata()->toArray();
-
-        if ($payData['add_paydata[amazon_timeout]'] == 1440){
-            $this->View()->moptAmazonAsyncAuthMessage = Shopware()->Snippets()
-                ->getNamespace('frontend/MoptPaymentPayone/messages')
-                ->get('amazonAsyncAuthMessage');
-        }
-
-        $this->View()->assign($orderVariables);
-        // TransactionID
-        $this->View()->sTransactionumber = $txid;
-        $this->View()->sPayment = array('description' => Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getDescription());
-        $this->View()->sDispatch =  $orderVariables['sDispatch'];
-
-
-        // unset session Vars
-        unset($this->session->moptPayoneAmazonAccessToken);
-        unset($this->session->moptPayoneAmazonReferenceId);
-        unset($this->session->moptPayoneAmazonWorkOrderId);
-        // reset basket
-        unset($this->session['sBasketQuantity']);
-        unset($this->session['sBasketAmount']);
-        // logout user to prevent autoforward to checkout/confirm when placing a second "normal" order
-        $this->admin->logout();
     }
+
+    /**
+     * handle amazon Error forward accordingly
+     *
+     * @return void
+     */
+    private function handleAmazonError($response)
+    {
+        switch ($response->getErrorCode()) {
+            // TransactionTimedOut
+            // forward to shippingpayment and show message to use another payment mean
+            case '980':
+                $this->redirectToShippingPayment($amazonLogout = false, $errorMessage = 'chooseotherpayment');
+                break;
+
+            // InvalidPaymentMethod
+            // forward to Widgets and show message to use another payment mean
+            case '981':
+                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
+                break;
+
+            // AmazonRejected 109 || 982
+            case '109':
+                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                break;
+
+            case '982':
+                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                break;
+
+            //  ProcessingFailure
+            // old: 900
+            case '983':
+                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                break;
+
+            //  BuyerEqualsSeller
+            //  old: 900
+            case '984':
+                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                break;
+
+            //  PaymentMethodNotAllowed
+            //  old: 900
+            case '985':
+                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
+                break;
+
+            //  PaymentMethodNotAllowed
+            //  old: 902 ??
+            case '902':
+                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
+                break;
+
+            //  PaymentPlanNotSet
+            //  old: 900
+            case '986':
+                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
+                break;
+
+            //  ShippingAddressNotSet
+            //  old: 900
+            case '987':
+                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotheraddress');
+                break;
+
+            default:
+                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                break;
+
+        }
+        return;
+    }
+
+    /**
+     * fredirect user to shippingpayment view and show error message
+     *
+     * @return void
+     */
+    private function redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment'){
+        $this->redirect([
+            'controller' => 'checkout',
+            'action' => 'shippingPayment',
+            'moptAmazonError' => $errorMessage,
+            'moptAmazonLogout' => $amazonLogout,
+        ]);
+        return;
+    }
+
+    /**
+     * forwards user to shippingpayment view
+     *
+     * @return void
+     */
+    private function redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment'){
+        $this->redirect([
+            'controller' => 'MoptPaymentAmazon',
+            'action' => 'index',
+            'moptAmazonError' => $errorMessage,
+            'moptAmazonReadonly' => $this->session->moptPayoneAmazonReferenceId,
+            'moptAmazonWorkOrderId' => $this->session->moptPayoneAmazonWorkOrderId,
+        ]);
+        return;
+    }
+
 
     /**
      * Get all countries from database via sAdmin object
