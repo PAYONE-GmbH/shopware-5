@@ -1,8 +1,9 @@
-{extends file="frontend/address/index.tpl"}
+{extends file="parent:frontend/address/index.tpl"}
 {namespace name="frontend/address/index"}
 
 {* Breadcrumb *}
-{block name="frontend_index_start" append}
+{block name="frontend_index_start"}
+    {$smarty.block.parent}
     {$sBreadcrumb[] = ["name"=>"{s name="AddressesTitleEdit"}Change address{/s}", "link"=>{url id=$formData.id}]}
 {/block}
 

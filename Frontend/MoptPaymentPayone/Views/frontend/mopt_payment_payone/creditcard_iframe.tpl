@@ -1,4 +1,4 @@
-{extends file='frontend/checkout/payment.tpl'}
+{extends file='parent:frontend/checkout/payment.tpl'}
 
 {block name="frontend_index_content"}
 

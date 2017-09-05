@@ -1,6 +1,7 @@
-{extends file="frontend/account/payment.tpl"}
+{extends file="parent:frontend/account/payment.tpl"}
 
-{block name="frontend_index_content" append}
+{block name="frontend_index_content"}
+    {$smarty.block.parent}
 {if $moptConsumerScoreCheckNeedsUserAgreement}
 
 <div id="moptConsumerScoreCheckNeedsUserAgreementModal" 

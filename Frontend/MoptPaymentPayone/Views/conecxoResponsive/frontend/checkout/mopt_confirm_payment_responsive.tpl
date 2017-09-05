@@ -1,6 +1,7 @@
-{extends file="frontend/register/confirm_payment.tpl"}
+{extends file="parent:frontend/register/confirm_payment.tpl"}
 
-{block name="frontend_checkout_payment_fieldset_template" append}
+{block name="frontend_checkout_payment_fieldset_template"}
+    {$smarty.block.parent}
 {if $payment_mean.id != 'mopt_payone_creditcard'}
 <div id="moptSavePayment{$payment_mean.id}" class="grid_14 bankdata" 
      style="clear: both; margin-right: 0px; margin-left: auto; display: none;">

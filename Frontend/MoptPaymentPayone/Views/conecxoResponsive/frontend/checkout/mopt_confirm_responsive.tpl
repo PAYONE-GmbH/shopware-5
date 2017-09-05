@@ -1,6 +1,7 @@
-{extends file="frontend/checkout/confirm.tpl"}
+{extends file="parent:frontend/checkout/confirm.tpl"}
 
-{block name="frontend_index_content" append}
+{block name="frontend_index_content"}
+    {$smarty.block.parent}
 {if $moptAddressCheckNeedsUserVerification}
 <div id="moptAddressCheckNeedsUserVerificationModal" 
      class="modal fade" 
@@ -29,8 +30,8 @@
 {/block}
 
 {* Payment selection *}
-{block name='frontend_checkout_confirm_payment' append}
-
+{block name='frontend_checkout_confirm_payment'}
+    {$smarty.block.parent}
 <div id="moptCheckPaymentMethodModal" 
      class="modal fade" 
      tabindex="-1" 
@@ -86,7 +87,7 @@
 </script>
 {/block}
 
-{block name="frontend_checkout_confirm_footer" prepend}
+{block name="frontend_checkout_confirm_footer"}
   {if $moptMandateData.mopt_payone__showMandateText}
     <div class="col-lg-6">
       <div class="row-fluid" style="overflow:scroll; border:1px solid #ccc; padding:10px; height:200px;"> 
@@ -104,12 +105,14 @@
     </div>
     <div class="clear">&nbsp;</div>
   {/if}
+    {$smarty.block.parent}
 {/block}
 
-{block name="frontend_checkout_confirm_error_messages" prepend}
+{block name="frontend_checkout_confirm_error_messages"}
   {if $moptMandateAgreementError}
     <div class="alert alert-danger">
       {s name='mandateAgreementError' namespace='frontend/MoptPaymentPayone/payment'}Bitte bestätigen Sie die Erteilung des Mandats.{/s}
     </div>
   {/if}
+    {$smarty.block.parent}
 {/block}

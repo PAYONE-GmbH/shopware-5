@@ -1,6 +1,7 @@
-{extends file="frontend/checkout/finish.tpl"}
+{extends file="parent:frontend/checkout/finish.tpl"}
 
-{block name="frontend_checkout_finish_teaser" append}
+{block name="frontend_checkout_finish_teaser"}
+    {$smarty.block.parent}
   {if $moptPaymentConfigParams.moptMandateDownloadEnabled}
       <div class="row hidden-print">
         <div class="col-md-12">
