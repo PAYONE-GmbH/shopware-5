@@ -1,6 +1,6 @@
-{extends file="frontend/checkout/confirm.tpl"}
+{extends file="parent:frontend/checkout/confirm.tpl"}
 
-{block name="frontend_checkout_confirm_confirm_table_actions" prepend}
+{block name="frontend_checkout_confirm_confirm_table_actions"}
     {if $moptMandateData.mopt_payone__showMandateText}
         <div>
             <div style="overflow:scroll; border:1px solid #ccc; padding:10px; height:200px;">
@@ -18,9 +18,11 @@
         </div>
         <div class="clear">&nbsp;</div>
     {/if}
+    {$smarty.block.parent}
 {/block}
 
-{block name="frontend_checkout_confirm_agb_checkbox" append}
+{block name="frontend_checkout_confirm_agb_checkbox"}
+    {$smarty.block.parent}
     {if $moptMandateData.mopt_payone__showMandateText}
         <input name="moptMandateConfirm" type="hidden" 
                id="moptMandateConfirm"/>
@@ -34,8 +36,9 @@
            id="moptAddressCheckNeedsUserVerification"/>
 {/block}
 
-{block name="frontend_checkout_confirm_error_messages" prepend}
+{block name="frontend_checkout_confirm_error_messages"}
     {if $moptMandateAgreementError}
         {include file="frontend/_includes/messages.tpl" type="error" content="{s name='mandateAgreementError' namespace='frontend/MoptPaymentPayone/payment'}Bitte bestätigen Sie die Erteilung des Mandats.{/s}"}
     {/if}
+    {$smarty.block.parent}
 {/block}
