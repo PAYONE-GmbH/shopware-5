@@ -1,8 +1,9 @@
-{extends file="frontend/account/billing.tpl"}
+{extends file="parent:frontend/account/billing.tpl"}
 
-{block name="frontend_index_content" append}
+{block name="frontend_index_content"}
+
 {if $moptAddressCheckNeedsUserVerification}
-
+    {$smarty.block.parent}
 <div id="moptAddressCheckNeedsUserVerificationModal" 
      class="modal fade" 
      tabindex="-1" 
