@@ -1,6 +1,7 @@
 {extends file="parent:frontend/checkout/cart.tpl"}
 
-{block name="frontend_checkout_actions_confirm" append}
+{block name="frontend_checkout_actions_confirm"}
+    {$smarty.block.parent}
     {if !$sMinimumSurcharge && !$sDispatchNoOrder}
         <div class="button--container right" style="margin-right: 10px">
             <div id="LoginWithAmazon"></div>
@@ -38,5 +39,30 @@
             </script>
         </div>
     {/if}
+{/block}
 
+{block name='frontend_checkout_cart_error_messages'}
+    <div>
+        Im Div
+        AmazonLogout:  {$moptAmazonLogout} <BR>
+        {if $moptAmazonError}
+            {include file="frontend/_includes/messages.tpl" type="error" content="{s name='amazonDeclined ' namespace='frontend/MoptPaymentPayone/errorMessages'}{/s}" bold=false}
+        {/if}
+    </div>
+    {$smarty.block.parent}
+{/block}
+
+{block name="frontend_index_header_javascript_jquery"}
+    {if $moptAmazonLogout === true}
+        <script async="async"
+                src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'>
+        </script>
+        <script>
+            window.onAmazonLoginReady = function () {
+                amazon.Login.logout();
+                console.log("Amazon Logout");
+            };
+        </script>
+    {/if}
+    {$smarty.block.parent}
 {/block}

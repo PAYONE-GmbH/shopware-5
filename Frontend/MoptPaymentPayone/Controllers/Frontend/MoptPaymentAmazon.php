@@ -339,12 +339,12 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             // AmazonRejected 109 || 982
             case '109':
-                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                break;
+            case '982':
+                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
                 break;
 
-            case '982':
-                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
-                break;
 
             //  ProcessingFailure
             // old: 900
@@ -417,6 +417,25 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             'moptAmazonError' => $errorMessage,
             'moptAmazonReadonly' => $this->session->moptPayoneAmazonReferenceId,
             'moptAmazonWorkOrderId' => $this->session->moptPayoneAmazonWorkOrderId,
+        ]);
+        return;
+    }
+
+    /**
+     * fredirect user to cart view and show error message
+     *
+     * @return void
+     */
+    private function redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment'){
+
+        $this->session->moptAmazonError = $errorMessage;
+        $this->session->moptAmazonLogout = $amazonLogout;
+
+        $this->redirect([
+            'controller' => 'checkout',
+            'action' => 'cart',
+            // 'moptAmazonError' => $errorMessage,
+            //'moptAmazonLogout' => $amazonLogout,
         ]);
         return;
     }
