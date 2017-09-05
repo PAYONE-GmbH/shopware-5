@@ -1,6 +1,7 @@
-{extends file="frontend/checkout/shipping_payment_core.tpl"}
+{extends file="parent:frontend/checkout/shipping_payment_core.tpl"}
 
-{block name="frontend_checkout_shipping_payment_core_payment_fields" append}
+{block name="frontend_checkout_shipping_payment_core_payment_fields"}
+    {$smarty.block.parent}
     <script type="text/javascript">
         //<![CDATA[
         if (typeof $ !== 'undefined') {
