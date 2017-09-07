@@ -6,7 +6,7 @@
 class Mopt_PayoneHelper
 {
 
-      /**
+   /**
    * check if Responsive Template is installed and activated for current subshop
    * snippet provided by Conexco
    *
@@ -101,7 +101,6 @@ class Mopt_PayoneHelper
         }
 
         $billingAddressChecktype = $this->getAddressChecktype($config, 'billing', $selectedCountry);
-
         return ($billingAddressChecktype !== false);
     }
 
@@ -333,13 +332,14 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
+        if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
+            return false;
+        } else {
+            return true;
+        }
         if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
             return false;
         }
-        if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
-            return false;
-        }
-
         return true;
     }
 
@@ -362,13 +362,15 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
-        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
-            return false;
-        }
         if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
             return false;
+        } else {
+            return true;
         }
 
+        if ( $moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
+            return false;
+        }
         return true;
     }
 
