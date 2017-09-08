@@ -552,12 +552,16 @@ function moptPaymentReady() {
 }
 
 $(document).ready(function(){
-    moptPaymentReady();
+   if (typeof document.asyncReady == "undefined")
+    {
+        moptPaymentReady();
+    }
 });
 
 if (typeof document.asyncReady !== "undefined") {
 
     document.asyncReady(function () {
+        console.log("async JS");
         moptPaymentReady();
     });
 }

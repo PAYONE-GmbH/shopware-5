@@ -49,7 +49,10 @@ function moptCheckoutReady() {
 
 
 $(document).ready(function(){
-    moptCheckoutReady();
+    if (typeof document.asyncReady == "undefined")
+    {
+        moptPaymentReady();
+    }
 });
 
 if (typeof document.asyncReady !== "undefined") {
