@@ -129,30 +129,30 @@ class AddressCheck implements SubscriberInterface
             $shippingAddressData['country'] = $billingAddressData['countryId'];
             $basketAmount = $basket['AmountNumeric'];
 
-            /* We need to skip both address checks if the risk rules were executed in
-             * an early stage, that does not provide the Billing & Shipping objects.
-             */
-            $isBillingAttribWriteable = function (\Mopt_PayoneMain $main, Customer $customer) {
-                try {
-                    $billingObject = $customer->getBilling();
-                    $main->getHelper()->getOrCreateBillingAttribute($billingObject);
-                } catch (\Exception $e) {
-                    return false;
-                }
-                return true;
-            };
-            $isShippingAttribWriteable = function (\Mopt_PayoneMain $main, Customer $customer) {
-                try {
-                    $shippingObject = $customer->getShipping();
-                    $main->getHelper()->getOrCreateShippingAttribute($shippingObject);
-                } catch (\Exception $e) {
-                    return false;
-                }
-                return true;
-            };
+
             $userObject = $userId ? Shopware()->Models()
                 ->getRepository('Shopware\Models\Customer\Customer')
                 ->find($userId) : null;
+
+            if (!$userObject){
+                $arguments->setReturn(false);
+                return;
+            }
+
+            /* We need to skip both address checks if the risk rules were executed in
+             * an early stage, that does not provide the Billing & Shipping objects.
+             */
+            $isBillingAttribWriteable = $this->isBillingAttribWriteable($userObject);
+            if (!$isBillingAttribWriteable){
+                $arguments->setReturn(false);
+                return;
+            }
+
+            $isShippingAttribWriteable = $this->isShippingAttribWriteable($userObject);
+            if (!$isShippingAttribWriteable){
+                $arguments->setReturn(false);
+                return;
+            }
 
             // perform billingAddressCheck if configured and required
             if ($this->getBillingAddressCheckIsNeeded(
@@ -161,7 +161,7 @@ class AddressCheck implements SubscriberInterface
                 $basketAmount,
                 $paymentName,
                 $billingAddressData['country']
-            ) && $isBillingAttribWriteable($moptPayoneMain, $userObject)) {
+            ) && $isBillingAttribWriteable) {
                 // perform check
                 $params = $moptPayoneMain
                     ->getParamBuilder()
@@ -202,7 +202,7 @@ class AddressCheck implements SubscriberInterface
                 $basketAmount,
                 $paymentName,
                 $shippingAddressData['country']
-            ) && $isShippingAttribWriteable($moptPayoneMain, $userObject)) {
+            ) && $isShippingAttribWriteable) {
                 // perform check
                 $params = $moptPayoneMain
                     ->getParamBuilder()
@@ -266,6 +266,29 @@ class AddressCheck implements SubscriberInterface
                 return;
             }
         }
+    }
+
+
+    private function isBillingAttribWriteable(Customer $customer){
+        try {
+            $billingObject = $customer->getBilling();
+            $moptPayoneMain = $this->container->get('MoptPayoneMain');
+            $moptPayoneMain->getHelper()->getOrCreateBillingAttribute($billingObject);
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;
+    }
+
+    private function isShippingAttribWriteable(Customer $customer){
+        try {
+            $billingObject = $customer->getBilling();
+            $moptPayoneMain = $this->container->get('MoptPayoneMain');
+            $moptPayoneMain->getHelper()->getOrCreateShippingAttribute($billingObject);
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -377,6 +400,29 @@ class AddressCheck implements SubscriberInterface
             );
 
             // handle result
+            $errors = $this->handleBillingAddressCheckResult(
+                $response,
+                $config,
+                $userId,
+                $subject,
+                $forwardOnError,
+                $billingAddressData
+            );
+            if (!empty($errors['sErrorFlag'])) {
+                $ret = [];
+                $ret['sErrorFlag']     = $errors['sErrorFlag'];
+                $ret['sErrorMessages'] = $errors['sErrorMessages'];
+
+                $arguments->setReturn($ret);
+                return;
+            }
+        }
+
+        // Handle previous INVALID Response and forward accordingly
+        if (!empty($session->moptAddressError)){
+            unset($session->moptAddressError);
+            $response = new \Payone_Api_Response_AddressCheck_Invalid();
+            $response->setStatus('INVALID');
             $errors = $this->handleBillingAddressCheckResult(
                 $response,
                 $config,
@@ -1207,6 +1253,10 @@ class AddressCheck implements SubscriberInterface
             }
         } else {
             $moptPayoneMain->getHelper()->saveBillingAddressError($userId, $response);
+            // save Response to prevent a second Check OnConfirm
+            if ($caller === null) {
+                $session->moptAddressError = $response;
+            }
             if ($forwardOnError) {
                 switch ($config['adresscheckFailureHandling']) {
                     case 0: // cancel transaction -> redirect to payment choice
@@ -1381,8 +1431,10 @@ class AddressCheck implements SubscriberInterface
                                 'sTarget'       => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
+                        } elseif ( version_compare(\Shopware::VERSION, '5.2.0', '>=')){
+
                         } else {
-                            $subject->forward('shipping', 'account', null, ['sTarget' => 'checkout']);
+                            $subject->forward('edit', 'address', null, ['sTarget' => 'checkout']);
                         }
                         break;
                     case 2: // perform consumerscore check
@@ -1476,7 +1528,6 @@ class AddressCheck implements SubscriberInterface
                 $basketAmount,
                 $country
             );
-
         if (($billingAddressCheckRequired === true) &&
             ($moptPayoneMain->getHelper()
                 ->isBillingAddressCheckValid(
