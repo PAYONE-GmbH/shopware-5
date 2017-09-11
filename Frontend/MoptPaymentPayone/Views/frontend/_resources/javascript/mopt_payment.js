@@ -561,7 +561,6 @@ $(document).ready(function(){
 if (typeof document.asyncReady !== "undefined") {
 
     document.asyncReady(function () {
-        console.log("async JS");
         moptPaymentReady();
     });
 }

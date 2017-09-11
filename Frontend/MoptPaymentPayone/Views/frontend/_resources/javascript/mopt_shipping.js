@@ -30,7 +30,7 @@ function moptShippingReady() {
 $(document).ready(function(){
     if (typeof document.asyncReady == "undefined")
     {
-        moptPaymentReady();
+        moptShippingReady();
     }
 });
 
