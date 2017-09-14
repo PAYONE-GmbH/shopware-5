@@ -206,7 +206,6 @@
             amazon.Login.setClientId("{$payoneAmazonPayConfig->getClientId()}");
             $('#moptAmazonPayButton').attr("disabled", "disabled");
             $.loadingIndicator.open();
-
         };
         window.onAmazonPaymentsReady = function () {
             new OffAmazonPayments.Widgets.AddressBook({
@@ -224,8 +223,6 @@
                 onAddressSelect: function (orderReference) {
 
                     $('#moptAmazonPayButton').attr("disabled", "disabled");
-                    $.loadingIndicator.open();
-
                     var call = '{url controller="moptAjaxPayone" action="getOrderReferenceDetails" forceSecure}';
                     $.ajax({
                         url: call ,
