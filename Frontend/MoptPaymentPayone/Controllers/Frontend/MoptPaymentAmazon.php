@@ -338,16 +338,25 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             // InvalidPaymentMethod
             // forward to Widgets and show message to use another payment mean
+            // old 900
+/*            case '900':
+                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
+                break;
+*/
             case '981':
                 $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
                 break;
 
             // AmazonRejected 109 || 982
-            case '109':
-                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+            // redirect to widgets not possible:
+            // Amazon Error after Widge re-rendering:
+            // PaymentMethodNotModifiable: Zahlungsweise kann im Status CLOSED nicht geändert werden
+            // nicht zu Cart redirecten, sondern zu ShippingPayment macht mehr Sinn
+            case '900':
+                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
                 break;
             case '982':
-                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
                 break;
 
 
@@ -364,13 +373,13 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 break;
 
             //  PaymentMethodNotAllowed
-            //  old: 900
+            //  old: 902 (Payone says 900??)
             case '985':
                 $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
                 break;
 
             //  PaymentMethodNotAllowed
-            //  old: 902 ??
+            //  old: 902 , new: 985
             case '902':
                 $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
                 break;
@@ -401,11 +410,14 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
      * @return void
      */
     private function redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment'){
+        $this->session->moptAmazonError = $errorMessage;
+        $this->session->moptAmazonLogout = $amazonLogout;
+
         $this->redirect([
             'controller' => 'checkout',
             'action' => 'shippingPayment',
-            'moptAmazonError' => $errorMessage,
-            'moptAmazonLogout' => $amazonLogout,
+//            'moptAmazonError' => $errorMessage,
+//            'moptAmazonLogout' => $amazonLogout,
         ]);
         return;
     }

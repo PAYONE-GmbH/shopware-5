@@ -137,6 +137,16 @@ class FrontendCheckout implements SubscriberInterface
         if ($request->getActionName() === 'shippingPayment') {
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment_core.tpl');
+
+            // used for amazon error handling
+            if ($session->moptAmazonError) {
+                $view->assign('moptAmazonError', $session->moptAmazonError);
+                unset($session->moptAmazonError);
+            }
+            if ($session->moptAmazonLogout) {
+                $view->assign('moptAmazonLogout', $session->moptAmazonLogout);
+                unset($session->moptAmazonLogout);
+            }
         }
         
         if ($request->getActionName() === 'cart') {
