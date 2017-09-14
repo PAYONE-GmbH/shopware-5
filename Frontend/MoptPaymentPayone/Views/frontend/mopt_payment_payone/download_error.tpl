@@ -1,18 +1,20 @@
-{extends file='frontend/index/index.tpl'}
+{extends file='parent:frontend/index/index.tpl'}
 
-{block name="frontend_index_header_javascript" append}
+{block name="frontend_index_header_javascript"}
+    {$smarty.block.parent}
 <script type="text/javascript">
-  //<![CDATA[
-  if(top!=self){
-    top.location=self.location;
-  }
-  //]]>
+    //<![CDATA[
+    if(top!=self){
+        top.location=self.location;
+    }
+    //]]>
 </script>
 {/block}
 
 {* Breadcrumb *}
-{block name='frontend_index_start' append}
-{$sBreadcrumb = [['name'=>"{s namespace='frontend/MoptPaymentPayone/payment' name=mandateDownloadTitle}Mandat Download{/s}"]]}
+{block name='frontend_index_start'}
+    {$smarty.block.parent}
+    {$sBreadcrumb = [['name'=>"{s namespace='frontend/MoptPaymentPayone/payment' name=mandateDownloadTitle}Mandat Download{/s}"]]}
 {/block}
 
 {* Hide sidebar left *}

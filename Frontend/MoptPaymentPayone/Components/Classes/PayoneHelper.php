@@ -6,7 +6,7 @@
 class Mopt_PayoneHelper
 {
 
-      /**
+   /**
    * check if Responsive Template is installed and activated for current subshop
    * snippet provided by Conexco
    *
@@ -101,7 +101,6 @@ class Mopt_PayoneHelper
         }
 
         $billingAddressChecktype = $this->getAddressChecktype($config, 'billing', $selectedCountry);
-
         return ($billingAddressChecktype !== false);
     }
 
@@ -144,13 +143,14 @@ class Mopt_PayoneHelper
         if (!$config['adresscheckActive']) {
             return false;
         }
-        // ToDo make this SW 5.3 compatible
 
-        // check if seperate shipping address is saved
-        $sql        = 'SELECT `id` FROM `s_user_shippingaddress` WHERE userID = ?';
-        $shippingId = Shopware()->Db()->fetchOne($sql, $userId);
-        if (!$shippingId) {
-            return false;
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        if ($userData['billingaddress'] && userData['shippingaddress'] ){
+            if ($this->areAddressesEqual($userData['billingaddress'],$userData['shippingaddress'])) {
+                return false;
+            }
+
         }
 
         // no check when basket value outside configured values
@@ -161,6 +161,21 @@ class Mopt_PayoneHelper
         $shippingAddressChecktype = $this->getAddressChecktype($config, 'shipping', $selectedCountry);
 
         return ($shippingAddressChecktype !== false);
+    }
+
+    /**
+     * @param array $addressA
+     * @param array $addressB
+     *
+     * @return bool
+     */
+    private function areAddressesEqual(array $addressA, array $addressB)
+    {
+        $unset = ['id', 'customernumber', 'phone', 'ustid'];
+        foreach ($unset as $key) {
+            unset($addressA[$key], $addressB[$key]);
+        }
+        return count(array_diff($addressA, $addressB)) == 0;
     }
 
   /**
@@ -317,13 +332,14 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
+        if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
+            return false;
+        } else {
+            return true;
+        }
         if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
             return false;
         }
-        if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
-            return false;
-        }
-
         return true;
     }
 
@@ -346,13 +362,15 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
-        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
-            return false;
-        }
         if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
             return false;
+        } else {
+            return true;
         }
 
+        if ( $moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
+            return false;
+        }
         return true;
     }
 
@@ -439,7 +457,7 @@ class Mopt_PayoneHelper
 
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
         if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+            version_compare(\Shopware::VERSION, '5.2.0', '>=')
         ) {
             $billing = $user->getDefaultBillingAddress();
         } else {
@@ -470,7 +488,7 @@ class Mopt_PayoneHelper
 
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
         if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+            version_compare(\Shopware::VERSION, '5.2.0', '>=')
         ) {
             $shipping = $user->getDefaultShippingAddress();
         } else {
