@@ -157,6 +157,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'amazon_timeout', 'data' => 0)
             ));
+            // send additional param to PO API
+            // this should trigger the cancelOrderReference on timouts in API side
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'cancel_on_timeout', 'data' => 'yes')
+            ));
         } elseif ($payoneAmazonPayConfig->getAmazonMode() === 'async') {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'amazon_timeout', 'data' => 1440)
