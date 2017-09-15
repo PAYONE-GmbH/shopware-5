@@ -116,9 +116,10 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $userData = $this->getUserData();
 
         // pre-reserve Shop Order Number
-        $my_sOrder = new sOrder();
-        $myOrdernum = $my_sOrder->sGetOrderNumber();
-
+        if (empty($this->session['moptAmazonOrdernum'])){
+            $my_sOrder = new sOrder();
+            $this->session['moptAmazonOrdernum'] = $my_sOrder->sGetOrderNumber();
+        }
         $config = $moptPayoneMain->getPayoneConfig($paymentId);;
 
         $response = $this->buildAndCallSetOrderReferenceDetails($config);
@@ -179,7 +180,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $request->setClearingtype(Payone_Enum_ClearingType::WALLET);
         $request->setWorkorderId($this->session->moptPayoneAmazonWorkOrderId);
         $request->setWallettype(Payone_Api_Enum_WalletType::AMAZONPAY);
-        $request->setReference($myOrdernum);
+        $request->setReference($this->session['moptAmazonOrdernum']);
         $personalData = $paramBuilder->getPersonalData($userData);
         $request->setPersonalData($personalData);
         $deliveryData = $paramBuilder->getDeliveryData($userData);
@@ -258,10 +259,10 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             // replace the new order number with the already reserved one, which is already sent to amazon
             $sql = 'UPDATE  `s_order` SET ordernumber = ? WHERE transactionID = ?';
-            Shopware()->Db()->query($sql, array($myOrdernum, $txid));
+            Shopware()->Db()->query($sql, array($this->session['moptAmazonOrdernum'], $txid));
 
             // also update Ordernumber in Session
-            $this->session['sOrderVariables']->sOrderNumber = $myOrdernum;
+            $this->session['sOrderVariables']->sOrderNumber = $this->session['moptAmazonOrdernum'];
 
             // get orderId for attribute Saving
             $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
@@ -314,6 +315,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             unset($this->session->moptPayoneAmazonAccessToken);
             unset($this->session->moptPayoneAmazonReferenceId);
             unset($this->session->moptPayoneAmazonWorkOrderId);
+            unset($this->session->moptAmazonOrdernum);
             // reset basket
             unset($this->session['sBasketQuantity']);
             unset($this->session['sBasketAmount']);
@@ -352,10 +354,19 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             // Amazon Error after Widge re-rendering:
             // PaymentMethodNotModifiable: Zahlungsweise kann im Status CLOSED nicht geändert werden
             // nicht zu Cart redirecten, sondern zu ShippingPayment macht mehr Sinn
-            case '900':
-                $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+            //case '900':
+                // unset session Vars
+                unset($this->session->moptPayoneAmazonAccessToken);
+                unset($this->session->moptPayoneAmazonReferenceId);
+                unset($this->session->moptPayoneAmazonWorkOrderId);
+                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                //$this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
                 break;
             case '982':
+                // unset session Vars
+                unset($this->session->moptPayoneAmazonAccessToken);
+                unset($this->session->moptPayoneAmazonReferenceId);
+                unset($this->session->moptPayoneAmazonWorkOrderId);
                 $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
                 break;
 

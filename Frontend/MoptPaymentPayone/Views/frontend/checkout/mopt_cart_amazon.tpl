@@ -11,6 +11,8 @@
                     amazon.Login.setClientId("{$payoneAmazonPayConfig->getClientId()}");
                 };
                 window.onAmazonPaymentsReady = function () {
+                    console.log('LoginButton');
+                    console.log(Date.now());
                     var authRequest;
                     OffAmazonPayments.Button('LoginWithAmazon', "{$payoneAmazonPayConfig->getSellerId()}", {
                         type: "{$payoneAmazonPayConfig->getButtonType()}",
@@ -44,6 +46,7 @@
 {block name='frontend_checkout_cart_error_messages'}
     <div>
         Im Div
+        Amazon clientId: {$payoneAmazonPayConfig->getSellerId()}<BR>
         AmazonLogout:  {$moptAmazonLogout} <BR>
         {if $moptAmazonError}
             {include file="frontend/_includes/messages.tpl" type="error" content="{s name='amazonDeclined ' namespace='frontend/MoptPaymentPayone/errorMessages'}{/s}" bold=false}
@@ -60,8 +63,12 @@
         <script>
             window.onAmazonLoginReady = function () {
                 amazon.Login.logout();
+                amazon.Login.setClientId("{$payoneAmazonPayConfig->getClientId()}");
+                console.log(Date.now());
                 console.log("Amazon Logout");
             };
+            console.log('Reinit Button')
+
         </script>
     {/if}
     {$smarty.block.parent}
