@@ -355,18 +355,10 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             // PaymentMethodNotModifiable: Zahlungsweise kann im Status CLOSED nicht geändert werden
             // nicht zu Cart redirecten, sondern zu ShippingPayment macht mehr Sinn
             //case '900':
-                // unset session Vars
-                unset($this->session->moptPayoneAmazonAccessToken);
-                unset($this->session->moptPayoneAmazonReferenceId);
-                unset($this->session->moptPayoneAmazonWorkOrderId);
                 $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
                 //$this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
                 break;
             case '982':
-                // unset session Vars
-                unset($this->session->moptPayoneAmazonAccessToken);
-                unset($this->session->moptPayoneAmazonReferenceId);
-                unset($this->session->moptPayoneAmazonWorkOrderId);
                 $this->redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment');
                 break;
 
@@ -421,14 +413,18 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
      * @return void
      */
     private function redirectToShippingPayment($amazonLogout = true, $errorMessage = 'chooseotherpayment'){
+
+        if ($amazonLogout === true){
+            // unset session Vars
+            unset($this->session->moptPayoneAmazonAccessToken);
+            unset($this->session->moptPayoneAmazonReferenceId);
+            unset($this->session->moptPayoneAmazonWorkOrderId);
+        }
         $this->session->moptAmazonError = $errorMessage;
         $this->session->moptAmazonLogout = $amazonLogout;
-
         $this->redirect([
             'controller' => 'checkout',
-            'action' => 'shippingPayment',
-//            'moptAmazonError' => $errorMessage,
-//            'moptAmazonLogout' => $amazonLogout,
+            'action' => 'shippingPayment'
         ]);
         return;
     }
@@ -456,14 +452,17 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
      */
     private function redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment'){
 
+        if ($amazonLogout === true){
+            // unset session Vars
+            unset($this->session->moptPayoneAmazonAccessToken);
+            unset($this->session->moptPayoneAmazonReferenceId);
+            unset($this->session->moptPayoneAmazonWorkOrderId);
+        }
         $this->session->moptAmazonError = $errorMessage;
         $this->session->moptAmazonLogout = $amazonLogout;
-
         $this->redirect([
             'controller' => 'checkout',
-            'action' => 'cart',
-            // 'moptAmazonError' => $errorMessage,
-            //'moptAmazonLogout' => $amazonLogout,
+            'action' => 'cart'
         ]);
         return;
     }
