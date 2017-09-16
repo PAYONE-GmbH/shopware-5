@@ -25,8 +25,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
 
         $this->logger = new Monolog\Logger('moptPayone');
-        $streamHandler = new Monolog\Handler\StreamHandler(Shopware()->Application()->Kernel()->getLogDir()
-                . '/moptPayoneTransactionStatus.log', Monolog\Logger::DEBUG);
+        $streamHandler = new Monolog\Handler\StreamHandler(
+            $this->buildPayoneTransactionLogPath(),
+            Monolog\Logger::DEBUG
+        );
         $this->logger->pushHandler($streamHandler);
 
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -410,5 +412,15 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
         $this->logger->debug('clearingdata already exists');
         return true;
+    }
+
+    /**
+     * builds the transaction log path
+     * @return string
+     */
+    protected function buildPayoneTransactionLogPath()
+    {
+        $logDir = Shopware()->Application()->Kernel()->getLogDir();
+        return  $logDir . '/moptPayoneTransactionStatus.log';
     }
 }
