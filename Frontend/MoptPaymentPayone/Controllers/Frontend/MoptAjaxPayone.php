@@ -2,7 +2,6 @@
 
 use Shopware\Components\CSRFWhitelistAware;
 
-
 /**
  * Integrate Payone protect and Ajax call handling
  */
@@ -60,7 +59,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function ajaxGetConsumerScoreUserAgreementAction()
     {
         $paymentId = $this->session->moptPaymentId;
-
         $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
 
         //add custom texts to view
@@ -800,7 +798,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         try {
             if (preg_match('/^[0-9]{1,5}$/', $calcValue)) {
-
                 $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-time', $paymentData, false, $ratePayShopId, $calcValue , $amount);;
 
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
@@ -837,7 +834,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return;
     }
 
-
     /**
      * show calculated installmentplan
      * @param $result
@@ -854,5 +850,4 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->View()->assign(array('result' => $result));
         return $this->View()->render();
     }
-
 }

@@ -2,7 +2,6 @@
 
 use Shopware\Components\CSRFWhitelistAware;
 
-
 /**
  * updated and finish transactions
  */
@@ -20,11 +19,13 @@ class Shopware_Controllers_Frontend_MoptAccountPayone extends Shopware_Controlle
         $activeBillingAddressId = $userData['additional']['user']['default_billing_address_id'];
         $activeShippingAddressId = $userData['additional']['user']['default_shipping_address_id'];
 
-        $this->View()->assign('activeBillingAddressId', $activeBillingAddressId);
-        $this->View()->assign('activeShippingAddressId', $activeShippingAddressId);
-        $this->View()->assign('sUserData', $userData);
-        $this->View()->assign('sUserLoggedIn', $this->admin->sCheckUser());
-        $this->View()->assign('sAction', $this->Request()->getActionName());
+        $this->View()->assign([
+            'activeBillingAddressId' => $activeBillingAddressId,
+            'activeShippingAddressId' => $activeShippingAddressId,
+            'sUserData' => $userData,
+            'sUserLoggedIn' => $this->admin->sCheckUser(),
+            'sAction' => $this->Request()->getActionName()
+        ]);
     }
 
     /**
@@ -37,26 +38,4 @@ class Shopware_Controllers_Frontend_MoptAccountPayone extends Shopware_Controlle
             'payment'
         ];
     }
-
-    /**
-     * Save paqyment action
-     *
-     * Save payment data
-     */
-    public function savePaymentAction()
-    {
-      parent::savePaymentAction();
-    }
-
-    /**
-     * Payment action method
-     *
-     * Read and change payment mean and payment data
-     */
-    public function paymentAction()
-    {
-        parent::paymentAction();
-    }
-
-
 }
