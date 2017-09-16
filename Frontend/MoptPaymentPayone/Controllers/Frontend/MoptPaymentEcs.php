@@ -78,7 +78,6 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $paymentId = $session->moptPaypayEcsPaymentId;
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
         
-
         $userData = $this->getUserData();
         $amount = $this->getBasketAmount($userData);
         
@@ -127,34 +126,37 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
     protected function getUserData()
     {
         $system = Shopware()->System();
-        $userData = $this->admin->sGetUserData();
-        if (!empty($userData['additional']['countryShipping'])) {
-            $sTaxFree = false;
-            if (!empty($userData['additional']['countryShipping']['taxfree'])) {
-                $sTaxFree = true;
-            } elseif (!empty($userData['additional']['countryShipping']['taxfree_ustid'])
-                    && !empty($userData['billingaddress']['ustid'])
-            ) {
-                $sTaxFree = true;
-            }
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $countryShipping = $userData['additional']['countryShipping'];
 
-            $system->sUSERGROUPDATA = Shopware()->Db()->fetchRow("
-                SELECT * FROM s_core_customergroups
-                WHERE groupkey = ?
-            ", array($system->sUSERGROUP));
+        if (empty($countryShipping)) {
+            return $userData;
+        }
 
-            if (!empty($sTaxFree)) {
-                $system->sUSERGROUPDATA['tax'] = 0;
-                $system->sCONFIG['sARTICLESOUTPUTNETTO'] = 1; //Old template
-                Shopware()->Session()->sUserGroupData = $system->sUSERGROUPDATA;
-                $userData['additional']['charge_vat'] = false;
-                $userData['additional']['show_net'] = false;
-                Shopware()->Session()->sOutputNet = true;
-            } else {
-                $userData['additional']['charge_vat'] = true;
-                $userData['additional']['show_net'] = !empty($system->sUSERGROUPDATA['tax']);
-                Shopware()->Session()->sOutputNet = empty($system->sUSERGROUPDATA['tax']);
-            }
+        $sTaxFree = (
+            !empty($countryShipping['taxfree']) ||
+            !empty($countryShipping['taxfree_ustid']) &&
+            !empty($userData['billingaddress']['ustid'])
+        );
+
+        $system->sUSERGROUPDATA = Shopware()->Db()->fetchRow(
+            'SELECT * FROM s_core_customergroups
+              WHERE groupkey = ?',
+            array($system->sUSERGROUP)
+        );
+
+        $userData['additional']['show_net'] = false;
+        $userData['additional']['charge_vat'] = false;
+        Shopware()->Session()->offsetSet('sOutputNet', true);
+
+        if (!empty($sTaxFree)) {
+            $system->sUSERGROUPDATA['tax'] = 0;
+            $this->container->get('config')->offsetSet('sARTICLESOUTPUTNETTO', 1);
+            Shopware()->Session()->offsetSet('sUserGroupData', $system->sUSERGROUPDATA);
+        } else {
+            $userData['additional']['charge_vat'] = true;
+            $userData['additional']['show_net'] = !empty($system->sUSERGROUPDATA['tax']);
+            Shopware()->Session()->offsetSet('sOutputNet', empty($system->sUSERGROUPDATA['tax']));
         }
 
         return $userData;
@@ -169,54 +171,52 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
     {
         $basket = Shopware()->Modules()->Basket()->sGetBasket();
         
-        if (!empty($userData['additional']['charge_vat'])) {
-            return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
-        } else {
+        if (empty($userData['additional']['charge_vat'])) {
             return $basket['AmountNetNumeric'];
         }
+
+        return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
     }
     
     protected function createrOrUpdateAndForwardUser($apiResponse, $paymentId, $session)
     {
         $payData = $apiResponse->getPaydata()->toAssocArray();
-        
-        if (!$this->isUserLoggedIn($session)) {
-            $this->createUserWithoutAccount($payData, $session, $paymentId);
-        } else {
+
+        if ($this->isUserLoggedIn($session)) {
             $user = $this->updateUserAddresses($payData, $session, $paymentId);
             if ($user === null) {
                 return $this->ecsAbortAction();
             }
         }
-        $user = $this->getUserData();
 
-        //set userdata
-        $user['sUserData']['additional']['charge_vat'] = true;
-        //set payment id
-        $user['sUserData']["additional"]["user"]["paymentID"] = $paymentId;
-        
-        //set userdata
+        $this->createUserWithoutAccount($payData, $session, $paymentId);
+
+        $user = $this->getUserData();
+        //set user data
         $user['additional']['charge_vat'] = true;
         //set payment id
-        $user['additional']['user']['paymentID'] = $paymentId;   
-        //set user data
-        //set payment method
-        //set shipment
+        $user['additional']['user']['paymentID'] = $paymentId;
+
         return $this->redirect(array('controller' => 'checkout', 'action' => 'confirm'));
     }
 
+    /**
+     * Checks if user is logged in
+     * @param $session
+     * @return bool
+     */
     protected function isUserLoggedIn($session)
     {
          return (isset($session->sUserId) && !empty($session->sUserId));
     }
-    
-  /**
-   * create / register user without login
-   */
+
+    /**
+     * create / register user without login
+     */
     protected function createUserWithoutAccount($personalData, $session, $paymentId)
     {
         $register = $this->extractData($personalData);
-        $register["payment"]["object"]["id"] = $paymentId;
+        $register['payment']['object']['id'] = $paymentId;
 
         $session['sRegister'] = $register;
         $session['sRegisterFinished'] = false;
@@ -226,14 +226,14 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
             $this->admin->sSYSTEM->_POST = $newdata['auth'];
             $this->admin->sLogin(true);            
         } else {
-        $this->admin->sSaveRegister();
+            $this->admin->sSaveRegister();
         }
     }
   
     protected function updateUserAddresses($personalData, $session, $paymentId)
     {
         $personalData = $this->extractData($personalData);
-      // use old phone number in case phone number is required
+        // use old phone number in case phone number is required
         if (Shopware()->Config()->get('requirePhoneField')) {
             $oldUserData = $this->admin->sGetUserData();
             $personalData['billing']['phone'] = $oldUserData['billingaddress']['phone'];
