@@ -1,6 +1,12 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
 <div class="payment--form-group">
+    {block name="frontend_checkout_payment_payone_telephone_label"}
+        <p class="none">
+            <label for="mopt_payone__klarna_telephone">{s name='klarnaTelephoneLabel'}Telefonnummer{/s}</label>
+        </p>
+    {/block}
+
     {block name="frontend_checkout_payment_payone_telephone_input"}
         <input name="moptPaymentData[mopt_payone__klarna_telephone]" type="text"
             id="mopt_payone__klarna_telephone"
