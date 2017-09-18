@@ -37,4 +37,10 @@ class Payone_Api_Enum_GenericpaymentAction
     const RATEPAY_PROFILE = 'profile';
 
     const RATEPAY_REQUEST_TYPE_CALCULATION = "calculation";
+
+    const AMAZON_GETCONFIGURATION = "getconfiguration";
+
+    const AMAZON_GETORDERREFERENCEDETAILS = "getorderreferencedetails";
+
+    const AMAZON_SETORDERREFERENCEDETAILS = "setorderreferencedetails";
 }

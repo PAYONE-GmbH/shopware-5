@@ -453,6 +453,12 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Bancontact',
                 'template' => 'mopt_paymentmean_bancontact.tpl',
                 'position' => 33,),
+            array(
+                'name' => 'mopt_payone__ewallet_amazon_pay',
+                'description' => 'PAYONE Amazon Pay',
+                'template' => 'mopt_paymentmean_amazon_ewallet.tpl',
+                'position' => 34,),
+
         );
     }
 
@@ -711,7 +717,17 @@ class Mopt_PayoneInstallHelper
       (74, 1, 1, 1, 0, 'box-shadow:inset 0 1px 1px #dadae5;background:#f8f8fa;border:1px solid #dadae5;border-top-color:#cbcbdb;line-height:19px;font-size:.875rem;width:85%;padding:.625rem .625rem .5625rem .625rem;color:#8798a9;','box-shadow:inset 0 1px 1px #dadae5;background:#f8f8fa;border:1px solid #dadae5;border-top-color:#cbcbdb;line-height:19px;font-size:.875rem;width:85%;padding:.625rem .625rem .5625rem .625rem;color:#8798a9;', '20px', '80px', 20, 20, '', 0, '20px', '100px', 1, 'tel', 4, 4, '', 0, '20px', '100px', 1, 'tel', 4, 4, '', 0, '20px', '40px', 1, 'select', 4, 4, '', 0, '20px', '40px', 1, 'select', 0, 0, 0, '', 0, 1, 0);
       ";
             Shopware()->Db()->query($sql);
-        }          
+        }
+
+        // insert default values for amazon
+        $sql = 'SELECT id FROM s_plugin_mopt_payone_amazon_pay';
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "INSERT INTO `s_plugin_mopt_payone_amazon_pay` (`id`, `client_id`, `seller_id`, `button_type`, `button_color`, `button_language`, `amazon_mode`) VALUES
+                  (1, '', '', 'PwA', 'Gold', 'none', 'sync');";
+            Shopware()->Db()->query($sql);
+        }
     }
 
     /**

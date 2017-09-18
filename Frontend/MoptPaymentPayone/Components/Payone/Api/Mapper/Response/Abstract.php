@@ -125,6 +125,18 @@ abstract class Payone_Api_Mapper_Response_Abstract extends Payone_Api_Mapper_Abs
     /**
      * @return bool
      */
+    protected function isPending()
+    {
+        $status = $this->getParam('status');
+        if ($status === 'PENDING') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
     protected function isOk()
     {
         $status = $this->getParam('status');

@@ -35,6 +35,11 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
     protected $clearingtype = null;
 
     /**
+     * @var string
+     */
+    protected $wallettype = null;
+
+    /**
      * Total amount (in smallest currency unit! e.g. cent)
      *
      * @var int
@@ -161,6 +166,22 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
     public function getClearingtype()
     {
         return $this->clearingtype;
+    }
+
+    /**
+     * @param string $wallettype
+     */
+    public function setWallettype($wallettype)
+    {
+        $this->wallettype = $wallettype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWallettype()
+    {
+        return $this->wallettype;
     }
 
     /**

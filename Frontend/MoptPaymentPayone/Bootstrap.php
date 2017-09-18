@@ -54,9 +54,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         $this->registerCustomModels();
         $this->get('Loader')->registerNamespace('Shopware\\Plugins\\MoptPaymentPayone', $this->Path());
-        $this->get('Loader')->registerNamespace('Payone', $this->Path().'Components/Payone/');
-        $this->get('Snippets')->addConfigDir($this->Path().'Snippets/');
-        $this->get('Loader')->registerNamespace('Mopt', $this->Path().'Components/Classes/');
+        $this->get('Loader')->registerNamespace('Payone', $this->Path() . 'Components/Payone/');
+        $this->get('Snippets')->addConfigDir($this->Path() . 'Snippets/');
+        $this->get('Loader')->registerNamespace('Mopt', $this->Path() . 'Components/Classes/');
     }
 
     /**
@@ -73,7 +73,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createMenu();
         $this->removePayment('mopt_payone__fin_klarna_installment');
 
-        return array('success' => true, 'invalidateCache' => array('backend', 'proxy','theme'));
+        return array('success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme'));
     }
 
     /**
@@ -101,10 +101,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     protected function deleteModels()
     {
-        $em       = $this->Application()->Models();
+        $em = $this->Application()->Models();
         $platform = $em->getConnection()->getDatabasePlatform();
         $platform->registerDoctrineTypeMapping('enum', 'string');
-        $tool     = new \Doctrine\ORM\Tools\SchemaTool($em);
+        $tool = new \Doctrine\ORM\Tools\SchemaTool($em);
 
         $tool->dropSchema(array(
             $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog')
@@ -114,6 +114,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal')));
         $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig')));
         $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')));
+        $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay')));
     }
 
     /**
@@ -167,7 +168,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             )
         );
         if ($payment === null) {
-        // do nothing
+            // do nothing
 
         } else {
             Shopware()->Models()->remove($payment);
@@ -228,8 +229,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     public function getInfo()
     {
-        $logo = base64_encode(file_get_contents(dirname(__FILE__).'/logo.png'));
-        $info = json_decode(file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'plugin.json'), true);
+        $logo = base64_encode(file_get_contents(dirname(__FILE__) . '/logo.png'));
+        $info = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'plugin.json'), true);
         return array(
             'label' => $this->getLabel(),
             'author' => $info['author'],
@@ -237,8 +238,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'link' => $info['link'],
             'support' => $info['support'],
             'version' => $this->getVersion(),
-            'description' => '<p><img src="data:image/png;base64,'.$logo.'" /></p> '
-            .file_get_contents(__DIR__.'/description.txt'),
+            'description' => '<p><img src="data:image/png;base64,' . $logo . '" /></p> '
+                . file_get_contents(__DIR__ . '/description.txt'),
             'solution_name' => $this->getSolutionName()
         );
     }
@@ -250,7 +251,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     public function getVersion()
     {
-        $info = json_decode(file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'plugin.json'), true);
+        $info = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'plugin.json'), true);
 
         if ($info) {
             return $info['currentVersion'];
@@ -261,7 +262,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
     public function getLabel()
     {
-        $info = json_decode(file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'plugin.json'), true);
+        $info = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'plugin.json'), true);
 
         if ($info) {
             return $info['label']['de'];
@@ -272,7 +273,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
     public function getSolutionName()
     {
-        $info = json_decode(file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'plugin.json'), true);
+        $info = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'plugin.json'), true);
 
         if ($info) {
             return $info['solution_name'];
@@ -293,12 +294,13 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'onGetBackendController'
         );
         $this->subscribeEvent(
-                'Theme_Compiler_Collect_Plugin_Javascript',
-                'addJsFiles'
-        );        
+            'Theme_Compiler_Collect_Plugin_Javascript',
+            'addJsFiles'
+        );
     }
-    
-    public function addJsFiles(Enlight_Event_EventArgs $args){
+
+    public function addJsFiles(Enlight_Event_EventArgs $args)
+    {
         $jsFiles = [
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_checkout.js',
             $this->Path() . 'Views/frontend/_resources/javascript/client_api.js',
@@ -306,8 +308,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_account.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
-    }   
-    
+    }
+
     /**
      * register all subscriber classes for dynamic event subscription without plugin reinstallation
      *
@@ -375,8 +377,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     protected function createDatabase()
     {
-        $em         = $this->Application()->Models();
-        $platform   = $em->getConnection()->getDatabasePlatform();
+        $em = $this->Application()->Models();
+        $platform = $em->getConnection()->getDatabasePlatform();
         $platform->registerDoctrineTypeMapping('enum', 'string');
         $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
 
@@ -419,10 +421,18 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         } catch (ToolsException $e) {
             // ignore
         }
-        
+
         try {
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay'),
+            ));
+        } catch (ToolsException $e) {
+            // ignore
+        }
+
+        try {
+            $schemaTool->createSchema(array(
+                $em->getClassMetadata('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay'),
             ));
         } catch (ToolsException $e) {
             // ignore
@@ -492,9 +502,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModelExtension();
 
         $this->getInstallHelper()->moptInsertEmptyConfigIfNotExists();
-        
+
         $this->getInstallHelper()->checkAndUpdateCreditcardModelIframeExtension();
-        
+
         $this->getInstallHelper()->checkAndUpdateConfigModelPayolutionInstallmentExtension();
 
         $this->getInstallHelper()->checkAndUpdateBoniversumConfigModelExtension();
@@ -560,8 +570,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $configurationLabelName = $this->getInstallHelper()->moptGetConfigurationLabelName();
 
         $labelPayment = array('label' => 'Zahlungen');
-        $labelPayOne  = array('label' => 'PAYONE');
-        $labelKontollZentrum  = array('label' => 'PAYONE Kontrollzentrum');
+        $labelPayOne = array('label' => 'PAYONE');
+        $labelKontollZentrum = array('label' => 'PAYONE Kontrollzentrum');
 
         // Lightweight Backend Controller
         $ret = $this->Menu()->findOneBy($labelKontollZentrum);
@@ -576,13 +586,13 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 )
             );
         }
-        
+
         if ($this->Menu()->findOneBy($labelPayOne)) {
             return;
         }
 
         $parent = $this->Menu()->findOneBy($labelPayment);
-        $item   = $this->createMenuItem(array(
+        $item = $this->createMenuItem(array(
             'label' => 'PAYONE',
             'class' => 'payoneicon',
             'active' => 1,
@@ -612,7 +622,15 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'class' => 'sprite-locale',
             'active' => 1,
             'parent' => $item,
-        ));        
+        ));
+        $this->createMenuItem(array(
+            'label' => 'Payone Amazon Pay',
+            'controller' => 'MoptPayoneAmazonPay',
+            'action' => 'Index',
+            'class' => 'sprite-locale',
+            'active' => 1,
+            'parent' => $item,
+        ));
         $this->createMenuItem(array(
             'label' => 'Payone Kreditkartenkonfiguration',
             'controller' => 'MoptPayoneCreditcardConfig',
@@ -660,9 +678,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     protected function checkAndDeleteOldLogs()
     {
-        $path = $this->Path().'../../../../../../';
+        $path = $this->Path() . '../../../../../../';
 
-        foreach (glob($path.'payone_*.lo*') as $file) {
+        foreach (glob($path . 'payone_*.lo*') as $file) {
             if (file_exists($file)) {
                 file_put_contents($file, '');
                 unlink($file);
@@ -688,8 +706,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         if (!$this->moptPayoneLogger) {
             $this->moptPayoneLogger = new Monolog\Logger('moptPayone');
-            $streamHandler          = new Monolog\Handler\StreamHandler(Shopware()->Application()->Kernel()->getLogDir()
-                .'/moptPayone.log', Monolog\Logger::ERROR);
+            $streamHandler = new Monolog\Handler\StreamHandler(Shopware()->Application()->Kernel()->getLogDir()
+                . '/moptPayone.log', Monolog\Logger::ERROR);
             $this->moptPayoneLogger->pushHandler($streamHandler);
         }
 
@@ -707,9 +725,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     public function onGetBackendController()
     {
-        $this->get('template')->addTemplateDir($this->Path().'Views/');
+        $this->get('template')->addTemplateDir($this->Path() . 'Views/');
 
-        return $this->Path().'Controllers/Backend/FcPayone.php';
+        return $this->Path() . 'Controllers/Backend/FcPayone.php';
     }
 
     /**
@@ -736,7 +754,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      *    ],
      *  ];
      *  try {
-     *    $return $moptPaymentPlugin->captureOrder($orderDetails, true, true);
+     *    $return = $plugin->captureOrder($orderDetails, true, true);
      *  } catch (Exception $e){
      *    echo "Exception:" . $e->getMessage();
      *  }
@@ -757,13 +775,13 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $orderDetailId = key($orderParams);
             if (!$orderDetail = Shopware()->Models()->getRepository('Shopware\Models\Order\Detail')->find($orderDetailId)) {
                 $message = Shopware()->Snippets()->getNamespace('backend/MoptPaymentPayone/errorMessages')
-                        ->get('orderNotFound', 'BestellungsPosition nicht gefunden', true);
+                    ->get('orderNotFound', 'BestellungsPosition nicht gefunden', true);
                 throw new Exception($message);
             }
 
             if (!$order = $orderDetail->getOrder()) {
                 $message = Shopware()->Snippets()->getNamespace('backend/MoptPaymentPayone/errorMessages')
-                        ->get('orderNotFound', 'Bestellung nicht gefunden', true);
+                    ->get('orderNotFound', 'Bestellung nicht gefunden', true);
                 throw new Exception($message);
             }
 
@@ -780,13 +798,13 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
             //fetch params
             $params = Mopt_PayoneMain::getInstance()->getParamBuilder()
-                    ->buildCustomOrderCapture($order, $orderParams, $finalize, $includeShipment);
+                ->buildCustomOrderCapture($order, $orderParams, $finalize, $includeShipment);
 
             $invoicing = null;
 
             if ($config['submitBasket'] || Mopt_PayoneMain::getInstance()->getPaymentHelper()->isPayoneBillsafe($paymentName)) {
                 $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
-                        ->getInvoicingFromOrder($order, array_column($orderDetailParams, 'id'), $finalize, false, $includeShipment);
+                    ->getInvoicingFromOrder($order, array_column($orderDetailParams, 'id'), $finalize, false, $includeShipment);
             }
 
             //call capture service
@@ -914,9 +932,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     protected function callPayoneCaptureService($params, $invoicing = null)
     {
         $service = Shopware()->Plugins()->Frontend()
-                        ->MoptPaymentPayone()->get('MoptPayoneBuilder')->buildServicePaymentCapture();
+            ->MoptPaymentPayone()->get('MoptPayoneBuilder')->buildServicePaymentCapture();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         $request = new Payone_Api_Request_Capture($params);
 
@@ -927,7 +945,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         if ($params['payolution_b2b'] == true) {
             $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'b2b', 'data' => 'yes')
+                array('key' => 'b2b', 'data' => 'yes')
             ));
             $request->setPaydata($paydata);
         }
@@ -937,9 +955,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     protected function callPayoneRefundService($params, $invoicing = null)
     {
         $service = Shopware()->Plugins()->Frontend()
-                        ->MoptPaymentPayone()->Application()->MoptPayoneBuilder()->buildServicePaymentDebit();
+            ->MoptPaymentPayone()->Application()->MoptPayoneBuilder()->buildServicePaymentDebit();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         $request = new Payone_Api_Request_Debit($params);
 
@@ -1031,5 +1049,5 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->persist($orderAttribute);
             Shopware()->Models()->flush();
         }
-    }      
+    }
 }

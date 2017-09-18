@@ -712,6 +712,21 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone amazonpay
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneAmazonPay($paymentName)
+    {
+        if (preg_match('#mopt_payone__ewallet_amazon_pay#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
    * get online bank transfer type for api communication
    *
    * @param string $paymentName
@@ -760,6 +775,17 @@ class Mopt_PayonePaymentHelper
             . 'FROM s_core_paymentmeans_countries, s_core_countries '
             . 'WHERE s_core_paymentmeans_countries.paymentID = ? '
             . 'AND s_core_countries.id = s_core_paymentmeans_countries.countryID;';
+        $paymentCountries = Shopware()->Db()->fetchAll($sql, $paymentId);
+
+        return $paymentCountries;
+    }
+
+    public function moptGetShippingCountriesAssignedToPayment($paymentId)
+    {
+        $sql    = 'SELECT s_premium_dispatch_countries.countryID, s_core_countries.countryname, s_core_countries.countryiso '
+            . 'FROM s_premium_dispatch_countries, s_core_countries, s_premium_dispatch_paymentmeans '
+            . 'WHERE s_premium_dispatch_countries.countryID = s_core_countries.id AND s_premium_dispatch_paymentmeans.paymentID = ? '
+            . 'AND s_premium_dispatch_paymentmeans.dispatchID = s_premium_dispatch_countries.dispatchID;';
         $paymentCountries = Shopware()->Db()->fetchAll($sql, $paymentId);
 
         return $paymentCountries;
@@ -1229,4 +1255,32 @@ class Mopt_PayonePaymentHelper
 
         return $paymentMeans;
     }
+
+    /**
+     * Fetches and returns amazon payment instance.
+     *
+     * @return \Shopware\Models\Payment\Payment
+     */
+    public function getPaymentAmazonPay()
+    {
+        $paymentAmazonPay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_amazon_pay']
+        );
+        return $paymentAmazonPay;
+    }
+
+    /**
+     * checks if AmazonPay is enabled
+     *
+     * @return bool
+     */
+    public function isAmazonPayActive()
+    {
+        $paymentAmazonPay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_amazon_pay']
+        );
+        return $paymentAmazonPay->getActive();
+    }
+
+
 }

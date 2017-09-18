@@ -156,6 +156,14 @@ class FrontendCheckout implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
         }
 
+        if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
+            && ($payoneAmazonPayConfig = $this->container->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
+        ) {
+            $view->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
+            $view->extendsTemplate('frontend/checkout/ajax_cart_amazon.tpl');
+            $view->extendsTemplate('frontend/checkout/mopt_cart_amazon.tpl');
+        }
+
         if (!empty($userData['additional']['payment']['id'])) {
             $paymentId = $userData['additional']['payment']['id'];
         } else {
