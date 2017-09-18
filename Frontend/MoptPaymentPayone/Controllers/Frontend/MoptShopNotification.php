@@ -25,8 +25,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
 
         $this->logger = new Monolog\Logger('moptPayone');
-        $streamHandler = new Monolog\Handler\StreamHandler(Shopware()->Application()->Kernel()->getLogDir()
-                . '/moptPayoneTransactionStatus.log', Monolog\Logger::DEBUG);
+        $streamHandler = new Monolog\Handler\StreamHandler(
+            $this->buildPayoneTransactionLogPath(),
+            Monolog\Logger::DEBUG
+        );
         $this->logger->pushHandler($streamHandler);
 
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -232,9 +234,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             SELECT id, ordernumber, paymentID, temporaryID, transactionID  FROM s_order
             WHERE transactionID=?';
 
-        $order = Shopware()->Db()->fetchAll($sql, array($transactionId));
+        $order = Shopware()->Db()->fetchRow($sql, array($transactionId));
 
-        return $order[0];
+        return $order;
     }
 
     /**
@@ -249,9 +251,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             SELECT id, ordernumber, paymentID, temporaryID, transactionID  FROM s_order
             WHERE ordernumber=?';
 
-        $order = Shopware()->Db()->fetchAll($sql, array($orderNumber));
+        $order = Shopware()->Db()->fetchRow($sql, array($orderNumber));
 
-        return $order[0];
+        return $order;
     }
 
     /**
@@ -285,9 +287,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
         if (empty($orderNumber) && !$this->isFinishedWithReference($paymentReference, $transactionId)) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**
@@ -308,10 +310,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
         if (empty($orderNumber)) {
             return false;
-        } else {
-            $this->setTransactionId($orderNumber, $transactionId);
-            return true;
         }
+
+        $this->setTransactionId($orderNumber, $transactionId);
+        return true;
     }
 
     /**
@@ -398,7 +400,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     protected function clearingDataExists($order)
     {
-
         $sql = 'SELECT mopt_payone_clearing_data FROM s_order_attributes WHERE orderID=?';
         $params[] = $order['id'];
 
@@ -407,9 +408,19 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         if (empty($clearingData)) {
             $this->logger->debug('clearingdata is empty');
             return false;
-        } else {
-            $this->logger->debug('clearingdata already exists');
-            return true;
         }
+
+        $this->logger->debug('clearingdata already exists');
+        return true;
+    }
+
+    /**
+     * builds the transaction log path
+     * @return string
+     */
+    protected function buildPayoneTransactionLogPath()
+    {
+        $logDir = Shopware()->Application()->Kernel()->getLogDir();
+        return  $logDir . '/moptPayoneTransactionStatus.log';
     }
 }

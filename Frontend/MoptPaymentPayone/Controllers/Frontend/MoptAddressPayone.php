@@ -1,12 +1,6 @@
 <?php
 
 use Shopware\Components\CSRFWhitelistAware;
-use Shopware\Bundle\AccountBundle\Form\Account\AddressFormType;
-use Shopware\Bundle\AccountBundle\Service\AddressServiceInterface;
-use Shopware\Models\Customer\Address;
-use Shopware\Models\Customer\AddressRepository;
-use Shopware\Models\Customer\Customer;
-use Symfony\Component\Form\FormInterface;
 
 /**
  * updated and finish transactions
@@ -30,8 +24,10 @@ class Shopware_Controllers_Frontend_MoptAddressPayone extends Shopware_Controlle
             return $this->forward('index', 'register', 'frontend', $this->getForwardParameters());
         }
 
-        $this->View()->assign('sUserData', $this->admin->sGetUserData());
-        $this->View()->assign('sAction', $this->Request()->getActionName());
+        $this->View()->assign([
+            'sUserData' => $this->admin->sGetUserData(),
+            'sAction' => $this->Request()->getActionName()
+        ]);
     }
 
     /**
@@ -43,18 +39,4 @@ class Shopware_Controllers_Frontend_MoptAddressPayone extends Shopware_Controlle
             'edit',
         ];
     }
-
-
-
-    /**
-     * edit action for changing addresses for guest users
-     *
-     * @return mixed
-     */
-    public function editAction()
-    {
-      parent::editAction();
-    }
-
-
 }
