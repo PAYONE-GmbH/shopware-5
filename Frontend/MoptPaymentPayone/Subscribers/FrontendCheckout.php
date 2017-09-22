@@ -161,10 +161,6 @@ class FrontendCheckout implements SubscriberInterface
         if ($this->container->get('MoptPayoneMain')->getHelper()->isResponsive()) {
             $templateSuffix = '_responsive';
         }
-        if ($templateSuffix === '' && $this->isPayPalEcsActive($subject) && ($imageUrl = $this->moptPayoneShortcutImgURL())) {
-            $view->assign('moptPaypalShortcutImgURL', $imageUrl);
-            $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
-        }
 
         if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
             && ($payoneAmazonPayConfig = $this->container->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
@@ -180,6 +176,11 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
             $view->extendsTemplate('frontend/checkout/ajax_cart_amazon.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_cart_amazon.tpl');
+        }
+
+        if ($templateSuffix === '' && $this->isPayPalEcsActive($subject) && ($imageUrl = $this->moptPayoneShortcutImgURL())) {
+            $view->assign('moptPaypalShortcutImgURL', $imageUrl);
+            $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
         }
 
         if (!empty($userData['additional']['payment']['id'])) {
