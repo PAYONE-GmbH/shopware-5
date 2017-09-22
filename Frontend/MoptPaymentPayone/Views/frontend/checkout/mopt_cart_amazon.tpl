@@ -1,7 +1,9 @@
 {extends file="parent:frontend/checkout/cart.tpl"}
 
+
 {block name="frontend_checkout_actions_confirm"}
     {$smarty.block.parent}
+    {if $smarty.server.REQUEST_SCHEME === 'https'}
     {if !$sMinimumSurcharge && !$sDispatchNoOrder}
         <div class="button--container right" style="margin-right: 10px">
             <div id="LoginWithAmazon"></div>
@@ -11,8 +13,6 @@
                     amazon.Login.setClientId("{$payoneAmazonPayConfig->getClientId()}");
                 };
                 window.onAmazonPaymentsReady = function () {
-                    console.log('LoginButton');
-                    console.log(Date.now());
                     var authRequest;
                     OffAmazonPayments.Button('LoginWithAmazon', "{$payoneAmazonPayConfig->getSellerId()}", {
                         type: "{$payoneAmazonPayConfig->getButtonType()}",
@@ -41,13 +41,30 @@
             </script>
         </div>
     {/if}
+    {/if}
 {/block}
+
+{if $moptAmazonError}
+    {block name="frontend_checkout_actions_checkout"}
+        <a href="{url controller='checkout' action='shippingPayment'}"
+           title="{"{s name='CheckoutActionsLinkProceedShort' namespace="frontend/checkout/actions"}{/s}"|escape}"
+           class="btn btn--checkout-proceed is--primary right is--icon-right is--large">
+            {s name="CheckoutActionsLinkProceedShort" namespace="frontend/checkout/actions"}{/s}
+            <i class="icon--arrow-right"></i>
+        </a>
+    {/block}
+    {block name="frontend_checkout_actions_confirm_bottom_checkout"}
+        <a href="{url controller='checkout' action='shippingPayment'}"
+           title="{"{s name='CheckoutActionsLinkProceedShort' namespace="frontend/checkout/actions"}{/s}"|escape}"
+           class="btn btn--checkout-proceed is--primary right is--icon-right is--large">
+            {s name="CheckoutActionsLinkProceedShort" namespace="frontend/checkout/actions"}{/s}
+            <i class="icon--arrow-right"></i>
+        </a>
+    {/block}
+{/if}
 
 {block name='frontend_checkout_cart_error_messages'}
     <div>
-        Im Div
-        Amazon clientId: {$payoneAmazonPayConfig->getSellerId()}<BR>
-        AmazonLogout:  {$moptAmazonLogout} <BR>
         {if $moptAmazonError}
             {include file="frontend/_includes/messages.tpl" type="error" content="{s name='amazonDeclined ' namespace='frontend/MoptPaymentPayone/errorMessages'}{/s}" bold=false}
         {/if}
@@ -64,11 +81,7 @@
             window.onAmazonLoginReady = function () {
                 amazon.Login.logout();
                 amazon.Login.setClientId("{$payoneAmazonPayConfig->getClientId()}");
-                console.log(Date.now());
-                console.log("Amazon Logout");
             };
-            console.log('Reinit Button')
-
         </script>
     {/if}
     {$smarty.block.parent}

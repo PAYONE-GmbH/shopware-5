@@ -1,6 +1,9 @@
 {extends file="parent:frontend/checkout/ajax_cart.tpl"}
 
-{block name='frontend_checkout_ajax_cart_button_container' append}
+
+{block name='frontend_checkout_ajax_cart_button_container'}
+    {$smarty.block.parent}
+    {if $smarty.server.REQUEST_SCHEME === 'https'}
     <div class="button--container">
         <div id="LoginWithAmazon"></div>
         <div class="clear"></div>
@@ -36,4 +39,6 @@
                 src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'>
         </script>
     </div>
+    {/if}
 {/block}
+
