@@ -200,6 +200,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $request->setBackurl($errorurl);
         $request->setErrorurl($backurl);
         $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
+        $orderVariables = $this->session['sOrderVariables'];
+        $orderHash = md5(serialize($orderVariables));
+        $transactionStatusPushCustomParam = 'session-' . Shopware()->Shop()->getId()
+            . '|' . $this->admin->sSYSTEM->sSESSION_ID . '|' . $orderHash;
+        $request->setParam($transactionStatusPushCustomParam);
 
         if ($config['submitBasket'] === true) {
             $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getSelectedDispatch(), $this->getUserData()));
