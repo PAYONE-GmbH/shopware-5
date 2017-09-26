@@ -38,10 +38,14 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
     public function indexAction()
     {
-
         if (!empty($this->Request()->getParam("access_token"))) {
             $this->session->moptPayoneAmazonAccessToken = $this->Request()->getParam("access_token");
         }
+
+        if (!empty($this->Request()->getCookie("amazon_Login_accessToken"))) {
+            $this->session->moptPayoneAmazonAccessToken = $this->Request()->getCookie("amazon_Login_accessToken");
+        }
+
 
         if (!empty($this->Request()->getParam("moptAmazonError"))) {
             $this->View()->moptPayoneAmazonError = $this->Request()->getParam("moptAmazonError");

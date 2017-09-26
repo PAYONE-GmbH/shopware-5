@@ -200,6 +200,30 @@
         </button>
     </div>
     <script>
+        {if $smarty.server.HTTP_REFERER|strpos:'https://eu.account.amazon.com/'=== 0}
+        function getURLParameter(name, source) {
+            return decodeURIComponent((new RegExp('[?|&|#]' + name + '=' +
+                '([^&]+?)(&|#|;|$)').exec(source) || [,""])[1].replace(/\+/g,
+                '%20')) || null;
+        }
+
+        var accessToken = getURLParameter("access_token", location.hash)
+        console.log(accessToken);
+
+        if (typeof accessToken === 'string' && accessToken.match(/^Atza/)) {
+            document.cookie = "amazon_Login_accessToken=" + accessToken +
+                ";secure";
+        }
+
+        window.onAmazonLoginReady = function () {
+            amazon.Login.setClientId('{$payoneAmazonPayConfig->getClientId()}');
+            amazon.Login.setUseCookie(true);
+            $('#moptAmazonPayButton').attr("disabled", "disabled");
+            $.loadingIndicator.open();
+        };
+
+
+        {else}
         var moptAmazonReferenceId = null;
 
         window.onAmazonLoginReady = function () {
@@ -207,6 +231,7 @@
             $('#moptAmazonPayButton').attr("disabled", "disabled");
             $.loadingIndicator.open();
         };
+        {/if}
         window.onAmazonPaymentsReady = function () {
             new OffAmazonPayments.Widgets.AddressBook({
                 sellerId: "{$payoneAmazonPayConfig->getSellerId()}",
