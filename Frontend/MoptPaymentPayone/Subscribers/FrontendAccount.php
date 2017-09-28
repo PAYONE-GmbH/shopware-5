@@ -66,8 +66,7 @@ class FrontendAccount implements SubscriberInterface
                     $subject->View()->sFormData += $paymentData;
                 }
             }
+            $subject->View()->sUserData += $paymentData;
         }
-        $subject->View()->sUserData += $paymentData;
-
     }
 }
