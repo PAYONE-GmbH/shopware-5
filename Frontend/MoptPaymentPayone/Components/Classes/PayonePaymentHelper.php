@@ -887,17 +887,26 @@ class Mopt_PayonePaymentHelper
             $fingerprint = Shopware()->Session()->moptRatepayFingerprint ;
         }
         return $fingerprint;
-    }  
-    
-    public function moptGetRatepayConfig($billingCountry)
+    }
+
+    /**
+     * @param string $billingCountry
+     * @param Mopt_PayoneMain $moptPayoneMain
+     * @return mixed
+     */
+    public function moptGetRatepayConfig($billingCountry, $moptPayoneMain = null)
     {
         $sTable = 's_plugin_mopt_payone_ratepay';
-        
-        $basket      = Shopware()->Modules()->Basket()->sGetBasket();
+
+        if (empty($moptPayoneMain)) {
+            $moptPayoneMain = Shopware()->Container()->get('MoptPayoneMain');
+        }
+
+        $basket      = $moptPayoneMain->sGetBasket();
         $basketValue = $basket['AmountNumeric'];
         $currency = Shopware()->Shop()->getCurrency();
         $currencyId  = $currency->getId();
-        
+
         $sQuery = " SELECT
                         shopid
                     FROM
@@ -910,10 +919,10 @@ class Mopt_PayonePaymentHelper
         $sShopId = Shopware()->Db()->fetchOne($sQuery);
         if($sShopId) {
             $config = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')->getRatepayConfigByShopId($sShopId);
-        } 
-        return $config;    
-    }      
-  
+        }
+        return $config;
+    }
+
     protected function _isUtf8EncodingNeeded($sString)
     {
         if (preg_match('!!u', $sString)) {
@@ -924,7 +933,7 @@ class Mopt_PayonePaymentHelper
             return true;
         }
     }
-  
+
     public function moptGetPayolutionAcceptanceText($companyname)
     {
         $sUrl = self::MOPT_PAYONE_PAYOLUTION_CONSENT_DE . base64_encode($companyname);
