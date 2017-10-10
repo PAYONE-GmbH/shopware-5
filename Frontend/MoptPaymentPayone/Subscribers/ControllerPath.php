@@ -54,6 +54,8 @@ class ControllerPath implements SubscriberInterface
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptAccountPayone'
             => 'moptRegisterController_Frontend_MoptAccountPayone',
 
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptPaymentAmazon'
+            => 'moptRegisterController_Frontend_MoptPaymentAmazon',
             //Backend
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptConfigPayone' => 'onGetConfigControllerBackend',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptApilogPayone' => 'onGetApilogControllerBackend',
@@ -68,7 +70,8 @@ class ControllerPath implements SubscriberInterface
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayonePaypal' => 'onGetBackendControllerPaypal',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneCreditcardConfig'
             => 'onGetBackendControllerCreditcardConfig',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneRatepay' => 'onGetBackendControllerRatepay',            
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneRatepay' => 'onGetBackendControllerRatepay',
+            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneAmazonPay' => 'onGetBackendControllerAmazonPay',
         );
     }
     
@@ -122,7 +125,7 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Frontend/MoptAccountPayone.php';
     }
-    
+
     /**
     * controller callback, return path to controller file
     *
@@ -132,7 +135,17 @@ class ControllerPath implements SubscriberInterface
     {
         return $this->path . 'Controllers/Frontend/MoptShopNotification.php';
     }
-    
+
+    /**
+     * controller callback, return path to controller file
+     *
+     * @return string
+     */
+    public function moptRegisterController_Frontend_MoptPaymentAmazon()
+    {
+        return $this->path . 'Controllers/Frontend/MoptPaymentAmazon.php';
+    }
+
     /**
     * Returns the path to a backend controller for an event.
     *
@@ -226,5 +239,15 @@ class ControllerPath implements SubscriberInterface
     public function onGetBackendControllerRatepay()
     {
         return $this->path . 'Controllers/Backend/MoptPayoneRatepay.php';
-    }    
+    }
+
+    /**
+     * Returns the path to a backend controller for an event.
+     *
+     * @return string
+     */
+    public function onGetBackendControllerAmazonPay()
+    {
+        return $this->path . 'Controllers/Backend/MoptPayoneAmazonPay.php';
+    }
 }

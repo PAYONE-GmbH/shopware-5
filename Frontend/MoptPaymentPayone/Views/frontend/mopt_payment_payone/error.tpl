@@ -41,3 +41,15 @@
 {/block}
 
 {block name='frontend_index_actions'}{/block}
+
+{block name="frontend_index_header_javascript_jquery" append}
+  <script async="async"
+          src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'>
+  </script>
+  <script>
+      window.onAmazonLoginReady = function () {
+          // console.log("Amazon Logout");
+          amazon.Login.logout();
+      };
+  </script>
+{/block}

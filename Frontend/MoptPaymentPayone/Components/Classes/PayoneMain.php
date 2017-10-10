@@ -54,6 +54,12 @@ class Mopt_PayoneMain
      */
     protected $basketUpdated = false;
 
+    /**
+     * Payone User Helper
+     * @var Mopt_PayoneUserHelper
+     */
+    protected $userHelper = null;
+
   /**
    * singleton accessor
    *
@@ -153,6 +159,20 @@ class Mopt_PayoneMain
         }
 
         return $this->paymentHelper;
+    }
+
+    /**
+     * getter method for user helper
+     *
+     * @return Mopt_PayoneUserHelper
+     */
+    public function getUserHelper()
+    {
+        if (is_null($this->userHelper)) {
+            $this->userHelper = new Mopt_PayoneUserHelper();
+        }
+
+        return $this->userHelper;
     }
 
     /**

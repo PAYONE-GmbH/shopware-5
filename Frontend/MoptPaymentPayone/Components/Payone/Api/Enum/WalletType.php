@@ -74,4 +74,5 @@ class Payone_Api_Enum_WalletType
      *       If response status is REDIRECT, send customer to the redirecturl (Yapital).
      */
     const YAPITAL = 'YPL';
+    const AMAZONPAY = 'AMZ';
 }

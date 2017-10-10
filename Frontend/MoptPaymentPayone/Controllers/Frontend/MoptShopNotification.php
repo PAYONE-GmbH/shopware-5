@@ -65,7 +65,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $request->setParamSources(array('_POST')); // only retrieve data from POST
 
         $this->CheckAndFixActiveShopIfNeeded($request->getParam('param'));
-        
+
         $transactionId = $request->getParam('txid');
         $this->logger->debug('push received for tx ' . $transactionId);
         $isOrderFinished = $this->isOrderFinished($transactionId, $request->getParam('reference'));
@@ -377,7 +377,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $sessionParam = explode('|', $customParam);
 
         $cookieName = explode('-', $sessionParam[0]);
-        $shopId = $cookieName[1];
+        $shopId = (int)$cookieName[1];
         $activeShopId = Shopware()->Shop()->getId();
 
         if ($activeShopId !== $shopId) {

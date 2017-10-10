@@ -154,6 +154,16 @@ class FrontendCheckout implements SubscriberInterface
         if ($request->getActionName() === 'shippingPayment') {
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment_core.tpl');
+
+            // used for amazon error handling
+            if ($session->moptAmazonError) {
+                $view->assign('moptAmazonError', $session->moptAmazonError);
+                unset($session->moptAmazonError);
+            }
+            if ($session->moptAmazonLogout) {
+                $view->assign('moptAmazonLogout', $session->moptAmazonLogout);
+                unset($session->moptAmazonLogout);
+            }
         }
         
         if ($request->getActionName() === 'cart') {
@@ -168,6 +178,23 @@ class FrontendCheckout implements SubscriberInterface
         if ($this->container->get('MoptPayoneMain')->getHelper()->isResponsive()) {
             $templateSuffix = '_responsive';
         }
+
+        if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
+            && ($payoneAmazonPayConfig = $this->container->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
+        ) {
+            if ($session->moptAmazonError) {
+                $view->assign('moptAmazonError', $session->moptAmazonError);
+                unset($session->moptAmazonError);
+            }
+            if ($session->moptAmazonLogout) {
+                $view->assign('moptAmazonLogout', $session->moptAmazonLogout);
+                unset($session->moptAmazonLogout);
+            }
+            $view->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
+            $view->extendsTemplate('frontend/checkout/ajax_cart_amazon.tpl');
+            $view->extendsTemplate('frontend/checkout/mopt_cart_amazon.tpl');
+        }
+
         if ($templateSuffix === '' && $this->isPayPalEcsActive($subject) && ($imageUrl = $this->moptPayoneShortcutImgURL())) {
             $view->assign('moptPaypalShortcutImgURL', $imageUrl);
             $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
