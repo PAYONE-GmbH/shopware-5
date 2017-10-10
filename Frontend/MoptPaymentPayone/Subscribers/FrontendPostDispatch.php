@@ -321,6 +321,7 @@ class FrontendPostDispatch implements SubscriberInterface
     protected function moptPayoneCheckEnvironment($controllerName = false)
     {
         $data = array();
+        /** @var \Mopt_PayoneMain $moptPayoneMain */
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $userId = Shopware()->Session()->sUserId;
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
@@ -461,7 +462,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPaymentHelper()
-                    ->moptGetRatepayConfig($userData['additional']['country']['countryiso']);
+                    ->moptGetRatepayConfig($userData['additional']['country']['countryiso'], $moptPayoneMain);
 
                 $data['moptRatepayConfig']['deviceFingerPrint'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetRatepayDeviceFingerprint();

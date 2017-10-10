@@ -60,7 +60,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function ajaxGetConsumerScoreUserAgreementAction()
     {
         $paymentId = $this->session->moptPaymentId;
-
         $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
 
         //add custom texts to view
@@ -475,7 +474,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayoneMain->sGetBasket();
         //create hash
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
@@ -544,7 +543,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
         $params['workorderid'] = $workorderId;
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayoneMain->sGetBasket();
         //create hash
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
@@ -613,7 +612,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayoneMain->sGetBasket();
         //create hash
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
@@ -680,10 +679,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      *
      * @return float
      */
-    public function getAmount(){
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+    public function getAmount()
+    {
+        $basket = $this->moptPayoneMain->sGetBasket();
         return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
-    }    
+    }
 
     /**
      * Returns the current currency short name.
@@ -800,7 +800,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         try {
             if (preg_match('/^[0-9]{1,5}$/', $calcValue)) {
-
                 $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-time', $paymentData, false, $ratePayShopId, $calcValue , $amount);;
 
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
@@ -836,7 +835,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         echo $html;
         return;
     }
-
 
     /**
      * show calculated installmentplan
