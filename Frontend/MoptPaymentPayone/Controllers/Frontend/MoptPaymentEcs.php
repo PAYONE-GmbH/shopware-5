@@ -4,6 +4,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
 {
 
     protected $moptPayone__serviceBuilder = null;
+    /** @var Mopt_PayoneMain $moptPayone__main */
     protected $moptPayone__main = null;
     protected $moptPayone__helper = null;
     protected $moptPayone__paymentHelper = null;
@@ -169,7 +170,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
      */
     protected function getBasketAmount($userData)
     {
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayone__main->sGetBasket();
         
         if (empty($userData['additional']['charge_vat'])) {
             return $basket['AmountNetNumeric'];

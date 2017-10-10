@@ -551,7 +551,7 @@ class AddressCheck implements SubscriberInterface
         $session        = Shopware()->Session();
 
         // get basket value
-        $basket      = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket      = $moptPayoneMain->sGetBasket();
         $basketValue = $basket['AmountNumeric'];
 
         $userId = $session->sUserId;

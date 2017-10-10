@@ -473,7 +473,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayoneMain->sGetBasket();
         //create hash
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
@@ -542,7 +542,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
         $params['workorderid'] = $workorderId;
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayoneMain->sGetBasket();
         //create hash
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
@@ -611,7 +611,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayoneMain->sGetBasket();
         //create hash
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
@@ -678,10 +678,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      *
      * @return float
      */
-    public function getAmount(){
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+    public function getAmount()
+    {
+        $basket = $this->moptPayoneMain->sGetBasket();
         return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
-    }    
+    }
 
     /**
      * Returns the current currency short name.
