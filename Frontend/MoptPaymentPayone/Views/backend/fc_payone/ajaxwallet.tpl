@@ -132,8 +132,8 @@
             </form>
         </div>
        
-        <a style="font-size: 28px" href="#" data-toggle="collapse" data-target="#payonetable">Konfiguration PayPal ECS Logos</a>
-        <div id="payonetable" class="collapse">
+        <a style="font-size: 28px" href="#"  data-target="#payonetable">Konfiguration PayPal ECS Logos</a>
+        <div id="payonetable">
             <form role="form" id="ajaxpaypalecs" enctype="multipart/form-data">
                 <table class="table-condensed">
                     <tr>
@@ -155,7 +155,58 @@
                 <input name="image" id="image" type="hidden">
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>                
-        </div>                
+        </div>
+        <a style="font-size: 28px" href="#" data-target="#amazonpayconfigs">Konfiguration AmazonPay</a>
+        <div id="amazonpayconfigs" class="form-group" >
+            <form role="form" id="ajaxamazonpay" enctype="multipart/form-data">
+                <table class="table-condensed" id="amazonpaytable">
+                    <tr><th>id</th><th>{s name=amazon_clientid}Client Id{/s}</th><th>{s name=amazon_sellerid}Seller Id{/s}</th><th>{s name=amazon_buttontype}Button Type{/s}</th><th>{s name=amazon_buttoncolor}Button Color{/s}</th><th>{s name=amazon_mode}Amazon Mode{/s}</th></tr>
+                    {foreach from=$amazonpayconfigs key=mykey item=amazonpayconfig}
+                    <tr id="row{$amazonpayconfig->getId()}">
+                        <td><input name="row[{$amazonpayconfig->getId()}][id]" id="id_{$amazonpayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$amazonpayconfig->getId()}" readonly="readonly" ></td>
+                        <td><input name="row[{$amazonpayconfig->getId()}][clientId]" id="amazonpayClientId_{$amazonpayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$amazonpayconfig->getClientId()}" readonly="readonly"></td>
+                        <td><input name="row[{$amazonpayconfig->getId()}][sellerId]" id="amazonpaySellerId_{$amazonpayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$amazonpayconfig->getSellerId()}" readonly="readonly"></td>
+                        <td>
+                            <select class="form-control" name="row[{$amazonpayconfig->getId()}][buttonType]" id="amazonpayButtonType_{$amazonpayconfig->getId()}">
+                                <option value="PwA" {if $amazonpayconfig->getButtonType() == 'PwA'}selected="selected"{/if}>{s name=amazon_buttontype_amazonpay}Amazon Pay (Default): Typical "Amazon Pay" button{/s}</option>
+                                <option value="Pay" {if $amazonpayconfig->getButtonType() == 'Pay'}selected="selected"{/if}>{s name=amazon_buttontype_pay}Pay: A slightly smaller "Pay" button{/s}</option>
+                                <option value="A" {if $amazonpayconfig->getButtonType() == 'A'}selected="selected"{/if}>{s name=amazon_buttontype_a}A: A small button with only the Amazon Pay Logo{/s}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control" name="row[{$amazonpayconfig->getId()}][buttonColor]" id="amazonpayButtonColor_{$amazonpayconfig->getId()}">
+                                <option value="Gold" {if $amazonpayconfig->getButtonColor() == 'Gold'}selected="selected"{/if}>{s name=amazon_buttoncolor_gold}Gold (default){/s}</option>
+                                <option value="LightGray" {if $amazonpayconfig->getButtonColor() == 'LightGray'}selected="selected"{/if}>{s name=amazon_buttoncolor_lightgray}Light gray{/s}</option>
+                                <option value="DarkGray" {if $amazonpayconfig->getButtonColor() == 'DarkGray'}selected="selected"{/if}>{s name=amazon_buttoncolor_darkgray}Dark gray{/s}</option>
+                            </select>
+                        </td>
+                        <!--
+                        <td>
+                            <select class="form-control" name="row[{$amazonpayconfig->getId()}][buttonLanguage]" id="amazonpayButtonLanguage_{$amazonpayconfig->getId()}">
+                                <option value="none" {if $amazonpayconfig->getButtonLanguage() == 'none'}selected="selected"{/if}>{s name=amazon_buttonlanguage_autodetect}Autodetect (default){/s}</option>
+                                <option value="en-GB" {if $amazonpayconfig->getButtonLanguage() == 'en-GB'}selected="selected"{/if}>{s name=amazon_buttonlanguage_en-GB}English (UK){/s}</option>
+                                <option value="de-DE" {if $amazonpayconfig->getButtonLanguage() == 'de-DE'}selected="selected"{/if}>{s name=amazon_buttonlanguage_de-DE}German (Germany){/s}</option>
+                                <option value="fr-FR" {if $amazonpayconfig->getButtonLanguage() == 'fr-FR'}selected="selected"{/if}>{s name=amazon_buttonlanguage_fr-FR}French (France){/s}</option>
+                                <option value="it-IT" {if $amazonpayconfig->getButtonLanguage() == 'it-IT'}selected="selected"{/if}>{s name=amazon_buttonlanguage_it-IT}Italian (Italy){/s}</option>
+                                <option value="es-ES" {if $amazonpayconfig->getButtonLanguage() == 'es-ES'}selected="selected"{/if}>{s name=amazon_buttonlanguage_es-ES}Spanish (Spain){/s}</option>
+                            </select>
+                        </td>
+                        -->
+                        <td>
+                            <select class="form-control" name="row[{$amazonpayconfig->getId()}][amazonMode]" id="amazonpayAmazonMode_{$amazonpayconfig->getId()}">
+                                <option value="sync" {if $amazonpayconfig->getAmazonMode() == 'sync'}selected="selected"{/if}>{s name=amazon_mode_always_sync}Always Synchronous{/s}</option>
+                                <option value="async" {if $amazonpayconfig->getAmazonMode() == 'async'}selected="selected"{/if}>{s name=amazon_mode_always_async}Always Asynchronous{/s}</option>
+                                <option value="firstsync" {if $amazonpayconfig->getAmazonMode() == 'firstsync'}selected="selected"{/if}>{s name=amazon_mode_always_firstsync}First synchronous, on failure try asynchronous (recommended, default):{/s}</option>
+                            </select>
+                        </td>
+                        <td role="button" name="delete" value="delete" onclick="clear_form_elements('#ajaxamazonpay');"><img id="delete_{$amazonpayconfig->getId()}" height="100%" src="{link file='backend/_resources/images/delete.png'}"></td>
+                        {/foreach}
+                </table>
+
+                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" name ="amazondownloadbtn" class="btn-payone btn " >Amazonpay Konfiguration abrufen</button>
+            </form>
+        </div>
     </div>
 {/block}
 
@@ -166,8 +217,11 @@
 
         var form = $('#ajaxwalletform');
         var iframeform = $('#ajaxpaypalecs');
+        var amazonpayform = $('#ajaxamazonpay');
         var url = "{url controller=FcPayone action=ajaxgetWalletConfig forceSecure}";
         var iframeurl = "{url controller=FcPayone action=ajaxgetPaypalConfig forceSecure}";
+        var amazonpaydownloadurl = "{url controller=MoptPayoneAmazonPay action=downloadConfigs forceSecure}";
+        var amazonpaysaveurl = "{url controller=MoptPayoneAmazonPay action=saveAmazonPayConfigs forceSecure}";
         var paymentid = null;
         var imagelink = null;
 
@@ -323,5 +377,50 @@
         }
 
         document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+
+        amazonpayform.on("submit", function (event) {
+            event.preventDefault();
+            amazonpayvalues = amazonpayform.serialize();
+            console.log("AMAZ PAY Vals");
+            console.log(amazonpayvalues);
+            var submitAction = $(this.id).context.activeElement.name;
+            if (submitAction == 'amazondownloadbtn') {
+                var url = amazonpaydownloadurl;
+            } else {
+                var url = amazonpaysaveurl;
+
+            }
+            $.post(url, amazonpayvalues, function (response) {
+                var data_array = $.parseJSON(response);
+                $('#amazonpaytable tr').css('background-color','');
+                if (data_array.errorElem && data_array.errorElem.length) {
+                    if (data_array.errorElem.length > 0){
+                        data_array.errorElem.forEach(markDownloadErrors);
+                        showalert("Das Abrufen von " + data_array.errorElem.length + " Konfigurationen ist fehlgeschlagen", "alert-danger");
+                    }
+                } else {
+                    showalert("Die Daten wurden gespeichert", "alert-success");
+                    location.reload();
+                }
+            });
+
+        });
+
+        function clear_form_elements(ele) {
+
+            console.log("clear triggered");
+
+            $(ele).find(':input').each(function() {
+                switch(this.type) {
+                    case 'select-multiple':
+                    case 'select-one':
+                        $(this).val('');
+                        break;
+                }
+            });
+
+        }
+
     </script>
 {/block}

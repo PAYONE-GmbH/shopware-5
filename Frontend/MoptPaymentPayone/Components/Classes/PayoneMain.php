@@ -49,6 +49,17 @@ class Mopt_PayoneMain
    */
     protected $paymentHelper = null;
 
+    /**
+     * @var bool $basketUpdated
+     */
+    protected $basketUpdated = false;
+
+    /**
+     * Payone User Helper
+     * @var Mopt_PayoneUserHelper
+     */
+    protected $userHelper = null;
+
   /**
    * singleton accessor
    *
@@ -149,4 +160,50 @@ class Mopt_PayoneMain
 
         return $this->paymentHelper;
     }
+
+    /**
+     * getter method for user helper
+     *
+     * @return Mopt_PayoneUserHelper
+     */
+    public function getUserHelper()
+    {
+        if (is_null($this->userHelper)) {
+            $this->userHelper = new Mopt_PayoneUserHelper();
+        }
+
+        return $this->userHelper;
+    }
+
+    /**
+     * Returns all basket data (and triggers an update if required)
+     *
+     * @return array
+     */
+    public function sGetBasket()
+    {
+        if ($this->basketUpdated === true) {
+            return Shopware()->Modules()->Basket()->sGetBasketData();
+        } else {
+            return Shopware()->Modules()->Basket()->sGetBasket();
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBasketUpdated()
+    {
+        return $this->basketUpdated;
+    }
+
+    /**
+     * @param bool $basketUpdated
+     */
+    public function setBasketUpdated($basketUpdated)
+    {
+        $this->basketUpdated = $basketUpdated;
+    }
+
+
 }

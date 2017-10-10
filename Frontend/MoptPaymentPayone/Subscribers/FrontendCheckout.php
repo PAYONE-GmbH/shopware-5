@@ -31,16 +31,33 @@ class FrontendCheckout implements SubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             // load stored payment data for payment method overview
             'Shopware_Controllers_Frontend_Checkout::getSelectedPayment::after' => 'onGetSelectedPayment',
             // save terms agreement handling
             'Enlight_Controller_Action_PostDispatch_Frontend_Checkout' => 'moptExtendController_Frontend_Checkout',
             // only used for payolution installments for now
             // redirects the customer back to shippingpayment for re-calculation of payment conditions
-    	    'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after'  => 'onBasketChangeConfirmPage',
+            'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after'  => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_Checkout::changeQuantityAction::after' => 'onBasketChangeConfirmPage',
-        );
+            'sBasket::sGetBasket::after' => 'onBasketDataUpdate',
+        ];
+    }
+
+    /**
+     * Sets a flag when basket data has been updated to prevent unnecessary calls to `sBasket::sGetBasket()`
+     *
+     * @param \Enlight_Hook_HookArgs $args
+     */
+    public function onBasketDataUpdate(\Enlight_Hook_HookArgs $args)
+    {
+        $return = $args->getReturn();
+
+        /** @var \Mopt_PayoneMain $payoneMain */
+        $payoneMain = $this->container->get('MoptPayoneMain');
+        $payoneMain->setBasketUpdated(true);
+
+        $args->setReturn($return);
     }
     
     /**
@@ -137,6 +154,16 @@ class FrontendCheckout implements SubscriberInterface
         if ($request->getActionName() === 'shippingPayment') {
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment_core.tpl');
+
+            // used for amazon error handling
+            if ($session->moptAmazonError) {
+                $view->assign('moptAmazonError', $session->moptAmazonError);
+                unset($session->moptAmazonError);
+            }
+            if ($session->moptAmazonLogout) {
+                $view->assign('moptAmazonLogout', $session->moptAmazonLogout);
+                unset($session->moptAmazonLogout);
+            }
         }
         
         if ($request->getActionName() === 'cart') {
@@ -151,6 +178,23 @@ class FrontendCheckout implements SubscriberInterface
         if ($this->container->get('MoptPayoneMain')->getHelper()->isResponsive()) {
             $templateSuffix = '_responsive';
         }
+
+        if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
+            && ($payoneAmazonPayConfig = $this->container->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
+        ) {
+            if ($session->moptAmazonError) {
+                $view->assign('moptAmazonError', $session->moptAmazonError);
+                unset($session->moptAmazonError);
+            }
+            if ($session->moptAmazonLogout) {
+                $view->assign('moptAmazonLogout', $session->moptAmazonLogout);
+                unset($session->moptAmazonLogout);
+            }
+            $view->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
+            $view->extendsTemplate('frontend/checkout/ajax_cart_amazon.tpl');
+            $view->extendsTemplate('frontend/checkout/mopt_cart_amazon.tpl');
+        }
+
         if ($templateSuffix === '' && $this->isPayPalEcsActive($subject) && ($imageUrl = $this->moptPayoneShortcutImgURL())) {
             $view->assign('moptPaypalShortcutImgURL', $imageUrl);
             $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');

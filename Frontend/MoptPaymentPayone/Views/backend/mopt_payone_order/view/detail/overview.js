@@ -24,6 +24,13 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
         {
           me.items.insert(3, me.createFcPayonePayolutionContainer());
         }
+
+        // enable clearing reference and workorderid for amazon
+        if(/mopt_payone__ewallet_amazon_pay/.test(me.record.raw.payment.name))
+        {
+            me.items.insert(3, me.createFcPayonePayolutionContainer());
+        }
+
     }
     
   },

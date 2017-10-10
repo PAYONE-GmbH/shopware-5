@@ -2,6 +2,7 @@
 
 use Shopware\Components\CSRFWhitelistAware;
 
+
 /**
  * Integrate Payone protect and Ajax call handling
  */
@@ -473,7 +474,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayoneMain->sGetBasket();
         //create hash
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
@@ -542,7 +543,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
         $params['workorderid'] = $workorderId;
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayoneMain->sGetBasket();
         //create hash
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
@@ -611,7 +612,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $basket = $this->moptPayoneMain->sGetBasket();
         //create hash
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
@@ -678,10 +679,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      *
      * @return float
      */
-    public function getAmount(){
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+    public function getAmount()
+    {
+        $basket = $this->moptPayoneMain->sGetBasket();
         return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
-    }    
+    }
 
     /**
      * Returns the current currency short name.
@@ -850,4 +852,174 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->View()->assign(array('result' => $result));
         return $this->View()->render();
     }
+
+    /**
+     * get actual payment method id
+     *
+     * @return string
+     */
+    protected function getOrderReferenceDetailsAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+
+        $payoneUserHelper = $this->moptPayoneMain->getUserHelper();
+        $payonePaymentHelper = $this->moptPayoneMain->getPaymentHelper();
+        $postData = $this->Request()->getParams();
+        $paymentData = $this->session->moptPayment;
+        $config = $this->moptPayoneMain->getPayoneConfig($payonePaymentHelper->getPaymentAmazonPay()->getId());
+        $clearingType = \Payone_Enum_ClearingType::WALLET;
+        $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
+        if (empty($this->session->moptPayoneAmazonReferenceId)) {
+            $this->session->moptPayoneAmazonReferenceId = $postData['referenceId'];
+        }
+
+
+        $data = [];
+        $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $this->session->moptPayoneAmazonReferenceId, $this->session->moptPayoneAmazonAccessToken );
+
+
+        if ($response->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
+            // create User from Address Data
+
+                $responseData = $response->toArray();
+                $responseAddress = $response->getPaydata()->toAssocArray();
+
+            // check if billing country is active for amazon
+
+            if (!$this->isBillingAddressSupported($responseAddress['billing_country'])) {
+                $data['errormessage'] = Shopware()->Snippets()
+                    ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                    ->get('amazonBillingAddressNotSupported');
+                $data['status'] = 'error';
+                $encoded = json_encode($data);
+                echo $encoded;
+                return;
+            }
+
+            if (!$this->isShippingAddressSupported($responseAddress['shipping_country'])) {
+                $data['errormessage'] = Shopware()->Snippets()
+                    ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                    ->get('amazonShippingAddressNotSupported');
+                $data['status'] = 'error';
+                $encoded = json_encode($data);
+                echo $encoded;
+                return;
+
+            }
+
+                $payoneUserHelper->createrOrUpdateUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId(), $this->session);
+
+                if (!$this->session->moptCountry) {
+                    $data['countryChanged'] = true;
+                    $this->session->moptCountry = $responseAddress['shipping_country'];
+                } else {
+
+                    if ($this->session->moptCountry == $responseAddress['shipping_country']) {
+                        $data['countryChanged'] = false;
+                        $this->session->moptCountry = $responseAddress['shipping_country'];
+                    } else {
+                        $data['countryChanged'] = true;
+                        $this->session->moptCountry = $responseAddress['shipping_country'];
+                    }
+                }
+
+                if (empty($this->session->moptPayoneAmazonWorkOrderId)) {
+                    $this->session->moptPayoneAmazonWorkOrderId = $responseData['workorderid'];
+                }
+
+                $data['data'] = $responseData['rawResponse'];
+                $data['status'] = 'success';
+                $data['workorderid'] = $this->session->moptPayoneAmazonWorkOrderId;
+                $encoded = json_encode($data);
+                echo $encoded;
+
+        } else {
+            $data['data'] = $response;
+            $data['errormessage'] = $response->getErrormessage();
+            $data['status'] = 'error';
+            $encoded = json_encode($data);
+            echo $encoded;
+        }
+    }
+
+    /**
+     * prepare and do payment server api call
+     *
+     * @param array $config
+     * @param string $clearingType
+     * @param string $walletType
+     * @param array $paymentData
+     * @param string $amazonReferenceId
+     * @param array $amazonAddressToken
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     */
+    protected function buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $amazonReferenceId, $amazonAddressToken)
+    {
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        //create hash
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $orderHash = md5(serialize($basket));
+        $this->session->moptOrderHash = $orderHash;
+
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::AMAZON_GETORDERREFERENCEDETAILS)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amazon_reference_id', 'data' => $amazonReferenceId)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amazon_address_token', 'data' => $amazonAddressToken)
+        ));
+
+        $request->setPaydata($paydata);
+        $request->setClearingtype($clearingType);
+        $request->setWallettype($walletType);
+        $request->setCurrency("EUR");
+        $request->setAmount($basket['AmountNumeric']);
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+
+        $response = $this->service->request($request);
+        return $response;
+    }
+
+    protected function isBillingAddressSupported($country){
+
+        $countries = $this->moptPayoneMain->getPaymentHelper()
+            ->moptGetCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
+
+        if (count($countries) == 0){
+            return true;
+        }
+
+        if (in_array($country, array_column($countries, 'countryiso'))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    protected function isShippingAddressSupported($country){
+
+        $countries = $this->moptPayoneMain->getPaymentHelper()
+            ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
+
+        if (count($countries) == 0){
+            return true;
+        }
+
+        if (in_array($country, array_column($countries, 'countryiso'))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

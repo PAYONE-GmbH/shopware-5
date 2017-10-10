@@ -147,8 +147,8 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
             $ratepayProfile['ratepayInstallmentMode'] = $dataset['ratepayInstallmentMode'];
             $config->fromArray($ratepayProfile);
             $this->getManager()->persist($config);
-            $this->getManager()->flush($config);
         }
+        $this->getManager()->flush($config);
         $data['errorElem'] = '';
         $data['status'] = 'success';
         $encoded = json_encode($data);
