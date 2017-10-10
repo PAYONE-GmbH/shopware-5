@@ -160,7 +160,7 @@
         <div id="amazonpayconfigs" class="form-group" >
             <form role="form" id="ajaxamazonpay" enctype="multipart/form-data">
                 <table class="table-condensed" id="amazonpaytable">
-                    <tr><th>id</th><th>{s name=amazon_clientid}Client Id{/s}</th><th>{s name=amazon_sellerid}Seller Id{/s}</th><th>{s name=amazon_buttontype}Button Type{/s}</th><th>{s name=amazon_buttoncolor}Button Color{/s}</th><th>{s name=amazon_buttonlanguage}Button Language{/s}</th><th>{s name=amazon_mode}Amazon Mode{/s}</th></tr>
+                    <tr><th>id</th><th>{s name=amazon_clientid}Client Id{/s}</th><th>{s name=amazon_sellerid}Seller Id{/s}</th><th>{s name=amazon_buttontype}Button Type{/s}</th><th>{s name=amazon_buttoncolor}Button Color{/s}</th><th>{s name=amazon_mode}Amazon Mode{/s}</th></tr>
                     {foreach from=$amazonpayconfigs key=mykey item=amazonpayconfig}
                     <tr id="row{$amazonpayconfig->getId()}">
                         <td><input name="row[{$amazonpayconfig->getId()}][id]" id="id_{$amazonpayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$amazonpayconfig->getId()}" readonly="readonly" ></td>
