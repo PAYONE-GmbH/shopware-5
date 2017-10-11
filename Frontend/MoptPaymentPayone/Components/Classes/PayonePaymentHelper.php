@@ -126,7 +126,7 @@ class Mopt_PayonePaymentHelper
    * extract clearing data from response object
    *
    * @param object $response
-   * @return boolean/array
+   * @return boolean|array
    */
     public function extractClearingDataFromResponse($response)
     {
