@@ -944,8 +944,13 @@ class Mopt_PayoneHelper
 
         if ($object instanceof Shopware\Models\Customer\Billing) {
             if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\CustomerBilling')
-              ->findOneBy(array('customerBillingId' => $object->getId()))) {
+              ->findOneBy(['customerBillingId' => $object->getId()])) {
                 $attribute = new Shopware\Models\Attribute\CustomerBilling();
+            }
+        } elseif ($object instanceof Shopware\Models\Customer\Address) {
+            if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\CustomerAddress')
+                ->findOneBy(['customerAddressId' => $object->getId()])) {
+                $attribute = new Shopware\Models\Attribute\CustomerAddress();
             }
         } else {
             throw new Exception('Unknown attribute base class');
@@ -970,8 +975,13 @@ class Mopt_PayoneHelper
 
         if ($object instanceof Shopware\Models\Customer\Shipping) {
             if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\CustomerShipping')
-              ->findOneBy(array('customerShippingId' => $object->getId()))) {
+              ->findOneBy(['customerShippingId' => $object->getId()])) {
                 $attribute = new Shopware\Models\Attribute\CustomerShipping();
+            }
+        } elseif ($object instanceof Shopware\Models\Customer\Address) {
+            if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\CustomerAddress')
+                ->findOneBy(['customerAddressId' => $object->getId()])) {
+                $attribute = new Shopware\Models\Attribute\CustomerAddress();
             }
         } else {
             throw new Exception('Unknown attribute base class');
