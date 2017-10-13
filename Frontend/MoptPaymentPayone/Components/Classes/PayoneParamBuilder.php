@@ -1215,11 +1215,11 @@ class Mopt_PayoneParamBuilder
             $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
             if ($article['modus'] == 2) {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
-                $params['id'] = substr($article['articlename'], 0, 100);
+                $params['id'] = substr($article['articlename'], 0, 32);
             }
             if ($article['modus'] == 4) {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
-                $params['id'] = substr($article['articlename'], 0, 100);
+                $params['id'] = substr($article['articlename'], 0, 32);
             }
             $items[] = $params;
         }
