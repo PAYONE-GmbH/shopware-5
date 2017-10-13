@@ -2,8 +2,6 @@
 
 {block name='frontend_account_payment_error_messages'}
     <div>
-        Im Div
-        AmazonLogout:  {$moptAmazonLogout} <BR>
         {if $moptAmazonError}
             {include file="frontend/_includes/messages.tpl" type="error" content="{s name='amazonDeclined ' namespace='frontend/MoptPaymentPayone/errorMessages'}{/s}" bold=false}
         {/if}
