@@ -119,7 +119,7 @@ class Mopt_PayoneHelper
             return false;
         }
 
-      //no check when basket value outside configured values
+        // no check when basket value outside configured values
         if ($basketValue < $config['adresscheckMinBasket'] || $basketValue > $config['adresscheckMaxBasket']) {
             return false;
         }
@@ -142,15 +142,6 @@ class Mopt_PayoneHelper
     {
         if (!$config['adresscheckActive']) {
             return false;
-        }
-
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
-
-        if ($userData['billingaddress'] && userData['shippingaddress'] ){
-            if ($this->areAddressesEqual($userData['billingaddress'],$userData['shippingaddress'])) {
-                return false;
-            }
-
         }
 
         // no check when basket value outside configured values
@@ -780,6 +771,9 @@ class Mopt_PayoneHelper
             case 2:
                 $checkType = 1;
                 break;
+            default:
+                $checkType = false;
+                break;
         }
 
         return $checkType;
@@ -803,6 +797,9 @@ class Mopt_PayoneHelper
             case 2:
                 $color = 'G';
                 break;
+            default:
+                $color = null;
+                break;
         }
 
         return $color;
@@ -823,19 +820,36 @@ class Mopt_PayoneHelper
 
             $userObject = !empty($userID) ?
                 $repository->find($userID) : null;
-            $billingLegacyAddress = !empty($userObject) ?
-                $userObject->getBilling() : null;
-            $billingLegacyAttribute = !empty($billingLegacyAddress) ?
-                $this->getOrCreateBillingAttribute($billingLegacyAddress) : null;
-            $moptBillingColor = !empty($billingLegacyAttribute) ?
-                $billingLegacyAttribute->getMoptPayoneConsumerscoreColor() : null;
 
-            $shippingLegacyAddress = !empty($userObject) ?
+            $billingAddress = !empty($userObject) ?
+                $userObject->getBilling() : null;
+            $billingAttribute = !empty($billingAddress) ?
+                $this->getOrCreateBillingAttribute($billingAddress) : null;
+            $moptBillingColor = !empty($billingAttribute) ?
+                $billingAttribute->getMoptPayoneConsumerscoreColor() : null;
+            if (empty($moptBillingColor)) {
+                $billingAddress = !empty($userObject) ?
+                    $userObject->getDefaultBillingAddress() : null;
+                $billingAttribute = !empty($billingAddress) ?
+                    $this->getOrCreateBillingAttribute($billingAddress) : null;
+                $moptBillingColor = !empty($billingAttribute) ?
+                    $billingAttribute->getMoptPayoneConsumerscoreColor() : null;
+            }
+
+            $shippingAddress = !empty($userObject) ?
                 $userObject->getShipping() : null;
-            $shippingLegacyAttribute = !empty($shippingLegacyAddress) ?
-                $this->getOrCreateShippingAttribute($shippingLegacyAddress) : null;
-            $moptShipmentColor = !empty($shippingLegacyAttribute) ?
-                $shippingLegacyAttribute->getMoptPayoneConsumerscoreColor() : null;
+            $shippingAttribute = !empty($shippingAddress) ?
+                $this->getOrCreateShippingAttribute($shippingAddress) : null;
+            $moptShipmentColor = !empty($shippingAttribute) ?
+                $shippingAttribute->getMoptPayoneConsumerscoreColor() : null;
+            if (empty($moptShipmentColor)) {
+                $shippingAddress = !empty($userObject) ?
+                    $userObject->getDefaultShippingAddress() : null;
+                $shippingAttribute = !empty($shippingAddress) ?
+                    $this->getOrCreateShippingAttribute($shippingAddress) : null;
+                $moptShipmentColor = !empty($shippingAttribute) ?
+                    $shippingAttribute->getMoptPayoneConsumerscoreColor() : null;
+            }
 
             $moptScoreColor = $userArray['additional']['user']['mopt_payone_consumerscore_color'];
         } else {
@@ -880,7 +894,7 @@ class Mopt_PayoneHelper
   
   /**
    *
-   * @param type $value the color value, can be NULL if not computed (e.g. user not logged in)
+   * @param string $value the color value, can be NULL if not computed (e.g. user not logged in)
    * @param bool $condition if the score should be used
    * @return int
    */

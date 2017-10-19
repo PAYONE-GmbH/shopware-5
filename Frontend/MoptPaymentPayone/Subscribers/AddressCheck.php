@@ -196,7 +196,8 @@ class AddressCheck implements SubscriberInterface
             }
 
             // perform shippingAddressCheck if configured and required
-            if ($this->getShippingAddressCheckIsNeeded(
+            $isDifferentAddress = $shippingAddressData['id'] !== $billingAddressData['id'];
+            if ($isDifferentAddress && $this->getShippingAddressCheckIsNeeded(
                 $config,
                 $userId,
                 $basketAmount,
