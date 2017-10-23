@@ -159,7 +159,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
     {
         $queryBuilder = Shopware()->Models()->getRepository('Shopware\Models\Dispatch\Dispatch')->getDispatchesQueryBuilder();
         
-        $dispatches = $queryBuilder->getQuery()->execute();
+        $dispatches = $queryBuilder->getQuery()->getArrayResult();
         $shippingMethods = array();
         foreach ($dispatches as $shippingMethod) {
             $key = $shippingMethod['name'] . ' ' . $shippingMethod['id'];
@@ -175,7 +175,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
     {
         $paymentMethods = array();
         
-        $repository = Shopware()->Models()->Payment();
+        $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
         $query = $repository->getListQuery();
         $results = $query->getArrayResult();
 
