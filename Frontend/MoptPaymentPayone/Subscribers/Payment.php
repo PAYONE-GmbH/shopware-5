@@ -40,6 +40,8 @@ class Payment implements SubscriberInterface
             'sAdmin::sGetDispatchBasket::after' => 'onGetDispatchBasket',
             // group creditcards
             'Shopware_Controllers_Frontend_Checkout::shippingPaymentAction::after' => 'onShippingPaymentAction',
+            // correct wrong currency when saving unfinished orders
+            'Shopware_Modules_Order_SaveOrder_FilterParams' => 'onOrder_SaveOrderProcessDetails',
         );
     }
 
@@ -302,5 +304,30 @@ class Payment implements SubscriberInterface
         if ($groupedPaymentMeans) {
             $subject->View()->sPayments = $groupedPaymentMeans;
         }
+    }
+
+    /**
+     * change currency to the original order currency
+     *
+     * @param \Enlight_Hook_HookArgs $arguments
+     * @return array
+     */
+    public function onOrder_SaveOrderProcessDetails(\Enlight_Hook_HookArgs $arguments)
+    {
+        $orderParams = $arguments->getReturn();
+        $orderCurrency = $orderParams['currency'];
+        $temporaryID = Shopware()->Session()->shopwareTemporaryId;
+
+        // Load Original Order, extract original currency and set currency
+        $sql = '
+            SELECT currency FROM s_order
+            WHERE temporaryID=? ';
+
+        $originalCurrency = Shopware()->Db()->fetchOne($sql, array($temporaryID));
+
+        if ($originalCurrency && $originalCurrency !== $orderCurrency) {
+            $orderParams['currency'] = $originalCurrency;
+        }
+        return $orderParams;
     }
 }
