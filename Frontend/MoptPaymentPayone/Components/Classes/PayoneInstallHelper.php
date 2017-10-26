@@ -458,7 +458,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Amazon Pay',
                 'template' => 'mopt_paymentmean_amazon_ewallet.tpl',
                 'position' => 34,),
-
+            array(
+                'name' => 'mopt_payone__ewallet_alipay',
+                'description' => 'PAYONE AliPay',
+                'template' => 'mopt_paymentmean_alipay_ewallet.tpl',
+                'position' => 35,),
         );
     }
 
