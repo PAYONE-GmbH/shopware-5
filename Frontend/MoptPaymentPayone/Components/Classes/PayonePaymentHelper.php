@@ -416,7 +416,7 @@ class Mopt_PayonePaymentHelper
     }
   
     /**
-   * check if given payment name is payone paypal payment
+   * check if given payment name is payone paydirekt payment
    *
    * @param string $paymentName
    * @return boolean
@@ -720,6 +720,21 @@ class Mopt_PayonePaymentHelper
     public function isPayoneAmazonPay($paymentName)
     {
         if (preg_match('#mopt_payone__ewallet_amazon_pay#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * check if given payment name is payone alipay payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneAlipay($paymentName)
+    {
+        if (preg_match('#mopt_payone__ewallet_alipay#', $paymentName)) {
             return true;
         } else {
             return false;
@@ -1200,6 +1215,9 @@ class Mopt_PayonePaymentHelper
         
         if ($this->isPayonePaydirekt($paymentShortName)) {
             return 'paydirekt';
+        }
+        if ($this->isPayoneAlipay($paymentShortName)) {
+            return 'alipay';
         }
         return false;
     }

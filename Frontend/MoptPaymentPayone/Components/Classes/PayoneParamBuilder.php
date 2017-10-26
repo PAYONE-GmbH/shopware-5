@@ -1146,6 +1146,34 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
+     * returns ALIPAY payment data object
+     *
+     * @param type $router
+     * @param bool $intialRecurringRequest
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     */
+    public function getPaymentAlipay($router, $intialRecurringRequest = false)
+    {
+        $params = array();
+        $params['wallettype'] = 'ALP';
+
+        if ($intialRecurringRequest) {
+            $params['successurl'] = $router->assemble(array('action' => 'alipayRecurringSuccess',
+                'forceSecure' => true, 'appendSession' => false));
+        } else {
+            $params['successurl'] = $router->assemble(array('action' => 'success',
+                'forceSecure' => true, 'appendSession' => false));
+        }
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+            'forceSecure' => true, 'appendSession' => false));
+
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
+        return $payment;
+    }
+
+    /**
      * returns business parameters
      *
      * @return \Payone_Api_Request_Parameter_Authorization_Business
