@@ -317,6 +317,9 @@ class Payment implements SubscriberInterface
         $orderParams = $arguments->getReturn();
         $orderCurrency = $orderParams['currency'];
         $temporaryID = Shopware()->Session()->shopwareTemporaryId;
+        $moptPayoneMain = $this->container->get('MoptPayoneMain');
+        $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+        $paymentName = $paymenthelper->getPaymentNameFromId($orderParams['paymentID']);
 
         // Load Original Order, extract original currency and set currency
         $sql = '
@@ -325,7 +328,7 @@ class Payment implements SubscriberInterface
 
         $originalCurrency = Shopware()->Db()->fetchOne($sql, array($temporaryID));
 
-        if ($originalCurrency && $originalCurrency !== $orderCurrency) {
+        if ($moptPayoneMain->getPaymentHelper()->isPayonePaymentMethod($paymentName) && $originalCurrency && $originalCurrency !== $orderCurrency) {
             $orderParams['currency'] = $originalCurrency;
         }
         return $orderParams;
