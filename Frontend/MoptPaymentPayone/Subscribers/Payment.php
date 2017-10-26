@@ -309,10 +309,10 @@ class Payment implements SubscriberInterface
     /**
      * change currency to the original order currency
      *
-     * @param \Enlight_Hook_HookArgs $arguments
+     * @param \Enlight_Event_EventArgs
      * @return array
      */
-    public function onOrder_SaveOrderProcessDetails(\Enlight_Hook_HookArgs $arguments)
+    public function onOrder_SaveOrderProcessDetails(\Enlight_Event_EventArgs $arguments)
     {
         $orderParams = $arguments->getReturn();
         $orderCurrency = $orderParams['currency'];
