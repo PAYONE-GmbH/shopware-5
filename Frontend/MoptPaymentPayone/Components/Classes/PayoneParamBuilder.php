@@ -1267,7 +1267,13 @@ class Mopt_PayoneParamBuilder
             $params['va'] = $taxFree ? 0 : number_format($basket['sShippingcostsTax'], 0, '.', ''); // vat
             $params['va'] = round($params['va'] * 100);
             $params['it'] = Payone_Api_Enum_InvoicingItemType::SHIPMENT;
-            $params = array_map('utf8_encode', $params);
+            $params = array_map(function ($param) {
+                if (is_string($param) && !preg_match('!!u', $param)) {
+                    return utf8_encode($param);
+                } else {
+                    return $param;
+                }
+            }, $params);
 
             $items[] = $params;
         }
