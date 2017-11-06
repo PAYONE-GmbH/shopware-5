@@ -157,6 +157,11 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         $this->View()->assign($response);
     }
 
+
+    /**
+     * @param $order \Shopware\Models\Order\Order
+     * @param bool $isAuth
+     */
     protected function moptPayoneUpdateSequenceNumber($order, $isAuth = false)
     {
         $attribute = $this->moptPayone__helper->getOrCreateAttribute($order);
@@ -170,9 +175,13 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         Shopware()->Models()->flush();
     }
 
+    /**
+     * @param $order \Shopware\Models\Order\Order
+     * @return bool
+     */
     protected function moptPayone_isOrderCapturable($order)
     {
-        if (!$this->moptPayone_hasOrderPayonePayment($order)) {
+        if (!$this->moptPayone_hasOrderPayonePayment($order) || $this->moptPayone_isOrderFailed($order)) {
             return false;
         }
 
@@ -250,9 +259,14 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         }
     }
 
+
+    /**
+     * @param $order \Shopware\Models\Order\Order
+     * @return bool
+     */
     protected function moptPayone_isOrderDebitable($order)
     {
-        if (!$this->moptPayone_hasOrderPayonePayment($order)) {
+        if (!$this->moptPayone_hasOrderPayonePayment($order) || $this->moptPayone_isOrderFailed($order)) {
             return false;
         }
 
@@ -267,6 +281,21 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         }
 
         return true;
+    }
+
+    /**
+     * @param $order \Shopware\Models\Order\Order
+     * @return bool
+     */
+    protected function moptPayone_isOrderFailed($order)
+    {
+        // mopt_payone_status Attribute is 'failed'
+        $orderAttribute = $this->moptPayone__helper->getOrCreateAttribute($order);
+        if ($orderAttribute->getMoptPayoneStatus($order) === 'failed') {
+            return true;
+        }
+
+        return false;
     }
 
     protected function moptPayone_callDebitService($params, $invoicing = null)

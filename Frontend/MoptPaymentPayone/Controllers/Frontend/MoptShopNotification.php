@@ -156,6 +156,14 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
             $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
         }
+
+        // handle new txaction = failed: save order with Status 21 ("Überprüfung notwendig")
+        // will not be mapped
+        $action = $request->getParam('txaction');
+        if ($action === 'failed' && !$orderIsCorrupted) {
+            $this->savePaymentStatus($transactionId, $order['temporaryID'], 21);
+        }
+
         $this->logger->debug('finished, output TSOK');
         echo $response->getStatus();
         $this->logger->debug('starting tx forwards');
