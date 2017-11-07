@@ -315,21 +315,28 @@ class Payment implements SubscriberInterface
     public function onOrder_SaveOrderProcessDetails(\Enlight_Event_EventArgs $arguments)
     {
         $orderParams = $arguments->getReturn();
-        $orderCurrency = $orderParams['currency'];
-        $temporaryID = Shopware()->Session()->shopwareTemporaryId;
+        $subject = $arguments->get('subject');
+        $originalOrderCurrencyId = $subject->sBasketData['sCurrencyId'];
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
         $paymentName = $paymenthelper->getPaymentNameFromId($orderParams['paymentID']);
 
-        // Load Original Order, extract original currency and set currency
-        $sql = '
-            SELECT currency FROM s_order
-            WHERE temporaryID=? ';
+        /** @var \Shopware\Components\Model\ModelManager $em */
+        $em = Shopware()->Models();
 
-        $originalCurrency = Shopware()->Db()->fetchOne($sql, array($temporaryID));
+        $originalCurrency = $em->getRepository(\Shopware\Models\Shop\Currency::class)->findOneBy(array('id' => $originalOrderCurrencyId))->toArray();
 
-        if ($moptPayoneMain->getPaymentHelper()->isPayonePaymentMethod($paymentName) && $originalCurrency && $originalCurrency !== $orderCurrency) {
-            $orderParams['currency'] = $originalCurrency;
+        if ($moptPayoneMain->getPaymentHelper()->isPayonePaymentMethod($paymentName) && $originalCurrency && $originalCurrency['id'] !== $subject->sSYSTEM->sCurrency['id']) {
+
+            // change currency Object to render emails correctly
+            $subject->sSYSTEM->sCurrency['id'] = $originalCurrency['id'];
+            $subject->sSYSTEM->sCurrency['name'] = $originalCurrency['name'];
+            $subject->sSYSTEM->sCurrency['currency'] = $originalCurrency['currency'];
+            $subject->sSYSTEM->sCurrency['factor'] = $originalCurrency['factor'];
+            $subject->sSYSTEM->sCurrency['symbol'] = $originalCurrency['symbol'];
+            // change order params to correct order currency in backend display
+            $orderParams['currency'] = $originalCurrency['currency'];
+            $orderParams['currencyFactor'] = $originalCurrency['factor'];
         }
         return $orderParams;
     }
