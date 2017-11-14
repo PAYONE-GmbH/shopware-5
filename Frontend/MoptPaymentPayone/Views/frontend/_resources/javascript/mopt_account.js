@@ -76,17 +76,4 @@ $('#moptConsumerScoreCheckNeedsUserAgreement').moptConsumerScoreCheckNeedsUserAg
 
 }
 
-$(document).ready(function(){
-    if (typeof document.asyncReady == "undefined")
-    {
-        moptAccountReady();
-    }
-});
-
-if (typeof document.asyncReady !== "undefined") {
-
-
-    document.asyncReady(function () {
-        moptAccountReady();
-    });
-}
+moptAccountReady();

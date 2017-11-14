@@ -48,16 +48,4 @@ function moptCheckoutReady() {
 }
 
 
-$(document).ready(function(){
-    if (typeof document.asyncReady == "undefined")
-    {
-        moptCheckoutReady();
-    }
-});
-
-if (typeof document.asyncReady !== "undefined") {
-
-    document.asyncReady(function () {
-        moptCheckoutReady();
-    });
-}
+moptCheckoutReady();
