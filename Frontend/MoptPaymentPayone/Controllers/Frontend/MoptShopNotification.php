@@ -154,8 +154,14 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 $request->getParam('txaction')
             );
 
-            $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
+            if ( $request->getParam('txaction') == 'failed' ){
+                // save failed status with mail notification
+                $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState,true);
+            } else {
+                $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
+            }
         }
+
 
         $this->logger->debug('finished, output TSOK');
         echo $response->getStatus();
