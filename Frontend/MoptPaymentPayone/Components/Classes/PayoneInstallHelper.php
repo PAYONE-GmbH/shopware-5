@@ -994,6 +994,46 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
+     * check if payone configuration is already extended for new status failed
+     *
+     * @return void
+     */
+    public function checkAndUpdateFailedStatusConfigModelExtension()
+    {
+        $db = Shopware()->Db();
+
+        $DBConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='state_failed'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN state_failed INT(11) NULL DEFAULT NULL;";
+
+            $db->exec($sql);
+        }
+
+        $db = Shopware()->Db();
+
+        $DBConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='trans_failed'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN trans_failed LONGTEXT NULL DEFAULT NULL;";
+
+            $db->exec($sql);
+        }
+    }
+
+    /**
      * check if the old PAYONE plugin is active and rename label to prevent errors
      *
      * @return string
