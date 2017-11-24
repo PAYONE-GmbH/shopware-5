@@ -364,6 +364,16 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 valueField: 'id',
                 allowBlank: true,
                 labelWidth: 200
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name=forwarding/status/failed}Failed{/s}',
+                name: 'transFailed',
+                queryMode: 'local',
+                displayField: 'description',
+                valueField: 'id',
+                allowBlank: true,
+                labelWidth: 200
             }
         ];
     },
@@ -1166,6 +1176,17 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 xtype: 'combobox',
                 fieldLabel: '{s name=forwarding/status/invoice}Invoice{/s}',
                 name: 'stateInvoice',
+                store: me.data.states,
+                queryMode: 'local',
+                displayField: 'description',
+                valueField: 'id',
+                allowBlank: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=forwarding/status/failed}Failed{/s}',
+                name: 'stateFailed',
                 store: me.data.states,
                 queryMode: 'local',
                 displayField: 'description',
