@@ -1034,6 +1034,33 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
+     * make sure an email template for payment status 21 exists
+     * so customers get notified when txaction=failed is received from payone
+     *
+     * @return void
+     */
+    public function checkAndInsertFailedStatusEmailTemplate()
+    {
+        $db = Shopware()->Db();
+
+        $sql = "SELECT * FROM s_core_config_mails
+                WHERE  stateId = 21";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = '
+            INSERT INTO `s_core_config_mails` (`stateId`, `name`, `frommail`, `fromname`, `subject`, `content`, `contentHTML`, `ishtml`, `attachment`, `mailtype`, `context`, `dirty`) VALUES
+            '.
+            "
+            (21, 'sORDERSTATEMAIL21', '{config name=mail}', '{config name=shopName}', 'Statusänderung zur Bestellung bei {config name=shopName}',
+            ".'\'{include file="string:{config name = emailheaderplain}\"}\r\n\r\nHallo {$sUser.billing_salutation|salutation} {$sUser.billing_firstname} {$sUser.billing_lastname},\n\nDer Status Ihrer Bestellung mit der Bestellnummer: {$sOrder.ordernumber} vom {$sOrder.ordertime|date_format:\" %d-%m-%Y\"} hat sich geändert.\n\nDer neue Status lautet nun {$sOrder . status_description}.\r\n\r\n{include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
+            ';
+            $db->exec($sql);
+        }
+
+    }
+
+    /**
      * check if the old PAYONE plugin is active and rename label to prevent errors
      *
      * @return string
