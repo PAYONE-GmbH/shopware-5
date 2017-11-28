@@ -27,16 +27,4 @@ function moptShippingReady() {
 
 }
 
-$(document).ready(function(){
-    if (typeof document.asyncReady == "undefined")
-    {
-        moptShippingReady();
-    }
-});
-
-if (typeof document.asyncReady !== "undefined") {
-
-    document.asyncReady(function() {
-        moptShippingReady();
-});
-}
+moptShippingReady();

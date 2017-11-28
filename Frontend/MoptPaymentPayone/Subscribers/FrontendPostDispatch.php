@@ -30,6 +30,8 @@
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
+use Shopware\Models\Shop\Template;
+use Shopware\Models\Shop\TemplateConfig\Element;
 
 class FrontendPostDispatch implements SubscriberInterface
 {
@@ -566,6 +568,8 @@ class FrontendPostDispatch implements SubscriberInterface
             $data['sFormData'] = array();
         }
 
+        $data['moptAsyncAjax'] = $this->isAsnycAjax();
+
         return $data;
     }
 
@@ -634,5 +638,38 @@ class FrontendPostDispatch implements SubscriberInterface
         $configData['jsonConfig'] = json_encode($configData);
 
         return $configData;
+    }
+
+
+    /**
+     * @return bool
+     */
+    protected function isAsnycAjax()
+    {
+        $shop = $this->container->get('shop');
+        /** @var Template $template */
+        $template = $shop->getTemplate();
+
+        /** @var Element $templateElement */
+        $templateElements = $template->getElements()->toArray();
+        foreach ($templateElements as $templateElement){
+            $configName = $templateElement->getName();
+
+            if ($configName === 'asyncJavascriptLoading'){
+                $configVal = $templateElement->getValues()->getValues();
+            }
+        }
+
+        // empty means default is set (>SW5.3 -> true)
+        // so if there is an element in array it should be false
+        if (\Shopware::VERSION === '___VERSION___' ||
+            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+        ) {
+            if (!empty($configVal) && !$configVal[0]->getValue()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     }
 }

@@ -551,16 +551,4 @@ function moptPaymentReady() {
 
 }
 
-$(document).ready(function(){
-   if (typeof document.asyncReady == "undefined")
-    {
-        moptPaymentReady();
-    }
-});
-
-if (typeof document.asyncReady !== "undefined") {
-
-    document.asyncReady(function () {
-        moptPaymentReady();
-    });
-}
+moptPaymentReady();
