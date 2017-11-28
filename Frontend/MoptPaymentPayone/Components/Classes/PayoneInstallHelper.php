@@ -1053,7 +1053,7 @@ class Mopt_PayoneInstallHelper
             '.
             "
             (21, 'sORDERSTATEMAIL21', '{config name=mail}', '{config name=shopName}', 'Statusänderung zur Bestellung bei {config name=shopName}',
-            ".'\'{include file="string:{config name = emailheaderplain}\"}\r\n\r\nHallo {$sUser.billing_salutation|salutation} {$sUser.billing_firstname} {$sUser.billing_lastname},\n\nDer Status Ihrer Bestellung mit der Bestellnummer: {$sOrder.ordernumber} vom {$sOrder.ordertime|date_format:\" %d-%m-%Y\"} hat sich geändert.\n\nDer neue Status lautet nun {$sOrder . status_description}.\r\n\r\n{include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
+            ".'\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\nHallo {$sUser.billing_salutation|salutation} {$sUser.billing_firstname} {$sUser.billing_lastname},\n\nDer Status Ihrer Bestellung mit der Bestellnummer: {$sOrder.ordernumber} vom {$sOrder.ordertime|date_format:\" %d-%m-%Y\"} hat sich geändert.\n\nDer neue Status lautet nun {$sOrder.status_description}.\r\n\r\n{include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
             ';
             $db->exec($sql);
         }
