@@ -1230,7 +1230,7 @@ class Mopt_PayoneParamBuilder
         foreach ($basket['content'] as $article) {
             $params = array();
 
-            $params['id'] = substr($article['ordernumber'], 0, 32); //article number
+            $params['id'] = substr($article['ordernumber'] ?: $article['articlename'], 0, 32); //article number
             if ($taxFree) {
                 $params['pr'] = $article['priceNumeric']; //price
             } else {
