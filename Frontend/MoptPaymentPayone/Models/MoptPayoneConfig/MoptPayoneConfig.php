@@ -343,6 +343,11 @@ class MoptPayoneConfig extends ModelEntity
     private $stateInvoice;
 
     /**
+     * @ORM\Column(name="state_failed", type="integer", nullable=true, unique=false)
+     */
+    private $stateFailed;
+
+    /**
      * @ORM\Column(name="check_cc", type="boolean", precision=0, scale=0, nullable=false, unique=false)
      */
     private $checkCc;
@@ -411,6 +416,11 @@ class MoptPayoneConfig extends ModelEntity
      * @ORM\Column(name="trans_invoice", type="text", nullable=true, unique=false)
      */
     private $transInvoice;
+
+    /**
+     * @ORM\Column(name="trans_failed", type="text", nullable=true, unique=false)
+     */
+    private $transFailed;
 
     /**
      * @ORM\Column(name="show_accountnumber", type="boolean", precision=0, scale=0, nullable=false, unique=false)
@@ -1258,6 +1268,23 @@ class MoptPayoneConfig extends ModelEntity
     /**
      * @return mixed
      */
+    public function getStateFailed()
+    {
+        return $this->stateFailed;
+    }
+
+    /**
+     * @param $stateFailed
+     */
+    public function setStateFailed($stateFailed)
+    {
+        $this->stateFailed = $stateFailed;
+    }
+
+
+    /**
+     * @return mixed
+     */
     public function getMapPersonCheck()
     {
         return $this->mapPersonCheck;
@@ -1681,6 +1708,22 @@ class MoptPayoneConfig extends ModelEntity
     public function setTransInvoice($transInvoice)
     {
         $this->transInvoice = $transInvoice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTransFailed()
+    {
+        return $this->transFailed;
+    }
+
+    /**
+     * @param $transFailed
+     */
+    public function setTransFailed($transFailed)
+    {
+        $this->transFailed = $transFailed;
     }
 
     /**

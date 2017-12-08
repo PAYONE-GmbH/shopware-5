@@ -510,6 +510,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndUpdateBoniversumConfigModelExtension();
 
+        $this->getInstallHelper()->checkAndUpdateFailedStatusConfigModelExtension();
+
+        $this->getInstallHelper()->checkAndInsertFailedStatusEmailTemplate();
+
         // adding transaction id in log table
         if (!$this->getInstallHelper()->payoneApiLogTransactionIdExist()) {
             $this->getInstallHelper()->extendPayoneApiLogTransactionId();
