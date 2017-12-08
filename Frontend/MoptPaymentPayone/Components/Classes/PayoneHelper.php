@@ -610,8 +610,14 @@ class Mopt_PayoneHelper
                 $aOrderVars = $orderVariables->getArrayCopy();
                 $addressId  = $aOrderVars['sUserData']['billingaddress']['id'];
             } else {
-                $userData = Shopware()->Modules()->Admin()->sGetUserData();
-                $addressId  = $userData['billingaddress']['id'];
+                /** @var \Shopware\Components\Model\ModelManager $em */
+                $em = Shopware()->Models();
+
+                /** @var \Shopware\Models\Customer\Customer $customer */
+                $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
+
+                /** @var \Shopware\Models\Customer\Address $address */
+                $addressId = $customer->getDefaultBillingAddress()->getId();
 
             }
 
@@ -656,8 +662,14 @@ class Mopt_PayoneHelper
                 $aOrderVars = $orderVariables->getArrayCopy();
                 $addressId  = $aOrderVars['sUserData']['shippingaddress']['id'];
             } else {
-                $userData = Shopware()->Modules()->Admin()->sGetUserData();
-                $addressId  = $userData['shippingaddress']['id'];
+                /** @var \Shopware\Components\Model\ModelManager $em */
+                $em = Shopware()->Models();
+
+                /** @var \Shopware\Models\Customer\Customer $customer */
+                $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
+
+                /** @var \Shopware\Models\Customer\Address $address */
+                $addressId = $customer->getDefaultShippingAddress()->getId();
 
             }
             // Update Model and Flush for SW 5.3; when using sql like below this does not happen
