@@ -262,11 +262,14 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             // Save Clearing Reference as Attribute (set in session )
             $this->session->paymentReference = $request->getReference();
 
+            $paymentStatusId = ($response->getStatus() === 'PENDING') ? 19 : null;
+
             Shopware()->Session()->sOrderVariables['sUserData'] = $this->getUserData();
             $txid = $response->getTxid();
             $orderNumber = $this->saveOrder(
                 $txid,
-                $this->session->paymentReference
+                $this->session->paymentReference,
+                $paymentStatusId
             );
 
             // replace the new order number with the already reserved one, which is already sent to amazon
