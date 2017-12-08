@@ -11,6 +11,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayonePosition', {
       iconCls: 'sprite-money-coin',
       text: '{s name=position/capture}Positionen einziehen{/s}',
       action: 'moptPayoneCapturePositions',
+      disabled: false,
       handler: function() {
         me.fireEvent('moptPayoneCapturePositions', me.record, me.orderPositionGrid, {
             callback: function(order) {
@@ -24,6 +25,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayonePosition', {
       iconCls: 'sprite-money-coin',
       text: '{s name=position/debit}Positionen gutschreiben{/s}',
       action: 'moptPayoneDebitPositions',
+      disabled: false,
       handler: function() {
         me.fireEvent('moptPayoneDebitPositions', me.record, me.orderPositionGrid, {
             callback: function(order) {
@@ -32,10 +34,10 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayonePosition', {
         });
       }
     });
-    
+
+
     toolbar.items.add(me.moptPayoneCapturePositionsButton);
     toolbar.items.add(me.moptPayoneDebitPositionsButton);
-    
     return toolbar;
   },
   
@@ -43,11 +45,17 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayonePosition', {
     var me = this;
     me.callParent(arguments);
     
-    this.addEvents('moptPayoneCapturePositions', 'moptPayoneDebitPositions');
+    this.addEvents('moptPayoneCapturePositions', 'moptPayoneDebitPositions','moptPayoneToolbarInit');
   },
           
   getColumns:function (grid) {
     var me = this;
+      var captureButton = Ext.ComponentQuery.query('button[action=moptPayoneCapturePositions]');
+      console.log(captureButton);
+      console.log("record");
+      console.log(me.record);
+      me.fireEvent('moptPayoneToolbarInit',  me.record);
+
     columns = me.callParent(arguments);
     
     columns.push({
@@ -62,8 +70,8 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayonePosition', {
       }
     );
     return columns;
-  }
-          
+  },
+
   
 });
 //{/block}
