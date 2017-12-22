@@ -5,16 +5,14 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
   
   init: function() {
     var me = this;
-
+    me.callParent(arguments);
     
     me.control({
         'order-detail-window order-position-panel': {
           moptPayoneCapturePositions: me.onMoptPayoneCapturePositions,
-          moptPayoneDebitPositions: me.onMoptPayoneDebitPositions,
-          moptPayoneToolbarInit: me.onMoptPayoneToolbarInit,
+          moptPayoneDebitPositions: me.onMoptPayoneDebitPositions
         }
     });
-      me.callParent(arguments);
   },
   
   onMoptPayoneDebitPositions: function(order, grid, options) {
@@ -212,21 +210,6 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     }
     
     return positionIds;
-  },
-
-    onMoptPayoneToolbarInit: function (order) {
-    var me = this;
-    console.log(arguments);
-
-    // disable capture and refund button for Status "Verzoegert"
-    console.log(order.data.cleared);
-    if (order.data.cleared === 19){
-      console.log("Order Status is 19 - disabling capture / refund buttons");
-      //console.log(Ext.ComponentQuery.query('button[action="moptPayoneDebitPositions"]'));
-      var captureButton = Ext.ComponentQuery.query('button[action=moptPayoneCapturePositions]');
-      console.log(captureButton);
-        ///console.log(refundButton);
-      }
   }
   
 });
