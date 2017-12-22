@@ -1253,7 +1253,7 @@ class Mopt_PayoneParamBuilder
         //add shipment as position
         if ($shipment) {
             $params = array();
-            $params['id'] = substr($shipment['name'], 0, 100); //article number
+            $params['id'] = substr('ship' . $shipment['id'], 0, 32); //shipping id
             if ($taxFree) {
                 $params['pr'] = $basket['sShippingcosts'];
             } else {
