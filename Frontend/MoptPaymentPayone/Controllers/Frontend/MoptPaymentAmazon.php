@@ -261,8 +261,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             // Save Clearing Reference as Attribute (set in session )
             $this->session->paymentReference = $request->getReference();
-
-            $paymentStatusId = ($response->getStatus() === 'PENDING') ? 19 : null;
+            $paymentStatusId = null;
 
             Shopware()->Session()->sOrderVariables['sUserData'] = $this->getUserData();
             $txid = $response->getTxid();
