@@ -145,8 +145,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             $saveClearingData = true;
         }
 
-        $this->logger->debug('save attribute data', $attributeData);
-        $this->saveOrderAttributeData($order, $attributeData, $saveOrderHash, $saveClearingData);
 
         if (!$orderIsCorrupted) {
             $mappedShopwareState = $this->moptPayone__helper->getMappedShopwarePaymentStatusId(
@@ -154,20 +152,34 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 $request->getParam('txaction')
             );
 
+            $transaction_status = $request->getParam('transaction_status');
+            $failedcause = $request->getParam('reasoncode');
+            //$transaction_status = 'pending';
+            //$failedcause = '-981';
+
             if ( $request->getParam('txaction') == 'failed' ){
                 // save failed status with mail notification
                 $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState,true);
-            } elseif ($request->getParam('txaction') == 'appointed' && $request->getParam('transaction_status') == 'pending'){
-                // update Order Status to "Verzoegert" (19)
-                $this->savePaymentStatus($transactionId, $order['temporaryID'], 19);
+            } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause == '-981'){
+                // InvalidPayment Method: update Order Status to "Verzoegert" (19) and send mail notification
+                $this->savePaymentStatus($transactionId, $order['temporaryID'], 19, true);
+                $attributeData['mopt_payone_status'] = 'pending';
 
-            } elseif ($request->getParam('txaction') == 'appointed' && $request->getParam('transaction_status') == 'completed'){
-                $this->savePaymentStatus($transactionId, $order['temporaryID'], 21, true);
+            } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause != '-981'){
+                // InvalidPayment Method: update Order Status to "Verzoegert" (19)
+                $this->savePaymentStatus($transactionId, $order['temporaryID'], 19);
+                $attributeData['mopt_payone_status'] = 'pending';
+
+            } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'completed'){
+                $this->savePaymentStatus($transactionId, $order['temporaryID'], 18);
 
             } else {
                 $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
             }
         }
+
+        $this->logger->debug('save attribute data', $attributeData);
+        $this->saveOrderAttributeData($order, $attributeData, $saveOrderHash, $saveClearingData);
 
 
         $this->logger->debug('finished, output TSOK');
