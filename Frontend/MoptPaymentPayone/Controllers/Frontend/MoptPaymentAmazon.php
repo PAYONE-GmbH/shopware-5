@@ -282,6 +282,10 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
             $orderId = Shopware()->Db()->fetchOne($sql, $txid);
 
+            //and update the new order number with the already reserved one for order_details
+            $sql = 'UPDATE  `s_order_details` SET ordernumber = ? WHERE orderID = ?';
+            Shopware()->Db()->query($sql, array($this->session['moptAmazonOrdernum'], $orderId));
+
             // save fields as Order Attribute
             $sql = 'UPDATE `s_order_attributes` ' .
                 'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, mopt_payone_payment_reference=?, '
