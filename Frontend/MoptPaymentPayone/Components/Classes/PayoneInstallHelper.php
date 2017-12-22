@@ -1052,8 +1052,46 @@ class Mopt_PayoneInstallHelper
             INSERT INTO `s_core_config_mails` (`stateId`, `name`, `frommail`, `fromname`, `subject`, `content`, `contentHTML`, `ishtml`, `attachment`, `mailtype`, `context`, `dirty`) VALUES
             '.
             "
-            (21, 'sORDERSTATEMAIL21', '{config name=mail}', '{config name=shopName}', 'Statusänderung zur Bestellung bei {config name=shopName}',
-            ".'\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\nHallo {$sUser.billing_salutation|salutation} {$sUser.billing_firstname} {$sUser.billing_lastname},\n\nDer Status Ihrer Bestellung mit der Bestellnummer: {$sOrder.ordernumber} vom {$sOrder.ordertime|date_format:\" %d-%m-%Y\"} hat sich geändert.\n\nDer neue Zahlungsstatus lautet nun {$sOrder.cleared_description}.\r\n\r\n{include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
+            (21, 'sORDERSTATEMAIL21', '{config name=mail}', '{config name=shopName}', 'Bitte kontaktieren Sie uns wegen Ihrer Bestellung',
+            ".'\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\n
+Sehr geehrter Kunde,\n\n
+Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=shopName} von Amazon Pay zurückgewiesen. Bitte kontaktieren Sie uns.\r\n\r\n
+{include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
+            ';
+            $db->exec($sql);
+        }
+
+    }
+
+    /**
+     * make sure an email template for payment status 19 exists
+     * so customers get notified when txaction=approved and transaction_status = pending is received from payone
+     *
+     * @return void
+     */
+    public function checkAndInsertDelayedStatusEmailTemplate()
+    {
+        $db = Shopware()->Db();
+
+        $sql = "SELECT * FROM s_core_config_mails
+                WHERE  stateId = 19";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = '
+            INSERT INTO `s_core_config_mails` (`stateId`, `name`, `frommail`, `fromname`, `subject`, `content`, `contentHTML`, `ishtml`, `attachment`, `mailtype`, `context`, `dirty`) VALUES
+            '.
+                "
+            (19, 'sORDERSTATEMAIL19', '{config name=mail}', '{config name=shopName}', 'Bitte aktualisieren Sie Ihre Zahlungsinformationen',
+            ".'\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\nSehr geehrter Kunde,\r\n
+Vielen Dank für Ihre Bestellung bei {config name=shopName}.\r\n
+Leider wurde Ihre Bezahlung von Amazon Pay abgelehnt.\r\n
+Sie können unter https://pay.amazon.com/de/jr/youraccount/orders?language=de_DE
+die Zahlungsinformationen für Ihre Bestellung
+aktualisieren, indem Sie eine andere Zahlungsweise auswählen oder eine neue
+Zahlungsweise angeben. Mit der neuen Zahlungsweise wird dann ein erneuter
+Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
+{include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
             ';
             $db->exec($sql);
         }
