@@ -707,7 +707,7 @@ class Mopt_PayoneInstallHelper
 
         if ($result->rowCount() === 0) {
             $sql = "INSERT INTO `s_plugin_mopt_payone_config` (`payment_id`, `merchant_id`, `portal_id`, `subaccount_id`, `api_key`, `live_mode`, `authorisation_method`, `submit_basket`, `adresscheck_active`, `adresscheck_live_mode`, `adresscheck_billing_adress`, `adresscheck_shipping_adress`, `adresscheck_automatic_correction`, `adresscheck_failure_handling`, `adresscheck_min_basket`, `adresscheck_max_basket`, `adresscheck_lifetime`, `adresscheck_failure_message`, `map_person_check`, `map_know_pre_lastname`, `map_know_lastname`, `map_not_known_pre_lastname`, `map_multi_name_to_adress`, `map_undeliverable`, `map_person_dead`, `map_wrong_adress`, `map_address_check_not_possible`, `map_address_okay_building_unknown`, `map_person_moved_address_unknown`, `map_unknown_return_value`, `consumerscore_active`, `consumerscore_live_mode`, `consumerscore_check_moment`, `consumerscore_check_mode`, `consumerscore_default`, `consumerscore_lifetime`, `consumerscore_min_basket`, `consumerscore_max_basket`, `consumerscore_failure_handling`, `consumerscore_note_message`, `consumerscore_note_active`, `consumerscore_agreement_message`, `consumerscore_agreement_active`, `consumerscore_abtest_value`, `consumerscore_abtest_active`, `payment_specific_data`, `state_appointed`, `state_capture`, `state_paid`, `state_underpaid`, `state_cancelation`, `state_refund`, `state_debit`, `state_reminder`, `state_vauthorization`, `state_vsettlement`, `state_transfer`, `state_invoice`, `state_failed`,  `check_cc`, `check_account`, `trans_appointed`, `trans_capture`, `trans_paid`, `trans_underpaid`, `trans_cancelation`, `trans_refund`, `trans_debit`, `trans_reminder`, `trans_vauthorization`, `trans_vsettlement`, `trans_transfer`, `trans_invoice`, `trans_failed` ) VALUES
-      (0, 0, 0, 0, '0', 0, 'Vorautorisierung', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'Es ist ein Fehler aufgetreten', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'IH', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 'N;', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21,  1, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '');
+      (0, 0, 0, 0, '0', 0, 'Vorautorisierung', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'Es ist ein Fehler aufgetreten', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'IH', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 'N;', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121,  1, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '');
       ";
             Shopware()->Db()->query($sql);
         }
@@ -1034,7 +1034,7 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
-     * make sure an email template for payment status 21 exists
+     * make sure an email template for payment status 121 exists
      * so customers get notified when txaction=failed is received from payone
      *
      * @return void
@@ -1043,8 +1043,21 @@ class Mopt_PayoneInstallHelper
     {
         $db = Shopware()->Db();
 
+        $sql = "SELECT * FROM s_core_states
+                WHERE  id = 121";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = '
+            INSERT INTO `s_core_states` (`id`, `name`, `description`, `position`, `group`, `mail`) VALUES
+            
+            (121, "amazon_failed", "Amazon Failed",121, "payment", 0);
+            ';
+            $db->exec($sql);
+        }
+
         $sql = "SELECT * FROM s_core_config_mails
-                WHERE  stateId = 21";
+                WHERE  stateId = 121";
         $result = $db->query($sql);
 
         if ($result->rowCount() === 0) {
@@ -1052,7 +1065,7 @@ class Mopt_PayoneInstallHelper
             INSERT INTO `s_core_config_mails` (`stateId`, `name`, `frommail`, `fromname`, `subject`, `content`, `contentHTML`, `ishtml`, `attachment`, `mailtype`, `context`, `dirty`) VALUES
             '.
             "
-            (21, 'sORDERSTATEMAIL21', '{config name=mail}', '{config name=shopName}', 'Bitte kontaktieren Sie uns wegen Ihrer Bestellung',
+            (121, 'sORDERSTATEMAIL121', '{config name=mail}', '{config name=shopName}', 'Bitte kontaktieren Sie uns wegen Ihrer Bestellung',
             ".'\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\n
 Sehr geehrter Kunde,\n\n
 Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=shopName} von Amazon Pay zurückgewiesen. Bitte kontaktieren Sie uns.\r\n\r\n
@@ -1064,7 +1077,7 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
     }
 
     /**
-     * make sure an email template for payment status 19 exists
+     * make sure an email template for payment status 119 exists
      * so customers get notified when txaction=approved and transaction_status = pending is received from payone
      *
      * @return void
@@ -1073,8 +1086,21 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
     {
         $db = Shopware()->Db();
 
+        $sql = "SELECT * FROM s_core_states
+                WHERE  id = 119";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = '
+            INSERT INTO `s_core_states` (`id`, `name`, `description`, `position`, `group`, `mail`) VALUES
+            
+            (119, "amazon_delayed", "Amazon Delayed",119, "payment", 0);
+            ';
+            $db->exec($sql);
+        }
+
         $sql = "SELECT * FROM s_core_config_mails
-                WHERE  stateId = 19";
+                WHERE  stateId = 119";
         $result = $db->query($sql);
 
         if ($result->rowCount() === 0) {
@@ -1082,7 +1108,7 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
             INSERT INTO `s_core_config_mails` (`stateId`, `name`, `frommail`, `fromname`, `subject`, `content`, `contentHTML`, `ishtml`, `attachment`, `mailtype`, `context`, `dirty`) VALUES
             '.
                 "
-            (19, 'sORDERSTATEMAIL19', '{config name=mail}', '{config name=shopName}', 'Bitte aktualisieren Sie Ihre Zahlungsinformationen',
+            (119, 'sORDERSTATEMAIL119', '{config name=mail}', '{config name=shopName}', 'Bitte aktualisieren Sie Ihre Zahlungsinformationen',
             ".'\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\nSehr geehrter Kunde,\r\n
 Vielen Dank für Ihre Bestellung bei {config name=shopName}.\r\n
 Leider wurde Ihre Bezahlung von Amazon Pay abgelehnt.\r\n
