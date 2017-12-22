@@ -291,7 +291,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
     {
         // mopt_payone_status Attribute is 'failed'
         $orderAttribute = $this->moptPayone__helper->getOrCreateAttribute($order);
-        if ($orderAttribute->getMoptPayoneStatus($order) === 'failed') {
+        if ($orderAttribute->getMoptPayoneStatus($order) === 'failed' || $orderAttribute->getMoptPayoneStatus($order)  === 'pending' ) {
             return true;
         }
 
