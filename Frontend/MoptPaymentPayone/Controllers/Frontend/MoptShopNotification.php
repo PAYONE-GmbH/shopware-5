@@ -161,12 +161,12 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 // save failed status with mail notification
                 $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState,true);
             } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause == '981'){
-                // InvalidPayment Method: update Order Status to "Verzoegert" (19) and send mail notification
+                // InvalidPayment Method: update Order Status to "amazon_delayed" (119) and send mail notification
                 $this->savePaymentStatus($transactionId, $order['temporaryID'], 19, true);
                 $attributeData['mopt_payone_status'] = 'pending';
 
             } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause != '981'){
-                // InvalidPayment Method: update Order Status to "Verzoegert" (19)
+                // InvalidPayment Method: update Order Status to "amazon_delayed" (119)
                 $this->savePaymentStatus($transactionId, $order['temporaryID'], 19);
                 $attributeData['mopt_payone_status'] = 'pending';
 
