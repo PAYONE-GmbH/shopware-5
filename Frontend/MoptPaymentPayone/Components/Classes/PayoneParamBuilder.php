@@ -1232,9 +1232,9 @@ class Mopt_PayoneParamBuilder
 
             $params['id'] = substr($article['ordernumber'] ?: $article['articlename'], 0, 32); //article number
             if ($taxFree) {
-                $params['pr'] = $article['priceNumeric']; //price
+                $params['pr'] = round($article['netprice'], 2); //netto price
             } else {
-                $params['pr'] = round($article['netprice'] * (1 + ($article['tax_rate'] / 100)), 2); //price
+                $params['pr'] = round($article['priceNumeric'], 2); //brutto price
             }
             $params['no'] = $article['quantity']; // ordered quantity
             $params['de'] = substr($article['articlename'], 0, 100); // description
