@@ -312,6 +312,11 @@ function moptPaymentReady() {
 
             var fcpolang = me.opts.moptPayoneParamsLanguage;
 
+            if (Payone.ClientApi.Language[fcpolang] === undefined){
+                console.log("language is not (yet) supported, falling back to english)");
+                fcpolang = 'en';
+            }
+
             if (me.opts.moptCreditcardConfig.default_translation_iframe_month1) {
                 Payone.ClientApi.Language[fcpolang].months.month1 = me.opts.moptCreditcardConfig.default_translation_iframe_month1;
             }
