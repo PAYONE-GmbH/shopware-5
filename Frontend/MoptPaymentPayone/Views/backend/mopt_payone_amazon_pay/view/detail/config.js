@@ -51,7 +51,6 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
             ],
             data: [
                 { value: 'sync', name: '{s name=amazon_mode_always_sync}Always Synchronous{/s}' },
-                { value: 'async', name: '{s name=amazon_mode_always_async}Always Asynchronous{/s}' },
                 { value: 'firstsync', name: '{s name=amazon_mode_firstsync}Asynchronous On Failure (default):{/s}'}
             ]
         });
@@ -109,7 +108,6 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                         displayField: 'name',
                         valueField: 'value',
                         helpText: '– Asynchronous On Failure (recommended, default): If a synchronous transaction fails, the transaction will be retried with an asynchronous request.<BR>' +
-                        '– Always Asynchronous: Always perform an asynchronous transaction. This will lead to higher acceptance rates. However, instant processing of transactions might not always be possible, since it can take up to 24 hours for Amazon to confirm or decline the transaction.<BR>' +
                         '– Always Synchronous: Always try synchronous transactions. These might have lower acceptance rates with Amazon. However, you will receive an instant confirmation of the transaction and you will be able to continue right away.<BR>',
                         editable: false,
                         allowBlank: false,

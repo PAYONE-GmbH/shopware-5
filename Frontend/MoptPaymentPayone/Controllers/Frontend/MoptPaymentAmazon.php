@@ -96,6 +96,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $basket['AmountNetNumeric'] = floatval(str_replace(',', '.', $basket['AmountNet']));
             $basket['sAmountNet'] = floatval($basket['AmountNetNumeric']) + floatval($shippingCosts['netto']);
             $basket['sTaxRates'] = $this->getTaxRates($basket);
+            $basket['sCurrencyId'] = Shopware()->Shop()->getCurrency()->getId();
 
             $this->View()->sShippingcosts = $shippingCosts['brutto'];
             $this->View()->sShippingcostsWithTax = $shippingCosts['brutto'];
@@ -260,12 +261,14 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             // Save Clearing Reference as Attribute (set in session )
             $this->session->paymentReference = $request->getReference();
+            $paymentStatusId = null;
 
             Shopware()->Session()->sOrderVariables['sUserData'] = $this->getUserData();
             $txid = $response->getTxid();
             $orderNumber = $this->saveOrder(
                 $txid,
-                $this->session->paymentReference
+                $this->session->paymentReference,
+                $paymentStatusId
             );
 
             // replace the new order number with the already reserved one, which is already sent to amazon
@@ -278,6 +281,10 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             // get orderId for attribute Saving
             $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
             $orderId = Shopware()->Db()->fetchOne($sql, $txid);
+
+            //and update the new order number with the already reserved one for order_details
+            $sql = 'UPDATE  `s_order_details` SET ordernumber = ? WHERE orderID = ?';
+            Shopware()->Db()->query($sql, array($this->session['moptAmazonOrdernum'], $orderId));
 
             // save fields as Order Attribute
             $sql = 'UPDATE `s_order_attributes` ' .

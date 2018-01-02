@@ -32,10 +32,10 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayonePosition', {
         });
       }
     });
-    
+
     toolbar.items.add(me.moptPayoneCapturePositionsButton);
     toolbar.items.add(me.moptPayoneDebitPositionsButton);
-    
+
     return toolbar;
   },
   
@@ -63,7 +63,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayonePosition', {
     );
     return columns;
   }
-          
+
   
 });
 //{/block}

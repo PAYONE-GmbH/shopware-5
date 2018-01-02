@@ -195,7 +195,6 @@
                         <td>
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][amazonMode]" id="amazonpayAmazonMode_{$amazonpayconfig->getId()}">
                                 <option value="sync" {if $amazonpayconfig->getAmazonMode() == 'sync'}selected="selected"{/if}>{s name=amazon_mode_always_sync}Always Synchronous{/s}</option>
-                                <option value="async" {if $amazonpayconfig->getAmazonMode() == 'async'}selected="selected"{/if}>{s name=amazon_mode_always_async}Always Asynchronous{/s}</option>
                                 <option value="firstsync" {if $amazonpayconfig->getAmazonMode() == 'firstsync'}selected="selected"{/if}>{s name=amazon_mode_always_firstsync}First synchronous, on failure try asynchronous (recommended, default):{/s}</option>
                             </select>
                         </td>
