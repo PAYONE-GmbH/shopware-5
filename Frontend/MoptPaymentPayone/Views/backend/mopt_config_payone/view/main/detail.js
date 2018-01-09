@@ -178,6 +178,12 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(12).disable();
         }
         ;
+        if (field === 'paydirekt') {
+            fieldset.items.getAt(23).enable();
+        } else {
+            fieldset.items.getAt(23).disable();
+        }
+        ;
     },
     /**
      * creates form child elements
@@ -1044,7 +1050,20 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 allowBlank: true,
                 disabled: true,
                 labelWidth: 200
-            }
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/paydirektOvercapture}Paydirekt Overcapture{/s}',
+                helpText: '{s name=fieldlabelhelp/paydirektOvercapture}Paydirekt erlaubt einen Overcapture von 10% des vorauthorisierten Warenkorbs. Diese Option NUR nach Absprache mit Payone anschalten!{/s}',
+                name: 'paydirektOvercapture',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: true,
+                labelWidth: 200
+            },
         ];
     },
     getPaymentStatus: function () {

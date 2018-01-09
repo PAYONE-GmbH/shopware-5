@@ -1369,4 +1369,21 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             . "ADD COLUMN transaction_id VARCHAR(255);";
         Shopware()->Db()->exec($sql);
     }
+
+    public function checkAndUpdateConfigModelPaydirektOvercaptureExtension()
+    {
+        $db = Shopware()->Db();
+
+        $DBConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='paydirekt_overcapture'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `paydirekt_overcapture` TINYINT(1) NOT NULL DEFAULT 0;";
+            $db->exec($sql);
+        }
+    }
 }
