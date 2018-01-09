@@ -120,12 +120,13 @@ class Mopt_PayonePaymentHelper
    */
     public function deletePaymentData($userId)
     {
-        $sql    = 'SELECT userId FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
-        $result = Shopware()->Db()->fetchOne($sql);
-
-        if ($result) {
-            $sql = 'DELETE FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
-            Shopware()->Db()->exec($sql);
+        if ($userId != null) {
+            $sql = 'SELECT userId FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
+            $result = Shopware()->Db()->fetchOne($sql);
+            if ($result) {
+                $sql = 'DELETE FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
+                Shopware()->Db()->exec($sql);
+            }
         }
     }
 
