@@ -5,10 +5,10 @@
  */
 class Mopt_PayonePaymentHelper
 {
-  //Klarna CDN links for consents and legal terms
+    //Klarna CDN links for consents and legal terms
     const MOPT_PAYONE_KLARNA_CONSENT_DE = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/de_de/consent";
     const MOPT_PAYONE_KLARNA_CONSENT_AT = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/de_at/consent";
-  
+
     const MOPT_PAYONE_KLARNA_INVOICE_TERMS_DE = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/de_de/invoice?fee=0";
     const MOPT_PAYONE_KLARNA_INVOICE_TERMS_AT = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/de_at/invoice?fee=0";
     const MOPT_PAYONE_KLARNA_INVOICE_TERMS_DK = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/da_dk/invoice?fee=0";
@@ -16,8 +16,8 @@ class Mopt_PayonePaymentHelper
     const MOPT_PAYONE_KLARNA_INVOICE_TERMS_NL = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/nl_nl/invoice?fee=0";
     const MOPT_PAYONE_KLARNA_INVOICE_TERMS_NO = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/nb_no/invoice?fee=0";
     const MOPT_PAYONE_KLARNA_INVOICE_TERMS_SE = "https://cdn.klarna.com/1.0/shared/content/legal/terms/##storeid##/sv_se/invoice?fee=0";
-  
-  //Payolution links for consents and legal terms
+
+    //Payolution links for consents and legal terms
     const MOPT_PAYONE_PAYOLUTION_CONSENT_DE = "https://payment.payolution.com/payolution-payment/infoport/dataprivacydeclaration?mId=";
     const MOPT_PAYONE_PAYOLUTION_SEPA_DE = "https://payment.payolution.com/payolution-payment/infoport/sepa/mandate.pdf";
 
@@ -66,12 +66,12 @@ class Mopt_PayonePaymentHelper
     ";
 
 
-  /**
-   * adds Payone API value for creditcard
-   *
-   * @param array $cardData
-   * @return array
-   */
+    /**
+     * adds Payone API value for creditcard
+     *
+     * @param array $cardData
+     * @return array
+     */
     public function mapCardLetter($cardData)
     {
         foreach ($cardData as &$creditCard) {
@@ -113,14 +113,14 @@ class Mopt_PayonePaymentHelper
         return $cardData;
     }
 
-  /**
-   * delete saved payment data
-   *
-   * @param string $userId
-   */
+    /**
+     * delete saved payment data
+     *
+     * @param string $userId
+     */
     public function deletePaymentData($userId)
     {
-        $sql    = 'SELECT userId FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
+        $sql = 'SELECT userId FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
         $result = Shopware()->Db()->fetchOne($sql);
 
         if ($result) {
@@ -139,51 +139,51 @@ class Mopt_PayonePaymentHelper
         return $sFallback;
     }
 
-  /**
-   * returns payment name
-   *
-   * @param string $paymentID
-   * @return string
-   */
+    /**
+     * returns payment name
+     *
+     * @param string $paymentID
+     * @return string
+     */
     public function getPaymentNameFromId($paymentID)
     {
-        $sql         = 'SELECT `name` FROM `s_core_paymentmeans` WHERE id = ?';
+        $sql = 'SELECT `name` FROM `s_core_paymentmeans` WHERE id = ?';
         $paymentName = Shopware()->Db()->fetchOne($sql, $paymentID);
 
         return $paymentName;
     }
 
-  /**
-   * save payment data
-   *
-   * @param string $userId
-   * @param array $paymentData
-   */
+    /**
+     * save payment data
+     *
+     * @param string $userId
+     * @param array $paymentData
+     */
     public function savePaymentData($userId, $paymentData)
     {
-        $sql         = 'replace into `s_plugin_mopt_payone_payment_data`' .
-            '(`userId`,`moptPaymentData`) values (?,?)';
+        $sql = 'REPLACE INTO `s_plugin_mopt_payone_payment_data`' .
+            '(`userId`,`moptPaymentData`) VALUES (?,?)';
         $paymentData = serialize($paymentData['formData']);
         Shopware()->Db()->query($sql, array($userId, $paymentData));
     }
 
-  /**
-   * set configured default payment as payment method
-   *
-   * @param string $userId
-   */
+    /**
+     * set configured default payment as payment method
+     *
+     * @param string $userId
+     */
     public function setConfiguredDefaultPaymentAsPayment($userId)
     {
         $sql = "UPDATE s_user SET paymentID = ? WHERE id = ?";
-        Shopware()->Db()->query($sql, array((int) Shopware()->Config()->Defaultpayment, (int) $userId));
+        Shopware()->Db()->query($sql, array((int)Shopware()->Config()->Defaultpayment, (int)$userId));
     }
 
-  /**
-   * extract clearing data from response object
-   *
-   * @param object $response
-   * @return boolean|array
-   */
+    /**
+     * extract clearing data from response object
+     *
+     * @param object $response
+     * @return boolean|array
+     */
     public function extractClearingDataFromResponse($response)
     {
         $responseData = $response->toArray();
@@ -204,13 +204,13 @@ class Mopt_PayonePaymentHelper
 
         return $responseData;
     }
-  
+
     /**
-   * extract barzahlen code to embed on checkout finish page from response object
-   *
-   * @param object $response
-   * @return boolean/array
-   */
+     * extract barzahlen code to embed on checkout finish page from response object
+     *
+     * @param object $response
+     * @return boolean/array
+     */
     public function extractBarzahlenCodeFromResponse($response)
     {
         if (!method_exists($response, 'getPaydata')) {
@@ -222,7 +222,7 @@ class Mopt_PayonePaymentHelper
         }
         $arr = $payData->toArray();
         foreach ($arr as $k => $v) {
-            $arr[substr($k, strpos($k, '[')+1, -1)] = $v;
+            $arr[substr($k, strpos($k, '[') + 1, -1)] = $v;
         }
         if ($arr['content_format'] === 'HTML') {
             return urldecode($arr['instruction_notes']);
@@ -230,16 +230,16 @@ class Mopt_PayonePaymentHelper
             return $arr['instruction_notes'];
         }
     }
-  
+
     /**
-   * extract Payolution Clearingdata on checkout finish page from response object
-   *
-   * @param object $response
-   * @return boolean/array
-   */
+     * extract Payolution Clearingdata on checkout finish page from response object
+     *
+     * @param object $response
+     * @return boolean/array
+     */
     public function extractPayolutionClearingDataFromResponse($response)
     {
-        if ($response instanceof Payone_Api_Response_Authorization_Approved){
+        if ($response instanceof Payone_Api_Response_Authorization_Approved) {
             $responseData = $response->toArray();
 
             foreach ($responseData['rawResponse'] as $key => $value) {
@@ -255,7 +255,7 @@ class Mopt_PayonePaymentHelper
 
             return $responseData['rawResponse'];
         }
-        
+
         if (!method_exists($response, 'getPaydata')) {
             return;
         }
@@ -264,17 +264,17 @@ class Mopt_PayonePaymentHelper
             return false;
         }
         $arr = $payData->toArray();
-   
-        return($arr);
+
+        return ($arr);
     }
 
-  /**
-   * returns clearing data
-   *
-   * @param string $orderId
-   * @return array
-   * @throws Exception
-   */
+    /**
+     * returns clearing data
+     *
+     * @param string $orderId
+     * @return array
+     * @throws Exception
+     */
     public function getClearingDataFromOrderId($orderId)
     {
         $data = array();
@@ -283,19 +283,19 @@ class Mopt_PayonePaymentHelper
             throw new Exception("Order not found.");
         }
 
-        $attribute    = $order->getAttribute();
+        $attribute = $order->getAttribute();
         $clearingData = $attribute->getMoptPayoneClearingData();
         json_decode($clearingData, $data);
 
         return $data;
     }
 
-  /**
-   * check if given payment name is payone creditcard payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone creditcard payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneCreditcard($paymentName)
     {
         if (preg_match('#mopt_payone__cc#', $paymentName) || $paymentName == 'mopt_payone_creditcard') {
@@ -304,7 +304,7 @@ class Mopt_PayonePaymentHelper
             return false;
         }
     }
-  
+
     /**
      * check if given payment name is payone creditcard payment
      *
@@ -321,12 +321,12 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-   * check if given payment name is payone creditcard payment not grouped
-   * it only checks for real existing payment methods not for virtual method "mopt_payone_creditcard"
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+     * check if given payment name is payone creditcard payment not grouped
+     * it only checks for real existing payment methods not for virtual method "mopt_payone_creditcard"
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneCreditcardNotGrouped($paymentName)
     {
         if (preg_match('#mopt_payone__cc#', $paymentName)) {
@@ -336,12 +336,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone sofortueberweisung payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone sofortueberweisung payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneSofortuerberweisung($paymentName)
     {
         if (preg_match('#mopt_payone__ibt_sofortueberweisung#', $paymentName)) {
@@ -366,12 +366,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone barzahlen payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone barzahlen payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneBarzahlen($paymentName)
     {
         if (preg_match('#mopt_payone__csh_barzahlen#', $paymentName)) {
@@ -380,13 +380,13 @@ class Mopt_PayonePaymentHelper
             return false;
         }
     }
-  
-  /**
-   * check if given payment name is payone giropay payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+
+    /**
+     * check if given payment name is payone giropay payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneGiropay($paymentName)
     {
         if (preg_match('#mopt_payone__ibt_giropay#', $paymentName)) {
@@ -396,12 +396,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone eps payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone eps payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneEPS($paymentName)
     {
         if (preg_match('#mopt_payone__ibt_eps#', $paymentName)) {
@@ -411,12 +411,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone post eFinance payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone post eFinance payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePostEFinance($paymentName)
     {
         if (preg_match('#mopt_payone__ibt_post_efinance#', $paymentName)) {
@@ -426,12 +426,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone post finance card payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone post finance card payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePostFinanceCard($paymentName)
     {
         if (preg_match('#mopt_payone__ibt_post_finance_card#', $paymentName)) {
@@ -441,12 +441,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone iDeal payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone iDeal payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneIDeal($paymentName)
     {
         if (preg_match('#mopt_payone__ibt_ideal#', $paymentName)) {
@@ -456,12 +456,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone paypal payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone paypal payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePaypal($paymentName)
     {
         if (preg_match('#mopt_payone__ewallet_paypal#', $paymentName)) {
@@ -470,13 +470,13 @@ class Mopt_PayonePaymentHelper
             return false;
         }
     }
-  
+
     /**
-   * check if given payment name is payone paydirekt payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+     * check if given payment name is payone paydirekt payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePaydirekt($paymentName)
     {
         if (preg_match('#mopt_payone__ewallet_paydirekt#', $paymentName)) {
@@ -486,12 +486,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is a payone ewallet payment method
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is a payone ewallet payment method
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isEWallet($paymentName)
     {
         if (preg_match('#mopt_payone__ewallet#', $paymentName)) {
@@ -501,12 +501,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone debitnote payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone debitnote payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneDebitnote($paymentName)
     {
         if (preg_match('#mopt_payone__acc_debitnote#', $paymentName)) {
@@ -516,12 +516,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone invoice payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone invoice payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneInvoice($paymentName)
     {
         if (preg_match('#mopt_payone__acc_invoice#', $paymentName)) {
@@ -546,12 +546,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone pay in advance payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone pay in advance payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePayInAdvance($paymentName)
     {
         if (preg_match('#mopt_payone__acc_payinadvance#', $paymentName)) {
@@ -561,12 +561,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone cash on delivery payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone cash on delivery payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneCashOnDelivery($paymentName)
     {
         if (preg_match('#mopt_payone__acc_cashondel#', $paymentName)) {
@@ -576,12 +576,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone billsafe payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone billsafe payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneBillsafe($paymentName)
     {
         if (preg_match('#mopt_payone__fin_billsafe#', $paymentName)) {
@@ -591,12 +591,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone klarna payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone klarna payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneKlarna($paymentName)
     {
         if (preg_match('#mopt_payone__fin_klarna#', $paymentName)) {
@@ -606,12 +606,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone P24 payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone P24 payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneP24($paymentName)
     {
         if (preg_match('#mopt_payone__ibt_p24#', $paymentName)) {
@@ -621,12 +621,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone payment method
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone payment method
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePaymentMethod($paymentName)
     {
         if (preg_match('#mopt_payone__#', $paymentName)) {
@@ -636,12 +636,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone instant bank transfer payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone instant bank transfer payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneInstantBankTransfer($paymentName)
     {
         if (preg_match('#mopt_payone__ibt#', $paymentName)) {
@@ -651,12 +651,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone finance payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone finance payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneFinance($paymentName)
     {
         if (preg_match('#mopt_payone__fin#', $paymentName)) {
@@ -676,13 +676,13 @@ class Mopt_PayonePaymentHelper
     {
         return strpos($paymentName, 'mopt_payone__creditcard_iframe') === 0;
     }
-    
-  /**
-   * check if given payment name is payone payolution debitnote payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+
+    /**
+     * check if given payment name is payone payolution debitnote payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePayolutionDebitNote($paymentName)
     {
         if (preg_match('#mopt_payone__fin_payolution_debitnote#', $paymentName)) {
@@ -692,12 +692,12 @@ class Mopt_PayonePaymentHelper
         }
     }
 
-  /**
-   * check if given payment name is payone payolution invoice payment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    /**
+     * check if given payment name is payone payolution invoice payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePayolutionInvoice($paymentName)
     {
         if (preg_match('#mopt_payone__fin_payolution_invoice#', $paymentName)) {
@@ -706,13 +706,13 @@ class Mopt_PayonePaymentHelper
             return false;
         }
     }
-    
-  /**
-   * check if given payment name is payone payolution installment
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+
+    /**
+     * check if given payment name is payone payolution installment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePayolutionInstallment($paymentName)
     {
         if (preg_match('#mopt_payone__fin_payolution_installment#', $paymentName)) {
@@ -720,14 +720,14 @@ class Mopt_PayonePaymentHelper
         } else {
             return false;
         }
-    }    
-    
-  /**
-   * check if given payment name is payone ratepay invoice
-   *
-   * @param string $paymentName
-   * @return boolean
-   */
+    }
+
+    /**
+     * check if given payment name is payone ratepay invoice
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayoneRatepayInvoice($paymentName)
     {
         if (preg_match('#mopt_payone__fin_ratepay_invoice#', $paymentName)) {
@@ -798,11 +798,11 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-   * get online bank transfer type for api communication
-   *
-   * @param string $paymentName
-   * @return string
-   */
+     * get online bank transfer type for api communication
+     *
+     * @param string $paymentName
+     * @return string
+     */
     public function getOnlineBankTransferTypeFromPaymentName($paymentName)
     {
         if ($this->isPayoneSofortuerberweisung($paymentName)) {
@@ -842,7 +842,7 @@ class Mopt_PayonePaymentHelper
 
     public function moptGetCountriesAssignedToPayment($paymentId)
     {
-        $sql    = 'SELECT s_core_paymentmeans_countries.countryID, s_core_countries.countryname, s_core_countries.countryiso '
+        $sql = 'SELECT s_core_paymentmeans_countries.countryID, s_core_countries.countryname, s_core_countries.countryiso '
             . 'FROM s_core_paymentmeans_countries, s_core_countries '
             . 'WHERE s_core_paymentmeans_countries.paymentID = ? '
             . 'AND s_core_countries.id = s_core_paymentmeans_countries.countryID;';
@@ -853,7 +853,7 @@ class Mopt_PayonePaymentHelper
 
     public function moptGetShippingCountriesAssignedToPayment($paymentId)
     {
-        $sql    = 'SELECT s_premium_dispatch_countries.countryID, s_core_countries.countryname, s_core_countries.countryiso '
+        $sql = 'SELECT s_premium_dispatch_countries.countryID, s_core_countries.countryname, s_core_countries.countryiso '
             . 'FROM s_premium_dispatch_countries, s_core_countries, s_premium_dispatch_paymentmeans '
             . 'WHERE s_premium_dispatch_countries.countryID = s_core_countries.id AND s_premium_dispatch_paymentmeans.paymentID = ? '
             . 'AND s_premium_dispatch_paymentmeans.dispatchID = s_premium_dispatch_countries.dispatchID;';
@@ -861,127 +861,135 @@ class Mopt_PayonePaymentHelper
 
         return $paymentCountries;
     }
-  
+
     public function moptGetKlarnaAdditionalInformation($country, $storeId)
     {
         $information = array('consent' => '', 'legalTerm' => '');
-    
+
         switch ($country) {
-            case 'DE': {
-                $information['consent'] = 'Mit der Übermittlung der für die Abwicklung der gewählten Klarna Zahlungsmethode '
-                . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an Klarna bin ich einverstanden. '
-                . 'Meine <a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_CONSENT_DE . '" '
-                . 'style="text-decoration: underline !important;">Einwilligung</a> '
-                . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen. Es gelten die AGB des Händlers.';
-                $information['legalTerm'] = 'Weitere Informationen zum Rechnungskauf finden Sie in den '
-                . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DE . '" style="text-decoration: underline !important;">'
-                . 'Rechnungsbedingungen</a>.';
-            }
-            break;
-      
-            case 'AT': {
-                $information['consent'] = 'Mit der Übermittlung der für die Abwicklung der gewählten Klarna Zahlungsmethode '
-                . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an Klarna bin ich einverstanden. '
-                . 'Meine <a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_CONSENT_AT . '" '
-                . 'style="text-decoration: underline !important;">Einwilligung</a> '
-                . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen. Es gelten die AGB des Händlers.';
-                $information['legalTerm'] = 'Weitere Informationen zum Rechnungskauf finden Sie in den '
-                . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_AT . '" style="text-decoration: underline !important;">'
-                . 'Rechnungsbedingungen</a>.';
-            }
-            break;
-      
-            case 'DK': {
-                $information['legalTerm'] = 'Accept legal terms. '
-                . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DK . '" style="text-decoration: underline !important;">'
-                . 'Vilkår for faktura</a>.';
-            }
-            break;
-      
-            case 'NL': {
-                $information['legalTerm'] = 'Accept legal terms. '
-                . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DK . '" style="text-decoration: underline !important;">'
-                . 'Factuurvoorwaarden</a>.';
-            }
-            break;
-      
-            case 'NO': {
-                $information['legalTerm'] = 'Accept legal terms. '
-                . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DK . '" style="text-decoration: underline !important;">'
-                . 'Vilkår for faktura</a>.';
-            }
-            break;
-      
-            case 'FI': {
-                $information['legalTerm'] = 'Accept legal terms. '
-                . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DK . '" style="text-decoration: underline !important;">'
-                . 'Laskuehdot</a>.';
-            }
-            break;
-      
-            case 'SE': {
-                $information['legalTerm'] = 'Accept legal terms. '
-                . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_SE . '" style="text-decoration: underline !important;">'
-                . 'Villkor för faktura</a>.';
-            }
-            break;
+            case 'DE':
+                {
+                    $information['consent'] = 'Mit der Übermittlung der für die Abwicklung der gewählten Klarna Zahlungsmethode '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an Klarna bin ich einverstanden. '
+                        . 'Meine <a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_CONSENT_DE . '" '
+                        . 'style="text-decoration: underline !important;">Einwilligung</a> '
+                        . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen. Es gelten die AGB des Händlers.';
+                    $information['legalTerm'] = 'Weitere Informationen zum Rechnungskauf finden Sie in den '
+                        . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DE . '" style="text-decoration: underline !important;">'
+                        . 'Rechnungsbedingungen</a>.';
+                }
+                break;
+
+            case 'AT':
+                {
+                    $information['consent'] = 'Mit der Übermittlung der für die Abwicklung der gewählten Klarna Zahlungsmethode '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an Klarna bin ich einverstanden. '
+                        . 'Meine <a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_CONSENT_AT . '" '
+                        . 'style="text-decoration: underline !important;">Einwilligung</a> '
+                        . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen. Es gelten die AGB des Händlers.';
+                    $information['legalTerm'] = 'Weitere Informationen zum Rechnungskauf finden Sie in den '
+                        . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_AT . '" style="text-decoration: underline !important;">'
+                        . 'Rechnungsbedingungen</a>.';
+                }
+                break;
+
+            case 'DK':
+                {
+                    $information['legalTerm'] = 'Accept legal terms. '
+                        . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DK . '" style="text-decoration: underline !important;">'
+                        . 'Vilkår for faktura</a>.';
+                }
+                break;
+
+            case 'NL':
+                {
+                    $information['legalTerm'] = 'Accept legal terms. '
+                        . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DK . '" style="text-decoration: underline !important;">'
+                        . 'Factuurvoorwaarden</a>.';
+                }
+                break;
+
+            case 'NO':
+                {
+                    $information['legalTerm'] = 'Accept legal terms. '
+                        . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DK . '" style="text-decoration: underline !important;">'
+                        . 'Vilkår for faktura</a>.';
+                }
+                break;
+
+            case 'FI':
+                {
+                    $information['legalTerm'] = 'Accept legal terms. '
+                        . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_DK . '" style="text-decoration: underline !important;">'
+                        . 'Laskuehdot</a>.';
+                }
+                break;
+
+            case 'SE':
+                {
+                    $information['legalTerm'] = 'Accept legal terms. '
+                        . '<a target="_blank" href="' . self::MOPT_PAYONE_KLARNA_INVOICE_TERMS_SE . '" style="text-decoration: underline !important;">'
+                        . 'Villkor för faktura</a>.';
+                }
+                break;
         }
-    
-        $information['consent']   = str_replace('##storeid##', $storeId, $information['consent']);
+
+        $information['consent'] = str_replace('##storeid##', $storeId, $information['consent']);
         $information['legalTerm'] = str_replace('##storeid##', $storeId, $information['legalTerm']);
 
         return $information;
     }
-  
+
     public function moptGetPayolutionAdditionalInformation($country, $companyname)
     {
         $information = array('consentDebit' => '', 'consentInvoice' => '', 'sepaagreement' => '');
-    
+
         switch ($country) {
-            case 'DE': {
-                $information['consentDebit'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
-                . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
-                . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayDebit();return false;">Einwilligung</a> '
-                . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
-        
-                $information['consentInvoice'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
-                . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
-                . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInvoice();return false;">Einwilligung</a> '
-                . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
-                
-                
-                $information['consentInstallment'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
-                . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
-                . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInstallment();return false;">Einwilligung</a> '
-                . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
-                
-                
-                $information['overlaycontent'] = $this->moptGetPayolutionAcceptanceText($companyname);
-        
-        
-                $information['sepaagreement'] = 'Hiermit erteile ich das <a target="_blank" href="' . self::MOPT_PAYONE_PAYOLUTION_SEPA_DE . '" '
-                . 'style="text-decoration: underline !important;">Sepa-Lastschriftmandat</a> ';
-        
-            }
-            break;
+            case 'DE':
+                {
+                    $information['consentDebit'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                        . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayDebit();return false;">Einwilligung</a> '
+                        . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
+
+                    $information['consentInvoice'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                        . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInvoice();return false;">Einwilligung</a> '
+                        . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
+
+
+                    $information['consentInstallment'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                        . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInstallment();return false;">Einwilligung</a> '
+                        . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
+
+
+                    $information['overlaycontent'] = $this->moptGetPayolutionAcceptanceText($companyname);
+
+
+                    $information['sepaagreement'] = 'Hiermit erteile ich das <a target="_blank" href="' . self::MOPT_PAYONE_PAYOLUTION_SEPA_DE . '" '
+                        . 'style="text-decoration: underline !important;">Sepa-Lastschriftmandat</a> ';
+
+                }
+                break;
         }
-    
+
         return $information;
     }
-    
+
     public function moptGetRatepayDeviceFingerprint()
     {
-        
-        if(!Shopware()->Session()->moptRatepayFingerprint) {
+
+        if (!Shopware()->Session()->moptRatepayFingerprint) {
             $userId = $this->session->sUserId;
             $userData = Shopware()->Modules()->Admin()->sGetUserData();
-            $fingerprint  = $userData['billingaddress']['firstname'];
+            $fingerprint = $userData['billingaddress']['firstname'];
             $fingerprint .= $userData['billingaddress']['lastname'];
             $fingerprint .= microtime();
             $fingerprint = md5($fingerprint);
             Shopware()->Session()->moptRatepayFingerprint = $fingerprint;
         } else {
-            $fingerprint = Shopware()->Session()->moptRatepayFingerprint ;
+            $fingerprint = Shopware()->Session()->moptRatepayFingerprint;
         }
         return $fingerprint;
     }
@@ -999,10 +1007,10 @@ class Mopt_PayonePaymentHelper
             $moptPayoneMain = Shopware()->Container()->get('MoptPayoneMain');
         }
 
-        $basket      = $moptPayoneMain->sGetBasket();
+        $basket = $moptPayoneMain->sGetBasket();
         $basketValue = $basket['AmountNumeric'];
         $currency = Shopware()->Shop()->getCurrency();
-        $currencyId  = $currency->getId();
+        $currencyId = $currency->getId();
 
         $sQuery = " SELECT
                         shopid
@@ -1014,7 +1022,7 @@ class Mopt_PayonePaymentHelper
                         country_code_billing = '{$billingCountry}'";
         $sQuery .= " LIMIT 1;";
         $sShopId = Shopware()->Db()->fetchOne($sQuery);
-        if($sShopId) {
+        if ($sShopId) {
             $config = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')->getRatepayConfigByShopId($sShopId);
         }
         return $config;
@@ -1054,29 +1062,28 @@ class Mopt_PayonePaymentHelper
         }
         return $sPage;
     }
-  
+
     public function moptUpdateUserInformation($userId, $paymentData)
     {
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
-        
+
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
             $billing = $user->getDefaultBillingAddress();
-        }
-        else {
+        } else {
             $billing = $user->getBilling();
         }
-            
+
         if (isset($paymentData['formData']['mopt_payone__klarna_birthyear'])) {
             if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
                 $user->setBirthday($paymentData['formData']['mopt_payone__klarna_birthyear']
-                  . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth']
-                  . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
-		Shopware()->Models()->persist($user);                
-                
+                    . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth']
+                    . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
+                Shopware()->Models()->persist($user);
+
             } else {
                 $billing->setBirthday($paymentData['formData']['mopt_payone__klarna_birthyear']
-                  . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth']
-                  . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
+                    . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth']
+                    . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
             }
             $billing->setPhone($paymentData['formData']['mopt_payone__klarna_telephone']);
         }
@@ -1088,7 +1095,7 @@ class Mopt_PayonePaymentHelper
                 $billing->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
             }
         }
-        
+
         if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate'])) {
             if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
                 $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
@@ -1136,18 +1143,18 @@ class Mopt_PayonePaymentHelper
                 $billing->setBirthday($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate']);
             }
         }
- 
+
         Shopware()->Models()->persist($billing);
         Shopware()->Models()->flush();
     }
-  
-  /**
-   * retrieve multilang errorcode based on context and errorcode
-   *
-   * @param string $context
-   * @param string $errorCode
-   * @return string
-   */
+
+    /**
+     * retrieve multilang errorcode based on context and errorcode
+     *
+     * @param string $context
+     * @param string $errorCode
+     * @return string
+     */
     public function moptGetErrorMessageFromErrorCodeViaSnippet($context = false, $errorCode = false)
     {
         $namespace = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages');
@@ -1156,19 +1163,19 @@ class Mopt_PayonePaymentHelper
         } else {
             $generalErrorMessage = $namespace->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten');
         }
-    
+
         if ($errorCode) {
             return $namespace->get('errorMessage' . $errorCode, $generalErrorMessage, true);
         } else {
             return $generalErrorMessage;
         }
     }
-  
-  /**
-   * collect and return predefinded possible creditcard check error messages
-   *
-   * @return array
-   */
+
+    /**
+     * collect and return predefinded possible creditcard check error messages
+     *
+     * @return array
+     */
     public function getCreditCardCheckErrorMessages()
     {
         $errorMessages = array();
@@ -1177,28 +1184,28 @@ class Mopt_PayonePaymentHelper
             'creditCardCheckerrorMessage',
             'Bitte überprüfen Sie die Angaben auf der Karte.'
         );
-        $errorMessages['1076']    = $namespace->get(
+        $errorMessages['1076'] = $namespace->get(
             'errorMessage1076',
             'Ungültiger Kartentyp. Bitte überprüfen Sie die Angaben auf der Karte.'
         );
-        $errorMessages['1078']    = $namespace->get(
+        $errorMessages['1078'] = $namespace->get(
             'errorMessage1078',
             'Ungültige Kartennummer. Bitte überprüfen Sie die Angaben auf der Karte.'
         );
-        $errorMessages['33']      = $namespace->get(
+        $errorMessages['33'] = $namespace->get(
             'errorMessage33',
             'Verfallsdatum ungültig. Bitte überprüfen Sie die Angaben auf der Karte.'
         );
-    
+
         return $errorMessages;
     }
-  
-  /**
-   * get action name from paymentname
-   *
-   * @param string $paymentShortName
-   * @return string|boolean
-   */
+
+    /**
+     * get action name from paymentname
+     *
+     * @param string $paymentShortName
+     * @return string|boolean
+     */
     public function getActionFromPaymentName($paymentShortName)
     {
         if ($this->isPayoneCreditcard($paymentShortName)) {
@@ -1260,7 +1267,7 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayoneFinance($paymentShortName)) {
             return 'finance';
         }
-        
+
         if ($this->isPayoneCreditcardIframe($paymentShortName)) {
             return 'creditcardIframe';
         }
@@ -1268,7 +1275,7 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayoneBarzahlen($paymentShortName)) {
             return 'barzahlen';
         }
-        
+
         if ($this->isPayonePaydirekt($paymentShortName)) {
             return 'paydirekt';
         }
@@ -1277,7 +1284,7 @@ class Mopt_PayonePaymentHelper
         }
         return false;
     }
- 
+
     /**
      * check if current payment method is paypal and paypal ecs is activated
      *
@@ -1290,11 +1297,11 @@ class Mopt_PayonePaymentHelper
         if (!$this->isPayonePaypal($paymentMethod['name'])) {
             return false;
         }
-        
+
         $config = $payoneMain->getPayoneConfig($paymentMethod['id']);
-        return (bool) $config['paypalEcsActive'];
+        return (bool)$config['paypalEcsActive'];
     }
-    
+
     /**
      * group credit cards to single payment method creditcard
      *
