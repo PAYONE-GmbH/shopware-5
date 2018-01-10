@@ -649,6 +649,7 @@ class Mopt_PayoneFormHandler
             $paymentData['sErrorFlag']['mopt_payone__ratepay_invoice_telephone'] = true;
         } else {
             $paymentData['formData']['mopt_payone__ratepay_invoice_telephone'] = $formData['mopt_payone__ratepay_invoice_telephone'];
+            $paymentData['formData']['mopt_save_phone'] = true;
         }
         $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_invoice_shopid'];
         $paymentData['formData']['mopt_payone__ratepay_invoice_device_fingerprint'] = $formData['mopt_payone__ratepay_invoice_device_fingerprint'];
@@ -697,6 +698,7 @@ class Mopt_PayoneFormHandler
             $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_telephone'] = true;
         } else {
             $paymentData['formData']['mopt_payone__ratepay_installment_telephone'] = $formData['mopt_payone__ratepay_installment_telephone'];
+            $paymentData['formData']['mopt_save_phone'] = true;
         }
 
         if ($formData['mopt_payone__ratepay_installment_iban'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_installment_iban'])) {
@@ -772,7 +774,7 @@ class Mopt_PayoneFormHandler
             $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_telephone'] = true;
         } else {
             $paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'] = $formData['mopt_payone__ratepay_direct_debit_telephone'];
-            $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
+            $paymentData['formData']['mopt_save_phone'] = true;
         }
 
         if (!empty($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']) && !empty($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'])){

@@ -103,6 +103,10 @@ class Payment implements SubscriberInterface
             $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
         }
 
+        if (isset($paymentData['formData']['mopt_save_phone'])) {
+            $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
+        }
+
         if (count($paymentData['sErrorFlag'])) {
             $error = true;
             $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
