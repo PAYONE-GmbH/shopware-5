@@ -498,6 +498,11 @@ class MoptPayoneConfig extends ModelEntity
     private $showSofortIbanBic;
 
     /**
+     * @ORM\Column(name="paydirekt_overcapture", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+     */
+    private $paydirektOvercapture;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -1964,5 +1969,21 @@ class MoptPayoneConfig extends ModelEntity
     public function setShowSofortIbanBic($showSofortIbanBic)
     {
         $this->showSofortIbanBic = $showSofortIbanBic;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPaydirektOvercapture()
+    {
+        return $this->paydirektOvercapture;
+    }
+
+    /**
+     * @param $paydirektOvercapture
+     */
+    public function setPaydirektOvercapture($paydirektOvercapture)
+    {
+        $this->paydirektOvercapture = $paydirektOvercapture;
     }
 }

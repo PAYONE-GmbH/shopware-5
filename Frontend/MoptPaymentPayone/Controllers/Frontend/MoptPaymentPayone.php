@@ -859,6 +859,13 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
+        if ($config['paydirektOvercapture'] == 1 && $config['authorisationMethod'] == 'Vorautorisierung' && $this->moptPayonePaymentHelper->isPayonePaydirekt($paymentName)) {
+            $paydirektdata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+            $paydirektdata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'over_capture', 'data' => 'yes')
+            ));
+            $request->setPaydata($paydirektdata);
+        }
         if ($payment) {
             $request->setPayment($payment);
         }

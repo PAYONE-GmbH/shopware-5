@@ -520,6 +520,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         if (!$this->getInstallHelper()->payoneApiLogTransactionIdExist()) {
             $this->getInstallHelper()->extendPayoneApiLogTransactionId();
         }
+
+        $this->getInstallHelper()->checkAndUpdateConfigModelPaydirektOvercaptureExtension();
     }
 
     /**

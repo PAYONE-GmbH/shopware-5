@@ -95,7 +95,9 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'payolutionCompanyName', type: 'string'},
     { name: 'payolutionB2bmode', type: 'boolean'},
     { name: 'payolutionDraftUser', type: 'string'},
-    { name: 'payolutionDraftPassword', type: 'string'}
+    { name: 'payolutionDraftPassword', type: 'string'},
+    { name: 'paydirektOvercapture', type: 'boolean'}
+
   ],
   /**
    * Validation

@@ -163,6 +163,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'paypalEcsActive',
             'payolutionB2bmode',
             'showSofortIbanBic',
+            'paydirektOvercapture',
         );
 
         foreach ($fields as $field) {
