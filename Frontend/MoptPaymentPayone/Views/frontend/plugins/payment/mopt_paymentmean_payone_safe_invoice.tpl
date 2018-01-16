@@ -7,6 +7,7 @@
 {/if}
 
 <div class="payment--form-group">
+    {if ! $sUserData.billingaddress.company}
 
     {if ($moptCreditCardCheckEnvironment.birthday == "0000-00-00" || $moptCreditCardCheckEnvironment.birthday =="") }
         <p class ="none">
@@ -63,7 +64,15 @@
         </select>
     </div>
       {/if}
+    {/if}
 
+    {if $sUserData.billingaddress.company}
+        <input type="text" name="moptPaymentData[mopt_payone__payone_safe_invoice_company_trade_registry_number]"
+               id="mopt_payone__payone_safe_invoice_company_trade_registry_number"
+               {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
+               placeholder="{s name='companyTradeRegistryNumber'}Handelsregisternummer*{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+               class="is--required{if $error_flags.mopt_payone__ratepay_invoice_company_trade_registry_number} has--error{/if}">
+    {/if}
 
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payone_safe_invoice_birthdaydate]" id="mopt_payone__payone_safe_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
     <div id="safeinvoice-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>

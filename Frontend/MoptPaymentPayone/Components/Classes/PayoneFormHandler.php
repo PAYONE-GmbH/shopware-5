@@ -826,6 +826,12 @@ class Mopt_PayoneFormHandler
             }
         }
 
+        if (!$formData['mopt_payone__payone_safe_invoice_company_trade_registry_number']) {
+            $paymentData['sErrorFlag']['mopt_payone__payone_safe_invoice_company_trade_registry_number'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__payone_safe_invoice_company_trade_registry_number'] = $formData['mopt_payone__ratepay_direct_debit_company_trade_registry_number'];
+        }
+
         // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
         $session = Shopware()->Session();
         $session->offsetSet('moptFormSubmitted', true);
