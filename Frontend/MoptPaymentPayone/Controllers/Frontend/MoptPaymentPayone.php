@@ -605,6 +605,24 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
+        if (!empty($session['moptRatepayOrdernum'])){
+
+            $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
+            $orderId = Shopware()->Db()->fetchOne($sql, $txId);
+
+            // replace the new order number with the already reserved one for Ratepay Payments
+            $sql = 'UPDATE  `s_order` SET ordernumber = ? WHERE transactionID = ?';
+            Shopware()->Db()->query($sql, array($session['moptRatepayOrdernum'], $txId));
+
+            //and update the new order number with the already reserved one for order_details
+            $sql = 'UPDATE  `s_order_details` SET ordernumber = ? WHERE orderID = ?';
+            Shopware()->Db()->query($sql, array($session['moptRatepayOrdernum'], $orderId));
+
+            // also update Ordernumber in Session
+            $session['sOrderVariables']->sOrderNumber = $session['moptRatepayOrdernum'];
+            $session->offsetUnset('moptRatepayOrdernum');
+        }
+
         if ($session->moptClearingData) {
             $clearingData = json_encode($session->moptClearingData);
             unset($session->moptClearingData);
@@ -876,6 +894,22 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 array('key' => 'over_capture', 'data' => 'yes')
             ));
             $request->setPaydata($paydirektdata);
+        }
+
+        // Override reference for ratepay with OrderId
+        if ($this->moptPayonePaymentHelper->isPayoneRatepayInvoice($paymentName)||
+            $this->moptPayonePaymentHelper->isPayoneRatepayInstallment($paymentName)||
+            $this->moptPayonePaymentHelper->isPayoneRatepayDirectDebit($paymentName)
+            )
+        {
+
+            // pre-reserve Shop Order Number
+            if (!$session->offsetExists('moptRatepayOrdernum')) {
+                $sOrder = new sOrder();
+                $session['moptRatepayOrdernum'] = $sOrder->sGetOrderNumber();
+                $request->setReference($sOrder->sGetOrderNumber());
+            }
+
         }
         if ($payment) {
             $request->setPayment($payment);
