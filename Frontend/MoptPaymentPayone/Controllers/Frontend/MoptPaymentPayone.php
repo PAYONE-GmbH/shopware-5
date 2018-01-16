@@ -679,8 +679,19 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         $session = Shopware()->Session();
         $paymentId = $this->getPaymentShortName();
-        if ($response->getStatus() == 'ERROR' && $paymentId === 'mopt_payone__fin_ratepay_invoice') {
+        if ($response->getStatus() == 'ERROR' &&
+            ($paymentId === 'mopt_payone__fin_ratepay_invoice' ||
+             $paymentId === 'mopt_payone__fin_ratepay_installment' ||
+             $paymentId === 'mopt_payone__fin_ratepay_direct_debit')
+            )
+        {
             $session->ratepayError = $response->getCustomermessage();
+            $session->offsetUnset('moptRatepayOrdernum');
+            // error code 307 = declined
+            if ($response->getErrorcode() == '307'){
+                // customer will not be able to use ratepay payments for 24 hours
+                $this->moptPayoneMain->getHelper()->saveRatepayBanDate($session->get('sUserId'));
+            }
             $this->forward('ratepayError');
         } elseif ($response->getStatus() == 'ERROR') {
             $session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()

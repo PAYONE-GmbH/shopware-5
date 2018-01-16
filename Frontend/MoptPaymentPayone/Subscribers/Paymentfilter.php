@@ -45,6 +45,7 @@ class Paymentfilter implements SubscriberInterface
         $locale = explode('_', $shopLocale);
         $country = isset($locale[1]) ? $locale[1] : $locale[0];
         $result = $args->getReturn();
+        $session = Shopware()->Session();
 
         $ratepayconfig = $moptPayoneMain->getPaymentHelper()
             ->moptGetRatepayConfig($country, $moptPayoneMain);
@@ -55,6 +56,25 @@ class Paymentfilter implements SubscriberInterface
 
         $removeInstallment = false;
         $removeInvoice = false;
+        $removeDirectDebit = false;
+
+        // check if ratepay ban date is set in customer attribute
+        $moptHelper = $moptPayoneMain->getHelper();
+        $userId = $session->get('sUserId');
+        if ($userId){
+            $banDate = $moptHelper->getRatepayBanDateFromUserId($userId);
+            $untilDate = $banDate->modify("+1 day");
+            $now = date('Y-m-d');
+            $nowDate = \DateTime::createFromFormat(
+                'Y-m-d',
+                $now
+            );
+            if ($nowDate < $untilDate ){
+                $removeInstallment = true;
+                $removeInvoice = true;
+                $removeDirectDebit = true;
+            }
+        }
 
         foreach ($result as $index=>$payment) {
             if ($payment['name'] === 'mopt_payone__fin_ratepay_installment') {
@@ -62,6 +82,9 @@ class Paymentfilter implements SubscriberInterface
             }
             if ($payment['name'] === 'mopt_payone__fin_ratepay_invoice') {
                 $invoiceIndex = $index;
+            }
+            if ($payment['name'] === 'mopt_payone__fin_ratepay_direct_debit') {
+                $directdebitIndex = $index;
             }
         }
 
@@ -90,6 +113,10 @@ class Paymentfilter implements SubscriberInterface
         if ($removeInvoice) {
             unset ($result[$invoiceIndex]);
         }
+        if ($removeDirectDebit) {
+            unset ($result[$directdebitIndex]);
+        }
+
         return $result;
     }
 }
