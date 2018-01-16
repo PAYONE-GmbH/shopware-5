@@ -63,16 +63,18 @@ class Paymentfilter implements SubscriberInterface
         $userId = $session->get('sUserId');
         if ($userId){
             $banDate = $moptHelper->getRatepayBanDateFromUserId($userId);
-            $untilDate = $banDate->modify("+1 day");
-            $now = date('Y-m-d');
-            $nowDate = \DateTime::createFromFormat(
-                'Y-m-d',
-                $now
-            );
-            if ($nowDate < $untilDate ){
-                $removeInstallment = true;
-                $removeInvoice = true;
-                $removeDirectDebit = true;
+            if ($banDate){
+                $untilDate = $banDate->modify("+1 day");
+                $now = date('Y-m-d');
+                $nowDate = \DateTime::createFromFormat(
+                    'Y-m-d',
+                    $now
+                );
+                if ($nowDate < $untilDate ){
+                    $removeInstallment = true;
+                    $removeInvoice = true;
+                    $removeDirectDebit = true;
+                }
             }
         }
 
