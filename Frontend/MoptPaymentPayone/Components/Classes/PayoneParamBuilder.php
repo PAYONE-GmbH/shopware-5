@@ -1342,7 +1342,10 @@ class Mopt_PayoneParamBuilder
             $isAboCommerceDiscount = (strpos($position->getArticlename(), 'ABO_DISCOUNT') === false) ? false : true;
             if ($order->getTaxFree()) {
                 $params['va'] = 0;
-            } elseif ($position->getTaxRate() == 0 && !$isAboCommerceDiscount) {
+            } elseif ($position->getTaxRate() == 0 &&
+                      $position->getTax()->getId() !== 0
+                      && !$isAboCommerceDiscount)
+            {
                 $params['va'] = number_format($position->getTax()->getTax(), 0, '.', '');
             } else {
                 $params['va'] = number_format($position->getTaxRate(), 0, '.', ''); // vat
