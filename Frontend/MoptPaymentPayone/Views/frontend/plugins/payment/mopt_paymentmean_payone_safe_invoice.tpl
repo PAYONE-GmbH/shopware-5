@@ -7,6 +7,7 @@
 {/if}
 
 <div class="payment--form-group">
+    {if ! $sUserData.billingaddress.company}
 
     {if ($moptCreditCardCheckEnvironment.birthday == "0000-00-00" || $moptCreditCardCheckEnvironment.birthday =="") }
         <p class ="none">
@@ -63,7 +64,7 @@
         </select>
     </div>
       {/if}
-
+    {/if}
 
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payone_safe_invoice_birthdaydate]" id="mopt_payone__payone_safe_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
     <div id="safeinvoice-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>

@@ -47,6 +47,11 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
      */
     protected $clearingsubtype = null;
     /**
+     * @var string
+     */
+    protected $businessrelation = null;
+
+    /**
      * Merchant reference number for the payment process. (Permitted symbols: 0-9, a-z, A-Z, .,-,_,/)
      *
      * @var string
@@ -191,6 +196,14 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     }
 
     /**
+     * @param string $businessrelation
+     */
+    public function setBusinessrelation($businessrelation)
+    {
+        $this->businessrelation = $businessrelation;
+    }
+
+    /**
      * @return string
      */
     public function getWallettype()
@@ -237,6 +250,14 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     public function getClearingsubtype()
     {
         return $this->clearingsubtype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBusinessrelation()
+    {
+        return $this->businessrelation;
     }
 
     /**
