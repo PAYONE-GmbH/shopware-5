@@ -24,3 +24,8 @@
     {$smarty.block.parent}
 {/block}
 
+{* Main content *}
+{block name="frontend_index_content"}
+    <input type="hidden" id="jsLoadMethod" value="{$jsLoadMethod}">
+    {$smarty.block.parent}
+{/block}

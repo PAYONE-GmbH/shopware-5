@@ -556,4 +556,24 @@ function moptPaymentReady() {
 
 }
 
-moptPaymentReady();
+var jsloadMethod = document.querySelector('#jsLoadMethod').value;
+alert(jsloadMethod);
+var isAsyncJsLoading = (jsloadMethod === 'async' || jsloadMethod === 'default');
+
+if (isAsyncJsLoading) {
+    $(document).ready(function(){
+        if (typeof document.asyncReady == "undefined")
+        {
+            moptPaymentReady();
+        }
+    });
+
+    if (typeof document.asyncReady !== "undefined") {
+        document.asyncReady(function () {
+            moptPaymentReady();
+        });
+    }
+} else {
+    moptPaymentReady();
+}
+
