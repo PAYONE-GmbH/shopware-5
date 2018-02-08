@@ -150,7 +150,6 @@ class FrontendCheckout implements SubscriberInterface
 
         $session = Shopware()->Session();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $this->assignAsyncJavascriptLoadingMode($args);
 
         if ($request->getActionName() === 'shippingPayment') {
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
@@ -221,61 +220,6 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         $view->assign('moptAgbChecked', $session->moptAgbChecked);
-    }
-
-    /**
-     * Assigns variable to template that will be used to fill a hidden field
-     * for making this value accessable to js
-     *
-     * @param \Enlight_Controller_ActionEventArgs $args
-     * @return void
-     */
-    protected function assignAsyncJavascriptLoadingMode(\Enlight_Controller_ActionEventArgs $args) {
-        $subject = $args->getSubject();
-        $view = $subject->View();
-
-        $jsLoadMethod = $this->getJavascriptLoadingMethod($args);
-        $view->assign('jsLoadMethod', $jsLoadMethod);
-    }
-
-    /**
-     * Returns js load mode as string (async or sync)
-     *
-     * @param void
-     * @return string
-     */
-    protected function getJavascriptLoadingMethod() {
-        $jsLoadConfigVal = $this->getTemplateConfigVar('asyncJavascriptLoading');
-        if (!$jsLoadConfigVal) {
-            $jsLoadConfigVal = 'default';
-        }
-
-        return $jsLoadConfigVal;
-    }
-
-    /**
-     * Tries to fetch the demanded config name option from template settings
-     *
-     * @param $templateConfigName
-     * @return bool
-     */
-    protected function getTemplateConfigVar($templateConfigName) {
-        $shop = $this->container->get('shop');
-        $template = $shop->getTemplate();
-        $configVal = false;
-
-        $templateElements = $template->getElements()->toArray();
-        foreach ($templateElements as $templateElement){
-            $configName = $templateElement->getName();
-
-            if ($configName === $templateConfigName){
-                $configValues = $templateElement->getValues()->getValues();
-                $configVal = $configValues[0]->getValue();
-                break;
-            }
-        }
-
-        return $configVal;
     }
 
     protected function isPayPalEcsActive($checkoutController)

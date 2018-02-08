@@ -576,4 +576,3 @@ if (isAsyncJsLoading) {
 } else {
     moptPaymentReady();
 }
-
