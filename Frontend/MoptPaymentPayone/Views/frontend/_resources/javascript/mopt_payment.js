@@ -557,7 +557,6 @@ function moptPaymentReady() {
 }
 
 var jsloadMethod = document.querySelector('#jsLoadMethod').value;
-alert(jsloadMethod);
 var isAsyncJsLoading = (jsloadMethod === 'async' || jsloadMethod === 'default');
 
 if (isAsyncJsLoading) {
