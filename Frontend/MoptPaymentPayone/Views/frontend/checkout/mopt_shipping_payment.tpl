@@ -26,6 +26,7 @@
 
 {* Main content *}
 {block name="frontend_index_content"}
-    <input type="hidden" id="jsLoadMethod" value="{$jsLoadMethod}">
+    {assign var='isAsyncJsLoading' value=($theme.asyncJavascriptLoading|isset && $theme.asyncJavascriptLoading)}
+    <input type="hidden" id="jsLoadMethod" value="{if $isAsyncJsLoading}a{/if}sync">
     {$smarty.block.parent}
 {/block}
