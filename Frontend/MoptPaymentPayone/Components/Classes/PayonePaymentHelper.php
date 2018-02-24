@@ -723,6 +723,19 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * Determines if given payment is of type ratepay
+     *
+     * @param $paymentName
+     * @return bool
+     */
+    public function isPayoneRatePay($paymentName) {
+        $matchPosition = strpos($paymentName, 'mopt_payone__fin_ratepay');
+        $return = ($matchPosition !== false) ? true : false;
+
+        return $return;
+    }
+
+    /**
      * check if given payment name is payone ratepay invoice
      *
      * @param string $paymentName
