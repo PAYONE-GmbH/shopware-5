@@ -63,12 +63,10 @@
     <div id="installment-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>        
 
     {if $fcPayolutionConfigInstallment.payolutionB2bmode && $sUserData.billingaddress.company}
-        <input type="text" name="moptPaymentData[mopt_payone__installment_company_trade_registry_number]" 
-               id="mopt_payone__installment_company_trade_registry_number" 
-               {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-               placeholder="{s name='companyTradeRegistryNumber'}Handelsregisternummer*{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"                
-               class="is--required{if $error_flags.mopt_payone__installment_company_trade_registry_number} has--error{/if}">
-
+        <input type="text" name="moptPaymentData[mopt_payone__installment_company_trade_registry_number]"
+               id="mopt_payone__installment_company_trade_registry_number" aria-required="false"
+               placeholder="{s name='companyTradeRegistryNumber'}Handelsregisternummer{/s}"
+               class="payment--field{if $error_flags.mopt_payone__installment_company_trade_registry_number} has--error{/if}">
         <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_installment_b2bmode]" id="moptPaymentData[mopt_payone__payolution_installment_b2bmode]" value="1">
     {/if}       
 
