@@ -71,15 +71,17 @@ class FrontendCheckout implements SubscriberInterface
     }
 
     public function triggerPayoneAuthorization(\Enlight_Hook_HookArgs $args) {
-        $payoneServiceBuilder = $this->Plugin()->get('MoptPayoneBuilder');
-        $moptPayoneMain = $this->Plugin()->get('MoptPayoneMain');
-        $session = Shopware()->Session();
-        $authorized = $session->moptIsAuthorized;
-        /**
-         * @todo: determine if authorize or preautorize and request po-api
-         */
-
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $paymentName = $userData['additional']['payment']['name'];
+        $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+        $action = $paymentHelper->getActionFromPaymentName($paymentName);
+        $this->forward(array(
+            'controller'=>'MoptPaymentPayone',
+            'action' => $action,
+            'forceSecure' => true
+        ));
     }
+
 
     /**
      * Check if this is a recurring abo commerce order of abocommerce plugin
