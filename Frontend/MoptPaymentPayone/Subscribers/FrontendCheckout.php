@@ -41,8 +41,83 @@ class FrontendCheckout implements SubscriberInterface
             'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after'  => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_Checkout::changeQuantityAction::after' => 'onBasketChangeConfirmPage',
             'sBasket::sGetBasket::after' => 'onBasketDataUpdate',
+            'Shopware_Controllers_Frontend_Checkout::saveOrder::before' => 'onSaveOrder',
         ];
     }
+
+    /**
+     * hooks before save order for catching abo-commerce orders with
+     * payone
+     */
+    public function onSaveOrder(\Enlight_Hook_HookArgs $args) {
+        $return = $args->getReturn();
+
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $paymentName = $userData['additional']['payment']['name'];
+        $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+        $isRecurringAboCommerceOrder = $this->isRecurringAboCommerceOrder();
+        $isPayonePayment = $paymentHelper->isPayonePaymentMethod($paymentName);
+
+        // payone authorization calls are only needed
+        // if this is a recurring payone order of an an abocommerce
+        // order version > 2.0
+        $triggerPayoneAuthorization = ($isRecurringAboCommerceOrder && $isPayonePayment);
+
+        if ($triggerPayoneAuthorization) {
+            $this->triggerPayoneAuthorization($args);
+        }
+
+        $args->setReturn($return);
+    }
+
+    public function triggerPayoneAuthorization(\Enlight_Hook_HookArgs $args) {
+        $payoneServiceBuilder = $this->Plugin()->get('MoptPayoneBuilder');
+        $moptPayoneMain = $this->Plugin()->get('MoptPayoneMain');
+        $session = Shopware()->Session();
+        $authorized = $session->moptIsAuthorized;
+        /**
+         * @todo: determine if authorize or preautorize and request po-api
+         */
+
+    }
+
+    /**
+     * Check if this is a recurring abo commerce order of abocommerce plugin
+     * version higher or equal than 2.0
+     *
+     * @param void
+     * @return bool
+     */
+    public function isRecurringAboCommerceOrder() {
+        // check 1: isRecurring value in session
+        $session = Shopware()->Session();
+        $isRecurringAboOrder = $session->offsetGet('isRecurringAboOrder');
+        if (!$isRecurringAboOrder) {
+            // this isn't a recurring abo order, so we can
+            // pass all other checks
+            return false;
+        }
+
+        // check 2: plugin installed
+        $pluginManager  = $this->container->get('shopware_plugininstaller.plugin_manager');
+        $plugin = $pluginManager->getPluginByName('AboCommerce');
+
+        if (!$plugin->getInstalled()) {
+            // if plugin is not installed it cannot be a recurring order indeed
+            return false;
+        }
+
+        // check 3 plugin version >= 2.0
+        $pluginVersion = $plugin->getVersion();
+        $pluginVersionOlderThan2 = version_compare($pluginVersion, '2.0', '<');
+        if ($pluginVersionOlderThan2) {
+            // handling is not needed in versions former 2.0
+            return false;
+        }
+
+        return true;
+    }
+
 
     /**
      * Sets a flag when basket data has been updated to prevent unnecessary calls to `sBasket::sGetBasket()`
