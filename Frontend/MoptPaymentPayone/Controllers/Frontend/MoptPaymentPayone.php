@@ -663,10 +663,22 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $this->saveTransactionPaymentData($orderId, Shopware()->Session()->moptPayment);
         }
 
-        unset($session->moptIsAuthorized);
-        unset($session->moptAgbChecked);
+        $this->removeSessionVariablesOnOrderFinish();
 
         $this->redirect(array('controller' => 'checkout', 'action' => 'finish', 'sUniqueID' => $moptPaymentReference));
+    }
+
+    /**
+     * Removing session variables that have no use anymore
+     *
+     * @param void
+     * @return void
+     */
+    protected function removeSessionVariablesOnOrderFinish() {
+        $session = Shopware()->Session();
+        $session->offsetUnset('moptIsAuthorized');
+        $session->offsetUnset('moptAgbChecked');
+        $session->offsetUnset('moptRatepayOrdernum');
     }
 
     /**
