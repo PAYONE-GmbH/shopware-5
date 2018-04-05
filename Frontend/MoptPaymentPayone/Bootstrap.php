@@ -191,6 +191,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
             return true;
         }
+        if (version_compare($oldVersion, '3.8.3', '<'))
+        {
+            /** update payolution payment settings
+             *
+             */
+            $this->getInstallHelper()->updatePayolutionAuthSettings();
+
+        }
 
         $this->install();
         $this->checkAndDeleteOldLogs();

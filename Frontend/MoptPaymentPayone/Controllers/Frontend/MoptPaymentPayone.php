@@ -788,11 +788,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $session->moptIsAuthorized = true;
         }
 
-        // Always use PreAuthorize for Payolution Payments
-        if ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName)) {
-            $session->moptIsAuthorized = false;
-        }
-
         $request = $this->mopt_payone__prepareRequest($config['paymentId'], $session->moptIsAuthorized);
 
         $request->setAmount($this->getAmount());
@@ -848,8 +843,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                     foreach ($order->getDetails() as $position) {
                         $orderPositions[] = $position->getId();
                     }
-
-
+                    
                     $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
                         ->getInvoicingFromOrder($order, $orderPositions, true, false, true);
                     $request->setInvoicing($invoicing);
