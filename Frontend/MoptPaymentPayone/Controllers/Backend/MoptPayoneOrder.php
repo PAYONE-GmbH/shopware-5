@@ -123,13 +123,20 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             $params = $this->moptPayone__main->getParamBuilder()
               ->buildOrderCapture($order, $positionIds, $finalize, $includeShipment);
 
-            if ($config['submitBasket'] || $this->moptPayone__main->getPaymentHelper()->isPayoneBillsafe($paymentName)) {
+            if ($config['submitBasket'] || $this->moptPayone__main->getPaymentHelper()->isPayoneBillsafe($paymentName) || $this->moptPayone__main->getPaymentHelper()->isPayoneSafeInvoice($paymentName) ) {
                 $invoicing = $this->moptPayone__main->getParamBuilder()
                 ->getInvoicingFromOrder($order, $positionIds, $finalize, false, $includeShipment);
             }
 
-          //call capture service
-            $response = $this->moptPayone_callCaptureService($params, $invoicing);
+            // see https://integrator.payone.de/jira/browse/SW-149
+            $autoSettleAccount = false;
+            $doNotSendCaptureMode = false;
+
+            if ($paymentName === 'mopt_payone__acc_payone_safe_invoice'){
+                $autoSettleAccount = true;
+                $doNotSendCaptureMode = true;
+            }
+            $response = $this->moptPayone_callCaptureService($params, $invoicing, $autoSettleAccount, $doNotSendCaptureMode);
 
             if ($response->getStatus() == Payone_Api_Enum_ResponseType::APPROVED) {
             //increase sequence
@@ -191,7 +198,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         return true;
     }
 
-    protected function moptPayone_callCaptureService($params, $invoicing = null)
+    protected function moptPayone_callCaptureService($params, $invoicing = null, $autoSettleAccount = false, $doNotSendCaptureMode = false)
     {
         $service = $this->moptPayone__sdk__Builder->buildServicePaymentCapture();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
@@ -220,13 +227,27 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
                 array('key' => 'shop_id', 'data' => $params['shop_id'])
             ));
         }
-        
-        if (isset($params['capturemode'])) {
+
+        // see https://integrator.payone.de/jira/browse/SW-149
+        if (isset($params['capturemode']) && !$doNotSendCaptureMode) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'capturemode', 'data' => $params['capturemode'])
             ));
         }
-        $request->setPaydata($paydata);
+
+        // see https://integrator.payone.de/jira/browse/SW-149
+        if ($invoicing && $doNotSendCaptureMode === true){
+            $invoiceParam = $request->getInvoicing();
+            $invoiceParam->setCapturemode(null);
+            $request->setInvoicing($invoiceParam);
+        }
+
+        if ($autoSettleAccount) {
+            $businessParam = $request->getBusiness();
+            $businessParam->setSettleaccount('auto');
+            $request->setBusiness($businessParam);
+        }
+
         unset($params['data']);
 
         return $service->capture($request);
