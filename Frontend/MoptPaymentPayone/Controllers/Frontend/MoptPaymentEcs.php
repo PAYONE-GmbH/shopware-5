@@ -115,7 +115,10 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
 
     public function ecsAbortAction()
     {
-        Shopware()->Session()->moptPayPalEcsError = true;
+        $session = Shopware()->Session();
+        $session->moptPayPalEcsError = true;
+        unset($session->moptPaypalEcsWorkerId);
+
         return $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
     }
 
