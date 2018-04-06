@@ -475,12 +475,7 @@ class Mopt_PayoneFormHandler
         }
 
         if ($formData['mopt_payone__payolution_debitnote_b2bmode'] === "1") {
-            if (!$formData['mopt_payone__debitnote_company_trade_registry_number']) {
-                $paymentData['sErrorFlag']['mopt_payone__debitnote_company_trade_registry_number'] = true;
-            } else {
-                $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__debitnote_company_trade_registry_number'];
-            }
-
+            $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__debitnote_company_trade_registry_number'];
             $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_debitnote_b2bmode'];
         }
 
@@ -523,12 +518,7 @@ class Mopt_PayoneFormHandler
         }
         
         if ($formData['mopt_payone__payolution_invoice_b2bmode'] === "1") {
-            if (!$formData['mopt_payone__invoice_company_trade_registry_number']) {
-                $paymentData['sErrorFlag']['mopt_payone__invoice_company_trade_registry_number'] = true;
-            } else {
-                $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__invoice_company_trade_registry_number'];
-            }
-
+            $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__invoice_company_trade_registry_number'];
             $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_invoice_b2bmode'];
         }
         
@@ -571,12 +561,7 @@ class Mopt_PayoneFormHandler
         }
         
         if ($formData['mopt_payone__payolution_installment_b2bmode'] === "1") {
-            if (!$formData['mopt_payone__installment_company_trade_registry_number']) {
-                $paymentData['sErrorFlag']['mopt_payone__installment_company_trade_registry_number'] = true;
-            } else {
-                $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__installment_company_trade_registry_number'];
-            }
-
+            $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__installment_company_trade_registry_number'];
             $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_installment_b2bmode'];
         }
         
