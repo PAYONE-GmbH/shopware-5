@@ -130,6 +130,38 @@ class Mopt_PayoneInstallHelper
     ];
 
     /**
+     * after updating the plugin from versions < 3.8.2
+     * set the authorisation method of payolution payments to preauth
+     *
+     * @return void
+     */
+    public function updatePayolutionAuthSettings()
+    {
+        $moptPayonePaymentHelper = new Mopt_PayonePaymentHelper();
+        $sql = 'SELECT payment_id, authorisation_method FROM s_plugin_mopt_payone_config;';
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() > 0) {
+
+            $resultArr = $result->fetchAll();
+            foreach ($resultArr as $value) {
+                $paymentId = $value['payment_id'];
+                $authMethod = $value['authorisation_method'];
+                $paymentName = $moptPayonePaymentHelper->getPaymentNameFromId($paymentId);
+                if ( $moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName)|| $moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $moptPayonePaymentHelper->isPayonePayolutionInstallment($paymentName)){
+
+                    if ($authMethod == 'Vorautorisierung'){
+                        // nothing to do
+                    } else {
+                        $updateSQl = "UPDATE s_plugin_mopt_payone_config SET authorisation_method = \"Vorautorisierung\" WHERE payment_id = $paymentId;";
+                        Shopware()->Db()->query($updateSQl);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * returns mapped SQL type from unified type string
      *
      * Type mapping from Shopware 5.2 to improve legacy compatibility,
