@@ -157,22 +157,25 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             //$transaction_status = 'pending';
             //$failedcause = '-981';
 
-            if ( $request->getParam('txaction') == 'failed' ){
-                // save failed status with mail notification
-                $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState,true);
-            } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause == '981'){
-                // InvalidPayment Method: update Order Status to "amazon_delayed" (119) and send mail notification
-                $this->savePaymentStatus($transactionId, $order['temporaryID'], 119, true);
-                $attributeData['mopt_payone_status'] = 'pending';
-
-            } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause != '981'){
-                // InvalidPayment Method: update Order Status to "amazon_delayed" (119)
-                $this->savePaymentStatus($transactionId, $order['temporaryID'], 119);
-                $attributeData['mopt_payone_status'] = 'pending';
-
-            } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'completed'){
-                $this->savePaymentStatus($transactionId, $order['temporaryID'], 18);
-
+            $paymentName = $this->moptPayone__paymentHelper->getPaymentNameFromId($order['paymentID']);
+            if ($paymentName === 'mopt_payone__ewallet_amazon_pay') {
+                if ($request->getParam('txaction') == 'failed') {
+                    // save failed status with mail notification
+                    $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState, true);
+                } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause == '981') {
+                    // InvalidPayment Method: update Order Status to "amazon_delayed" (119) and send mail notification
+                    $this->savePaymentStatus($transactionId, $order['temporaryID'], 119, true);
+                    $attributeData['mopt_payone_status'] = 'pending';
+                } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause != '981') {
+                    // InvalidPayment Method: update Order Status to "amazon_delayed" (119)
+                    $this->savePaymentStatus($transactionId, $order['temporaryID'], 119);
+                    $attributeData['mopt_payone_status'] = 'pending';
+                } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'completed') {
+                    $this->savePaymentStatus($transactionId, $order['temporaryID'], 18);
+                } else {
+                    $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
+                }
+                // !Amazonpay
             } else {
                 $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
             }
