@@ -15,6 +15,14 @@ class FrontendCheckout implements SubscriberInterface
     private $container;
 
     /**
+     * List of payment names which can handle recurring orders
+     * @var array
+     */
+    private $payoneRecurringAllowedPayments = array(
+        'mopt_payone__acc_payinadvance',
+    );
+
+    /**
      * inject di container
      *
      * @param \Shopware\Components\DependencyInjection\Container $container
@@ -52,34 +60,50 @@ class FrontendCheckout implements SubscriberInterface
     public function onSaveOrder(\Enlight_Hook_HookArgs $args) {
         $return = $args->getReturn();
 
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $paymentName = $userData['additional']['payment']['name'];
+        // get order data
+        $session = $this->container->get('Session');
+        $sOrderVariables = $session['sOrderVariables']->getArrayCopy();
+        $paymentName = $sOrderVariables['sUserData']['additional']['payment']['name'];
         $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+
+        // validate order data
         $isRecurringAboCommerceOrder = $this->isRecurringAboCommerceOrder();
         $isPayonePayment = $paymentHelper->isPayonePaymentMethod($paymentName);
+        $isPayoneRecurringAllowed = (
+            $isPayonePayment &&
+            in_array($paymentName, $this->payoneRecurringAllowedPayments)
+        );
 
         // payone authorization calls are only needed
         // if this is a recurring payone order of an an abocommerce
         // order version > 2.0
-        $triggerPayoneAuthorization = ($isRecurringAboCommerceOrder && $isPayonePayment);
+        $triggerPayoneAuthorization = ($isRecurringAboCommerceOrder && $isPayoneRecurringAllowed);
 
         if ($triggerPayoneAuthorization) {
-            $this->triggerPayoneAuthorization($args);
+            $this->triggerPayoneAuthorization($sOrderVariables);
         }
 
         $args->setReturn($return);
     }
 
-    public function triggerPayoneAuthorization(\Enlight_Hook_HookArgs $args) {
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $paymentName = $userData['additional']['payment']['name'];
-        $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-        $action = $paymentHelper->getActionFromPaymentName($paymentName);
-        $this->forward(array(
-            'controller'=>'MoptPaymentPayone',
-            'action' => $action,
-            'forceSecure' => true
-        ));
+    /**
+     *
+     * @param array $sOrderVariables
+     * @throws \Exception
+     */
+    public function triggerPayoneAuthorization($sOrderVariables) {
+        $payoneService = $this->container->get('payone_service');
+
+        $response = $payoneService->callAuthorization($sOrderVariables,true);
+
+        $status = $response->getStatus();
+        if ($status == 'ERROR') {
+            /**
+             * todo: write email to shop owner to inform about the problem
+             */
+            $exception = new \Exception('Recurring Payone order failed');
+            throw $exception;
+        }
     }
 
 
@@ -89,10 +113,13 @@ class FrontendCheckout implements SubscriberInterface
      *
      * @param void
      * @return bool
+     * @throws
      */
     public function isRecurringAboCommerceOrder() {
         // check 1: isRecurring value in session
-        $session = Shopware()->Session();
+        // $session = Shopware()->Session();
+        $session = $this->container->get('Session');
+
         $isRecurringAboOrder = $session->offsetGet('isRecurringAboOrder');
         if (!$isRecurringAboOrder) {
             // this isn't a recurring abo order, so we can
@@ -100,9 +127,13 @@ class FrontendCheckout implements SubscriberInterface
             return false;
         }
 
-        // check 2: plugin installed
+        // check 2: plugin exists and is installed
         $pluginManager  = $this->container->get('shopware_plugininstaller.plugin_manager');
-        $plugin = $pluginManager->getPluginByName('AboCommerce');
+        try {
+            $plugin = $pluginManager->getPluginByName('SwagAboCommerce');
+        } catch (\Exception $e) {
+            return false;
+        }
 
         if (!$plugin->getInstalled()) {
             // if plugin is not installed it cannot be a recurring order indeed

@@ -267,6 +267,154 @@ class Mopt_PayoneService
     }
 
     /**
+     * Service method offers the possibility of triggering an (pre)authorization call
+     * based on a former order. Initially this method has been created for swag abo
+     * commerce plugin. Note that only few PO-Payment can be used this way
+     *
+     * @param array $formerOrderVariables
+     * @param bool $isRecurring
+     */
+    public function callAuthorization($formerOrderVariables, $isRecurring=false) {
+        $paymentName =
+            $formerOrderVariables['sUserData']['additional']['payment']['name'];
+
+        $customerPresent = ($isRecurring) ? 'no' : 'yes';
+        $paramBuilder = $this->payoneMain->getParamBuilder();
+
+        $baseParams = $paramBuilder->buildAuthorize($paymentName);
+        $paymentParams = $this->fetchPaymentParams($formerOrderVariables);
+        $orderParams = $this->fetchOrderParams($formerOrderVariables);
+
+        $params = array_merge(
+            $baseParams,
+            $paymentParams,
+            $orderParams
+        );
+
+        $response = $this->callPayoneAuthorizeService($params,$customerPresent);
+
+        return $response;
+    }
+
+    /**
+     * Fetch payment related params from given formerOrderVariables
+     *
+     * @param $orderVariables
+     * @return array
+     */
+    protected function fetchPaymentParams($formerOrderVariables) {
+        $params = array();
+        $paymentName = $formerOrderVariables['sUserData']['additional']['payment']['name'];
+        $paymentHelper = $this->payoneMain->getPaymentHelper();
+        $clearingType = $paymentHelper->getClearingTypeByPaymentName($paymentName);
+        $requestType = $this->getAuthorizationRequestType($formerOrderVariables);
+
+        $params['request'] = $requestType;
+        $params['clearingtype'] = $clearingType;
+
+        return $params;
+    }
+
+    /**
+     * Returns authorization request type based on former order
+     *
+     * @param $formerOrderVariables
+     * @return string
+     */
+    protected function getAuthorizationRequestType($formerOrderVariables) {
+        $paymentName = $formerOrderVariables['sUserData']['additional']['payment']['name'];
+        $paymentForcesPreauthorization =
+            $this->checkPaymentForcesPreauthorization($paymentName);
+
+        if ($paymentForcesPreauthorization)
+            return Payone_Api_Enum_RequestType::PREAUTHORIZATION;
+
+        // so check config then
+        $paymentConfig = $this->payoneMain->getPayoneConfig($paymentName);
+
+        $requestType = ($paymentConfig['authorisationMethod'] == 'preAuthorise') ?
+            Payone_Api_Enum_RequestType::PREAUTHORIZATION :
+            Payone_Api_Enum_RequestType::AUTHORIZATION;
+
+        return $requestType;
+    }
+
+    /**
+     * Checks if payment type forces request type to be
+     * preauthorization or not
+     *
+     * @param string $paymentName
+     * @return bool
+     */
+    protected function checkPaymentForcesPreauthorization($paymentName) {
+        $paymentHelper = $this->payoneMain->getPaymentHelper();
+        $paymentForcesPreauthorization = (
+            $paymentHelper->isPayoneBarzahlen($paymentName) ||
+            $paymentHelper->isPayonePayolutionDebitNote($paymentName) ||
+            $paymentHelper->isPayonePayolutionInvoice($paymentName)
+        );
+
+        return $paymentForcesPreauthorization;
+    }
+
+    protected function fetchOrderParams($orderVariables) {
+        return array();
+    }
+
+    /**
+     * Calls authorization service with given params
+     *
+     * @param array $params
+     * @param string $customerPresent
+     * @return Payone_Api_Request_Preauthorization|Payone_Api_Request_Authorization
+     * @throws
+     */
+    protected function callPayoneAuthorizeService($params, $customerPresent='no') {
+        $isPreAuthorization =
+            ($params['request'] == Payone_Api_Enum_RequestType::PREAUTHORIZATION);
+
+        $service = $this->buildPayoneAuthorizeService($isPreAuthorization);
+
+        if ($isPreAuthorization) {
+            $request = new Payone_Api_Request_Preauthorization($params);
+            $method = 'preauthorize';
+        } else {
+            $request = new Payone_Api_Request_Authorization($params);
+            $method = 'authorize';
+        }
+
+        $request->setCustomerIsPresent($customerPresent);
+
+        $response = $service->$method($request);
+
+        return $response;
+    }
+
+    /**
+     * Returns a (pre)authorization build server instance
+     *
+     * @param bool $isPreAuthorization
+     * @return mixed
+     * @throws Exception
+     */
+    protected function buildPayoneAuthorizeService($isPreAuthorization) {
+        $payoneBuilder = Shopware()->Container()->get('MoptPayoneBuilder');
+
+        if ($isPreAuthorization) {
+            $service = $payoneBuilder->buildServicePaymentPreauthorize();
+        } else {
+            $service = $payoneBuilder->buildServicePaymentAuthorize();
+        }
+
+        // add repository to service
+        $repositoryPath = 'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog';
+        $repository = Shopware()->Models()->getRepository($repositoryPath);
+        $service->getServiceProtocol()->addRepository($repository);
+
+        return $service;
+    }
+
+    /**
      * @param mixed $params
      * @param null $invoicing
      * @return Payone_Api_Response_Capture_Approved|Payone_Api_Response_Error

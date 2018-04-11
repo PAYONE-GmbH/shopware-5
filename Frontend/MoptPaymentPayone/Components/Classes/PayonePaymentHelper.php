@@ -65,6 +65,13 @@ class Mopt_PayonePaymentHelper
         </footer>
     ";
 
+    /**
+     * Determination list for getting matching clearingtype per payment
+     * @var array
+     */
+    private $payment2clearingtype = array(
+        'mopt_payone__acc_payinadvance'=>Payone_Enum_ClearingType::ADVANCEPAYMENT
+    );
 
     /**
      * adds Payone API value for creditcard
@@ -289,6 +296,24 @@ class Mopt_PayonePaymentHelper
         json_decode($clearingData, $data);
 
         return $data;
+    }
+
+    /**
+     * Returns clearingtype for given payment
+     *
+     * @param $paymentName
+     * @return string
+     */
+    public function getClearingTypeByPaymentName($paymentName) {
+        $return = '';
+
+        $exists = isset($this->payment2clearingtype[$paymentName]);
+
+        if ($exists) {
+            $return = $this->payment2clearingtype[$paymentName];
+        }
+
+        return $return;
     }
 
     /**
