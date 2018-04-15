@@ -93,9 +93,17 @@ class FrontendCheckout implements SubscriberInterface
      */
     public function triggerPayoneAuthorization($sOrderVariables) {
         $payoneService = $this->container->get('payone_service');
-
         $response = $payoneService->callAuthorization($sOrderVariables,true);
+        $this->handlePayoneAuthorizationResponse($response);
+    }
 
+    /**
+     * Handles response of an autorization call and triggers resulting actions
+     *
+     * @param $response
+     * @throws \Exception
+     */
+    protected function handlePayoneAuthorizationResponse($response) {
         $status = $response->getStatus();
         if ($status == 'ERROR') {
             /**
@@ -103,6 +111,25 @@ class FrontendCheckout implements SubscriberInterface
              */
             $exception = new \Exception('Recurring Payone order failed');
             throw $exception;
+        }
+
+        $txid = $response->getTxid();
+        $this->addTxidToOrder($txid);
+    }
+
+    /**
+     * Injects txid to order before or after it persisted
+     *
+     * @param $txid
+     * @param bool $beforePersist
+     * @throws \Exception
+     * @todo: currently only before persiting is implemented
+     */
+    protected function addTxidToOrder($txid, $beforePersist = true) {
+
+        if ($beforePersist) {
+            $session = $this->container->get('Session');
+            $session->offsetSet('payoneTxid', $txid);
         }
     }
 

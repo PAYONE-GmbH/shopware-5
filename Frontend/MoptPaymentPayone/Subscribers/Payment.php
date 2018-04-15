@@ -319,10 +319,10 @@ class Payment implements SubscriberInterface
     public function onOrder_SaveOrderProcessDetails(\Enlight_Event_EventArgs $arguments)
     {
         $orderParams = $arguments->getReturn();
+
         $subject = $arguments->get('subject');
 
         $currencyArray = $this->moptGetOriginalCurrencyArray($arguments);
-
         if ($currencyArray) {
             // change currency Object to render emails correctly
             $subject->sSYSTEM->sCurrency['id'] = $currencyArray['id'];
@@ -333,6 +333,15 @@ class Payment implements SubscriberInterface
             // change order params to correct order currency in backend display
             $orderParams['currency'] = $currencyArray['currency'];
             $orderParams['currencyFactor'] = $currencyArray['factor'];
+        }
+
+        /**
+         * Adding Txid from session
+         */
+        $session = $this->container->get('Session');
+        $txid = $session->offsetGet('payoneTxid');
+        if ($txid) {
+            $orderParams['transactionID'] = $txid;
         }
 
         return $orderParams;

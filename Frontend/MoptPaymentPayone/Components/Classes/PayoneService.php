@@ -273,6 +273,7 @@ class Mopt_PayoneService
      *
      * @param array $formerOrderVariables
      * @param bool $isRecurring
+     * @return object
      */
     public function callAuthorization($formerOrderVariables, $isRecurring=false) {
         $paymentName =
@@ -282,6 +283,7 @@ class Mopt_PayoneService
         $paramBuilder = $this->payoneMain->getParamBuilder();
 
         $baseParams = $paramBuilder->buildAuthorize($paymentName);
+        $baseParams['reference'] = $this->getParamPaymentReference();
         $paymentParams = $this->fetchPaymentParams($formerOrderVariables);
         $orderParams = $this->fetchOrderParams($formerOrderVariables);
 
@@ -291,9 +293,35 @@ class Mopt_PayoneService
             $orderParams
         );
 
-        $response = $this->callPayoneAuthorizeService($params,$customerPresent);
+        // initialize request with a base of params
+        $request = $this->getPayoneAuthorizeRequest($params,$customerPresent);
+
+        // adding user related information to request
+        $orderUserData = $formerOrderVariables['sUserData'];
+        $request = $this->addPersonData($request, $orderUserData);
+
+        // trigger request
+        $response = $this->callPayoneAuthorizeService($request);
 
         return $response;
+    }
+
+    /**
+     * Adding person data to request
+     *
+     * @param $request
+     * @param $orderUserData
+     * @return object
+     */
+    protected function addPersonData($request, $userData) {
+        $paramBuilder = $this->payoneMain->getParamBuilder();
+        $deliveryData = $paramBuilder->getDeliveryData($userData);
+        $personalData = $paramBuilder->getPersonalData($userData);
+
+        $request->setDeliveryData($deliveryData);
+        $request->setPersonalData($personalData);
+
+        return $request;
     }
 
     /**
@@ -357,33 +385,93 @@ class Mopt_PayoneService
         return $paymentForcesPreauthorization;
     }
 
-    protected function fetchOrderParams($orderVariables) {
-        return array();
+    /**
+     * Returns user related params (address, contact) of given order params
+     *
+     * @param $orderVariables
+     * @return array
+     */
+    protected function fetchUserParams($orderVariables) {
+        $userParams = array();
+        $orderUserData = $orderVariables['sUserData'];
+        $shippingData = $orderUserData['shippingaddress'];
+        $additionalData = $orderUserData['additional'];
+
+        $userParams['shipping_firstname'] = $shippingData['firstname'];
+        $userParams['shipping_lastname'] = $shippingData['lastname'];
+        $userParams['shipping_company'] = $shippingData['company'];
+        $userParams['shipping_street'] = $shippingData['street'];
+        $userParams['shipping_addressaddition'] = $shippingData[''];
+        $userParams['shipping_zip'] = $shippingData['zipcode'];
+        $userParams['shipping_city'] = $shippingData['city'];
+        $userParams['shipping_country'] = $additionalData['countryShipping']['countryiso'];
+
+        return $userParams;
     }
 
     /**
-     * Calls authorization service with given params
+     * Splits an address string into number and streetname
+     *
+     * @param $addressString
+     * @return array
+     */
+    public function splitStreet($addressString) {
+        $addressParts = explode(' ', $addressString);
+        $number = array_pop($addressParts);
+        $street = implode(',', $addressParts);
+
+        $splittedStreet = array(
+            'street'=>$street,
+            'number'=>$number,
+        );
+
+        return $splittedStreet;
+    }
+
+
+    protected function fetchOrderParams($orderVariables) {
+        $orderParams = array();
+        $currency = Shopware()->Container()->get('Currency');
+
+        $orderParams['amount'] = $orderVariables['sAmount'];
+        $orderParams['currency'] = $currency->getShortName();
+
+        return $orderParams;
+    }
+
+    /**
+     * Returns a basically filled request object
      *
      * @param array $params
      * @param string $customerPresent
      * @return Payone_Api_Request_Preauthorization|Payone_Api_Request_Authorization
      * @throws
      */
-    protected function callPayoneAuthorizeService($params, $customerPresent='no') {
+    protected function getPayoneAuthorizeRequest($params) {
         $isPreAuthorization =
             ($params['request'] == Payone_Api_Enum_RequestType::PREAUTHORIZATION);
 
-        $service = $this->buildPayoneAuthorizeService($isPreAuthorization);
 
         if ($isPreAuthorization) {
             $request = new Payone_Api_Request_Preauthorization($params);
-            $method = 'preauthorize';
         } else {
             $request = new Payone_Api_Request_Authorization($params);
-            $method = 'authorize';
         }
 
+        return $request;
+    }
+
+    protected function callPayoneAuthorizeService($request,$customerPresent='no') {
         $request->setCustomerIsPresent($customerPresent);
+        $isPreAuthorization =
+            ($request->getRequest() == Payone_Api_Enum_RequestType::PREAUTHORIZATION);
+
+        $service = $this->buildPayoneAuthorizeService($isPreAuthorization);
+
+        $method = 'authorize';
+        if ($isPreAuthorization) {
+            $method = 'preauthorize';
+        }
 
         $response = $service->$method($request);
 
@@ -568,4 +656,15 @@ class Mopt_PayoneService
         Shopware()->Models()->persist($attribute);
         Shopware()->Models()->flush();
     }
+
+    /**
+     * create random payment reference
+     *
+     * @return string
+     */
+    public function getParamPaymentReference()
+    {
+        return 'mopt-' . uniqid() . rand(10, 99);
+    }
+
 }
