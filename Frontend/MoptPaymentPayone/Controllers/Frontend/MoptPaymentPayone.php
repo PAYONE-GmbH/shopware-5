@@ -920,7 +920,17 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
 
         $request = $this->moptSetRatePayReference($request);
-
+        if ($this->moptPayonePaymentHelper->isPayoneSafeInvoice($paymentName) ||
+            $this->moptPayonePaymentHelper->isPayoneInvoice($paymentName)
+           )
+        {
+            if (!$personalData->getCompany()){
+                $request->setBusinessrelation(Payone_Api_Enum_BusinessrelationType::B2C);
+            } else {
+                $request->setBusinessrelation(Payone_Api_Enum_BusinessrelationType::B2B);
+            }
+        }
+      
         if ($payment) {
             $request->setPayment($payment);
         }

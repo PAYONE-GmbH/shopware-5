@@ -125,6 +125,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         $view->extendsTemplate('frontend/checkout/mopt_confirm_payment' . $templateSuffix . '.tpl');
         $view->extendsTemplate('frontend/checkout/mopt_confirm' . $templateSuffix . '.tpl');
+        $view->extendsTemplate('frontend/index/mopt_index' . $templateSuffix . '.tpl');
         if ($request->getActionName() == 'finish') {
             $view->extendsTemplate('frontend/checkout/mopt_finish' . $templateSuffix . '.tpl');
         }

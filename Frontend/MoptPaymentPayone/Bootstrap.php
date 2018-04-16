@@ -68,6 +68,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         $this->registerEvents();
         $this->createPayments();
+        $this->updatePayments();
         $this->createDatabase();
         $this->addAttributes();
         $this->createMenu();
@@ -372,6 +373,28 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->createPayment($payment);
         }
     }
+
+    /**
+     * updates some specific payment methods
+     */
+    protected function updatePayments()
+    {
+        /** @var Shopware\Models\Payment\Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__acc_payone_safe_invoice')
+        );
+        if ($payment === null) {
+            // do nothing
+
+        } else {
+            $payment->setTemplate('mopt_paymentmean_payone_safe_invoice.tpl');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
+
+
+    }
+
 
     /**
      * create tables, add coloumns

@@ -814,7 +814,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
-         if ($formData['mopt_payone__payone_safe_invoice_birthdaydate'] !== "0000-00-00") {
+         if ($formData['mopt_payone__payone_safe_invoice_birthdaydate'] !== "0000-00-00" ) {
             if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__payone_safe_invoice_birthdaydate']))) {
                 $paymentData['sErrorFlag']['mopt_payone__payone_safe_invoice_birthday'] = true;
                 $paymentData['sErrorFlag']['mopt_payone__payone_safe_invoice_birthmonth'] = true;
