@@ -97,8 +97,8 @@ class Mopt_PayoneMain
         $data       = $repository->getConfigByPaymentId($paymentId, $asArray);
 
         if ($data === null) {
-            $data = new Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig();
-            $data->setPaymentId($paymentId);
+            $data = array();
+            $data['paymentId'] = $paymentId;
         }
 
         return $this->payoneConfig[$paymentId] = $data;
