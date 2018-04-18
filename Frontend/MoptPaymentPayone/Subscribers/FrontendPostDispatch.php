@@ -219,14 +219,18 @@ class FrontendPostDispatch implements SubscriberInterface
 
         // for amazon Pay redirect directly to finish instead of confirm
 
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay') ) {
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay')) {
             $session->offsetSet('moptFormSubmitted', true);
-            $action->forward('finish', 'moptPaymentAmazon' , null , array('sAGB' => 'on'));
+            $action->forward('finish', 'moptPaymentAmazon', null, array('sAGB' => 'on'));
         }
 
-                if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
+        if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
             if ($session->moptBarzahlenCode) {
                 $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
+            }
+            // cleanup sComment see #SW-151
+            if (isset($session['sComment'])) {
+                unset($session['sComment']);
             }
         }
 
@@ -258,7 +262,7 @@ class FrontendPostDispatch implements SubscriberInterface
             // remove AmazonPay from Payment List
             $payments = $view->getAssign('sPayments');
 
-            foreach ($payments as $index=>$payment) {
+            foreach ($payments as $index => $payment) {
                 if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
                     $amazonPayIndex = $index;
                 }
@@ -272,7 +276,7 @@ class FrontendPostDispatch implements SubscriberInterface
             // remove AmazonPay from Payment List
             $payments = $view->getAssign('sPaymentMeans');
 
-            foreach ($payments as $index=>$payment) {
+            foreach ($payments as $index => $payment) {
                 if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
                     $amazonPayIndex = $index;
                 }
@@ -293,7 +297,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         }
 
-        if ($controllerName == 'moptAjaxPayone' ) {
+        if ($controllerName == 'moptAjaxPayone') {
             // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
             if (version_compare(\Shopware::VERSION, '5.3.0', '>=')
             ) {
@@ -374,7 +378,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
                 $data['mopt_payone__klarna_telephone'] = $userData['billingaddress']['phone'];
             }
-
 
 
             //prepare additional Payolution information and retrieve birthday from user data
@@ -526,7 +529,7 @@ class FrontendPostDispatch implements SubscriberInterface
         }
         $payoneParams['language'] = $shopLanguage[0];
         $payoneParams['errorMessages'] = json_encode($moptPayoneMain->getPaymentHelper()
-                ->getCreditCardCheckErrorMessages());
+            ->getCreditCardCheckErrorMessages());
 
         $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
 
@@ -550,7 +553,7 @@ class FrontendPostDispatch implements SubscriberInterface
         $payoneParams['hash'] = $generateHashService->generate($request, $creditCardConfig['api_key']);
 
         $data['moptPayoneCheckCc'] = $creditCardConfig['check_cc'];
-        $data['moptCreditcardMinValid'] = (int) $creditCardConfig['creditcard_min_valid'];
+        $data['moptCreditcardMinValid'] = (int)$creditCardConfig['creditcard_min_valid'];
 
         // remove the api key; only ['hash'] ist used
         $creditCardConfig['api_key'] = "";
@@ -597,7 +600,7 @@ class FrontendPostDispatch implements SubscriberInterface
         //get country via user object
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
 
-        $data['moptShowAccountnumber'] = (bool) ($debitConfig['showAccountnumber'] && $userData['additional']['country']['countryiso'] === 'DE');
+        $data['moptShowAccountnumber'] = (bool)($debitConfig['showAccountnumber'] && $userData['additional']['country']['countryiso'] === 'DE');
         if (Shopware()->Config()->currency === 'CHF' && $userData['additional']['country']['countryiso'] === 'CH') {
             $data['moptIsSwiss'] = true;
         } else {
@@ -605,7 +608,7 @@ class FrontendPostDispatch implements SubscriberInterface
         }
 
         if ($mandateData) {
-            $data['moptMandateDownloadEnabled'] = (bool) ($config['mandateDownloadEnabled']);
+            $data['moptMandateDownloadEnabled'] = (bool)($config['mandateDownloadEnabled']);
         } else {
             $data['moptMandateDownloadEnabled'] = false;
         }
@@ -653,10 +656,10 @@ class FrontendPostDispatch implements SubscriberInterface
 
         /** @var Element $templateElement */
         $templateElements = $template->getElements()->toArray();
-        foreach ($templateElements as $templateElement){
+        foreach ($templateElements as $templateElement) {
             $configName = $templateElement->getName();
 
-            if ($configName === 'asyncJavascriptLoading'){
+            if ($configName === 'asyncJavascriptLoading') {
                 $configVal = $templateElement->getValues()->getValues();
             }
         }
