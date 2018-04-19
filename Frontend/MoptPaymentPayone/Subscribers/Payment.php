@@ -319,29 +319,65 @@ class Payment implements SubscriberInterface
     public function onOrder_SaveOrderProcessDetails(\Enlight_Event_EventArgs $arguments)
     {
         $orderParams = $arguments->getReturn();
+
+        $subject = $arguments->get('subject');
+
+        $currencyArray = $this->moptGetOriginalCurrencyArray($arguments);
+        if ($currencyArray) {
+            // change currency Object to render emails correctly
+            $subject->sSYSTEM->sCurrency['id'] = $currencyArray['id'];
+            $subject->sSYSTEM->sCurrency['name'] = $currencyArray['name'];
+            $subject->sSYSTEM->sCurrency['currency'] = $currencyArray['currency'];
+            $subject->sSYSTEM->sCurrency['factor'] = $currencyArray['factor'];
+            $subject->sSYSTEM->sCurrency['symbol'] = $currencyArray['symbol'];
+            // change order params to correct order currency in backend display
+            $orderParams['currency'] = $currencyArray['currency'];
+            $orderParams['currencyFactor'] = $currencyArray['factor'];
+        }
+
+        /**
+         * Adding Txid from session
+         */
+        $session = $this->container->get('Session');
+        $txid = $session->offsetGet('payoneTxid');
+        if ($txid) {
+            $orderParams['transactionID'] = $txid;
+        }
+
+        return $orderParams;
+    }
+
+    /**
+     * Tries to fetch former used currency as an array
+     *
+     * @param \Enlight_Event_EventArgs $arguments
+     * @return mixed bool|array
+     */
+    protected function moptGetOriginalCurrencyArray(\Enlight_Event_EventArgs $arguments) {
+        $orderParams = $arguments->getReturn();
         $subject = $arguments->get('subject');
         $originalOrderCurrencyId = $subject->sBasketData['sCurrencyId'];
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
-        $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-        $paymentName = $paymenthelper->getPaymentNameFromId($orderParams['paymentID']);
+        $paymentHelper = $moptPayoneMain->getPaymentHelper();
+        $paymentName = $paymentHelper->getPaymentNameFromId($orderParams['paymentID']);
+        $isPayonePayment = $paymentHelper->isPayonePaymentMethod($paymentName);
 
-        /** @var \Shopware\Components\Model\ModelManager $em */
         $em = Shopware()->Models();
+        $currencyModel = $em->getRepository(\Shopware\Models\Shop\Currency::class);
+        $fetchedCurrency = $currencyModel->findOneBy(array('id' => $originalOrderCurrencyId));
 
-        $originalCurrency = $em->getRepository(\Shopware\Models\Shop\Currency::class)->findOneBy(array('id' => $originalOrderCurrencyId))->toArray();
-
-        if ($moptPayoneMain->getPaymentHelper()->isPayonePaymentMethod($paymentName) && $originalCurrency && $originalCurrency['id'] !== $subject->sSYSTEM->sCurrency['id']) {
-
-            // change currency Object to render emails correctly
-            $subject->sSYSTEM->sCurrency['id'] = $originalCurrency['id'];
-            $subject->sSYSTEM->sCurrency['name'] = $originalCurrency['name'];
-            $subject->sSYSTEM->sCurrency['currency'] = $originalCurrency['currency'];
-            $subject->sSYSTEM->sCurrency['factor'] = $originalCurrency['factor'];
-            $subject->sSYSTEM->sCurrency['symbol'] = $originalCurrency['symbol'];
-            // change order params to correct order currency in backend display
-            $orderParams['currency'] = $originalCurrency['currency'];
-            $orderParams['currencyFactor'] = $originalCurrency['factor'];
+        if (method_exists($fetchedCurrency, 'toArray')) {
+            $originalCurrency = $fetchedCurrency->toArray();
         }
-        return $orderParams;
+
+        $valid = (
+            $isPayonePayment &&
+            $originalCurrency &&
+            $originalCurrency['id'] !== $subject->sSYSTEM->sCurrency['id']
+        );
+
+        $return = ($valid) ? $originalCurrency : false;
+
+        return $return;
     }
 }
