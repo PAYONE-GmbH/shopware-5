@@ -36,7 +36,8 @@
 
 {block name="frontend_index_header_javascript_jquery" append}
     <script async="async"
-            src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'>
+        {if $payoneAmazonPayMode == 1} src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/lpa/js/Widgets.js'> {/if}
+        {if $payoneAmazonPayMode == 0} src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'>{/if}
     </script>
     <script>
         window.onAmazonLoginReady = function () {
