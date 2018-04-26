@@ -54,16 +54,18 @@ class FrontendCheckout implements SubscriberInterface
      * @return string
      */
     public function onGetOrderNumber(\Enlight_Hook_HookArgs $args) {
-        $return = $args->getReturn();
-
         $session = Shopware()->Session();
         $moptRatepayOrdernum = $session->offsetGet('moptRatepayOrdernum');
 
         if ($moptRatepayOrdernum) {
             return $moptRatepayOrdernum;
+        } else {
+            // standard behaviour
+            $args->setReturn($args->getSubject()->executeParent(
+                $args->getMethod(),
+                $args->getArgs()
+            ));
         }
-
-        $args->setReturn($return);
     }
 
     /**
