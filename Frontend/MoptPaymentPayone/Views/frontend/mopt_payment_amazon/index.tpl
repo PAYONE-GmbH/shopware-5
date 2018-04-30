@@ -369,7 +369,7 @@
             });
         } else {
             console.log('sync mode');
-            document.ready(function() {
+            $(document).ready(function() {
                 {if $payoneAmazonPayMode == 1}
                 console.log("Live Mode");
                 $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/de/lpa/js/Widgets.js');
