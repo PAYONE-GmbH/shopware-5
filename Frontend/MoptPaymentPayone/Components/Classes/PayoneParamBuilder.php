@@ -105,10 +105,13 @@ class Mopt_PayoneParamBuilder
         //create business object (used for settleaccount param)
         $business = new Payone_Api_Request_Parameter_Capture_Business();
 
-        if ($this->payonePaymentHelper->isPayonePayInAdvance($paymentName) || $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName) || $this->payonePaymentHelper->isPayonePaypal($paymentName)) {
+        if ($this->payonePaymentHelper->isPayonePayInAdvance($paymentName) ||
+            $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName) ||
+            $this->payonePaymentHelper->isPayoneInvoice($paymentName)
+        ) {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::NO);
         } else {
-            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::AUTO);
+            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::AUTO);
         }
 
         $params['business'] = $business;
@@ -123,11 +126,6 @@ class Mopt_PayoneParamBuilder
             || $this->payonePaymentHelper->isPayoneRatepayInstallment($paymentName)
             || $this->payonePaymentHelper->isPayoneRatepayDirectDebit($paymentName)
         ) {
-            if ($finalize === true) {
-                $params['capturemode'] = Payone_Api_Enum_CaptureMode::COMPLETED;
-            } else {
-                $params['capturemode'] = Payone_Api_Enum_CaptureMode::NOTCOMPLETED;
-            }
             $params['shop_id'] = $this->getParamRatepayShopId($order);
         }
 
