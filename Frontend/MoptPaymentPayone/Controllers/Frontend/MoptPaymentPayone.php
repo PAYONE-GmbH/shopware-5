@@ -795,8 +795,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $request = $this->mopt_payone__prepareRequest($config['paymentId'], $session->moptIsAuthorized);
 
+        $currency = $this->moptGetCurrency();
         $request->setAmount($this->getAmount());
-        $request->setCurrency($this->getCurrencyShortName());
+        $request->setCurrency($currency);
 
         //get shopware temporary order id - session id
         $shopwareTemporaryId = $this->admin->sSYSTEM->sSESSION_ID;
@@ -900,6 +901,42 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
 
         return $response;
+    }
+
+    /**
+     * Returns matching currency depending on order situation (e. g. recurring order)
+     *
+     * @param void
+     * @return string
+     */
+    protected function moptGetCurrency() {
+        $isRecurringOrder = $this->isRecurringOrder();
+        $currency = $this->getCurrencyShortName();
+
+        if ($isRecurringOrder) {
+            $orderCurrency = $this->moptGetOrderCurrencyById($currency);
+            $currency = $orderCurrency;
+        }
+
+        return $currency;
+    }
+
+    /**
+     * Returns the order currency short name from given orderid
+     * uses currency param as fallback
+     *
+     * @param string $currency
+     * @return string
+     */
+    protected function moptGetOrderCurrencyById($currency) {
+        $orderId = $this->Request()->getParam('orderId');
+        if ($orderId) {
+            $sql = 'SELECT `currency` FROM `s_order` WHERE id = ?';
+            $currency = Shopware()->Db()->fetchOne($sql, $orderId);
+        }
+
+        return $currency;
+
     }
 
     /**
@@ -1120,7 +1157,15 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function recurringAction()
     {
-        if (!$this->getAmount() || $this->getOrderNumber()) {
+        $orderNumber = $this->getOrderNumber();
+        $amount = $this->getAmount();
+        $isRecurringOrder = $this->isRecurringOrder();
+        $redirectToCheckoutController = (
+            (!$amount || $orderNumber) &&
+            !$isRecurringOrder
+        );
+
+        if ($redirectToCheckoutController) {
             $this->redirect(array(
                 'controller' => 'checkout'
             ));
@@ -1258,7 +1303,29 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     protected function isRecurringOrder()
     {
-        return isset(Shopware()->Session()->isRecuringAboOrder);
+        // check 1: isRecurring value in session
+        // $session = Shopware()->Session();
+        $session = $this->container->get('Session');
+        $isRecurringAboOrder = $session->offsetGet('isRecurringAboOrder');
+        if (!$isRecurringAboOrder) {
+            // this isn't a recurring abo order, so we can
+            // pass all other checks
+            return false;
+        }
+
+        // check 2: plugin exists and is installed
+        $pluginManager  = $this->container->get('shopware_plugininstaller.plugin_manager');
+        try {
+            $plugin = $pluginManager->getPluginByName('SwagAboCommerce');
+        } catch (\Exception $e) {
+            return false;
+        }
+        if (!$plugin->getInstalled()) {
+            // if plugin is not installed it cannot be a recurring order indeed
+            return false;
+        }
+
+        return true;
     }
 
     /**
