@@ -1432,7 +1432,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             FROM s_order_basket
             WHERE sessionID = ?
             AND ordernumber != "sw-surcharge";',
-            [$this->session->get('sessionId')]
+            array($this->session->get('sessionId'))
         );
 
         foreach ($basketArticles as $article) {
