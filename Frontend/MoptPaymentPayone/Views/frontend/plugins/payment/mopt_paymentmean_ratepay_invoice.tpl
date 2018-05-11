@@ -1,6 +1,12 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
 <div class="payment--form-group">
+
+    <div id="mopt_payone__ratepay_invoice_abg">
+        Es gelten die <a target="_blank" href="https://www.ratepay.com/zgb-dse">zusätzlichen Allgemeinen Geschäftsbedingungen und der Datenschutzhinweis</a> der RatePAY GmbH.</br>
+        <p></p>
+    </div>
+
     {if ! $sUserData.billingaddress.company}
         <p class ="none">
             <label for="mopt_payone__ratepay_invoice_birthday">

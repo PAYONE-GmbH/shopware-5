@@ -8,6 +8,12 @@
 
 <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/ratepay.css"}" />
 <div class="payment--form-group">
+
+    <div id="mopt_payone__ratepay_installment_abg">
+        Es gelten die <a target="_blank" href="https://www.ratepay.com/zgb-dse">zusätzlichen Allgemeinen Geschäftsbedingungen und der Datenschutzhinweis</a> der RatePAY GmbH.</br>
+        <p></p>
+    </div>
+
     {if ! $sUserData.billingaddress.company}
         <p class ="none">
             <label for="mopt_payone__ratepay_installment_birthday">
