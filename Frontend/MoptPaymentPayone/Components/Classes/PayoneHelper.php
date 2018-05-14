@@ -1358,15 +1358,18 @@ class Mopt_PayoneHelper
 
     public function getPayoneAmazonPayConfig()
     {
+        // use latest config
+        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_amazon_pay";
+        $latest = Shopware()->Db()->fetchOne($sql);
+
         /**
          * @var $config \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay
          */
         $config =  Shopware()->Models()->find(
             'Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay',
-            1
+            $latest
         );
         return $config;
     }
-
 
 }
