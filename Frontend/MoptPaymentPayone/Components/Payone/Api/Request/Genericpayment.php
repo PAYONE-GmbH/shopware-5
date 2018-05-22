@@ -107,8 +107,12 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
      * @var string
      */
     protected $financingtype = null;
-    
-    
+
+    protected $backurl = null;
+
+    protected $errorurl = null;
+
+    protected $successurl = null;
     
     /**
      * @param array $data
@@ -420,5 +424,50 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
     public function setFinancingType($financingtype)
     {
         $this->financingtype = $financingtype;
+    }
+
+    /* @return string
+     */
+    public function getErrorurl()
+    {
+        return $this->errorurl;
+    }
+
+    /**
+     * @param string $errorurl
+     */
+    public function setErrorurl($errorurl)
+    {
+        $this->errorurl = $errorurl;
+    }
+
+    /* @return string
+     */
+    public function getBackurl()
+    {
+        return $this->backurl;
+    }
+
+    /**
+     * @param string $backurl
+     */
+    public function setBackurl($backurl)
+    {
+        $this->backurl = $backurl;
+    }
+
+    /* @return string
+     */
+    public function getSuccessurl()
+    {
+        return $this->successurl;
+    }
+
+    /**
+     * @param string $successurl
+     */
+    public function setSuccessurl($successurl)
+    {
+        $this->successurl = $successurl;
     }
 }

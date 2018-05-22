@@ -155,6 +155,20 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * returns payment name
+     *
+     * @param string $paymentName
+     * @return string
+     */
+    public function getPaymentIdFromName($paymentName)
+    {
+        $sql = 'SELECT `id` FROM `s_core_paymentmeans` WHERE name = ?';
+        $paymentId = Shopware()->Db()->fetchOne($sql, $paymentName);
+
+        return $paymentId;
+    }
+
+    /**
      * save payment data
      *
      * @param string $userId
@@ -1373,5 +1387,17 @@ class Mopt_PayonePaymentHelper
         return $paymentAmazonPay->getActive();
     }
 
+    /**
+     * checks if Masterpass is enabled
+     *
+     * @return bool
+     */
+    public function isMasterpassActive()
+    {
+        $paymentMasterpass = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_masterpass']
+        );
+        return $paymentMasterpass->getActive();
+    }
 
 }
