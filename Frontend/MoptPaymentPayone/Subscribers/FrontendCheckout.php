@@ -41,13 +41,38 @@ class FrontendCheckout implements SubscriberInterface
             'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after'  => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_Checkout::changeQuantityAction::after' => 'onBasketChangeConfirmPage',
             'sBasket::sGetBasket::after' => 'onBasketDataUpdate',
+            'sOrder::sGetOrderNumber::replace' => 'onGetOrderNumber',
         ];
+    }
+
+
+    /**
+     * Checks if there is a reatepay order number reservation available and
+     * returns this value if true
+     *
+     * @param \Enlight_Hook_HookArgs $args
+     * @return string
+     */
+    public function onGetOrderNumber(\Enlight_Hook_HookArgs $args) {
+        $session = Shopware()->Session();
+        $moptRatepayOrdernum = $session->offsetGet('moptRatepayOrdernum');
+
+        if ($moptRatepayOrdernum) {
+            return $moptRatepayOrdernum;
+        } else {
+            // standard behaviour
+            $args->setReturn($args->getSubject()->executeParent(
+                $args->getMethod(),
+                $args->getArgs()
+            ));
+        }
     }
 
     /**
      * Sets a flag when basket data has been updated to prevent unnecessary calls to `sBasket::sGetBasket()`
      *
      * @param \Enlight_Hook_HookArgs $args
+     * @throws
      */
     public function onBasketDataUpdate(\Enlight_Hook_HookArgs $args)
     {
