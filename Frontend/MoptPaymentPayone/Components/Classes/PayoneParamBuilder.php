@@ -106,13 +106,15 @@ class Mopt_PayoneParamBuilder
         $business = new Payone_Api_Request_Parameter_Capture_Business();
 
         if ($this->payonePaymentHelper->isPayonePayInAdvance($paymentName) ||
-            $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName) ||
-            $this->payonePaymentHelper->isPayoneInvoice($paymentName)
+            $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName)
         ) {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::NO);
+        } elseif ($this->payonePaymentHelper->isPayoneInvoice($paymentName)) {
+            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::NO);
         } else {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::AUTO);
         }
+
 
         $params['business'] = $business;
 
