@@ -198,6 +198,7 @@ class Mopt_PayoneInstallHelper
                 'consumerscore_date'                => 'date',
                 'consumerscore_color'               => 'string',
                 'consumerscore_value'               => 'integer',
+                'ratepay_ban'                       => 'date',
             ],
             's_user_billingaddress_attributes' => [
                 'addresscheck_result'               => 'string',

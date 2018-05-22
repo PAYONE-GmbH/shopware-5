@@ -470,6 +470,7 @@ class Mopt_PayoneParamBuilder
         }
 
         $params['gender'] = ($billingAddress['salutation'] === 'mr') ? 'm' : 'f';
+        $params['salutation'] = ($billingAddress['salutation'] === 'mr') ? 'Herr' : 'Frau';
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
             if ($userData['additional']['user']['birthday'] !== '0000-00-00') {
                 $params['birthday'] = str_replace('-', '', $userData['additional']['user']['birthday']); //YYYYMMDD

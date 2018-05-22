@@ -58,6 +58,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
             && ($payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
         ) {
+            $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+            $config = $this->container->get('MoptPayoneMain')->getPayoneConfig($paymenthelper->getPaymentAmazonPay()->getId());
 
             $this->session['sPaymentID'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $this->View()->sPayment = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
@@ -74,7 +76,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 $this->setDispatch($this->Request()->getParam("sDispatch"), Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
             }
 
-
+            $this->View()->assign('payoneAmazonPayMode', $config['liveMode']);
             $this->View()->sDispatches = $this->getDispatches(Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
             $this->View()->sAmount = $basket['Amount'];
             $this->View()->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
@@ -321,7 +323,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                     ->getNamespace('frontend/MoptPaymentPayone/messages')
                     ->get('amazonAsyncAuthMessage');
             }
-
+            $this->View()->assign('payoneAmazonPayMode', $config['liveMode']);
             $this->View()->assign($orderVariables);
             // TransactionID
             $this->View()->sTransactionumber = $txid;
