@@ -581,7 +581,6 @@ class Mopt_PayoneFormHandler
                 $paymentData['formData']['mopt_payone__payolution_installment_bic'] = $formData['mopt_payone__payolution_installment_bic'];
             }
         }
-        $paymentData['formData']['mopt_payone__payolution_installment_shippingcosts'] = $formData['mopt_payone__payolution_installment_shippingcosts'];
 
         $this->setFormSubmittedFlag();
 
@@ -823,8 +822,7 @@ class Mopt_PayoneFormHandler
      * @return string
      */
     private function getUserCountyIso() {
-        $orderVars = $this->session->sOrderVariables;
-        $userData = $orderVars['sUserData'];
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
         return $userData['additional']['country']['countryiso'];
     }
 

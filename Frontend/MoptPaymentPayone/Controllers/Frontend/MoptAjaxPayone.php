@@ -380,17 +380,16 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentData = $this->session->moptPayment;
         $paymentData['mopt_payone__company_trade_registry_number'] = $this->Request()->getPost('hreg');
+        $paymentData['dob'] = $this->Request()->getPost('dob');
+        $paymentData['mopt_payone__payolution_installment_basketamount'] = $this->Request()->getPost('basketamount');
         if (!empty($paymentData['mopt_payone__company_trade_registry_number'])){
             $paymentData['mopt_payone__payolution_b2bmode'] = 1;
         } else{
             $paymentData['mopt_payone__payolution_b2bmode'] = 0;
         }
-        $paymentData['dob'] = $this->Request()->getPost('dob');
-        $paymentData['mopt_payone__payolution_installment_shippingcosts'] = $this->Request()->getPost('shippingcosts');
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $financeType = Payone_Api_Enum_PayolutionType::PYS;
         $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
-        $userData = $this->admin->sGetUserData();
         $data = [];
         $precheckResponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
         if ($precheckResponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
@@ -497,7 +496,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__company_trade_registry_number'])
             ));
         }
-        $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])){
+            $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        } else {
+            $amountWithShipping = $paymentData['mopt_payone__payolution_installment_basketamount'];
+        }
         $request->setPaydata($paydata);
         $request->setAmount($amountWithShipping);
         $request->setCurrency($this->getCurrencyShortName());
@@ -566,7 +569,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
             ));
         }
-        $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])){
+            $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        } else {
+            $amountWithShipping = $paymentData['mopt_payone__payolution_installment_basketamount'];
+        }
         $request->setPaydata($paydata);
         $request->setAmount($amountWithShipping);
         $request->setCurrency($this->getCurrencyShortName());
