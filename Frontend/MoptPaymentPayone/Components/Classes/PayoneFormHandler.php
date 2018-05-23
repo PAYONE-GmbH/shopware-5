@@ -29,6 +29,20 @@
 
 class Mopt_PayoneFormHandler
 {
+    const PAYOLUTION_NO_IBANBIC_COUNTRIES = [
+        'GB',
+        'CH',
+    ];
+
+    private $session;
+
+    /**
+     * class constructor
+     */
+    public function __construct()
+    {
+        $this->session = Shopware()->Session();
+    }
 
     /**
      * process payment form
@@ -97,11 +111,10 @@ class Mopt_PayoneFormHandler
         }
 
         if ($paymentHelper->isPayonePaymentMethod($paymentId)) {
-            // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-            $session = Shopware()->Session();
-            $session->offsetSet('moptFormSubmitted', true);
+            $this->setFormSubmittedFlag();
+
         }
-        
+
         return array();
     }
 
@@ -167,9 +180,7 @@ class Mopt_PayoneFormHandler
 
         $paymentData['formData']['mopt_payone__sofort_bankcountry'] = $formData['mopt_payone__sofort_bankcountry'];
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -192,9 +203,7 @@ class Mopt_PayoneFormHandler
 
         $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::BANCONTACT;
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -228,9 +237,7 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::GIROPAY;
         $paymentData['formData']['mopt_payone__giropay_bankcountry'] = 'DE';
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -253,9 +260,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__eps_bankcountry'] = 'AT';
         }
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -278,9 +283,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__ideal_bankcountry'] = 'NL';
         }
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -347,9 +350,7 @@ class Mopt_PayoneFormHandler
             unset($paymentData['sErrorFlag']['mopt_payone__debit_bankcode']);
         }
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -364,10 +365,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
         $paymentData['formData'] = $formData;
-
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -417,9 +415,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_save_birthday_and_phone'] = false;
         }
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -480,11 +476,9 @@ class Mopt_PayoneFormHandler
         }
 
         // set sessionflag to trigger precheck
-        Shopware()->Session()->moptPayolutionPrecheck = "1";
+        $this->session->moptPayolutionPrecheck = "1";
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -516,22 +510,20 @@ class Mopt_PayoneFormHandler
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
-        
+
         if ($formData['mopt_payone__payolution_invoice_b2bmode'] === "1") {
             $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__invoice_company_trade_registry_number'];
             $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_invoice_b2bmode'];
         }
-        
-        // set sessionflag to trigger precheck
-        Shopware()->Session()->moptPayolutionPrecheck = "1";
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        // set sessionflag to trigger precheck
+        $this->session->moptPayolutionPrecheck = "1";
+
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
-    
+
     /**
      * process form data
      *
@@ -559,41 +551,39 @@ class Mopt_PayoneFormHandler
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
         }
-        
+
         if ($formData['mopt_payone__payolution_installment_b2bmode'] === "1") {
             $paymentData['formData']['mopt_payone__company_trade_registry_number'] = $formData['mopt_payone__installment_company_trade_registry_number'];
             $paymentData['formData']['mopt_payone__payolution_b2bmode'] = $formData['mopt_payone__payolution_installment_b2bmode'];
         }
-        
+
         if ($formData['mopt_payone__payolution_installment_duration'] ==="") {
             $paymentData['sErrorFlag']['mopt_payone__payolution_installment_duration'] = true;
         } else {
             $paymentData['formData']['mopt_payone__payolution_installment_duration'] = $formData['mopt_payone__payolution_installment_duration'];
         }
-        
+
         if ($formData['mopt_payone__payolution_installment_workorderid'] ==="") {
             $paymentData['sErrorFlag']['mopt_payone__payolution_installment_workorderid'] = true;
         } else {
             $paymentData['formData']['mopt_payone__payolution_installment_workorderid'] = $formData['mopt_payone__payolution_installment_workorderid'];
         }
 
-        if (!$formData['mopt_payone__payolution_installment_iban'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_installment_iban'])) {
-            $paymentData['sErrorFlag']['mopt_payone__payolution_installment_iban'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__payolution_installment_iban'] = $formData['mopt_payone__payolution_installment_iban'];
+        if (! in_array($this->getUserCountyIso(), self::PAYOLUTION_NO_IBANBIC_COUNTRIES)) {
+            if (!$formData['mopt_payone__payolution_installment_iban'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_installment_iban'])) {
+                $paymentData['sErrorFlag']['mopt_payone__payolution_installment_iban'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__payolution_installment_iban'] = $formData['mopt_payone__payolution_installment_iban'];
+            }
+            if (!$formData['mopt_payone__payolution_installment_bic'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_installment_bic'])) {
+                $paymentData['sErrorFlag']['mopt_payone__payolution_installment_bic'] = true;
+            } else {
+                $paymentData['formData']['mopt_payone__payolution_installment_bic'] = $formData['mopt_payone__payolution_installment_bic'];
+            }
         }
-
-        if (!$formData['mopt_payone__payolution_installment_bic'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_installment_bic'])) {
-            $paymentData['sErrorFlag']['mopt_payone__payolution_installment_bic'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__payolution_installment_bic'] = $formData['mopt_payone__payolution_installment_bic'];
-        }
-
         $paymentData['formData']['mopt_payone__payolution_installment_shippingcosts'] = $formData['mopt_payone__payolution_installment_shippingcosts'];
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -629,7 +619,7 @@ class Mopt_PayoneFormHandler
 
             $paymentData['formData']['mopt_payone__ratepay_b2bmode'] = $formData['mopt_payone__ratepay_b2bmode'];
         }
-          
+
         if (!$formData['mopt_payone__ratepay_invoice_telephone']) {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_invoice_telephone'] = true;
         } else {
@@ -639,9 +629,7 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_invoice_shopid'];
         $paymentData['formData']['mopt_payone__ratepay_invoice_device_fingerprint'] = $formData['mopt_payone__ratepay_invoice_device_fingerprint'];
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -717,9 +705,7 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__ratepay_installment_last_installment_amount'] = $formData['mopt_payone__ratepay_installment_last_installment_amount'];
         $paymentData['formData']['mopt_payone__ratepay_installment_interest_rate'] = $formData['mopt_payone__ratepay_installment_interest_rate'];
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -782,9 +768,7 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_direct_debit_shopid'];
         $paymentData['formData']['mopt_payone__ratepay_direct_debit_device_fingerprint'] = $formData['mopt_payone__ratepay_direct_debit_device_fingerprint'];
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
+        $this->setFormSubmittedFlag();
 
         return $paymentData;
     }
@@ -799,7 +783,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
-         if ($formData['mopt_payone__payone_safe_invoice_birthdaydate'] !== "0000-00-00" ) {
+        if ($formData['mopt_payone__payone_safe_invoice_birthdaydate'] !== "0000-00-00" ) {
             if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__payone_safe_invoice_birthdaydate']))) {
                 $paymentData['sErrorFlag']['mopt_payone__payone_safe_invoice_birthday'] = true;
                 $paymentData['sErrorFlag']['mopt_payone__payone_safe_invoice_birthmonth'] = true;
@@ -811,10 +795,7 @@ class Mopt_PayoneFormHandler
             }
         }
 
-        // set SessionFlag, so we can redirect customer to shippingPayment in case the same paymentmean was used before
-        $session = Shopware()->Session();
-        $session->offsetSet('moptFormSubmitted', true);
-
+        $this->setFormSubmittedFlag();
         return $paymentData;
     }
 
@@ -832,8 +813,28 @@ class Mopt_PayoneFormHandler
             return false;
         }
         else {
-           return true;
+            return true;
         }
     }
 
+    /**
+     * gets the country from the current user in iso format
+     *
+     * @return string
+     */
+    private function getUserCountyIso() {
+        $orderVars = $this->session->sOrderVariables;
+        $userData = $orderVars['sUserData'];
+        return $userData['additional']['country']['countryiso'];
+    }
+
+    /**
+     * sets the session flag moptFormsubmitted
+     * this is used to prevent the redirectiion of the customer to shippingPayment
+     *
+     * @return void
+     */
+    private function setFormSubmittedFlag() {
+        $this->session->offsetSet('moptFormSubmitted', true);
+    }
 }
