@@ -1245,8 +1245,13 @@ class Mopt_PayoneParamBuilder
             if ($article['modus'] == 2) {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
             }
-            if ($article['modus'] == 4) {
+            # paypal does not accept negative values for handling use voucher instead
+            # this was an issue with articles added by the SwagAdvancedPromotionSuite plugin
+            if ($article['modus'] == 4 && $params['pr'] >= "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
+            }
+            if ($article['modus'] == 4 && $params['pr'] < "0")   {
+                $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
             }
             $items[] = $params;
         }
@@ -1358,8 +1363,15 @@ class Mopt_PayoneParamBuilder
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
                 $params['id'] = substr($position->getArticleName(), 0, 100); //article number
             }
-            if ($mode == 4) {
+
+            # paypal does not accept negative values for handling use voucher instead
+            # this was an issue with articles added by the SwagAdvancedPromotionSuite plugin
+            if ($mode == 4 && $params['pr'] >= "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
+                $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+            }
+            if ($mode == 4 && $params['pr'] < "0")   {
+                $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
                 $params['id'] = substr($position->getArticleName(), 0, 100); //article number
             }
 
