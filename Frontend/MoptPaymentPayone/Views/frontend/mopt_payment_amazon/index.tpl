@@ -360,11 +360,11 @@
             document.asyncReady(function () {
                 {if $payoneAmazonPayMode == 1}
                 console.log("Live Mode");
-                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/de/lpa/js/Widgets.js');
+                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js');
                 {/if}
                 {if $payoneAmazonPayMode == 0}
                 console.log("Test Mode");
-                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js');
+                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js');
                 {/if}
             });
         } else {
@@ -372,11 +372,11 @@
             $(document).ready(function() {
                 {if $payoneAmazonPayMode == 1}
                 console.log("Live Mode");
-                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/de/lpa/js/Widgets.js');
+                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js');
                 {/if}
                 {if $payoneAmazonPayMode == 0}
                 console.log("Test Mode");
-                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js');
+                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js');
                 {/if}
             });
         }

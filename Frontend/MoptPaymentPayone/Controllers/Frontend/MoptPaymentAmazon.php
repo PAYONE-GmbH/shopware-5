@@ -23,6 +23,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $this->admin = Shopware()->Modules()->Admin();
         $this->session = Shopware()->Session();
         $this->plugin = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
+        $this->basket = Shopware()->Modules()->Basket();
     }
 
     /**
@@ -116,7 +117,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
     public function finishAction()
     {
         $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
-        $this->basket = $this->get('modules')->Basket()->sGetBasket();
         $moptPayoneMain = $this->plugin->get('MoptPayoneMain');
         $payoneServiceBuilder = $this->plugin->get('MoptPayoneBuilder');
         $paramBuilder = $moptPayoneMain->getParamBuilder();
@@ -886,6 +886,4 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $response = $service->request($request);
         return $response;
     }
-
-
 }
