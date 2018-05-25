@@ -345,157 +345,162 @@ class Mopt_PayoneInstallHelper
                 'template' => 'mopt_paymentmean_creditcard.tpl',
                 'position' => 8,),
             array(
+                'name' => 'mopt_payone__cc_china_union',
+                'description' => 'PAYONE China Union Pay',
+                'template' => 'mopt_paymentmean_creditcard.tpl',
+                'position' => 9,),
+            array(
                 'name' => 'mopt_payone__ibt_sofortueberweisung',
                 'description' => 'PAYONE SOFORT Überweisung',
                 'template' => 'mopt_paymentmean_sofort.tpl',
-                'position' => 9,),
+                'position' => 10,),
             array(
                 'name' => 'mopt_payone__ibt_giropay',
                 'description' => 'PAYONE Giropay',
                 'template' => 'mopt_paymentmean_giropay.tpl',
-                'position' => 10,),
+                'position' => 11,),
             array(
                 'name' => 'mopt_payone__ibt_eps',
                 'description' => 'PAYONE eps',
                 'template' => 'mopt_paymentmean_eps.tpl',
-                'position' => 11,),
+                'position' => 12,),
             array(
                 'name' => 'mopt_payone__ibt_post_efinance',
                 'description' => 'PAYONE Post-Finance EFinance',
                 'template' => null,
-                'position' => 12,),
+                'position' => 13,),
             array(
                 'name' => 'mopt_payone__ibt_post_finance_card',
                 'description' => 'PAYONE Post-Finance Card',
                 'template' => null,
-                'position' => 13,),
+                'position' => 14,),
             array(
                 'name' => 'mopt_payone__ibt_ideal',
                 'description' => 'PAYONE iDeal',
                 'template' => 'mopt_paymentmean_ideal.tpl',
-                'position' => 14,),
+                'position' => 15,),
             array(
                 'name' => 'mopt_payone__ewallet_paypal',
                 'description' => 'PAYONE PayPal',
                 'template' => null,
-                'position' => 15,),
+                'position' => 16,),
             array(
                 'name' => 'mopt_payone__acc_debitnote',
                 'description' => 'PAYONE Lastschrift',
                 'template' => 'mopt_paymentmean_debit.tpl',
-                'position' => 16,),
+                'position' => 17,),
             array(
                 'name' => 'mopt_payone__acc_invoice',
                 'description' => 'PAYONE Offene Rechnung',
                 'template' => null,
-                'position' => 17,),
+                'position' => 18,),
             array(
                 'name' => 'mopt_payone__acc_payinadvance',
                 'description' => 'PAYONE Vorkasse',
                 'template' => null,
-                'position' => 18,),
+                'position' => 19,),
             array(
                 'name' => 'mopt_payone__acc_cashondel',
                 'description' => 'PAYONE Nachnahme',
                 'template' => null,
-                'position' => 19,),
+                'position' => 20,),
             array(
                 'name' => 'mopt_payone__fin_billsafe',
                 'description' => 'PAYONE BillSAFE',
                 'template' => null,
-                'position' => 20,),
+                'position' => 21,),
             array(
                 'name' => 'mopt_payone__fin_klarna',
                 'description' => 'PAYONE Klarna',
                 'template' => 'mopt_paymentmean_klarna.tpl',
-                'position' => 21,),
+                'position' => 22,),
             array(
                 'name' => 'mopt_payone__ibt_p24',
                 'description' => 'PAYONE P24',
                 'template' => null,
-                'position' => 22,),
+                'position' => 23,),
             array(
                 'name' => 'mopt_payone__creditcard_iframe',
                 'description' => 'PAYONE Kreditkarte',
                 'template' => null,
-                'position' => 23,),
+                'position' => 24,),
             array(
                 'name' => 'mopt_payone__csh_barzahlen',
                 'description' => 'PAYONE Barzahlen',
                 'template' => null,
-                'position' => 24,
+                'position' => 25,
                 'additionalDescription' => '<label for="payment_barzahlen">'
-                . '  <img style="height: 3em; vertical-align: -1em;" src="https://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen">'
-                . '</label>'
-                . '<img style="float: right; margin-left: 10px; max-width: 180px; max-height: 180px;" src="https://cdn.barzahlen.de/images/barzahlen_special.png">'
-                . 'Mit Abschluss der Bestellung bekommen Sie einen Zahlschein angezeigt, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen können. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins an der Kasse einer Barzahlen-Partnerfiliale.<br/><br/>'
-                . '<strong>Bezahlen Sie bei:</strong>'
-                . ' '
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_01.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_02.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_03.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_04.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_05.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_06.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_07.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_08.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_09.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_10.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'),
+                    . '  <img style="height: 3em; vertical-align: -1em;" src="https://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen">'
+                    . '</label>'
+                    . '<img style="float: right; margin-left: 10px; max-width: 180px; max-height: 180px;" src="https://cdn.barzahlen.de/images/barzahlen_special.png">'
+                    . 'Mit Abschluss der Bestellung bekommen Sie einen Zahlschein angezeigt, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen können. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins an der Kasse einer Barzahlen-Partnerfiliale.<br/><br/>'
+                    . '<strong>Bezahlen Sie bei:</strong>'
+                    . ' '
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_01.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_02.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_03.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_04.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_05.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_06.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_07.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_08.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_09.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_10.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'),
             array(
                 'name' => 'mopt_payone__ewallet_paydirekt',
                 'description' => 'PAYONE Paydirekt',
                 'template' => null,
-                'position' => 25,),
+                'position' => 26,),
             array(
                 'name' => 'mopt_payone__fin_payolution_invoice',
                 'description' => 'PAYONE Payolution Rechnungskauf',
                 'template' => 'mopt_paymentmean_payolution_invoice.tpl',
-                'position' => 26,),
+                'position' => 27,),
             array(
                 'name' => 'mopt_payone__fin_payolution_debitnote',
                 'description' => 'PAYONE Payolution Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
-                'position' => 27,),
+                'position' => 28,),
             array(
                 'name' => 'mopt_payone__fin_payolution_installment',
                 'description' => 'PAYONE Payolution Ratenzahlung',
                 'template' => 'mopt_paymentmean_payolution_installment.tpl',
-                'position' => 28,),
+                'position' => 29,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_invoice',
                 'description' => 'PAYONE Ratepay Rechnungskauf',
                 'template' => 'mopt_paymentmean_ratepay_invoice.tpl',
-                'position' => 29,),
+                'position' => 30,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_installment',
                 'description' => 'PAYONE Ratepay Ratenkauf',
                 'template' => 'mopt_paymentmean_ratepay_installment.tpl',
-                'position' => 30,),
+                'position' => 31,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_direct_debit',
                 'description' => 'PAYONE Ratepay Lastschrift',
                 'template' => 'mopt_paymentmean_ratepay_direct_debit.tpl',
-                'position' => 31,),
+                'position' => 32,),
             array(
-                 'name' => 'mopt_payone__acc_payone_safe_invoice',
-                 'description' => 'PAYONE Rechnung mit Zahlungsgarantie',
-                 'template' => 'mopt_paymentmean_payone_safe_invoice.tpl',
-                 'position' => 32,),
+                'name' => 'mopt_payone__acc_payone_safe_invoice',
+                'description' => 'PAYONE Rechnung mit Zahlungsgarantie',
+                'template' => 'mopt_paymentmean_payone_safe_invoice.tpl',
+                'position' => 33,),
             array(
                 'name' => 'mopt_payone__ibt_bancontact',
                 'description' => 'PAYONE Bancontact',
                 'template' => 'mopt_paymentmean_bancontact.tpl',
-                'position' => 33,),
+                'position' => 34,),
             array(
                 'name' => 'mopt_payone__ewallet_amazon_pay',
                 'description' => 'PAYONE Amazon Pay',
                 'template' => 'mopt_paymentmean_amazon_ewallet.tpl',
-                'position' => 34,),
+                'position' => 35,),
             array(
                 'name' => 'mopt_payone__ewallet_alipay',
                 'description' => 'PAYONE AliPay',
                 'template' => 'mopt_paymentmean_alipay_ewallet.tpl',
-                'position' => 35,),
+                'position' => 36,),
         );
     }
 
