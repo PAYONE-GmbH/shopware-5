@@ -219,7 +219,6 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'company_trade_registry_number', 'data' => $params['vatid'])
             ));
-            $request->setPaydata($paydata);
         }
 
         if (isset($params['shop_id'])) {
@@ -247,6 +246,8 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             $businessParam->setSettleaccount('auto');
             $request->setBusiness($businessParam);
         }
+
+        $request->setPaydata($paydata);
 
         unset($params['data']);
 
