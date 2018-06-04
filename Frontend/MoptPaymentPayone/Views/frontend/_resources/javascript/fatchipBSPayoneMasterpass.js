@@ -3,30 +3,42 @@ $.plugin("fatchipBSPayoneMasterpass", {
         fatchipBSPayoneMasterpassRegisterUrl: false,
 
         customerType: "private",
-        salutation: "mr", // there is no way to know the gender
+        salutation: false,
         firstname: false,
         lastname: false,
         email: false,
-        phone: "0",
+        phone: false,
         //birthdayDay: false,
         //birthdayMonth: false,
         //birthdayYear: false,
         street: false,
         zip: false,
         city: false,
-        countryCodeBillingID: false
+        countryCodeBillingID: false,
+        differentShipping: "1",
+        salutation2: false,
+        firstname2: false,
+        lastname2: false,
+        phone2: false,
+        company2: "",
+        department2: "",
+        street2: false,
+        zip2: false,
+        city2: false,
+        countryCodeShippingID: false
     },
 
     init: function () {
         "use strict";
         var me = this;
         me.applyDataAttributes();
+        // TESTING
+        console.log(me.opts);
         var frm = $("<form>", {
             "action": me.opts.fatchipBSPayoneMasterpassRegisterUrl,
             "method": "post"
         });
 
-        // SW 5.0 - 5.1
         frm.append(
             "<input type=\"hidden\" name=\"register[personal][customer_type]\" value=\"" + me.opts.customerType + "\"/>" +
             "<input type=\"hidden\" name=\"register[personal][salutation]\" value=\"" + me.opts.salutation + "\"/>" +
@@ -44,14 +56,24 @@ $.plugin("fatchipBSPayoneMasterpass", {
             "<input type=\"hidden\" name=\"register[billing][city]\" value=\"" + me.opts.city + "\"/>" +
             "<input type=\"hidden\" name=\"register[billing][zipcode]\" value=\"" + me.opts.zip + "\"/>" +
             "<input type=\"hidden\" name=\"register[billing][country]\" value=\"" + me.opts.countryCodeBillingID + "\"/>" +
-            //"<input type=\"hidden\" name=\"register[billing][shippingAddress]\" value=\"" + me.opts.differentShipping + "\"/>" +
+            "<input type=\"hidden\" name=\"register[billing][shippingAddress]\" value=\"" + me.opts.differentShipping + "\"/>" +
             "<input type=\"hidden\" name=\"register[billing][customer_type]\" value=\"" + me.opts.customerType + "\"/>" +
             // SW > 5.2
             "<input type=\"hidden\" name=\"register[billing][accountmode]\" value=\"1\"/>" +
             "<input type=\"hidden\" name=\"register[billing][phone]\" value=\"" + me.opts.phone + "\"/>" +
 
             // SW > 5.2 check this, shouldnt be neccessary ->Register::getPostData
-            "<input type=\"hidden\" name=\"register[billing][additional][customer_type]\" value=\"" + me.opts.customerType + "\"/>"
+            "<input type=\"hidden\" name=\"register[billing][additional][customer_type]\" value=\"" + me.opts.customerType + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][salutation]\" value=\"" + me.opts.salutation2 + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][firstname]\" value=\"" + me.opts.firstname2 + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][lastname]\" value=\"" + me.opts.lastname2 + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][company]\" value=\"" + me.opts.company2 + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][department]\" value=\"" + me.opts.department2 + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][street]\" value=\"" + me.opts.street2 + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][city]\" value=\"" + me.opts.city2 + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][zipcode]\" value=\"" + me.opts.zip2 + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][country]\" value=\"" + me.opts.countryCodeShippingID + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][phone]\" value=\"" + me.opts.phone2 + "\"/>"
         );
 
         $(document.body).append(frm);

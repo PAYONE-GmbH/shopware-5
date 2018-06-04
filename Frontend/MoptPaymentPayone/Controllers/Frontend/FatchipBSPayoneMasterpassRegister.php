@@ -67,13 +67,44 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
         $request = $this->Request();
         $params = $request->getParams();
         $session= Shopware()->Session();
+        $addressData = $params['BSPayoneAddressData'];
+        // get shippingcountryID  and billingcountryId from countries
+        $addressData['countryCodeBillingID'] = $this->getCountryIdFromIso($addressData['country']);
+        $addressData['countryCodeShippingID'] = $this->getCountryIdFromIso($addressData['shipping_country']);
+        $addressData['salutation'] = $this->getSalutationFromGender($addressData['gender']);
+            // StefTEst Remove
         $testBefore = $session->offsetGet('sPaymentID');
 
         $session->offsetSet('sPaymentID', $this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
-
+        // StefTEst RovePayone Connector
         $testAfter = $session->offsetGet('sPaymentID');
+        // set flag so we do not get edirected back to shippingpayment
+        $session->offsetSet('moptFormSubmitted', true);
 
+        $this->view->assign('fatchipBSPayone', $addressData);
         $this->view->loadTemplate('frontend/fatchipBSPayoneMasterpassRegister/index.tpl');
+    }
+
+    /**
+     * @ignore <description>
+     * @param $countryIso
+     * @return string
+     */
+    public function getCountryIdFromIso($countryIso)
+    {
+        $countrySql = 'SELECT id FROM s_core_countries WHERE countryiso=?';
+        return Shopware()->Db()->fetchOne($countrySql, [$countryIso]);
+    }
+
+    /**
+     * @ignore <description>
+     * @param $gender
+     * @return string
+     */
+    public function getSalutationFromGender($gender)
+    {
+        $salutation = $gender === 'M' ? 'mr' : 'ms';
+        return $salutation;
     }
 
     /**

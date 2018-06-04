@@ -266,8 +266,13 @@ class FrontendPostDispatch implements SubscriberInterface
                 if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
                     $amazonPayIndex = $index;
                 }
+                if ($payment['name'] === 'mopt_payone__ewallet_masterpass') {
+                    $masterpassIndex = $index;
+                }
+
             }
             unset ($payments[$amazonPayIndex]);
+            unset ($payments[$masterpassIndex]);
             $view->assign('sPayments', $payments);
         }
 

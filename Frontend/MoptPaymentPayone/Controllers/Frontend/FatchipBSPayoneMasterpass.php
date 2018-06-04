@@ -41,7 +41,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
     protected $service = null;
 
 
-
     /**
      * Init payment controller
      *
@@ -73,8 +72,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
 
     public function successAction()
     {
-        $params = $this->Request()->getParams();
-        $this->buildAndCallGetCheckoutAction();
+        $this->buildAndCallGetCheckout();
     }
 
     /**
@@ -84,7 +82,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
      * @param string $walletType
      * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
      */
-    protected function buildAndCallGetCheckoutAction($clearingType = 'wlt', $walletType = 'MPA')
+    protected function buildAndCallGetCheckout($clearingType = 'wlt', $walletType = 'MPA')
     {
         $router = $this->Front()->Router();
         $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
@@ -93,7 +91,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         //create hash
         $basket = Shopware()->Modules()->Basket()->sGetBasket();
         $orderHash = md5(serialize($basket));
-        $this->session->offsetSet('moptOrderHash',$orderHash);
+        $this->session->offsetSet('moptOrderHash', $orderHash);
 
         $request = new Payone_Api_Request_Genericpayment($params);
 
@@ -114,7 +112,18 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         ));
 
         $response = $this->service->request($request);
-        $paydataArray=$response->getPayDataArray();
+        switch ($response->getStatus()) {
+            case\Payone_Api_Enum_ResponseType::OK;
+                $addressData = $response->getPayDataArray();
+
+                $this->forward('register', 'FatchipBSPayoneMasterpassRegister', null, ['BSPayoneAddressData' => $addressData]);
+                break;
+            default:
+                $this->forward('error');
+                break;
+        }
+
+        // Steftest
         //$this->session->offsetSet('fatchipBSPayoneMasterPassWorkOrderId', $response->getWorkorderId());
     }
 

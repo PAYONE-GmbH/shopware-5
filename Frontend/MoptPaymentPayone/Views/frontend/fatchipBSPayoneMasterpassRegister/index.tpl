@@ -34,27 +34,24 @@
 {* Replace Register content with Amazon Widget SW 5.0 *}
 {block name='frontend_register_index_registration'}
     <div id="fatchipBSPayoneMasterpassInformation" hidden
+
          data-fatchipBSPayoneMasterpassRegisterUrl='{url controller="FatchipBSPayoneMasterpassRegister" action="saveRegister" forceSecure}?sTarget=FatchipBSPayoneMasterpassCheckout&sTargetAction=shippingPayment'
-<!--  {*       data-firstname='{$fatchipAddrFirstName}'
-         data-lastname='{$fatchipAddrLastName}'
-         data-email='{$fatchipCTResponse->getEmail()}'
-         data-phone='0' // never set, as precaution use 0 to defeat sw field validation
-         data-street='{$fatchipCTResponse->getAddrStreet()}'
-         data-zip='{$fatchipCTResponse->getAddrZip()}'
-         data-city='{$fatchipCTResponse->getAddrCity()}'
-         data-countryCodeBillingID='{$fatchipAddrCountryCodeID}'
-    *}
-         -->
-    data-firstname='Stefan'
-    data-lastname='Müller'
-    data-email='stefan.mueller@fatchip.de'
-    data-phone='0' // never set, as precaution use 0 to defeat sw field validation
-    data-street='Speyerer Str.3'
-    data-zip='10779'
-    data-city='Berlin'
-    data-countryCodeBillingID='2'
-
-
+         data-firstname='{$fatchipBSPayone.firstname}'
+         data-lastname='{$fatchipBSPayone.lastname}'
+         data-email='{$fatchipBSPayone.email}'
+         data-phone='{$fatchipBSPayone.telephonenumber}' // never set, as precaution use 0 to defeat sw field validation
+         data-street='{$fatchipBSPayone.street}'
+         data-zip='{$fatchipBSPayone.zip}'
+         data-city='{$fatchipBSPayone.city}'
+         data-firstname2='{$fatchipBSPayone.shipping_firstname}'
+         data-lastname2='{$fatchipBSPayone.shipping_firstname}'
+         data-street2='{$fatchipBSPayone.shipping_street}'
+         data-zip2='{$fatchipBSPayone.shipping_zip}'
+         data-city2='{$fatchipBSPayone.shipping_city}'
+         data-phone2='{$fatchipBSPayone.shipping_city}'
+         data-salutation='{$fatchipBSPayone.shipping_telephonenumber}'
+         data-countryCodeBillingID='{$fatchipBSPayone.countryCodeBillingID}'
+         data-countryCodeShippingID='{$fatchipBSPayone.countryCodeShippingID}'
     ></div>
 {/block}
 
