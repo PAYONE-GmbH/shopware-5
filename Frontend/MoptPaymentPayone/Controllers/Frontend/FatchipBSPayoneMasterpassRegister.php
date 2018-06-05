@@ -72,6 +72,8 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
         $addressData['countryCodeBillingID'] = $this->getCountryIdFromIso($addressData['country']);
         $addressData['countryCodeShippingID'] = $this->getCountryIdFromIso($addressData['shipping_country']);
         $addressData['salutation'] = $this->getSalutationFromGender($addressData['gender']);
+        // not in response, reuse billing salutation
+        $addressData['shipping_salutation'] = $addressData['salutation'];
             // StefTEst Remove
         $testBefore = $session->offsetGet('sPaymentID');
 
@@ -83,6 +85,21 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
 
         $this->view->assign('fatchipBSPayone', $addressData);
         $this->view->loadTemplate('frontend/fatchipBSPayoneMasterpassRegister/index.tpl');
+    }
+
+
+    // TODO this should not be neccessary but somehow the parent os not
+    /**
+     * Registers users in shopware.
+     *
+     * Assigns all neccessary values to view
+     * Registration is handled by a jquery plugin
+     *
+     * @return void
+     */
+    public function saveRegisterAction()
+    {
+        return parent::saveRegisterAction();
     }
 
     /**
@@ -116,6 +133,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
     {
         $returnArray = array(
             'saveRegister',
+            'register'
         );
         return $returnArray;
     }

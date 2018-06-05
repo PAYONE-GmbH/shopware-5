@@ -48,8 +48,9 @@
          data-street2='{$fatchipBSPayone.shipping_street}'
          data-zip2='{$fatchipBSPayone.shipping_zip}'
          data-city2='{$fatchipBSPayone.shipping_city}'
-         data-phone2='{$fatchipBSPayone.shipping_city}'
-         data-salutation='{$fatchipBSPayone.shipping_telephonenumber}'
+         data-phone2='{$fatchipBSPayone.shipping_telephonenumber}'
+         data-salutation='{$fatchipBSPayone.salutation}'
+         data-salutation2='{$fatchipBSPayone.shipping_salutation}'
          data-countryCodeBillingID='{$fatchipBSPayone.countryCodeBillingID}'
          data-countryCodeShippingID='{$fatchipBSPayone.countryCodeShippingID}'
     ></div>

@@ -104,12 +104,14 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassCheckout extends Sh
         $this->view->loadTemplate('frontend/fatchipBSPayoneMasterpassCheckout/confirm.tpl');
     }
 
+
     /**
      * {@inheritdoc}
      *
      * @return void
      * @throws Exception
      */
+/*
     public function finishAction()
     {
         parent::finishAction();
@@ -118,6 +120,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassCheckout extends Sh
         Shopware()->Session()->unsetAll();
         Shopware()->Modules()->Basket()->sRefreshBasket();
     }
+*/
 }
 
 

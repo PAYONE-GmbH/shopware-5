@@ -127,27 +127,52 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         //$this->session->offsetSet('fatchipBSPayoneMasterPassWorkOrderId', $response->getWorkorderId());
     }
 
-    /**
-     * Gateway action method
-     *
-     * Creates paymentclass and redirects to Computop URL
-     * Overridden to support recurring payments init
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function gatewayAction()
+    public function gatewayAction($clearingType = 'wlt', $walletType = 'MPA')
     {
-        $payment = $this->getPaymentClassForGatewayAction();
-        /** @var \Fatchip\CTPayment\CTPaymentMethodsIframe\PaypalStandard $payment */
+        $router = $this->Front()->Router();
+        $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        //create hash
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $orderHash = md5(serialize($basket));
+        $this->session->offsetSet('moptOrderHash', $orderHash);
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
 
-        if ($this->utils->isAboCommerceArticleInBasket()) {
-            $payment->setRTF('I');
-            $payment->setTxType('BAID');
+        $request = new Payone_Api_Request_Preauthorization($params);
+
+        $request->setWorkorderId($this->session->offsetGet('fatchipBSPayoneMasterPassWorkOrderId'));
+        $request->setClearingtype($clearingType);
+        $request->setWallettype($walletType);
+        $request->setCurrency("EUR");
+        $request->setAmount($basket['AmountNumeric']);
+        // TODO: use order number
+        $rand = rand(100000, 999999);
+        $request->setReference($rand);
+        $personalData = $this->moptPayoneMain->getParamBuilder()->getPersonalData($userData);
+        $request->setPersonalData($personalData);
+        $deliveryData = $this->moptPayoneMain->getParamBuilder()->getDeliveryData($userData);
+        $request->setDeliveryData($deliveryData);
+
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreAuthorize();
+        $this->session->moptIsAuthorized = false;
+        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+
+        $response = $this->service->preauthorize($request);
+        switch ($response->getStatus()) {
+            case\Payone_Api_Enum_ResponseType::APPROVED;
+
+            // forward to finish
+                //save order
+                $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
+                    'hash' => $orderHash));
+                break;
+            default:
+                $this->forward('error');
+                break;
         }
-        $params = $payment->getRedirectUrlParams();
-        $this->session->offsetSet('fatchipCTRedirectParams', $params);
-        $this->redirect($payment->getHTTPGetURL($params));
     }
 
 

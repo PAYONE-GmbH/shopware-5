@@ -223,6 +223,10 @@ class FrontendPostDispatch implements SubscriberInterface
             $session->offsetSet('moptFormSubmitted', true);
             $action->forward('finish', 'moptPaymentAmazon', null, array('sAGB' => 'on'));
         }
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_masterpass')) {
+            $session->offsetSet('moptFormSubmitted', true);
+            $action->forward('finish', 'FatchipBSPayoneMasterpassCheckout', null, array('sAGB' => 'on'));
+        }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
             if ($session->moptBarzahlenCode) {

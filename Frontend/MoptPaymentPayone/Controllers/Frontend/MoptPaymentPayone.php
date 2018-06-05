@@ -80,6 +80,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
+        if ($action === 'masterpass') {
+            return $this->redirect(array('controller' => 'FatchipBSPayoneMasterpass', 'action' => 'gateway', 'forceSecure' => true));
+        }
+
         if ($action) {
             return $this->redirect(array('action' => $action, 'forceSecure' => true));
         } else {

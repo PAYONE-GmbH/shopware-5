@@ -798,6 +798,21 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone amazonpay
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneMasterpass($paymentName)
+    {
+        if (preg_match('#mopt_payone__ewallet_masterpass#', $paymentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * check if given payment name is payone alipay payment
      *
      * @param string $paymentName
@@ -1296,6 +1311,9 @@ class Mopt_PayonePaymentHelper
         }
         if ($this->isPayoneAlipay($paymentShortName)) {
             return 'alipay';
+        }
+        if ($this->isPayoneMasterpass($paymentShortName)) {
+            return 'masterpass';
         }
         return false;
     }
