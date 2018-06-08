@@ -44,7 +44,7 @@
          data-zip='{$fatchipBSPayone.zip}'
          data-city='{$fatchipBSPayone.city}'
          data-firstname2='{$fatchipBSPayone.shipping_firstname}'
-         data-lastname2='{$fatchipBSPayone.shipping_firstname}'
+         data-lastname2='{$fatchipBSPayone.shipping_lastname}'
          data-street2='{$fatchipBSPayone.shipping_street}'
          data-zip2='{$fatchipBSPayone.shipping_zip}'
          data-city2='{$fatchipBSPayone.shipping_city}'

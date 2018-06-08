@@ -74,6 +74,18 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
         $addressData['salutation'] = $this->getSalutationFromGender($addressData['gender']);
         // not in response, reuse billing salutation
         $addressData['shipping_salutation'] = $addressData['salutation'];
+        // shipping_firstname contains shipping_firstname and shipping_lastname, so split it
+        $nameParts=preg_split("/\s+(?=\S*+$)/",$addressData['shipping_firstname']);
+        // also convert wrong charset of the response, this will be fixed by BSPayone
+        $addressData['shipping_firstname'] = utf8_decode($nameParts[0]);
+        $addressData['shipping_lastname'] = utf8_decode($nameParts[1]);
+
+        $addressData['firstname'] = utf8_decode($addressData['firstname']);
+        $addressData['lastname'] = utf8_decode($addressData['lastname']);
+        $addressData['street'] = utf8_decode($addressData['street']);
+        $addressData['shipping_street'] = utf8_decode($addressData['shipping_street']);
+        $addressData['billing_street'] = utf8_decode($addressData['billing_street']);
+
             // StefTEst Remove
         $testBefore = $session->offsetGet('sPaymentID');
 
