@@ -63,8 +63,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassCheckout extends Sh
     public function shippingPaymentAction()
     {
         parent::shippingPaymentAction();
-        $request = $this->Request();
-        $params = $request->getParams();
         $session = Shopware()->Session();
         $fatchipBSPayoneMasterpassID = $this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass');
         $session->offsetSet('sPaymentID', $fatchipBSPayoneMasterpassID);
@@ -104,23 +102,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassCheckout extends Sh
         $this->view->loadTemplate('frontend/fatchipBSPayoneMasterpassCheckout/confirm.tpl');
     }
 
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return void
-     * @throws Exception
-     */
-/*
-    public function finishAction()
-    {
-        parent::finishAction();
-
-        $this->view->loadTemplate('frontend/fatchipBSPayoneMasterpassCheckout/finish.tpl');
-        Shopware()->Session()->unsetAll();
-        Shopware()->Modules()->Basket()->sRefreshBasket();
-    }
-*/
 }
 
 

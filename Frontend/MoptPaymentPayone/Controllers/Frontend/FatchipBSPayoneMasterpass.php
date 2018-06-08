@@ -129,15 +129,13 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
 
     public function gatewayAction($clearingType = 'wlt', $walletType = 'MPA')
     {
-        $router = $this->Front()->Router();
         $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         //create hash
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
-        $orderHash = md5(serialize($basket));
+        $orderVariables = $this->session['sOrderVariables']->getArrayCopy();
+        $orderHash = md5(serialize($session['sOrderVariables']));
         $this->session->offsetSet('moptOrderHash', $orderHash);
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
 
         $request = new Payone_Api_Request_Preauthorization($params);
 
@@ -145,13 +143,13 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $request->setClearingtype($clearingType);
         $request->setWallettype($walletType);
         $request->setCurrency("EUR");
-        $request->setAmount($basket['AmountNumeric']);
+        $request->setAmount($orderVariables['sAmount']);
         // TODO: use order number
         $rand = rand(100000, 999999);
         $request->setReference($rand);
-        $personalData = $this->moptPayoneMain->getParamBuilder()->getPersonalData($userData);
+        $personalData = $this->moptPayoneMain->getParamBuilder()->getPersonalData($orderVariables['sUserData']);
         $request->setPersonalData($personalData);
-        $deliveryData = $this->moptPayoneMain->getParamBuilder()->getDeliveryData($userData);
+        $deliveryData = $this->moptPayoneMain->getParamBuilder()->getDeliveryData($orderVariables['sUserData']);
         $request->setDeliveryData($deliveryData);
 
         $this->service = $this->payoneServiceBuilder->buildServicePaymentPreAuthorize();
@@ -163,9 +161,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $response = $this->service->preauthorize($request);
         switch ($response->getStatus()) {
             case\Payone_Api_Enum_ResponseType::APPROVED;
-
-            // forward to finish
-                //save order
                 $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
                     'hash' => $orderHash));
                 break;
