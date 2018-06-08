@@ -113,6 +113,11 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
     protected $errorurl = null;
 
     protected $successurl = null;
+
+    /**
+     * @var Payone_Api_Request_Parameter_Invoicing_Transaction
+     */
+    protected $invoicing = null;
     
     /**
      * @param array $data
@@ -469,5 +474,21 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
     public function setSuccessurl($successurl)
     {
         $this->successurl = $successurl;
+    }
+
+    /**
+     * @param Payone_Api_Request_Parameter_Invoicing_Transaction $invoicing
+     */
+    public function setInvoicing(Payone_Api_Request_Parameter_Invoicing_Transaction $invoicing)
+    {
+        $this->invoicing = $invoicing;
+    }
+
+    /**
+     * @return Payone_Api_Request_Parameter_Invoicing_Transaction
+     */
+    public function getInvoicing()
+    {
+        return $this->invoicing;
     }
 }

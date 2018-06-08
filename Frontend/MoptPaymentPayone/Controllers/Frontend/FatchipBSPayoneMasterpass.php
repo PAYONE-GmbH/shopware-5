@@ -84,7 +84,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
      */
     protected function buildAndCallGetCheckout($clearingType = 'wlt', $walletType = 'MPA')
     {
-        $router = $this->Front()->Router();
         $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
@@ -134,10 +133,18 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $params['api_version'] = '3.10';
         //create hash
         $orderVariables = $this->session['sOrderVariables']->getArrayCopy();
-        $orderHash = md5(serialize($session['sOrderVariables']));
+        $orderHash = md5(serialize($this->session['sOrderVariables']));
         $this->session->offsetSet('moptOrderHash', $orderHash);
 
-        $request = new Payone_Api_Request_Preauthorization($params);
+        if ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung') {
+            $request = new Payone_Api_Request_Preauthorization($params);
+            $this->service = $this->payoneServiceBuilder->buildServicePaymentPreAuthorize();
+            $this->session->moptIsAuthorized = false;
+        } else {
+            $request = new Payone_Api_Request_Authorization($params);
+            $this->service = $this->payoneServiceBuilder->buildServicePaymentAuthorize();
+            $this->session->moptIsAuthorized = true;
+        }
 
         $request->setWorkorderId($this->session->offsetGet('fatchipBSPayoneMasterPassWorkOrderId'));
         $request->setClearingtype($clearingType);
@@ -152,15 +159,35 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $deliveryData = $this->moptPayoneMain->getParamBuilder()->getDeliveryData($orderVariables['sUserData']);
         $request->setDeliveryData($deliveryData);
 
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreAuthorize();
-        $this->session->moptIsAuthorized = false;
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
             'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
 
-        $response = $this->service->preauthorize($request);
+        // submit basket
+
+        if (!$config['submitBasket']) {
+            // do nothing
+        } else {
+            $request->setInvoicing($this->moptPayoneMain->getParamBuilder()->getInvoicing($this->getBasket(),$orderVariables['sDispatch'], $orderVariables['sUserData']));
+        }
+
+        if ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung') {
+            $response = $this->service->preauthorize($request);
+        } else {
+            $response = $this->service->authorize($request);
+        }
+
+
         switch ($response->getStatus()) {
             case\Payone_Api_Enum_ResponseType::APPROVED;
+
+                //extract possible clearing data
+                $clearingData = $this->moptPayoneMain->getPaymentHelper()->extractClearingDataFromResponse($response);
+
+                if ($clearingData) {
+                    $this->session->moptClearingData = $clearingData;
+                }
+
                 $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
                     'hash' => $orderHash));
                 break;
