@@ -1,9 +1,11 @@
 <?php
 
+use Shopware\Components\CSRFWhitelistAware;
+
 /**
  * mopt payone payment controller
  */
-class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controllers_Frontend_Payment
+class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
 
     /**
@@ -43,6 +45,28 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->moptPayoneMain = $this->Plugin()->get('MoptPayoneMain');
         $this->moptPayonePaymentHelper = $this->moptPayoneMain->getPaymentHelper();
         $this->session = Shopware()->Session();
+    }
+
+    /**
+     * whitelists Actions for CSRF checks
+     *
+     * it only used here to whitelist iDeal redirects, since
+     * these use Post Requests
+     * 
+     * @return array
+     */
+    public function getWhitelistedCSRFActions()
+    {
+        if ($this->session->isIdealredirect) {
+            return [
+                'success',
+                'failure',
+                'cancel',
+                'finishOrder',
+            ];
+        } else {
+            return [];
+        }
     }
 
     /**
@@ -679,6 +703,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session->offsetUnset('moptIsAuthorized');
         $session->offsetUnset('moptAgbChecked');
         $session->offsetUnset('moptRatepayOrdernum');
+        $session->offsetUnset('isIdealredirect');
     }
 
     /**
