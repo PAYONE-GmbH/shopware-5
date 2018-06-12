@@ -51,7 +51,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * whitelists Actions for CSRF checks
      *
      * it only used here to whitelist iDeal redirects, since
-     * these use
+     * these use Post Requests
      */
     public function getWhitelistedCSRFActions()
     {
