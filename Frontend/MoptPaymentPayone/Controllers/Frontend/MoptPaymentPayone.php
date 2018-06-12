@@ -52,16 +52,18 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      *
      * it only used here to whitelist iDeal redirects, since
      * these use Post Requests
+     * 
+     * @return array
      */
     public function getWhitelistedCSRFActions()
     {
-        if ($this->session->isIdealredirect){
-        return [
-            'success',
-            'failure',
-            'cancel',
-            'finishOrder',
-        ];
+        if ($this->session->isIdealredirect) {
+            return [
+                'success',
+                'failure',
+                'cancel',
+                'finishOrder',
+            ];
         } else {
             return [];
         }
