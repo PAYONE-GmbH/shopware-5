@@ -42,9 +42,9 @@ class Payone_Api_Enum_GenericpaymentAction
 
     const AMAZON_GETORDERREFERENCEDETAILS = "getorderreferencedetails";
 
+    const AMAZON_SETORDERREFERENCEDETAILS = "setorderreferencedetails";
+
     const MASTERPASS_SETCHECKOUT = "setcheckout";
 
     const MASTERPASS_GETCHECKOUT = "getcheckout";
-
-
 }
