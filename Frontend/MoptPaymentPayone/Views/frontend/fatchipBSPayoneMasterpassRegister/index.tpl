@@ -33,6 +33,7 @@
 
 {* Replace Register content with Amazon Widget SW 5.0 *}
 {block name='frontend_register_index_registration'}
+{if !$errorMessage}
     <div id="fatchipBSPayoneMasterpassInformation" hidden
 
          data-fatchipBSPayoneMasterpassRegisterUrl='{url controller="FatchipBSPayoneMasterpassRegister" action="saveRegister" forceSecure}?sTarget=FatchipBSPayoneMasterpassCheckout&sTargetAction=shippingPayment'
@@ -54,5 +55,25 @@
          data-countryCodeBillingID='{$fatchipBSPayone.countryCodeBillingID}'
          data-countryCodeShippingID='{$fatchipBSPayone.countryCodeShippingID}'
     ></div>
+{/if}
+
+{* Error Messages php *}
+{if $errorMessage}
+    <div style="padding-top: 100px">
+      <div class="alert is--error is--rounded">
+           <div class="alert--icon">
+                <i class="icon--element icon--cross"></i>
+           </div>
+           <div id="FatchipBSPayoneErrorContent" style="margin-left: 10%" >
+                {$errorMessage}
+                <ul>
+                     {foreach from=$errorFields item=error_field}
+                          <li>{$error_field}</li>
+                     {/foreach}
+                </ul>
+           </div>
+      </div>
+    </div>
+{/if}
 {/block}
 

@@ -55,6 +55,56 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
     }
 
     /**
+     *
+     * @return void
+     */
+    public function indexAction()
+    {
+        $session = Shopware()->Session();
+        // this has to be set so shipping methods will work
+        $session->offsetSet('sPaymentID', $this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
+
+        if (version_compare(\Shopware::VERSION, '5.2', '>=')) {
+            $register = $this->View()->getAssign('errors');
+            $errors = array_merge($register['personal'], $register['billing'], $register['shipping']);
+        } else {
+            $registerArrObj = $this->View()->getAssign('register')->getArrayCopy();
+            $register = $this->getArrayFromArrayObjs($registerArrObj);
+            $merged_errors = array_merge($register['personal'], $register['billing'], $register['shipping']);
+            $errors = $merged_errors['error_flags'];
+        }
+        if (!empty($errors)) {
+            // first error contains SW error message, unset it
+            unset($errors[array_keys($errors[0])]);
+            $errorMessage = 'Fehler bei der Shop Registrierung:  ' .
+                'Bitte korrigieren Sie in Ihrem Masterpass Konto folgende Angaben:';
+            $this->view->assign('errorMessage', $errorMessage);
+            $this->view->assign('errorFields', array_keys($errors));
+        }
+        $this->view->loadTemplate('frontend/fatchipBSPayoneMasterpassRegister/index.tpl');
+    }
+
+    /**
+     * Converts arrayObjects from view template to an accessible array.
+     *
+     * @param array $arrayObjs Enlight_View_Default->getAssign()->toArray()
+     *
+     * @see    Enlight_View_Default::getAssign()
+     * @return array
+     */
+    private function getArrayFromArrayObjs($arrayObjs)
+    {
+        $array = [];
+        foreach ($arrayObjs as $key => $arrayObj) {
+            $array[$key] = $arrayObj->getArrayCopy();
+            foreach ($array[$key] as $arrayObjKey => $value) {
+                $array[$key][$arrayObjKey] = $value->getArrayCopy();
+            }
+        }
+        return $array;
+    }
+
+    /**
      * Registers users in shopware.
      *
      * Assigns all neccessary values to view
@@ -84,7 +134,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
         $addressData['lastname'] = utf8_decode($addressData['lastname']);
         $addressData['street'] = utf8_decode($addressData['street']);
         $addressData['shipping_street'] = utf8_decode($addressData['shipping_street']);
-        $addressData['billing_street'] = utf8_decode($addressData['billing_street']);
 
             // StefTEst Remove
         $testBefore = $session->offsetGet('sPaymentID');
