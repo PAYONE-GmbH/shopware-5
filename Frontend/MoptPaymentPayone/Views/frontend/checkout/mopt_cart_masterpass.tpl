@@ -3,7 +3,6 @@
 {block name="frontend_checkout_actions_confirm"}
     {$smarty.block.parent}
     <div class="button--container">
-        <!-- <img src="https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_147x034px.svg" onclick="getMasterPassData()" > -->
         <img src="https://masterpass.com/dyn/img/btn/global/mp_chk_btn_147x034px.svg" onclick="getMasterPassData()" >
         <div class="clear"></div>
     </div>
@@ -34,7 +33,6 @@
                 });
             });
         }
-
     </script>
 {/block}
 

@@ -31,6 +31,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
     protected $moptPayonePaymentHelper;
 
     protected $payoneServiceBuilder;
+
     protected $service = null;
 
     /**
@@ -116,40 +117,34 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
     {
         $request = $this->Request();
         $params = $request->getParams();
-        $session= Shopware()->Session();
+        $session = Shopware()->Session();
+
         $addressData = $params['BSPayoneAddressData'];
         // get shippingcountryID  and billingcountryId from countries
         $addressData['countryCodeBillingID'] = $this->getCountryIdFromIso($addressData['country']);
         $addressData['countryCodeShippingID'] = $this->getCountryIdFromIso($addressData['shipping_country']);
         $addressData['salutation'] = $this->getSalutationFromGender($addressData['gender']);
-        // not in response, reuse billing salutation
+        // not in response, re-use billing salutation
         $addressData['shipping_salutation'] = $addressData['salutation'];
         // shipping_firstname contains shipping_firstname and shipping_lastname, so split it
-        $nameParts=preg_split("/\s+(?=\S*+$)/",$addressData['shipping_firstname']);
+        $nameParts = preg_split("/\s+(?=\S*+$)/", $addressData['shipping_firstname']);
         // also convert wrong charset of the response, this will be fixed by BSPayone
         $addressData['shipping_firstname'] = utf8_decode($nameParts[0]);
         $addressData['shipping_lastname'] = utf8_decode($nameParts[1]);
-
         $addressData['firstname'] = utf8_decode($addressData['firstname']);
         $addressData['lastname'] = utf8_decode($addressData['lastname']);
         $addressData['street'] = utf8_decode($addressData['street']);
         $addressData['shipping_street'] = utf8_decode($addressData['shipping_street']);
 
-            // StefTEst Remove
-        $testBefore = $session->offsetGet('sPaymentID');
-
         $session->offsetSet('sPaymentID', $this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
-        // StefTEst RovePayone Connector
-        $testAfter = $session->offsetGet('sPaymentID');
-        // set flag so we do not get edirected back to shippingpayment
+        // set flag so we do not get redirected back to shippingpayment
         $session->offsetSet('moptFormSubmitted', true);
 
         $this->view->assign('fatchipBSPayone', $addressData);
         $this->view->loadTemplate('frontend/fatchipBSPayoneMasterpassRegister/index.tpl');
     }
 
-
-    // TODO this should not be neccessary but somehow the parent os not
+    // TODO this method should not be necessary recheck
     /**
      * Registers users in shopware.
      *

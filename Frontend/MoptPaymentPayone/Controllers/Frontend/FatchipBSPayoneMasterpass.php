@@ -58,7 +58,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
     }
 
-
     public function indexAction()
     {
         $this->forward('gateway');
@@ -87,7 +86,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
-        //create hash
         $basket = Shopware()->Modules()->Basket()->sGetBasket();
         $orderHash = md5(serialize($basket));
         $this->session->offsetSet('moptOrderHash', $orderHash);
@@ -118,12 +116,10 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
                 $this->forward('register', 'FatchipBSPayoneMasterpassRegister', null, ['BSPayoneAddressData' => $addressData]);
                 break;
             default:
+                // TODO forward error from response
                 $this->forward('error');
                 break;
         }
-
-        // Steftest
-        //$this->session->offsetSet('fatchipBSPayoneMasterPassWorkOrderId', $response->getWorkorderId());
     }
 
     public function gatewayAction($clearingType = 'wlt', $walletType = 'MPA')
@@ -177,17 +173,12 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
             $response = $this->service->authorize($request);
         }
 
-
         switch ($response->getStatus()) {
             case\Payone_Api_Enum_ResponseType::APPROVED;
-
-                //extract possible clearing data
                 $clearingData = $this->moptPayoneMain->getPaymentHelper()->extractClearingDataFromResponse($response);
-
                 if ($clearingData) {
                     $this->session->moptClearingData = $clearingData;
                 }
-
                 $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
                     'hash' => $orderHash));
                 break;
@@ -195,67 +186,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
                 $this->forward('error');
                 break;
         }
-    }
-
-
-    /**
-     * Recurring payment action method.
-     */
-    public function recurringAction()
-    {
-        $params = $this->Request()->getParams();
-        $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
-        $payment = $this->getPaymentClassForGatewayAction();
-        $payment->setRTF('R');
-        $requestParams = $payment->getRedirectUrlParams();
-        $requestParams['BillingAgreementID'] = $this->getParamPaypalBillingAgreementId($params['orderId']);
-        $response = $this->plugin->callComputopService($requestParams, $payment, 'PaypalRecurring', $payment->getRecurringURL());
-
-        if ($this->Request()->isXmlHttpRequest()) {
-            if ($response->getStatus() !== CTEnumStatus::OK) {
-                $data = [
-                    'success' => false,
-                    'message' => "Error",
-                ];
-            } else {
-                $orderNumber = $this->saveOrder(
-                    $response->getTransID(),
-                    $response->getPayID(),
-                    self::PAYMENTSTATUSRESERVED
-                );
-                $this->saveTransactionResult($response);
-                $this->updateRefNrWithComputopFromOrderNumber($orderNumber);
-                $data = [
-                    'success' => true,
-                    'data' => [
-                        'orderNumber' => $orderNumber,
-                        'transactionId' => $response->getTransID(),
-                    ],
-                ];
-            }
-            echo Zend_Json::encode($data);
-        }
-    }
-
-    /**
-     * returns paypal billing agreementId from
-     * the last order to use it to authorize
-     * recurring payments
-     *
-     * @param string $orderNumber shopware order-number
-     *
-     * @return boolean | string paypal biilingAgreementId
-     */
-    protected function getParamPaypalBillingAgreementId($orderNumber)
-    {
-        $order = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['id' => $orderNumber]);
-        $agreementId = false;
-        if ($order) {
-            $orderAttribute = $order->getAttribute();
-            $agreementId = $orderAttribute->getfatchipctPaypalbillingagreementid();
-
-        }
-        return $agreementId;
     }
 }
 
