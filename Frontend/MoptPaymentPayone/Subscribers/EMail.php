@@ -50,6 +50,7 @@ class EMail implements SubscriberInterface
         $variables = $args->getReturn();
         $session = Shopware()->Session();
         $moptRatepayOrdernum = $session->offsetGet('moptRatepayOrdernum');
+        $bsPayoneMasterpassOrdernum = $session->offsetGet('BSPayoneMasterpassOrdernum');
 
         if ($session->moptClearingData) {
             $variables['additional']['moptPayoneClearingData'] = $session->moptClearingData;
@@ -57,6 +58,10 @@ class EMail implements SubscriberInterface
 
         if ($moptRatepayOrdernum) {
             $variables['ordernumber'] = $moptRatepayOrdernum;
+        }
+
+        if ($bsPayoneMasterpassOrdernum) {
+            $variables['ordernumber'] = $bsPayoneMasterpassOrdernum;
         }
 
         $args->setReturn($variables);

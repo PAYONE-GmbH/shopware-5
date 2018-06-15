@@ -609,6 +609,24 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
+        if (!empty($session['BSPayoneMasterpassOrdernum'])){
+
+            $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
+            $orderId = Shopware()->Db()->fetchOne($sql, $txId);
+
+            // replace the new order number with the already reserved one for Ratepay Payments
+            $sql = 'UPDATE  `s_order` SET ordernumber = ? WHERE transactionID = ?';
+            Shopware()->Db()->query($sql, array($session['BSPayoneMasterpassOrdernum'], $txId));
+
+            //and update the new order number with the already reserved one for order_details
+            $sql = 'UPDATE  `s_order_details` SET ordernumber = ? WHERE orderID = ?';
+            Shopware()->Db()->query($sql, array($session['BSPayoneMasterpassOrdernum'], $orderId));
+
+            // also update Ordernumber in Session
+            $session['sOrderVariables']->sOrderNumber = $session['BSPayoneMasterpassOrdernum'];
+            $session->offsetUnset('BSPayoneMasterpassOrdernum');
+        }
+
         if (!empty($session['moptRatepayOrdernum'])){
 
             $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
