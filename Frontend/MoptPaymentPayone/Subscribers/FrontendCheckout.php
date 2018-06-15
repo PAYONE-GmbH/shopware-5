@@ -197,7 +197,6 @@ class FrontendCheckout implements SubscriberInterface
 
 
         if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isMasterpassActive()) {
-            //$view->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
             $view->extendsTemplate('frontend/checkout/ajax_cart_masterpass.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_cart_masterpass.tpl');
         }
@@ -227,6 +226,7 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         $view->assign('moptAgbChecked', $session->moptAgbChecked);
+        $view->assign('BSPayoneMode', $config['liveMode']);
     }
 
     protected function isPayPalEcsActive($checkoutController)
