@@ -66,7 +66,11 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
     public function errorAction()
     {
         $params = $this->Request()->getParams();
-        die(var_dump($params));
+        // set errors in session so we can use the error handling in MoptPayment Controller
+        $this->session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()
+            ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $params['response']->getErrorcode());
+        $this->forward('error', 'MoptPaymentPayone', null);
+
     }
 
     public function successAction()
@@ -116,8 +120,10 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
                 $this->forward('register', 'FatchipBSPayoneMasterpassRegister', null, ['BSPayoneAddressData' => $addressData]);
                 break;
             default:
-                // TODO forward error from response
-                $this->forward('error');
+                // set errors in session so we can use the error handling in MoptPayment Controller
+                $this->session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()
+                    ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
+                $this->forward('error', 'MoptPaymentPayone', null);
                 break;
         }
     }
@@ -183,7 +189,10 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
                     'hash' => $orderHash));
                 break;
             default:
-                $this->forward('error');
+                // set errors in session so we can use the error handling in MoptPayment Controller
+                $this->session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()
+                    ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
+                $this->forward('error', 'MoptPaymentPayone', null);
                 break;
         }
     }
