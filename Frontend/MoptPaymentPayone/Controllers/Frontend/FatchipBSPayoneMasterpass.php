@@ -130,7 +130,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $request->setPaydata($paydata);
         $request->setClearingtype($clearingType);
         $request->setWallettype($walletType);
-        $request->setCurrency("EUR");
+        $request->setCurrency( $this->getCurrencyShortName());
         $request->setAmount($basket['AmountNumeric']);
 
         $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
@@ -184,7 +184,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $request->setWorkorderId($this->session->offsetGet('fatchipBSPayoneMasterPassWorkOrderId'));
         $request->setClearingtype($clearingType);
         $request->setWallettype($walletType);
-        $request->setCurrency("EUR");
+        $request->setCurrency( $this->getCurrencyShortName());
         $request->setAmount($orderVariables['sAmount']);
         // TODO: use order number
         $rand = rand(100000, 999999);
