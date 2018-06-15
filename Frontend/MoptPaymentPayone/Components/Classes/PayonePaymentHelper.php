@@ -116,7 +116,8 @@ class Mopt_PayonePaymentHelper
     /**
      * delete saved payment data
      *
-     * @param string $userId
+     * @param $userId
+     * @throws Zend_Db_Adapter_Exception
      */
     public function deletePaymentData($userId)
     {
@@ -171,8 +172,9 @@ class Mopt_PayonePaymentHelper
     /**
      * save payment data
      *
-     * @param string $userId
-     * @param array $paymentData
+     * @param $userId
+     * @param $paymentData
+     * @throws Zend_Db_Adapter_Exception
      */
     public function savePaymentData($userId, $paymentData)
     {
@@ -185,7 +187,8 @@ class Mopt_PayonePaymentHelper
     /**
      * set configured default payment as payment method
      *
-     * @param string $userId
+     * @param $userId
+     * @throws Zend_Db_Adapter_Exception
      */
     public function setConfiguredDefaultPaymentAsPayment($userId)
     {
@@ -223,13 +226,13 @@ class Mopt_PayonePaymentHelper
     /**
      * extract barzahlen code to embed on checkout finish page from response object
      *
-     * @param object $response
-     * @return boolean/array
+     * @param $response
+     * @return bool|string
      */
     public function extractBarzahlenCodeFromResponse($response)
     {
         if (!method_exists($response, 'getPaydata')) {
-            return;
+            return false;
         }
         $payData = $response->getPaydata();
         if (!$payData) {
@@ -250,7 +253,7 @@ class Mopt_PayonePaymentHelper
      * extract Payolution Clearingdata on checkout finish page from response object
      *
      * @param object $response
-     * @return boolean/array
+     * @return boolean|array
      */
     public function extractPayolutionClearingDataFromResponse($response)
     {
@@ -1048,8 +1051,8 @@ class Mopt_PayonePaymentHelper
     /**
      * retrieve multilang errorcode based on context and errorcode
      *
-     * @param string $context
-     * @param string $errorCode
+     * @param string|bool $context
+     * @param string|bool $errorCode
      * @return string
      */
     public function moptGetErrorMessageFromErrorCodeViaSnippet($context = false, $errorCode = false)
@@ -1075,7 +1078,7 @@ class Mopt_PayonePaymentHelper
      */
     public function getCreditCardCheckErrorMessages()
     {
-        $errorMessages = array();
+        $errorMessages = [];
         $namespace = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages');
         $errorMessages['general'] = $namespace->get(
             'creditCardCheckerrorMessage',
