@@ -9,20 +9,15 @@
     <script>
         function getMasterPassData(){
 
+            {if $BSPayoneMode == '1'}
+            $.getScript('https://www.masterpass.com/lightbox/Switch/integration/MasterPass.client.js');
+            {else}
             $.getScript('https://sandbox.masterpass.com/lightbox/Switch/integration/MasterPass.client.js');
+            {/if}
+
             $.post('{url controller="moptAjaxPayone" action="buildAndCallSetCheckout" forceSecure}', function (response)
             {
                 var data = $.parseJSON(response);
-                console.log("token:");
-                console.log(data.token);
-                console.log("checkoutid:");
-                console.log(data.merchantcheckoutid);
-                console.log("callbackurl:");
-                console.log(data.callbackurl);
-                console.log("allowedcardtypes:");
-                console.log(data.allowedcardtypes);
-                console.log("version:");
-                console.log(data.version);
 
                 MasterPass.client.checkout({
                     "requestToken": data.token,
