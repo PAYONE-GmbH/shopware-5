@@ -12,6 +12,7 @@ $.plugin("fatchipBSPayoneMasterpass", {
         //birthdayMonth: false,
         //birthdayYear: false,
         street: false,
+        additionalAddressLine1: false,
         zip: false,
         city: false,
         countryCodeBillingID: false,
@@ -23,6 +24,7 @@ $.plugin("fatchipBSPayoneMasterpass", {
         company2: "",
         department2: "",
         street2: false,
+        additionalAddressLine1shipping: false,
         zip2: false,
         city2: false,
         countryCodeShippingID: false
@@ -53,6 +55,7 @@ $.plugin("fatchipBSPayoneMasterpass", {
             "<input type=\"hidden\" name=\"register[personal][phone]\" value=\"" + me.opts.phone + "\"/>" +
 
             "<input type=\"hidden\" name=\"register[billing][street]\" value=\"" + me.opts.street + "\"/>" +
+            "<input type=\"hidden\" name=\"register[billing][additionalAddressLine1]\" value=\"" + me.opts.additionalAddressLine1 + "\"/>" +
             "<input type=\"hidden\" name=\"register[billing][city]\" value=\"" + me.opts.city + "\"/>" +
             "<input type=\"hidden\" name=\"register[billing][zipcode]\" value=\"" + me.opts.zip + "\"/>" +
             "<input type=\"hidden\" name=\"register[billing][country]\" value=\"" + me.opts.countryCodeBillingID + "\"/>" +
@@ -70,6 +73,7 @@ $.plugin("fatchipBSPayoneMasterpass", {
             "<input type=\"hidden\" name=\"register[shipping][company]\" value=\"" + me.opts.company2 + "\"/>" +
             "<input type=\"hidden\" name=\"register[shipping][department]\" value=\"" + me.opts.department2 + "\"/>" +
             "<input type=\"hidden\" name=\"register[shipping][street]\" value=\"" + me.opts.street2 + "\"/>" +
+            "<input type=\"hidden\" name=\"register[shipping][additionalAddressLine1]\" value=\"" + me.opts.additionalAddressLine1shipping + "\"/>" +
             "<input type=\"hidden\" name=\"register[shipping][city]\" value=\"" + me.opts.city2 + "\"/>" +
             "<input type=\"hidden\" name=\"register[shipping][zipcode]\" value=\"" + me.opts.zip2 + "\"/>" +
             "<input type=\"hidden\" name=\"register[shipping][country]\" value=\"" + me.opts.countryCodeShippingID + "\"/>" +
