@@ -33,7 +33,7 @@
     <a class="btn" href="{url controller=checkout action=cart forceSecure}" title="{s namespace='frontend/MoptPaymentPayone/payment' name=PaymentLinkChangeBasket}Warenkorb ändern{/s}">
       {s namespace='frontend/MoptPaymentPayone/payment' name=PaymentLinkChangeBasket}{/s}
     </a>
-    <a class="btn" href="{url controller=account action=payment sTarget=checkout sChange=1 forceSecure}" title="{s namespace='frontend/MoptPaymentPayone/payment' name=PaymentLinkChange}Zahlungsart ändern{/s}">
+    <a class="btn" href="{url controller=checkout action=shippingPayment sTarget=checkout forceSecure}" title="{s namespace='frontend/MoptPaymentPayone/payment' name=PaymentLinkChange}Zahlungsart ändern{/s}">
       {s namespace='frontend/MoptPaymentPayone/payment' name=PaymentLinkChange}{/s}
     </a>
   </div>
@@ -43,9 +43,10 @@
 {block name='frontend_index_actions'}{/block}
 
 {block name="frontend_index_header_javascript_jquery" append}
-  <script async="async"
-          src='https://static-eu.payments-amazon.com/OffAmazonPayments/de/sandbox/lpa/js/Widgets.js'>
-  </script>
+    <script async="async"
+        {if $payoneAmazonPayMode == 1} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js'> {/if}
+        {if $payoneAmazonPayMode == 0} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'>{/if}
+    </script>
   <script>
       window.onAmazonLoginReady = function () {
           // console.log("Amazon Logout");

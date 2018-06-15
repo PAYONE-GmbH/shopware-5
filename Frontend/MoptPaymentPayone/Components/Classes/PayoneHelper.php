@@ -519,6 +519,26 @@ class Mopt_PayoneHelper
         Shopware()->Models()->flush();
     }
 
+    /**
+     * save ratepay ban date
+     *
+     * @param string $userId
+     * @return mixed
+     */
+    public function saveRatepayBanDate($userId)
+    {
+        if (!$userId) {
+            return;
+        }
+
+        $user          = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
+        $userAttribute = $this->getOrCreateUserAttribute($user);
+
+        $userAttribute->setMoptPayoneRatepayBan(date('Y-m-d'));
+        Shopware()->Models()->persist($userAttribute);
+        Shopware()->Models()->flush();
+    }
+
   /**
    * save check error
    *
@@ -1201,6 +1221,31 @@ class Mopt_PayoneHelper
         return $userConsumerScoreData;
     }
 
+
+    /**
+     * get ratepay ban date
+     *
+     * @param string $userId
+     * @return array
+     */
+    public function getRatepayBanDateFromUserId($userId)
+    {
+        $ratepayBanDate = null;
+        $sql    = 'SELECT `mopt_payone_ratepay_ban` '
+            . 'FROM `s_user_attributes` WHERE userID = ?';
+        $result = Shopware()->Db()->fetchAll($sql, $userId);
+
+        if ($result) {
+            $ratepayBanDate = DateTime::createFromFormat(
+                'Y-m-d',
+                $result[0]['mopt_payone_ratepay_ban']
+            );
+        }
+
+        return $ratepayBanDate;
+    }
+
+
   /**
    * get address check data
    *
@@ -1358,15 +1403,18 @@ class Mopt_PayoneHelper
 
     public function getPayoneAmazonPayConfig()
     {
+        // use latest config
+        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_amazon_pay";
+        $latest = Shopware()->Db()->fetchOne($sql);
+
         /**
          * @var $config \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay
          */
         $config =  Shopware()->Models()->find(
             'Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay',
-            1
+            $latest
         );
         return $config;
     }
-
 
 }

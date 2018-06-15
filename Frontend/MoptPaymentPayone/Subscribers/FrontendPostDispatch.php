@@ -108,11 +108,21 @@ class FrontendPostDispatch implements SubscriberInterface
             return;
         }
 
+        // ignore ajax editor
+        if ($action === 'ajaxEditor') {
+            return;
+        }
+
         $controllerName = $request->getControllerName();
 
         $this->setCorrectViewsFolder();
 
         $session = Shopware()->Session();
+
+        // get paymentId from view instead of sGetUserData
+        $paymentId = $view->sPayment['id'];
+        $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+        $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($paymentId);
 
         if ($session->moptMandateData) {
             $view->assign('moptMandateData', $session->moptMandateData);
@@ -145,9 +155,8 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('fcPayolutionConfigInstallment', $moptPayoneData['payolutionConfigInstallment']);
             $view->assign('moptRatepayConfig', $moptPayoneData['moptRatepayConfig']);
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
-            $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-            $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
-            if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($moptPaymentName)) {
+            $paymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
+            if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_creditcard';
             }
             $view->assign('sFormData', $moptPayoneFormData);
@@ -302,8 +311,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 // and update order variables in session
                 $session['sOrderVariables'] = new \ArrayObject($view->getAssign(), \ArrayObject::ARRAY_AS_PROPS);
             }
-            // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
-
         }
 
         if ($controllerName == 'moptAjaxPayone') {

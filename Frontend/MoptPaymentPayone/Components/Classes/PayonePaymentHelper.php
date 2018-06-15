@@ -1078,7 +1078,7 @@ class Mopt_PayonePaymentHelper
      */
     public function getCreditCardCheckErrorMessages()
     {
-        $errorMessages = [];
+        $errorMessages = array();
         $namespace = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages');
         $errorMessages['general'] = $namespace->get(
             'creditCardCheckerrorMessage',
