@@ -30,8 +30,21 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
      */
     protected $moptPayonePaymentHelper;
 
+    /**
+     * PayOne Builder
+     *
+     * @var Payone_Builder
+     */
     protected $payoneServiceBuilder;
 
+    /**
+     * @var Enlight_Components_Session_Namespace
+     */
+    protected $session;
+
+    /**
+     * @var Payone_Api_Service_Payment_Genericpayment
+     */
     protected $service = null;
 
     /**
@@ -56,6 +69,9 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
     }
 
     /**
+     * This methods loads the template used by the auto registration via the jquery plugin
+     * If a registration is not successful gets errors from failed registration attempts
+     * and shows them to the user
      *
      * @return void
      */
@@ -142,20 +158,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
 
         $this->view->assign('fatchipBSPayone', $addressData);
         $this->view->loadTemplate('frontend/fatchipBSPayoneMasterpassRegister/index.tpl');
-    }
-
-    // TODO this method should not be necessary recheck
-    /**
-     * Registers users in shopware.
-     *
-     * Assigns all neccessary values to view
-     * Registration is handled by a jquery plugin
-     *
-     * @return void
-     */
-    public function saveRegisterAction()
-    {
-        return parent::saveRegisterAction();
     }
 
     /**

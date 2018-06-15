@@ -36,8 +36,14 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
      */
     protected $payoneServiceBuilder;
 
+    /**
+     * @var Enlight_Components_Session_Namespace
+     */
     protected $session;
 
+    /**
+     * @var Payone_Api_Service_Payment_Genericpayment
+     */
     protected $service = null;
 
 
@@ -58,11 +64,24 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
     }
 
+    /**
+     * Method will be called after
+     * checkout confirm
+     *
+     * @return void
+     */
     public function indexAction()
     {
         $this->forward('gateway');
     }
 
+    /**
+     * Method will be called when something goes wrong
+     * after masterpass login
+     *
+     * @return void
+     * @throws Exception
+     */
     public function errorAction()
     {
         $params = $this->Request()->getParams();
@@ -70,9 +89,15 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $this->session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()
             ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $params['response']->getErrorcode());
         $this->forward('error', 'MoptPaymentPayone', null);
-
     }
 
+    /**
+     * Method will be called after successful
+     * masterpass login
+     *
+     * @return void
+     * @throws Exception
+     */
     public function successAction()
     {
         $this->buildAndCallGetCheckout();
@@ -83,7 +108,8 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
      *
      * @param string $clearingType
      * @param string $walletType
-     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     * @return void
+     * @throws Exception
      */
     protected function buildAndCallGetCheckout($clearingType = 'wlt', $walletType = 'MPA')
     {
@@ -128,6 +154,13 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         }
     }
 
+    /**
+     * calls the BSPayone API
+     *
+     * @param string $clearingType
+     * @param string $walletType
+     * @throws Exception
+     */
     public function gatewayAction($clearingType = 'wlt', $walletType = 'MPA')
     {
         $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
@@ -164,8 +197,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
             'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
-
-        // submit basket
 
         if (!$config['submitBasket']) {
             // do nothing
