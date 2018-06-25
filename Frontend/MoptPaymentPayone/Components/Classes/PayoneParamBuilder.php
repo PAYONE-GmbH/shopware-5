@@ -1016,6 +1016,8 @@ class Mopt_PayoneParamBuilder
         }
 
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'IDL') {
+            $session = Shopware()->Session();
+            $session->offsetSet('isIdealredirect', true);
             $params['onlinebanktransfertype'] = 'IDL';
             $params['bankcountry'] = $paymentData['mopt_payone__ideal_bankcountry'];
             $params['bankgrouptype'] = $paymentData['mopt_payone__ideal_bankgrouptype'];

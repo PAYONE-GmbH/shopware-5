@@ -222,10 +222,6 @@ class FrontendPostDispatch implements SubscriberInterface
             unset($session->moptBarzahlenCode);
         }
 
-        $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($userData['additional']['payment']['id']);
-
         // for amazon Pay redirect directly to finish instead of confirm
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay')) {
