@@ -34,8 +34,6 @@ $.plugin("fatchipBSPayoneMasterpass", {
         "use strict";
         var me = this;
         me.applyDataAttributes();
-        // TESTING
-        console.log(me.opts);
         var frm = $("<form>", {
             "action": me.opts.fatchipBSPayoneMasterpassRegisterUrl,
             "method": "post"
