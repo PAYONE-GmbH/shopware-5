@@ -151,6 +151,8 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
         $addressData['lastname'] = utf8_decode($addressData['lastname']);
         $addressData['street'] = utf8_decode($addressData['street']);
         $addressData['shipping_street'] = utf8_decode($addressData['shipping_street']);
+        $addressData['shipping_addressaddition'] = utf8_decode($addressData['shipping_addressaddition']);
+        $addressData['addressaddition'] = utf8_decode($addressData['addressaddition']);
 
         $session->offsetSet('sPaymentID', $this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
         // set flag so we do not get redirected back to shippingpayment
