@@ -83,6 +83,7 @@ class Payone_Api_Service_Payment_Genericpayment extends Payone_Api_Service_Payme
             $this->validateRequest($request);
 
             $requestParams = $this->getMapperRequest()->map($request);
+            unset($requestParams['data']);
 
             $responseRaw = $this->getAdapter()->request($requestParams);
 

@@ -996,6 +996,57 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $response;
     }
 
+    /**
+     * prepare and do payment server api call
+     *
+     * @param string $clearingType
+     * @param string $walletType
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     */
+    protected function buildAndCallSetCheckoutAction($clearingType = 'wlt', $walletType = 'MPA')
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $router = $this->Front()->Router();
+        $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        //create hash
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $orderHash = md5(serialize($basket));
+        Shopware()->Session()->offsetSet('moptOrderHash',$orderHash);
+
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::MASTERPASS_SETCHECKOUT)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'originURL', 'data' => $router->assemble(['controller' => 'FatchipBSPayoneMasterpass', 'action' => 'index', 'forceSecure' => true]))
+        ));
+
+        $request->setPaydata($paydata);
+        $request->setClearingtype($clearingType);
+        $request->setWallettype($walletType);
+        $request->setCurrency("EUR");
+        $request->setAmount($basket['AmountNumeric']);
+        $request->setBackurl($router->assemble(['controller' => 'FatchipBSPayoneMasterpass', 'action' => 'register', 'forceSecure' => true]));
+        $request->setSuccessurl($router->assemble(['controller' => 'FatchipBSPayoneMasterpass', 'action' => 'success', 'forceSecure' => true]));
+        $request->setErrorurl($router->assemble(['controller' => 'FatchipBSPayoneMasterpass', 'action' => 'error', 'forceSecure' => true]));
+
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+
+        $response = $this->service->request($request);
+        $paydataArray=$response->getPayDataArray();
+        $this->session->offsetSet('fatchipBSPayoneMasterPassWorkOrderId', $response->getWorkorderId());
+
+        $encoded = json_encode($paydataArray);
+        echo $encoded;
+    }
+
     protected function isBillingAddressSupported($country){
 
         $countries = $this->moptPayoneMain->getPaymentHelper()

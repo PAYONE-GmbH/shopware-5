@@ -496,6 +496,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE AliPay',
                 'template' => 'mopt_paymentmean_alipay_ewallet.tpl',
                 'position' => 35,),
+            array(
+                'name' => 'mopt_payone__ewallet_masterpass',
+                'description' => 'PAYONE Masterpass',
+                'template' => null,
+                'position' => 36,),
         );
     }
 

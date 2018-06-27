@@ -52,7 +52,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      *
      * it only used here to whitelist iDeal redirects, since
      * these use Post Requests
-     * 
+     *
      * @return array
      */
     public function getWhitelistedCSRFActions()
@@ -102,6 +102,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 $this->session->moptMandateAgreementError = true;
                 $action = false;
             }
+        }
+
+        if ($action === 'masterpass') {
+            return $this->redirect(array('controller' => 'FatchipBSPayoneMasterpass', 'action' => 'gateway', 'forceSecure' => true));
         }
 
         if ($action) {
@@ -629,6 +633,24 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
+        if (!empty($session['BSPayoneMasterpassOrdernum'])){
+
+            $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
+            $orderId = Shopware()->Db()->fetchOne($sql, $txId);
+
+            // replace the new order number with the already reserved one for Ratepay Payments
+            $sql = 'UPDATE  `s_order` SET ordernumber = ? WHERE transactionID = ?';
+            Shopware()->Db()->query($sql, array($session['BSPayoneMasterpassOrdernum'], $txId));
+
+            //and update the new order number with the already reserved one for order_details
+            $sql = 'UPDATE  `s_order_details` SET ordernumber = ? WHERE orderID = ?';
+            Shopware()->Db()->query($sql, array($session['BSPayoneMasterpassOrdernum'], $orderId));
+
+            // also update Ordernumber in Session
+            $session['sOrderVariables']->sOrderNumber = $session['BSPayoneMasterpassOrdernum'];
+            $session->offsetUnset('BSPayoneMasterpassOrdernum');
+        }
+
         if (!empty($session['moptRatepayOrdernum'])){
 
             $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
@@ -950,7 +972,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 $request->setBusinessrelation(Payone_Api_Enum_BusinessrelationType::B2B);
             }
         }
-      
+
         if ($payment) {
             $request->setPayment($payment);
         }
@@ -1493,7 +1515,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             FROM s_order_basket
             WHERE sessionID = ?
             AND ordernumber != "sw-surcharge";',
-            array($this->session->get('sessionId'))
+            [$this->session->get('sessionId')]
         );
 
         foreach ($basketArticles as $article) {

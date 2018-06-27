@@ -53,9 +53,14 @@ class ControllerPath implements SubscriberInterface
             => 'moptRegisterController_Frontend_MoptAddressPayone',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptAccountPayone'
             => 'moptRegisterController_Frontend_MoptAccountPayone',
-
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptPaymentAmazon'
             => 'moptRegisterController_Frontend_MoptPaymentAmazon',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_FatchipBSPayoneMasterpassRegister'
+            => 'onGetFrontendControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_FatchipBSPayoneMasterpassCheckout'
+            => 'onGetFrontendControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_FatchipBSPayoneMasterpass'
+            => 'onGetFrontendControllerPath',
             //Backend
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptConfigPayone' => 'onGetConfigControllerBackend',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptApilogPayone' => 'onGetApilogControllerBackend',
@@ -73,6 +78,17 @@ class ControllerPath implements SubscriberInterface
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneRatepay' => 'onGetBackendControllerRatepay',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneAmazonPay' => 'onGetBackendControllerAmazonPay',
         );
+    }
+
+    /**
+     * Provide path to custom frontend controllers
+     * @param \Enlight_Event_EventArgs $args
+     * @return string
+     */
+    public function onGetFrontendControllerPath(\Enlight_Event_EventArgs $args)
+    {
+        $controllerName = $args->getRequest()->getControllerName();
+        return $this->path . 'Controllers/Frontend/' . $controllerName . '.php';
     }
     
     /**

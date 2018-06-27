@@ -228,6 +228,10 @@ class FrontendPostDispatch implements SubscriberInterface
             $session->offsetSet('moptFormSubmitted', true);
             $action->forward('finish', 'moptPaymentAmazon', null, array('sAGB' => 'on'));
         }
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_masterpass')) {
+            $session->offsetSet('moptFormSubmitted', true);
+            $action->forward('finish', 'FatchipBSPayoneMasterpassCheckout', null, array('sAGB' => 'on'));
+        }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
             if ($session->moptBarzahlenCode) {
@@ -271,8 +275,13 @@ class FrontendPostDispatch implements SubscriberInterface
                 if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
                     $amazonPayIndex = $index;
                 }
+                if ($payment['name'] === 'mopt_payone__ewallet_masterpass') {
+                    $masterpassIndex = $index;
+                }
+
             }
             unset ($payments[$amazonPayIndex]);
+            unset ($payments[$masterpassIndex]);
             $view->assign('sPayments', $payments);
         }
 

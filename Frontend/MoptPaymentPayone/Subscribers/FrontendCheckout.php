@@ -223,6 +223,12 @@ class FrontendCheckout implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_cart_amazon.tpl');
         }
 
+
+        if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isMasterpassActive()) {
+            $view->extendsTemplate('frontend/checkout/ajax_cart_masterpass.tpl');
+            $view->extendsTemplate('frontend/checkout/mopt_cart_masterpass.tpl');
+        }
+
         if ($templateSuffix === '' && $this->isPayPalEcsActive($subject) && ($imageUrl = $this->moptPayoneShortcutImgURL())) {
             $view->assign('moptPaypalShortcutImgURL', $imageUrl);
             $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
@@ -248,6 +254,7 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         $view->assign('moptAgbChecked', $session->moptAgbChecked);
+        $view->assign('BSPayoneMode', $config['liveMode']);
     }
 
     protected function isPayPalEcsActive($checkoutController)
