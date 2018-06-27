@@ -191,6 +191,9 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $request->setPersonalData($personalData);
         $deliveryData = $this->moptPayoneMain->getParamBuilder()->getDeliveryData($orderVariables['sUserData']);
         $request->setDeliveryData($deliveryData);
+        $transactionStatusPushCustomParam = 'session-' . Shopware()->Shop()->getId()
+            . '|' . $this->admin->sSYSTEM->sSESSION_ID . '|' . $orderHash;
+        $request->setParam($transactionStatusPushCustomParam);
 
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
             'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
