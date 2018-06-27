@@ -1568,7 +1568,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if (!$isRatepayReferenceInSession) {
             $sOrder = new sOrder();
             $reservedOrderNr = $sOrder->sGetOrderNumber();
-            $referencePrefix = $this->moptGetRatePayReferencePrefix();
+            // TODO deactivated for now because it is causing unintended side-effects
+            // $referencePrefix = $this->moptGetRatePayReferencePrefix();
+            $referencePrefix = '';
             $reservedOrderNrAsReference = $referencePrefix.$reservedOrderNr;
         }  else {
             $reservedOrderNrAsReference = $session->offsetGet('moptRatepayOrdernum');

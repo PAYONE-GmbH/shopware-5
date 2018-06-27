@@ -244,7 +244,9 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         if (!$isMasterpassOrderNumInSession) {
             $sOrder = new sOrder();
             $reservedOrderNr = $sOrder->sGetOrderNumber();
-            $referencePrefix = $this->getPrefix();
+            // TODO deactivated for now because it is causing unintended side-effects
+            // $referencePrefix = $this->getPrefix();
+            $referencePrefix = '';
             $reservedOrderNrAsReference = $referencePrefix.$reservedOrderNr;
         }  else {
             $reservedOrderNrAsReference = $this->session->offsetGet('BSPayoneMasterpassOrdernum');
