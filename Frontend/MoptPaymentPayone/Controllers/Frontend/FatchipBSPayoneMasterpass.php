@@ -191,6 +191,10 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $request->setPersonalData($personalData);
         $deliveryData = $this->moptPayoneMain->getParamBuilder()->getDeliveryData($orderVariables['sUserData']);
         $request->setDeliveryData($deliveryData);
+        $admin = Shopware()->Modules()->Admin();
+        $transactionStatusPushCustomParam = 'session-' . Shopware()->Shop()->getId()
+            . '|' . $admin->sSYSTEM->sSESSION_ID . '|' . $orderHash;
+        $request->setParam($transactionStatusPushCustomParam);
 
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
             'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
@@ -241,7 +245,9 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         if (!$isMasterpassOrderNumInSession) {
             $sOrder = new sOrder();
             $reservedOrderNr = $sOrder->sGetOrderNumber();
-            $referencePrefix = $this->getPrefix();
+            // TODO deactivated for now because it is causing unintended side-effects
+            // $referencePrefix = $this->getPrefix();
+            $referencePrefix = '';
             $reservedOrderNrAsReference = $referencePrefix.$reservedOrderNr;
         }  else {
             $reservedOrderNrAsReference = $this->session->offsetGet('BSPayoneMasterpassOrdernum');
