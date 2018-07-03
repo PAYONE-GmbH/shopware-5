@@ -458,7 +458,7 @@ class Mopt_PayoneInstallHelper
                 'position' => 27,),
             array(
                 'name' => 'mopt_payone__fin_payolution_installment',
-                'description' => 'Paysafe Pay Later™ Ratenkauf',
+                'description' => 'PAYONE Paysafe Pay Later™ Ratenkauf',
                 'template' => 'mopt_paymentmean_payolution_installment.tpl',
                 'position' => 28,),
             array(
