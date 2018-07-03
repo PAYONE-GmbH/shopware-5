@@ -33,7 +33,8 @@ class FrontendAccount implements SubscriberInterface
     {
         return array(
             // load payment data from db to use for payment
-            'Shopware_Controllers_Frontend_Account::paymentAction::after' => 'onPaymentAction'
+            'Shopware_Controllers_Frontend_Account::paymentAction::after' => 'onPaymentAction',
+            'Shopware_Controllers_Frontend_Account::savePaymentAction::after' => 'onPaymentSaveAction',
         );
     }
 
@@ -45,6 +46,8 @@ class FrontendAccount implements SubscriberInterface
     public function onPaymentAction(\Enlight_Hook_HookArgs $arguments)
     {
         $subject = $arguments->getSubject();
+        $request = $subject->Request();
+        $controllerName = $request->getControllerName();
         $userId = Shopware()->Session()->sUserId;
 
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
@@ -68,5 +71,51 @@ class FrontendAccount implements SubscriberInterface
             }
             $subject->View()->sUserData += $paymentData;
         }
+
+        if ($controllerName == 'account') {
+            $subject->View()->assign('showPOCCDeleteButton', true);
+        }
     }
+
+    /**
+     * Check
+     *
+     * @param \Enlight_Hook_HookArgs $arguments
+     */
+    public function onPaymentSaveAction(\Enlight_Hook_HookArgs $arguments) {
+        $subject = $arguments->getSubject();
+        $request = $subject->Request();
+        $deleteCCDataChecked = (bool) $request->getParam('mopt_payone__cc_deletedata');
+        if ($deleteCCDataChecked) {
+            $this->triggerDeleteCCData();
+        }
+    }
+
+
+    /**
+     * Performs deletion of previously saved CC Data
+     *
+     * @param void
+     * @return void
+     */
+    protected function triggerDeleteCCData() {
+        $userId = Shopware()->Session()->sUserId;
+        $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
+        $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+
+        // empty cc data
+        $paymentData['mopt_payone__cc_accountholder'] =
+        $paymentData['mopt_payone__cc_truncatedcardpan_hidden'] =
+        $paymentData['mopt_payone__cc_cardexpiremonth_hidden'] =
+        $paymentData['mopt_payone__cc_cardexpireyear_hidden'] =
+        $paymentData['mopt_payone__cc_pseudocardpan'] =
+        $paymentData['mopt_payone__cc_cardexpiredate'] =
+        $paymentData['mopt_payone__cc_Year'] =
+        $paymentData['mopt_payone__cc_paymentname'] = '';
+
+        $serializedPaymentData = serialize($paymentData);
+        $sql = 'UPDATE s_plugin_mopt_payone_payment_data SET `moptPaymentData`= ? WHERE userId = ?';
+        Shopware()->Db()->executeUpdate($sql,array($serializedPaymentData, $userId));
+    }
+
 }

@@ -129,8 +129,6 @@
                            {$moptCreditCardCheckEnvironment.moptCreditcardConfig.standard_input_css}
                        {/if}
                                "
-
-
                 />
              </span>
              <span class="hiddenCCFields" style="display: none">
@@ -177,6 +175,12 @@
     </p>
     {/if}
 
+    {if $showPOCCDeleteButton}
+        <p class="none">
+            <input name="mopt_payone__cc_deletedata" type="checkbox" id="mopt_payone__cc_deletedata" value="true" class="checkbox"/>
+            <label for="mopt_payone__cc_deletedata"  style="float:none; width:100%; display:inline">{s name='creditCardDelete'}Gespeicherte Kreditkartendaten löschen{/s}</label>
+        </p>
+    {/if}
 
     <div id="errorOutput"></div>
 
