@@ -453,17 +453,17 @@ class Mopt_PayoneInstallHelper
                 'position' => 26,),
             array(
                 'name' => 'mopt_payone__fin_payolution_invoice',
-                'description' => 'PAYONE Payolution Rechnungskauf',
+                'description' => 'PAYONE Paysafe Pay Later™ Rechnungskauf',
                 'template' => 'mopt_paymentmean_payolution_invoice.tpl',
                 'position' => 27,),
             array(
                 'name' => 'mopt_payone__fin_payolution_debitnote',
-                'description' => 'PAYONE Payolution Lastschrift',
+                'description' => 'PAYONE Paysafe Pay Later™ Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
                 'position' => 28,),
             array(
                 'name' => 'mopt_payone__fin_payolution_installment',
-                'description' => 'PAYONE Payolution Ratenzahlung',
+                'description' => 'PAYONE Paysafe Pay Later™ Ratenkauf',
                 'template' => 'mopt_paymentmean_payolution_installment.tpl',
                 'position' => 29,),
             array(
@@ -501,6 +501,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE AliPay',
                 'template' => 'mopt_paymentmean_alipay_ewallet.tpl',
                 'position' => 36,),
+            array(
+                'name' => 'mopt_payone__ewallet_masterpass',
+                'description' => 'PAYONE Masterpass',
+                'template' => null,
+                'position' => 37,),
         );
     }
 

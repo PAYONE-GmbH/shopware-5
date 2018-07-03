@@ -108,11 +108,21 @@ class FrontendPostDispatch implements SubscriberInterface
             return;
         }
 
+        // ignore ajax editor
+        if ($action === 'ajaxEditor') {
+            return;
+        }
+
         $controllerName = $request->getControllerName();
 
         $this->setCorrectViewsFolder();
 
         $session = Shopware()->Session();
+
+        // get paymentId from view instead of sGetUserData
+        $paymentId = $view->sPayment['id'];
+        $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+        $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($paymentId);
 
         if ($session->moptMandateData) {
             $view->assign('moptMandateData', $session->moptMandateData);
@@ -145,9 +155,8 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('fcPayolutionConfigInstallment', $moptPayoneData['payolutionConfigInstallment']);
             $view->assign('moptRatepayConfig', $moptPayoneData['moptRatepayConfig']);
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
-            $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-            $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
-            if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($moptPaymentName)) {
+            $paymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
+            if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_creditcard';
             }
             $view->assign('sFormData', $moptPayoneFormData);
@@ -213,15 +222,15 @@ class FrontendPostDispatch implements SubscriberInterface
             unset($session->moptBarzahlenCode);
         }
 
-        $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($userData['additional']['payment']['id']);
-
         // for amazon Pay redirect directly to finish instead of confirm
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay')) {
             $session->offsetSet('moptFormSubmitted', true);
             $action->forward('finish', 'moptPaymentAmazon', null, array('sAGB' => 'on'));
+        }
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_masterpass')) {
+            $session->offsetSet('moptFormSubmitted', true);
+            $action->forward('finish', 'FatchipBSPayoneMasterpassCheckout', null, array('sAGB' => 'on'));
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
@@ -266,8 +275,13 @@ class FrontendPostDispatch implements SubscriberInterface
                 if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
                     $amazonPayIndex = $index;
                 }
+                if ($payment['name'] === 'mopt_payone__ewallet_masterpass') {
+                    $masterpassIndex = $index;
+                }
+
             }
             unset ($payments[$amazonPayIndex]);
+            unset ($payments[$masterpassIndex]);
             $view->assign('sPayments', $payments);
         }
 
@@ -293,8 +307,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 // and update order variables in session
                 $session['sOrderVariables'] = new \ArrayObject($view->getAssign(), \ArrayObject::ARRAY_AS_PROPS);
             }
-            // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
-
         }
 
         if ($controllerName == 'moptAjaxPayone') {

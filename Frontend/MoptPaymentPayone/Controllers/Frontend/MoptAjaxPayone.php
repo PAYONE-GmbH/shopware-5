@@ -380,17 +380,16 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentData = $this->session->moptPayment;
         $paymentData['mopt_payone__company_trade_registry_number'] = $this->Request()->getPost('hreg');
+        $paymentData['dob'] = $this->Request()->getPost('dob');
+        $paymentData['mopt_payone__payolution_installment_basketamount'] = $this->Request()->getPost('basketamount');
         if (!empty($paymentData['mopt_payone__company_trade_registry_number'])){
             $paymentData['mopt_payone__payolution_b2bmode'] = 1;
         } else{
             $paymentData['mopt_payone__payolution_b2bmode'] = 0;
         }
-        $paymentData['dob'] = $this->Request()->getPost('dob');
-        $paymentData['mopt_payone__payolution_installment_shippingcosts'] = $this->Request()->getPost('shippingcosts');
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
         $financeType = Payone_Api_Enum_PayolutionType::PYS;
         $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
-        $userData = $this->admin->sGetUserData();
         $data = [];
         $precheckResponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
         if ($precheckResponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
@@ -497,7 +496,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__company_trade_registry_number'])
             ));
         }
-        $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])){
+            $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        } else {
+            $amountWithShipping = $paymentData['mopt_payone__payolution_installment_basketamount'];
+        }
         $request->setPaydata($paydata);
         $request->setAmount($amountWithShipping);
         $request->setCurrency($this->getCurrencyShortName());
@@ -566,7 +569,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
             ));
         }
-        $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])){
+            $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        } else {
+            $amountWithShipping = $paymentData['mopt_payone__payolution_installment_basketamount'];
+        }
         $request->setPaydata($paydata);
         $request->setAmount($amountWithShipping);
         $request->setCurrency($this->getCurrencyShortName());
@@ -987,6 +994,57 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $response = $this->service->request($request);
         return $response;
+    }
+
+    /**
+     * prepare and do payment server api call
+     *
+     * @param string $clearingType
+     * @param string $walletType
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     */
+    protected function buildAndCallSetCheckoutAction($clearingType = 'wlt', $walletType = 'MPA')
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $router = $this->Front()->Router();
+        $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
+        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        //create hash
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $orderHash = md5(serialize($basket));
+        Shopware()->Session()->offsetSet('moptOrderHash',$orderHash);
+
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::MASTERPASS_SETCHECKOUT)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'originURL', 'data' => $router->assemble(['controller' => 'FatchipBSPayoneMasterpass', 'action' => 'index', 'forceSecure' => true]))
+        ));
+
+        $request->setPaydata($paydata);
+        $request->setClearingtype($clearingType);
+        $request->setWallettype($walletType);
+        $request->setCurrency("EUR");
+        $request->setAmount($basket['AmountNumeric']);
+        $request->setBackurl($router->assemble(['controller' => 'FatchipBSPayoneMasterpass', 'action' => 'register', 'forceSecure' => true]));
+        $request->setSuccessurl($router->assemble(['controller' => 'FatchipBSPayoneMasterpass', 'action' => 'success', 'forceSecure' => true]));
+        $request->setErrorurl($router->assemble(['controller' => 'FatchipBSPayoneMasterpass', 'action' => 'error', 'forceSecure' => true]));
+
+        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+
+        $response = $this->service->request($request);
+        $paydataArray=$response->getPayDataArray();
+        $this->session->offsetSet('fatchipBSPayoneMasterPassWorkOrderId', $response->getWorkorderId());
+
+        $encoded = json_encode($paydataArray);
+        echo $encoded;
     }
 
     protected function isBillingAddressSupported($country){

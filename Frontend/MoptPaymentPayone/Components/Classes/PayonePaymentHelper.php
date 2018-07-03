@@ -119,7 +119,8 @@ class Mopt_PayonePaymentHelper
     /**
      * delete saved payment data
      *
-     * @param string $userId
+     * @param $userId
+     * @throws Zend_Db_Adapter_Exception
      */
     public function deletePaymentData($userId)
     {
@@ -158,10 +159,25 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * returns payment name
+     *
+     * @param string $paymentName
+     * @return string
+     */
+    public function getPaymentIdFromName($paymentName)
+    {
+        $sql = 'SELECT `id` FROM `s_core_paymentmeans` WHERE name = ?';
+        $paymentId = Shopware()->Db()->fetchOne($sql, $paymentName);
+
+        return $paymentId;
+    }
+
+    /**
      * save payment data
      *
-     * @param string $userId
-     * @param array $paymentData
+     * @param $userId
+     * @param $paymentData
+     * @throws Zend_Db_Adapter_Exception
      */
     public function savePaymentData($userId, $paymentData)
     {
@@ -174,7 +190,8 @@ class Mopt_PayonePaymentHelper
     /**
      * set configured default payment as payment method
      *
-     * @param string $userId
+     * @param $userId
+     * @throws Zend_Db_Adapter_Exception
      */
     public function setConfiguredDefaultPaymentAsPayment($userId)
     {
@@ -212,13 +229,13 @@ class Mopt_PayonePaymentHelper
     /**
      * extract barzahlen code to embed on checkout finish page from response object
      *
-     * @param object $response
-     * @return boolean/array
+     * @param $response
+     * @return bool|string
      */
     public function extractBarzahlenCodeFromResponse($response)
     {
         if (!method_exists($response, 'getPaydata')) {
-            return;
+            return false;
         }
         $payData = $response->getPaydata();
         if (!$payData) {
@@ -239,7 +256,7 @@ class Mopt_PayonePaymentHelper
      * extract Payolution Clearingdata on checkout finish page from response object
      *
      * @param object $response
-     * @return boolean/array
+     * @return boolean|array
      */
     public function extractPayolutionClearingDataFromResponse($response)
     {
@@ -302,11 +319,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneCreditcard($paymentName)
     {
-        if (preg_match('#mopt_payone__cc#', $paymentName) || $paymentName == 'mopt_payone_creditcard') {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__cc#', $paymentName) ? true : false;
     }
 
     /**
@@ -333,11 +346,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneCreditcardNotGrouped($paymentName)
     {
-        if (preg_match('#mopt_payone__cc#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__cc#', $paymentName) ? true : false;
     }
 
     /**
@@ -348,11 +357,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneSofortuerberweisung($paymentName)
     {
-        if (preg_match('#mopt_payone__ibt_sofortueberweisung#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ibt_sofortueberweisung#', $paymentName) ? true : false;
     }
 
     /**
@@ -363,11 +368,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneBancontact($paymentName)
     {
-        if (preg_match('#mopt_payone__ibt_bancontact#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ibt_bancontact#', $paymentName) ? true : false;
     }
 
     /**
@@ -378,11 +379,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneBarzahlen($paymentName)
     {
-        if (preg_match('#mopt_payone__csh_barzahlen#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__csh_barzahlen#', $paymentName) ? true : false;
     }
 
     /**
@@ -393,11 +390,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneGiropay($paymentName)
     {
-        if (preg_match('#mopt_payone__ibt_giropay#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ibt_giropay#', $paymentName) ? true : false;
     }
 
     /**
@@ -408,11 +401,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneEPS($paymentName)
     {
-        if (preg_match('#mopt_payone__ibt_eps#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ibt_eps#', $paymentName) ? true : false;
     }
 
     /**
@@ -423,11 +412,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePostEFinance($paymentName)
     {
-        if (preg_match('#mopt_payone__ibt_post_efinance#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ibt_post_efinance#', $paymentName) ? true : false;
     }
 
     /**
@@ -438,11 +423,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePostFinanceCard($paymentName)
     {
-        if (preg_match('#mopt_payone__ibt_post_finance_card#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ibt_post_finance_card#', $paymentName) ? true : false;
     }
 
     /**
@@ -453,11 +434,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneIDeal($paymentName)
     {
-        if (preg_match('#mopt_payone__ibt_ideal#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ibt_ideal#', $paymentName) ? true : false;
     }
 
     /**
@@ -468,11 +445,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaypal($paymentName)
     {
-        if (preg_match('#mopt_payone__ewallet_paypal#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ewallet_paypal#', $paymentName) ? true : false;
     }
 
     /**
@@ -483,11 +456,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaydirekt($paymentName)
     {
-        if (preg_match('#mopt_payone__ewallet_paydirekt#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ewallet_paydirekt#', $paymentName) ? true : false;
     }
 
     /**
@@ -498,11 +467,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isEWallet($paymentName)
     {
-        if (preg_match('#mopt_payone__ewallet#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ewallet#', $paymentName) ? true : false;
     }
 
     /**
@@ -513,11 +478,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneDebitnote($paymentName)
     {
-        if (preg_match('#mopt_payone__acc_debitnote#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__acc_debitnote#', $paymentName) ? true : false;
     }
 
     /**
@@ -528,11 +489,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneInvoice($paymentName)
     {
-        if (preg_match('#mopt_payone__acc_invoice#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__acc_invoice#', $paymentName) ? true : false;
     }
 
     /**
@@ -543,11 +500,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneSafeInvoice($paymentName)
     {
-        if (preg_match('#mopt_payone__acc_payone_safe_invoice#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__acc_payone_safe_invoice#', $paymentName) ? true : false;
     }
 
     /**
@@ -558,11 +511,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePayInAdvance($paymentName)
     {
-        if (preg_match('#mopt_payone__acc_payinadvance#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__acc_payinadvance#', $paymentName) ? true : false;
     }
 
     /**
@@ -573,11 +522,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneCashOnDelivery($paymentName)
     {
-        if (preg_match('#mopt_payone__acc_cashondel#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__acc_cashondel#', $paymentName) ? true : false;
     }
 
     /**
@@ -588,11 +533,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneBillsafe($paymentName)
     {
-        if (preg_match('#mopt_payone__fin_billsafe#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__fin_billsafe#', $paymentName) ? true : false;
     }
 
     /**
@@ -603,11 +544,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneKlarna($paymentName)
     {
-        if (preg_match('#mopt_payone__fin_klarna#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__fin_klarna#', $paymentName) ? true : false;
     }
 
     /**
@@ -618,11 +555,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneP24($paymentName)
     {
-        if (preg_match('#mopt_payone__ibt_p24#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ibt_p24#', $paymentName) ? true : false;
     }
 
     /**
@@ -633,11 +566,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaymentMethod($paymentName)
     {
-        if (preg_match('#mopt_payone__#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__#', $paymentName) ? true : false;
     }
 
     /**
@@ -648,11 +577,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneInstantBankTransfer($paymentName)
     {
-        if (preg_match('#mopt_payone__ibt#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ibt#', $paymentName) ? true : false;
     }
 
     /**
@@ -663,11 +588,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneFinance($paymentName)
     {
-        if (preg_match('#mopt_payone__fin#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__fin#', $paymentName) ? true : false;
     }
 
     /**
@@ -689,11 +610,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePayolutionDebitNote($paymentName)
     {
-        if (preg_match('#mopt_payone__fin_payolution_debitnote#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__fin_payolution_debitnote#', $paymentName) ? true : false;
     }
 
     /**
@@ -704,11 +621,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePayolutionInvoice($paymentName)
     {
-        if (preg_match('#mopt_payone__fin_payolution_invoice#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__fin_payolution_invoice#', $paymentName) ? true : false;
     }
 
     /**
@@ -719,11 +632,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePayolutionInstallment($paymentName)
     {
-        if (preg_match('#mopt_payone__fin_payolution_installment#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__fin_payolution_installment#', $paymentName) ? true : false;
     }
 
     /**
@@ -747,11 +656,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneRatepayInvoice($paymentName)
     {
-        if (preg_match('#mopt_payone__fin_ratepay_invoice#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__fin_ratepay_invoice#', $paymentName) ? true : false;
     }
 
     /**
@@ -762,11 +667,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneRatepayInstallment($paymentName)
     {
-        if (preg_match('#mopt_payone__fin_ratepay_installment#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__fin_ratepay_installment#', $paymentName) ? true : false;
     }
 
     /**
@@ -777,11 +678,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneRatepayDirectDebit($paymentName)
     {
-        if (preg_match('#mopt_payone__fin_ratepay_direct_debit#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__fin_ratepay_direct_debit#', $paymentName) ? true : false;
     }
 
     /**
@@ -792,11 +689,18 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneAmazonPay($paymentName)
     {
-        if (preg_match('#mopt_payone__ewallet_amazon_pay#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ewallet_amazon_pay#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone masterpass
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneMasterpass($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_masterpass#', $paymentName) ? true : false;
     }
 
     /**
@@ -807,11 +711,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneAlipay($paymentName)
     {
-        if (preg_match('#mopt_payone__ewallet_alipay#', $paymentName)) {
-            return true;
-        } else {
-            return false;
-        }
+        return preg_match('#mopt_payone__ewallet_alipay#', $paymentName) ? true : false;
     }
 
     /**
@@ -998,7 +898,6 @@ class Mopt_PayonePaymentHelper
     {
 
         if (!Shopware()->Session()->moptRatepayFingerprint) {
-            $userId = $this->session->sUserId;
             $userData = Shopware()->Modules()->Admin()->sGetUserData();
             $fingerprint = $userData['billingaddress']['firstname'];
             $fingerprint .= $userData['billingaddress']['lastname'];
@@ -1168,8 +1067,8 @@ class Mopt_PayonePaymentHelper
     /**
      * retrieve multilang errorcode based on context and errorcode
      *
-     * @param string $context
-     * @param string $errorCode
+     * @param string|bool $context
+     * @param string|bool $errorCode
      * @return string
      */
     public function moptGetErrorMessageFromErrorCodeViaSnippet($context = false, $errorCode = false)
@@ -1299,6 +1198,9 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayoneAlipay($paymentShortName)) {
             return 'alipay';
         }
+        if ($this->isPayoneMasterpass($paymentShortName)) {
+            return 'masterpass';
+        }
         return false;
     }
 
@@ -1389,5 +1291,17 @@ class Mopt_PayonePaymentHelper
         return $paymentAmazonPay->getActive();
     }
 
+    /**
+     * checks if Masterpass is enabled
+     *
+     * @return bool
+     */
+    public function isMasterpassActive()
+    {
+        $paymentMasterpass = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_masterpass']
+        );
+        return $paymentMasterpass->getActive();
+    }
 
 }

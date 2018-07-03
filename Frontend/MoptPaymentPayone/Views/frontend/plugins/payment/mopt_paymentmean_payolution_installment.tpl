@@ -189,7 +189,6 @@
         }
 
         var hreg = document.getElementById("mopt_payone__installment_company_trade_registry_number");
-        var shippingcosts = document.getElementById("mopt_payone__payolution_installment_shippingcosts");
         var myhreg; 
         var mydob;
         if ( hreg !== null){
@@ -199,9 +198,6 @@
         if (dob.value !== null){
             mydob = dob.value;
             mydob = mydob.replace(/-/g,"");
-        } 
-        if ( shippingcosts !== null){
-            myshippingcosts = shippingcosts.value;
         }
 
         payolutionInstallmentAgree = $("#mopt_payone__payolution_installment_agreement").prop('checked');
@@ -211,7 +207,7 @@
             $.ajax({
                 url: call,
                 type: 'POST',
-                data: { dob: mydob, hreg: myhreg, shippingcosts: myshippingcosts },
+                data: { dob: mydob, hreg: myhreg, shippingcosts: {$sShippingcosts}, basketamount: {$sAmount} },
 
                 beforeSend: function () {
                     $.loadingIndicator.open();
