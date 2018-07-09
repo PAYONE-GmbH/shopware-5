@@ -633,7 +633,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
-        if (!empty($session['BSPayoneMasterpassOrdernum'])){
+        if (!empty($session['BSPayoneMasterpassOrdernum'])) {
 
             $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
             $orderId = Shopware()->Db()->fetchOne($sql, $txId);
@@ -651,7 +651,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $session->offsetUnset('BSPayoneMasterpassOrdernum');
         }
 
-        if (!empty($session['moptRatepayOrdernum'])){
+        if (!empty($session['moptRatepayOrdernum'])) {
 
             $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
             $orderId = Shopware()->Db()->fetchOne($sql, $txId);
@@ -720,7 +720,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param void
      * @return void
      */
-    protected function removeSessionVariablesOnOrderFinish() {
+    protected function removeSessionVariablesOnOrderFinish()
+    {
         $session = Shopware()->Session();
         $session->offsetUnset('moptIsAuthorized');
         $session->offsetUnset('moptAgbChecked');
@@ -740,14 +741,13 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $paymentId = $this->getPaymentShortName();
         if ($response->getStatus() == 'ERROR' &&
             ($paymentId === 'mopt_payone__fin_ratepay_invoice' ||
-             $paymentId === 'mopt_payone__fin_ratepay_installment' ||
-             $paymentId === 'mopt_payone__fin_ratepay_direct_debit')
-            )
-        {
+                $paymentId === 'mopt_payone__fin_ratepay_installment' ||
+                $paymentId === 'mopt_payone__fin_ratepay_direct_debit')
+        ) {
             $session->ratepayError = $response->getCustomermessage();
             $session->offsetUnset('moptRatepayOrdernum');
             // error code 307 = declined
-            if ($response->getErrorcode() == '307'){
+            if ($response->getErrorcode() == '307') {
                 // customer will not be able to use ratepay payments for 24 hours
                 $this->moptPayoneMain->getHelper()->saveRatepayBanDate($session->get('sUserId'));
             }
@@ -932,7 +932,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                     foreach ($order->getDetails() as $position) {
                         $orderPositions[] = $position->getId();
                     }
-                    
+
                     $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
                         ->getInvoicingFromOrder($order, $orderPositions, true, false, true);
                     $request->setInvoicing($invoicing);
@@ -946,7 +946,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         // this is currently used only for paydirekt
         // checking wether esd is enabled in payment config is not neccessary
         if ($this->moptPayonePaymentHelper->isPayonePaydirekt($paymentName)
-            && $this->isBasketDigital()){
+            && $this->isBasketDigital()) {
             $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'shopping_cart_type', 'data' => 'DIGITAL')
@@ -964,9 +964,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $request = $this->moptSetRatePayReference($request);
         if ($this->moptPayonePaymentHelper->isPayoneSafeInvoice($paymentName) ||
             $this->moptPayonePaymentHelper->isPayoneInvoice($paymentName)
-           )
-        {
-            if (!$personalData->getCompany()){
+        ) {
+            if (!$personalData->getCompany()) {
                 $request->setBusinessrelation(Payone_Api_Enum_BusinessrelationType::B2C);
             } else {
                 $request->setBusinessrelation(Payone_Api_Enum_BusinessrelationType::B2B);
@@ -992,7 +991,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param void
      * @return string
      */
-    protected function moptGetCurrency() {
+    protected function moptGetCurrency()
+    {
         $isRecurringOrder = $this->isRecurringOrder();
         $currency = $this->getCurrencyShortName();
 
@@ -1011,7 +1011,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param string $currency
      * @return string
      */
-    protected function moptGetOrderCurrencyById($currency) {
+    protected function moptGetOrderCurrencyById($currency)
+    {
         $orderId = $this->Request()->getParam('orderId');
         if ($orderId) {
             $sql = 'SELECT `currency` FROM `s_order` WHERE id = ?';
@@ -1119,43 +1120,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function getUserData()
     {
-        if ($this->isRecurringOrder()) {
-            $orderVars = Shopware()->Session()->sOrderVariables;
-            return $orderVars['sUserData'];
-        }
-
-        $system = Shopware()->System();
-        $orderVariables = Shopware()->Session()->sOrderVariables;
-        $userData = $orderVariables['sUserData'];
-        if (!empty($userData['additional']['countryShipping'])) {
-            $sTaxFree = false;
-            if (!empty($userData['additional']['countryShipping']['taxfree'])) {
-                $sTaxFree = true;
-            } elseif (!empty($userData['additional']['countryShipping']['taxfree_ustid']) && !empty($userData['billingaddress']['ustid'])
-            ) {
-                $sTaxFree = true;
-            }
-
-            $system->sUSERGROUPDATA = Shopware()->Db()->fetchRow("
-                SELECT * FROM s_core_customergroups
-                WHERE groupkey = ?
-            ", array($system->sUSERGROUP));
-
-            if (!empty($sTaxFree)) {
-                $system->sUSERGROUPDATA['tax'] = 0;
-                $system->sCONFIG['sARTICLESOUTPUTNETTO'] = 1; //Old template
-                Shopware()->Session()->sUserGroupData = $system->sUSERGROUPDATA;
-                $userData['additional']['charge_vat'] = false;
-                $userData['additional']['show_net'] = false;
-                Shopware()->Session()->sOutputNet = true;
-            } else {
-                $userData['additional']['charge_vat'] = true;
-                $userData['additional']['show_net'] = !empty($system->sUSERGROUPDATA['tax']);
-                Shopware()->Session()->sOutputNet = empty($system->sUSERGROUPDATA['tax']);
-            }
-        }
-
-        return $userData;
+        $orderVars = Shopware()->Session()->sOrderVariables;
+        return $orderVars['sUserData'];
     }
 
     /**
@@ -1397,7 +1363,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
 
         // check 2: plugin exists and is installed
-        $pluginManager  = $this->container->get('shopware_plugininstaller.plugin_manager');
+        $pluginManager = $this->container->get('shopware_plugininstaller.plugin_manager');
         try {
             $plugin = $pluginManager->getPluginByName('SwagAboCommerce');
         } catch (\Exception $e) {
@@ -1519,7 +1485,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         );
 
         foreach ($basketArticles as $article) {
-            if ($article['esdarticle'] !== "1"){
+            if ($article['esdarticle'] !== "1") {
                 $isDigitalOnly = false;
             }
         }
@@ -1534,7 +1500,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @return object
      * @throws Exception
      */
-    protected function moptSetRatePayReference($request) {
+    protected function moptSetRatePayReference($request)
+    {
         $ratepayOrderNrAsReference = $this->moptGetRatepayOrderNrAsReference();
 
         // Override reference for ratepay with OrderId
@@ -1553,7 +1520,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @return mixed bool|string
      * @throws Exception
      */
-    protected function moptGetRatepayOrderNrAsReference() {
+    protected function moptGetRatepayOrderNrAsReference()
+    {
         $user = $this->getUser();
         $paymentName = $user['additional']['payment']['name'];
         $isRatePay = $this->moptPayonePaymentHelper->isPayoneRatepay($paymentName);
@@ -1571,8 +1539,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             // TODO deactivated for now because it is causing unintended side-effects
             // $referencePrefix = $this->moptGetRatePayReferencePrefix();
             $referencePrefix = '';
-            $reservedOrderNrAsReference = $referencePrefix.$reservedOrderNr;
-        }  else {
+            $reservedOrderNrAsReference = $referencePrefix . $reservedOrderNr;
+        } else {
             $reservedOrderNrAsReference = $session->offsetGet('moptRatepayOrdernum');
         }
         $session->offsetSet('moptRatepayOrdernum', $reservedOrderNrAsReference);
@@ -1587,7 +1555,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param void
      * @return string
      */
-    protected function moptGetRatePayReferencePrefix() {
+    protected function moptGetRatePayReferencePrefix()
+    {
         $prefix = "";
         $user = $this->getUser();
         $paymentName = $user['additional']['payment']['name'];
@@ -1595,7 +1564,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $liveMode = $config['liveMode'];
         if (!$liveMode) {
             $datestring = date('YmdHis');
-            $prefix = $datestring."_";
+            $prefix = $datestring . "_";
         }
 
         return $prefix;

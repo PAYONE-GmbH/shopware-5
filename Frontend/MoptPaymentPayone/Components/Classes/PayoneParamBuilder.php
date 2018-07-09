@@ -1226,23 +1226,22 @@ class Mopt_PayoneParamBuilder
         $items = array();
 
         $taxFree = false;
+        $isNet = false;
         if (isset($userData['additional']['charge_vat'])) {
             $taxFree = !$userData['additional']['charge_vat'];
         }
+        if (isset($userData['additional']['show_net'])) {
+            $isNet = !$userData['additional']['show_net'];
+        }
 
         foreach ($basket['content'] as $article) {
-            $params = array();
+            $params = [];
 
             $params['id'] = substr($article['ordernumber'] ?: $article['articlename'], 0, 32); //article number
-            if ($taxFree) {
-                $params['pr'] = round($article['netprice'], 2); //netto price
-            } else {
-                $params['pr'] = round($article['priceNumeric'], 2); //brutto price
-            }
-            $params['no'] = $article['quantity']; // ordered quantity
+            $params['pr'] = round($article['priceNumeric'], 2);
+            $params['no'] = $article['quantity'];
             $params['de'] = substr($article['articlename'], 0, 100); // description
-            $params['va'] = $taxFree ? 0 : number_format($article['tax_rate'], 0, '.', ''); // vat
-            $params['va'] = round($params['va'] * 100);
+            $params['va'] = ($taxFree || $isNet) ? 0 : number_format($article['tax_rate'], 0, '.', ''); // vat
             $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
             if ($article['modus'] == 2) {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
@@ -1252,10 +1251,24 @@ class Mopt_PayoneParamBuilder
             if ($article['modus'] == 4 && $params['pr'] >= "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
             }
-            if ($article['modus'] == 4 && $params['pr'] < "0")   {
+            if ($article['modus'] == 4 && $params['pr'] < "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
             }
             $items[] = $params;
+        }
+
+        // add taxes seperatly to avoid rounding issues and cent differences
+        if (!$taxFree && $isNet) {
+            foreach ($basket['content'] as $article) {
+                $params['id'] = substr($article['ordernumber'] ?: $article['articlename'], 0, 29) . '-tax'; //article number
+                $params['pr'] = str_replace(',', '.', $article['tax']);
+                $params['no'] = 1;
+                $params['de'] = substr($article['articlename'], 0, 96) . '-tax'; // description
+                $params['va'] = 0;
+                $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
+
+                $items[] = $params;
+            }
         }
 
         //add shipment as position
@@ -1283,7 +1296,6 @@ class Mopt_PayoneParamBuilder
 
             $items[] = $params;
         }
-
         return $items;
     }
 
@@ -1351,9 +1363,8 @@ class Mopt_PayoneParamBuilder
             if ($order->getTaxFree()) {
                 $params['va'] = 0;
             } elseif ($position->getTaxRate() == 0 &&
-                      $position->getTax()->getId() !== 0
-                      && !$isAboCommerceDiscount)
-            {
+                $position->getTax()->getId() !== 0
+                && !$isAboCommerceDiscount) {
                 $params['va'] = number_format($position->getTax()->getTax(), 0, '.', '');
             } else {
                 $params['va'] = number_format($position->getTaxRate(), 0, '.', ''); // vat
@@ -1372,7 +1383,7 @@ class Mopt_PayoneParamBuilder
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
                 $params['id'] = substr($position->getArticleName(), 0, 100); //article number
             }
-            if ($mode == 4 && $params['pr'] < "0")   {
+            if ($mode == 4 && $params['pr'] < "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
                 $params['id'] = substr($position->getArticleName(), 0, 100); //article number
             }
@@ -1434,7 +1445,8 @@ class Mopt_PayoneParamBuilder
      * @param integer $paymentId
      * @return array
      */
-    public function getAddressCheckParams($addressFormData, $personalFormData, $paymentId = 0)
+    public
+    function getAddressCheckParams($addressFormData, $personalFormData, $paymentId = 0)
     {
         $params = $this->getAuthParameters($paymentId);
 
@@ -1463,7 +1475,8 @@ class Mopt_PayoneParamBuilder
      * @param string $paymentId
      * @return array
      */
-    public function getConsumerscoreCheckParams($userFormData, $paymentId = 0)
+    public
+    function getConsumerscoreCheckParams($userFormData, $paymentId = 0)
     {
         $params = $this->getAuthParameters($paymentId);
 
@@ -1488,7 +1501,8 @@ class Mopt_PayoneParamBuilder
      * @param string $id
      * @return string
      */
-    protected function getCountryFromId($id)
+    protected
+    function getCountryFromId($id)
     {
         $sql = 'SELECT `countryiso` FROM s_core_countries WHERE id = ' . $id;
         $country = Shopware()->Db()->fetchOne($sql);
@@ -1500,7 +1514,8 @@ class Mopt_PayoneParamBuilder
      *
      * @return string
      */
-    protected function getLanguageFromActiveShop()
+    protected
+    function getLanguageFromActiveShop()
     {
         $shopLanguage = explode('_', Shopware()->Shop()->getLocale()->getLocale());
 
@@ -1514,7 +1529,8 @@ class Mopt_PayoneParamBuilder
      * @param string $countryIso
      * @return string
      */
-    protected function getStateFromId($stateId, $countryIso)
+    protected
+    function getStateFromId($stateId, $countryIso)
     {
         $enabledTransmittingStatesCountryIsos = array('US', 'CA', 'MX', 'AR', 'BR', 'CN', 'ID', 'IN', 'TH');
 
@@ -1533,7 +1549,8 @@ class Mopt_PayoneParamBuilder
      *
      * @return string
      */
-    public function getParamPaymentReference()
+    public
+    function getParamPaymentReference()
     {
         return 'mopt-' . uniqid() . rand(10, 99);
     }
@@ -1546,7 +1563,8 @@ class Mopt_PayoneParamBuilder
      * @param array $bankData
      * @return array
      */
-    public function buildManageMandate($paymentId, $userData, $bankData)
+    public
+    function buildManageMandate($paymentId, $userData, $bankData)
     {
         $params = $this->getAuthParameters($paymentId);
 
@@ -1565,7 +1583,8 @@ class Mopt_PayoneParamBuilder
      * @param string $mandateId
      * @return array
      */
-    public function buildGetFile($paymentId, $mandateId)
+    public
+    function buildGetFile($paymentId, $mandateId)
     {
         $params = $this->getAuthParameters($paymentId);
 
@@ -1576,7 +1595,8 @@ class Mopt_PayoneParamBuilder
         return $params;
     }
 
-    public function buildPayPalExpressCheckout($paymentId, $router, $amount, $currencyName, $userData)
+    public
+    function buildPayPalExpressCheckout($paymentId, $router, $amount, $currencyName, $userData)
     {
         $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
         $params = $this->getAuthParameters($paymentId);
@@ -1598,7 +1618,8 @@ class Mopt_PayoneParamBuilder
         return array_merge($params, $this->buildPayPalEcsShippingAddress($userData));
     }
 
-    public function buildPayPalExpressCheckoutDetails($paymentId, $router, $amount, $currencyName, $userData, $workerId)
+    public
+    function buildPayPalExpressCheckoutDetails($paymentId, $router, $amount, $currencyName, $userData, $workerId)
     {
         $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
         $params = $this->getAuthParameters($paymentId);
@@ -1621,7 +1642,8 @@ class Mopt_PayoneParamBuilder
         return array_merge($params, $this->buildPayPalEcsShippingAddress($userData));
     }
 
-    protected function buildPayPalEcsWalletParams($router)
+    protected
+    function buildPayPalEcsWalletParams($router)
     {
         $walletParams = array(
             'wallettype' => Payone_Api_Enum_WalletType::PAYPAL_EXPRESS,
@@ -1636,7 +1658,8 @@ class Mopt_PayoneParamBuilder
         return $walletParams;
     }
 
-    protected function buildPayPalEcsShippingAddress($userData)
+    protected
+    function buildPayPalEcsShippingAddress($userData)
     {
         $params = array();
 
@@ -1654,7 +1677,8 @@ class Mopt_PayoneParamBuilder
         return $params;
     }
 
-    public function getPaymentPaypalEcs($router)
+    public
+    function getPaymentPaypalEcs($router)
     {
         $params = array();
 
@@ -1673,7 +1697,8 @@ class Mopt_PayoneParamBuilder
      *
      * @return string without whitespaces
      */
-    protected function removeWhitespaces($input)
+    protected
+    function removeWhitespaces($input)
     {
         return preg_replace('/\s+/', '', $input);
     }
@@ -1686,7 +1711,8 @@ class Mopt_PayoneParamBuilder
      * @param array $userData
      * @return array
      */
-    public function buildIframeParameters($basket, $shipment, $userData)
+    public
+    function buildIframeParameters($basket, $shipment, $userData)
     {
         $payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig();
         $router = Shopware()->Front()->Router();
@@ -1737,7 +1763,8 @@ class Mopt_PayoneParamBuilder
      * @param array $userData
      * @return int
      */
-    protected function getParamAmount($basket, $userData)
+    protected
+    function getParamAmount($basket, $userData)
     {
         if (!empty($userData['additional']['charge_vat'])) {
             return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
@@ -1752,7 +1779,8 @@ class Mopt_PayoneParamBuilder
      * @param array $request
      * @return string
      */
-    protected function getParamHash($request)
+    protected
+    function getParamHash($request)
     {
         $payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig();
         ksort($request);
@@ -1771,7 +1799,8 @@ class Mopt_PayoneParamBuilder
      * @param array $payoneConfig
      * @return string
      */
-    protected function getParamAuthorizationMethod($payoneConfig)
+    protected
+    function getParamAuthorizationMethod($payoneConfig)
     {
         $preAuthValues = array('preAuthorise', 'Vorautorisierung');
 
@@ -1787,7 +1816,8 @@ class Mopt_PayoneParamBuilder
      *
      * @return string
      */
-    protected function getCustomSessionParameters()
+    protected
+    function getCustomSessionParameters()
     {
         $session = Shopware()->Session();
 
@@ -1805,7 +1835,8 @@ class Mopt_PayoneParamBuilder
      *
      * @return array
      */
-    public function getBasicParameters()
+    public
+    function getBasicParameters()
     {
         $params = array();
 
