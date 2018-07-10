@@ -1319,11 +1319,8 @@ class Mopt_PayoneParamBuilder
         $positionquantities = null
     )
     {
-        $blTaxFree = $order->getTaxFree();
-        $blNet = $order->getNet();
-        // check here if netto is set and it corresponds with taxfree flag
-        // if order is netto and taxfree is not set add taxes to all positions
-        $blDebitBrutto = (!$blTaxFree && $blNet);
+        $taxFree = $order->getTaxFree();
+        $isNet = $order->getNet();
 
         $transaction = new Payone_Api_Request_Parameter_Capture_Invoicing_Transaction(array());
 
@@ -1338,18 +1335,9 @@ class Mopt_PayoneParamBuilder
                     continue;
                 }
             }
-            $flTaxRate = $position->getTaxRate();
-            $params = array();
+            $params = [];
             $params['id'] = $position->getArticleNumber(); //article number
-            if (!$blDebitBrutto) {
-                $params['pr'] = $position->getPrice(); //price
-            } else {
-                $params['pr'] = $position->getPrice() * (1 + ($flTaxRate / 100));
-            }
-
-            if ($debit) {
-                $params['pr'] = $params['pr'] * -1;
-            }
+            $params['pr'] = $debit ? $position->getPrice() * -1 : $position->getPrice(); //price
             if (isset($positionquantities) && !empty($positionquantities[$position->getId()])) {
                 $params['no'] = $positionquantities[$position->getId()]; // custom refunded quantity
             } else {
@@ -1369,7 +1357,7 @@ class Mopt_PayoneParamBuilder
             } else {
                 $params['va'] = number_format($position->getTaxRate(), 0, '.', ''); // vat
             }
-            $params['va'] = round($params['va'] * 100);
+            $params['va'] = ($taxFree || $isNet) ? 0 : round($params['va'] * 100);
             $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
             $mode = $position->getMode();
             if ($mode == 2) {
@@ -1398,6 +1386,74 @@ class Mopt_PayoneParamBuilder
             $item = new Payone_Api_Request_Parameter_Invoicing_Item($params);
             $transaction->addItem($item);
         }
+
+        // add taxes seperatly to avoid rounding issues and cent differences
+        if (!$taxFree && $isNet) {
+            foreach ($order->getDetails() as $position) {
+                if (!in_array($position->getId(), $positionIds)) {
+                    continue;
+                }
+
+                if (!$debit) {
+                    $positionAttribute = $this->payoneHelper->getOrCreateAttribute($position);
+                    if ($positionAttribute->getMoptPayoneCaptured()) {
+                        continue;
+                    }
+                }
+                $params = [];
+                $params['id'] = $position->getArticleNumber() . '-tax'; //article number
+                $params['pr'] = $debit ? $position->getPrice() * -1 * $position->getQuantity() *  $position->getTaxRate() / 100: $position->getPrice() *  $position->getQuantity() *  $position->getTaxRate() / 100; //price
+                $params['pr'] = round($params['pr'], 2);
+                if (isset($positionquantities) && !empty($positionquantities[$position->getId()])) {
+                    $params['no'] = $positionquantities[$position->getId()]; // custom refunded quantity
+                } else {
+                    $params['no'] = $position->getQuantity(); // ordered quantity
+                }
+
+                $params['de'] = substr($position->getArticleName(), 0, 94) . '-tax'; // description
+
+                // Check if article is a AboCommerce Discount
+                $isAboCommerceDiscount = (strpos($position->getArticlename(), 'ABO_DISCOUNT') === false) ? false : true;
+                if ($order->getTaxFree()) {
+                    $params['va'] = 0;
+                } elseif ($position->getTaxRate() == 0 &&
+                    $position->getTax()->getId() !== 0
+                    && !$isAboCommerceDiscount) {
+                    $params['va'] = number_format($position->getTax()->getTax(), 0, '.', '');
+                } else {
+                    $params['va'] = number_format($position->getTaxRate(), 0, '.', ''); // vat
+                }
+                $params['va'] = ($taxFree || $isNet) ? 0 : round($params['va'] * 100);
+                $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
+                $mode = $position->getMode();
+                if ($mode == 2) {
+                    $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
+                    $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                }
+
+                # paypal does not accept negative values for handling use voucher instead
+                # this was an issue with articles added by the SwagAdvancedPromotionSuite plugin
+                if ($mode == 4 && $params['pr'] >= "0") {
+                    $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
+                    $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                }
+                if ($mode == 4 && $params['pr'] < "0") {
+                    $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
+                    $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                }
+
+                if ($position->getArticleNumber() == 'SHIPPING') {
+                    $params['it'] = Payone_Api_Enum_InvoicingItemType::SHIPMENT;
+                    $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                    //don't use $includeShipment if shipping article exists
+                    $includeShipment = false;
+                }
+                $params = array_map('htmlspecialchars_decode', $params);
+                $item = new Payone_Api_Request_Parameter_Invoicing_Item($params);
+                $transaction->addItem($item);
+            }
+        }
+
 
         if ($finalize !== 'skipCaptureMode') {
             $transaction
@@ -1433,7 +1489,6 @@ class Mopt_PayoneParamBuilder
             $item = new Payone_Api_Request_Parameter_Invoicing_Item($params);
             $transaction->addItem($item);
         }
-
         return $transaction;
     }
 
