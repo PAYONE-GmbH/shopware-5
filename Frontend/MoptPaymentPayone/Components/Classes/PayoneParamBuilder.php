@@ -293,14 +293,10 @@ class Mopt_PayoneParamBuilder
         }
 
         if ($includeShipment) {
-            if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
-            } else {
-                $amount += $order->getInvoiceShipping() * (1 + ($flTaxRate / 100));
-            }
         }
 
-        return $amount * -1;
+        return round($amount, 2) * -1;
     }
 
     /**
@@ -345,14 +341,10 @@ class Mopt_PayoneParamBuilder
         }
 
         if ($includeShipment) {
-            if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
-            } else {
-                $amount += $order->getInvoiceShipping();
-            }
         }
-        $amount = round($amount, 2);
-        return $amount;
+
+        return round($amount, 2);;
     }
 
 
@@ -1404,26 +1396,13 @@ class Mopt_PayoneParamBuilder
                 $params['id'] = $position->getArticleNumber() . '-tax'; //article number
                 $params['pr'] = $debit ? $position->getPrice() * -1 * $position->getQuantity() *  $position->getTaxRate() / 100: $position->getPrice() *  $position->getQuantity() *  $position->getTaxRate() / 100; //price
                 $params['pr'] = round($params['pr'], 2);
-                if (isset($positionquantities) && !empty($positionquantities[$position->getId()])) {
-                    $params['no'] = $positionquantities[$position->getId()]; // custom refunded quantity
-                } else {
-                    $params['no'] = $position->getQuantity(); // ordered quantity
-                }
+                $params['no'] = 1;
 
                 $params['de'] = substr($position->getArticleName(), 0, 94) . '-tax'; // description
 
                 // Check if article is a AboCommerce Discount
                 $isAboCommerceDiscount = (strpos($position->getArticlename(), 'ABO_DISCOUNT') === false) ? false : true;
-                if ($order->getTaxFree()) {
-                    $params['va'] = 0;
-                } elseif ($position->getTaxRate() == 0 &&
-                    $position->getTax()->getId() !== 0
-                    && !$isAboCommerceDiscount) {
-                    $params['va'] = number_format($position->getTax()->getTax(), 0, '.', '');
-                } else {
-                    $params['va'] = number_format($position->getTaxRate(), 0, '.', ''); // vat
-                }
-                $params['va'] = ($taxFree || $isNet) ? 0 : round($params['va'] * 100);
+                $params['va'] = 0;
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
                 $mode = $position->getMode();
                 if ($mode == 2) {
