@@ -2,9 +2,9 @@
 
 {block name="frontend_checkout_actions_confirm"}
     {$smarty.block.parent}
-    <div class="button--container " style="display:table-cell; float:right; margin-right: 10px;">
+    <div class="button--container " style="display:table-cell;text-align:center;float:right; margin-right: 10px;">
         <img src="https://masterpass.com/dyn/img/btn/global/mp_chk_btn_147x034px.svg" onclick="getMasterPassData()">
-        <a href="https://www.mastercard.com/mc_us/wallet/learnmore/{$Locale|replace:"_":"/"}/" target="_blank"><u>Learn more</u></a>
+        <a href="https://www.mastercard.com/mc_us/wallet/learnmore/{$Locale|replace:"_":"/"}/" target="_blank"><u>{s namespace='frontend/MoptPaymentPayone/payment' name=masterpassLearnMore}Mehr erfahren{/s}</u></a>
         <div class="clear"></div>
     </div>
     <script>
@@ -36,7 +36,7 @@
     {$smarty.block.parent}
     <div class="button--container " style="display:table-cell; float:right; margin-right: 10px;">
         <img src="https://masterpass.com/dyn/img/btn/global/mp_chk_btn_147x034px.svg" onclick="getMasterPassData()">
-        <a href="https://www.mastercard.com/mc_us/wallet/learnmore/{$Locale|replace:"_":"/"}/" target="_blank"><u>Learn more</u></a>
+        <a href="https://www.mastercard.com/mc_us/wallet/learnmore/{$Locale|replace:"_":"/"}/" target="_blank"><u>{s namespace='frontend/MoptPaymentPayone/payment' name=masterpassLearnMore}Mehr erfahren{/s}</u></a>
         <div class="clear"></div>
     </div>
     <script>

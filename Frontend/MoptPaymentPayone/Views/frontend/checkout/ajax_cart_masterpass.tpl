@@ -4,7 +4,7 @@
     {$smarty.block.parent}
     <div class="button--container" style="text-align:center; display:table-cell; vertical-align:middle;">
         <img src="https://masterpass.com/dyn/img/btn/global/mp_chk_btn_147x034px.svg" onclick="getMasterPassData()">
-        <a href="https://www.mastercard.com/mc_us/wallet/learnmore/{$Locale|replace:"_":"/"}/" target="_blank"><u>Learn more</u></a>
+        <a href="https://www.mastercard.com/mc_us/wallet/learnmore/{$Locale|replace:"_":"/"}/" target="_blank"><u>{s namespace='frontend/MoptPaymentPayone/payment' name=masterpassLearnMore}Mehr erfahren{/s}</u></a>
         <div class="clear"></div>
     </div>
     <script>
