@@ -78,20 +78,6 @@
                 <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="transactionlog"}">
                         <span class="glyphicon glyphicon-arrow-right"></span>Zahlstatus</a></li>
             </ul>
-
-        </li>  
-        <li><a id="link-drilldown-3" href="#" class="box box-menu payone-menu"  data-toggle="collapse" data-target="#drilldown-3">
-                <span class="glyphicon glyphicon-arrow-right"></span>Information<span class="glyphicon glyphicon-chevron-right"></span>
-                <span class="glyphicon glyphicon-chevron-down"></span>
-            </a>
-            <ul id="drilldown-3" class="nav collapse">
-                <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="general"}">
-                        <span class="glyphicon glyphicon-arrow-right"></span>Allgemein</a></li>
-                <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="tipps"}">
-                        <span class="glyphicon glyphicon-arrow-right"></span>Tipps & Tricks</a></li>                        
-                <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="support"}">
-                        <span class="glyphicon glyphicon-arrow-right"></span>Support</a></li>
-            </ul>
         </li>
     </ul>
 {/block}

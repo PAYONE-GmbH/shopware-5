@@ -64,9 +64,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             'ajaxgetRiskCheckConfig',
             'ajaxgetAddressCheckConfig',
             'transactionlog',
-            'general',
-            'support',
-            'tipps',
             'ajaxcreditcard',
             'ajaxgetCreditCardConfig',
             'ajaxgetIframeConfig',
@@ -652,56 +649,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             "breadcrump" => $breadcrump,
             "params" => $params,
             "data" => $data,
-            ));
-    }
-
-    public function generalAction()
-    {
-        $breadcrump = array(
-            "Konfiguration", "Information", "general", "Allgemein"
-        );
-
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
-        $this->View()->assign(array
-            (
-            "breadcrump" => $breadcrump,
-            "params" => $params,
-            "data" => $data,
-            ));
-    }
-
-    public function supportAction()
-    {
-        $breadcrump = array(
-            "Konfiguration", "Information", "support", "Support"
-        );
-
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
-
-        $this->View()->assign(array
-            (
-            "breadcrump" => $breadcrump,
-            "params" => $params,
-            "data" => $data,
-            ));
-    }
-
-    public function tippsAction()
-    {
-        $breadcrump = array(
-            "Konfiguration", "Information", "tipps", "Tipps"
-        );
-
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
-
-        $this->View()->assign(array
-            (
-            "data" => $data,
-            "breadcrump" => $breadcrump,
-            "params" => $params
             ));
     }
 
