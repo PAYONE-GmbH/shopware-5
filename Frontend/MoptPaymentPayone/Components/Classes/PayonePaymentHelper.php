@@ -641,7 +641,8 @@ class Mopt_PayonePaymentHelper
      * @param $paymentName
      * @return bool
      */
-    public function isPayoneRatePay($paymentName) {
+    public function isPayoneRatePay($paymentName)
+    {
         $matchPosition = strpos($paymentName, 'mopt_payone__fin_ratepay');
         $return = ($matchPosition !== false) ? true : false;
 
@@ -1289,6 +1290,25 @@ class Mopt_PayonePaymentHelper
             ['name' => 'mopt_payone__ewallet_amazon_pay']
         );
         return $paymentAmazonPay->getActive();
+    }
+
+    /**
+     * checks if Ratepay is enabled
+     *
+     * @return bool
+     */
+    public function isRatepayActive()
+    {
+        $paymentRatepayInvoice = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__fin_ratepay_invoice']
+        );
+        $paymentRatepayInstallment = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__fin_ratepay_installment']
+        );
+        $paymentRatepayDebit = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__fin_ratepay_direct_debit']
+        );
+        return $paymentRatepayInvoice->getActive() || $paymentRatepayInstallment->getActive() || $paymentRatepayDebit->getActive();
     }
 
     /**

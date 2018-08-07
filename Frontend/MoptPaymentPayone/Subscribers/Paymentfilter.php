@@ -34,17 +34,20 @@ class Paymentfilter implements SubscriberInterface
             'Shopware_Modules_Admin_GetPaymentMeans_DataFilter' => 'onGetPaymentsDataFilter',
         );
     }
-    
+
     public function onGetPaymentsDataFilter(\Enlight_Event_EventArgs $args)
     {
         /** @var \Mopt_PayoneMain $moptPayoneMain */
+        $result = $args->getReturn();
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
+        if (!$moptPayoneMain->getPaymentHelper()->isRatepayActive()) {
+            return $result;
+        }
         $basket = $moptPayoneMain->sGetBasket();
         $basketAmount = $basket['Amount'];
         $shopLocale = Shopware()->Shop()->getLocale()->getLocale();
         $locale = explode('_', $shopLocale);
         $country = isset($locale[1]) ? $locale[1] : $locale[0];
-        $result = $args->getReturn();
         $session = Shopware()->Session();
 
         $ratepayconfig = $moptPayoneMain->getPaymentHelper()
@@ -61,16 +64,16 @@ class Paymentfilter implements SubscriberInterface
         // check if ratepay ban date is set in customer attribute
         $moptHelper = $moptPayoneMain->getHelper();
         $userId = $session->get('sUserId');
-        if ($userId){
+        if ($userId) {
             $banDate = $moptHelper->getRatepayBanDateFromUserId($userId);
-            if ($banDate){
+            if ($banDate) {
                 $untilDate = $banDate->modify("+1 day");
                 $now = date('Y-m-d');
                 $nowDate = \DateTime::createFromFormat(
                     'Y-m-d',
                     $now
                 );
-                if ($nowDate < $untilDate ){
+                if ($nowDate < $untilDate) {
                     $removeInstallment = true;
                     $removeInvoice = true;
                     $removeDirectDebit = true;
@@ -78,7 +81,7 @@ class Paymentfilter implements SubscriberInterface
             }
         }
 
-        foreach ($result as $index=>$payment) {
+        foreach ($result as $index => $payment) {
             if ($payment['name'] === 'mopt_payone__fin_ratepay_installment') {
                 $installmentIndex = $index;
             }
@@ -92,16 +95,16 @@ class Paymentfilter implements SubscriberInterface
 
         // check eligibility
 
-        if ($ratepayconfig['eligibilityRatepayInvoice'] === false){
+        if ($ratepayconfig['eligibilityRatepayInvoice'] === false) {
             $removeInvoice = true;
         }
 
-        if ($ratepayconfig['eligibilityRatepayInstallment'] === false){
+        if ($ratepayconfig['eligibilityRatepayInstallment'] === false) {
             $removeInstallment = true;
         }
 
         // check basket amounts
-        $basketAmount = str_replace(',','.', $basketAmount);
+        $basketAmount = str_replace(',', '.', $basketAmount);
         if ($basketAmount < $ratepayconfig['txLimitInstallmentMin'] || $basketAmount > $ratepayconfig['txLimitInstallmentMax']) {
             $removeInstallment = true;
         }
