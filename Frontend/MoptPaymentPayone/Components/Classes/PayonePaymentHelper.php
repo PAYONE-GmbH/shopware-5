@@ -935,7 +935,7 @@ class Mopt_PayonePaymentHelper
                     WHERE 
                         '{$basketValue}' BETWEEN tx_limit_invoice_min AND tx_limit_invoice_max AND
                         currency_id = '{$currencyId}' AND
-                        country_code_billing = '{$billingCountry}'";
+                        country_code_billing LIKE '%{$billingCountry}%'";
         $sQuery .= " LIMIT 1;";
         $sShopId = Shopware()->Db()->fetchOne($sQuery);
         if ($sShopId) {
