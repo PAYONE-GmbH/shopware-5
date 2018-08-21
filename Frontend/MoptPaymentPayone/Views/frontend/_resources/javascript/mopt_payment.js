@@ -277,7 +277,6 @@ function moptPaymentReady() {
             }
             config.language = eval('Payone.ClientApi.Language.' + me.opts.moptPayoneParamsLanguage);
 
-
             if (me.opts.moptCreditcardConfig.cardno_custom_style === '0') {
                 config.fields.cardpan.style = me.opts.moptCreditcardConfig.cardno_input_css;
             }
@@ -440,7 +439,19 @@ function moptPaymentReady() {
 
             if (diff < 0) {
                 $('#mopt_payone__cc_cvc').val('');
-                processPayoneResponse(false);
+                var response = {
+                    status:'INVALID',
+                    errorcode: '1077',
+                    get:function(string) {
+                        if ( string == 'status' ) {
+                            return this.status;
+                        }
+                        if ( string == 'errorcode' ) {
+                            return this.errorcode;
+                        }
+                    }
+                };
+                processPayoneResponse(response);
             }
             else {
                 var data = {
@@ -482,7 +493,7 @@ function moptPaymentReady() {
             if (iframes.isComplete()) {
                 iframes.creditCardCheck('processPayoneIframeResponse');
             } else {
-                moptShowGeneralIFrameError();
+                moptShowGeneralError();
             }
         },
         destroy: function () {
@@ -497,7 +508,7 @@ function moptPaymentReady() {
             if (iframes.isComplete()) {
                 iframes.creditCardCheck('processPayoneIframeResponseWithoutSubmit');
             } else {
-                moptShowGeneralIFrameError();
+                moptShowGeneralError();
             }
         },
         destroy: function () {
@@ -541,11 +552,10 @@ function moptPaymentReady() {
         poBindDispatchChange();
     });
 
-
-//define global iframe var
+    //define global iframe var
     var iframes;
 
-//call the plugins
+    //call the plugins
     poBindDispatchChange();
 
     $('.moptPayoneIbanBic').moptPayoneIbanBicValidator();
