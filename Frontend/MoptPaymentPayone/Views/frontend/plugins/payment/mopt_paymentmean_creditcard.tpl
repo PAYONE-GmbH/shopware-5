@@ -242,8 +242,7 @@
                 alert(errorMessages[0].general);
             }
         }
-                }
-                ;
+    };
                 
     function processPayoneIframeResponse(response) {
         if (response.status === "VALID") {
@@ -281,17 +280,13 @@
                 //$('.hiddenCCFields').show();
                 $("#shippingPaymentForm").submit();
                 $('form[name="frmRegister"]').submit();
-            } else {
-              alert("Das Ablaufdatum ihrer Kreditkarte ist unzureichend!");
+                var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
+                alert(errorMessages[0]['CustomExpiry']);
             }
         });
         } else {
-
-                        if (response && response.errormessage) {
-                            alert(response.errormessage);
-                        } else {
-                            moptShowGeneralIFrameError();
-                        }
+            var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
+            alert(errorMessages[0][response.errorcode]);
         }
     };
 
@@ -327,32 +322,22 @@
                 var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
                 var diff = selectedDate.getTime() - minValidDate.getTime();
                 if (diff > 0){
-
                     location.reload();
 
                 } else {
-                    alert("Das Ablaufdatum ihrer Kreditkarte ist unzureichend!");
+                    var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
+                    alert(errorMessages[0]['CustomExpiry']);
                 }
             });
         } else {
-
-            if (response && response.errormessage) {
-                alert(response.errormessage);
-            } else {
-                console.log("ErrorWithoutsubmit");
-                moptShowGeneralIFrameError();
-            }
+            var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
+            alert(errorMessages[0][response.errorcode]);
         }
     };
 
-    
     function moptShowGeneralError() {
         var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
         alert(errorMessages[0].general);
-    };
-    
-    function moptShowGeneralIFrameError() {
-        alert("Bitte füllen Sie alle Formularfelder vollständig aus");
     };
 
     function showhiddenCCFields() {
