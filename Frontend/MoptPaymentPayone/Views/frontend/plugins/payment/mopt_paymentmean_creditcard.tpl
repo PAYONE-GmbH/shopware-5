@@ -275,11 +275,12 @@
             var selectedMonth = response.cardexpiredate.substring(2,4);
             var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
             var diff = selectedDate.getTime() - minValidDate.getTime();
-            if (diff > 0){
+            if (diff >= 0){
                 $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
                 //$('.hiddenCCFields').show();
                 $("#shippingPaymentForm").submit();
                 $('form[name="frmRegister"]').submit();
+            } else {
                 var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
                 alert(errorMessages[0]['CustomExpiry']);
             }
@@ -321,7 +322,7 @@
                 var selectedMonth = response.cardexpiredate.substring(2,4);
                 var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
                 var diff = selectedDate.getTime() - minValidDate.getTime();
-                if (diff > 0){
+                if (diff >= 0){
                     location.reload();
 
                 } else {
