@@ -347,7 +347,7 @@
             data: data,
             success: function(expiryResponse)
             {
-                if (expiryResponse === 'true' ){
+                if (expiryResponse == 'true' ){
                     ret = true;
                 } else {
                     showExpiryErrorMessage();

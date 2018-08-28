@@ -721,7 +721,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             'saveOriginalShippingAddress',
             'savePseudoCard',
             'rate',
-            'runtime'
+            'runtime',
+            'checkCreditCardExpiry',
         );
         return $returnArray;
     }
