@@ -1080,4 +1080,35 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
     }
 
+    /**
+     * AJAX action called for creditcard expiry checks
+     *
+     */
+    public function checkCreditCardExpiryAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $shopId = $this->container->get('shop')->getId();
+
+        $sql = 'SELECT * FROM s_plugin_mopt_payone_creditcard_config WHERE shop_id = ?';
+        $configData = Shopware()->Db()->fetchRow($sql, $shopId);
+
+        if (!$configData) {
+            $sql = 'SELECT * FROM s_plugin_mopt_payone_creditcard_config WHERE is_default = ?';
+            $configData = Shopware()->Db()->fetchRow($sql, true);
+        }
+        $minExpiryDays = (int) $configData['creditcard_min_valid'];
+        $expireDate = $this->Request()->getPost('mopt_payone__cc_cardexpiredate');
+        $expireSplit = str_split($expireDate, 2);
+        $expireMonth = $expireSplit[1];
+        $expireYear = $expireSplit[0];
+        $expireTime = strtotime("+".$minExpiryDays. " day");
+        $cardExpireTime = strtotime("31-" . $expireMonth . "-20" ."$expireYear". " " ."23:59:59");
+        $timediff = $cardExpireTime - $expireTime;
+        if ($timediff >= 0 ) {
+            echo json_encode(true);
+        } else {
+            echo json_encode($minExpiryDays);
+        }
+    }
+
 }

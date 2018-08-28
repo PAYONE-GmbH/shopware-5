@@ -139,9 +139,16 @@ function moptPaymentReady() {
                             $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
                             return 'undefined';
                         } else {
-                            return true;
-                        }
-                        ;
+                            var data = {};
+                            data.mopt_payone__cc_cardexpiredate = $('#mopt_payone__cc_cardexpireyear_hidden').val().substr(2,4) + $('#mopt_payone__cc_cardexpiremonth_hidden').val();
+                            var success = expiryCheck(data);
+                            if (success == true) {
+                                return true;
+                            } else {
+                                e.preventDefault();
+                                return false;
+                            }
+                        };
                     });
                 }
             }
@@ -526,7 +533,7 @@ function moptPaymentReady() {
                         $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
                     }
                     $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheckWithoutSubmit();
-                    return undefined;
+                    return 'undefined';
 
                 } else {
                     return true;
