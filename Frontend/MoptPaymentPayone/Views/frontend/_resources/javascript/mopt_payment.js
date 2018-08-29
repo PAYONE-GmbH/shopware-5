@@ -140,7 +140,7 @@ function moptPaymentReady() {
                             return 'undefined';
                         } else {
                             var data = {};
-                            if (creditcardCheckType === 0){
+                            if (creditcardCheckType === '0'){
                                 data.mopt_payone__cc_cardexpiredate = $('#mopt_payone__cc_cardexpireyear_hidden').val().substr(2,4) + $('#mopt_payone__cc_cardexpiremonth_hidden').val();
                             } else {
                                 data.mopt_payone__cc_cardexpiredate = $('#mopt_payone__cc_Year').val().substr(2,4) + $('#mopt_payone__cc_month').val();

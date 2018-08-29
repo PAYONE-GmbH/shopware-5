@@ -292,7 +292,6 @@
                 mopt_payone__cc_cardexpiredate: response.cardexpiredate
             };
             savePseudoCard(data);
-            $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
         } else {
             showErrorMessage(response);
         }
@@ -330,6 +329,7 @@
         jQuery.post('{url controller=moptAjaxPayone action=checkCreditCardExpiry forceSecure}', data, function (expiryResponse)
         {
             if (expiryResponse == 'true' ){
+                $('#mopt_payone__cc_truncatedcardpan_hidden').val(data.mopt_payone__cc_truncatedcardpan);
                 savePseudoCard(data);
                 submitForm();
             } else {
