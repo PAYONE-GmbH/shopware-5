@@ -1100,19 +1100,42 @@ class Mopt_PayonePaymentHelper
             'creditCardCheckerrorMessage',
             'Bitte überprüfen Sie die Angaben auf der Karte.'
         );
+        $errorMessages['CustomExpiry'] = $namespace->get(
+            'errorMessageCustomExpiry',
+            'Unzureichendes Gültigkeitsdatum. Ihre Kreditkarte unterschreitet die vom Händler hinterlegte Mindestgültigkeit.'
+        );
+        $errorMessages['33'] = $namespace->get(
+            'errorMessage33',
+            'Ungültiges Verfallsdatum. Bitte überprüfen Sie die Angaben auf der Karte.'
+        );
+        $errorMessages['877'] = $namespace->get(
+            'errorMessage877',
+            'Ungültige Kartennummer. Bitte überprüfen Sie die Angaben auf der Karte.'
+        );
+        $errorMessages['880'] = $namespace->get(
+            'errorMessage880',
+            'Kartentyp passt nicht zur Kartennummer. Bitte überprüfen Sie die Angaben auf der Karte.'
+        );
+        $errorMessages['1041'] = $namespace->get(
+            'errorMessage1041',
+            'Parameter successurl fehlt oder ist fehlerhaft.'
+        );
         $errorMessages['1076'] = $namespace->get(
             'errorMessage1076',
             'Ungültiger Kartentyp. Bitte überprüfen Sie die Angaben auf der Karte.'
+        );
+        $errorMessages['1077'] = $namespace->get(
+            'errorMessage1077',
+            'Ungültiges Verfallsdatum. Bitte überprüfen Sie die Angaben auf der Karte.'
         );
         $errorMessages['1078'] = $namespace->get(
             'errorMessage1078',
             'Ungültige Kartennummer. Bitte überprüfen Sie die Angaben auf der Karte.'
         );
-        $errorMessages['33'] = $namespace->get(
-            'errorMessage33',
-            'Verfallsdatum ungültig. Bitte überprüfen Sie die Angaben auf der Karte.'
+        $errorMessages['1079'] = $namespace->get(
+            'errorMessage1079',
+            'Ungültiges Verfallsdatum. Bitte überprüfen Sie die Angaben auf der Karte.'
         );
-
         return $errorMessages;
     }
 

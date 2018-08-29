@@ -137,7 +137,7 @@ function moptPaymentReady() {
                                 $('#mopt_payone_creditcard_form').data('plugin_moptPayoneIframeCreditcardCheck').destroy();
                             }
                             $('#mopt_payone_creditcard_form').moptPayoneIframeCreditcardCheck();
-                            return undefined;
+                            return 'undefined';
                         } else {
                             return true;
                         }
@@ -432,7 +432,6 @@ function moptPaymentReady() {
         },
         checkCreditCard: function () {
             var me = this;
-
             var today = new Date();
             var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + me.opts.moptCreditcardMinValid);
             var selectedDate = new Date($('#mopt_payone__cc_Year').val(), $('#mopt_payone__cc_month').val(), 0);
