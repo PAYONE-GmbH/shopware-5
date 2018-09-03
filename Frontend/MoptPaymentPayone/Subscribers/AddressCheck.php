@@ -357,18 +357,20 @@ class AddressCheck implements SubscriberInterface
         $shippingAddressData['country'] = $shippingAddressData['countryID'];
         $session                        = Shopware()->Session();
         $userId                         = $session->sUserId;
+        $paymentName                    = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($paymentId);
 
         // get billing address attributes
         $userBillingAddressCheckData = $moptPayoneMain->getHelper()
             ->getBillingAddresscheckDataFromUserId($userId);
         // check if addresscheck is required for billing adress
-        $billingAddressCheckRequired = $moptPayoneMain
-            ->getHelper()
-            ->isBillingAddressToBeCheckedWithBasketValue(
+
+        $billingAddressCheckRequired = $this->getBillingAddressCheckIsNeeded(
                 $config,
+                $userId,
                 $basketValue,
+                $paymentName,
                 $billingAddressData['country']
-            );
+        );
 
         if ($session->moptAddressCheckNeedsUserVerification) {
             $billingAddressCheckRequired = false;
@@ -446,13 +448,13 @@ class AddressCheck implements SubscriberInterface
         $shippingAttributes = $moptPayoneMain->getHelper()
             ->getShippingAddressAttributesFromUserId($userId);
         // check if addresscheck is required for shipping address
-        $shippingAddressCheckRequired = $moptPayoneMain->getHelper()
-            ->isShippingAddressToBeCheckedWithBasketValue(
-                $config,
-                $basketValue,
-                $shippingAddressData['country'],
-                $userId
-            );
+        $shippingAddressCheckRequired = $this->getShippingAddressCheckIsNeeded(
+            $config,
+            $userId,
+            $basketValue,
+            $paymentName,
+            $shippingAddressData['country']
+        );
 
         if ($session->moptAddressCheckNeedsUserVerification) {
             $shippingAddressCheckRequired = false;
@@ -1107,7 +1109,7 @@ class AddressCheck implements SubscriberInterface
             ->getApiModeFromId($config['adresscheckLiveMode']));
 
         try {
-            $response = $service->check($request);
+             $response = $service->check($request);
         } catch (\Exception $e) {
             throw $e;
         }
