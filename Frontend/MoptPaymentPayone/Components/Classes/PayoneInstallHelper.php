@@ -200,22 +200,6 @@ class Mopt_PayoneInstallHelper
                 'consumerscore_value'               => 'integer',
                 'ratepay_ban'                       => 'date',
             ],
-            's_user_billingaddress_attributes' => [
-                'addresscheck_result'               => 'string',
-                'addresscheck_date'                 => 'date',
-                'addresscheck_personstatus'         => 'string',
-                'consumerscore_result'              => 'string',
-                'consumerscore_date'                => 'date',
-                'consumerscore_color'               => 'string',
-                'consumerscore_value'               => 'integer',
-            ],
-            's_user_shippingaddress_attributes' => [
-                'addresscheck_result'               => 'string',
-                'addresscheck_date'                 => 'date',
-                'addresscheck_personstatus'         => 'string',
-                'consumerscore_color'               => 'string',
-                'consumerscore_value'               => 'integer',
-            ],
             's_order_attributes' => [
                 'txid'                              => 'integer',
                 'status'                            => 'string',
