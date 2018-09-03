@@ -7,7 +7,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.StatePayment', {
       type: 'integer'
     },
     {
-      name: 'description', 
+      name: 'name',
       type: 'string'
     }
   ]

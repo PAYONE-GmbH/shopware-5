@@ -1,5 +1,7 @@
 <?php
 
+use Shopware\Models\Order\Order;
+
 /**
  * backend controller for payone configuration
  *
@@ -239,11 +241,8 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
      */
     public function readPaymentStateAction()
     {
-        $builder = Shopware()->Models()->createQueryBuilder();
-        $data = $builder->select('a.id, a.description')
-                        ->from('Shopware\Models\Order\Status', 'a')
-                        ->where('a.group = \'payment\'')
-                        ->getQuery()->getArrayResult();
+        $orderRepository = Shopware()->Models()->getRepository(Order::class);
+        $data = $orderRepository->getPaymentStatusQuery()->getArrayResult();
 
         $this->View()->assign(array('data' => $data, 'success' => true));
     }
