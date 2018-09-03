@@ -254,7 +254,7 @@
                         type: 'post',
                         data: { referenceId: moptAmazonReferenceId}
                     })
-                        .success(function(response){
+                        .done(function(response){
                             var responseData = $.parseJSON(response);
 
                             if (responseData.status == "error"){
