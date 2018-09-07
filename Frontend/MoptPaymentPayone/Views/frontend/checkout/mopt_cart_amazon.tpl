@@ -34,6 +34,26 @@
                                 + ' - ' + error.getErrorMessage());
                         }
                     });
+                    OffAmazonPayments.Button('LoginWithAmazonBottom', "{$payoneAmazonPayConfig->getSellerId()}", {
+                        type: "{$payoneAmazonPayConfig->getButtonType()}",
+                        color: "{$payoneAmazonPayConfig->getButtonColor()}",
+                        size: 'medium',
+                        //language: "{$payoneAmazonPayConfig->getButtonLanguage()}",
+                        language: "{$Locale|replace:"_":"-"}",
+
+                        authorization: function () {
+                            loginOptions = {
+                                scope: 'profile payments:widget payments:shipping_address payments:billing_address',
+                                popup: true
+                            };
+                            authRequest = amazon.Login.authorize(loginOptions, '{url controller='moptPaymentAmazon' action='index'}');
+                        },
+                        onError: function(error) {
+                            alert("The following error occurred: "
+                                + error.getErrorCode()
+                                + ' - ' + error.getErrorMessage());
+                        }
+                    });
                 }
             </script>
             <script async="async"
@@ -89,38 +109,6 @@
     <div class="button--container right" style="margin-right: 10px">
         <div id="LoginWithAmazonBottom"></div>
         <div class="clear"></div>
-        <script>
-            window.onAmazonLoginReady = function () {
-                amazon.Login.setClientId("{$payoneAmazonPayConfig->getClientId()}");
-            };
-            window.onAmazonPaymentsReady = function () {
-                var authRequest;
-                OffAmazonPayments.Button('LoginWithAmazonBottom', "{$payoneAmazonPayConfig->getSellerId()}", {
-                    type: "{$payoneAmazonPayConfig->getButtonType()}",
-                    color: "{$payoneAmazonPayConfig->getButtonColor()}",
-                    size: 'medium',
-                    //language: "{$payoneAmazonPayConfig->getButtonLanguage()}",
-                    language: "{$Locale|replace:"_":"-"}",
-
-                    authorization: function () {
-                        loginOptions = {
-                            scope: 'profile payments:widget payments:shipping_address payments:billing_address',
-                            popup: true
-                        };
-                        authRequest = amazon.Login.authorize(loginOptions, '{url controller='moptPaymentAmazon' action='index'}');
-                    },
-                    onError: function(error) {
-                        alert("The following error occurred: "
-                            + error.getErrorCode()
-                            + ' - ' + error.getErrorMessage());
-                    }
-                });
-            }
-        </script>
-        <script async="async"
-                {if $payoneAmazonPayMode == 1} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js'> {/if}
-            {if $payoneAmazonPayMode == 0} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'>{/if}
-        </script>
     </div>
 {/if}
 {else}
@@ -155,10 +143,6 @@
                 }
             });
         }
-    </script>
-    <script async="async"
-            {if $payoneAmazonPayMode == 1} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js'> {/if}
-        {if $payoneAmazonPayMode == 0} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'>{/if}
     </script>
     {/if}
     {/block}
@@ -196,6 +180,7 @@
         <script async="async"
                 {if $payoneAmazonPayMode == 1} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js'> {/if}
                 {if $payoneAmazonPayMode == 0} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'>{/if}
+            console.log('Loaded by indeX_header');
         </script>
         <script>
             window.onAmazonLoginReady = function () {
