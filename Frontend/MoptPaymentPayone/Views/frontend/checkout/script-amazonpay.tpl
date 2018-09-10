@@ -6,10 +6,10 @@
     function offPaymentsWrapper(buttonDiv, popup, useHttpMode) {
         var authRequest;
         var shopUrl = '{url controller='moptPaymentAmazon' action='index'}';
-        if (useHttpMode) {
+        if (shopUrl.indexOf('http://') !== -1)
+        {
             shopUrl = shopUrl.replace("http://", "https://");
-            console.log('ShopURl Ajax');
-            console.log(shopUrl);
+            popup = false;
         }
         OffAmazonPayments.Button(buttonDiv, "{$payoneAmazonPayConfig->getSellerId()}", {
             type: "{$payoneAmazonPayConfig->getButtonType()}",
@@ -35,8 +35,7 @@
     function forceDomReload()
     {
         // force redraw of parent element to fix safari issues:
-        // see https://stackoverflow.com/questions/8840580/force-dom-redraw-refresh-on-chrome-mac
-        console.log('force dom reload Cart');
+        // see https://stackoverflow.com/questions/8840580/force-dom-redraw-refresh-on-chrome-macconsole.
         document.getElementById('LoginWithAmazon').style.display = 'none';
         document.getElementById('LoginWithAmazon').style.display = 'inline-block';
         document.getElementById('LoginWithAmazonBottom').style.display = 'none';
