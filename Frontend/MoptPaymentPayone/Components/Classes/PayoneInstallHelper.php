@@ -183,7 +183,7 @@ class Mopt_PayoneInstallHelper
 
     /**
      * - returns the definition for attribute table extensions
-     * - intended to be used with Shopware version >= 5.2.0
+     * - intended to be used with Shopware version < 5.2.0
      * - Shopware versions < 5.2.0 can use the definitions by mapping
      * the types with unifiedToSQL() of this helper class
      *
@@ -199,6 +199,22 @@ class Mopt_PayoneInstallHelper
                 'consumerscore_color'               => 'string',
                 'consumerscore_value'               => 'integer',
                 'ratepay_ban'                       => 'date',
+            ],
+            's_user_billingaddress_attributes' => [
+                'addresscheck_result'               => 'string',
+                'addresscheck_date'                 => 'date',
+                'addresscheck_personstatus'         => 'string',
+                'consumerscore_result'              => 'string',
+                'consumerscore_date'                => 'date',
+                'consumerscore_color'               => 'string',
+                'consumerscore_value'               => 'integer',
+            ],
+            's_user_shippingaddress_attributes' => [
+                'addresscheck_result'               => 'string',
+                'addresscheck_date'                 => 'date',
+                'addresscheck_personstatus'         => 'string',
+                'consumerscore_color'               => 'string',
+                'consumerscore_value'               => 'integer',
             ],
             's_order_attributes' => [
                 'txid'                              => 'integer',
@@ -262,9 +278,16 @@ class Mopt_PayoneInstallHelper
      *
      * @return array
      */
-    public function moptAttributeExtensionsArray52()
+    public function moptAttributeExtensionsArray52($pluginId)
     {
         return [
+            's_user_attributes' => [
+                'consumerscore_result'              => 'string',
+                'consumerscore_date'                => 'date',
+                'consumerscore_color'               => 'string',
+                'consumerscore_value'               => 'integer',
+                'ratepay_ban'                       => 'date',
+            ],
             's_user_addresses_attributes' => [
                 'addresscheck_result'               => 'string',
                 'addresscheck_date'                 => 'date',
@@ -273,7 +296,60 @@ class Mopt_PayoneInstallHelper
                 'consumerscore_date'                => 'date',
                 'consumerscore_color'               => 'string',
                 'consumerscore_value'               => 'integer',
-            ]
+            ],
+            's_order_attributes' => [
+                'txid'                              => 'integer',
+                'status'                            => 'string',
+                'sequencenumber'                    => 'integer',
+                'is_authorized'                     => 'boolean',
+                'is_finally_captured'               => 'boolean',
+                'clearing_data'                     => 'text',
+                // since 2.1.4 - save shipping cost with order
+                'ship_captured'                     => ['float',
+                    [
+                        'label' => 'Versandkosten bisher eingezogen:',
+                        'helpText' => '',
+                        'displayInBackend' => true,
+                        'pluginId' => $pluginId
+                    ]
+                ],
+                'ship_debit'                        => ['float',
+                    [
+                        'label' => 'Versandkosten bisher gutgeschrieben:',
+                        'helpText' => '',
+                        'displayInBackend' => true,
+                        'pluginId' => $pluginId
+                    ]
+                ],
+                // since 2.3.0 - save payment data for abo commerce support
+                'payment_data'                      => 'text',
+                // since 2.5.2 - save order hash and payment reference
+                'payment_reference'                 => 'string',
+                'order_hash'                        => 'string',
+                // since 3.3.8 - Payolution Payment Order extensions
+                'payolution_workorder_id'           => ['string',
+                    [
+                        'label' => 'Workorder ID:',
+                        'helpText' => '',
+                        'displayInBackend' => true,
+                        'pluginId' => $pluginId
+                    ]
+                ],
+                'payolution_clearing_reference'     => ['string',
+                    [
+                        'label' => 'Clearing Reference:',
+                        'helpText' => '',
+                        'displayInBackend' => true,
+                        'pluginId' => $pluginId
+                    ]
+                ],
+            ],
+            's_order_details_attributes' => [
+                'payment_status'                    => 'string',
+                'shipment_date'                     => 'date',
+                'captured'                          => 'float',
+                'debit'                             => 'float',
+            ],
         ];
     }
 
