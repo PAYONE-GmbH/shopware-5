@@ -208,7 +208,6 @@
         }
 
         var accessToken = getURLParameter("access_token", location.hash)
-        console.log(accessToken);
 
         if (typeof accessToken === 'string' && accessToken.match(/^Atza/)) {
             document.cookie = "amazon_Login_accessToken=" + accessToken +
@@ -310,6 +309,10 @@
             }).bind("walletWidgetDiv");
         };
     </script>
+    <script async
+        {if $payoneAmazonPayMode == 1} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js'>{/if}
+        {if $payoneAmazonPayMode == 0} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'>{/if}
+    </script>
 {/block}
 
 {* remove SW 5.1 billing panel and use it for dispatches *}
@@ -342,7 +345,8 @@
 {/block}
 
 
-{block name="frontend_index_header_javascript_jquery" append}
+{block name="frontend_index_header_javascript_jquery"}
+    {$smarty.block.parent}
     {if $moptAmazonLogout === true}
     <script>
         window.onAmazonLoginReady = function () {
@@ -351,35 +355,5 @@
         };
     </script>
     {/if}
-
-    <script>
-        var jsloadMethod = document.querySelector('#jsLoadMethod').value;
-        var isAsyncJsLoading = (jsloadMethod === 'async' || jsloadMethod === 'default');
-        console.log(isAsyncJsLoading);
-        if (isAsyncJsLoading) {
-            document.asyncReady(function () {
-                {if $payoneAmazonPayMode == 1}
-                console.log("Live Mode");
-                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js');
-                {/if}
-                {if $payoneAmazonPayMode == 0}
-                console.log("Test Mode");
-                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js');
-                {/if}
-            });
-        } else {
-            console.log('sync mode');
-            $(document).ready(function() {
-                {if $payoneAmazonPayMode == 1}
-                console.log("Live Mode");
-                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js');
-                {/if}
-                {if $payoneAmazonPayMode == 0}
-                console.log("Test Mode");
-                $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js');
-                {/if}
-            });
-        }
-    </script>
 {/block}
 

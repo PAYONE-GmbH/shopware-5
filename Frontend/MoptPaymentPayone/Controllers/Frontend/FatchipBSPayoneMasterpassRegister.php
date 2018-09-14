@@ -145,14 +145,14 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
         // shipping_firstname contains shipping_firstname and shipping_lastname, so split it
         $nameParts = preg_split("/\s+(?=\S*+$)/", $addressData['shipping_firstname']);
         // also convert wrong charset of the response, this will be fixed by BSPayone
-        $addressData['shipping_firstname'] = utf8_decode($nameParts[0]);
-        $addressData['shipping_lastname'] = utf8_decode($nameParts[1]);
-        $addressData['firstname'] = utf8_decode($addressData['firstname']);
-        $addressData['lastname'] = utf8_decode($addressData['lastname']);
-        $addressData['street'] = utf8_decode($addressData['street']);
-        $addressData['shipping_street'] = utf8_decode($addressData['shipping_street']);
-        $addressData['shipping_addressaddition'] = utf8_decode($addressData['shipping_addressaddition']);
-        $addressData['addressaddition'] = utf8_decode($addressData['addressaddition']);
+        $addressData['shipping_firstname'] = $this->decodeUtf8IfNeeded($nameParts[0]);
+        $addressData['shipping_lastname'] = $this->decodeUtf8IfNeeded($nameParts[1]);
+        $addressData['firstname'] =$this->decodeUtf8IfNeeded($addressData['firstname']);
+        $addressData['lastname'] = $this->decodeUtf8IfNeeded($addressData['lastname']);
+        $addressData['street'] = $this->decodeUtf8IfNeeded($addressData['street']);
+        $addressData['shipping_street'] = $this->decodeUtf8IfNeeded($addressData['shipping_street']);
+        $addressData['shipping_addressaddition'] = $this->decodeUtf8IfNeeded($addressData['shipping_addressaddition']);
+        $addressData['addressaddition'] = $this->decodeUtf8IfNeeded($addressData['addressaddition']);
 
         $session->offsetSet('sPaymentID', $this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
         // set flag so we do not get redirected back to shippingpayment
@@ -196,6 +196,11 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
             'register'
         );
         return $returnArray;
+    }
+
+    protected function decodeUtf8IfNeeded($string)
+    {
+        return (preg_match('!!u', $string)) ? $string : utf8_decode($string);
     }
 }
 
