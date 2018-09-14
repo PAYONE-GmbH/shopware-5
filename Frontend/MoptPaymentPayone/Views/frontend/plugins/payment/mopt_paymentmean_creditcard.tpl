@@ -251,6 +251,8 @@
             $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
             $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
             $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
+            $('#mopt_payone__cc_cardexpireyear_hidden').val('20'+ $('#mopt_payone__cc_cardexpiredate').val().substring(0,2));
+            $('#mopt_payone__cc_cardexpiremonth_hidden').val($('#mopt_payone__cc_cardexpiredate').val().substring(2,4));
 
             var data = {
                 mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
@@ -266,6 +268,7 @@
             ccCheck(data);
         } else {
             showErrorMessage(response);
+            $('#mopt_payone__cc_hostediframesubmit').val('1');
         }
     };
 
@@ -279,6 +282,8 @@
             $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
             $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
             $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
+            $('#mopt_payone__cc_cardexpireyear_hidden').val('20'+ $('#mopt_payone__cc_cardexpiredate').val().substring(0,2));
+            $('#mopt_payone__cc_cardexpiremonth_hidden').val($('#mopt_payone__cc_cardexpiredate').val().substring(2,4));
 
             var data = {
                 mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
@@ -334,6 +339,8 @@
                 submitForm();
             } else {
                 showExpiryErrorMessage();
+                $('#mopt_payone__cc_truncatedcardpan_hidden').val('');
+                $('#mopt_payone__cc_hostediframesubmit').val('1');
             }
         });
     };
@@ -351,6 +358,8 @@
                     ret = true;
                 } else {
                     showExpiryErrorMessage();
+                    $('#mopt_payone__cc_truncatedcardpan_hidden').val('');
+                    $('#mopt_payone__cc_hostediframesubmit').val('1');
                     ret = false;
                 }
 

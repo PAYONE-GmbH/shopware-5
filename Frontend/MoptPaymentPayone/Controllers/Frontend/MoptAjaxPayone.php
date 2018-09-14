@@ -1102,9 +1102,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $expireSplit = str_split($expireDate, 2);
         $expireMonth = $expireSplit[1];
         $expireYear = $expireSplit[0];
-        $expireTime = strtotime("+".$minExpiryDays. " day");
-        $cardExpireTime = strtotime("31-" . $expireMonth . "-20" ."$expireYear". " " ."23:59:59");
-        $timediff = $cardExpireTime - $expireTime;
+        $expireTime = strtotime("+". ($minExpiryDays +1) . " day");
+        $cardExpireNextMonth = strtotime("01-" . ($expireMonth +1) . "-20" ."$expireYear". " " ."23:59:59");
+        $timediff = $cardExpireNextMonth - $expireTime;
+        $hours = $timediff / 3600;
         if ($timediff >= 0 ) {
             echo json_encode(true);
         } else {
