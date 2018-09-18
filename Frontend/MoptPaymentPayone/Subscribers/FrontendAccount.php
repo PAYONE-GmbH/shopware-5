@@ -116,6 +116,9 @@ class FrontendAccount implements SubscriberInterface
         $serializedPaymentData = serialize($paymentData);
         $sql = 'UPDATE s_plugin_mopt_payone_payment_data SET `moptPaymentData`= ? WHERE userId = ?';
         Shopware()->Db()->executeUpdate($sql,array($serializedPaymentData, $userId));
+        // also remove creditcard as default payment
+        $sql = "UPDATE s_user SET paymentID = ? WHERE id = ?";
+        Shopware()->Db()->query($sql, array((int)Shopware()->Config()->Defaultpayment, (int)$userId));
     }
 
 }

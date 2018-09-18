@@ -229,17 +229,14 @@
                 mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
                 mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text()
             };
-            jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
-            {
-                $("#shippingPaymentForm").submit();
-                $('form[name="frmRegister"]').submit();
-            });
+            savePseudoCard(data);
+            submitForm();
         } else {
             var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
             if (response && (response.get('errorcode') in errorMessages[0])) {
                 alert(errorMessages[0][response.get('errorcode')]);
             } else {
-                alert(errorMessages[0].general);
+                moptShowGeneralError();
             }
         }
     };
@@ -254,6 +251,8 @@
             $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
             $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
             $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
+            $('#mopt_payone__cc_cardexpireyear_hidden').val('20'+ $('#mopt_payone__cc_cardexpiredate').val().substring(0,2));
+            $('#mopt_payone__cc_cardexpiremonth_hidden').val($('#mopt_payone__cc_cardexpiredate').val().substring(2,4));
 
             var data = {
                 mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
@@ -264,30 +263,12 @@
                 mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
                 mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
                 mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
-            mopt_payone__cc_cardexpiredate: response.cardexpiredate
-        };
-        jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
-        {
-            var today = new Date();
-            var configuredDays = {$moptCreditCardCheckEnvironment.moptCreditcardMinValid};
-            var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + configuredDays);
-            var selectedYear = '20'+response.cardexpiredate.substring(0,2);
-            var selectedMonth = response.cardexpiredate.substring(2,4);
-            var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
-            var diff = selectedDate.getTime() - minValidDate.getTime();
-            if (diff >= 0){
-                $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
-                //$('.hiddenCCFields').show();
-                $("#shippingPaymentForm").submit();
-                $('form[name="frmRegister"]').submit();
-            } else {
-                var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
-                alert(errorMessages[0]['CustomExpiry']);
-            }
-        });
+                mopt_payone__cc_cardexpiredate: response.cardexpiredate
+            };
+            ccCheck(data);
         } else {
-            var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
-            alert(errorMessages[0][response.errorcode]);
+            showErrorMessage(response);
+            $('#mopt_payone__cc_hostediframesubmit').val('1');
         }
     };
 
@@ -301,6 +282,8 @@
             $('#payment_meanmopt_payone_creditcard').val($('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'));
             $('#mopt_payone__cc_cardexpiredate').val(response.cardexpiredate);
             $('#mopt_payone__cc_truncatedcardpan_hidden').val(response.truncatedcardpan);
+            $('#mopt_payone__cc_cardexpireyear_hidden').val('20'+ $('#mopt_payone__cc_cardexpiredate').val().substring(0,2));
+            $('#mopt_payone__cc_cardexpiremonth_hidden').val($('#mopt_payone__cc_cardexpiredate').val().substring(2,4));
 
             var data = {
                 mopt_payone__cc_truncatedcardpan: response.truncatedcardpan,
@@ -313,26 +296,9 @@
                 mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
                 mopt_payone__cc_cardexpiredate: response.cardexpiredate
             };
-            jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
-            {
-                var today = new Date();
-                var configuredDays = {$moptCreditCardCheckEnvironment.moptCreditcardMinValid};
-                var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + configuredDays);
-                var selectedYear = '20'+response.cardexpiredate.substring(0,2);
-                var selectedMonth = response.cardexpiredate.substring(2,4);
-                var selectedDate = new Date(selectedYear,selectedMonth,0,0,0);
-                var diff = selectedDate.getTime() - minValidDate.getTime();
-                if (diff >= 0){
-                    location.reload();
-
-                } else {
-                    var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
-                    alert(errorMessages[0]['CustomExpiry']);
-                }
-            });
+            savePseudoCard(data);
         } else {
-            var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
-            alert(errorMessages[0][response.errorcode]);
+            showErrorMessage(response);
         }
     };
 
@@ -363,5 +329,65 @@
         $('#mopt_payone__cc_cardtype').parents('.js--fancy-select').removeClass('is--disabled');
         $('.inputIframe').show();
     };
+
+    function ccCheck(data) {
+        jQuery.post('{url controller=moptAjaxPayone action=checkCreditCardExpiry forceSecure}', data, function (expiryResponse)
+        {
+            if (expiryResponse == 'true' ){
+                $('#mopt_payone__cc_truncatedcardpan_hidden').val(data.mopt_payone__cc_truncatedcardpan);
+                savePseudoCard(data);
+                submitForm();
+            } else {
+                showExpiryErrorMessage();
+                $('#mopt_payone__cc_truncatedcardpan_hidden').val('');
+                $('#mopt_payone__cc_hostediframesubmit').val('1');
+            }
+        });
+    };
+
+    function expiryCheck(data) {
+        var ret;
+        $.ajax({
+            type: 'POST',
+            url: '{url controller=moptAjaxPayone action=checkCreditCardExpiry forceSecure}',
+            async: false,
+            data: data,
+            success: function(expiryResponse)
+            {
+                if (expiryResponse == 'true' ){
+                    ret = true;
+                } else {
+                    showExpiryErrorMessage();
+                    $('#mopt_payone__cc_truncatedcardpan_hidden').val('');
+                    $('#mopt_payone__cc_hostediframesubmit').val('1');
+                    ret = false;
+                }
+
+            }
+        });
+        return ret;
+    };
+
+    function submitForm() {
+        $("#shippingPaymentForm").submit();
+        $('form[name="frmRegister"]').submit();
+    };
+
+    function savePseudoCard(data) {
+        jQuery.post('{url controller="moptAjaxPayone" action="savePseudoCard" forceSecure}', data, function ()
+        {
+        });
+    };
+
+    function showErrorMessage(response) {
+        var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
+        alert(errorMessages[0][response.errorcode]);
+    };
+
+    function showExpiryErrorMessage() {
+        var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
+        alert(errorMessages[0]['CustomExpiry']);
+    };
+
 //]]>
 </script>           
