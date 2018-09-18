@@ -1076,7 +1076,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateAppointed',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1087,7 +1087,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateCapture',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1098,7 +1098,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'statePaid',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1109,7 +1109,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateUnderpaid',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1120,7 +1120,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateCancelation',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1131,7 +1131,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateRefund',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1142,7 +1142,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateDebit',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1153,7 +1153,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateReminder',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1164,7 +1164,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateVauthorization',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1175,7 +1175,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateVsettlement',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1186,7 +1186,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateTransfer',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1197,7 +1197,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateInvoice',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
@@ -1208,7 +1208,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'stateFailed',
                 store: me.data.states,
                 queryMode: 'local',
-                displayField: 'name',
+                displayField: 'description',
                 valueField: 'id',
                 allowBlank: false,
                 labelWidth: 200
