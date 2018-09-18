@@ -1224,7 +1224,6 @@ class Mopt_PayoneParamBuilder
     protected function getBasketItems($basket, $shipment, $userData)
     {
         $items = array();
-
         $taxFree = false;
         if (isset($userData['additional']['charge_vat'])) {
             $taxFree = !$userData['additional']['charge_vat'];
@@ -1255,6 +1254,11 @@ class Mopt_PayoneParamBuilder
             if ($article['modus'] == 4 && $params['pr'] < "0")   {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
             }
+            # Repertus Set Artikel Plus compatibility
+            if ($article['modus'] == 12 && $params['pr'] == "0")   {
+                $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
+            }
+
             $items[] = $params;
         }
 
