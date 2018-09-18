@@ -174,7 +174,9 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         $session = Shopware()->Session();
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $orderVars = $session->get('sOrderVariables');
+        $userPaymentId = $orderVars['sUserData']['additional']['payment']['id'];
+
 
         if ($request->getActionName() === 'shippingPayment') {
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
@@ -234,8 +236,8 @@ class FrontendCheckout implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
         }
 
-        if (!empty($userData['additional']['payment']['id'])) {
-            $paymentId = $userData['additional']['payment']['id'];
+        if (!empty($userPaymentId)) {
+            $paymentId = $userPaymentId;
         } else {
             $paymentId = 0;
         }

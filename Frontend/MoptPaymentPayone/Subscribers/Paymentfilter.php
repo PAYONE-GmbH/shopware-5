@@ -37,22 +37,22 @@ class Paymentfilter implements SubscriberInterface
     
     public function onGetPaymentsDataFilter(\Enlight_Event_EventArgs $args)
     {
-        /** @var \Mopt_PayoneMain $moptPayoneMain */
-        $moptPayoneMain = $this->container->get('MoptPayoneMain');
-        $basket = $moptPayoneMain->sGetBasket();
-        $basketAmount = $basket['Amount'];
+        $result = $args->getReturn();
         $shopLocale = Shopware()->Shop()->getLocale()->getLocale();
         $locale = explode('_', $shopLocale);
         $country = isset($locale[1]) ? $locale[1] : $locale[0];
-        $result = $args->getReturn();
-        $session = Shopware()->Session();
 
+        /** @var \Mopt_PayoneMain $moptPayoneMain */
+        $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $ratepayconfig = $moptPayoneMain->getPaymentHelper()
-            ->moptGetRatepayConfig($country, $moptPayoneMain);
+            ->moptGetRatepayConfig($country);
 
         if (!$ratepayconfig) {
             return $result;
         }
+
+        $session = Shopware()->Session();
+        $basketAmount = $session->get('sBasketAmount');
 
         $removeInstallment = false;
         $removeInvoice = false;
@@ -101,7 +101,6 @@ class Paymentfilter implements SubscriberInterface
         }
 
         // check basket amounts
-        $basketAmount = str_replace(',','.', $basketAmount);
         if ($basketAmount < $ratepayconfig['txLimitInstallmentMin'] || $basketAmount > $ratepayconfig['txLimitInstallmentMax']) {
             $removeInstallment = true;
         }
