@@ -917,9 +917,6 @@ class Mopt_PayonePaymentHelper
     public function moptGetRatepayConfig($billingCountry)
     {
         $sTable = 's_plugin_mopt_payone_ratepay';
-
-        $session = Shopware()->Session();
-        $basketAmount = $session->get('sBasketAmount');
         $currency = Shopware()->Shop()->getCurrency();
         $currencyId = $currency->getId();
 
@@ -928,7 +925,6 @@ class Mopt_PayonePaymentHelper
                     FROM
                         {$sTable}
                     WHERE 
-                        '{$basketAmount}' BETWEEN tx_limit_invoice_min AND tx_limit_invoice_max AND
                         currency_id = '{$currencyId}' AND
                         country_code_billing = '{$billingCountry}'";
         $sQuery .= " LIMIT 1;";

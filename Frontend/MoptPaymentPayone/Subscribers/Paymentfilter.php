@@ -91,13 +91,14 @@ class Paymentfilter implements SubscriberInterface
         }
 
         // check eligibility
-
         if ($ratepayconfig['eligibilityRatepayInvoice'] === false){
             $removeInvoice = true;
         }
-
         if ($ratepayconfig['eligibilityRatepayInstallment'] === false){
             $removeInstallment = true;
+        }
+        if ($ratepayconfig['eligibilityRatepayElv'] === false){
+            $removeDirectDebit = true;
         }
 
         // check basket amounts
@@ -105,9 +106,11 @@ class Paymentfilter implements SubscriberInterface
             $removeInstallment = true;
         }
         if ($basketAmount < $ratepayconfig['txLimitInvoiceMin'] || $basketAmount > $ratepayconfig['txLimitInvoiceMax']) {
-            $removeInstallment = true;
+            $removeInvoice = true;
         }
-
+        if ($basketAmount < $ratepayconfig['txLimitElvMin'] || $basketAmount > $ratepayconfig['txLimitElvMax']) {
+            $removeDirectDebit = true;
+        }
         if ($removeInstallment) {
             unset ($result[$installmentIndex]);
         }
