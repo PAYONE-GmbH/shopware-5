@@ -480,7 +480,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
 
                 $data['moptRatepayConfig'] = $moptPayoneMain->getPaymentHelper()
-                    ->moptGetRatepayConfig($userData['additional']['country']['countryiso'], $moptPayoneMain);
+                    ->moptGetRatepayConfig($userData['additional']['country']['countryiso']);
 
                 $data['moptRatepayConfig']['deviceFingerPrint'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetRatepayDeviceFingerprint();
