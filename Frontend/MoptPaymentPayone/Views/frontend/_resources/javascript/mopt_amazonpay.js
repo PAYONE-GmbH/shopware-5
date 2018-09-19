@@ -13,8 +13,9 @@ $.plugin('addressBookWidgetDiv', {
                 });
             }
         } else {
-            console.log('sync');
-            moptAmazonReady();
+            $( document ).ready(function() {
+                moptAmazonReady();
+            });
         }
     },
     destroy: function () {
