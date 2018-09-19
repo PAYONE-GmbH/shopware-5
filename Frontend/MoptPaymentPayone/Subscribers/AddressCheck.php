@@ -550,10 +550,7 @@ class AddressCheck implements SubscriberInterface
         $config         = $moptPayoneMain->getPayoneConfig();
         $postData       = $arguments->get('post');
         $session        = Shopware()->Session();
-
-        // get basket value
-        $basket      = $moptPayoneMain->sGetBasket();
-        $basketValue = $basket['AmountNumeric'];
+        $basketAmount = $session->get('sBasketAmount');
 
         $userId = $session->sUserId;
 
@@ -569,13 +566,13 @@ class AddressCheck implements SubscriberInterface
 
         if ($billingAddressCheckRequired) {
             // if nothing in basket, don't check and  just reset the validation date and result
-            if (!$basketValue) {
+            if (!$basketAmount) {
                 $moptPayoneMain->getHelper()->resetAddressCheckData($userId);
                 return;
             }
 
             // no check when basket value outside configured values
-            if ($basketValue < $config['adresscheckMinBasket'] || $basketValue > $config['adresscheckMaxBasket']) {
+            if ($basketAmount < $config['adresscheckMinBasket'] || $basketAmount > $config['adresscheckMaxBasket']) {
                 return;
             } else {
                 $billingFormData  = $postData["register"]['billing'];
