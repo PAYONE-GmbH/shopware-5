@@ -1177,6 +1177,20 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
             $db->exec($sql);
         }
 
+        if (version_compare(\Shopware::VERSION, '5.5.0', '>=')) {
+            $sql = "SELECT * FROM s_core_snippets
+                WHERE  name = 'amazon_failed' AND namespace = 'backend/static/payment_status'";
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = '
+            INSERT INTO `s_core_snippets` (`namespace`, `shopID`, `localeID`, `name`, `value` ) VALUES
+            
+            ("backend/static/payment_status",1 , 1, "amazon_failed", "Amazon Failed");
+            ';
+                $db->exec($sql);
+            }
+        }
     }
 
     /**
@@ -1223,6 +1237,21 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 {include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
             ';
             $db->exec($sql);
+        }
+
+        if (version_compare(\Shopware::VERSION, '5.5.0', '>=')) {
+            $sql = "SELECT * FROM s_core_snippets
+                WHERE  name = 'amazon_delayed' AND namespace = 'backend/static/payment_status'";
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = '
+            INSERT INTO `s_core_snippets` (`namespace`, `shopID`, `localeID`, `name`, `value` ) VALUES
+            
+            ("backend/static/payment_status",1 , 1, "amazon_delayed", "Amazon Delayed");
+            ';
+                $db->exec($sql);
+            }
         }
 
     }
