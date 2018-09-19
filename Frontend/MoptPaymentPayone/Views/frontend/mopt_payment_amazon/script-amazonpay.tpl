@@ -109,7 +109,6 @@
     };
 
     function moptAmazonReady() {
-        console.log('getting scripts');
         {if $payoneAmazonPayMode == 1}
         $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js');
         {else}

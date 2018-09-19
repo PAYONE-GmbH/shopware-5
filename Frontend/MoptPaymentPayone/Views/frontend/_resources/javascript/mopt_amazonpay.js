@@ -6,9 +6,7 @@ $.plugin('addressBookWidgetDiv', {
 
         if (isAsyncJsLoading) {
             if (typeof document.asyncReady !== "undefined") {
-                console.log('asyc');
                 document.asyncReady(function () {
-                    console.log('asyncCallback');
                     moptAmazonReady();
                 });
             }
