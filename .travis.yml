@@ -1,6 +1,7 @@
 language: php
 php:
 - '5.6'
+- '7.2'
 env:
 - SWVER=5.4
 - SWVER=5.5
