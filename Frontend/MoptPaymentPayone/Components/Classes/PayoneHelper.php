@@ -854,35 +854,18 @@ class Mopt_PayoneHelper
                 $repository->find($userID) : null;
 
             $billingAddress = !empty($userObject) ?
-                $userObject->getBilling() : null;
+                $userObject->getDefaultBillingAddress() : null;
             $billingAttribute = !empty($billingAddress) ?
                 $this->getOrCreateBillingAttribute($billingAddress) : null;
             $moptBillingColor = !empty($billingAttribute) ?
                 $billingAttribute->getMoptPayoneConsumerscoreColor() : null;
-            if (empty($moptBillingColor)) {
-                $billingAddress = !empty($userObject) ?
-                    $userObject->getDefaultBillingAddress() : null;
-                $billingAttribute = !empty($billingAddress) ?
-                    $this->getOrCreateBillingAttribute($billingAddress) : null;
-                $moptBillingColor = !empty($billingAttribute) ?
-                    $billingAttribute->getMoptPayoneConsumerscoreColor() : null;
-            }
 
             $shippingAddress = !empty($userObject) ?
-                $userObject->getShipping() : null;
+                $userObject->getDefaultShippingAddress() : null;
             $shippingAttribute = !empty($shippingAddress) ?
                 $this->getOrCreateShippingAttribute($shippingAddress) : null;
             $moptShipmentColor = !empty($shippingAttribute) ?
                 $shippingAttribute->getMoptPayoneConsumerscoreColor() : null;
-            if (empty($moptShipmentColor)) {
-                $shippingAddress = !empty($userObject) ?
-                    $userObject->getDefaultShippingAddress() : null;
-                $shippingAttribute = !empty($shippingAddress) ?
-                    $this->getOrCreateShippingAttribute($shippingAddress) : null;
-                $moptShipmentColor = !empty($shippingAttribute) ?
-                    $shippingAttribute->getMoptPayoneConsumerscoreColor() : null;
-            }
-
             $moptScoreColor = $userArray['additional']['user']['mopt_payone_consumerscore_color'];
         } else {
             $moptBillingColor = $userArray['billingaddress']['moptPayoneConsumerscoreColor'];

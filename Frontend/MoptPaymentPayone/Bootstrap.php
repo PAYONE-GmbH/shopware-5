@@ -191,15 +191,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
             return true;
         }
-        if (version_compare($oldVersion, '3.8.3', '<'))
-        {
-            /** update payolution payment settings
-             *
-             */
+        if (version_compare($oldVersion, '3.8.3', '<')) {
             $this->getInstallHelper()->updatePayolutionAuthSettings();
-
         }
-
         $this->install();
         $this->checkAndDeleteOldLogs();
 
@@ -316,6 +310,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_payment.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_account.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_shipping.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_amazonpay.js',
             $this->Path() . 'Views/frontend/_resources/javascript/fatchipBSPayoneMasterpass.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
@@ -562,36 +557,21 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     protected function addAttributes()
     {
         $prefix = 'mopt_payone';
+        $tables = $this->assertMinimumVersion('5.2') ? $this->getInstallHelper()->moptAttributeExtensionsArray52($this->getId()) : $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
 
-        $tables = $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
-
-        /** @var \Shopware\Bundle\AttributeBundle\Service\CrudService $attributeService */
-        $attributeService = $this->assertMinimumVersion('5.2') ?
-            Shopware()->Container()->get('shopware_attribute.crud_service') : null;
-
-        foreach ($tables as $table => $attributes) {
-            foreach ($attributes as $attribute => $options) {
-                $type = is_array($options) ? $options[0] : $options;
-                $data = is_array($options) ? $options[1] : [];
-                if ($this->assertMinimumVersion('5.2')) {
-                    $attributeService->update($table, $prefix . '_' . $attribute, $type, $data);
-                } else {
+        if (version_compare(\Shopware::VERSION, '5.2.0', '<')) {
+            foreach ($tables as $table => $attributes) {
+                foreach ($attributes as $attribute => $options) {
+                    $type = is_array($options) ? $options[0] : $options;
                     $type = $this->getInstallHelper()->unifiedToSQL($type);
                     /** @noinspection PhpDeprecationInspection */
                     Shopware()->Models()->addAttribute($table, $prefix, $attribute, $type, true, null);
                 }
             }
         }
-        Shopware()->Models()->generateAttributeModels(array_keys($tables));
 
-        // SW 5.2 Use Address Table instead of shipping and billing tables
-        if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.2.0', '>=')
-        ) {
-
-            $tables = $this->getInstallHelper()->moptAttributeExtensionsArray52();
+        if ($this->assertMinimumVersion('5.2')) {
             $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
-
             foreach ($tables as $table => $attributes) {
                 foreach ($attributes as $attribute => $options) {
                     $type = is_array($options) ? $options[0] : $options;
@@ -599,8 +579,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                     $attributeService->update($table, $prefix . '_' . $attribute, $type, $data);
                 }
             }
-            Shopware()->Models()->generateAttributeModels(array_keys($tables));
         }
+        Shopware()->Models()->generateAttributeModels(array_keys($tables));
     }
 
     /**
@@ -619,11 +599,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         if (!$ret) {
             $this->createMenuItem(
                 array(
-                'label' => 'PAYONE Kontrollzentrum',
-                'onclick' => 'Shopware.ModuleManager.createSimplifiedModule("FcPayone", { "title": "PAYONE Kontrollzentrum" })',
-                'class' => 'payoneicon',
-                'active' => 1,
-                'parent' => $this->Menu()->findOneBy($labelPayment),
+                    'label' => 'PAYONE Kontrollzentrum',
+                    'onclick' => 'Shopware.ModuleManager.createSimplifiedModule("FcPayone", { "title": "PAYONE Kontrollzentrum" })',
+                    'class' => 'payoneicon',
+                    'active' => 1,
+                    'parent' => $this->Menu()->findOneBy($labelPayment),
                 )
             );
         }

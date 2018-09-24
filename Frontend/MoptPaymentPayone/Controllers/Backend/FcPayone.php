@@ -3,7 +3,10 @@
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Models\Order\Order;
 
+
+require_once 'MoptConfigPayone.php';
 /*
  * (c) shopware AG <info@shopware.com>
  *
@@ -572,7 +575,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function ajaxpaymentstatusconfigAction()
     {
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
         $params = $this->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
         $breadcrump = array(
             "Konfiguration", "Features", "ajaxpaymentstatusconfig", "Paymentstatus"
@@ -580,13 +582,18 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
         $query = $this->getAllPaymentsQuery(array('name' => 'mopt_payone__%'), null, $repository);
         $payonepaymentmethods = $query->getArrayResult();
-        $data = array();
 
-        $builder = Shopware()->Models()->createQueryBuilder();
-        $data = $builder->select('a.id, a.description')
+        if (version_compare(Shopware()->Config()->version, '5.5', '>=')) {
+            $orderRepository = Shopware()->Models()->getRepository(Order::class);
+            $data = $orderRepository->getPaymentStatusQuery()->getArrayResult();
+            $data = array_map(['Shopware_Controllers_Backend_MoptConfigPayone', 'getPaymentStatusTranslation'], $data);
+        } else {
+            $builder = Shopware()->Models()->createQueryBuilder();
+            $data = $builder->select('a.id, a.description')
                 ->from('Shopware\Models\Order\Status', 'a')
                 ->where('a.group = \'payment\'')
                 ->getQuery()->getArrayResult();
+        }
 
         $this->View()->assign(array(
             "payonepaymentmethods" => $payonepaymentmethods,

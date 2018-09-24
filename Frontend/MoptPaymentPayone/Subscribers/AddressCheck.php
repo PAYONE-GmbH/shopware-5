@@ -272,7 +272,12 @@ class AddressCheck implements SubscriberInterface
 
     private function isBillingAttribWriteable(Customer $customer){
         try {
-            $billingObject = $customer->getBilling();
+            if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                $billingObject = $customer->getDefaultBillingAddress();
+            } else {
+                $billingObject = $customer->getBilling();
+            }
+
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
             $moptPayoneMain->getHelper()->getOrCreateBillingAttribute($billingObject);
         } catch (\Exception $e) {
@@ -283,9 +288,13 @@ class AddressCheck implements SubscriberInterface
 
     private function isShippingAttribWriteable(Customer $customer){
         try {
-            $billingObject = $customer->getBilling();
+            if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                $shippingObject = $customer->getDefaultShippingAddress();
+            } else {
+                $shippingObject = $customer->getShipping();
+            }
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
-            $moptPayoneMain->getHelper()->getOrCreateShippingAttribute($billingObject);
+            $moptPayoneMain->getHelper()->getOrCreateShippingAttribute($shippingObject);
         } catch (\Exception $e) {
             return false;
         }
@@ -357,18 +366,20 @@ class AddressCheck implements SubscriberInterface
         $shippingAddressData['country'] = $shippingAddressData['countryID'];
         $session                        = Shopware()->Session();
         $userId                         = $session->sUserId;
+        $paymentName                    = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($paymentId);
 
         // get billing address attributes
         $userBillingAddressCheckData = $moptPayoneMain->getHelper()
             ->getBillingAddresscheckDataFromUserId($userId);
         // check if addresscheck is required for billing adress
-        $billingAddressCheckRequired = $moptPayoneMain
-            ->getHelper()
-            ->isBillingAddressToBeCheckedWithBasketValue(
+
+        $billingAddressCheckRequired = $this->getBillingAddressCheckIsNeeded(
                 $config,
+                $userId,
                 $basketValue,
+                $paymentName,
                 $billingAddressData['country']
-            );
+        );
 
         if ($session->moptAddressCheckNeedsUserVerification) {
             $billingAddressCheckRequired = false;
@@ -446,13 +457,13 @@ class AddressCheck implements SubscriberInterface
         $shippingAttributes = $moptPayoneMain->getHelper()
             ->getShippingAddressAttributesFromUserId($userId);
         // check if addresscheck is required for shipping address
-        $shippingAddressCheckRequired = $moptPayoneMain->getHelper()
-            ->isShippingAddressToBeCheckedWithBasketValue(
-                $config,
-                $basketValue,
-                $shippingAddressData['country'],
-                $userId
-            );
+        $shippingAddressCheckRequired = $this->getShippingAddressCheckIsNeeded(
+            $config,
+            $userId,
+            $basketValue,
+            $paymentName,
+            $shippingAddressData['country']
+        );
 
         if ($session->moptAddressCheckNeedsUserVerification) {
             $shippingAddressCheckRequired = false;
@@ -1104,7 +1115,7 @@ class AddressCheck implements SubscriberInterface
             ->getApiModeFromId($config['adresscheckLiveMode']));
 
         try {
-            $response = $service->check($request);
+             $response = $service->check($request);
         } catch (\Exception $e) {
             throw $e;
         }

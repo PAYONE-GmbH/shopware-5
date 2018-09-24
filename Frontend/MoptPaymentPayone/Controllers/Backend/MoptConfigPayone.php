@@ -1,5 +1,7 @@
 <?php
 
+use Shopware\Models\Order\Order;
+
 /**
  * backend controller for payone configuration
  *
@@ -239,13 +241,37 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
      */
     public function readPaymentStateAction()
     {
-        $builder = Shopware()->Models()->createQueryBuilder();
-        $data = $builder->select('a.id, a.description')
-                        ->from('Shopware\Models\Order\Status', 'a')
-                        ->where('a.group = \'payment\'')
-                        ->getQuery()->getArrayResult();
 
+        if (version_compare(Shopware()->Config()->version, '5.5', '>=')) {
+            $orderRepository = Shopware()->Models()->getRepository(Order::class);
+            $data = $orderRepository->getPaymentStatusQuery()->getArrayResult();
+            $data = array_map(['Shopware_Controllers_Backend_MoptConfigPayone', 'getPaymentStatusTranslation'], $data);
+        } else {
+            $builder = Shopware()->Models()->createQueryBuilder();
+            $data = $builder->select('a.id, a.description')
+                        ->from('Shopware\Models\Order\Status', 'a')
+                ->where('a.group = \'payment\'')
+                ->getQuery()->getArrayResult();
+        }
         $this->View()->assign(array('data' => $data, 'success' => true));
+    }
+
+    public function getPaymentStatusTranslation($dataArray)
+    {
+        switch ($dataArray['name']) {
+            case 'amazon_failed':
+                $dataArray['description'] = 'Amazon Failed';
+                break;
+            case 'amazon_delayed':
+                $dataArray['description'] = 'Amazon Delayed';
+                break;
+            default:
+                $dataArray['description'] = Shopware()->Snippets()
+                    ->getNamespace('backend/static/payment_status')
+                    ->get($dataArray['name'], false);
+
+        }
+        return $dataArray;
     }
 
     /**
