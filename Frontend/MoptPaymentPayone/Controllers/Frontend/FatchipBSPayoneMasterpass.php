@@ -186,7 +186,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
         $request->setWallettype($walletType);
         $request->setCurrency( $this->getCurrencyShortName());
         $request->setAmount($orderVariables['sAmount']);
-        $request->setReference($this->reserveOrdernumber());
+        $request->setReference($this->moptPayoneMain->reserveOrdernumber());
         $personalData = $this->moptPayoneMain->getParamBuilder()->getPersonalData($orderVariables['sUserData']);
         $request->setPersonalData($personalData);
         $deliveryData = $this->moptPayoneMain->getParamBuilder()->getDeliveryData($orderVariables['sUserData']);
@@ -228,53 +228,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpass extends Shopware_C
                 $this->forward('error', 'MoptPaymentPayone', null);
                 break;
         }
-    }
-
-    /**
-     * reserves an ordernr,
-     * sets it in session and return it
-     *
-     * @param void
-     * @return String
-     * @throws Exception
-     */
-    protected function reserveOrdernumber() {
-
-        $isMasterpassOrderNumInSession = $this->session->offsetExists('BSPayoneMasterpassOrdernum');
-        // pre-reserve shop order number if its not yet in session
-        if (!$isMasterpassOrderNumInSession) {
-            $sOrder = new sOrder();
-            $reservedOrderNr = $sOrder->sGetOrderNumber();
-            // TODO deactivated for now because it is causing unintended side-effects
-            // $referencePrefix = $this->getPrefix();
-            $referencePrefix = '';
-            $reservedOrderNrAsReference = $referencePrefix.$reservedOrderNr;
-        }  else {
-            $reservedOrderNrAsReference = $this->session->offsetGet('BSPayoneMasterpassOrdernum');
-        }
-        $this->session->offsetSet('BSPayoneMasterpassOrdernum', $reservedOrderNrAsReference);
-        return $reservedOrderNrAsReference;
-    }
-
-    /**
-     * Returns a timestring for orders in test mode due to raw order numbers
-     * will be used at this point as reference and will lead to a 911 error
-     *
-     * @param void
-     * @return string
-     */
-    protected function getPrefix() {
-        $prefix = "";
-        $user = $this->getUser();
-        $paymentName = $user['additional']['payment']['name'];
-        $config = $this->moptPayoneMain->getPayoneConfig($paymentName);
-        $liveMode = $config['liveMode'];
-        if (!$liveMode) {
-            $datestring = date('YmdHis');
-            $prefix = $datestring."_";
-        }
-
-        return $prefix;
     }
 }
 

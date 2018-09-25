@@ -633,40 +633,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
-        if (!empty($session['BSPayoneMasterpassOrdernum'])){
-
-            $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
-            $orderId = Shopware()->Db()->fetchOne($sql, $txId);
-
-            // replace the new order number with the already reserved one for Ratepay Payments
-            $sql = 'UPDATE  `s_order` SET ordernumber = ? WHERE transactionID = ?';
-            Shopware()->Db()->query($sql, array($session['BSPayoneMasterpassOrdernum'], $txId));
-
-            //and update the new order number with the already reserved one for order_details
-            $sql = 'UPDATE  `s_order_details` SET ordernumber = ? WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array($session['BSPayoneMasterpassOrdernum'], $orderId));
-
-            // also update Ordernumber in Session
-            $session['sOrderVariables']->sOrderNumber = $session['BSPayoneMasterpassOrdernum'];
-            $session->offsetUnset('BSPayoneMasterpassOrdernum');
-        }
-
-        if (!empty($session['moptRatepayOrdernum'])){
-
-            $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
-            $orderId = Shopware()->Db()->fetchOne($sql, $txId);
-
-            // replace the new order number with the already reserved one for Ratepay Payments
-            $sql = 'UPDATE  `s_order` SET ordernumber = ? WHERE transactionID = ?';
-            Shopware()->Db()->query($sql, array($session['moptRatepayOrdernum'], $txId));
-
-            //and update the new order number with the already reserved one for order_details
-            $sql = 'UPDATE  `s_order_details` SET ordernumber = ? WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array($session['moptRatepayOrdernum'], $orderId));
-
-            // also update Ordernumber in Session
-            $session['sOrderVariables']->sOrderNumber = $session['moptRatepayOrdernum'];
-            $session->offsetUnset('moptRatepayOrdernum');
+        if (!empty($session['moptReservedOrdernum'])){
+            $session->offsetUnset('moptReservedOrdernum');
         }
 
         if ($session->moptClearingData) {
@@ -724,7 +692,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session = Shopware()->Session();
         $session->offsetUnset('moptIsAuthorized');
         $session->offsetUnset('moptAgbChecked');
-        $session->offsetUnset('moptRatepayOrdernum');
+        $session->offsetUnset('moptReservedOrdernum');
         $session->offsetUnset('isIdealredirect');
     }
 
@@ -745,7 +713,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             )
         {
             $session->ratepayError = $response->getCustomermessage();
-            $session->offsetUnset('moptRatepayOrdernum');
+            $session->offsetUnset('moptReservedOrdernum');
             // error code 307 = declined
             if ($response->getErrorcode() == '307'){
                 // customer will not be able to use ratepay payments for 24 hours
@@ -884,8 +852,16 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         //get shopware temporary order id - session id
         $shopwareTemporaryId = $this->admin->sSYSTEM->sSESSION_ID;
-        $paymentReference = $paramBuilder->getParamPaymentReference();
 
+        if ($this->moptPayonePaymentHelper->isPayoneRatepayInvoice($paymentName) ||
+            $this->moptPayonePaymentHelper->isPayoneRatepayDirectDebit($paymentName) ||
+            $this->moptPayonePaymentHelper->isPayoneRatepayInstallment($paymentName)
+        )
+        {
+            $paymentReference = $this->moptPayoneMain->reserveOrdernumber();
+        } else {
+            $paymentReference = $paramBuilder->getParamPaymentReference();
+        }
         $request->setReference($paymentReference);
         $transactionStatusPushCustomParam = 'session-' . Shopware()->Shop()->getId()
             . '|' . $this->admin->sSYSTEM->sSESSION_ID . '|' . $orderHash;
@@ -961,7 +937,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $request->setPaydata($paydirektdata);
         }
 
-        $request = $this->moptSetRatePayReference($request);
         if ($this->moptPayonePaymentHelper->isPayoneSafeInvoice($paymentName) ||
             $this->moptPayonePaymentHelper->isPayoneInvoice($paymentName)
            )
@@ -1525,79 +1500,5 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
 
         return $isDigitalOnly;
-    }
-
-    /**
-     * Sets custom reference for ratepay
-     *
-     * @param object $request
-     * @return object
-     * @throws Exception
-     */
-    protected function moptSetRatePayReference($request) {
-        $ratepayOrderNrAsReference = $this->moptGetRatepayOrderNrAsReference();
-
-        // Override reference for ratepay with OrderId
-        if ($ratepayOrderNrAsReference) {
-            $request->setReference($ratepayOrderNrAsReference);
-        }
-
-        return $request;
-    }
-
-    /**
-     * Returns a ratepay ordernr for use as reference or false if there is
-     * none due to non payone ratepay payment
-     *
-     * @param void
-     * @return mixed bool|string
-     * @throws Exception
-     */
-    protected function moptGetRatepayOrderNrAsReference() {
-        $user = $this->getUser();
-        $paymentName = $user['additional']['payment']['name'];
-        $isRatePay = $this->moptPayonePaymentHelper->isPayoneRatepay($paymentName);
-        if (!$isRatePay) {
-            return false;
-        }
-
-        $session = Shopware()->Session();
-        $isRatepayReferenceInSession = $session->offsetExists('moptRatepayOrdernum');
-
-        // pre-reserve shop order number if its not yet in session
-        if (!$isRatepayReferenceInSession) {
-            $sOrder = new sOrder();
-            $reservedOrderNr = $sOrder->sGetOrderNumber();
-            // TODO deactivated for now because it is causing unintended side-effects
-            // $referencePrefix = $this->moptGetRatePayReferencePrefix();
-            $referencePrefix = '';
-            $reservedOrderNrAsReference = $referencePrefix.$reservedOrderNr;
-        }  else {
-            $reservedOrderNrAsReference = $session->offsetGet('moptRatepayOrdernum');
-        }
-        $session->offsetSet('moptRatepayOrdernum', $reservedOrderNrAsReference);
-
-        return $reservedOrderNrAsReference;
-    }
-
-    /**
-     * Returns a timestring for orders in test mode due to raw order numbers
-     * will be used at this point as reference and will lead to a 911 error
-     *
-     * @param void
-     * @return string
-     */
-    protected function moptGetRatePayReferencePrefix() {
-        $prefix = "";
-        $user = $this->getUser();
-        $paymentName = $user['additional']['payment']['name'];
-        $config = $this->moptPayoneMain->getPayoneConfig($paymentName);
-        $liveMode = $config['liveMode'];
-        if (!$liveMode) {
-            $datestring = date('YmdHis');
-            $prefix = $datestring."_";
-        }
-
-        return $prefix;
     }
 }
