@@ -881,7 +881,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             $this->session->moptPayoneAmazonReferenceId = $postData['referenceId'];
         }
 
-
         $data = [];
         $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $this->session->moptPayoneAmazonReferenceId, $this->session->moptPayoneAmazonAccessToken );
 
@@ -915,31 +914,31 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
             }
 
-                $payoneUserHelper->createrOrUpdateUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId(), $this->session);
+            $payoneUserHelper->createrOrUpdateUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId(), $this->session);
 
-                if (!$this->session->moptCountry) {
-                    $data['countryChanged'] = true;
+            if (!$this->session->moptCountry) {
+                $data['countryChanged'] = true;
+                $this->session->moptCountry = $responseAddress['shipping_country'];
+            } else {
+
+                if ($this->session->moptCountry == $responseAddress['shipping_country']) {
+                    $data['countryChanged'] = false;
                     $this->session->moptCountry = $responseAddress['shipping_country'];
                 } else {
-
-                    if ($this->session->moptCountry == $responseAddress['shipping_country']) {
-                        $data['countryChanged'] = false;
-                        $this->session->moptCountry = $responseAddress['shipping_country'];
-                    } else {
-                        $data['countryChanged'] = true;
-                        $this->session->moptCountry = $responseAddress['shipping_country'];
-                    }
+                    $data['countryChanged'] = true;
+                    $this->session->moptCountry = $responseAddress['shipping_country'];
                 }
+            }
 
-                if (empty($this->session->moptPayoneAmazonWorkOrderId)) {
-                    $this->session->moptPayoneAmazonWorkOrderId = $responseData['workorderid'];
-                }
+            if (empty($this->session->moptPayoneAmazonWorkOrderId)) {
+                $this->session->moptPayoneAmazonWorkOrderId = $responseData['workorderid'];
+            }
 
-                $data['data'] = $responseData['rawResponse'];
-                $data['status'] = 'success';
-                $data['workorderid'] = $this->session->moptPayoneAmazonWorkOrderId;
-                $encoded = json_encode($data);
-                echo $encoded;
+            $data['data'] = $responseData['rawResponse'];
+            $data['status'] = 'success';
+            $data['workorderid'] = $this->session->moptPayoneAmazonWorkOrderId;
+            $encoded = json_encode($data);
+            echo $encoded;
 
         } else {
             $data['data'] = $response;
@@ -1064,7 +1063,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
     }
 
-
     protected function isShippingAddressSupported($country){
 
         $countries = $this->moptPayoneMain->getPaymentHelper()
@@ -1105,7 +1103,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $expireTime = strtotime("+". ($minExpiryDays +1) . " day");
         $cardExpireNextMonth = strtotime("01-" . ($expireMonth +1) . "-20" ."$expireYear". " " ."23:59:59");
         $timediff = $cardExpireNextMonth - $expireTime;
-        $hours = $timediff / 3600;
         if ($timediff >= 0 ) {
             echo json_encode(true);
         } else {
