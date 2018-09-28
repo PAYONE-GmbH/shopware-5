@@ -231,6 +231,12 @@ function moptPaymentReady() {
                 $('#mopt_payone__cc_cvc').val(me.opts.messageCreditCardCvcProcessed);
             }
 
+            $('#mopt_payone__cc_cardtype').change(function () {
+                $('#mopt_payone__cc_truncatedcardpan').val('');
+                $('#mopt_payone__cc_cvc').val('');
+                $('#mopt_payone__cc_show_saved_hint').hide();
+            });
+
         },
         prepareIframeCreditcardCheck: function () {
             var me = this;
@@ -295,6 +301,10 @@ function moptPaymentReady() {
             if (me.opts.moptCreditcardConfig.cardno_custom_iframe === '0') {
                 config.fields.cardpan.iframe.width = me.opts.moptCreditcardConfig.cardno_iframe_width;
                 config.fields.cardpan.iframe.height = me.opts.moptCreditcardConfig.cardno_iframe_height;
+            }
+
+            if (me.opts.moptCreditcardConfig.check_cc === '1') {
+                config.fields.cardcvc2.length = {"A": 4, "V": 3, "M": 3};
             }
 
             if (me.opts.moptCreditcardConfig.cardcvc_custom_style === '0' && me.opts.moptCreditcardConfig.check_cc === '1') {
@@ -491,6 +501,12 @@ function moptPaymentReady() {
         init: function () {
             if (iframes.isComplete()) {
                 iframes.creditCardCheck('processPayoneIframeResponse');
+            } else if (
+                iframes.isCardTypeComplete() &&
+                iframes.isCardpanComplete() &&
+                iframes.isExpireMonthComplete() &&
+                iframes.isExpireYearComplete()) {
+                iframes.creditCardCheck('processPayoneIframeResponse');
             } else {
                 moptShowGeneralIFrameError();
             }
@@ -505,6 +521,12 @@ function moptPaymentReady() {
     $.plugin('moptPayoneIframeCreditcardCheckWithoutSubmit', {
         init: function () {
             if (iframes.isComplete()) {
+                iframes.creditCardCheck('processPayoneIframeResponseWithoutSubmit');
+            } else if (
+                iframes.isCardTypeComplete() &&
+                iframes.isCardpanComplete() &&
+                iframes.isExpireMonthComplete() &&
+                iframes.isExpireYearComplete()) {
                 iframes.creditCardCheck('processPayoneIframeResponseWithoutSubmit');
             } else {
                 moptShowGeneralIFrameError();
