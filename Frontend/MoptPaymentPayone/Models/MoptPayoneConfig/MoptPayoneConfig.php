@@ -202,9 +202,18 @@ class MoptPayoneConfig extends ModelEntity
      * IA = infoscore all characteristics
      * IB = infoscore all characteristics + boniscore
      *
-     * @ORM\Column(name="consumerscore_check_mode", type="string", length=4, nullable=false, unique=false)
+     * @ORM\Column(name="consumerscore_check_mode_b2c", type="string", length=4, nullable=false, unique=false)
      */
-    private $consumerscoreCheckMode;
+    private $consumerscoreCheckModeB2C;
+
+    /**
+     * IH = infoscore hard characteristics
+     * IA = infoscore all characteristics
+     * IB = infoscore all characteristics + boniscore
+     *
+     * @ORM\Column(name="consumerscore_check_mode_b2b", type="string", length=4, nullable=false, unique=false)
+     */
+    private $consumerscoreCheckModeB2B;
 
     /**
      * 0 = red
@@ -857,17 +866,33 @@ class MoptPayoneConfig extends ModelEntity
     /**
      * @return mixed
      */
-    public function getConsumerscoreCheckMode()
+    public function getConsumerscoreCheckModeB2C()
     {
-        return $this->consumerscoreCheckMode;
+        return $this->consumerscoreCheckModeB2C;
     }
 
     /**
-     * @param $consumerscoreCheckMode
+     * @param $consumerscoreCheckModeB2C
      */
-    public function setConsumerscoreCheckMode($consumerscoreCheckMode)
+    public function setConsumerscoreCheckModeB2C($consumerscoreCheckModeB2C)
     {
-        $this->consumerscoreCheckMode = $consumerscoreCheckMode;
+        $this->consumerscoreCheckModeB2C = $consumerscoreCheckModeB2C;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConsumerscoreCheckModeB2B()
+    {
+        return $this->consumerscoreCheckModeB2B;
+    }
+
+    /**
+     * @param $consumerscoreCheckModeB2B
+     */
+    public function setConsumerscoreCheckModeB2B($consumerscoreCheckModeB2B)
+    {
+        $this->consumerscoreCheckModeB2B = $consumerscoreCheckModeB2B;
     }
 
     /**
