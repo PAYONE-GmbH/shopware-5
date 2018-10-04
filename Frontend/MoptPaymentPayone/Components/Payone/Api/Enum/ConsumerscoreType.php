@@ -36,4 +36,7 @@ class Payone_Api_Enum_ConsumerscoreType
     const INFOSCORE_ALL = 'IA';
     const INFOSCORE_ALL_BONI = 'IB';
     const BONIVERSUM_VERITA = 'CE';
+    const SCHUFA_SFS = 'SFS';
+    // unused yet
+    const SCHUFA_SFM = 'SFM';
 }
