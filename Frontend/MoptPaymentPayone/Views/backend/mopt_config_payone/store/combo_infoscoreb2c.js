@@ -22,7 +22,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.store.ComboInfoscoreb2c', {
         },
         {
             display: '{s name=fieldvalue/NONE}Keine Prüfung{/s}',
-            value: 'NONE'
+            value: 'NO'
         }
     ]
 });
