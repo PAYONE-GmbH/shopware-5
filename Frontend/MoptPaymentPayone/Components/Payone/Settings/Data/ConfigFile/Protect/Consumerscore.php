@@ -47,7 +47,10 @@ class Payone_Settings_Data_ConfigFile_Protect_Consumerscore extends Payone_Setti
     protected $max_order_total = '';
 
     /** @var string */
-    protected $addresscheck = '';
+    protected $addresscheckb2c = '';
+
+    /** @var string */
+    protected $addresscheckb2b = '';
 
     /** @var string */
     protected $red = '';
@@ -75,19 +78,35 @@ class Payone_Settings_Data_ConfigFile_Protect_Consumerscore extends Payone_Setti
     }
 
     /**
-     * @param string $addresscheck
+     * @param string $addresscheckb2c
      */
-    public function setAddresscheck($addresscheck)
+    public function setAddresscheckb2c($addresscheckb2c)
     {
-        $this->addresscheck = $addresscheck;
+        $this->addresscheckb2c = $addresscheckb2c;
     }
 
     /**
      * @return string
      */
-    public function getAddresscheck()
+    public function getAddresscheckb2c()
     {
-        return $this->addresscheck;
+        return $this->addresscheckb2c;
+    }
+
+    /**
+     * @param string $addresscheckb2b
+     */
+    public function setAddresscheckb2b($addresscheckb2b)
+    {
+        $this->addresscheckb2b = $addresscheckb2b;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddresscheckb2b()
+    {
+        return $this->addresscheckb2b;
     }
 
     /**

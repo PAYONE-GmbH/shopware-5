@@ -91,8 +91,9 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
         $addressCheck->setPersonstatusmapping($personStatusMapping);
 
         $consumerscore = new Payone_Settings_Data_ConfigFile_Protect_Consumerscore();
-        $consumerscore->setActive($globalPayoneConfig['onsumerscoreActive']);
-        $consumerscore->setAddresscheck($globalPayoneConfig['consumerscoreCheckMode']);
+        $consumerscore->setActive($globalPayoneConfig['consumerscoreActive']);
+        $consumerscore->setAddresscheckb2c($globalPayoneConfig['consumerscoreCheckModeB2B']);
+        $consumerscore->setAddresscheckb2b($globalPayoneConfig['consumerscoreCheckModeB2C']);
         $consumerscore->setDuetime($globalPayoneConfig['consumerscoreLifetime']);
         $consumerscore->setMaxOrderTotal($globalPayoneConfig['consumerscoreMaxBasket']);
         $consumerscore->setMinOrderTotal($globalPayoneConfig['consumerscoreMinBasket']);
