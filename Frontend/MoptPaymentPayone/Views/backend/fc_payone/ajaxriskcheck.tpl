@@ -76,16 +76,30 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="consumerscoreCheckMode" class="text-left col-md-3 control-label">{s name=consumerscoreCheckMode/active}Prüfungsart{/s}</label>
+                    <label for="consumerscoreCheckModeB2C" class="text-left col-md-3 control-label">{s name=consumerscoreCheckModeB2C/active}Prüfungsart B2C{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckMode" name="consumerscoreCheckMode" aria-describedby="consumerscoreCheckMode-status" >
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckModeB2C" name="consumerscoreCheckModeB2C" aria-describedby="consumerscoreCheckModeB2C-status" >
                         <option value="IH">Infoscore (harte Kriterien)</option>
                         <option value="IA">Infoscore (alle Merkmale)</option>
                         <option value="IB">Infoscore (alle Merkmale + Boniscore)</option>
                         <option value="CE">Boniversum VERITA Score</option>
+                        <option value="NO">keine Prüfung</option>
                         </select>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="consumerscoreCheckMode-status" class="sr-only">(success)</span>
+                        <span id="consumerscoreCheckModeB2C-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+
+                    <label for="consumerscoreCheckModeB2B" class="text-left col-md-3 control-label">{s name=consumerscoreCheckModeB2B/active}Prüfungsart B2B{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckModeB2B" name="consumerscoreCheckModeB2B" aria-describedby="consumerscoreCheckModeB2B-status" >
+                            <option value="SFS">Schufa</option>
+                            <option value="NO">keine Prüfung</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="consumerscoreCheckModeB2B-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
