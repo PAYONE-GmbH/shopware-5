@@ -1147,7 +1147,7 @@ class AddressCheck implements SubscriberInterface
         ));
         $request = new \Payone_Api_Request_Consumerscore($params);
         $userId = Shopware()->Session()->sUserId;
-        $isCompany = $this->isCompany($userId);
+        $isCompany = $moptPayoneMain->getHelper()->isCompany($userId);
         if ($isCompany) {
             $request->setAddresschecktype(
                 ($config['consumerscoreCheckModeB2B'] === \Payone_Api_Enum_ConsumerscoreType::SCHUFA_SFS) ?
@@ -1183,20 +1183,6 @@ class AddressCheck implements SubscriberInterface
             throw $e;
         }
         return $response;
-    }
-
-    function isCompany($userId)
-    {
-        $customer = Shopware()->Models()
-            ->getRepository('Shopware\Models\Customer\Customer')
-            ->find($userId);
-        if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-            $billing = $customer->getDefaultBillingAddress();
-        } else {
-            $billing = $customer->getBilling();
-        }
-        $return = !empty($billing->getCompany()) ? true : false;
-        return $return;
     }
 
     /**
@@ -1673,11 +1659,11 @@ class AddressCheck implements SubscriberInterface
         }
 
         // check backend config for B2B and B2C settings
-        if ($this->isCompany($userId) && $config['consumerscoreCheckModeB2B'] === 'NO' ){
+        if ($moptPayoneMain->getHelper()->isCompany($userId) && $config['consumerscoreCheckModeB2B'] === 'NO' ){
             return false;
         }
 
-        if (! $this->isCompany($userId) && $config['consumerscoreCheckModeB2C'] === 'NO' ){
+        if (! $moptPayoneMain->getHelper()->isCompany($userId) && $config['consumerscoreCheckModeB2C'] === 'NO' ){
             return false;
         }
 
