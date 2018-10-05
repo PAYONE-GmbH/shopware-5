@@ -543,6 +543,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndInsertDelayedStatusEmailTemplate();
 
+        $this->getInstallHelper()->checkAndUpdateConsumerscoreExtension();
+
         // adding transaction id in log table
         if (!$this->getInstallHelper()->payoneApiLogTransactionIdExist()) {
             $this->getInstallHelper()->extendPayoneApiLogTransactionId();

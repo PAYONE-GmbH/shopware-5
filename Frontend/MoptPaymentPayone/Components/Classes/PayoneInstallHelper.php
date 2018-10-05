@@ -50,49 +50,49 @@ class Mopt_PayoneInstallHelper
      * @var array
      */
     private $types = [
-        self::TYPE_STRING   => [
+        self::TYPE_STRING => [
             'sql' => 'VARCHAR(500)',
             'dbal' => 'string',
             'allowDefaultValue' => true,
             'quoteDefaultValue' => true,
             'elastic' => ['type' => 'string']
         ],
-        self::TYPE_TEXT     => [
+        self::TYPE_TEXT => [
             'sql' => 'TEXT',
             'dbal' => 'text',
             'allowDefaultValue' => false,
             'quoteDefaultValue' => false,
             'elastic' => ['type' => 'string']
         ],
-        self::TYPE_HTML     => [
+        self::TYPE_HTML => [
             'sql' => 'MEDIUMTEXT',
             'dbal' => 'text',
             'allowDefaultValue' => false,
             'quoteDefaultValue' => false,
             'elastic' => ['type' => 'string']
         ],
-        self::TYPE_INTEGER  => [
+        self::TYPE_INTEGER => [
             'sql' => 'INT(11)',
             'dbal' => 'integer',
             'allowDefaultValue' => true,
             'quoteDefaultValue' => false,
             'elastic' => ['type' => 'long']
         ],
-        self::TYPE_FLOAT    => [
+        self::TYPE_FLOAT => [
             'sql' => 'DOUBLE',
             'dbal' => 'float',
             'allowDefaultValue' => true,
             'quoteDefaultValue' => false,
             'elastic' => ['type' => 'double']
         ],
-        self::TYPE_BOOLEAN  => [
+        self::TYPE_BOOLEAN => [
             'sql' => 'INT(1)',
             'dbal' => 'boolean',
             'allowDefaultValue' => true,
             'quoteDefaultValue' => false,
             'elastic' => ['type' => 'boolean']
         ],
-        self::TYPE_DATE     => [
+        self::TYPE_DATE => [
             'sql' => 'DATE',
             'dbal' => 'date',
             'allowDefaultValue' => true,
@@ -148,9 +148,9 @@ class Mopt_PayoneInstallHelper
                 $paymentId = $value['payment_id'];
                 $authMethod = $value['authorisation_method'];
                 $paymentName = $moptPayonePaymentHelper->getPaymentNameFromId($paymentId);
-                if ( $moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName)|| $moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $moptPayonePaymentHelper->isPayonePayolutionInstallment($paymentName)){
+                if ($moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName) || $moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $moptPayonePaymentHelper->isPayonePayolutionInstallment($paymentName)) {
 
-                    if ($authMethod == 'Vorautorisierung'){
+                    if ($authMethod == 'Vorautorisierung') {
                         // nothing to do
                     } else {
                         $updateSQl = "UPDATE s_plugin_mopt_payone_config SET authorisation_method = \"Vorautorisierung\" WHERE payment_id = $paymentId;";
@@ -194,37 +194,37 @@ class Mopt_PayoneInstallHelper
     {
         return [
             's_user_attributes' => [
-                'consumerscore_result'              => 'string',
-                'consumerscore_date'                => 'date',
-                'consumerscore_color'               => 'string',
-                'consumerscore_value'               => 'integer',
-                'ratepay_ban'                       => 'date',
+                'consumerscore_result' => 'string',
+                'consumerscore_date' => 'date',
+                'consumerscore_color' => 'string',
+                'consumerscore_value' => 'integer',
+                'ratepay_ban' => 'date',
             ],
             's_user_billingaddress_attributes' => [
-                'addresscheck_result'               => 'string',
-                'addresscheck_date'                 => 'date',
-                'addresscheck_personstatus'         => 'string',
-                'consumerscore_result'              => 'string',
-                'consumerscore_date'                => 'date',
-                'consumerscore_color'               => 'string',
-                'consumerscore_value'               => 'integer',
+                'addresscheck_result' => 'string',
+                'addresscheck_date' => 'date',
+                'addresscheck_personstatus' => 'string',
+                'consumerscore_result' => 'string',
+                'consumerscore_date' => 'date',
+                'consumerscore_color' => 'string',
+                'consumerscore_value' => 'integer',
             ],
             's_user_shippingaddress_attributes' => [
-                'addresscheck_result'               => 'string',
-                'addresscheck_date'                 => 'date',
-                'addresscheck_personstatus'         => 'string',
-                'consumerscore_color'               => 'string',
-                'consumerscore_value'               => 'integer',
+                'addresscheck_result' => 'string',
+                'addresscheck_date' => 'date',
+                'addresscheck_personstatus' => 'string',
+                'consumerscore_color' => 'string',
+                'consumerscore_value' => 'integer',
             ],
             's_order_attributes' => [
-                'txid'                              => 'integer',
-                'status'                            => 'string',
-                'sequencenumber'                    => 'integer',
-                'is_authorized'                     => 'boolean',
-                'is_finally_captured'               => 'boolean',
-                'clearing_data'                     => 'text',
+                'txid' => 'integer',
+                'status' => 'string',
+                'sequencenumber' => 'integer',
+                'is_authorized' => 'boolean',
+                'is_finally_captured' => 'boolean',
+                'clearing_data' => 'text',
                 // since 2.1.4 - save shipping cost with order
-                'ship_captured'                     => ['float',
+                'ship_captured' => ['float',
                     [
                         'label' => 'Versandkosten bisher eingezogen:',
                         'helpText' => '',
@@ -232,7 +232,7 @@ class Mopt_PayoneInstallHelper
                         'pluginId' => $pluginId
                     ]
                 ],
-                'ship_debit'                        => ['float',
+                'ship_debit' => ['float',
                     [
                         'label' => 'Versandkosten bisher gutgeschrieben:',
                         'helpText' => '',
@@ -241,12 +241,12 @@ class Mopt_PayoneInstallHelper
                     ]
                 ],
                 // since 2.3.0 - save payment data for abo commerce support
-                'payment_data'                      => 'text',
+                'payment_data' => 'text',
                 // since 2.5.2 - save order hash and payment reference
-                'payment_reference'                 => 'string',
-                'order_hash'                        => 'string',
+                'payment_reference' => 'string',
+                'order_hash' => 'string',
                 // since 3.3.8 - Payolution Payment Order extensions
-                'payolution_workorder_id'           => ['string',
+                'payolution_workorder_id' => ['string',
                     [
                         'label' => 'Workorder ID:',
                         'helpText' => '',
@@ -254,7 +254,7 @@ class Mopt_PayoneInstallHelper
                         'pluginId' => $pluginId
                     ]
                 ],
-                'payolution_clearing_reference'     => ['string',
+                'payolution_clearing_reference' => ['string',
                     [
                         'label' => 'Clearing Reference:',
                         'helpText' => '',
@@ -264,10 +264,10 @@ class Mopt_PayoneInstallHelper
                 ],
             ],
             's_order_details_attributes' => [
-                'payment_status'                    => 'string',
-                'shipment_date'                     => 'date',
-                'captured'                          => 'float',
-                'debit'                             => 'float',
+                'payment_status' => 'string',
+                'shipment_date' => 'date',
+                'captured' => 'float',
+                'debit' => 'float',
             ],
         ];
     }
@@ -282,30 +282,30 @@ class Mopt_PayoneInstallHelper
     {
         return [
             's_user_attributes' => [
-                'consumerscore_result'              => 'string',
-                'consumerscore_date'                => 'date',
-                'consumerscore_color'               => 'string',
-                'consumerscore_value'               => 'integer',
-                'ratepay_ban'                       => 'date',
+                'consumerscore_result' => 'string',
+                'consumerscore_date' => 'date',
+                'consumerscore_color' => 'string',
+                'consumerscore_value' => 'integer',
+                'ratepay_ban' => 'date',
             ],
             's_user_addresses_attributes' => [
-                'addresscheck_result'               => 'string',
-                'addresscheck_date'                 => 'date',
-                'addresscheck_personstatus'         => 'string',
-                'consumerscore_result'              => 'string',
-                'consumerscore_date'                => 'date',
-                'consumerscore_color'               => 'string',
-                'consumerscore_value'               => 'integer',
+                'addresscheck_result' => 'string',
+                'addresscheck_date' => 'date',
+                'addresscheck_personstatus' => 'string',
+                'consumerscore_result' => 'string',
+                'consumerscore_date' => 'date',
+                'consumerscore_color' => 'string',
+                'consumerscore_value' => 'integer',
             ],
             's_order_attributes' => [
-                'txid'                              => 'integer',
-                'status'                            => 'string',
-                'sequencenumber'                    => 'integer',
-                'is_authorized'                     => 'boolean',
-                'is_finally_captured'               => 'boolean',
-                'clearing_data'                     => 'text',
+                'txid' => 'integer',
+                'status' => 'string',
+                'sequencenumber' => 'integer',
+                'is_authorized' => 'boolean',
+                'is_finally_captured' => 'boolean',
+                'clearing_data' => 'text',
                 // since 2.1.4 - save shipping cost with order
-                'ship_captured'                     => ['float',
+                'ship_captured' => ['float',
                     [
                         'label' => 'Versandkosten bisher eingezogen:',
                         'helpText' => '',
@@ -313,7 +313,7 @@ class Mopt_PayoneInstallHelper
                         'pluginId' => $pluginId
                     ]
                 ],
-                'ship_debit'                        => ['float',
+                'ship_debit' => ['float',
                     [
                         'label' => 'Versandkosten bisher gutgeschrieben:',
                         'helpText' => '',
@@ -322,12 +322,12 @@ class Mopt_PayoneInstallHelper
                     ]
                 ],
                 // since 2.3.0 - save payment data for abo commerce support
-                'payment_data'                      => 'text',
+                'payment_data' => 'text',
                 // since 2.5.2 - save order hash and payment reference
-                'payment_reference'                 => 'string',
-                'order_hash'                        => 'string',
+                'payment_reference' => 'string',
+                'order_hash' => 'string',
                 // since 3.3.8 - Payolution Payment Order extensions
-                'payolution_workorder_id'           => ['string',
+                'payolution_workorder_id' => ['string',
                     [
                         'label' => 'Workorder ID:',
                         'helpText' => '',
@@ -335,7 +335,7 @@ class Mopt_PayoneInstallHelper
                         'pluginId' => $pluginId
                     ]
                 ],
-                'payolution_clearing_reference'     => ['string',
+                'payolution_clearing_reference' => ['string',
                     [
                         'label' => 'Clearing Reference:',
                         'helpText' => '',
@@ -345,10 +345,10 @@ class Mopt_PayoneInstallHelper
                 ],
             ],
             's_order_details_attributes' => [
-                'payment_status'                    => 'string',
-                'shipment_date'                     => 'date',
-                'captured'                          => 'float',
-                'debit'                             => 'float',
+                'payment_status' => 'string',
+                'shipment_date' => 'date',
+                'captured' => 'float',
+                'debit' => 'float',
             ],
         ];
     }
@@ -575,7 +575,7 @@ class Mopt_PayoneInstallHelper
     public function moptCreatePaymentDataTable()
     {
         $sql = "CREATE TABLE IF NOT EXISTS `s_plugin_mopt_payone_payment_data` (`userId` int(11) NOT NULL,`moptPaymentData`"
-                . " text NOT NULL, PRIMARY KEY (`userId`))";
+            . " text NOT NULL, PRIMARY KEY (`userId`))";
         Shopware()->Db()->exec($sql);
     }
 
@@ -585,9 +585,9 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN show_accountnumber TINYINT(1) NOT NULL DEFAULT 0,"
-                . "ADD COLUMN mandate_active TINYINT(1) NOT NULL DEFAULT 0,"
-                . "ADD COLUMN mandate_download_enabled TINYINT(1) NOT NULL DEFAULT 0;";
+            . "ADD COLUMN show_accountnumber TINYINT(1) NOT NULL DEFAULT 0,"
+            . "ADD COLUMN mandate_active TINYINT(1) NOT NULL DEFAULT 0,"
+            . "ADD COLUMN mandate_download_enabled TINYINT(1) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -610,7 +610,7 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigKlarnaDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN klarna_store_id VARCHAR(255) DEFAULT 0;";
+            . "ADD COLUMN klarna_store_id VARCHAR(255) DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -620,30 +620,30 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigPayolutionDataTable()
     {
         $sql = "SELECT value FROM s_core_config_values "
-                . "WHERE element_id = '893';";
+            . "WHERE element_id = '893';";
         $result = Shopware()->Db()->query($sql);
         $serializedCompanyName = $result->fetchColumn(0);
-        $companyName = unserialize((string) $serializedCompanyName);
+        $companyName = unserialize((string)$serializedCompanyName);
         if ($companyName) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                    . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT '" . $companyName . "' ,"
-                    . "ADD COLUMN payolution_b2bmode TINYINT(1) NOT NULL DEFAULT 1;";
+                . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT '" . $companyName . "' ,"
+                . "ADD COLUMN payolution_b2bmode TINYINT(1) NOT NULL DEFAULT 1;";
         } else {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                    . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT 'Ihr Firmenname' ,"
-                    . "ADD COLUMN payolution_b2bmode TINYINT(1) NOT NULL DEFAULT 1;";
+                . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT 'Ihr Firmenname' ,"
+                . "ADD COLUMN payolution_b2bmode TINYINT(1) NOT NULL DEFAULT 1;";
         }
 
         Shopware()->Db()->exec($sql);
     }
-    
+
     /**
      * extend config data table with showBic config column
      */
     public function fcExtendConfigShowBicDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN show_bic TINYINT(1) NOT NULL DEFAULT 0;";
+            . "ADD COLUMN show_bic TINYINT(1) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -653,7 +653,7 @@ class Mopt_PayoneInstallHelper
     public function fcExtendConfigShowSofortIbanBicDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN show_sofort_iban_bic TINYINT(1) NOT NULL DEFAULT 1;";
+            . "ADD COLUMN show_sofort_iban_bic TINYINT(1) NOT NULL DEFAULT 1;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -673,7 +673,7 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigSaveTermsDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN save_terms VARCHAR(255) DEFAULT 0;";
+            . "ADD COLUMN save_terms VARCHAR(255) DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -683,7 +683,7 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigPaypalEcsDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN paypal_ecs_active TINYINT(1) NOT NULL DEFAULT 0;";
+            . "ADD COLUMN paypal_ecs_active TINYINT(1) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -693,7 +693,7 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigCreditcardMinValidDays()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN creditcard_min_valid INT(11) NOT NULL DEFAULT 0;";
+            . "ADD COLUMN creditcard_min_valid INT(11) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -703,9 +703,9 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigAddressCheckCountries()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN adresscheck_billing_countries VARCHAR(255);";
+            . "ADD COLUMN adresscheck_billing_countries VARCHAR(255);";
         $sql1 = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN adresscheck_shipping_countries VARCHAR(255);";
+            . "ADD COLUMN adresscheck_shipping_countries VARCHAR(255);";
         Shopware()->Db()->exec($sql);
         Shopware()->Db()->exec($sql1);
     }
@@ -815,7 +815,7 @@ class Mopt_PayoneInstallHelper
       ";
             Shopware()->Db()->query($sql);
         }
-        
+
         // insert default values for creditcard config
         $sql = 'SELECT id FROM s_plugin_mopt_payone_creditcard_config';
         $result = Shopware()->Db()->query($sql);
@@ -921,7 +921,7 @@ class Mopt_PayoneInstallHelper
 
         return true;
     }
-    
+
     /**
      * check if payone configuration is already extended for show_bic config option
      *
@@ -1167,10 +1167,10 @@ class Mopt_PayoneInstallHelper
         if ($result->rowCount() === 0) {
             $sql = '
             INSERT INTO `s_core_config_mails` (`stateId`, `name`, `frommail`, `fromname`, `subject`, `content`, `contentHTML`, `ishtml`, `attachment`, `mailtype`, `context`, `dirty`) VALUES
-            '.
-            "
+            ' .
+                "
             (121, 'sORDERSTATEMAIL121', '{config name=mail}', '{config name=shopName}', 'Bitte kontaktieren Sie uns wegen Ihrer Bestellung',
-            ".'\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\n
+            " . '\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\n
 Sehr geehrter Kunde,\n\n
 Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=shopName} von Amazon Pay zurückgewiesen. Bitte kontaktieren Sie uns.\r\n\r\n
 {include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
@@ -1224,10 +1224,10 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
         if ($result->rowCount() === 0) {
             $sql = '
             INSERT INTO `s_core_config_mails` (`stateId`, `name`, `frommail`, `fromname`, `subject`, `content`, `contentHTML`, `ishtml`, `attachment`, `mailtype`, `context`, `dirty`) VALUES
-            '.
+            ' .
                 "
             (119, 'sORDERSTATEMAIL119', '{config name=mail}', '{config name=shopName}', 'Bitte aktualisieren Sie Ihre Zahlungsinformationen',
-            ".'\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\nSehr geehrter Kunde,\r\n
+            " . '\'{include file="string:{config name=emailheaderplain}\"}\r\n\r\nSehr geehrter Kunde,\r\n
 Vielen Dank für Ihre Bestellung bei {config name=shopName}.\r\n
 Leider wurde Ihre Bezahlung von Amazon Pay abgelehnt.\r\n
 Sie können unter https://pay.amazon.com/de/jr/youraccount/orders?language=de_DE
@@ -1287,9 +1287,9 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "select CONSTRAINT_NAME from "
-                . "information_schema.key_column_usage where "
-                . "table_schema = '" . $DBConfig['dbname'] . "' and "
-                . "table_name = 's_plugin_mopt_payone_creditcard_config' and column_name = 'error_locale_id';";
+            . "information_schema.key_column_usage where "
+            . "table_schema = '" . $DBConfig['dbname'] . "' and "
+            . "table_name = 's_plugin_mopt_payone_creditcard_config' and column_name = 'error_locale_id';";
         $result = Shopware()->Db()->query($sql);
 
 
@@ -1298,11 +1298,11 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
             try {
                 $sqlUpdate = 'ALTER TABLE s_plugin_mopt_payone_creditcard_config DROP INDEX '
-                        . $constraint['CONSTRAINT_NAME'] . ';';
+                    . $constraint['CONSTRAINT_NAME'] . ';';
                 Shopware()->Db()->query($sqlUpdate);
             } catch (Exception $exc) {
                 $logger->error('removing unique index from '
-                        . 's_plugin_mopt_payone_creditcard_config.error_locale_id failed', $exc->getMessage());
+                    . 's_plugin_mopt_payone_creditcard_config.error_locale_id failed', $exc->getMessage());
             }
         }
 
@@ -1313,7 +1313,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
         if ($resultColumn->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config` "
-                    . "ADD COLUMN is_default TINYINT(1) DEFAULT 0;";
+                . "ADD COLUMN is_default TINYINT(1) DEFAULT 0;";
             Shopware()->Db()->exec($sql);
         }
     }
@@ -1331,18 +1331,18 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config` "
-                    . "ADD COLUMN merchant_id INT(11) NOT NULL DEFAULT 0,"
-                    . "ADD COLUMN portal_id INT(11) NOT NULL DEFAULT 0,"
-                    . "ADD COLUMN subaccount_id INT(11) NOT NULL DEFAULT 0,"
-                    . "ADD COLUMN api_key VARCHAR(100) NOT NULL,"
-                    . "ADD COLUMN live_mode TINYINT(1) NOT NULL DEFAULT 0,"
-                    . "ADD COLUMN check_cc TINYINT(1) NOT NULL DEFAULT 1,"
-                    . "ADD COLUMN creditcard_min_valid INT(11) DEFAULT 0;";
+                . "ADD COLUMN merchant_id INT(11) NOT NULL DEFAULT 0,"
+                . "ADD COLUMN portal_id INT(11) NOT NULL DEFAULT 0,"
+                . "ADD COLUMN subaccount_id INT(11) NOT NULL DEFAULT 0,"
+                . "ADD COLUMN api_key VARCHAR(100) NOT NULL,"
+                . "ADD COLUMN live_mode TINYINT(1) NOT NULL DEFAULT 0,"
+                . "ADD COLUMN check_cc TINYINT(1) NOT NULL DEFAULT 1,"
+                . "ADD COLUMN creditcard_min_valid INT(11) DEFAULT 0;";
 
             $db->exec($sql);
         }
     }
-    
+
     public function checkAndUpdateCreditcardModelIframeExtension()
     {
         $db = Shopware()->Db();
@@ -1355,32 +1355,32 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         $result = $db->query($sql);
 
         if ($result->rowCount() === 0) {
-           $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config` "
-                    . "ADD COLUMN default_translation_iframe_month1 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month2 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month3 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month4 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month5 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month6 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month7 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month8 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month9 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month10 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month11 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframe_month12 VARCHAR(40) NULL,"
-                    . "ADD COLUMN default_translation_iframeinvalid_cardpan VARCHAR(255) NULL,"
-                    . "ADD COLUMN default_translation_iframeinvalid_cvc VARCHAR(255) NULL,"
-                    . "ADD COLUMN default_translation_iframeinvalid_pan_for_cardtype VARCHAR(255) NULL,"
-                    . "ADD COLUMN default_translation_iframeinvalid_cardtype VARCHAR(255) NULL,"
-                    . "ADD COLUMN default_translation_iframeinvalid_expire_date VARCHAR(255) NULL,"
-                    . "ADD COLUMN default_translation_iframeinvalid_issue_number VARCHAR(255) NULL,"
-                    . "ADD COLUMN default_translation_iframetransaction_rejected VARCHAR(255) NULL,"
-                    . "ADD COLUMN default_translation_iframe_cardpan VARCHAR(255) NULL,"
-                    . "ADD COLUMN default_translation_iframe_cvc VARCHAR(255) NULL;";
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config` "
+                . "ADD COLUMN default_translation_iframe_month1 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month2 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month3 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month4 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month5 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month6 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month7 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month8 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month9 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month10 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month11 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframe_month12 VARCHAR(40) NULL,"
+                . "ADD COLUMN default_translation_iframeinvalid_cardpan VARCHAR(255) NULL,"
+                . "ADD COLUMN default_translation_iframeinvalid_cvc VARCHAR(255) NULL,"
+                . "ADD COLUMN default_translation_iframeinvalid_pan_for_cardtype VARCHAR(255) NULL,"
+                . "ADD COLUMN default_translation_iframeinvalid_cardtype VARCHAR(255) NULL,"
+                . "ADD COLUMN default_translation_iframeinvalid_expire_date VARCHAR(255) NULL,"
+                . "ADD COLUMN default_translation_iframeinvalid_issue_number VARCHAR(255) NULL,"
+                . "ADD COLUMN default_translation_iframetransaction_rejected VARCHAR(255) NULL,"
+                . "ADD COLUMN default_translation_iframe_cardpan VARCHAR(255) NULL,"
+                . "ADD COLUMN default_translation_iframe_cvc VARCHAR(255) NULL;";
             $db->exec($sql);
         }
-    } 
-    
+    }
+
     public function checkAndUpdateConfigModelPayolutionInstallmentExtension()
     {
         $db = Shopware()->Db();
@@ -1393,13 +1393,14 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         $result = $db->query($sql);
 
         if ($result->rowCount() === 0) {
-           $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `payolution_draft_user` VARCHAR(255) NULL AFTER `payolution_b2bmode`,
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `payolution_draft_user` VARCHAR(255) NULL AFTER `payolution_b2bmode`,
                    ADD `payolution_draft_password` VARCHAR(255) NULL AFTER `payolution_draft_user`;";
             $db->exec($sql);
         }
     }
 
-    public function checkAndUpdateConfigModelRatepayExtension() {
+    public function checkAndUpdateConfigModelRatepayExtension()
+    {
         $db = Shopware()->Db();
 
         $DBConfig = $db->getConfig();
@@ -1516,6 +1517,25 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `paydirekt_overcapture` TINYINT(1) NOT NULL DEFAULT 0;";
+            $db->exec($sql);
+        }
+    }
+
+    function checkAndUpdateConsumerscoreExtension()
+    {
+        $db = Shopware()->Db();
+
+        $DBConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='consumerscore_check_mode_b2b'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `consumerscore_check_mode_b2b` VARCHAR(4) NOT NULL DEFAULT 'NO';";
+            $db->exec($sql);
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` CHANGE `consumerscore_check_mode` `consumerscore_check_mode_b2c` VARCHAR(4);";
             $db->exec($sql);
         }
     }

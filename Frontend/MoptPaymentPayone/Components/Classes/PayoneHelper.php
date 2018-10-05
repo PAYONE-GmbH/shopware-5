@@ -1204,7 +1204,6 @@ class Mopt_PayoneHelper
         return $userConsumerScoreData;
     }
 
-
     /**
      * get ratepay ban date
      *
