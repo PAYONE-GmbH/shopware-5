@@ -457,10 +457,36 @@ function moptPaymentReady() {
             var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + me.opts.moptCreditcardMinValid);
             var selectedDate = new Date($('#mopt_payone__cc_Year').val(), $('#mopt_payone__cc_month').val(), 0);
             var diff = selectedDate.getTime() - minValidDate.getTime();
+            var cvcLengthCheck = false;
+            var cvc = $('#mopt_payone__cc_cvc').val();
 
-            if (diff < 0) {
+            if (cvc !== 'undefined') {
+                switch($('#mopt_payone__cc_cardtype').val()) {
+                    case 'A':
+                        cvcLengthCheck = (cvc.length == 4);
+                        break;
+                    case 'V':
+                        cvcLengthCheck = (cvc.length == 3);
+                        break;
+                    case 'M':
+                        cvcLengthCheck = (cvc.length == 3);
+                        break;
+                    default:
+                        cvcLengthCheck = true;
+                }
+            }
+
+            if ( diff < 0 ) {
                 $('#mopt_payone__cc_cvc').val('');
                 processPayoneResponse(false);
+            } else if (! cvcLengthCheck) {
+                function Response(){
+                    this.get = function (egal){
+                        return 1079;
+                    }
+                }
+                response = new Response();
+                processPayoneResponse(response);
             }
             else {
                 var data = {
