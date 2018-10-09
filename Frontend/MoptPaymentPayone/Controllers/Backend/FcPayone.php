@@ -1104,6 +1104,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $data['message'] = 'Zahlungsart erfolgreich gespeichert!';
         $this->createPayoneConfig($paymentData);
+        $this->createPayoneCreditcardConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
         exit(0);
@@ -1259,6 +1260,23 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         Shopware()->Models()->flush($data);
 
         return $data;
+    }
+
+    public function createPayoneCreditcardConfig($options)
+    {
+        $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig');
+        /** @var $creditcardConfig \Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig */
+        $creditcardConfig = $repository->findOneBy(
+            array(
+                'id' => '1'
+            )
+        );
+        $creditcardConfig->setMerchantId($options['merchantId']);
+        $creditcardConfig->setPortalId($options['portalId']);
+        $creditcardConfig->setSubaccountId($options['subaccountId']);
+        $creditcardConfig->setApiKey($options['apiKey']);
+
+        Shopware()->Models()->flush($creditcardConfig);
     }
 
     public function getAllIframeConfigQuery($filter = null, $order = null, $repository)
