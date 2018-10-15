@@ -63,7 +63,7 @@ class Mopt_PayoneHelper
             }
         }
 
-        if ($config['consumerscoreCheckModeB2C'] === Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) {
+        if ($config['consumerscoreCheckModeB2C'] === Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA && $config["adresscheck{$type}Adress"] !== 0) {
             return Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON;
         }
       
