@@ -398,8 +398,8 @@
                     "{foreach from=$currencies item=currency}<option value='{$currency->getId()}'>{$currency->getName()}</option>{/foreach}"+
                     "</select></td>"+
                     "<td>"+ "<select class='form-control' name='row[" + len + "][ratepayInstallmentMode]' id='ratepayInstallmentMode_" + len + "'>"+
-                    "<option value='0' {if $ratepayconfig->getRatepayInstallmentMode() == 0}selected='selected'{/if}>Vorkasse</option>"+
-                    "<option value='1' {if $ratepayconfig->getRatepayInstallmentMode() == 1}selected='selected'{/if}>Lastschrift</option>"+
+                    "<option value='0' {if $ratepayconfig && $ratepayconfig->getRatepayInstallmentMode() == 0}selected='selected'{/if}>Vorkasse</option>"+
+                    "<option value='1' {if $ratepayconfig && $ratepayconfig->getRatepayInstallmentMode() == 1}selected='selected'{/if}>Lastschrift</option>"+
                     "</select></td>"+
                     "<td role='button' name='delete' value='delete' onclick='removeRow(" + len + ");'><img id='delete_" + len + "' height='100%' src='{link file="backend/_resources/images/delete.png"}'></td>" +
                     "</tr>";
