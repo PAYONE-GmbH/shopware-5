@@ -878,12 +878,12 @@ class AddressCheck implements SubscriberInterface
             $userAttribute->setMoptPayoneConsumerscoreDate(0);
             Shopware()->Models()->persist($userAttribute);
             Shopware()->Models()->flush();
-            $billing = $user->getBilling();
+            $billing = $user->getDefaultBillingAddress();
             $billingAttribute = $moptPayoneMain->getHelper()->getOrCreateBillingAttribute($billing);
             $billingAttribute->setMoptPayoneAddresscheckDate(0);
             Shopware()->Models()->persist($billingAttribute);
             Shopware()->Models()->flush();
-            $shipping = $user->getShipping();
+            $shipping = $user->getDefaultShippingAddress();
             $shippingAttribute = $moptPayoneMain->getHelper()->getOrCreateShippingAttribute($shipping);
             $shippingAttribute->setMoptPayoneAddresscheckDate(0);
             Shopware()->Models()->persist($shippingAttribute);
