@@ -322,8 +322,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             // reset basket
             unset($this->session['sBasketQuantity']);
             unset($this->session['sBasketAmount']);
-            // logout user to prevent autoforward to checkout/confirm when placing a second "normal" order
-            $this->admin->logout();
         }
     }
 
