@@ -1,5 +1,5 @@
 <script>
-    {if $smarty.server.HTTP_REFERER|strpos:'https://eu.account.amazon.com/'=== 0}
+    {if $smarty.server.HTTP_REFERER|strpos:'Amazon' == false}
     function getURLParameter(name, source) {
         return decodeURIComponent((new RegExp('[?|&|#]' + name + '=' +
             '([^&]+?)(&|#|;|$)').exec(source) || [,""])[1].replace(/\+/g,
