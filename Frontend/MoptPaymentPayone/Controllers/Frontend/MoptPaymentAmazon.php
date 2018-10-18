@@ -110,6 +110,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->sAmountTax = $basket['sAmountTax'];
             $this->View()->sBasket = $basket;
 
+            $this->session->offsetSet('moptFormSubmitted', true);
             $this->session['sOrderVariables'] = new ArrayObject($this->View()->getAssign(), ArrayObject::ARRAY_AS_PROPS);
         }
     }
@@ -319,6 +320,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             unset($this->session->moptPayoneAmazonReferenceId);
             unset($this->session->moptPayoneAmazonWorkOrderId);
             unset($this->session->moptReservedOrdernum);
+            unset($this->session->moptFormSubmitted);
             // reset basket
             unset($this->session['sBasketQuantity']);
             unset($this->session['sBasketAmount']);
