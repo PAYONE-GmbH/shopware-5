@@ -237,6 +237,14 @@ function moptPaymentReady() {
                 $('#mopt_payone__cc_show_saved_hint').hide();
             });
 
+
+            $('#mopt_payone__cc_truncatedcardpan').click(function() {
+                if ($('#mopt_payone__cc_truncatedcardpan').val().indexOf("XXXX") >= 0) {
+                    $('#mopt_payone__cc_truncatedcardpan').val('');
+                    $('#mopt_payone__cc_cvc').val('');
+                    $('#mopt_payone__cc_show_saved_hint').hide();
+                }
+            });
         },
         prepareIframeCreditcardCheck: function () {
             var me = this;
