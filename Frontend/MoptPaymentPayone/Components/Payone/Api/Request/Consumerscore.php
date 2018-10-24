@@ -94,6 +94,12 @@ class Payone_Api_Request_Consumerscore extends Payone_Api_Request_Abstract
      * @var string
      */
     protected $language = null;
+    /**
+     * used by SCHUFA
+     * @var string
+     */
+    protected $businessrelation = null;
+
 
     /**
      * @param string $addresschecktype
@@ -333,5 +339,21 @@ class Payone_Api_Request_Consumerscore extends Payone_Api_Request_Abstract
     public function getZip()
     {
         return $this->zip;
+    }
+
+    /**
+     * @param string $businessrelation
+     */
+    public function setBusinessrelation($businessrelation)
+    {
+        $this->businessrelation = $businessrelation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBusinessrelation()
+    {
+        return $this->businessrelation;
     }
 }

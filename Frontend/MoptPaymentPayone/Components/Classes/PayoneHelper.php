@@ -63,7 +63,7 @@ class Mopt_PayoneHelper
             }
         }
 
-        if ($config['consumerscoreCheckMode'] === Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) {
+        if ($config['consumerscoreCheckModeB2C'] === Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA && $config["adresscheck{$type}Adress"] !== 0) {
             return Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON;
         }
       
@@ -188,7 +188,7 @@ class Mopt_PayoneHelper
             return false;
         }
 
-        return is_string($config['consumerscoreCheckMode']);
+        return is_string($config['consumerscoreCheckModeB2C']);
     }
 
   /**
@@ -1204,7 +1204,6 @@ class Mopt_PayoneHelper
         return $userConsumerScoreData;
     }
 
-
     /**
      * get ratepay ban date
      *
@@ -1398,6 +1397,20 @@ class Mopt_PayoneHelper
             $latest
         );
         return $config;
+    }
+
+    public function isCompany($userId)
+    {
+        $customer = Shopware()->Models()
+            ->getRepository('Shopware\Models\Customer\Customer')
+            ->find($userId);
+        if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+            $billing = $customer->getDefaultBillingAddress();
+        } else {
+            $billing = $customer->getBilling();
+        }
+        $return = !empty($billing->getCompany()) ? true : false;
+        return $return;
     }
 
 }

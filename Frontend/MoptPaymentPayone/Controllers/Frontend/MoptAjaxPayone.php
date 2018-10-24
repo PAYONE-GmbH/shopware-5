@@ -110,13 +110,35 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog')
         );
         $request = new Payone_Api_Request_Consumerscore($params);
-        $request->setAddresschecktype(
-            ($config['consumerscoreCheckMode'] == \Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) ?
-                \Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON :
-                \Payone_Api_Enum_AddressCheckType::NONE
-        );
+        $isCompany = $this->moptPayoneMain->getHelper()->isCompany($userId);
+        if ($isCompany) {
+            $request->setAddresschecktype(
+                ($config['consumerscoreCheckModeB2B'] === \Payone_Api_Enum_ConsumerscoreType::SCHUFA_SFS) ?
+                    \Payone_Api_Enum_AddressCheckType::SCHUFA :
+                    \Payone_Api_Enum_AddressCheckType::NONE
+            );
+            $request->setBusinessRelation(
+                ($config['consumerscoreCheckModeB2B'] === \Payone_Api_Enum_ConsumerscoreType::SCHUFA_SFS) ?
+                    \Payone_Api_Enum_BusinessrelationType::B2B :
+                    null
+            );
+            $request->setConsumerscoretype($config['consumerscoreCheckModeB2B']);
+        } else {
+            $request->setAddresschecktype(
+                ($config['consumerscoreCheckModeB2C'] === \Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) ?
+                    \Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON :
+                    \Payone_Api_Enum_AddressCheckType::NONE
+            );
 
-        $request->setConsumerscoretype($config['consumerscoreCheckMode']);
+            // for future use
+            /* $request->setBusinessRelation(
+                ($config['consumerscoreCheckModeB2B'] === \Payone_Api_Enum_ConsumerscoreType::SCHUFA_SFS) ?
+                    \Payone_Api_Enum_BusinessrelationType::B2C :
+                    null
+            );
+            */
+            $request->setConsumerscoretype($config['consumerscoreCheckModeB2C']);
+        }
 
         try {
             $response = $service->score($request);

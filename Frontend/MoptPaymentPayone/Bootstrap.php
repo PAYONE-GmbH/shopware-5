@@ -410,6 +410,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $platform->registerDoctrineTypeMapping('enum', 'string');
         $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
 
+        $cacheManager = Shopware()->Container()->get('shopware.cache_manager');
+
+        $cacheManager->clearProxyCache();
+
         try {
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog'),
@@ -543,12 +547,15 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndInsertDelayedStatusEmailTemplate();
 
+
         // adding transaction id in log table
         if (!$this->getInstallHelper()->payoneApiLogTransactionIdExist()) {
             $this->getInstallHelper()->extendPayoneApiLogTransactionId();
         }
 
         $this->getInstallHelper()->checkAndUpdateConfigModelPaydirektOvercaptureExtension();
+
+        $this->getInstallHelper()->checkAndUpdateConsumerscoreExtension();
     }
 
     /**
