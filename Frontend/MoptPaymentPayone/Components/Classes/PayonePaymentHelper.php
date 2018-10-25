@@ -1187,10 +1187,6 @@ class Mopt_PayonePaymentHelper
             return 'finance';
         }
 
-        if ($this->isPayoneCreditcardIframe($paymentShortName)) {
-            return 'creditcardIframe';
-        }
-
         if ($this->isPayoneBarzahlen($paymentShortName)) {
             return 'barzahlen';
         }
