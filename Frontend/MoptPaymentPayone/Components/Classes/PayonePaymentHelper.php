@@ -330,7 +330,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneCreditcardForExport($paymentName)
     {
-        if (preg_match('#mopt_payone__cc#', $paymentName) || $paymentName == 'mopt_payone_creditcard' || preg_match('#mopt_payone__creditcard_iframe#', $paymentName)) {
+        if (preg_match('#mopt_payone__cc#', $paymentName) || $paymentName == 'mopt_payone_creditcard') {
             return true;
         } else {
             return false;
@@ -589,17 +589,6 @@ class Mopt_PayonePaymentHelper
     public function isPayoneFinance($paymentName)
     {
         return preg_match('#mopt_payone__fin#', $paymentName) ? true : false;
-    }
-
-    /**
-     * check if given payment name is payone creditcard iframe
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayoneCreditcardIframe($paymentName)
-    {
-        return strpos($paymentName, 'mopt_payone__creditcard_iframe') === 0;
     }
 
     /**
