@@ -154,9 +154,9 @@
                type="text"
                id="mopt_payone__cc_cvc"
                data-moptNumberErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="numberFormField"}Dieses Feld darf nur Zahlen enthalten{/s}"
-               {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
+               {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptPayoneCheckCc }required="required" aria-required="true"{/if}
                placeholder="{s name='creditCardCvc'}Prüfziffer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-               class="payment--field is--required{if $error_flags.mopt_payone__cc_cvc} has--error{/if} moptPayoneNumber" />
+               {if $moptCreditCardCheckEnvironment.moptPayoneCheckCc} class="payment--field is--required {/if}{if $error_flags.mopt_payone__cc_cvc} has--error{/if} moptPayoneNumber" />
     </p>
     {elseif $moptCreditCardCheckEnvironment.moptPayoneCheckCc}
         <p class="none" id="label_mopt_payone__cc_cvc">
@@ -164,7 +164,7 @@
                 {s name='creditCardCvc'}Prüfziffer{/s}
             </label>
         </p>
-        <span id="mopt_payone__cc_cvc" class="inputIframe"></span>
+        <span id="mopt_payone__cc_cvc" class="inputIframe" {if !$moptCreditCardCheckEnvironment.moptPayoneCheckCc}style="display:none;"{/if}></span>
     {/if}
 
     {if $moptIsAjax}
@@ -328,6 +328,11 @@
         $('#mopt_payone__cc_cardtype').attr('disabled', false);
         $('#mopt_payone__cc_cardtype').parents('.js--fancy-select').removeClass('is--disabled');
         $('.inputIframe').show();
+        {if $moptCreditCardCheckEnvironment.moptPayoneCheckCc}
+        // trigger onchange event manually
+        // to update cvc length when creditcard is pre-selected
+        $('#mopt_payone__cc_cardtype').trigger('change');
+        {/if}
     };
 
     function ccCheck(data) {

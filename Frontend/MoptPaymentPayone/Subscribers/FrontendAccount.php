@@ -100,19 +100,7 @@ class FrontendAccount implements SubscriberInterface
      */
     protected function triggerDeleteCCData() {
         $userId = Shopware()->Session()->sUserId;
-        $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
-        $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
-
-        // empty cc data
-        $paymentData['mopt_payone__cc_accountholder'] =
-        $paymentData['mopt_payone__cc_truncatedcardpan_hidden'] =
-        $paymentData['mopt_payone__cc_cardexpiremonth_hidden'] =
-        $paymentData['mopt_payone__cc_cardexpireyear_hidden'] =
-        $paymentData['mopt_payone__cc_pseudocardpan'] =
-        $paymentData['mopt_payone__cc_cardexpiredate'] =
-        $paymentData['mopt_payone__cc_Year'] =
-        $paymentData['mopt_payone__cc_paymentname'] = '';
-
+        $paymentData = [];
         $serializedPaymentData = serialize($paymentData);
         $sql = 'UPDATE s_plugin_mopt_payone_payment_data SET `moptPaymentData`= ? WHERE userId = ?';
         Shopware()->Db()->executeUpdate($sql,array($serializedPaymentData, $userId));

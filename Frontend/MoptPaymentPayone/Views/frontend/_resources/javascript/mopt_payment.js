@@ -231,6 +231,20 @@ function moptPaymentReady() {
                 $('#mopt_payone__cc_cvc').val(me.opts.messageCreditCardCvcProcessed);
             }
 
+            $('#mopt_payone__cc_cardtype').change(function () {
+                $('#mopt_payone__cc_truncatedcardpan').val('');
+                $('#mopt_payone__cc_cvc').val('');
+                $('#mopt_payone__cc_show_saved_hint').hide();
+            });
+
+
+            $('#mopt_payone__cc_truncatedcardpan').click(function() {
+                if ($('#mopt_payone__cc_truncatedcardpan').val().indexOf("XXXX") >= 0) {
+                    $('#mopt_payone__cc_truncatedcardpan').val('');
+                    $('#mopt_payone__cc_cvc').val('');
+                    $('#mopt_payone__cc_show_saved_hint').hide();
+                }
+            });
         },
         prepareIframeCreditcardCheck: function () {
             var me = this;
@@ -295,6 +309,10 @@ function moptPaymentReady() {
             if (me.opts.moptCreditcardConfig.cardno_custom_iframe === '0') {
                 config.fields.cardpan.iframe.width = me.opts.moptCreditcardConfig.cardno_iframe_width;
                 config.fields.cardpan.iframe.height = me.opts.moptCreditcardConfig.cardno_iframe_height;
+            }
+
+            if (me.opts.moptCreditcardConfig.check_cc === '1') {
+                config.fields.cardcvc2.length = {"A": 4, "V": 3, "M": 3};
             }
 
             if (me.opts.moptCreditcardConfig.cardcvc_custom_style === '0' && me.opts.moptCreditcardConfig.check_cc === '1') {
@@ -447,10 +465,36 @@ function moptPaymentReady() {
             var minValidDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + me.opts.moptCreditcardMinValid);
             var selectedDate = new Date($('#mopt_payone__cc_Year').val(), $('#mopt_payone__cc_month').val(), 0);
             var diff = selectedDate.getTime() - minValidDate.getTime();
+            var cvcLengthCheck = false;
+            var cvc = $('#mopt_payone__cc_cvc').val();
 
-            if (diff < 0) {
+            if (cvc !== 'undefined') {
+                switch($('#mopt_payone__cc_cardtype').val()) {
+                    case 'A':
+                        cvcLengthCheck = (cvc.length == 4);
+                        break;
+                    case 'V':
+                        cvcLengthCheck = (cvc.length == 3);
+                        break;
+                    case 'M':
+                        cvcLengthCheck = (cvc.length == 3);
+                        break;
+                    default:
+                        cvcLengthCheck = true;
+                }
+            }
+
+            if ( diff < 0 ) {
                 $('#mopt_payone__cc_cvc').val('');
                 processPayoneResponse(false);
+            } else if (! cvcLengthCheck) {
+                function Response(){
+                    this.get = function (egal){
+                        return 1079;
+                    }
+                }
+                response = new Response();
+                processPayoneResponse(response);
             }
             else {
                 var data = {
@@ -491,6 +535,12 @@ function moptPaymentReady() {
         init: function () {
             if (iframes.isComplete()) {
                 iframes.creditCardCheck('processPayoneIframeResponse');
+            } else if (
+                iframes.isCardTypeComplete() &&
+                iframes.isCardpanComplete() &&
+                iframes.isExpireMonthComplete() &&
+                iframes.isExpireYearComplete()) {
+                iframes.creditCardCheck('processPayoneIframeResponse');
             } else {
                 moptShowGeneralIFrameError();
             }
@@ -505,6 +555,12 @@ function moptPaymentReady() {
     $.plugin('moptPayoneIframeCreditcardCheckWithoutSubmit', {
         init: function () {
             if (iframes.isComplete()) {
+                iframes.creditCardCheck('processPayoneIframeResponseWithoutSubmit');
+            } else if (
+                iframes.isCardTypeComplete() &&
+                iframes.isCardpanComplete() &&
+                iframes.isExpireMonthComplete() &&
+                iframes.isExpireYearComplete()) {
                 iframes.creditCardCheck('processPayoneIframeResponseWithoutSubmit');
             } else {
                 moptShowGeneralIFrameError();
