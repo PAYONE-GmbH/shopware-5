@@ -224,12 +224,10 @@ class FrontendPostDispatch implements SubscriberInterface
 
         // for amazon Pay redirect directly to finish instead of confirm
 
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay')) {
-            $session->offsetSet('moptFormSubmitted', true);
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay' && $session->offsetGet('moptFormSubmitted') === true)) {
             $action->forward('finish', 'moptPaymentAmazon', null, array('sAGB' => 'on'));
         }
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_masterpass')) {
-            $session->offsetSet('moptFormSubmitted', true);
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_masterpass' && $session->offsetGet('moptFormSubmitted') === true)) {
             $action->forward('finish', 'FatchipBSPayoneMasterpassCheckout', null, array('sAGB' => 'on'));
         }
 

@@ -212,5 +212,14 @@ class Mopt_PayoneMain
         $this->basketUpdated = $basketUpdated;
     }
 
+    public function reserveOrdernumber()
+    {
+        $session = Shopware()->Session();
+        if (empty($session['moptReservedOrdernum'])){
+            $order = new sOrder();
+            $session['moptReservedOrdernum'] = $order->sGetOrderNumber();
+        }
+        return $session['moptReservedOrdernum'];
+    }
 
 }

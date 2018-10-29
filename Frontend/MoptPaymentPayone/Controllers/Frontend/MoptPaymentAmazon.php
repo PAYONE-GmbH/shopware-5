@@ -110,6 +110,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->sAmountTax = $basket['sAmountTax'];
             $this->View()->sBasket = $basket;
 
+            $this->session->offsetSet('moptFormSubmitted', true);
             $this->session['sOrderVariables'] = new ArrayObject($this->View()->getAssign(), ArrayObject::ARRAY_AS_PROPS);
         }
     }
@@ -121,12 +122,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $payoneServiceBuilder = $this->plugin->get('MoptPayoneBuilder');
         $paramBuilder = $moptPayoneMain->getParamBuilder();
         $userData = $this->getUserData();
-
-        // pre-reserve Shop Order Number
-        if (empty($this->session['moptAmazonOrdernum'])){
-            $my_sOrder = new sOrder();
-            $this->session['moptAmazonOrdernum'] = $my_sOrder->sGetOrderNumber();
-        }
         $config = $moptPayoneMain->getPayoneConfig($paymentId);;
 
         $response = $this->buildAndCallSetOrderReferenceDetails($config);
@@ -189,7 +184,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $request->setClearingtype(Payone_Enum_ClearingType::WALLET);
         $request->setWorkorderId($this->session->moptPayoneAmazonWorkOrderId);
         $request->setWallettype(Payone_Api_Enum_WalletType::AMAZONPAY);
-        $request->setReference($this->session['moptAmazonOrdernum']);
+        $request->setReference($moptPayoneMain->reserveOrdernumber());
         $personalData = $paramBuilder->getPersonalData($userData);
         $request->setPersonalData($personalData);
         $deliveryData = $paramBuilder->getDeliveryData($userData);
@@ -273,20 +268,9 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 $paymentStatusId
             );
 
-            // replace the new order number with the already reserved one, which is already sent to amazon
-            $sql = 'UPDATE  `s_order` SET ordernumber = ? WHERE transactionID = ?';
-            Shopware()->Db()->query($sql, array($this->session['moptAmazonOrdernum'], $txid));
-
-            // also update Ordernumber in Session
-            $this->session['sOrderVariables']->sOrderNumber = $this->session['moptAmazonOrdernum'];
-
             // get orderId for attribute Saving
             $sql = 'SELECT `id` FROM `s_order` WHERE transactionID = ?'; //get order id
             $orderId = Shopware()->Db()->fetchOne($sql, $txid);
-
-            //and update the new order number with the already reserved one for order_details
-            $sql = 'UPDATE  `s_order_details` SET ordernumber = ? WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array($this->session['moptAmazonOrdernum'], $orderId));
 
             // save fields as Order Attribute
             $sql = 'UPDATE `s_order_attributes` ' .
@@ -335,12 +319,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             unset($this->session->moptPayoneAmazonAccessToken);
             unset($this->session->moptPayoneAmazonReferenceId);
             unset($this->session->moptPayoneAmazonWorkOrderId);
-            unset($this->session->moptAmazonOrdernum);
+            unset($this->session->moptReservedOrdernum);
+            unset($this->session->moptFormSubmitted);
             // reset basket
             unset($this->session['sBasketQuantity']);
             unset($this->session['sBasketAmount']);
-            // logout user to prevent autoforward to checkout/confirm when placing a second "normal" order
-            $this->admin->logout();
         }
     }
 
@@ -751,6 +734,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 Shopware()->Session()->sOutputNet = empty($system->sUSERGROUPDATA['tax']);
             }
             $userData['additional']['user']['paymentID'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
+            $userData['additional']['payment']['id'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
         }
 
         return $userData;
@@ -850,7 +834,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $session = Shopware()->Session();
         $clearingType = \Payone_Enum_ClearingType::WALLET;
         $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
-        $data = [];
         $params = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize($config['paymentId']);
         $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
         $params['api_version'] = '3.10';
