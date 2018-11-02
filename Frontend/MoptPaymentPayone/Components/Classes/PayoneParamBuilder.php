@@ -1683,58 +1683,6 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
-     * return all needed parameters for iframe integration
-     *
-     * @param array $basket
-     * @param array $shipment
-     * @param array $userData
-     * @return array
-     */
-    public function buildIframeParameters($basket, $shipment, $userData)
-    {
-        $payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig();
-        $router = Shopware()->Front()->Router();
-
-        $params = array();
-        $params['encoding'] = 'UTF-8';
-        $params['portalid'] = $payoneConfig['portalId'];
-        $params['aid'] = $payoneConfig['subaccountId'];
-        $params['mode'] = $payoneConfig['liveMode'] ? Payone_Enum_Mode::LIVE : Payone_Enum_Mode::TEST;
-        $params['request'] = $this->getParamAuthorizationMethod($payoneConfig);
-        $params['clearingtype'] = 'cc';
-        $params['currency'] = Shopware()->Currency()->getShortName();
-        $params['amount'] = (int)round(($this->getParamAmount($basket, $userData) * 100));
-        $params['reference'] = $this->getParamPaymentReference();
-        $params['targetwindow'] = 'top';
-        $params['param'] = $this->getCustomSessionParameters();
-
-        foreach ($this->getBasketItems($basket, $shipment, $userData) as $key => $data) {
-            $params['id[' . ($key + 1) . ']'] = $data['id'];
-            $params['pr[' . ($key + 1) . ']'] = round($data['pr'] * 100); //int cast has rounding problems
-            $params['no[' . ($key + 1) . ']'] = $data['no'];
-            $params['de[' . ($key + 1) . ']'] = $data['de'];
-            $params['va[' . ($key + 1) . ']'] = $data['va'];
-        }
-
-        $params['successurl'] = $router->assemble(array(
-            'controller' => 'MoptPaymentPayone',
-            'action' => 'creditcardIframeSuccess',
-            'reference' => $params['reference'],
-            'forceSecure' => true,
-            'appendSession' => true,
-        ));
-        $params['backurl'] = $router->assemble(array(
-            'controller' => 'checkout',
-            'action' => 'confirm',
-            'forceSecure' => true,
-            'appendSession' => true,
-        ));
-
-        $params['hash'] = $this->getParamHash($params);
-        return $params;
-    }
-
-    /**
      * get total basket amount
      *
      * @param array $basket
