@@ -101,12 +101,14 @@ class AddressCheck implements SubscriberInterface
 
         // execute parent call if rule is not payone
         if (strpos($rule, 'sRiskMOPT_PAYONE__') !== 0) {
-            $arguments->setReturn(
-                $arguments->getSubject()->executeParent(
-                    $arguments->getMethod(),
-                    $arguments->getArgs()
-                )
-            );
+            if(method_exists($subject, $rule)) {
+                $arguments->setReturn(
+                    $subject->executeParent(
+                        $arguments->getMethod(),
+                        $arguments->getArgs()
+                    )
+                );
+            }
         } else {
             $paymentID = Shopware()->Session()->moptRiskCheckPaymentId;
             /** @var \Mopt_PayoneMain $moptPayoneMain */
