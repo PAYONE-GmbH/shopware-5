@@ -512,6 +512,11 @@ class MoptPayoneConfig extends ModelEntity
     private $paydirektOvercapture;
 
     /**
+     * @ORM\Column(name="send_ordernumber_as_reference", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+     */
+    private $sendOrdernumberAsReference;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -2010,5 +2015,21 @@ class MoptPayoneConfig extends ModelEntity
     public function setPaydirektOvercapture($paydirektOvercapture)
     {
         $this->paydirektOvercapture = $paydirektOvercapture;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSendOrdernumberAsReference()
+    {
+        return $this->sendOrdernumberAsReference;
+    }
+
+    /**
+     * @param $sendOrdernumberAsReference
+     */
+    public function setSendOrdernumberAsReference($sendOrdernumberAsReference)
+    {
+        $this->sendOrdernumberAsReference = $sendOrdernumberAsReference;
     }
 }
