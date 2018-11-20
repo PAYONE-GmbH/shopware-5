@@ -602,17 +602,19 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $labelKontollZentrum = array('label' => 'PAYONE Kontrollzentrum');
 
         // Lightweight Backend Controller
-        $ret = $this->Menu()->findOneBy($labelKontollZentrum);
-        if (!$ret) {
-            $this->createMenuItem(
-                array(
-                    'label' => 'PAYONE Kontrollzentrum',
-                    'onclick' => 'Shopware.ModuleManager.createSimplifiedModule("FcPayone", { "title": "PAYONE Kontrollzentrum" })',
-                    'class' => 'payoneicon',
-                    'active' => 1,
-                    'parent' => $this->Menu()->findOneBy($labelPayment),
-                )
-            );
+        if (version_compare(\Shopware::VERSION, '5.2.0', '<') && \Shopware::VERSION !== '___VERSION___') {
+            $ret = $this->Menu()->findOneBy($labelKontollZentrum);
+            if (!$ret) {
+                $this->createMenuItem(
+                    array(
+                        'label' => 'PAYONE Kontrollzentrum',
+                        'onclick' => 'Shopware.ModuleManager.createSimplifiedModule("FcPayone", { "title": "PAYONE Kontrollzentrum" })',
+                        'class' => 'payoneicon',
+                        'active' => 1,
+                        'parent' => $this->Menu()->findOneBy($labelPayment),
+                    )
+                );
+            }
         }
 
         if ($this->Menu()->findOneBy($labelPayOne)) {
