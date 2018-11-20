@@ -602,7 +602,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $labelKontollZentrum = array('label' => 'PAYONE Kontrollzentrum');
 
         // Lightweight Backend Controller
-        if (version_compare(\Shopware::VERSION, '5.2.0', '<') && \Shopware::VERSION !== '___VERSION___') {
+        if ($this->assertMinimumVersion('5.2')) {
             $ret = $this->Menu()->findOneBy($labelKontollZentrum);
             if (!$ret) {
                 $this->createMenuItem(

@@ -1147,11 +1147,20 @@ class Mopt_PayoneInstallHelper
         $result = $db->query($sql);
 
         if ($result->rowCount() === 0) {
-            $sql = '
-            INSERT INTO `s_core_states` (`id`, `name`, `description`, `position`, `group`, `mail`) VALUES
-            
-            (121, "amazon_failed", "Amazon Failed",121, "payment", 0);
-            ';
+            if (version_compare(\Shopware::VERSION, '5.1', '>=')) {
+                $sql = '
+                INSERT INTO `s_core_states` (`id`, `name`, `description`, `position`, `group`, `mail`) VALUES
+                
+                (121, "amazon_failed", "Amazon Failed",121, "payment", 0);
+                ';
+            } else {
+                $sql = '
+                INSERT INTO `s_core_states` (`id`, `description`, `position`, `group`, `mail`) VALUES
+                
+                (121, "Amazon Failed",121, "payment", 0);
+                ';
+            }
+
             $db->exec($sql);
         }
 
@@ -1204,11 +1213,19 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
         $result = $db->query($sql);
 
         if ($result->rowCount() === 0) {
-            $sql = '
-            INSERT INTO `s_core_states` (`id`, `name`, `description`, `position`, `group`, `mail`) VALUES
-            
-            (119, "amazon_delayed", "Amazon Delayed",119, "payment", 0);
-            ';
+            if (version_compare(\Shopware::VERSION, '5.1', '>=')) {
+                $sql = '
+                INSERT INTO `s_core_states` (`id`, `name`, `description`, `position`, `group`, `mail`) VALUES
+                
+                (119, "amazon_delayed", "Amazon Delayed",119, "payment", 0);
+                ';
+            } else {
+                $sql = '
+                INSERT INTO `s_core_states` (`id`, `description`, `position`, `group`, `mail`) VALUES
+                
+                (119, "Amazon Delayed",119, "payment", 0);
+                ';
+            }
             $db->exec($sql);
         }
 
