@@ -381,8 +381,6 @@
         amazonpayform.on("submit", function (event) {
             event.preventDefault();
             amazonpayvalues = amazonpayform.serialize();
-            console.log("AMAZ PAY Vals");
-            console.log(amazonpayvalues);
             var submitAction = $(this.id).context.activeElement.name;
             if (submitAction == 'amazondownloadbtn') {
                 var url = amazonpaydownloadurl;

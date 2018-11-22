@@ -566,7 +566,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     public function successAction()
     {
         $session = Shopware()->Session();
-        $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $session->txId, 'hash' => $session->paymentReference));
+        $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $session->txId, 'hash' => $session->moptPaymentReference));
     }
 
     /**
@@ -633,8 +633,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
-        if (!empty($session['moptReservedOrdernum'])){
-            $session->offsetUnset('moptReservedOrdernum');
+        if (!empty($session['moptPaymentReference'])){
+            $session->offsetUnset('moptPaymentReference');
         }
 
         if ($session->moptClearingData) {
@@ -655,13 +655,13 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $sql = 'UPDATE `s_order_attributes`' .
                 'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, mopt_payone_payment_reference=?, '
                 . 'mopt_payone_order_hash=?, mopt_payone_clearing_data=? WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array($txId, $session->moptIsAuthorized, $session->paymentReference,
+            Shopware()->Db()->query($sql, array($txId, $session->moptIsAuthorized, $session->moptPaymentReference,
                 $session->moptOrderHash, $clearingData, $orderId));
         } else {
             $sql = 'UPDATE `s_order_attributes`' .
                 'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, mopt_payone_payment_reference=?, '
                 . 'mopt_payone_order_hash=? WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array($txId, $session->moptIsAuthorized, $session->paymentReference,
+            Shopware()->Db()->query($sql, array($txId, $session->moptIsAuthorized, $session->moptPaymentReference,
                 $session->moptOrderHash, $orderId));
         }
 
@@ -692,7 +692,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session = Shopware()->Session();
         $session->offsetUnset('moptIsAuthorized');
         $session->offsetUnset('moptAgbChecked');
-        $session->offsetUnset('moptReservedOrdernum');
+        $session->offsetUnset('moptPaymentReference');
         $session->offsetUnset('isIdealredirect');
     }
 
@@ -713,7 +713,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             )
         {
             $session->ratepayError = $response->getCustomermessage();
-            $session->offsetUnset('moptReservedOrdernum');
+            $session->offsetUnset('moptPaymentReference');
             // error code 307 = declined
             if ($response->getErrorcode() == '307'){
                 // customer will not be able to use ratepay payments for 24 hours
@@ -755,7 +755,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
             //save order
             $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
-                'hash' => $session->paymentReference));
+                'hash' => $session->moptPaymentReference));
         }
     }
 
@@ -809,7 +809,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
             //save order
             $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
-                'hash' => $session->paymentReference));
+                'hash' => $session->moptPaymentReference));
         }
     }
 
@@ -853,9 +853,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         //get shopware temporary order id - session id
         $shopwareTemporaryId = $this->admin->sSYSTEM->sSESSION_ID;
 
-        if ($this->moptPayonePaymentHelper->isPayoneRatepayInvoice($paymentName) ||
-            $this->moptPayonePaymentHelper->isPayoneRatepayDirectDebit($paymentName) ||
-            $this->moptPayonePaymentHelper->isPayoneRatepayInstallment($paymentName)
+        if ($this->moptPayonePaymentHelper->isPayoneRatepay($paymentName) ||
+            $this->moptPayonePaymentHelper->isPayoneMasterpass($paymentName) ||
+            $this->moptPayonePaymentHelper->isPayoneAmazonPay($paymentName) ||
+            $config['sendOrdernumberAsReference'] === true
         )
         {
             $paymentReference = $this->moptPayoneMain->reserveOrdernumber();
@@ -881,7 +882,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $request->setRecurrence('recurring');
         }
 
-        $session->paymentReference = $paymentReference;
+        $session->moptPaymentReference = $paymentReference;
         $session->shopwareTemporaryId = $shopwareTemporaryId;
 
         $personalData = $paramBuilder->getPersonalData($this->getUserData());
@@ -1272,7 +1273,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         if (!$errorMessage) {
             $clearingData = $this->moptPayoneMain->getPaymentHelper()->extractClearingDataFromResponse($response);
-            $orderNr = $this->saveOrder($response->getTxid(), $session->paymentReference);
+            $orderNr = $this->saveOrder($response->getTxid(), $session->moptPaymentReference);
 
             $sql = 'SELECT `id` FROM `s_order` WHERE ordernumber = ?'; // get order id
             $orderId = Shopware()->Db()->fetchOne($sql, $orderNr);
@@ -1322,7 +1323,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 $this->redirect(array(
                     'controller' => 'checkout',
                     'action' => 'finish',
-                    'sUniqueID' => $session->paymentReference
+                    'sUniqueID' => $session->moptPaymentReference
                 ));
             }
         }

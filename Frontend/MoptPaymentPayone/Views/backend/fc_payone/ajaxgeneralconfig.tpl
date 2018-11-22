@@ -27,7 +27,7 @@
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#" id="0">Alle Zahlarten - Global</a></li>
                             {foreach from=$payonepaymentmethods item=paymentmethod}
-                            <li><a href="#" id="{$paymentmethod.id}">{$paymentmethod.description}</a></li>
+                            <li><a href="#" data-name="{$paymentmethod.name}" id="{$paymentmethod.id}">{$paymentmethod.description}</a></li>
                             {/foreach}   
                     </ul>
                 </div>
@@ -128,6 +128,16 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
+                <div class="form-group has-feedback has-error menu-level-standard menu-level-experte">
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Sendet die Shopware Bestellnummer anstatt einen Zufallswert an Payone">
+                    <label for="sendOrdernumberAsReference" class="text-left col-md-3 control-label">{s name=fieldlabel/sendOrdernumberAsReference}Benutze Shopware-Bestellnummer{/s}</label>
+                    <div class="col-md-6">
+                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="sendOrdernumberAsReference" name="sendOrdernumberAsReference" aria-describedby="sendOrdernumberAsReference-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="sendOrdernumberAsReference-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>
         </div>
@@ -147,7 +157,6 @@
         {
             var params = "paymentid=0";
             var call = url + '?' + params;
-
             form.validator('validate');
 
             $.ajax({
@@ -169,6 +178,7 @@
             var params = "paymentid=" + this.id;
             var call = url + '?' + params;
             paymentid = this.id;
+            var filterid = this.getAttribute("data-name");
 
             $.ajax({
                 url: call,
@@ -176,6 +186,15 @@
                 success: function (data) {
                     response = $.parseJSON(data);
                     if (response.status === 'success') {
+                        if(/mopt_payone__ewallet_amazon_pay/.test(filterid)){
+                            $('#sendOrdernumberAsReference').prop( "disabled", true );
+                        }
+                        if(/mopt_payone__ewallet_masterpass/.test(filterid)){
+                            $('#sendOrdernumberAsReference').prop( "disabled", true );
+                        }
+                        if(/mopt_payone__fin_ratepay/.test(filterid)){
+                            $('#sendOrdernumberAsReference').prop( "disabled", true );
+                        }
                         populateForm(form, response.data);
                         form.validator('validate');
                     }

@@ -556,6 +556,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndUpdateConfigModelPaydirektOvercaptureExtension();
 
         $this->getInstallHelper()->checkAndUpdateConsumerscoreExtension();
+
+        $this->getInstallHelper()->checkAndUpdateSendOrderNumberAsReferenceExtension();
     }
 
     /**

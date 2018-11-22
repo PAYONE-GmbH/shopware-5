@@ -215,11 +215,11 @@ class Mopt_PayoneMain
     public function reserveOrdernumber()
     {
         $session = Shopware()->Session();
-        if (empty($session['moptReservedOrdernum'])){
+        if (empty($session['moptPaymentReference'])){
             $order = new sOrder();
-            $session['moptReservedOrdernum'] = $order->sGetOrderNumber();
+            $session['moptPaymentReference'] = $order->sGetOrderNumber();
         }
-        return $session['moptReservedOrdernum'];
+        return $session['moptPaymentReference'];
     }
 
 }

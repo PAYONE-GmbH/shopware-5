@@ -184,6 +184,12 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(23).disable();
         }
         ;
+        if (field === 'masterpass' || field === 'amazonpay' || field === 'ratepay') {
+            fieldset.items.getAt(24).disable();
+        } else {
+            fieldset.items.getAt(24).enable();
+        }
+
     },
     /**
      * creates form child elements
@@ -1067,6 +1073,19 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 fieldLabel: '{s name=fieldlabel/paydirektOvercapture}Paydirekt Overcapture{/s}',
                 helpText: '{s name=fieldlabelhelp/paydirektOvercapture}Paydirekt erlaubt einen Overcapture von 10% des vorauthorisierten Warenkorbs. Diese Option NUR nach Absprache mit Payone anschalten!{/s}',
                 name: 'paydirektOvercapture',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: true,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/sendOrdernumberAsReference}Benutze Shopware-Bestellnummer{/s}',
+                helpText: '{s name=fieldlabelhelp/sendOrdernumberAsReference}Sendet die Shopware Bestellnummer anstatt einen Zufallswert an Payone{/s}',
+                name: 'sendOrdernumberAsReference',
                 store: me.data.yesno,
                 queryMode: 'local',
                 displayField: 'display',
