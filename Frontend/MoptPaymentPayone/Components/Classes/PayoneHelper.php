@@ -1319,7 +1319,7 @@ class Mopt_PayoneHelper
         // Paypal ECS returns their own state codes
         // see https://developer.paypal.com/docs/classic/api/state_codes/#usa
         // so try again after mapping them to the real ISO Codes
-        $stateIso = $isPaypalEcs ? $this->getCountryIsoFromPaypalCountryCode($countryId) : $stateIso;
+        $stateIso = ($isPaypalEcs && !empty($this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso))) ? $this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso)  : $stateIso;
 
         $sql = 'SELECT `id` FROM s_core_countries_states WHERE `shortcode` LIKE "' . $stateIso . '" '
             . 'AND `countryID` = ' . $countryId . ';';
@@ -1412,7 +1412,7 @@ class Mopt_PayoneHelper
                 'YAMANASHI-KEN' => '19',
             ],
             // MX
-            '??' => [
+            '1001' => [
                 'AGS' => 'AGU',
                 'BC' => 'BCN',
                 'BCS' => 'BCS',
@@ -1447,7 +1447,7 @@ class Mopt_PayoneHelper
                 'ZAC' => 'ZAC',
             ],
             // CN
-            '??' => [
+            '1002' => [
                 'CN-AH' => 'AH',
                 'CN-BJ' => 'BJ',
                 'CN-CQ' => 'CQ',
@@ -1484,7 +1484,7 @@ class Mopt_PayoneHelper
                 'CN-ZJ' => 'ZJ',
             ],
             // AR
-            '??' => [
+            '1003' => [
                 'CIUDAD AUTÓNOMA DE BUENOS AIRES' => 'C',
                 'BUENOS AIRES' => 'B',
                 'CATAMARCA' => 'K',
@@ -1511,7 +1511,7 @@ class Mopt_PayoneHelper
                 'TUCUMÁN' => 'T',
             ],
             // ID
-            '??' => [
+            '1004' => [
                 'ID-BA' => 'C',
                 'ID-BB' => 'B',
                 'ID-BT' => 'K',
@@ -1548,7 +1548,7 @@ class Mopt_PayoneHelper
                 'ID-SU' => 'G',
             ],
             // IN
-            '??' => [
+            /*'1005' => [
                 'Andaman and Nicobar Islands' => 'AN',
                 'Andhra Pradesh' => 'AP',
                 'Arunachal Pradesh' => 'AR',
@@ -1586,6 +1586,7 @@ class Mopt_PayoneHelper
                 'Uttarakhand' => 'UT',
                 'West Bengal' => 'WB',
             ],
+            */
         ];
 
         return $map[$countryId][$stateIso];

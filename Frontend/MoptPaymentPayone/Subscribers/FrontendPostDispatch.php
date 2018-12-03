@@ -276,6 +276,14 @@ class FrontendPostDispatch implements SubscriberInterface
                 if ($payment['name'] === 'mopt_payone__ewallet_masterpass') {
                     $masterpassIndex = $index;
                 }
+                // remove paypal for countries which need a state
+                // in case no state for the country is supplied
+                if ($payment['name'] === 'mopt_payone__ewallet_paypal') {
+                    if ($this->isStateNeeded())  {
+                        $paypalIndex = $index;
+                        unset ($payments[$paypalIndex]);
+                    }
+                }
 
             }
             unset ($payments[$amazonPayIndex]);
@@ -654,11 +662,37 @@ class FrontendPostDispatch implements SubscriberInterface
         return $configData;
     }
 
+    /**
+     * return bool
+     */
+    protected function isStateNeeded()
+    {
+        $return = false;
+        $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $coutriesNeedState = array('JP', 'US', 'CA', 'MX', 'AR', 'BR', 'CN', 'ID', 'IN', 'TH');
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $shippingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['shippingaddress']['countryID']);
+        $billingStateIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['stateID']);
+        $shippingStateIso = $moptPayoneHelper->getCountryIsoFromId($userData['shippingaddress']['stateID']);
+
+        if (!in_array($billingCountryIso, $coutriesNeedState) && !in_array($shippingCountryIso, $coutriesNeedState)) {
+            return false;
+        }
+        if (in_array($billingCountryIso, $coutriesNeedState) && empty($billingStateIso)) {
+            $return = true;
+        } else if (in_array($shippingCountryIso, $coutriesNeedState) && empty($shippingStateIso)) {
+            $return = true;
+        }
+
+        return $return;
+    }
 
     /**
      * @return bool
      */
-    protected function isAsnycAjax()
+    protected
+    function isAsnycAjax()
     {
         $shop = $this->container->get('shop');
         /** @var Template $template */
