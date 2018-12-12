@@ -98,6 +98,7 @@ class AddressCheck implements SubscriberInterface
     public function sAdmin__executeRiskRule(\Enlight_Hook_HookArgs $arguments)
     {
         $rule = $arguments->get('rule');
+        $subject = $arguments->getSubject();
 
         // execute parent call if rule is not payone
         if (strpos($rule, 'sRiskMOPT_PAYONE__') !== 0) {

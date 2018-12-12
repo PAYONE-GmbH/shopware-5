@@ -21,7 +21,7 @@ function resetForm($form)
 
 function populateForm($form, data)
 {
-    console.log("PopulateForm, All form data: " + JSON.stringify(data));
+    // console.log("PopulateForm, All form data: " + JSON.stringify(data));
 
     $.each(data, function (key, value)   // all json fields ordered by name
     {

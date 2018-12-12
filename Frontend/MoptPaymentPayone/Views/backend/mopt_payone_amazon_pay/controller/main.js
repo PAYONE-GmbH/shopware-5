@@ -14,7 +14,6 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.controller.Main', {
     },
     
     displayProcessWindow: function(grid) {
-        console.log("displayProcessWindow begin");
         var selection = grid.getSelectionModel().getSelection();
  
         if (selection.length <= 0) return;

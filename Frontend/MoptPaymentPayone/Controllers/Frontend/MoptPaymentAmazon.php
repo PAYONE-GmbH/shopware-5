@@ -257,14 +257,14 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         } elseif ($response->getStatus() === Payone_Api_Enum_ResponseType::APPROVED || $response->getStatus() === 'PENDING') {
 
             // Save Clearing Reference as Attribute (set in session )
-            $this->session->paymentReference = $request->getReference();
+            $this->session->moptPaymentReference = $request->getReference();
             $paymentStatusId = null;
 
             Shopware()->Session()->sOrderVariables['sUserData'] = $this->getUserData();
             $txid = $response->getTxid();
             $orderNumber = $this->saveOrder(
                 $txid,
-                $this->session->paymentReference,
+                $this->session->moptPaymentReference,
                 $paymentStatusId
             );
 
@@ -277,7 +277,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, mopt_payone_payment_reference=?, '
                 . 'mopt_payone_order_hash=?, mopt_payone_payolution_workorder_id=?,  mopt_payone_payolution_clearing_reference=?  WHERE orderID = ?';
             Shopware()->Db()->query($sql, array($txid, $this->session->moptIsAuthorized,
-                $this->session->paymentReference, $this->session->moptOrderHash, $this->session->moptPayoneAmazonWorkOrderId, $this->session->moptPayoneAmazonReferenceId, $orderId));
+                $this->session->moptPaymentReference, $this->session->moptOrderHash, $this->session->moptPayoneAmazonWorkOrderId, $this->session->moptPayoneAmazonReferenceId, $orderId));
 
 
             // Register Custom Template
@@ -319,7 +319,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             unset($this->session->moptPayoneAmazonAccessToken);
             unset($this->session->moptPayoneAmazonReferenceId);
             unset($this->session->moptPayoneAmazonWorkOrderId);
-            unset($this->session->moptReservedOrdernum);
+            unset($this->session->moptPaymentReference);
             unset($this->session->moptFormSubmitted);
             // reset basket
             unset($this->session['sBasketQuantity']);
