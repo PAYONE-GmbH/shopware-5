@@ -37,18 +37,10 @@ class OrderNumber implements SubscriberInterface
 
     public function onGetOrderNumber(\Enlight_Hook_HookArgs $args)
     {
-        if ($this->container->has('shop')) {
-            $session = Shopware()->Session();
-            $moptPaymentReference = $session->offsetGet('moptPaymentReference');
-        }
-        if ($moptPaymentReference) {
-            $args->setReturn($moptPaymentReference);
-        } else {
-            // standard behaviour
-            $args->setReturn($args->getSubject()->executeParent(
-                $args->getMethod(),
-                $args->getArgs()
-            ));
-        }
+        // standard behaviour
+        $args->setReturn($args->getSubject()->executeParent(
+            $args->getMethod(),
+            $args->getArgs()
+        ));
     }
 }
