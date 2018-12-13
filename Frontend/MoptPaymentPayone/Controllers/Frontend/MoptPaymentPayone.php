@@ -575,7 +575,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function failureAction()
     {
-        $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+        $session = Shopware()->Session();
+        $session->payoneErrorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
             ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten', true);
         $this->forward('error');
     }
@@ -586,7 +587,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function cancelAction()
     {
-        $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/messages')
+        $session = Shopware()->Session();
+        $session->payoneErrorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/messages')
             ->get('cancelMessage', 'Der Bezahlvorgang wurde abgebrochen', true);
         $this->forward('error');
     }
