@@ -184,10 +184,10 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(23).disable();
         }
         ;
-        if (field === 'masterpass' || field === 'amazonpay' || field === 'ratepay') {
-            fieldset.items.getAt(24).disable();
-        } else {
+        if (typeof field === 'undefined' || field.trim().length === 0) {
             fieldset.items.getAt(24).enable();
+        } else {
+            fieldset.items.getAt(24).disable();
         }
 
     },
