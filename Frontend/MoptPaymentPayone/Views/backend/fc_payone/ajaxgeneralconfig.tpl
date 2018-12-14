@@ -178,7 +178,7 @@
             var params = "paymentid=" + this.id;
             var call = url + '?' + params;
             paymentid = this.id;
-            var filterid = this.getAttribute("data-name");
+            var filterid = this.getAttribute('id');
 
             $.ajax({
                 url: call,
@@ -186,15 +186,10 @@
                 success: function (data) {
                     response = $.parseJSON(data);
                     if (response.status === 'success') {
-                        if(/mopt_payone__ewallet_amazon_pay/.test(filterid)){
-                            $('#sendOrdernumberAsReference').prop( "disabled", true );
-                        }
-                        if(/mopt_payone__ewallet_masterpass/.test(filterid)){
-                            $('#sendOrdernumberAsReference').prop( "disabled", true );
-                        }
-                        if(/mopt_payone__fin_ratepay/.test(filterid)){
-                            $('#sendOrdernumberAsReference').prop( "disabled", true );
-                        }
+                        console.log('filterid');
+                        console.log(filterid);
+                        console.log(typeof filterid);
+                        $('#sendOrdernumberAsReference').prop( "disabled", filterid !== '0');
                         populateForm(form, response.data);
                         form.validator('validate');
                     }
