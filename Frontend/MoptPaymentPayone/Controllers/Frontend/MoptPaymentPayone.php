@@ -592,6 +592,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         $session = Shopware()->Session();
         $session->payoneErrorMessage = 'Der Bezahlvorgang wurde abgebrochen';
+        $session->otherErrorMessages = false;
         $this->forward('error');
     }
 
@@ -613,10 +614,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         $session = Shopware()->Session();
         $this->View()->errormessage = $session->payoneErrorMessage;
-        $otherErrorMessages = $session->otherErrorMessages;
-        if (!empty($otherErrorMessages)) {
-            $this->View()->contactShopOwner = $otherErrorMessages['contactShopOwner'];
-            $this->View()->otherPaymentMethod = $otherErrorMessages['otherPaymentMethod'];
+        if ($session->otherErrorMessages !== false) {
+            $this->View()->contactShopOwner = $session->otherErrorMessages['contactShopOwner'];
+            $this->View()->otherPaymentMethod = $session->otherErrorMessages['otherPaymentMethod'];
         }
     }
 
