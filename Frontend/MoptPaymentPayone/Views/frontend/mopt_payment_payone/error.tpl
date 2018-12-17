@@ -23,12 +23,12 @@
 {* Main content *}
 {block name="frontend_index_content"}
 <div id="center" class="grid_13">
-  <h2>{$errormessage|escape|nl2br}</h2>
-  <br />
-  <h3>{s namespace='frontend/MoptPaymentPayone/payment' name=PaymentErrorInfo}Bitte kontaktieren Sie den Shopbetreiber.{/s}</h3>
-  <br />
-  <h3>{s namespace='frontend/MoptPaymentPayone/payment' name=PaymentFailInfo}Bitte versuchen Sie es mit einer anderen Zahlungsart nochmal.{/s}</h3>
-  <br />
+    <h2>{$errormessage|escape|nl2br}</h2>
+    <br />
+    <h3>{$contactShopOwner|escape|nl2br}</h3>
+    <br />
+    <h3>{$otherPaymentMethod|escape|nl2br}</h3>
+    <br />
   <div class="actions">
     <a class="btn" href="{url controller=checkout action=cart forceSecure}" title="{s namespace='frontend/MoptPaymentPayone/payment' name=PaymentLinkChangeBasket}Warenkorb ändern{/s}">
       {s namespace='frontend/MoptPaymentPayone/payment' name=PaymentLinkChangeBasket}{/s}
