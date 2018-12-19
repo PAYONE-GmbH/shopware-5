@@ -575,8 +575,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function failureAction()
     {
-        $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-            ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten', true);
+        $session = Shopware()->Session();
+        $session->payoneErrorMessage = 'Es ist ein Fehler aufgetreten';
+        $session->otherErrorMessages = array(
+            'contactShopOwner' => 'Bitte kontaktieren Sie den Shopbetreiber.',
+            'otherPaymentMethod' => 'Bitte versuchen Sie es mit einer anderen Zahlungsart nochmal.'
+        );
         $this->forward('error');
     }
 
@@ -586,8 +590,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function cancelAction()
     {
-        $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/messages')
-            ->get('cancelMessage', 'Der Bezahlvorgang wurde abgebrochen', true);
+        $session = Shopware()->Session();
+        $session->payoneErrorMessage = 'Der Bezahlvorgang wurde abgebrochen';
+        $session->otherErrorMessages = false;
         $this->forward('error');
     }
 
@@ -609,6 +614,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         $session = Shopware()->Session();
         $this->View()->errormessage = $session->payoneErrorMessage;
+        if ($session->otherErrorMessages !== false) {
+            $this->View()->contactShopOwner = $session->otherErrorMessages['contactShopOwner'];
+            $this->View()->otherPaymentMethod = $session->otherErrorMessages['otherPaymentMethod'];
+        }
     }
 
     /**
