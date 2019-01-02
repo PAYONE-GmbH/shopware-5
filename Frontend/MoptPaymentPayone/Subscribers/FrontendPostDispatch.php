@@ -662,7 +662,10 @@ class FrontendPostDispatch implements SubscriberInterface
         return $configData;
     }
 
-    /**
+    /** checks if state information is required for
+     * certain countries
+     * return true if state is mandatory for paypal and is available in shopware
+     *
      * return bool
      */
     protected function isStateNeeded()
@@ -670,18 +673,18 @@ class FrontendPostDispatch implements SubscriberInterface
         $return = false;
         $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $coutriesNeedState = array('JP', 'US', 'CA', 'MX', 'AR', 'BR', 'CN', 'ID', 'IN', 'TH');
+        $countriesNeedState = array('JP', 'US', 'CA', 'MX', 'AR', 'BR', 'CN', 'ID', 'IN', 'TH');
         $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
         $shippingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['shippingaddress']['countryID']);
-        $billingStateIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['stateID']);
-        $shippingStateIso = $moptPayoneHelper->getCountryIsoFromId($userData['shippingaddress']['stateID']);
+        $billingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['billingaddress']['countryID'],$userData['billingaddress']['stateID']);
+        $shippingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['shippingaddress']['countryID'],$userData['shippingaddress']['stateID']);
 
-        if (!in_array($billingCountryIso, $coutriesNeedState) && !in_array($shippingCountryIso, $coutriesNeedState)) {
+        if (!in_array($billingCountryIso, $countriesNeedState) && !in_array($shippingCountryIso, $countriesNeedState)) {
             return false;
         }
-        if (in_array($billingCountryIso, $coutriesNeedState) && empty($billingStateIso)) {
+        if (in_array($billingCountryIso, $countriesNeedState) && empty($billingStateIso)) {
             $return = true;
-        } else if (in_array($shippingCountryIso, $coutriesNeedState) && empty($shippingStateIso)) {
+        } else if (in_array($shippingCountryIso, $countriesNeedState) && empty($shippingStateIso)) {
             $return = true;
         }
 

@@ -1333,20 +1333,20 @@ class Mopt_PayoneHelper
     }
 
     /**
-     * get state id from iso
+     * get state shortcode from countryID and StateID
      *
      * @param string $countryId
      * @param string $stateId
-     * @return string $stateName
+     * @return string $stateShortcode
      */
-    public function getStateNameFromId($countryId, $stateId)
+    public function getStateShortcodeFromId($countryId, $stateId)
     {
-        $sql = 'SELECT `name` FROM s_core_countries_states WHERE `id`= "' . $stateId . '" '
+        $sql = 'SELECT `shortcode` FROM s_core_countries_states WHERE `id`= "' . $stateId . '" '
             . 'AND `countryID` = ' . $countryId . ';';
-        $stateName = Shopware()->Db()->fetchOne($sql);
+        $stateShortcode = Shopware()->Db()->fetchOne($sql);
 
-        if ($stateName) {
-            return $stateName;
+        if ($stateShortcode) {
+            return $stateShortcode;
         } else {
             return null;
         }
