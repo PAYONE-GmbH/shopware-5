@@ -96,6 +96,15 @@ class Mopt_PayoneMain
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig');
         $data       = $repository->getConfigByPaymentId($paymentId, $asArray);
 
+        $global_config = $repository->getConfigByPaymentId(0, $asArray);
+        if ($asArray) {
+            $data['sendOrdernumberAsReference'] = $global_config['sendOrdernumberAsReference'];
+        } else {
+            $data->setSendOrdernumberAsReference(
+                $global_config->getSendOrdernumberAsReference()
+            );
+        }
+
         if ($data === null) {
             $data = array();
             $data['paymentId'] = $paymentId;
