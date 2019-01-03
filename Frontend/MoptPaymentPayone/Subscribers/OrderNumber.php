@@ -38,7 +38,6 @@ class OrderNumber implements SubscriberInterface
 
     public function onGetOrderNumber(\Enlight_Hook_HookArgs $args)
     {
-        // $paymentId = Shopware()->Container()->get('plugins')->Frontend()->get('MoptPaymentPayone')->getPaymentId();
         $userId = Shopware()->Session()->sUserId;
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentId = unserialize(Shopware()->Db()->fetchOne($sql, $userId))['mopt_payone__cc_paymentid'];

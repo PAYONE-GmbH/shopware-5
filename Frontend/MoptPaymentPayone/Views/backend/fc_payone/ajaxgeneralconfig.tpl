@@ -186,9 +186,6 @@
                 success: function (data) {
                     response = $.parseJSON(data);
                     if (response.status === 'success') {
-                        console.log('filterid');
-                        console.log(filterid);
-                        console.log(typeof filterid);
                         $('#sendOrdernumberAsReference').prop( "disabled", filterid !== '0');
                         populateForm(form, response.data);
                         form.validator('validate');
