@@ -276,6 +276,14 @@ class FrontendPostDispatch implements SubscriberInterface
                 if ($payment['name'] === 'mopt_payone__ewallet_masterpass') {
                     $masterpassIndex = $index;
                 }
+                // remove paypal for countries which need a state
+                // in case no state for the country is supplied
+                if ($payment['name'] === 'mopt_payone__ewallet_paypal') {
+                    if ($this->isStateNeeded())  {
+                        $paypalIndex = $index;
+                        unset ($payments[$paypalIndex]);
+                    }
+                }
 
             }
             unset ($payments[$amazonPayIndex]);
@@ -654,11 +662,40 @@ class FrontendPostDispatch implements SubscriberInterface
         return $configData;
     }
 
+    /** checks if state information is required for
+     * certain countries
+     * return true if state is mandatory for paypal and is available in shopware
+     *
+     * return bool
+     */
+    protected function isStateNeeded()
+    {
+        $return = false;
+        $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $countriesNeedState = array('JP', 'US', 'CA', 'MX', 'AR', 'BR', 'CN', 'ID', 'IN', 'TH');
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $shippingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['shippingaddress']['countryID']);
+        $billingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['billingaddress']['countryID'],$userData['billingaddress']['stateID']);
+        $shippingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['shippingaddress']['countryID'],$userData['shippingaddress']['stateID']);
+
+        if (!in_array($billingCountryIso, $countriesNeedState) && !in_array($shippingCountryIso, $countriesNeedState)) {
+            return false;
+        }
+        if (in_array($billingCountryIso, $countriesNeedState) && empty($billingStateIso)) {
+            $return = true;
+        } else if (in_array($shippingCountryIso, $countriesNeedState) && empty($shippingStateIso)) {
+            $return = true;
+        }
+
+        return $return;
+    }
 
     /**
      * @return bool
      */
-    protected function isAsnycAjax()
+    protected
+    function isAsnycAjax()
     {
         $shop = $this->container->get('shop');
         /** @var Template $template */

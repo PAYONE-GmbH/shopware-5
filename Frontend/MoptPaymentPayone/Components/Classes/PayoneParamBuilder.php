@@ -1251,11 +1251,11 @@ class Mopt_PayoneParamBuilder
             if ($article['modus'] == 4 && $params['pr'] >= "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
             }
-            if ($article['modus'] == 4 && $params['pr'] < "0")   {
+            if ($article['modus'] == 4 && $params['pr'] < "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
             }
             # Repertus Set Artikel Plus compatibility
-            if ($article['modus'] == 12 && $params['pr'] == "0")   {
+            if ($article['modus'] == 12 && $params['pr'] == "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
             }
 
@@ -1355,9 +1355,8 @@ class Mopt_PayoneParamBuilder
             if ($order->getTaxFree()) {
                 $params['va'] = 0;
             } elseif ($position->getTaxRate() == 0 &&
-                      $position->getTax()->getId() !== 0
-                      && !$isAboCommerceDiscount)
-            {
+                $position->getTax()->getId() !== 0
+                && !$isAboCommerceDiscount) {
                 $params['va'] = number_format($position->getTax()->getTax(), 0, '.', '');
             } else {
                 $params['va'] = number_format($position->getTaxRate(), 0, '.', ''); // vat
@@ -1376,7 +1375,7 @@ class Mopt_PayoneParamBuilder
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
                 $params['id'] = substr($position->getArticleName(), 0, 100); //article number
             }
-            if ($mode == 4 && $params['pr'] < "0")   {
+            if ($mode == 4 && $params['pr'] < "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
                 $params['id'] = substr($position->getArticleName(), 0, 100); //article number
             }
@@ -1520,7 +1519,7 @@ class Mopt_PayoneParamBuilder
      */
     protected function getStateFromId($stateId, $countryIso)
     {
-        $enabledTransmittingStatesCountryIsos = array('US', 'CA', 'MX', 'AR', 'BR', 'CN', 'ID', 'IN', 'TH');
+        $enabledTransmittingStatesCountryIsos = array('JP', 'US', 'CA', 'MX', 'AR', 'BR', 'CN', 'ID', 'IN', 'TH');
 
         if (!in_array($countryIso, $enabledTransmittingStatesCountryIsos)) {
             return '';

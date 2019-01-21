@@ -331,7 +331,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $register['billing']['city']           = $personalData['shipping_city'];
         $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['shipping_country']);
         if ($personalData['shipping_state'] !== 'Empty') {
-            $register['billing']['stateID']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['shipping_state']);
+            $register['billing']['state']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['shipping_state'], true);
         }
         $register['billing']['street']         = $personalData['shipping_street'];
         $register['billing']['additionalAddressLine1'] = $personalData['shipping_addressaddition'];
@@ -359,7 +359,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $register['shipping']['city']         = $register['billing']['city'];
         $register['shipping']['country']      = $register['billing']['country'];
         if ($personalData['shipping_state'] !== 'Empty') {
-            $register['shipping']['stateID']  = $register['billing']['stateID'];
+            $register['shipping']['state']  = $register['billing']['state'];
         }
         $register['shipping']['company']      = $register['billing']['company'];
         $register['shipping']['department']   = '';
@@ -435,9 +435,10 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $address = $customer->getDefaultBillingAddress();
         
          /** @var \Shopware\Models\Country\Country $country */
-        // $country = $address->getCountry();
         $country = $em->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $billingData['country'] ));
+        $countryState = $em->getRepository('\Shopware\Models\Country\State')->findOneBy(array('id' => $billingData['state'] ));
         $billingData['country'] = $country;
+        $billingData['state'] = $countryState;
         $address->fromArray($billingData);
 
         $this->get('shopware_account.address_service')->update($address);
@@ -461,10 +462,10 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $address = $customer->getDefaultShippingAddress();
         
          /** @var \Shopware\Models\Country\Country $country */
-//      $country = $address->getCountry();
         $country = $em->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $shippingData['country'] ));
-
+        $countryState = $em->getRepository('\Shopware\Models\Country\State')->findOneBy(array('id' => $shippingData['state'] ));
         $shippingData['country'] = $country;
+        $shippingData['state'] = $countryState;
         $address->fromArray($shippingData);
 
         $this->get('shopware_account.address_service')->update($address);
