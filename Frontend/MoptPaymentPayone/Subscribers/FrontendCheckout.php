@@ -38,7 +38,7 @@ class FrontendCheckout implements SubscriberInterface
             'Enlight_Controller_Action_PostDispatch_Frontend_Checkout' => 'moptExtendController_Frontend_Checkout',
             // only used for payolution installments for now
             // redirects the customer back to shippingpayment for re-calculation of payment conditions
-            'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after'  => 'onBasketChangeConfirmPage',
+            'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after' => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_Checkout::changeQuantityAction::after' => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout::deleteArticleAction::after' => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout::after' => 'onBasketChangeConfirmPage',
