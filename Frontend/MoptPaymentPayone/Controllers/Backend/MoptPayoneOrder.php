@@ -113,10 +113,15 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             }
             $config = Mopt_PayoneMain::getInstance()->getPayoneConfig($payment->getId());
 
-          //positions ?
+            //positions ?
             $positionIds = $request->get('positionIds') ? json_decode($request->get('positionIds')) : array();
 
-          //covert finalize param
+            // for paypal installment always capture the complete order
+            if ($paymentName == 'mopt_payone__fin_paypal_installment') {
+                $positionIds = $order->
+            }
+
+            //covert finalize param
             $finalize = $request->get('finalize') == "true" ? true : false;
 
           //fetch params

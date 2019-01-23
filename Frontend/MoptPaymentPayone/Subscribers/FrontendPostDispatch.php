@@ -231,6 +231,14 @@ class FrontendPostDispatch implements SubscriberInterface
             $action->forward('finish', 'FatchipBSPayoneMasterpassCheckout', null, array('sAGB' => 'on'));
         }
 
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')) {
+            if (isset($session->moptPaypalInstallmentWorkerId)) {
+                $action->forward('confirm', 'FatchipBSPayonePaypalInstallmentCheckout');
+            } else {
+                $action->redirect(['controller' => 'FatchipBSPayonePaypalInstallmentCheckout', 'action' => 'gateway', 'forceSecure' => true]);
+            }
+        }
+
         if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
             if ($session->moptBarzahlenCode) {
                 $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
@@ -694,8 +702,7 @@ class FrontendPostDispatch implements SubscriberInterface
     /**
      * @return bool
      */
-    protected
-    function isAsnycAjax()
+    protected function isAsnycAjax()
     {
         $shop = $this->container->get('shop');
         /** @var Template $template */

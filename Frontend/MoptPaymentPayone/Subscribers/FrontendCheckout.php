@@ -40,6 +40,8 @@ class FrontendCheckout implements SubscriberInterface
             // redirects the customer back to shippingpayment for re-calculation of payment conditions
             'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after'  => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_Checkout::changeQuantityAction::after' => 'onBasketChangeConfirmPage',
+            'Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout::deleteArticleAction::after' => 'onBasketChangeConfirmPage',
+            'Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout::after' => 'onBasketChangeConfirmPage',
             'sBasket::sGetBasket::after' => 'onBasketDataUpdate',
         ];
     }
@@ -84,7 +86,8 @@ class FrontendCheckout implements SubscriberInterface
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePayolutionInstallment($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])
-            ) {
+            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalInstallment($userData['additional']['payment']['name'])
+        ) {
             return;
         }
         // Set redirect flag

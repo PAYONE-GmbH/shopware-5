@@ -561,6 +561,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Masterpass',
                 'template' => null,
                 'position' => 36,),
+            array(
+                'name' => 'mopt_payone__fin_paypal_installment',
+                'description' => 'PAYONE Ratenkauf powered by Paypal',
+                'template' => null,
+                'position' => 37,),
         );
     }
 

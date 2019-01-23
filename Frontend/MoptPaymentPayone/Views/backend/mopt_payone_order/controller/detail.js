@@ -115,6 +115,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     
     var details = order.raw.details;
     var showShippingCostsCheckbox = true;
+    var paymentName = order.raw.payment.name;
     
     for (var i = 0; i < details.length; i++)
     {
@@ -140,13 +141,18 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
               + amount.toFixed(2) + '&#8364 </span> {s name=detail/debit3}markiert{/s}. <br>' 
               + ' {s name=detail/debit7}Welche Art des Zahlungseinzugs möchten Sie vornehmen{/s}?';
     }
-    
+
+    if (paymentName == 'mopt_payone__fin_paypal_installment'){
+      var moptButtonText = { no: '{s name=detail/captureFinal}Finaler Geldeinzug{/s}', cancel: '{s name=detail/cancel}Abbrechen{/s}' }
+    } else {
+      var moptButtonText = { yes: '{s name=detail/capturePartly}(Teil-)Geldeinzug{/s}', no: '{s name=detail/captureFinal}Finaler Geldeinzug{/s}', cancel: '{s name=detail/cancel}Abbrechen{/s}' }
+    }
     //bit wierd message-box... plausible way doesn't seem to work 
     //(see: http://stackoverflow.com/questions/12263291/extjs-4-or-4-1-messagebox-custom-buttons)
     Ext.MessageBox.show({
       title: '{s name=detail/captureConfirm}Zahlung einziehen{/s}',
       msg: moptMessageBoxText,
-      buttonText: { yes: '{s name=detail/capturePartly}(Teil-)Geldeinzug{/s}', no: '{s name=detail/captureFinal}Finaler Geldeinzug{/s}', cancel: '{s name=detail/cancel}Abbrechen{/s}' },
+      buttonText: moptButtonText,
       fn: function(btn){
         
         var includeShipment = false;

@@ -32,6 +32,7 @@
 require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
 use \Doctrine\ORM\Tools\ToolsException;
+use Shopware\Plugins\MoptPaymentPayone\Bootstrap\RiskRules;
 
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
@@ -72,6 +73,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createDatabase();
         $this->addAttributes();
         $this->createMenu();
+        $riskRules = new RiskRules();
+        $riskRules->createRiskRules();
         $this->removePayment('mopt_payone__fin_klarna_installment');
 
         return array('success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme'));
