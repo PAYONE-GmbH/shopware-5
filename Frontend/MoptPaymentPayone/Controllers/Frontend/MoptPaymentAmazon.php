@@ -109,6 +109,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->sAmountNet = $basket['sAmountNet'];
             $this->View()->sAmountTax = $basket['sAmountTax'];
             $this->View()->sBasket = $basket;
+            $this->View()->sComment = isset($this->session['sComment']) ? $this->session['sComment'] : null;
 
             $this->session->offsetSet('moptFormSubmitted', true);
             $this->session['sOrderVariables'] = new ArrayObject($this->View()->getAssign(), ArrayObject::ARRAY_AS_PROPS);
@@ -122,7 +123,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $payoneServiceBuilder = $this->plugin->get('MoptPayoneBuilder');
         $paramBuilder = $moptPayoneMain->getParamBuilder();
         $userData = $this->getUserData();
-        $config = $moptPayoneMain->getPayoneConfig($paymentId);;
+        $config = $moptPayoneMain->getPayoneConfig($paymentId);
+        Shopware()->Session()->sComment = $this->Request()->getParam('sComment');
 
         $response = $this->buildAndCallSetOrderReferenceDetails($config);
 
@@ -321,6 +323,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             unset($this->session->moptPayoneAmazonWorkOrderId);
             unset($this->session->moptPaymentReference);
             unset($this->session->moptFormSubmitted);
+            unset($this->session->sComment);
             // reset basket
             unset($this->session['sBasketQuantity']);
             unset($this->session['sBasketAmount']);
