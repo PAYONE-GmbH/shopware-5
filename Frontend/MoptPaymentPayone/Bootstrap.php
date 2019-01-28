@@ -333,6 +333,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\Document($container, $this->Path()),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\Payment($container),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\OrderNumber($container),
+            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\EMail($container),
             // Frontend
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\FrontendCheckout($container),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\FrontendAccount($container),
