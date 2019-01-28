@@ -17,11 +17,6 @@
 {block name='frontend_checkout_confirm_tos_panel'}
 {/block}
 
-{* disable additional features, used by SW 5.1 *}
-{block name='frontend_checkout_confirm_additional_features'}
-{/block}
-
-
 {block name='frontend_index_content_top'}
 
     <style type="text/css">
@@ -134,8 +129,6 @@
         </form>
     </div>
 
-
-
     <form id="confirm--form" method="post" action="{url action='finish'}">
         <div class="tos--panel panel has--border">
             <div class="panel--title primary is--underline">
@@ -166,6 +159,7 @@
                 </ul>
             </div>
         </div>
+        <textarea class="is--hidden user-comment--hidden" rows="1" cols="1" name="sComment">{$sComment|escape}</textarea>
     </form>
 
     <div class="finish--table product--table">
@@ -244,3 +238,28 @@
     {/if}
 {/block}
 
+{* Additional feature which can be enabled / disabled in the base configuration *}
+{if {config name=commentvoucherarticle}}
+    {block name="frontend_checkout_confirm_additional_features"}
+        <div class="panel has--border additional--features">
+            {block name="frontend_checkout_confirm_additional_features_headline"}
+                <div class="panel--title is--underline">
+                    {s name="ConfirmHeadlineAdditionalOptions" namespace="frontend/checkout/confirm"}{/s}
+                </div>
+            {/block}
+
+            {block name="frontend_checkout_confirm_additional_features_content"}
+                <div class="panel--body is--wide block-group" >
+
+                    {* Additional customer comment for the order *}
+                    {block name='frontend_checkout_confirm_comment'}
+                        {* Hidden field for the user comment *}
+                        <div class="feature--user-comment block" style="margin: 0px">
+                            <textarea class="user-comment--field" data-storage-field="true" data-storageKeyName="sComment" rows="5" cols="20" placeholder="{s name="ConfirmPlaceholderComment" namespace="frontend/checkout/confirm"}{/s}" data-pseudo-text="true" data-selector=".user-comment--hidden">{$sComment|escape}</textarea>
+                        </div>
+                    {/block}
+                </div>
+            {/block}
+        </div>
+    {/block}
+{/if}
