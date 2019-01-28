@@ -264,6 +264,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
         $session = Shopware()->Session();
         $session->moptPayPalInstallmentError = true;
         unset($this->session->moptPaypalInstallmentWorkerId);
+        unset($this->session->moptFormSubmitted);
 
         return $this->redirect(['controller' => 'checkout', 'action' => 'cart']);
     }
