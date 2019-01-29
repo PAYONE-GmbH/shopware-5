@@ -564,7 +564,7 @@ class Mopt_PayoneInstallHelper
             array(
                 'name' => 'mopt_payone__fin_paypal_installment',
                 'description' => 'PAYONE Ratenkauf powered by Paypal',
-                'template' => null,
+                'template' => 'mopt_paymentmean_paypal_installment.tpl',
                 'position' => 37,),
         );
     }

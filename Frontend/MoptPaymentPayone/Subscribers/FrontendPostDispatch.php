@@ -249,7 +249,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
         }
 
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
+        if ((($controllerName == 'checkout' || $controllerName == 'FatchipBSPayonePaypalInstallmentCheckout')  && $request->getActionName() == 'confirm')) {
             if ($moptPaymentHelper->isPayonePaymentMethod($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     $action->redirect(
@@ -265,6 +265,7 @@ class FrontendPostDispatch implements SubscriberInterface
         if (($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment')) {
             if ($session->moptBasketChanged) {
                 unset($session->moptBasketChanged);
+                unset($session->moptPaypalInstallmentWorkerId);
                 $redirectnotice =
                     '<center><b>Ratenzahlung</b></center>'
                     . 'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'

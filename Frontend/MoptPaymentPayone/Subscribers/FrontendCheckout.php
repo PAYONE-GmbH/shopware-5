@@ -41,7 +41,7 @@ class FrontendCheckout implements SubscriberInterface
             'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after' => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_Checkout::changeQuantityAction::after' => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout::deleteArticleAction::after' => 'onBasketChangeConfirmPage',
-            'Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout::after' => 'onBasketChangeConfirmPage',
+            'Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout::changeQuantityAction::after' => 'onBasketChangeConfirmPage',
             'sBasket::sGetBasket::after' => 'onBasketDataUpdate',
         ];
     }
