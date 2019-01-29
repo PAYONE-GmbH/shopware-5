@@ -150,12 +150,13 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout ext
 
         $request->setInvoicing($this->moptPayoneMain->getParamBuilder()->getInvoicing($orderVariables['sBasket'],$orderVariables['sDispatch'], $orderVariables['sUserData']));
 
-        // TODO better unset
+        // sending these set by setInvoicing  leads to errors
         unset($request->invoice_deliverydate);
         unset($request->invoice_deliveryenddate);
         unset($request->invoice_deliverymode);
         unset($request->invoiceappendix);
         unset($request->invoiceid);
+
         $request->setPaydata($payData);
         $request->setClearingtype($clearingType);
         $request->setFinancingType($financingType);
@@ -167,9 +168,6 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout ext
         $deliveryData = $this->moptPayoneMain->getParamBuilder()->getDeliveryData($userData);
         $request->setDeliveryData($deliveryData);
 
-        // TODO fix salutation?
-        $request->salutation = 'mr';
-        $request->setBirthday('19781213');
 
         // $request->setCountry();
         $request->setSuccessurl(

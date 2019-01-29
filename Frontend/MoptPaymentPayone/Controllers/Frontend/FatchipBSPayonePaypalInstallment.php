@@ -153,7 +153,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
 
     /**
      * Method will be called after successful
-     * masterpass login
+     * return from  paypal
      *
      * @return void
      * @throws Exception
