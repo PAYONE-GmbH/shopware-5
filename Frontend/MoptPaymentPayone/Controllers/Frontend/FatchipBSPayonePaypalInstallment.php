@@ -106,7 +106,13 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
         $request->setWorkorderId($this->session->offsetGet('moptPaypalInstallmentWorkerId'));
         $request->setCurrency( $this->getCurrencyShortName());
         $request->setAmount($this->getAmount());
-        $request->setReference($this->moptPayoneMain->reserveOrdernumber());
+        if ( $config['sendOrdernumberAsReference'] === true )
+        {
+            $paymentReference = $this->moptPayoneMain->reserveOrdernumber();
+        } else {
+            $paymentReference = $this->moptPayoneMain->getParamBuilder()->getParamPaymentReference();
+        }
+        $request->setReference($paymentReference);
         $personalData = $this->moptPayoneMain->getParamBuilder()->getPersonalData($orderVariables['sUserData']);
         $request->setPersonalData($personalData);
         $deliveryData = $this->moptPayoneMain->getParamBuilder()->getDeliveryData($orderVariables['sUserData']);
