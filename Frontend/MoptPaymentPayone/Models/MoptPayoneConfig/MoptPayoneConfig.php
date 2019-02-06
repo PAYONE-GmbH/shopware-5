@@ -367,6 +367,11 @@ class MoptPayoneConfig extends ModelEntity
     private $checkAccount;
 
     /**
+     * @ORM\Column(name="trans_logging", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+     */
+    private $transLogging;
+
+    /**
      * @ORM\Column(name="trans_appointed", type="text", nullable=true, unique=false)
      */
     private $transAppointed;
@@ -1551,6 +1556,22 @@ class MoptPayoneConfig extends ModelEntity
     public function setCheckAccount($checkAccount)
     {
         $this->checkAccount = $checkAccount;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getTransLogging()
+    {
+        return $this->transLogging;
+    }
+
+    /**
+     * @param $transEnablelogging
+     */
+    public function setTransLogging($transLogging)
+    {
+        $this->transLogging = $transLogging;
     }
 
     /**

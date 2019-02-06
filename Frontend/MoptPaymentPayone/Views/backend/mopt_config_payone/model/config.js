@@ -69,6 +69,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'extra', type: 'string'},
     { name: 'checkCc', type: 'boolean'},
     { name: 'checkAccount', type: 'int'},
+    { name: 'transLogging', type: 'boolean'},
     { name: 'transAppointed', type: 'string'},
     { name: 'transCapture', type: 'string'},
     { name: 'transPaid', type: 'string'},

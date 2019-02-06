@@ -1550,4 +1550,21 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             $db->exec($sql);
         }
     }
+
+    function checkAndUpdateTransLoggingExtension()
+    {
+        $db = Shopware()->Db();
+
+        $DBConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='trans_logging'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `trans_logging` TINYINT(1) NOT NULL DEFAULT 0;";
+            $db->exec($sql);
+        }
+    }
 }
