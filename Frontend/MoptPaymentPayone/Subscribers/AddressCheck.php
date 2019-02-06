@@ -102,7 +102,10 @@ class AddressCheck implements SubscriberInterface
 
         // execute parent call if rule is not payone
         if (strpos($rule, 'sRiskMOPT_PAYONE__') !== 0) {
-            if(method_exists($subject, $rule)) {
+            if(method_exists($subject, $rule) ||
+               count($this->container->get('events')->getListeners('shopware_modules_admin_execute_risk_rule_'.$rule)) > 0
+            )
+            {
                 $arguments->setReturn(
                     $subject->executeParent(
                         $arguments->getMethod(),
