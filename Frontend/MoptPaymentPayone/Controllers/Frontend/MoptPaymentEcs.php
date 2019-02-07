@@ -181,7 +181,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
 
         return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
     }
-    
+
     protected function createrOrUpdateAndForwardUser($apiResponse, $paymentId, $session)
     {
         $payData = $apiResponse->getPaydata()->toAssocArray();
@@ -191,9 +191,9 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
             if ($user === null) {
                 return $this->ecsAbortAction();
             }
+        } else {
+            $this->createUserWithoutAccount($payData, $session, $paymentId);
         }
-
-        $this->createUserWithoutAccount($payData, $session, $paymentId);
 
         $user = $this->getUserData();
         //set user data
