@@ -247,7 +247,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 $logentry = ';' . $payoneStatus . ';' . $rawPost['txid'] . ';' . $url . ';';
 
                 $client = new Zend_Http_Client($url, $zendClientConfig);
-                $client->setConfig(array('timeout' => 60));
+                $client->setConfig(array('timeout' => 50));
                 $client->setParameterPost($rawPost);
                 $requestStart = microtime(true);
                 try {
