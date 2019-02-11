@@ -167,6 +167,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'showSofortIbanBic',
             'paydirektOvercapture',
             'sendOrdernumberAsReference',
+            'transLogging',
         );
 
         foreach ($fields as $field) {
