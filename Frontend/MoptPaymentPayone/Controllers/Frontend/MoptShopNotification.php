@@ -244,8 +244,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 if (empty($url)) {
                     continue;
                 }
-                $logentry = ';' . $payoneStatus . ';' . $rawPost['txid'] . ';' . $url . ';';
-
+                $logentry = array( "payone-status=".$payoneStatus , "txid=".$rawPost['txid'],"url=". $url );
                 $client = new Zend_Http_Client($url, $zendClientConfig);
                 $client->setConfig(array('timeout' => 50));
                 $client->setParameterPost($rawPost);
@@ -257,14 +256,18 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 }
                 $requestStop = microtime(true);
                 $requestDuration = ($requestStop - $requestStart);
+                $logentry []= "duration=".$requestDuration;
                 $response = $client->getLastResponse();
                 if ($response !== null) {
-                    $logentry .= $requestDuration . ';' . $response->getStatus() . ';' . $response->getMessage() . ';' ;
+                    $logentry []= "response-status=".$response->getStatus();
+                    $logentry []= "response-message=".$response->getMessage();
                 } else {
-                    $logentry .= $requestDuration . ';' . '408' . ';' . 'Timout' . ';' ;
+                    $logentry []= "response-status=408";
+                    $logentry []= "response-status=Timeout";
                 }
                 if ($payoneConfig['transLogging'] === true) {
-                    $this->rotatingLogger->debug($logentry);
+                    $log=implode(";",$logentry);
+                    $this->rotatingLogger->debug($log);
                 }
             }
         }
