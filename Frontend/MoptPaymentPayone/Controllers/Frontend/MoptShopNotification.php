@@ -263,7 +263,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     $logentry []= "response-message=".$response->getMessage();
                 } else {
                     $logentry []= "response-status=408";
-                    $logentry []= "response-status=Timeout";
+                    $logentry []= "response-message=Timeout";
                 }
                 if ($payoneConfig['transLogging'] === true) {
                     $log=implode(";",$logentry);
