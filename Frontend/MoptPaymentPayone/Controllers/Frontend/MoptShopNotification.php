@@ -1,6 +1,9 @@
 <?php
 
 use Shopware\Components\CSRFWhitelistAware;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 /**
  * updated and finish transactions
@@ -13,6 +16,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     protected $moptPayone__helper = null;
     protected $moptPayone__paymentHelper = null;
     protected $logger = null;
+    protected $rotatingLogger = null;
 
     /**
      * init notification controller for processing status updates
@@ -24,12 +28,20 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->moptPayone__helper = $this->moptPayone__main->getHelper();
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
 
-        $this->logger = new Monolog\Logger('moptPayone');
-        $streamHandler = new Monolog\Handler\StreamHandler(
+        $this->logger = new Logger('moptPayone');
+        $streamHandler = new StreamHandler(
             $this->buildPayoneTransactionLogPath(),
-            Monolog\Logger::DEBUG
+            Logger::DEBUG
         );
         $this->logger->pushHandler($streamHandler);
+
+        // used by transactionstatus forward
+        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logFile = $logPath . '/MoptPaymentPayone_txredirect_production.log';
+
+        $rfh = new RotatingFileHandler($logFile, 14);
+        $this->rotatingLogger = new Logger('MoptPaymentPayone');
+        $this->rotatingLogger->pushHandler($rfh);
 
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
     }
@@ -232,11 +244,31 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 if (empty($url)) {
                     continue;
                 }
-
+                $logentry = array( "payone-status=".$payoneStatus , "txid=".$rawPost['txid'],"url=". $url );
                 $client = new Zend_Http_Client($url, $zendClientConfig);
-                $client->setConfig(array('timeout' => 60));
+                $client->setConfig(array('timeout' => 50));
                 $client->setParameterPost($rawPost);
-                $client->request(Zend_Http_Client::POST);
+                $requestStart = microtime(true);
+                try {
+                    $client->request(Zend_Http_Client::POST);
+                } catch (Zend_Http_Client_Exception $e) {
+                    // do nothing
+                }
+                $requestStop = microtime(true);
+                $requestDuration = ($requestStop - $requestStart);
+                $logentry []= "duration=".$requestDuration;
+                $response = $client->getLastResponse();
+                if ($response !== null) {
+                    $logentry []= "response-status=".$response->getStatus();
+                    $logentry []= "response-message=".$response->getMessage();
+                } else {
+                    $logentry []= "response-status=408";
+                    $logentry []= "response-message=Timeout";
+                }
+                if ($payoneConfig['transLogging'] === true) {
+                    $log=implode(";",$logentry);
+                    $this->rotatingLogger->debug($log);
+                }
             }
         }
     }

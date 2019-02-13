@@ -258,6 +258,17 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 }
             },
             {
+                name: 'transLogging',
+                xtype: 'combobox',
+                fieldLabel: '{s name=forwarding/logging}Logging{/s}',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                labelWidth: 200
+            },
+            {
                 xtype: 'textfield',
                 fieldLabel: '{s name=forwarding/status/appointed}Appointed{/s}',
                 name: 'transAppointed',
