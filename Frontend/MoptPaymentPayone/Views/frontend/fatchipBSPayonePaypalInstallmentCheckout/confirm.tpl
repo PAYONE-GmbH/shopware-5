@@ -118,6 +118,7 @@
 
 {* disable changing quantities and delete basket items on confirm page *}
 {block name='frontend_checkout_cart_item_quantity_selection'}
+{if $sUserData.additional.payment.name == 'mopt_payone__fin_paypal_installment'}
     {if !$sBasketItem.additional_details.laststock || ($sBasketItem.additional_details.laststock && $sBasketItem.additional_details.instock > 0)}
         <form name="basket_change_quantity{$sBasketItem.id}" class="select-field" method="post"
               action="{url action='changeQuantity' sTargetAction=$sTargetAction}">
@@ -134,10 +135,14 @@
     {else}
         {s name="CartColumnQuantityEmpty" namespace="frontend/checkout/cart_item"}{/s}
     {/if}
+{else}
+    {$smarty.block.parent}
+{/if}
 {/block}
 
 {* Remove product from basket *}
 {block name='frontend_checkout_cart_item_delete_article'}
+{if $sUserData.additional.payment.name == 'mopt_payone__fin_paypal_installment'}
     <div class="panel--td column--actions">
         <form action="{url action='deleteArticle' sDelete=$sBasketItem.id sTargetAction=$sTargetAction}"
               method="post">
@@ -147,4 +152,7 @@
             </button>
         </form>
     </div>
+{else}
+    {$smarty.block.parent}
+{/if}
 {/block}

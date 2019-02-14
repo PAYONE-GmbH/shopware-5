@@ -233,7 +233,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')) {
             if (isset($session->moptPaypalInstallmentWorkerId)) {
-                $action->forward('confirm', 'FatchipBSPayonePaypalInstallmentCheckout');
+                $action->redirect(['controller' => 'FatchipBSPayonePaypalInstallmentCheckout', 'action' => 'confirm', 'forceSecure' => true]);
             } else {
                 $action->redirect(['controller' => 'FatchipBSPayonePaypalInstallmentCheckout', 'action' => 'gateway', 'forceSecure' => true]);
             }

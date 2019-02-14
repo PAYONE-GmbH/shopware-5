@@ -253,7 +253,8 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
         switch ($response->getStatus()) {
             case\Payone_Api_Enum_ResponseType::OK;
                 $installmentData = $response->getPayData()->toAssocArray();
-                $this->forward('confirm', 'FatchipBSPayonePaypalInstallmentCheckout', null, $installmentData);
+                $this->session->offsetSet('moptPaypalInstallmentData', $installmentData );
+                $this->redirect(['controller' => 'FatchipBSPayonePaypalInstallmentCheckout', 'action' => 'confirm']);
                 break;
             default:
                 $this->session->offsetUnset('moptPaypalInstallmentWorkerId');

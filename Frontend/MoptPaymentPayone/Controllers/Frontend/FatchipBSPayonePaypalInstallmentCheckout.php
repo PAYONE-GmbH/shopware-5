@@ -93,16 +93,17 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout ext
      */
     public function confirmAction()
     {
-        // return to shippingpayment if checkout result form the previous step is not set
-        $workorderId = Shopware()->Session()->offsetGet('moptPaypalInstallmentWorkerId');
-        if (empty($workorderId)) {
-            $this->redirect(['controller' => 'checkout', 'action' => 'shippingPayment']);
-        } else {
-            parent::confirmAction();
-            $installmentData = $this->request->getParams();
-            $this->view->loadTemplate('frontend/fatchipBSPayonePaypalInstallmentCheckout/confirm.tpl');
-            $this->view->assign('Installment', $installmentData);
-        }
+            // return to shippingpayment if checkout result form the previous step is not set
+            $workorderId = Shopware()->Session()->offsetGet('moptPaypalInstallmentWorkerId');
+            if (empty($workorderId)) {
+                $this->redirect(['controller' => 'checkout', 'action' => 'shippingPayment']);
+            } else {
+                parent::confirmAction();
+                $installmentData = Shopware()->Session()->offsetGet('moptPaypalInstallmentData');
+                $this->view->loadTemplate('frontend/fatchipBSPayonePaypalInstallmentCheckout/confirm.tpl');
+                $this->view->assign('Installment', $installmentData);
+            }
+
     }
 
     /**
