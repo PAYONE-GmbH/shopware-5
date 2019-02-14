@@ -626,6 +626,21 @@ class Mopt_PayoneHelper
             version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
             $orderVariables = Shopware()->Session()->sOrderVariables;
 
+            if (Shopware()->Session()->sPaymentID ) {
+                /** @var Mopt_PayoneMain $moptPayoneMain */
+                try {
+                    $moptPayoneMain = Shopware()->Container()->get('MoptPayoneMain');
+                    $helper = $moptPayoneMain->getPaymentHelper();
+                    $paymentName = $helper->getPaymentNameFromId((string) Shopware()->Session()->sPaymentID);
+                }
+                catch(\Exception $e) {
+                    //needed for a payment method check, we don't want exceptions if we cannot receive the payment method
+                }
+                if ($paymentName === 'mopt_payone__ewallet_amazon_pay') {
+                    return;
+                }
+            }
+
             // ordervariables are null until shippingPayment view
             if ($orderVariables !== null) {
                 $aOrderVars = $orderVariables->getArrayCopy();
@@ -678,6 +693,21 @@ class Mopt_PayoneHelper
             version_compare(\Shopware::VERSION, '5.2.0', '>=')
         ) {
             $orderVariables = Shopware()->Session()->sOrderVariables;
+
+            if (Shopware()->Session()->sPaymentID ) {
+                /** @var Mopt_PayoneMain $moptPayoneMain */
+                try {
+                    $moptPayoneMain = Shopware()->Container()->get('MoptPayoneMain');
+                    $helper = $moptPayoneMain->getPaymentHelper();
+                    $paymentName = $helper->getPaymentNameFromId((string) Shopware()->Session()->sPaymentID);
+                }
+                catch(\Exception $e) {
+                    //needed for a payment method check, we don't want exceptions if we cannot receive the payment method
+                }
+                if ($paymentName === 'mopt_payone__ewallet_amazon_pay') {
+                    return;
+                }
+            }
 
             if ($orderVariables !== null) {
                 $aOrderVars = $orderVariables->getArrayCopy();
