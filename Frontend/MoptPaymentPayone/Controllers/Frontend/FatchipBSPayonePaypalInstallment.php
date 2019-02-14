@@ -149,6 +149,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
                 break;
             default:
                 $this->session->offsetUnset('moptPaypalInstallmentWorkerId');
+                $this->session->offsetUnset('moptPaypalInstallmentData');
                 // set errors in session so we can use the error handling in MoptPayment Controller
                 $this->session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()
                     ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
@@ -271,6 +272,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
         $session = Shopware()->Session();
         $session->moptPayPalInstallmentError = true;
         unset($this->session->moptPaypalInstallmentWorkerId);
+        unset($this->session->moptPaypalInstallmentData);
         unset($this->session->moptFormSubmitted);
 
         return $this->redirect(['controller' => 'checkout', 'action' => 'cart']);

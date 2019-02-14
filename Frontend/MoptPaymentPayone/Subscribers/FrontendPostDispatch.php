@@ -266,6 +266,7 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($session->moptBasketChanged) {
                 unset($session->moptBasketChanged);
                 unset($session->moptPaypalInstallmentWorkerId);
+                unset($session->moptPaypalInstallmentData);
                 $redirectnotice =
                     '<center><b>Ratenzahlung</b></center>'
                     . 'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
