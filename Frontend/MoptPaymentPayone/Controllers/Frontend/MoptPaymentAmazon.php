@@ -110,6 +110,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->sAmountTax = $basket['sAmountTax'];
             $this->View()->sBasket = $basket;
             $this->View()->sComment = isset($this->session['sComment']) ? $this->session['sComment'] : null;
+            $this->View()->amazonCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
 
             $this->session->offsetSet('moptFormSubmitted', true);
             $this->session['sOrderVariables'] = new ArrayObject($this->View()->getAssign(), ArrayObject::ARRAY_AS_PROPS);
@@ -182,7 +183,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
         $request->setPaydata($paydata);
         $request->setApiVersion("3.10");
-        $request->setCurrency("EUR");
+        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
         $request->setClearingtype(Payone_Enum_ClearingType::WALLET);
         $request->setWorkorderId($this->session->moptPayoneAmazonWorkOrderId);
         $request->setWallettype(Payone_Api_Enum_WalletType::AMAZONPAY);
@@ -864,7 +865,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $request->setPaydata($paydata);
         $request->setClearingtype($clearingType);
         $request->setWallettype($walletType);
-        $request->setCurrency("EUR");
+        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
         $request->setAmount($basket['AmountNumeric']);
         $request->setWorkorderId($session->moptPayoneAmazonWorkOrderId);
 

@@ -92,7 +92,7 @@
             }
         }).bind("addressBookWidgetDiv");
 
-        new OffAmazonPayments.Widgets.Wallet({
+        walletWidget = new OffAmazonPayments.Widgets.Wallet({
             sellerId: "{$payoneAmazonPayConfig->getSellerId()}",
             scope: 'profile payments:widget payments:shipping_address payments:billing_address',
             onPaymentSelect: function (orderReference) {
@@ -105,7 +105,9 @@
                 console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
                 // See "Handling Errors" for more information.
             }
-        }).bind("walletWidgetDiv");
+        });
+        walletWidget.setPresentmentCurrency("{$amazonCurrency}");// ISO-4217 currency code, merchant is expected to enter valid list of currency supported by Amazon Pay.
+        walletWidget.bind("walletWidgetDiv");
     };
 
     function moptAmazonReady() {
