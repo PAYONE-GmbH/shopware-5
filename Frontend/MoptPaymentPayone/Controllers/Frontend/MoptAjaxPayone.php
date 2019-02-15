@@ -1007,7 +1007,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->setPaydata($paydata);
         $request->setClearingtype($clearingType);
         $request->setWallettype($walletType);
-        $request->setCurrency("EUR");
+        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
         $request->setAmount($basket['AmountNumeric']);
         $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
         $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
