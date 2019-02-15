@@ -201,6 +201,14 @@ class AddressCheck implements SubscriberInterface
                 }
             }
 
+            // Do not check Packstation addresses
+            if ($moptPayoneMain->getHelper()->isWunschpaketActive() &&
+                is_numeric($shippingAddressData['street']))
+            {
+                $arguments->setReturn(false);
+                return;
+            }
+
             // perform shippingAddressCheck if configured and required
             $isDifferentAddress = $shippingAddressData['id'] !== $billingAddressData['id'];
             if ($isDifferentAddress && $this->getShippingAddressCheckIsNeeded(
@@ -459,6 +467,13 @@ class AddressCheck implements SubscriberInterface
                 $arguments->setReturn($ret);
                 return;
             }
+        }
+
+        // Do not check Packstation addresses
+        if ($moptPayoneMain->getHelper()->isWunschpaketActive() &&
+            is_numeric($shippingAddressData['street']))
+        {
+            return;
         }
 
         // get shipping address attributes
@@ -753,6 +768,14 @@ class AddressCheck implements SubscriberInterface
             $session = Shopware()->Session();
             $userId = $session->sUserId;
             $shippingFormData = $postData['register']['shipping'];
+
+            // Do not check Packstation addresses
+            if ($moptPayoneMain->getPaymentHelper()->isWunschpaketActive() &&
+                is_numeric($postData['register']['shipping']['street']))
+            {
+                return;
+            }
+
             $params = $moptPayoneMain->getParamBuilder()
                 ->getAddressCheckParams($shippingFormData, $shippingFormData);
             $response = $this->performAddressCheck(
