@@ -100,6 +100,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $basket['sAmountNet'] = floatval($basket['AmountNetNumeric']) + floatval($shippingCosts['netto']);
             $basket['sTaxRates'] = $this->getTaxRates($basket);
             $basket['sCurrencyId'] = Shopware()->Shop()->getCurrency()->getId();
+            $basket['sCurrencyName'] = Shopware()->Shop()->getCurrency()->getCurrency();
 
             $this->View()->sShippingcosts = $shippingCosts['brutto'];
             $this->View()->sShippingcostsWithTax = $shippingCosts['brutto'];
