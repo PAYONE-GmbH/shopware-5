@@ -108,6 +108,7 @@
         });
         walletWidget.setPresentmentCurrency("{$amazonCurrency}");// ISO-4217 currency code, merchant is expected to enter valid list of currency supported by Amazon Pay.
         walletWidget.bind("walletWidgetDiv");
+        console.log(walletWidget.getPresentmentCurrency());
     };
 
     function moptAmazonReady() {
