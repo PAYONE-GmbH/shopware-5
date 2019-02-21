@@ -491,4 +491,20 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
     {
         return $this->invoicing;
     }
+
+    /**
+     * @param Payone_Api_Request_Parameter_Authorization_PersonalData $personalData
+     */
+    public function setPersonalData(Payone_Api_Request_Parameter_Authorization_PersonalData $personalData)
+    {
+        $this->personalData = $personalData;
+    }
+
+    /**
+     * @return Payone_Api_Request_Parameter_Authorization_PersonalData
+     */
+    public function getPersonalData()
+    {
+        return $this->personalData;
+    }
 }

@@ -52,6 +52,16 @@ class Payone_Api_Request_Capture extends Payone_Api_Request_Abstract
     protected $currency = null;
 
     /**
+     * @var string
+     */
+    protected $clearingtype = null;
+
+    /**
+     * @var string
+     */
+    protected $financetype = null;
+
+    /**
      * @var Payone_Api_Request_Parameter_Capture_Business
      */
     protected $business = null;
@@ -229,5 +239,37 @@ class Payone_Api_Request_Capture extends Payone_Api_Request_Abstract
 
     public function setCapturemode($capturemode) {
         $this->capturemode = $capturemode;
-    }    
+    }
+
+    /**
+     * @return null
+     */
+    public function getClearingtype()
+    {
+        return $this->clearingtype;
+    }
+
+    /**
+     * @param null $clearingtype
+     */
+    public function setClearingType($clearingtype)
+    {
+        $this->clearingtype = $clearingtype;
+    }
+
+    /**
+     * @return null
+     */
+    public function getFinancetype()
+    {
+        return $this->financetype;
+    }
+
+    /**
+     * @param null $financetype
+     */
+    public function setFinancetype($financetype)
+    {
+        $this->financetype = $financetype;
+    }
 }
