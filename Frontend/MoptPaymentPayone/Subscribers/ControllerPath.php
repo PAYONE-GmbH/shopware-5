@@ -63,6 +63,10 @@ class ControllerPath implements SubscriberInterface
             => 'onGetFrontendControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptTransactionStatusForwarding'
             => 'onGetFrontendControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_FatchipBSPayonePaypalInstallment'
+            => 'onGetFrontendControllerPath',
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_FatchipBSPayonePaypalInstallmentCheckout'
+            => 'onGetFrontendControllerPath',
             //Backend
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptConfigPayone' => 'onGetConfigControllerBackend',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptApilogPayone' => 'onGetApilogControllerBackend',

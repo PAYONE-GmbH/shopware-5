@@ -39,6 +39,8 @@ class Payone_Api_Request_Authorization extends Payone_Api_Request_Authorization_
      */
     protected $business = null;
 
+    protected $financingtype = null;
+
     /**
      * @param \Payone_Api_Request_Parameter_Authorization_Business $business
      */
@@ -53,5 +55,21 @@ class Payone_Api_Request_Authorization extends Payone_Api_Request_Authorization_
     public function getBusiness()
     {
         return $this->business;
+    }
+
+    /**
+     * @param string $financingtype
+     */
+    public function setFinancingtype($financingtype)
+    {
+        $this->financingtype = $financingtype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFinancingtype()
+    {
+        return $this->financingtype;
     }
 }

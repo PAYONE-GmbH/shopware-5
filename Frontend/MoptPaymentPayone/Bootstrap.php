@@ -32,6 +32,7 @@
 require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
 use \Doctrine\ORM\Tools\ToolsException;
+use Shopware\Plugins\MoptPaymentPayone\Bootstrap\RiskRules;
 
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
@@ -72,6 +73,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createDatabase();
         $this->addAttributes();
         $this->createMenu();
+        $riskRules = new RiskRules();
+        $riskRules->createRiskRules();
         $this->removePayment('mopt_payone__fin_klarna_installment');
 
         return array('success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme'));
@@ -299,6 +302,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->subscribeEvent(
             'Theme_Compiler_Collect_Plugin_Javascript',
             'addJsFiles'
+        );
+        $this->subscribeEvent(
+            'Shopware_Modules_Admin_Execute_Risk_Rule_sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS',
+            'sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS'
+        );
+        $this->subscribeEvent(
+            'Shopware_Modules_Admin_Execute_Risk_Rule_sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT',
+            'sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT'
         );
     }
 
@@ -782,4 +793,33 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         return $this->get('payone_service')->refundOrder($orderDetailParams, $finalize, $includeShipment);
     }
+
+    /**
+     * this method is only used to prevent a methodNotFound exception when our custom risk rule registration in onDispatchLoopStartup()
+     * is too late.
+     * The only known case where this happens is when changing currencies in shops with multiple currencies enabled
+     *
+     * @param Enlight_Event_EventArgs $args
+     * @return false
+     */
+    public function sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS(Enlight_Event_EventArgs $args)
+    {
+        $args->setReturn(false);
+        return false;
+    }
+
+    /**
+     * this method is only used to prevent a methodNotFound exception when our custom risk rule registration in onDispatchLoopStartup()
+     * is too late.
+     * The only known case where this happens is when changing currencies in shops with multiple currencies enabled
+     *
+     * @param Enlight_Event_EventArgs $args
+     * @return false
+     */
+    public function sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT(Enlight_Event_EventArgs $args)
+    {
+        $args->setReturn(false);
+        return false;
+    }
+
 }

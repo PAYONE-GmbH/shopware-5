@@ -38,4 +38,5 @@ class Payone_Api_Enum_FinancingType
     const PYD = 'PYD'; // PAYOLUTION DEBIT
     const PYM = 'PYM'; // PAYOLUTION MONTHLY
     const PYS = 'PYS'; // PAYOLUTION INSTALLMENT
+    const PPI = 'PPI'; // PAYPAL_INSTALLMENT
 }
