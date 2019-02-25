@@ -512,8 +512,15 @@ class Mopt_PayoneParamBuilder
         $params['shipping_lastname'] = $shippingAddress['lastname'];
         $params['shipping_company'] = $shippingAddress['company'];
         $params['shipping_street'] = $shippingAddress['street'];
+        $params['shipping_addressaddition'] = $shippingAddress['additionalAddressLine1'];
         $params['shipping_zip'] = $shippingAddress['zipcode'];
         $params['shipping_city'] = $shippingAddress['city'];
+
+        // Wunschpaket Packstation saves the packstation number in street
+        // this has to be prefixed with 'Packstation' for the payone api to accept
+        $params['shipping_street'] = ($this->payoneHelper->isWunschpaketActive() && is_numeric($shippingAddress['street']))?
+            'Packstation' . ' ' . $shippingAddress['street'] : $shippingAddress['street'];
+
         $params['shipping_country'] = $this->getCountryFromId($shippingAddress['countryID']);
         if (!empty($shippingAddress['stateID'])) {
             $params['shipping_state'] = $this->getStateFromId($shippingAddress['stateID'], $params['shipping_country']);
