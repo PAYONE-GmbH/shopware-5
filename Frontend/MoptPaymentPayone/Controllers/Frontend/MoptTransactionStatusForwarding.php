@@ -73,7 +73,11 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
 
             $zendClientConfig = array(
                 'adapter' => 'Zend_Http_Client_Adapter_Curl',
-                'curloptions' => array(CURLOPT_FOLLOWLOCATION => true),
+                'curloptions' => array(
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_SSL_VERIFYHOST => false
+                )
             );
 
             foreach ($forwardingUrls as $url) {
