@@ -1385,11 +1385,11 @@ class Mopt_PayoneParamBuilder
             # this was an issue with articles added by the SwagAdvancedPromotionSuite plugin
             if ($mode == 4 && $params['pr'] >= "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
-                $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                $params['id'] = substr($position->getArticleNumber(), 0, 100); //article number
             }
             if ($mode == 4 && $params['pr'] < "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
-                $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                $params['id'] = substr($position->getArticleNumber(), 0, 100); //article number
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {
