@@ -1378,7 +1378,7 @@ class Mopt_PayoneParamBuilder
             $mode = $position->getMode();
             if ($mode == 2) {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
-                $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                $params['id'] = substr($position->getArticleNumber(), 0, 100); //article number
             }
 
             # paypal does not accept negative values for handling use voucher instead
