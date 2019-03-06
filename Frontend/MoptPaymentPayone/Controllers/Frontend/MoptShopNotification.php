@@ -172,8 +172,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     // InvalidPayment Method: update Order Status to "amazon_delayed" (119)
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], 119);
                     $attributeData['mopt_payone_status'] = 'pending';
-                } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'completed') {
-                    $this->savePaymentStatus($transactionId, $order['temporaryID'], 18);
                 } else {
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
                 }
