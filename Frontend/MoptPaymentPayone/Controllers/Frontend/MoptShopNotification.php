@@ -179,6 +179,14 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             } else {
                 $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
             }
+
+            // mark OrderDetails as captured on receiving "paid"
+            if ($request->getParam('txaction') == 'paid') {
+                $orderObj = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['number' => $orderNumber]);
+                if ($order) {
+                    $this->markOrderDetailsAsFullyCaptured($orderObj);
+                }
+            }
         }
 
         $this->logger->debug('save attribute data', $attributeData);
@@ -442,5 +450,27 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     {
         $logDir = Shopware()->Application()->Kernel()->getLogDir();
         return  $logDir . '/moptPayoneTransactionStatus.log';
+    }
+
+    /**
+     * Marks all OrderDetails and Shipping as Fully Captured
+     *
+     * @param Shopware\Models\Order\Order $order shopware order object
+     *
+     * @return void
+     * @throws Exception
+     */
+    private function markOrderDetailsAsFullyCaptured($order)
+    {
+        foreach ($order->getDetails() as $position) {
+            $positionAttribute = $position->getAttribute();
+            $positionAttribute->setMoptPayoneCaptured($position->getPrice() * $position->getQuantity());
+            Shopware()->Models()->persist($positionAttribute);
+        }
+        Shopware()->Models()->flush();
+        $orderAttribute = $order->getAttribute();
+        $orderAttribute->setMoptPayoneShipCaptured($order->getInvoiceShipping());
+        Shopware()->Models()->persist($orderAttribute);
+        Shopware()->Models()->flush();
     }
 }
