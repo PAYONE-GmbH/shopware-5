@@ -182,8 +182,8 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
             // mark OrderDetails as captured on receiving "paid"
             if ($request->getParam('txaction') == 'paid') {
-                $orderObj = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['number' => $orderNumber]);
-                if ($order) {
+                $orderObj = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['transactionId' => $transactionId]);
+                if ($orderObj) {
                     $this->markOrderDetailsAsFullyCaptured($orderObj);
                 }
             }
