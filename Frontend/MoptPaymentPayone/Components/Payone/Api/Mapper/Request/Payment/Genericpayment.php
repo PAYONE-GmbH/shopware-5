@@ -30,6 +30,10 @@ class Payone_Api_Mapper_Request_Payment_Genericpayment extends Payone_Api_Mapper
         /** @var $request Payone_Api_Request_Authorization */
         $this->mapAmount($request);
 
+        if ($request->getInvoicing()) {
+            $this->mapInvoicingData($request);
+        }
+
         return $request->toArray();
     }
 }

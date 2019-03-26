@@ -47,4 +47,10 @@ class Payone_Api_Enum_GenericpaymentAction
     const MASTERPASS_SETCHECKOUT = "setcheckout";
 
     const MASTERPASS_GETCHECKOUT = "getcheckout";
+
+    const PAYPAL_INSTALLMENT_RESERVERVATION = "installment_reservation";
+
+    const PAYPAL_INSTALLMENT_SALE = "installment_sale";
+
+    const PAYPAL_INSTALLMENT_GET_PAYMENT = "get_Payment";
 }

@@ -38,8 +38,15 @@ class FrontendCheckout implements SubscriberInterface
             'Enlight_Controller_Action_PostDispatch_Frontend_Checkout' => 'moptExtendController_Frontend_Checkout',
             // only used for payolution installments for now
             // redirects the customer back to shippingpayment for re-calculation of payment conditions
-            'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after'  => 'onBasketChangeConfirmPage',
+            'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after' => 'onBasketChangeConfirmPage',
             'Shopware_Controllers_Frontend_Checkout::changeQuantityAction::after' => 'onBasketChangeConfirmPage',
+            'Shopware_Controllers_Frontend_Checkout::ajaxAddArticleAction::after' => 'onBasketChange',
+            'Shopware_Controllers_Frontend_Checkout::ajaxDeleteArticle::after' => 'onBasketChange',
+            'Shopware_Controllers_Frontend_Checkout::ajaxAddArticleCartAction::after' => 'onBasketChange',
+            'Shopware_Controllers_Frontend_Checkout::ajaxDeleteArticleCart::after' => 'onBasketChange',
+            'Shopware_Controllers_Frontend_Checkout::addArticleAction::after' => 'onBasketChange',
+            'Shopware_Controllers_Frontend_Checkout::deleteArticleAction::after' => 'onBasketChange',
+            'Shopware_Controllers_Frontend_Checkout::changeQuantityAction::after' => 'onBasketChange',
             'sBasket::sGetBasket::after' => 'onBasketDataUpdate',
         ];
     }
@@ -84,14 +91,37 @@ class FrontendCheckout implements SubscriberInterface
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePayolutionInstallment($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])
-            ) {
+            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalInstallment($userData['additional']['payment']['name'])
+        ) {
             return;
         }
         // Set redirect flag
         Shopware()->Session()->moptBasketChanged = true;
         $arguments->setReturn($ret);
     }
-    
+
+    /**
+     * set redirect flag for redirecting to paymentshipping in case basket is changed
+     * only used for some payone payment methods
+     *
+     * @param \Enlight_Hook_HookArgs $arguments
+     * @return type
+     */
+    public function onBasketChange(\Enlight_Hook_HookArgs $arguments)
+    {
+        $ret = $arguments->getReturn();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalInstallment($userData['additional']['payment']['name']))
+         {
+            return;
+        }
+        // Set redirect flag
+        if (isset(Shopware()->Session()->moptPaypalInstallmentWorkerId))
+        {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
+        $arguments->setReturn($ret);
+    }
 
     /**
      * assign saved payment data to view

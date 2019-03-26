@@ -113,17 +113,21 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             }
             $config = Mopt_PayoneMain::getInstance()->getPayoneConfig($payment->getId());
 
-          //positions ?
+            //positions ?
             $positionIds = $request->get('positionIds') ? json_decode($request->get('positionIds')) : array();
 
-          //covert finalize param
+            //covert finalize param
             $finalize = $request->get('finalize') == "true" ? true : false;
 
           //fetch params
             $params = $this->moptPayone__main->getParamBuilder()
               ->buildOrderCapture($order, $positionIds, $finalize, $includeShipment);
 
-            if ($config['submitBasket'] || $this->moptPayone__main->getPaymentHelper()->isPayoneBillsafe($paymentName) || $this->moptPayone__main->getPaymentHelper()->isPayoneSafeInvoice($paymentName) ) {
+            if ($config['submitBasket'] ||
+                $this->moptPayone__main->getPaymentHelper()->isPayoneBillsafe($paymentName) ||
+                $this->moptPayone__main->getPaymentHelper()->isPayoneSafeInvoice($paymentName) ||
+                $this->moptPayone__main->getPaymentHelper()->isPayonePaypalInstallment($paymentName)
+            ) {
                 $invoicing = $this->moptPayone__main->getParamBuilder()
                 ->getInvoicingFromOrder($order, $positionIds, $finalize, false, $includeShipment);
             }

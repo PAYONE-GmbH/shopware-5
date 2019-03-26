@@ -1679,4 +1679,16 @@ class Mopt_PayoneHelper
         return $return;
     }
 
+    /**
+     * check if WUnschpaket plugin is activated
+     *
+     * @return bool
+     */
+    public function isWunschpaketActive()
+    {
+        $sql = "SELECT 1 FROM s_core_plugins WHERE name='DHLPaWunschpaket' AND active=1";
+        $result = Shopware()->Db()->fetchOne($sql);
+        return ($result == 1);
+    }
+
 }

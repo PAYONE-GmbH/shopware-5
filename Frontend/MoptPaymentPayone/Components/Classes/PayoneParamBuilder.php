@@ -101,6 +101,11 @@ class Mopt_PayoneParamBuilder
         $params['sequencenumber'] = $this->getParamSequencenumber($order);
         $params['amount'] = $this->getParamCaptureAmount($order, $postionIds, $includeShipment);
         $params['currency'] = $order->getCurrency();
+        if ($paymentName === 'mopt_payone__fin_paypal_installment') {
+            $params['clearingtype'] = 'fnc';
+            $params['financingtype'] = Payone_Api_Enum_FinancingType::PPI;
+        }
+
 
         //create business object (used for settleaccount param)
         $business = new Payone_Api_Request_Parameter_Capture_Business();
@@ -507,8 +512,15 @@ class Mopt_PayoneParamBuilder
         $params['shipping_lastname'] = $shippingAddress['lastname'];
         $params['shipping_company'] = $shippingAddress['company'];
         $params['shipping_street'] = $shippingAddress['street'];
+        $params['shipping_addressaddition'] = $shippingAddress['additionalAddressLine1'];
         $params['shipping_zip'] = $shippingAddress['zipcode'];
         $params['shipping_city'] = $shippingAddress['city'];
+
+        // Wunschpaket Packstation saves the packstation number in street
+        // this has to be prefixed with 'Packstation' for the payone api to accept
+        $params['shipping_street'] = ($this->payoneHelper->isWunschpaketActive() && is_numeric($shippingAddress['street']))?
+            'Packstation' . ' ' . $shippingAddress['street'] : $shippingAddress['street'];
+
         $params['shipping_country'] = $this->getCountryFromId($shippingAddress['countryID']);
         if (!empty($shippingAddress['stateID'])) {
             $params['shipping_state'] = $this->getStateFromId($shippingAddress['stateID'], $params['shipping_country']);
@@ -1366,18 +1378,18 @@ class Mopt_PayoneParamBuilder
             $mode = $position->getMode();
             if ($mode == 2) {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
-                $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                $params['id'] = substr($position->getArticleNumber(), 0, 100); //article number
             }
 
             # paypal does not accept negative values for handling use voucher instead
             # this was an issue with articles added by the SwagAdvancedPromotionSuite plugin
             if ($mode == 4 && $params['pr'] >= "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
-                $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                $params['id'] = substr($position->getArticleNumber(), 0, 100); //article number
             }
             if ($mode == 4 && $params['pr'] < "0") {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
-                $params['id'] = substr($position->getArticleName(), 0, 100); //article number
+                $params['id'] = substr($position->getArticleNumber(), 0, 100); //article number
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {

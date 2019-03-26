@@ -231,6 +231,14 @@ class FrontendPostDispatch implements SubscriberInterface
             $action->forward('finish', 'FatchipBSPayoneMasterpassCheckout', null, array('sAGB' => 'on'));
         }
 
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')) {
+            if (isset($session->moptPaypalInstallmentWorkerId)) {
+                $action->redirect(['controller' => 'FatchipBSPayonePaypalInstallmentCheckout', 'action' => 'confirm', 'forceSecure' => true]);
+            } else {
+                $action->redirect(['controller' => 'FatchipBSPayonePaypalInstallmentCheckout', 'action' => 'gateway', 'forceSecure' => true]);
+            }
+        }
+
         if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
             if ($session->moptBarzahlenCode) {
                 $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
@@ -241,7 +249,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
         }
 
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
+        if ((($controllerName == 'checkout' || $controllerName == 'FatchipBSPayonePaypalInstallmentCheckout')  && $request->getActionName() == 'confirm')) {
             if ($moptPaymentHelper->isPayonePaymentMethod($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     $action->redirect(
@@ -257,6 +265,8 @@ class FrontendPostDispatch implements SubscriberInterface
         if (($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment')) {
             if ($session->moptBasketChanged) {
                 unset($session->moptBasketChanged);
+                unset($session->moptPaypalInstallmentWorkerId);
+                unset($session->moptPaypalInstallmentData);
                 $redirectnotice =
                     '<center><b>Ratenzahlung</b></center>'
                     . 'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
@@ -694,8 +704,7 @@ class FrontendPostDispatch implements SubscriberInterface
     /**
      * @return bool
      */
-    protected
-    function isAsnycAjax()
+    protected function isAsnycAjax()
     {
         $shop = $this->container->get('shop');
         /** @var Template $template */

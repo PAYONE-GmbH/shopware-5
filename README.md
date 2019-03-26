@@ -12,7 +12,7 @@ The PAYONE payment extension for Shopware is already certified by shoplupe for i
 *	Find all currently supported payment methods on http://www.payone.com/shopware
 
 ## More information
-Documentation for Shopware: https://www.payone.com/uploads/media/PAYONE_Dokumentation_Shopware-Payment-Plugin.pdf<br>
+Documentation for Shopware: see https://github.com/PAYONE-GmbH/docs<br>
 Videoguide: Installation and configuration: https://www.youtube.com/watch?v=P3Q7Gt1opsI<br>
 More information about Shopware on https://www.payone.com/shopware<br>
 

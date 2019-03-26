@@ -91,6 +91,8 @@ class Mopt_PayoneMain
         if (!empty($this->payoneConfig[$paymentId]) && !$forceReload) {
             return $this->payoneConfig[$paymentId];
         }
+        $this->getPaymentHelper();
+        $paymentName = $this->paymentHelper->getPaymentNameFromId($paymentId);
 
         /** @var \Shopware\CustomModels\MoptPayoneConfig\Repository $repository */
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig');
@@ -99,6 +101,14 @@ class Mopt_PayoneMain
         $global_config = $repository->getConfigByPaymentId(0, $asArray);
         if ($asArray) {
             $data['sendOrdernumberAsReference'] = $global_config['sendOrdernumberAsReference'];
+            if ($this->paymentHelper->isPayoneRatepay($paymentName) ||
+                $this->paymentHelper->isPayoneRatepayDirectDebit($paymentName) ||
+                $this->paymentHelper->isPayoneRatepayInstallment($paymentName) ||
+                $this->paymentHelper->isPayoneMasterpass($paymentName) ||
+                $this->paymentHelper->isPayoneAmazonPay($paymentName)
+            ) {
+                $data['sendOrdernumberAsReference'] = true;
+            }
         } else {
             $data->setSendOrdernumberAsReference(
                 $global_config->getSendOrdernumberAsReference()

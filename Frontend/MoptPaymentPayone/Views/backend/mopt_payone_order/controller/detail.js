@@ -26,6 +26,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     var selectionModel = grid.getSelectionModel();
     var positions = selectionModel.getSelection();
     var amount = 0;
+    var currency = order.raw.currency;
     
     
     for (var i = 0; i < positions.length; i++)
@@ -45,8 +46,8 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     }
     
     var moptMessageBoxText =  '<p>{s name=detail/debit1}Sie haben{/s} ' + positionIds.length + ' {s name=detail/debit2}Position(en) mit einem Gesamtbetrag von{/s} ' 
-            + '<span style="color: red;">' + amount.toFixed(2) + '&#8364 </span>{s name=detail/debit3}markiert{/s}.</p><br>' 
-            + '<p><label for="mopt_payone__capture_shipment">{s name=detail/debit4}Versandkosten mit gutschreiben{/s}</label>' 
+            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency +' </span>{s name=detail/debit3}markiert{/s}.</p><br>'
+            + '<p><label for="mopt_payone__capture_shipment">{s name=detail/debit4}Versandkosten mit gutschreiben{/s}</label>'
             + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"' 
             + 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/></p>' 
             + '<br><p>{s name=detail/debit5}Sind Sie sicher{/s}?</p>';
@@ -54,7 +55,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     if(!showShippingCostsCheckbox)
     {
       moptMessageBoxText =  '{s name=detail/debit1}Sie haben{/s} ' + positionIds.length + ' {s name=detail/debit2}Position(en) mit einem Gesamtbetrag von{/s} ' 
-            + '<span style="color: red;">' + amount.toFixed(2) + '&#8364 </span>{s name=detail/debit3}markiert{/s}. ' 
+            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency +' </span>{s name=detail/debit3}markiert{/s}. '
             + '<br> {s name=detail/debit5}Sind Sie sicher{/s}?';
     }
     
@@ -106,6 +107,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     var selectionModel = grid.getSelectionModel();
     var positions = selectionModel.getSelection();
     var amount = 0;
+    var currency = order.raw.currency;
     
     
     for (var i = 0; i < positions.length; i++)
@@ -115,6 +117,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     
     var details = order.raw.details;
     var showShippingCostsCheckbox = true;
+    var paymentName = order.raw.payment.name;
     
     for (var i = 0; i < details.length; i++)
     {
@@ -126,7 +129,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     
     var moptMessageBoxText =  '<p>{s name=detail/debit1}Sie haben{/s} ' + positionIds.length 
             + ' {s name=detail/debit2}Position(en) mit einem Gesamtbetrag von{/s} <span style="color: red;">' 
-              + amount.toFixed(2) + '&#8364 </span> {s name=detail/debit3}markiert{/s}.</p><br>' 
+              + amount.toFixed(2) + ' ' + currency +' </span> {s name=detail/debit3}markiert{/s}.</p><br>'
               + '<p><label for="mopt_payone__capture_shipment">{s name=detail/debit6}Versandkosten auch Einziehen{/s}</label>' 
               + '<input type="checkbox" id="mopt_payone__capture_shipment" class="x-form-field x-form-checkbox"' 
               + 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/>'
@@ -137,16 +140,21 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     {
       moptMessageBoxText =  '{s name=detail/debit1}Sie haben{/s} ' + positionIds.length 
               + ' {s name=detail/debit2}Position(en) mit einem Gesamtbetrag von{/s} <span style="color: red;">' 
-              + amount.toFixed(2) + '&#8364 </span> {s name=detail/debit3}markiert{/s}. <br>' 
+              + amount.toFixed(2) + ' ' + currency +' </span> {s name=detail/debit3}markiert{/s}. <br>'
               + ' {s name=detail/debit7}Welche Art des Zahlungseinzugs möchten Sie vornehmen{/s}?';
     }
-    
+
+    if (paymentName == 'mopt_payone__fin_paypal_installment'){
+      var moptButtonText = { no: '{s name=detail/captureFinal}Finaler Geldeinzug{/s}', cancel: '{s name=detail/cancel}Abbrechen{/s}' }
+    } else {
+      var moptButtonText = { yes: '{s name=detail/capturePartly}(Teil-)Geldeinzug{/s}', no: '{s name=detail/captureFinal}Finaler Geldeinzug{/s}', cancel: '{s name=detail/cancel}Abbrechen{/s}' }
+    }
     //bit wierd message-box... plausible way doesn't seem to work 
     //(see: http://stackoverflow.com/questions/12263291/extjs-4-or-4-1-messagebox-custom-buttons)
     Ext.MessageBox.show({
       title: '{s name=detail/captureConfirm}Zahlung einziehen{/s}',
       msg: moptMessageBoxText,
-      buttonText: { yes: '{s name=detail/capturePartly}(Teil-)Geldeinzug{/s}', no: '{s name=detail/captureFinal}Finaler Geldeinzug{/s}', cancel: '{s name=detail/cancel}Abbrechen{/s}' },
+      buttonText: moptButtonText,
       fn: function(btn){
         
         var includeShipment = false;

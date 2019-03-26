@@ -1,7 +1,6 @@
 <?php
 
 use Shopware\Components\CSRFWhitelistAware;
-use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -34,15 +33,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             Logger::DEBUG
         );
         $this->logger->pushHandler($streamHandler);
-
-        // used by transactionstatus forward
-        $logPath = Shopware()->Application()->Kernel()->getLogDir();
-        $logFile = $logPath . '/MoptPaymentPayone_txredirect_production.log';
-
-        $rfh = new RotatingFileHandler($logFile, 14);
-        $this->rotatingLogger = new Logger('MoptPaymentPayone');
-        $this->rotatingLogger->pushHandler($rfh);
-
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
     }
 
@@ -182,8 +172,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     // InvalidPayment Method: update Order Status to "amazon_delayed" (119)
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], 119);
                     $attributeData['mopt_payone_status'] = 'pending';
-                } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'completed') {
-                    $this->savePaymentStatus($transactionId, $order['temporaryID'], 18);
                 } else {
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
                 }
@@ -200,7 +188,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->logger->debug('finished, output TSOK');
         echo $response->getStatus();
         $this->logger->debug('starting tx forwards');
-        $this->moptPayoneForwardTransactionStatus($config, $rawPost, $request->getParam('txaction'));
+        $this->moptPayoneForwardTransactionStatus($rawPost, $paymentId);
         $this->logger->debug('finished all tasks, exit');
         exit;
     }
@@ -225,52 +213,23 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     /**
      * forward request to configured urls
      *
-     * @param array $payoneConfig
      * @param array $rawPost
-     * @param string $payoneStatus
      */
-    protected function moptPayoneForwardTransactionStatus($payoneConfig, $rawPost, $payoneStatus)
+    protected function moptPayoneForwardTransactionStatus($rawPost, $paymentID)
     {
-        $configKey = 'trans' . ucfirst($payoneStatus);
-        if (isset($payoneConfig[$configKey])) {
-            $forwardingUrls = explode(';', $payoneConfig[$configKey]);
+        $url = Shopware()->Front()->Router()->assemble(array('controller' => 'MoptTransactionStatusForwarding', 'action' => 'index'));
+        $rawPost['paymentID'] = $paymentID;
 
-            $zendClientConfig = array(
-                'adapter' => 'Zend_Http_Client_Adapter_Curl',
-                'curloptions' => array(CURLOPT_FOLLOWLOCATION => true),
-            );
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $rawPost);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT_MS, 100);
 
-            foreach ($forwardingUrls as $url) {
-                if (empty($url)) {
-                    continue;
-                }
-                $logentry = array( "payone-status=".$payoneStatus , "txid=".$rawPost['txid'],"url=". $url );
-                $client = new Zend_Http_Client($url, $zendClientConfig);
-                $client->setConfig(array('timeout' => 50));
-                $client->setParameterPost($rawPost);
-                $requestStart = microtime(true);
-                try {
-                    $client->request(Zend_Http_Client::POST);
-                } catch (Zend_Http_Client_Exception $e) {
-                    // do nothing
-                }
-                $requestStop = microtime(true);
-                $requestDuration = ($requestStop - $requestStart);
-                $logentry []= "duration=".$requestDuration;
-                $response = $client->getLastResponse();
-                if ($response !== null) {
-                    $logentry []= "response-status=".$response->getStatus();
-                    $logentry []= "response-message=".$response->getMessage();
-                } else {
-                    $logentry []= "response-status=408";
-                    $logentry []= "response-message=Timeout";
-                }
-                if ($payoneConfig['transLogging'] === true) {
-                    $log=implode(";",$logentry);
-                    $this->rotatingLogger->debug($log);
-                }
-            }
-        }
+        $result = curl_exec($curl);
+
     }
 
     /**
