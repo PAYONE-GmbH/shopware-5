@@ -119,16 +119,24 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             $orderHash = md5(serialize($session['sOrderVariables']));
             $customParam = explode('|', $request->getParam('param'));
 
-            if ($orderHash !== $customParam[2]) {
-                $this->logger->error('order corrupted - order hash mismatch');
-                $orderIsCorrupted = true;
-                $paymentStatus = 21;
-                $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'), $paymentStatus);
+            if ($request->getParam('txaction') !== 'failed') {
+                if ($orderHash !== $customParam[2]) {
+                    $this->logger->error('order corrupted - order hash mismatch');
+                    $orderIsCorrupted = true;
+                    $paymentStatus = 21;
+                    $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'), $paymentStatus);
+                } else {
+                    $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'));
+                }
+                $order = $this->loadOrderByOrderNumber($orderNumber);
             } else {
-                $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'));
+                $this->logger->debug('finished, output TSOK');
+                echo $response->getStatus();
+                $this->logger->debug('starting tx forwards');
+                $this->moptPayoneForwardTransactionStatus($rawPost, $paymentId);
+                $this->logger->debug('finished all tasks, exit');
+                exit;
             }
-
-            $order = $this->loadOrderByOrderNumber($orderNumber);
         }
 
         $attributeData = array();
