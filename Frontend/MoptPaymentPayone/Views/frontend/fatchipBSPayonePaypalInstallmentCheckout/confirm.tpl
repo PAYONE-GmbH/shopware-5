@@ -159,6 +159,7 @@
 
 {block name='frontend_checkout_cart_footer_field_labels_taxes'}
     {$smarty.block.parent}
+    {if $sUserData.additional.payment.name == 'mopt_payone__fin_paypal_installment'}
         <li class="list--entry block-group entry--totalnet">
             <div class="entry--label block" style="padding-top: 15px">
                 {s name='financecost' namespace="frontend/MoptPaymentPayone/payment"}Finanzierungskosten{/s}:
@@ -175,4 +176,5 @@
                 {$Installment.total_cost_value|number_format:2:",":"."} {$Installment.total_cost_currency}
             </div>
         </li>
+    {/if}
 {/block}
