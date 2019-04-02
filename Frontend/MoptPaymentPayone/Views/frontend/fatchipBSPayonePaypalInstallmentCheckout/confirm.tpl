@@ -156,3 +156,23 @@
     {$smarty.block.parent}
 {/if}
 {/block}
+
+{block name='frontend_checkout_cart_footer_field_labels_taxes'}
+    {$smarty.block.parent}
+        <li class="list--entry block-group entry--totalnet">
+            <div class="entry--label block" style="padding-top: 15px">
+                {s name='financecost' namespace="frontend/MoptPaymentPayone/payment"}Finanzierungskosten{/s}:
+            </div>
+            <div class="entry--value block is--no-star" style="padding-top: 15px">
+                {$Installment.total_interest_value|number_format:2:",":"."} {$Installment.total_interest_currency}
+            </div>
+        </li>
+        <li class="list--entry block-group entry--total">
+            <div class="entry--label block">
+                {s name='financecosttotal' namespace="frontend/MoptPaymentPayone/payment"}Gesamtbetrag (mit Finanzierungskosten){/s}:
+            </div>
+            <div class="entry--value block is--no-star">
+                {$Installment.total_cost_value|number_format:2:",":"."} {$Installment.total_cost_currency}
+            </div>
+        </li>
+{/block}
