@@ -212,10 +212,14 @@ class FrontendCheckout implements SubscriberInterface
             $templateSuffix = '_responsive';
         }
 
-        if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
-            && ($payoneAmazonPayConfig = $this->container->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
+        $moptPayoneMain = $this->container->get('MoptPayoneMain');
+
+        if ($templateSuffix === ''
+            && $moptPayoneMain->getPaymentHelper()->isAmazonPayActive()
+            && ($payoneAmazonPayConfig = $moptPayoneMain->getHelper()->getPayoneAmazonPayConfig())
+            && !($moptPayoneMain->getHelper()->isAboCommerceArticleInBasket())
         ) {
-            $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+            $paymenthelper = $moptPayoneMain->getPaymentHelper();
             $config = $this->container->get('MoptPayoneMain')->getPayoneConfig($paymenthelper->getPaymentAmazonPay()->getId());
             if ($session->moptAmazonError) {
                 $view->assign('moptAmazonError', $session->moptAmazonError);
