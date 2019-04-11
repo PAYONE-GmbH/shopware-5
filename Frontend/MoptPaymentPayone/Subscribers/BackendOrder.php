@@ -79,8 +79,8 @@ class BackendOrder implements SubscriberInterface
                     $orderDetail['moptPayoneDebit']    = $attribute->getMoptPayoneDebit();
             
                 } else {
-                    $orderDetail['moptPayoneCaptured'] = round($orderDetail['moptPayoneCaptured'] * ( 1 + ($orderDetail['taxRate'] /100)), 2);
-                    $orderDetail['moptPayoneDebit'] = round($orderDetail['moptPayoneDebit'] * ( 1 + ($orderDetail['taxRate'] /100)), 2);
+                    $orderDetail['moptPayoneCaptured'] = round($attribute->getMoptPayoneCaptured() * ( 1 + ($orderDetail['taxRate'] /100)), 2);
+                    $orderDetail['moptPayoneDebit'] = round($attribute->getMoptPayoneDebit() * ( 1 + ($orderDetail['taxRate'] /100)), 2);
                 }
             }
         }
