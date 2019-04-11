@@ -285,7 +285,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
     /**
      * extract clearing data from response object
      *
-     * @param object $response
+     * @param array $data
      * @return boolean|array
      */
     public function extractClearingDataFromInstallmentData($data)
