@@ -236,7 +236,9 @@ class FrontendCheckout implements SubscriberInterface
         }
 
 
-        if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isMasterpassActive()) {
+        if ($templateSuffix === '' 
+            && $moptPayoneMain->getPaymentHelper()->isMasterpassActive()
+            && !($moptPayoneMain->getHelper()->isAboCommerceArticleInBasket())) {
             $view->extendsTemplate('frontend/checkout/ajax_cart_masterpass.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_cart_masterpass.tpl');
         }
