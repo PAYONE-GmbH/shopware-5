@@ -1271,10 +1271,18 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
                 'id' => '1'
             )
         );
-        $creditcardConfig->setMerchantId($options['merchantId']);
-        $creditcardConfig->setPortalId($options['portalId']);
-        $creditcardConfig->setSubaccountId($options['subaccountId']);
-        $creditcardConfig->setApiKey($options['apiKey']);
+        if (isset($options['merchantId'])) {
+            $creditcardConfig->setMerchantId($options['merchantId']);
+        }
+        if (isset($options['portalId'])) {
+            $creditcardConfig->setPortalId($options['portalId']);
+        };
+        if (isset($options['subaccountId'])) {
+            $creditcardConfig->setSubaccountId($options['subaccountId']);
+        };
+        if (isset($options['apiKey'])) {
+            $creditcardConfig->setApiKey($options['apiKey']);
+        };
 
         Shopware()->Models()->flush($creditcardConfig);
     }
