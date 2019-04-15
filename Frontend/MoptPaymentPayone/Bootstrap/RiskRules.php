@@ -65,7 +65,7 @@ class RiskRules
     public function createRiskRules()
     {
         $this->createPayoneRiskRule('mopt_payone__fin_paypal_installment',
-            'ORDERVALUELESS', '99', '', '', 2);
+            'ORDERVALUELESS', '100', '', '', 2);
         $this->createPayoneRiskRule('mopt_payone__fin_paypal_installment',
             'ORDERVALUEMORE', '5000', '', '', 2);
     }
