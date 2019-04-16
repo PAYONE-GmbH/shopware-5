@@ -139,6 +139,12 @@ class FrontendPostDispatch implements SubscriberInterface
         if ($request->getActionName() == 'finish') {
             $view->extendsTemplate('frontend/checkout/mopt_finish' . $templateSuffix . '.tpl');
         }
+
+        if ($request->getActionName() == 'finish' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')  {
+            $installmentData = Shopware()->Session()->offsetGet('moptPaypalInstallmentData');
+            $view->assign('Installment', $installmentData);
+        }
+
         unset($session->moptMandateAgreement);
         if ($request->getParam('mandate_status')) {
             $session->moptMandateAgreement = $request->getParam('mandate_status');
