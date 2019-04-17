@@ -38,11 +38,11 @@ class OrderNumber implements SubscriberInterface
 
     public function onGetOrderNumber(\Enlight_Hook_HookArgs $args)
     {
-        $paymentId = Shopware()->Session()->sPaymentID;
-        $config = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
-
         if ($this->container->has('shop')) {
             $session = Shopware()->Session();
+            $orderVars = $session->get('sOrderVariables');
+            $userPaymentId = $orderVars['sUserData']['additional']['payment']['id'];
+            $config = Mopt_PayoneMain::getInstance()->getPayoneConfig($userPaymentId);
             $moptPaymentReference = $session->offsetGet('moptPaymentReference');
         }
         if ($moptPaymentReference && $config['sendOrdernumberAsReference']) {
