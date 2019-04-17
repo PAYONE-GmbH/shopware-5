@@ -100,7 +100,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
             if ($this->session->moptMandateData['mopt_payone__showMandateText'] == true && (int)$this->session->moptMandateAgreement !== 1) {
                 $this->session->moptMandateAgreementError = true;
-                $action = false;
+                $this->session->moptFormSubmitted = true;
+                return $this->redirect(array('controller' => 'checkout', 'action' => 'confirm'));
             }
         }
 
