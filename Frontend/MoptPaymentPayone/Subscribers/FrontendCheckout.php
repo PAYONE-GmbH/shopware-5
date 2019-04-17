@@ -67,11 +67,11 @@ class FrontendCheckout implements SubscriberInterface
 
         $args->setReturn($return);
     }
-    
+
     /**
      * set redirect flag for redirecting to paymentshipping in case basket is changed
      * only used for payolution installment to re-calculate payment conditions
-     * 
+     *
      * @param \Enlight_Hook_HookArgs $arguments
      * @return type
      */
@@ -85,8 +85,8 @@ class FrontendCheckout implements SubscriberInterface
         }
         if ($sTargetAction !== 'confirm') {
             return;
-        }    
-        
+        }
+
         $ret = $arguments->getReturn();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePayolutionInstallment($userData['additional']['payment']['name'])
@@ -111,13 +111,11 @@ class FrontendCheckout implements SubscriberInterface
     {
         $ret = $arguments->getReturn();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalInstallment($userData['additional']['payment']['name']))
-         {
+        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalInstallment($userData['additional']['payment']['name'])) {
             return;
         }
         // Set redirect flag
-        if (isset(Shopware()->Session()->moptPaypalInstallmentWorkerId))
-        {
+        if (isset(Shopware()->Session()->moptPaypalInstallmentWorkerId)) {
             Shopware()->Session()->moptBasketChanged = true;
         }
         $arguments->setReturn($ret);
@@ -198,49 +196,57 @@ class FrontendCheckout implements SubscriberInterface
                 unset($session->moptAmazonLogout);
             }
         }
-        
+
         if ($request->getActionName() === 'cart') {
             if ($session->moptPayPalEcsError) {
                 unset($session->moptPayPalEcsError);
                 $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-                                ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten', true));
+                    ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten', true));
             }
         }
-        
+
         $templateSuffix = '';
         if ($this->container->get('MoptPayoneMain')->getHelper()->isResponsive()) {
             $templateSuffix = '_responsive';
         }
 
-        if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
-            && ($payoneAmazonPayConfig = $this->container->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
-        ) {
-            $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-            $config = $this->container->get('MoptPayoneMain')->getPayoneConfig($paymenthelper->getPaymentAmazonPay()->getId());
-            if ($session->moptAmazonError) {
-                $view->assign('moptAmazonError', $session->moptAmazonError);
-                unset($session->moptAmazonError);
+        $moptPayoneMain = $this->container->get('MoptPayoneMain');
+
+        if (!($moptPayoneMain->getHelper()->isAboCommerceArticleInBasket())
+            && $templateSuffix === '') {
+
+            if ($moptPayoneMain->getPaymentHelper()->isAmazonPayActive()
+                && ($payoneAmazonPayConfig = $moptPayoneMain->getHelper()->getPayoneAmazonPayConfig())
+            ) {
+                $paymenthelper = $moptPayoneMain->getPaymentHelper();
+                $config = $moptPayoneMain->getPayoneConfig($paymenthelper->getPaymentAmazonPay()->getId());
+                if ($session->moptAmazonError) {
+                    $view->assign('moptAmazonError', $session->moptAmazonError);
+                    unset($session->moptAmazonError);
+                }
+                if ($session->moptAmazonLogout) {
+                    $view->assign('moptAmazonLogout', $session->moptAmazonLogout);
+                    unset($session->moptAmazonLogout);
+                }
+                $view->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
+                $view->assign('payoneAmazonPayMode', $config['liveMode']);
+                $view->extendsTemplate('frontend/checkout/ajax_cart_amazon.tpl');
+                $view->extendsTemplate('frontend/checkout/mopt_cart_amazon.tpl');
             }
-            if ($session->moptAmazonLogout) {
-                $view->assign('moptAmazonLogout', $session->moptAmazonLogout);
-                unset($session->moptAmazonLogout);
+
+
+            if ($moptPayoneMain->getPaymentHelper()->isMasterpassActive()) {
+                $view->extendsTemplate('frontend/checkout/ajax_cart_masterpass.tpl');
+                $view->extendsTemplate('frontend/checkout/mopt_cart_masterpass.tpl');
             }
-            $view->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
-            $view->assign('payoneAmazonPayMode', $config['liveMode']);
-            $view->extendsTemplate('frontend/checkout/ajax_cart_amazon.tpl');
-            $view->extendsTemplate('frontend/checkout/mopt_cart_amazon.tpl');
+
+            if ($this->isPayPalEcsActive($subject) && ($imageUrl = $this->moptPayoneShortcutImgURL())) {
+                $view->assign('moptPaypalShortcutImgURL', $imageUrl);
+                $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
+            }
+
         }
 
-
-        if ($templateSuffix === '' && $this->container->get('MoptPayoneMain')->getPaymentHelper()->isMasterpassActive()) {
-            $view->extendsTemplate('frontend/checkout/ajax_cart_masterpass.tpl');
-            $view->extendsTemplate('frontend/checkout/mopt_cart_masterpass.tpl');
-        }
-
-        if ($templateSuffix === '' && $this->isPayPalEcsActive($subject) && ($imageUrl = $this->moptPayoneShortcutImgURL())) {
-            $view->assign('moptPaypalShortcutImgURL', $imageUrl);
-            $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
-        }
 
         if (!empty($userPaymentId)) {
             $paymentId = $userPaymentId;
@@ -248,7 +254,7 @@ class FrontendCheckout implements SubscriberInterface
             $paymentId = 0;
         }
 
-        $config = $this->container->get('MoptPayoneMain')->getPayoneConfig($paymentId);
+        $config = $moptPayoneMain->getPayoneConfig($paymentId);
         $confirmActions = array('confirm', 'index', 'payment');
 
         if ($config['saveTerms'] !== 0) {
@@ -296,18 +302,18 @@ class FrontendCheckout implements SubscriberInterface
 
         $builder = Shopware()->Models()->createQueryBuilder();
         $builder->select('button.image')
-                ->from('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal', 'button')
-                ->where('button.localeId = ?1')
-                ->setParameter(1, $localeId);
+            ->from('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal', 'button')
+            ->where('button.localeId = ?1')
+            ->setParameter(1, $localeId);
 
         $result = $builder->getQuery()->getOneOrNullResult();
 
         if (!$result) {
             $builder->resetDQLParts();
             $builder->select('button.image')
-                    ->from('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal', 'button')
-                    ->where('button.isDefault = ?1')
-                    ->setParameter(1, true);
+                ->from('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal', 'button')
+                ->where('button.isDefault = ?1')
+                ->setParameter(1, true);
 
             $result = $builder->getQuery()->getOneOrNullResult();
         }
