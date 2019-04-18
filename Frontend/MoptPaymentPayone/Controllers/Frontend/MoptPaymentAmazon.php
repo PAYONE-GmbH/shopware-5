@@ -283,6 +283,12 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             Shopware()->Db()->query($sql, array($txid, $this->session->moptIsAuthorized,
                 $this->session->moptPaymentReference, $this->session->moptOrderHash, $this->session->moptPayoneAmazonWorkOrderId, $this->session->moptPayoneAmazonReferenceId, $orderId));
 
+            if ($this->session->moptIsAuthorized === true) {
+                $order = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['transactionId' => $txid]);
+                if ($order) {
+                    $moptPayoneMain->getPaymentHelper()->markOrderDetailsAsFullyCaptured($order);
+                }
+            }
 
             // Register Custom Template
             $this->View()->loadTemplate("frontend/checkout/finish.tpl");
