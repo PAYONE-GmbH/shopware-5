@@ -63,6 +63,12 @@ class MoptPayoneAmazonPay extends ModelEntity
     protected $amazonMode;
 
     /**
+     * @var
+     * @ORM\Column(name="pac_station_allow", type="string", nullable=true)
+     */
+    protected $pacStationAllow;
+
+    /**
      * @return int
      */
     public function getId()
@@ -173,5 +179,23 @@ class MoptPayoneAmazonPay extends ModelEntity
     {
         $this->amazonMode = $amazonMode;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPacStationAllow()
+    {
+        return $this->pacStationAllow;
+    }
+
+    /**
+     * @param mixed $pacStationAllow
+     */
+    public function setPacStationAllow($pacStationAllow)
+    {
+        $this->pacStationAllow = $pacStationAllow;
+    }
+
+
 
 }
