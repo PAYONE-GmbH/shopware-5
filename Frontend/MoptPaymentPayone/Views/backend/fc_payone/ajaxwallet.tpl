@@ -160,7 +160,7 @@
         <div id="amazonpayconfigs" class="form-group" >
             <form role="form" id="ajaxamazonpay" enctype="multipart/form-data">
                 <table class="table-condensed" id="amazonpaytable">
-                    <tr><th>id</th><th>{s name=amazon_clientid}Client Id{/s}</th><th>{s name=amazon_sellerid}Seller Id{/s}</th><th>{s name=amazon_buttontype}Button Type{/s}</th><th>{s name=amazon_buttoncolor}Button Color{/s}</th><th>{s name=amazon_mode}Amazon Mode{/s}</th></tr>
+                    <tr><th>id</th><th>{s name=amazon_clientid}Client Id{/s}</th><th>{s name=amazon_sellerid}Seller Id{/s}</th><th>{s name=amazon_buttontype}Button Type{/s}</th><th>{s name=amazon_buttoncolor}Button Color{/s}</th><th>{s name=amazon_mode}Amazon Mode{/s}</th><th>{s name=amazon_pacStation}Pacstation allowed{/s}</th></tr>
                     {foreach from=$amazonpayconfigs key=mykey item=amazonpayconfig}
                     <tr id="row{$amazonpayconfig->getId()}">
                         <td><input name="row[{$amazonpayconfig->getId()}][id]" id="id_{$amazonpayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$amazonpayconfig->getId()}" readonly="readonly" ></td>
@@ -196,6 +196,12 @@
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][amazonMode]" id="amazonpayAmazonMode_{$amazonpayconfig->getId()}">
                                 <option value="sync" {if $amazonpayconfig->getAmazonMode() == 'sync'}selected="selected"{/if}>{s name=amazon_mode_always_sync}Always Synchronous{/s}</option>
                                 <option value="firstsync" {if $amazonpayconfig->getAmazonMode() == 'firstsync'}selected="selected"{/if}>{s name=amazon_mode_always_firstsync}First synchronous, on failure try asynchronous (recommended, default):{/s}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control" name="row[{$amazonpayconfig->getId()}][pacStationAllow]" id="amazonpayPacstation_{$amazonpayconfig->getId()}">
+                                <option value="allow" {if $amazonpayconfig->getPacStationAllow() == 'allow'}selected="selected"{/if}>{s name=pack_station_allow}Allow (recommended, default){/s}</option>
+                                <option value="deny" {if $amazonpayconfig->getPacStationAllow() == 'deny'}selected="selected"{/if}>{s name=pack_station_deny}Deny{/s}</option>
                             </select>
                         </td>
                         <td role="button" name="delete" value="delete" onclick="clear_form_elements('#ajaxamazonpay');"><img id="delete_{$amazonpayconfig->getId()}" height="100%" src="{link file='backend/_resources/images/delete.png'}"></td>
