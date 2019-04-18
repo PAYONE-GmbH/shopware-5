@@ -1573,13 +1573,13 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         }
     }
 
-    function fcPacStationAllowedForAmazonPayExtensionExist()
+    function fcPackStationAllowedForAmazonPayExtensionExist()
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_amazon_pay'
                 AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='pac_station_allow';";
+                AND COLUMN_NAME ='pack_station_allow';";
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
@@ -1589,10 +1589,10 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         return true;
     }
 
-    function fcPacStationAllowedForAmazonPayDataTable()
+    function fcPackStationAllowedForAmazonPayDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_amazon_pay` "
-            . "ADD COLUMN 'pac_station_allow' VARCHAR(50) DEFAULT 'allow';";
+            . "ADD COLUMN 'pack_station_allow' VARCHAR(50) DEFAULT 'allow';";
         Shopware()->Db()->exec($sql);
     }
 }

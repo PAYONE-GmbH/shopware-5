@@ -542,8 +542,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         }
 
         // config option for AmazaonPay Pacstation allow
-        if (!$this->getInstallHelper()->fcPacStationAllowedForAmazonPayExtensionExist()) {
-            $this->getInstallHelper()->fcPacStationAllowedForAmazonPayDataTable();
+        if (!$this->getInstallHelper()->fcPackStationAllowedForAmazonPayExtensionExist()) {
+            $this->getInstallHelper()->fcPackStationAllowedForAmazonPayDataTable();
         }
 
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModel($this->getPayoneLogger());

@@ -1073,18 +1073,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $countries = $this->moptPayoneMain->getPaymentHelper()
             ->moptGetCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
 
-        $payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig();
-
-        if(false && $payoneAmazonPayConfig->getPacStationAllow() == 'deny'){
-            //check if address is pacStation
-            foreach ($address as $item){
-                if (strpos(strtolower($item), 'packstation') !== false){
-                    return false;
-                }
-            }
-        }
-
-
         if (count($countries) == 0){
             return true;
         }
@@ -1109,12 +1097,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig();
 
         //Check if amazon payment is not allowed for Packstation's
-        if ($config->getPacStationAllow() == 'deny'){
+        if ($config->getPackStationAllow() == 'deny'){
             if (strpos($address['shipping_street'], 'Packstation') !== false) {
                 return false;
             }
         }
-
 
         if (count($countries) == 0){
             return true;
