@@ -831,8 +831,8 @@ class Mopt_PayoneInstallHelper
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
-            $sql = "INSERT INTO `s_plugin_mopt_payone_amazon_pay` (`id`, `client_id`, `seller_id`, `button_type`, `button_color`, `button_language`, `amazon_mode`) VALUES
-                  (1, '', '', 'PwA', 'Gold', 'none', 'sync');";
+            $sql = "INSERT INTO `s_plugin_mopt_payone_amazon_pay` (`id`, `client_id`, `seller_id`, `button_type`, `button_color`, `button_language`, `amazon_mode`, 'pac_station_allow') VALUES
+                  (1, '', '', 'PwA', 'Gold', 'none', 'sync', 'allow');";
             Shopware()->Db()->query($sql);
         }
     }
@@ -1571,5 +1571,28 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `trans_logging` TINYINT(1) NOT NULL DEFAULT 0;";
             $db->exec($sql);
         }
+    }
+
+    function fcPacStationAllowedForAmazonPayExtensionExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_amazon_pay'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='pac_station_allow';";
+        $result = Shopware()->Db()->query($sql);
+
+        if ($result->rowCount() === 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    function fcPacStationAllowedForAmazonPayDataTable()
+    {
+        $sql = "ALTER TABLE `s_plugin_mopt_payone_amazon_pay` "
+            . "ADD COLUMN 'pac_station_allow' VARCHAR(50) DEFAULT 'allow';";
+        Shopware()->Db()->exec($sql);
     }
 }
