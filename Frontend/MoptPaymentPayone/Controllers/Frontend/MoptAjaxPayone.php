@@ -161,8 +161,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 echo json_encode(true);
                 return;
             }
-        }                
-        
+        }
+
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
             if ($response->getScore() === 'U'){
                 $response->setScore($this->moptPayoneMain->getHelper()->getScoreColor($config));
@@ -175,9 +175,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         } else { /* INVALID */
             $this->moptPayoneMain->getHelper()->saveConsumerScoreError($userId, $response);
             unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
-            unset($this->session->moptPaymentId);            
-            
-            echo json_encode(false);          
+            unset($this->session->moptPaymentId);
+
+            echo json_encode(false);
         }
     }
 
@@ -910,12 +910,12 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
             // create User from Address Data
 
-                $responseData = $response->toArray();
-                $responseAddress = $response->getPaydata()->toAssocArray();
+            $responseData = $response->toArray();
+            $responseAddress = $response->getPaydata()->toAssocArray();
 
             // check if billing country is active for amazon
 
-            if (!$this->isBillingAddressSupported($responseAddress['billing_country'])) {
+            if (!$this->isBillingAddressSupported($responseAddress)) {
                 $data['errormessage'] = Shopware()->Snippets()
                     ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                     ->get('amazonBillingAddressNotSupported');
@@ -925,7 +925,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 return;
             }
 
-            if (!$this->isShippingAddressSupported($responseAddress['shipping_country'])) {
+            if (!$this->isShippingAddressSupported($responseAddress)) {
                 $data['errormessage'] = Shopware()->Snippets()
                     ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                     ->get('amazonShippingAddressNotSupported');
@@ -1069,32 +1069,58 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         echo $encoded;
     }
 
-    protected function isBillingAddressSupported($country){
-
+    protected function isBillingAddressSupported($address){
         $countries = $this->moptPayoneMain->getPaymentHelper()
             ->moptGetCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
+
+        $payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig();
+
+        if(false && $payoneAmazonPayConfig->getPacStationAllow() == 'deny'){
+            //check if address is pacStation
+            foreach ($address as $item){
+                if (strpos(strtolower($item), 'packstation') !== false){
+                    return false;
+                }
+            }
+        }
+
 
         if (count($countries) == 0){
             return true;
         }
 
-        if (in_array($country, array_column($countries, 'countryiso'))) {
+        if (in_array($address['billing_country'], array_column($countries, 'countryiso'))) {
             return true;
         } else {
             return false;
         }
     }
 
-    protected function isShippingAddressSupported($country){
-
+    /**
+     * Check if shipping address is allowed
+     *
+     * @param $address
+     * @return bool
+     */
+    protected function isShippingAddressSupported($address){
         $countries = $this->moptPayoneMain->getPaymentHelper()
             ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
+
+        $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig();
+
+        //Check if amazon payment is not allowed for Packstation's
+        if ($config->getPacStationAllow() == 'deny'){
+            if (strpos($address['shipping_street'], 'Packstation') !== false) {
+                return false;
+            }
+        }
+
 
         if (count($countries) == 0){
             return true;
         }
 
-        if (in_array($country, array_column($countries, 'countryiso'))) {
+        if (in_array($address['shipping_country'], array_column($countries, 'countryiso'))) {
             return true;
         } else {
             return false;
