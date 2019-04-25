@@ -195,6 +195,10 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('moptAmazonLogout', $session->moptAmazonLogout);
                 unset($session->moptAmazonLogout);
             }
+            /* @see https://integrator.payone.de/jira/browse/SW-236 */
+            if ($session->moptPaypalEcsWorkerId) {
+                unset($session->moptPaypalEcsWorkerId);
+            }
         }
 
         if ($request->getActionName() === 'cart') {
