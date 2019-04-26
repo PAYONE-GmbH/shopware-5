@@ -1318,4 +1318,26 @@ class Mopt_PayonePaymentHelper
         return $paymentMasterpass->getActive();
     }
 
+    /**
+     * Marks all OrderDetails and Shipping as Fully Captured
+     *
+     * @param Shopware\Models\Order\Order $order shopware order object
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function markOrderDetailsAsFullyCaptured($order)
+    {
+        foreach ($order->getDetails() as $position) {
+            $positionAttribute = $position->getAttribute();
+            $positionAttribute->setMoptPayoneCaptured($position->getPrice() * $position->getQuantity());
+            Shopware()->Models()->persist($positionAttribute);
+        }
+        Shopware()->Models()->flush();
+        $orderAttribute = $order->getAttribute();
+        $orderAttribute->setMoptPayoneShipCaptured($order->getInvoiceShipping());
+        Shopware()->Models()->persist($orderAttribute);
+        Shopware()->Models()->flush();
+    }
+
 }

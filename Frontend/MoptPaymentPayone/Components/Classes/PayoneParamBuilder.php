@@ -984,22 +984,22 @@ class Mopt_PayoneParamBuilder
             $params['bankaccount'] = $this->removeWhitespaces($paymentData['mopt_payone__sofort_bankaccount']);
             $params['bankcode'] = $this->removeWhitespaces($paymentData['mopt_payone__sofort_bankcode']);
             $params['successurl'] = $router->assemble(array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => true));
+                'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => true));
+                'forceSecure' => true, 'appendSession' => false));
             $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => true));
+                'forceSecure' => true, 'appendSession' => false));
         }
 
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'BCT') {
             $params['onlinebanktransfertype'] = 'BCT';
             $params['bankcountry'] = $paymentData['mopt_payone__bancontact_bankcountry'];
             $params['successurl'] = $router->assemble(array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => true));
+                'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => true));
+                'forceSecure' => true, 'appendSession' => false));
             $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => true));
+                'forceSecure' => true, 'appendSession' => false));
         }
 
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'GPY') {
@@ -1107,11 +1107,11 @@ class Mopt_PayoneParamBuilder
 
         $params['financingtype'] = $financeType;
         $params['successurl'] = $router->assemble(array('action' => 'success',
-            'forceSecure' => true, 'appendSession' => true));
+            'forceSecure' => true, 'appendSession' => false));
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
-            'forceSecure' => true, 'appendSession' => true));
+            'forceSecure' => true, 'appendSession' => false));
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
-            'forceSecure' => true, 'appendSession' => true));
+            'forceSecure' => true, 'appendSession' => false));
 
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing($params);
         return $payment;
@@ -1641,11 +1641,11 @@ class Mopt_PayoneParamBuilder
         $walletParams = array(
             'wallettype' => Payone_Api_Enum_WalletType::PAYPAL_EXPRESS,
             'successurl' => $router->assemble(array('action' => 'ecs',
-                'forceSecure' => true, 'appendSession' => true)),
+                'forceSecure' => true, 'appendSession' => false)),
             'errorurl' => $router->assemble(array('action' => 'ecsAbort',
-                'forceSecure' => true, 'appendSession' => true)),
+                'forceSecure' => true, 'appendSession' => false)),
             'backurl' => $router->assemble(array('action' => 'ecsAbort',
-                'forceSecure' => true, 'appendSession' => true)),
+                'forceSecure' => true, 'appendSession' => false)),
         );
 
         return $walletParams;
