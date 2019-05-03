@@ -320,6 +320,11 @@ class Payment implements SubscriberInterface
     {
         $orderParams = $arguments->getReturn();
         $subject = $arguments->get('subject');
+        $moptPayoneMain = $this->container->get('MoptPayoneMain');
+        $paymentHelper = $moptPayoneMain->getPaymentHelper();
+        $paymentName = $paymentHelper->getPaymentNameFromId($orderParams['paymentID']);
+        $isPayonePaypal = $paymentHelper->isPayonePaypal($paymentName);
+
         $currencyArray = $this->moptGetOriginalCurrencyArray($arguments);
 
         if ($currencyArray) {
@@ -335,7 +340,7 @@ class Payment implements SubscriberInterface
         }
 
         // correct net flag when SwagBusinessEssentials is installed
-        if ($subject->sSYSTEM->sUSERGROUP !== $subject->sUserData['additional']['user']['customergroup']) {
+        if ($isPayonePaypal && ($subject->sSYSTEM->sUSERGROUP !== $subject->sUserData['additional']['user']['customergroup'])) {
             // get complete USERGROUPDATA and check if net output is enabled
             $sUSERGROUPDATA = Shopware()->Db()->fetchRow(
                 'SELECT * FROM s_core_customergroups
