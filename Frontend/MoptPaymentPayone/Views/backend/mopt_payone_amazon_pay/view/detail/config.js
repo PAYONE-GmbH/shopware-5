@@ -125,7 +125,7 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                     },
                     packStationMode: {
                         xtype: 'combobox',
-                        fieldLabel: 'Pacstation mode',
+                        fieldLabel: 'Packstation mode',
                         name: 'packStationMode',
                         queryMode: 'local',
                         displayField: 'name',
