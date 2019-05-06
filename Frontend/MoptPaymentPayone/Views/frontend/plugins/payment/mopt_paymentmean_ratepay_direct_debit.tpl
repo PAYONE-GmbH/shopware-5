@@ -1,5 +1,6 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
+{if $payment_mean.id == $form_data.payment}
 <div class="payment--form-group">
     <div id="mopt_payone__ratepay_direct_debit_abg">
         Es gelten die <a target="_blank" href="https://www.ratepay.com/zgb-dse">zusätzlichen Allgemeinen Geschäftsbedingungen und der Datenschutzhinweis</a> der RatePAY GmbH.</br>
@@ -198,3 +199,4 @@
     }
 
 </script>
+{/if}
