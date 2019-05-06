@@ -104,10 +104,9 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
         $request->setClearingtype(Payone_Enum_ClearingType::FINANCING);
         $request->setFinancingtype(Payone_Api_Enum_FinancingType::PPI);
         $request->setWorkorderId($this->session->offsetGet('moptPaypalInstallmentWorkerId'));
-        $request->setCurrency( $this->getCurrencyShortName());
+        $request->setCurrency($this->getCurrencyShortName());
         $request->setAmount($this->getAmount());
-        if ( $config['sendOrdernumberAsReference'] === true )
-        {
+        if ($config['sendOrdernumberAsReference'] === true) {
             $paymentReference = $this->moptPayoneMain->reserveOrdernumber();
         } else {
             $paymentReference = $this->moptPayoneMain->getParamBuilder()->getParamPaymentReference();
@@ -129,7 +128,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
         if (!$config['submitBasket']) {
             // do nothing
         } else {
-            $request->setInvoicing($this->moptPayoneMain->getParamBuilder()->getInvoicing($orderVariables['sBasket'],$orderVariables['sDispatch'], $orderVariables['sUserData']));
+            $request->setInvoicing($this->moptPayoneMain->getParamBuilder()->getInvoicing($orderVariables['sBasket'], $orderVariables['sDispatch'], $orderVariables['sUserData']));
         }
 
         if ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung') {
@@ -139,13 +138,14 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
         }
 
         switch ($response->getStatus()) {
-            case\Payone_Api_Enum_ResponseType::APPROVED;
-                $clearingData = $this->moptPayoneMain->getPaymentHelper()->extractClearingDataFromResponse($response);
-                if ($clearingData) {
-                    $this->session->moptClearingData = $clearingData;
+            case \Payone_Api_Enum_ResponseType::APPROVED;
+                $responseData = $response->toArray();
+
+                if ($responseData['txid']) {
+                    $this->session->moptClearingData['clearing_txid'] = $responseData['txid'];
                 }
                 $this->forward('finishOrder', 'MoptPaymentPayone', null, array('txid' => $response->getTxid(),
-                'hash' => $orderHash));
+                    'hash' => $orderHash));
                 break;
             default:
                 $this->session->offsetUnset('moptPaypalInstallmentWorkerId');
@@ -254,7 +254,11 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
         switch ($response->getStatus()) {
             case\Payone_Api_Enum_ResponseType::OK;
                 $installmentData = $response->getPayData()->toAssocArray();
-                $this->session->offsetSet('moptPaypalInstallmentData', $installmentData );
+                $this->session->offsetSet('moptPaypalInstallmentData', $installmentData);
+                $clearingData = $this->extractClearingDataFromInstallmentData($installmentData);
+                if ($clearingData) {
+                    $this->session->moptClearingData = $clearingData;
+                }
                 $this->redirect(['controller' => 'FatchipBSPayonePaypalInstallmentCheckout', 'action' => 'confirm']);
                 break;
             default:
@@ -276,6 +280,27 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
         unset($this->session->moptFormSubmitted);
 
         return $this->redirect(['controller' => 'checkout', 'action' => 'cart']);
+    }
+
+    /**
+     * extract clearing data from response object
+     *
+     * @param array $data
+     * @return boolean|array
+     */
+    public function extractClearingDataFromInstallmentData($data)
+    {
+
+        foreach ($data as $key => $value) {
+            $data['clearing_'.$key] = $value;
+            unset($data[$key]);
+        }
+
+        if (empty($data)) {
+            return false;
+        }
+
+        return $data;
     }
 }
 

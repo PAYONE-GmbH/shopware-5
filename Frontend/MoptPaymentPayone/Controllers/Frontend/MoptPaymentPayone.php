@@ -100,7 +100,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
             if ($this->session->moptMandateData['mopt_payone__showMandateText'] == true && (int)$this->session->moptMandateAgreement !== 1) {
                 $this->session->moptMandateAgreementError = true;
-                $action = false;
+                $this->session->moptFormSubmitted = true;
+                return $this->redirect(array('controller' => 'checkout', 'action' => 'confirm'));
             }
         }
 
@@ -646,7 +647,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
-        if (!empty($session['moptPaymentReference'])){
+        if (!empty($session['moptPaymentReference'])) {
             $session->offsetUnset('moptPaymentReference');
         }
 
@@ -692,6 +693,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             Shopware()->Db()->query($sql, array(Shopware()->Session()->moptPaypalInstallmentWorkerId, $orderId));
         }
 
+        if ($session->moptIsAuthorized === true) {
+            $order = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['transactionId' => $txId]);
+            if ($order) {
+                $this->moptPayonePaymentHelper->markOrderDetailsAsFullyCaptured($order);
+            }
+        }
         if (Shopware()->Session()->moptPayment) {
             $this->saveTransactionPaymentData($orderId, Shopware()->Session()->moptPayment);
         }
@@ -707,14 +714,14 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param void
      * @return void
      */
-    protected function removeSessionVariablesOnOrderFinish() {
+    protected function removeSessionVariablesOnOrderFinish()
+    {
         $session = Shopware()->Session();
         $session->offsetUnset('moptIsAuthorized');
         $session->offsetUnset('moptAgbChecked');
         $session->offsetUnset('moptPaymentReference');
         $session->offsetUnset('isIdealredirect');
         $session->offsetUnset('moptPaypalInstallmentWorkerId');
-        $session->offsetUnset('moptPaypalInstallmentData');
     }
 
     /**
@@ -729,14 +736,13 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $paymentId = $this->getPaymentShortName();
         if ($response->getStatus() == 'ERROR' &&
             ($paymentId === 'mopt_payone__fin_ratepay_invoice' ||
-             $paymentId === 'mopt_payone__fin_ratepay_installment' ||
-             $paymentId === 'mopt_payone__fin_ratepay_direct_debit')
-            )
-        {
+                $paymentId === 'mopt_payone__fin_ratepay_installment' ||
+                $paymentId === 'mopt_payone__fin_ratepay_direct_debit')
+        ) {
             $session->ratepayError = $response->getCustomermessage();
             $session->offsetUnset('moptPaymentReference');
             // error code 307 = declined
-            if ($response->getErrorcode() == '307'){
+            if ($response->getErrorcode() == '307') {
                 // customer will not be able to use ratepay payments for 24 hours
                 $this->moptPayoneMain->getHelper()->saveRatepayBanDate($session->get('sUserId'));
             }
@@ -878,8 +884,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $this->moptPayonePaymentHelper->isPayoneMasterpass($paymentName) ||
             $this->moptPayonePaymentHelper->isPayoneAmazonPay($paymentName) ||
             $config['sendOrdernumberAsReference'] === true
-        )
-        {
+        ) {
             $paymentReference = $this->moptPayoneMain->reserveOrdernumber();
         } else {
             $paymentReference = $paramBuilder->getParamPaymentReference();
@@ -930,7 +935,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                     foreach ($order->getDetails() as $position) {
                         $orderPositions[] = $position->getId();
                     }
-                    
+
                     $invoicing = Mopt_PayoneMain::getInstance()->getParamBuilder()
                         ->getInvoicingFromOrder($order, $orderPositions, true, false, true);
                     $request->setInvoicing($invoicing);
@@ -944,7 +949,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         // this is currently used only for paydirekt
         // checking wether esd is enabled in payment config is not neccessary
         if ($this->moptPayonePaymentHelper->isPayonePaydirekt($paymentName)
-            && $this->isBasketDigital()){
+            && $this->isBasketDigital()) {
             $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'shopping_cart_type', 'data' => 'DIGITAL')
@@ -961,9 +966,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         if ($this->moptPayonePaymentHelper->isPayoneSafeInvoice($paymentName) ||
             $this->moptPayonePaymentHelper->isPayoneInvoice($paymentName)
-           )
-        {
-            if (!$personalData->getCompany()){
+        ) {
+            if (!$personalData->getCompany()) {
                 $request->setBusinessrelation(Payone_Api_Enum_BusinessrelationType::B2C);
             } else {
                 $request->setBusinessrelation(Payone_Api_Enum_BusinessrelationType::B2B);
@@ -989,7 +993,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param void
      * @return string
      */
-    protected function moptGetCurrency() {
+    protected function moptGetCurrency()
+    {
         $isRecurringOrder = $this->isRecurringOrder();
         $currency = $this->getCurrencyShortName();
 
@@ -1008,7 +1013,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @param string $currency
      * @return string
      */
-    protected function moptGetOrderCurrencyById($currency) {
+    protected function moptGetOrderCurrencyById($currency)
+    {
         $orderId = $this->Request()->getParam('orderId');
         if ($orderId) {
             $sql = 'SELECT `currency` FROM `s_order` WHERE id = ?';
@@ -1394,7 +1400,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
 
         // check 2: plugin exists and is installed
-        $pluginManager  = $this->container->get('shopware_plugininstaller.plugin_manager');
+        $pluginManager = $this->container->get('shopware_plugininstaller.plugin_manager');
         try {
             $plugin = $pluginManager->getPluginByName('SwagAboCommerce');
         } catch (\Exception $e) {
@@ -1441,11 +1447,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         );
 
         foreach ($basketArticles as $article) {
-            if ($article['esdarticle'] !== "1"){
+            if ($article['esdarticle'] !== "1") {
                 $isDigitalOnly = false;
             }
         }
 
         return $isDigitalOnly;
     }
+
 }
