@@ -54,6 +54,16 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                 { value: 'firstsync', name: '{s name=amazon_mode_firstsync}Asynchronous On Failure (default):{/s}'}
             ]
         });
+        me.packStationModeStore =  Ext.create('Ext.data.Store', {
+            fields: [
+                { type: 'string', name: 'value' },
+                { type: 'string', name: 'name' }
+            ],
+            data: [
+                { value: 'allow', name: 'Allow' },
+                { value: 'deny', name: 'Deny' },
+            ]
+        });
 
 
         return {
@@ -112,6 +122,18 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                         editable: false,
                         allowBlank: false,
                         store: me.amazonModeStore
+                    },
+                    packStationMode: {
+                        xtype: 'combobox',
+                        fieldLabel: 'Pacstation mode',
+                        name: 'packStationMode',
+                        queryMode: 'local',
+                        displayField: 'name',
+                        valueField: 'value',
+                        helpText: '– Allow (recommended, default): allow packstation as shipping address for AmazonPay.<BR>' +
+                            '– Deny: denypackstation as shipping address for AmazonPay. <BR>',
+                        allowBlank: true,
+                        store: me.packStationModeStore
                     }
                 }
             }]
