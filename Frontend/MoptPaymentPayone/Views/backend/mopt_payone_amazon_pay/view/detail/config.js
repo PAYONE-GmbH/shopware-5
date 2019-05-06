@@ -131,9 +131,10 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                         displayField: 'name',
                         valueField: 'value',
                         helpText: '– Allow (recommended, default): allow packstation as shipping address for AmazonPay.<BR>' +
-                                  '– Deny: denypackstation as shipping address for AmazonPay. <BR>',
+                            '– Deny: denypackstation as shipping address for AmazonPay. <BR>',
                         allowBlank: true,
                         store: me.packStationModeStore
+                    }
                 }
             }]
         };

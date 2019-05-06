@@ -1090,10 +1090,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $countries = $this->moptPayoneMain->getPaymentHelper()
             ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
 
+        /**
+         * @var $config \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay
+         */
         $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig();
 
         //Check if amazon payment is not allowed for Packstation's
-        if ($config->getPacStationAllow() == 'deny'){
+        if ($config->getPackStationMode() == 'deny'){
             if (strpos($address['shipping_street'], 'Packstation') !== false) {
                 return false;
             }
