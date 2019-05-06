@@ -64,9 +64,9 @@ class MoptPayoneAmazonPay extends ModelEntity
 
     /**
      * @var
-     * @ORM\Column(name="pack_station_allow", type="string", nullable=true)
+     * @ORM\Column(name="pack_station_mode", type="string", nullable=false)
      */
-    protected $packStationAllow;
+    protected $packStationMode;
 
     /**
      * @return int
@@ -183,17 +183,17 @@ class MoptPayoneAmazonPay extends ModelEntity
     /**
      * @return mixed
      */
-    public function getPackStationAllow()
+    public function getPackStationMode()
     {
-        return $this->packStationAllow;
+        return $this->packStationMode;
     }
 
     /**
-     * @param mixed $packStationAllow
+     * @param $packStationMode
      */
-    public function setPackStationAllow($packStationAllow)
+    public function setPackStationMode($packStationMode)
     {
-        $this->packStationAllow = $packStationAllow;
+        $this->packStationMode = $packStationMode;
     }
 
 
