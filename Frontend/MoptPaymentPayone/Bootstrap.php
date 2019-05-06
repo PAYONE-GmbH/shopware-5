@@ -541,11 +541,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->getInstallHelper()->fcExtendConfigRatepayInstallmentModeDataTable();
         }
 
-        // config option for AmazaonPay Pacstation allow
-        if (!$this->getInstallHelper()->fcPackStationAllowedForAmazonPayExtensionExist()) {
-            $this->getInstallHelper()->fcPackStationAllowedForAmazonPayDataTable();
-        }
-
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModel($this->getPayoneLogger());
 
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModelExtension();
@@ -577,6 +572,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndUpdateSendOrderNumberAsReferenceExtension();
 
         $this->getInstallHelper()->checkAndUpdateTransLoggingExtension();
+
+        // config option for AmazaonPay Packstation allow
+        $this->getInstallHelper()->checkAndUpdateAmazonPackStationModelExtension();
     }
 
     /**
