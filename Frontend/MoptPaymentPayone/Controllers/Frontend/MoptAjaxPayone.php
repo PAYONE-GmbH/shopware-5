@@ -1085,7 +1085,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
     }
 
-    protected function isShippingAddressSupported($address){
+     protected function isShippingAddressSupported($address){
 
         $countries = $this->moptPayoneMain->getPaymentHelper()
             ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
@@ -1097,8 +1097,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         //Check if amazon payment is not allowed for Packstation's
         if ($config->getPackStationMode() == 'deny'){
-            if (strpos($address['shipping_street'], 'Packstation') !== false) {
-                return false;
+            foreach ($address as $part) {
+                if (strpos($part, 'Packstation') !== false
+                    || strpos($part, 'packstation') !== false) {
+                    return false;
+                }
             }
         }
 
@@ -1112,7 +1115,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             return false;
         }
     }
-
+    
     /**
      * AJAX action called for creditcard expiry checks
      *
