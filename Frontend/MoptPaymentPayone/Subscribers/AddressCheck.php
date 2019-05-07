@@ -119,14 +119,8 @@ class AddressCheck implements SubscriberInterface
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
             $config = $moptPayoneMain->getPayoneConfig($paymentID);
 
-            $currentPaymentName = '';
-
-            if(is_array(Shopware()->Session()->sRegister) && array_key_exists('payment', Shopware()->Session()->sRegister) &&
-                array_key_exists('object', Shopware()->Session()->sRegister['payment']) && array_key_exists('id', Shopware()->Session()->sRegister['payment']['object']) &&
-                !empty(Shopware()->Session()->sRegister['payment']['object']['id'])) {
-                $currentPaymentId = Shopware()->Session()->sRegister['payment']['object']['id'];
-                $currentPaymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($currentPaymentId);
-            }
+            $currentPaymentId = Shopware()->Session()->sPaymentID;
+            $currentPaymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($currentPaymentId);
 
             if($currentPaymentName == 'mopt_payone__ewallet_amazon_pay') {
                 $arguments->setReturn(false);

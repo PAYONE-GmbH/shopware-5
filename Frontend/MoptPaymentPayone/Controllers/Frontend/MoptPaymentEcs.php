@@ -195,6 +195,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
             $this->createUserWithoutAccount($payData, $session, $paymentId);
         }
 
+        Shopware()->Session()->sPaymentID = $session->moptPaypayEcsPaymentId;
+
         $user = $this->getUserData();
         //set user data
         $user['additional']['charge_vat'] = true;

@@ -38,6 +38,8 @@ class Payment implements SubscriberInterface
             'sAdmin::sValidateStep3::after' => 'onValidateStep3',
             // hook for getting dispatch basket, used to calculate correct shipment costs for credit card payments
             'sAdmin::sGetDispatchBasket::after' => 'onGetDispatchBasket',
+            // hook for getting dispatch basket, used to calculate correct shipment costs for credit card payments
+            'sAdmin::sUpdatePayment::before' => 'onUpdatePayment',
             // group creditcards
             'Shopware_Controllers_Frontend_Checkout::shippingPaymentAction::after' => 'onShippingPaymentAction',
             // correct wrong currency when saving unfinished orders
@@ -387,5 +389,11 @@ class Payment implements SubscriberInterface
         $return = ($valid) ? $originalCurrency : false;
 
         return $return;
+    }
+
+    public function onUpdatePayment(\Enlight_Event_EventArgs $arguments) {
+        if(Shopware()->Front()->Request()->get('payment')) {
+            Shopware()->Session()->sPaymentID = Shopware()->Front()->Request()->get('payment');
+        }
     }
 }
