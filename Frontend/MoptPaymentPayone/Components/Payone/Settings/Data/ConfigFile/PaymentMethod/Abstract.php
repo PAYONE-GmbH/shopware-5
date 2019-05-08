@@ -231,7 +231,7 @@ abstract class Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract extends Pa
     /**
      * @param string $key
      */
-    public function setKey(string $key)
+    public function setKey($key)
     {
         $this->key = $key;
     }

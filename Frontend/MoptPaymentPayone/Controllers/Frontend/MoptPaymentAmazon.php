@@ -39,21 +39,25 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
     public function indexAction()
     {
-        if (!empty($this->Request()->getParam("access_token"))) {
-            $this->session->moptPayoneAmazonAccessToken = $this->Request()->getParam("access_token");
+        $accessToken = $this->Request()->getParam("access_token");
+        if (!empty($accessToken)) {
+            $this->session->moptPayoneAmazonAccessToken = $accessToken;
         }
 
-        if (!empty($this->Request()->getCookie("amazon_Login_accessToken"))) {
-            $this->session->moptPayoneAmazonAccessToken = $this->Request()->getCookie("amazon_Login_accessToken");
+        $amazonLoginAccessToken = $this->Request()->getCookie("amazon_Login_accessToken");
+        if (!empty($amazonLoginAccessToken)) {
+            $this->session->moptPayoneAmazonAccessToken = $amazonLoginAccessToken;
         }
 
 
-        if (!empty($this->Request()->getParam("moptAmazonError"))) {
-            $this->View()->moptPayoneAmazonError = $this->Request()->getParam("moptAmazonError");
+        $moptAmazonError = $this->Request()->getParam("moptAmazonError");
+        if (!empty($moptAmazonError)) {
+            $this->View()->moptPayoneAmazonError = $moptAmazonError;
         }
 
-        if (!empty($this->Request()->getParam("moptAmazonReadonly"))) {
-            $this->View()->payoneAmazonReadOnly = $this->Request()->getParam("moptAmazonReadonly");
+        $moptAmazonReadonly = $this->Request()->getParam("moptAmazonReadonly");
+        if (!empty($moptAmazonReadonly)) {
+            $this->View()->payoneAmazonReadOnly = $moptAmazonReadonly;
         }
 
         if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()

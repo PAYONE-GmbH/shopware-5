@@ -15,7 +15,7 @@ class Shopware_Controllers_Frontend_MoptAddressPayone extends Shopware_Controlle
     {
         $this->admin = Shopware()->Modules()->Admin();
 
-        $this->addressRepository = $this->get('models')->getRepository(Shopware\Models\Customer\Address::class);
+        $this->addressRepository = $this->get('models')->getRepository('Shopware\Models\Customer\Address');
         $this->addressService = $this->get('shopware_account.address_service');
 
         $this->View()->assign('sUserLoggedIn', $this->admin->sCheckUser());

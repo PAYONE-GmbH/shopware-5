@@ -1,7 +1,5 @@
 <?php
 
-use Shopware\Models\Order\Order;
-
 /**
  * backend controller for payone configuration
  *
@@ -245,7 +243,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     {
 
         if (version_compare(Shopware()->Config()->version, '5.5', '>=')) {
-            $orderRepository = Shopware()->Models()->getRepository(Order::class);
+            $orderRepository = Shopware()->Models()->getRepository('Shopware\Models\Order\Order');
             $data = $orderRepository->getPaymentStatusQuery()->getArrayResult();
             $data = array_map(['Shopware_Controllers_Backend_MoptConfigPayone', 'getPaymentStatusTranslation'], $data);
         } else {

@@ -371,7 +371,7 @@ class Payment implements SubscriberInterface
         $isPayonePayment = $paymentHelper->isPayonePaymentMethod($paymentName);
 
         $em = Shopware()->Models();
-        $currencyModel = $em->getRepository(\Shopware\Models\Shop\Currency::class);
+        $currencyModel = $em->getRepository('Shopware\Models\Shop\Currency');
         $fetchedCurrency = $currencyModel->findOneBy(array('id' => $originalOrderCurrencyId));
 
         if (method_exists($fetchedCurrency, 'toArray')) {

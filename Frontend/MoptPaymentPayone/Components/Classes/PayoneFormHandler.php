@@ -29,7 +29,7 @@
 
 class Mopt_PayoneFormHandler
 {
-    const PAYOLUTION_NO_IBANBIC_COUNTRIES = [
+    private $payolutionNoIbanbicCountries = [
         'GB',
         'CH',
     ];
@@ -569,7 +569,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__payolution_installment_workorderid'] = $formData['mopt_payone__payolution_installment_workorderid'];
         }
 
-        if (! in_array($this->getUserCountyIso(), self::PAYOLUTION_NO_IBANBIC_COUNTRIES)) {
+        if (! in_array($this->getUserCountyIso(), $this->payolutionNoIbanbicCountries)) {
             if (!$formData['mopt_payone__payolution_installment_iban'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_installment_iban'])) {
                 $paymentData['sErrorFlag']['mopt_payone__payolution_installment_iban'] = true;
             } else {

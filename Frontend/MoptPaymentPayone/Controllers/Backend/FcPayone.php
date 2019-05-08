@@ -3,7 +3,6 @@
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr\Join;
 use Shopware\Components\CSRFWhitelistAware;
-use Shopware\Models\Order\Order;
 
 
 require_once 'MoptConfigPayone.php';
@@ -584,7 +583,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $payonepaymentmethods = $query->getArrayResult();
 
         if (version_compare(Shopware()->Config()->version, '5.5', '>=')) {
-            $orderRepository = Shopware()->Models()->getRepository(Order::class);
+            $orderRepository = Shopware()->Models()->getRepository('Shopware\Models\Order\Order');
             $data = $orderRepository->getPaymentStatusQuery()->getArrayResult();
             $data = array_map(['Shopware_Controllers_Backend_MoptConfigPayone', 'getPaymentStatusTranslation'], $data);
         } else {

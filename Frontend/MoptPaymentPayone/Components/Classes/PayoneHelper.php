@@ -1319,7 +1319,8 @@ class Mopt_PayoneHelper
         // Paypal ECS returns their own state codes
         // see https://developer.paypal.com/docs/classic/api/state_codes/#usa
         // so try again after mapping them to the real ISO Codes
-        $stateIso = ($isPaypalEcs && !empty($this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso))) ? $this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso)  : $stateIso;
+        $countryIsoFromPaypalCountryCode = $this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso);
+        $stateIso = ($isPaypalEcs && !empty($countryIsoFromPaypalCountryCode)) ? $countryIsoFromPaypalCountryCode : $stateIso;
 
         $sql = 'SELECT `id` FROM s_core_countries_states WHERE `shortcode` LIKE "' . $stateIso . '" '
             . 'AND `countryID` = ' . $countryId . ';';
@@ -1675,7 +1676,8 @@ class Mopt_PayoneHelper
         } else {
             $billing = $customer->getBilling();
         }
-        $return = !empty($billing->getCompany()) ? true : false;
+        $company = $billing->getCompany();
+        $return = !empty($company) ? true : false;
         return $return;
     }
 
