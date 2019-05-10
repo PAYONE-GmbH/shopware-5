@@ -252,14 +252,14 @@ class Payment implements SubscriberInterface
 
         if (!$paymentMeansWithGroupedCreditcard) {
             return;
-        }
-		
-        $this->container->get('events')->notify(
-            'MoptPaymentPayone_Subscriber_Payment_paymentGrouped',
-            [
-                'payments' => $paymentMeansWithGroupedCreditcard
-            ]
-        );
+        }else{
+			$this->container->get('events')->notify(
+				'MoptPaymentPayone_Subscriber_Payment_onGetPaymentMeans_paymentsGrouped',
+				[
+					'groupedPaymentMeans' => $paymentMeansWithGroupedCreditcard
+				]
+			);
+		}
 		
         $arguments->setReturn($paymentMeansWithGroupedCreditcard);
     }
@@ -314,14 +314,13 @@ class Payment implements SubscriberInterface
         $groupedPaymentMeans = $moptPayoneMain->getPaymentHelper()->groupCreditcards($subject->View()->sPayments);
         if ($groupedPaymentMeans) {
             $subject->View()->sPayments = $groupedPaymentMeans;
+            $this->container->get('events')->notify(
+                'MoptPaymentPayone_Subscriber_Payment_onShippingPaymentAction_paymentsGrouped',
+                [
+                    'groupedPaymentMeans' => $paymentMeansWithGroupedCreditcard
+                ]
+            );
         }
-		
-        $this->container->get('events')->notify(
-            'MoptPaymentPayone_Subscriber_Payment_paymentGrouped',
-            [
-                'payments' => $paymentMeansWithGroupedCreditcard
-            ]
-        );
     }
 
     /**
