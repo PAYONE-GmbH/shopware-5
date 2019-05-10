@@ -254,6 +254,14 @@ class Payment implements SubscriberInterface
             return;
         }
 
+        //custom notify event
+        $this->container->get('events')->notify(
+            'MoptPaymentPayone_Subscriber_Payment_onGetPaymentMeans_paymentsGrouped',
+            [
+                'groupedPaymentMeans' => $paymentMeansWithGroupedCreditcard
+            ]
+        );
+		
         $arguments->setReturn($paymentMeansWithGroupedCreditcard);
     }
 
@@ -297,7 +305,8 @@ class Payment implements SubscriberInterface
      * group credit cards for payment form
      *
      * @param \Enlight_Hook_HookArgs $arguments
-     * @return type
+     * @return void
+     * @throws \Enlight_Event_Exception
      */
     public function onShippingPaymentAction(\Enlight_Hook_HookArgs $arguments)
     {
@@ -307,6 +316,14 @@ class Payment implements SubscriberInterface
         $groupedPaymentMeans = $moptPayoneMain->getPaymentHelper()->groupCreditcards($subject->View()->sPayments);
         if ($groupedPaymentMeans) {
             $subject->View()->sPayments = $groupedPaymentMeans;
+
+            //custom notify event
+            $this->container->get('events')->notify(
+                'MoptPaymentPayone_Subscriber_Payment_onShippingPaymentAction_paymentsGrouped',
+                [
+                    'groupedPaymentMeans' => $groupedPaymentMeans
+                ]
+            );
         }
     }
 
