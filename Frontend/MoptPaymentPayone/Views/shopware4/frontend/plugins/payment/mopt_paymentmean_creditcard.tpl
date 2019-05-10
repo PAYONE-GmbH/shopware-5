@@ -8,14 +8,7 @@
 <script src="{link file='frontend/_resources/javascript/client_api.js'}"></script>
 
 <div class="debit" id="mopt_payone__cc_form">
-    <p class="none {if $error_flags.mopt_payone__cc_accountholder}instyle_error{/if}">
-        <label>
-            {s namespace='frontend/MoptPaymentPayone/payment' name='creditCardHolder'}Karteninhaber{/s}
-        </label>
-        <input name="moptPaymentData[mopt_payone__cc_accountholder]" type="text" id="mopt_payone__cc_accountholder" 
-               class="text {if $error_flags.mopt_payone__cc_accountholder}instyle_error{/if}" 
-               value="{$form_data.mopt_payone__cc_accountholder|escape}"/>
-    </p>
+    <p class="none {if $error_flags.mopt_payone__cc_accountholder}instyle_error{/if}"></p>
     <p class="none">
         <label for="mopt_payone__cc_cardtype">
             {s namespace='frontend/MoptPaymentPayone/payment' name='creditCardType'}Kartentyp{/s}
