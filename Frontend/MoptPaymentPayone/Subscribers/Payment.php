@@ -254,7 +254,7 @@ class Payment implements SubscriberInterface
             return;
         }
 		
-		$this->container->get('events')->notify(
+        $this->container->get('events')->notify(
             'MoptPaymentPayone_Subscriber_Payment_paymentGrouped',
             [
                 'payments' => $paymentMeansWithGroupedCreditcard
@@ -316,13 +316,12 @@ class Payment implements SubscriberInterface
             $subject->View()->sPayments = $groupedPaymentMeans;
         }
 		
-		$this->container->get('events')->notify(
+        $this->container->get('events')->notify(
             'MoptPaymentPayone_Subscriber_Payment_paymentGrouped',
             [
-                'payments' => $groupedPaymentMeans
+                'payments' => $paymentMeansWithGroupedCreditcard
             ]
         );
-		
     }
 
     /**
