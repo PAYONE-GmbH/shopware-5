@@ -14,6 +14,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     protected $moptPayone__main = null;
     protected $moptPayone__helper = null;
     protected $moptPayone__paymentHelper = null;
+    /** @var Logger $logger */
     protected $logger = null;
     protected $rotatingLogger = null;
 
@@ -78,6 +79,17 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         } else {
             $this->restoreSession($request->getParam('param'));
             $session = Shopware()->Session();
+            if (!property_exists($session, 'sOrderVariables')) {
+                $message = 'The session could not be restored. It might help to configure the server\'s gc_probability:'
+                    . '\n\n   https://developers.shopware.com/sysadmins-guide/sessions/#blocking-transactions'
+                    . '\n   https://www.php.net/manual/de/session.configuration.php#ini.session.gc-probability';
+                $this->logger->error($message);
+            } elseif (!method_exists($orderVariables = $session['sOrderVariables'], 'getArrayCopy')) {
+                $message = 'Method \'getArrayCopy\' does not exist, this might depend on malformed Object'
+                    . 'sOrderVariables because of existence of Plugin \'SwagAdvancedCart\'. See also'
+                    . '\n   https://github.com/PAYONE-GmbH/shopware-5/issues/37#issuecomment-399108861';
+                $this->logger->error($message);
+            }
             $orderVariables = $session['sOrderVariables']->getArrayCopy();
             $paymentId = $orderVariables['sUserData']['additional']['user']['paymentID'];
         }
