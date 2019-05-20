@@ -214,7 +214,7 @@ class Payment implements SubscriberInterface
 
             //save data to table and session
             $session->moptPayment = $post;
-            if (!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentId)) {
+            if (!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentId) && !is_null($userId)) {
                 $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
             }
         }
