@@ -1,5 +1,6 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
+{if $payment_mean.id == $form_data.payment}
 <div class="payment--form-group">
 
     <div id="mopt_payone__ratepay_invoice_abg">
@@ -134,3 +135,4 @@
     }
 
 </script>
+{/if}

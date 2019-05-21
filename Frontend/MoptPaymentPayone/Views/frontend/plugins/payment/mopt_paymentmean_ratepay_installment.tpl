@@ -6,6 +6,7 @@
     {assign var="moptRequired" value=0}
 {/if}
 
+{if $payment_mean.id == $form_data.payment}
 <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/ratepay.css"}" />
 <div class="payment--form-group">
 
@@ -262,3 +263,4 @@
     }
 
 </script>
+{/if}
