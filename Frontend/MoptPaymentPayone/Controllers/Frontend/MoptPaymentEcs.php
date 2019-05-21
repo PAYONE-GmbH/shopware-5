@@ -227,13 +227,9 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $session['sRegister'] = $register;
         $session['sRegisterFinished'] = false;
         
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $newdata = $this->saveUser($register,$paymentId);
-            $this->admin->sSYSTEM->_POST = $newdata['auth'];
-            $this->admin->sLogin(true);            
-        } else {
-            $this->admin->sSaveRegister();
-        }
+        $newdata = $this->saveUser($register,$paymentId);
+        $this->admin->sSYSTEM->_POST = $newdata['auth'];
+        $this->admin->sLogin(true);
     }
   
     protected function updateUserAddresses($personalData, $session, $paymentId)
@@ -252,9 +248,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         if (!$updated) {
             return null;
         }        
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $this->updateCustomer($personalData, $paymentId);
-        }         
+        $this->updateCustomer($personalData, $paymentId);
         return $personalData;
     }
   
@@ -277,20 +271,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
                 'phone'=>array('required'=> intval(Shopware()->Config()->get('requirePhoneField'))),
                 'country'=>array('required' => 1, 'in' => $countryIds)
             );
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $this->updateBilling($userId, $personalData['billing']);
-            return true;                        
-        } else {            
-            $checkData = $this->admin->sValidateStep2($rules, true);
-            if (!empty($checkData['sErrorMessages'])) {
-                $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-                $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-                return false;
-            } else {
-                $this->admin->sUpdateBilling();
-                return true;
-            }
-        }
+        $this->updateBilling($userId, $personalData['billing']);
+        return true;
     }
   
     protected function updateShippingAddress($personalData, $session)
@@ -305,20 +287,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         'city'=>array('required'=>1)
         );
         $this->admin->sSYSTEM->_POST = $personalData['shipping'];
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $this->updateShipping($userId, $personalData['billing']);
-            return true;                        
-        } else {      
-            $checkData = $this->admin->sValidateStep2ShippingAddress($rules, true);
-            if (!empty($checkData['sErrorMessages'])) {
-                $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-                $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-                return false;
-            } else {
-                $this->admin->sUpdateShipping();
-                return true;
-            }
-        }  
+        $this->updateShipping($userId, $personalData['billing']);
+        return true;
     }
   
   /**
