@@ -81,13 +81,6 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         
         $userData = $this->getUserData();
         $amount = $this->getBasketAmount($userData);
-
-        //Check if shipping address is supported
-        if (!$this->isShippingAddressSupported($userData)) {
-            $session = Shopware()->Session();
-            $session->offsetSet('packStationDenied', true);
-            return $this->forward('ecsAbort');
-        }
         
         $expressCheckoutRequestData = $paramBuilder->buildPayPalExpressCheckoutDetails(
             $paymentId,
@@ -497,25 +490,4 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $customer->setPaymentId($paymentId);
         Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
     }
-
-
-    /**
-     * Check if address is confirm with PayPal Configuration (packStation check)
-     *
-     * @param $userData
-     * @return bool
-     */
-    private function isShippingAddressSupported($userData){
-        $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayonePayPalConfig();
-        if ($config->getPackStationMode() == 'deny') {
-            //Check if address is PackStation
-            foreach ($userData['shippingaddress'] as $adressPart) {
-                if (strpos(strtolower($adressPart), 'packstation')) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    
 }
