@@ -1691,4 +1691,25 @@ class Mopt_PayoneHelper
         return ($result == 1);
     }
 
+
+    /**
+     * Return the latest PayPalConfig
+     * @return \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
+     */
+    public function getPayonePayPalConfig()
+    {
+        // use latest config
+        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_paypal";
+        $latest = Shopware()->Db()->fetchOne($sql);
+
+        /**
+         * @var $config \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
+         */
+        $config = Shopware()->Models()->find(
+            'Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal',
+            $latest
+        );
+        return $config;
+    }
+
 }

@@ -204,8 +204,14 @@ class FrontendCheckout implements SubscriberInterface
         if ($request->getActionName() === 'cart') {
             if ($session->moptPayPalEcsError) {
                 unset($session->moptPayPalEcsError);
-                $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-                    ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten', true));
+                if ($session->offsetExists('packStationDenied')){
+                    $session->offsetUnset('packStationDenied');
+                    $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                        ->get('addresscheckErrorMessage', 'Bitte überprüfen Sie die Adresse', true));
+                }else {
+                    $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                        ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten', true));
+                }
             }
         }
 
