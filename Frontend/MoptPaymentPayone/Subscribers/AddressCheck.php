@@ -119,6 +119,14 @@ class AddressCheck implements SubscriberInterface
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
             $config = $moptPayoneMain->getPayoneConfig($paymentID);
 
+            $currentPaymentId = Shopware()->Session()->sPaymentID;
+            $currentPaymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($currentPaymentId);
+
+            if($currentPaymentName == 'mopt_payone__ewallet_amazon_pay') {
+                $arguments->setReturn(false);
+                return;
+            }
+
             if (!$config['adresscheckActive'] && !$config['consumerscoreActive']) {
                 $arguments->setReturn(false);
                 return;
@@ -135,6 +143,19 @@ class AddressCheck implements SubscriberInterface
             $shippingAddressData['country'] = $billingAddressData['countryId'];
             $basketAmount = $basket['AmountNumeric'];
 
+            if (in_array( $paymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
+                // check for paypal ecs
+                if ($paymentName == 'mopt_payone__ewallet_paypal' && Shopware()->Session()->moptPaypalEcsWorkerId) {
+                    $arguments->setReturn(false);
+                    return;
+                } elseif ($paymentName == 'mopt_payone__ewallet_paypal' && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
+                    // do nothing
+                } else {
+                    $arguments->setReturn(false);
+                    return;
+                }
+
+            }
 
             $userObject = $userId ? Shopware()->Models()
                 ->getRepository('Shopware\Models\Customer\Customer')
@@ -384,6 +405,20 @@ class AddressCheck implements SubscriberInterface
         $userId = $session->sUserId;
         $paymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($paymentId);
 
+        if (in_array( $paymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
+            // check for paypal ecs
+            if ($paymentName == 'mopt_payone__ewallet_paypal' && Shopware()->Session()->moptPaypalEcsWorkerId) {
+                $arguments->setReturn(false);
+                return;
+            } elseif ($paymentName == 'mopt_payone__ewallet_paypal' && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
+                // do nothing
+            } else {
+                $arguments->setReturn(false);
+                return;
+            }
+
+        }
+
         // get billing address attributes
         $userBillingAddressCheckData = $moptPayoneMain->getHelper()
             ->getBillingAddresscheckDataFromUserId($userId);
@@ -587,6 +622,21 @@ class AddressCheck implements SubscriberInterface
         $basketAmount = $session->get('sBasketAmount');
 
         $userId = $session->sUserId;
+        $paymentId =  $session->sPaymentID;
+
+        $paymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($paymentId);
+
+        if (in_array( $paymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
+            // check for paypal ecs
+            if ($paymentName == 'mopt_payone__ewallet_paypal' && Shopware()->Session()->moptPaypalEcsWorkerId) {
+                return;
+            } elseif ($paymentName == 'mopt_payone__ewallet_paypal' && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
+                // do nothing
+            } else {
+                return;
+            }
+
+        }
 
         // perform check if addresscheck is enabled
         $billingAddressCheckRequired = $moptPayoneMain->getHelper()->isBillingAddressToBeChecked(
@@ -768,6 +818,20 @@ class AddressCheck implements SubscriberInterface
             $session = Shopware()->Session();
             $userId = $session->sUserId;
             $shippingFormData = $postData['register']['shipping'];
+            $paymentId =  $session->sPaymentID;
+            $paymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($paymentId);
+
+	    if (in_array( $paymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
+	      // check for paypal ecs
+	        if ($paymentName == 'mopt_payone__ewallet_paypal' && Shopware()->Session()->moptPaypalEcsWorkerId) {
+	            return;
+	        } elseif ($paymentName == 'mopt_payone__ewallet_paypal' && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
+	            // do nothing
+	        } else {
+	            return;
+	    }
+
+	}
 
             // Do not check Packstation addresses
             if ($moptPayoneMain->getPaymentHelper()->isWunschpaketActive() &&
@@ -1053,6 +1117,7 @@ class AddressCheck implements SubscriberInterface
         $shippingAddressData = $userData['shippingaddress'];
         $shippingAddressData['country'] = $shippingAddressData['countryID'];
         $session = Shopware()->Session();
+        unset(Shopware()->Session()->moptPaypalEcsWorkerId);
         $userId = $session->sUserId;
 
         if ($this->getCustomerCheckIsNeeded($config, $userId, $basketValue, false)) {

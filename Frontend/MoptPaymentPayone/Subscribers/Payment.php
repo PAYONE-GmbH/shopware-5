@@ -38,6 +38,8 @@ class Payment implements SubscriberInterface
             'sAdmin::sValidateStep3::after' => 'onValidateStep3',
             // hook for getting dispatch basket, used to calculate correct shipment costs for credit card payments
             'sAdmin::sGetDispatchBasket::after' => 'onGetDispatchBasket',
+            // hook for getting dispatch basket, used to calculate correct shipment costs for credit card payments
+            'sAdmin::sUpdatePayment::before' => 'onUpdatePayment',
             // group creditcards
             'Shopware_Controllers_Frontend_Checkout::shippingPaymentAction::after' => 'onShippingPaymentAction',
             // correct wrong currency when saving unfinished orders
@@ -214,7 +216,7 @@ class Payment implements SubscriberInterface
 
             //save data to table and session
             $session->moptPayment = $post;
-            if (!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentId)) {
+            if (!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentId) && !is_null($userId)) {
                 $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
             }
         }
@@ -254,6 +256,14 @@ class Payment implements SubscriberInterface
             return;
         }
 
+        //custom notify event
+        $this->container->get('events')->notify(
+            'MoptPaymentPayone_Subscriber_Payment_onGetPaymentMeans_paymentsGrouped',
+            [
+                'groupedPaymentMeans' => $paymentMeansWithGroupedCreditcard
+            ]
+        );
+		
         $arguments->setReturn($paymentMeansWithGroupedCreditcard);
     }
 
@@ -297,7 +307,8 @@ class Payment implements SubscriberInterface
      * group credit cards for payment form
      *
      * @param \Enlight_Hook_HookArgs $arguments
-     * @return type
+     * @return void
+     * @throws \Enlight_Event_Exception
      */
     public function onShippingPaymentAction(\Enlight_Hook_HookArgs $arguments)
     {
@@ -307,6 +318,14 @@ class Payment implements SubscriberInterface
         $groupedPaymentMeans = $moptPayoneMain->getPaymentHelper()->groupCreditcards($subject->View()->sPayments);
         if ($groupedPaymentMeans) {
             $subject->View()->sPayments = $groupedPaymentMeans;
+
+            //custom notify event
+            $this->container->get('events')->notify(
+                'MoptPaymentPayone_Subscriber_Payment_onShippingPaymentAction_paymentsGrouped',
+                [
+                    'groupedPaymentMeans' => $groupedPaymentMeans
+                ]
+            );
         }
     }
 
@@ -383,5 +402,11 @@ class Payment implements SubscriberInterface
         $return = ($valid) ? $originalCurrency : false;
 
         return $return;
+    }
+
+    public function onUpdatePayment(\Enlight_Event_EventArgs $arguments) {
+        if(Shopware()->Front()->Request()->get('payment')) {
+            Shopware()->Session()->sPaymentID = Shopware()->Front()->Request()->get('payment');
+        }
     }
 }
