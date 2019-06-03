@@ -1237,8 +1237,14 @@ class Mopt_PayoneParamBuilder
     {
         $items = array();
         $taxFree = false;
+        $blNet = false;
+
         if (isset($userData['additional']['charge_vat'])) {
             $taxFree = !$userData['additional']['charge_vat'];
+        }
+
+        if (isset($userData['additional']['show_net'])) {
+            $blNet = !$userData['additional']['show_net'];
         }
 
         foreach ($basket['content'] as $article) {
@@ -1247,6 +1253,8 @@ class Mopt_PayoneParamBuilder
             $params['id'] = substr($article['ordernumber'] ?: $article['articlename'], 0, 32); //article number
             if ($taxFree) {
                 $params['pr'] = round($article['netprice'], 2); //netto price
+            } elseif ($blNet) {
+                $params['pr'] = round($article['netprice'] * (1 + ($article['tax_rate'] / 100)), 2);
             } else {
                 $params['pr'] = round($article['priceNumeric'], 2); //brutto price
             }
