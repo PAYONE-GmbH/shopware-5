@@ -26,7 +26,7 @@
      >
 
 
-    <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name="changeCard" namespace="frontend/register/index"}{/s}</a>
+    <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
     <input name="moptPaymentData[mopt_payone__cc_accountholder]"
            type="text"
