@@ -26,7 +26,7 @@
      >
 
 
-    <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >ändern</a>
+    <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__cc_cardtype]"
