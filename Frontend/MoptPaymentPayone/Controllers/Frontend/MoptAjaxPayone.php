@@ -1086,9 +1086,19 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     }
 
      protected function isShippingAddressSupported($address){
+        if (count($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries()) > 0 ){
+            $amazonPaySupportedCountries = array();
+            foreach ($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries() as $amazonCountry) {
+                /**
+                 * @var \Shopware\Models\Country\Country $country
+                 */
+                $amazonPaySupportedCountries[] = $amazonCountry->getIso();
+            }
 
-        $countries = $this->moptPayoneMain->getPaymentHelper()
-            ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
+            if (!in_array($address['shipping_country'], $amazonPaySupportedCountries)) {
+                return false;
+            }
+        }
 
         /**
          * @var $config \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay
@@ -1104,6 +1114,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 }
             }
         }
+
+         $countries = $this->moptPayoneMain->getPaymentHelper()
+             ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
 
         if (count($countries) == 0){
             return true;
