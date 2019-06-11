@@ -187,7 +187,7 @@ class FrontendCheckout implements SubscriberInterface
             if (!$this->isShippingAddressSupported($orderVars['sUserData']['shippingaddress'])) {
                 $view->assign('invalidShippingAddress', true);
                 $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-                    ->get('bankaccountcheckblocked', 'Test Error', true));
+                    ->get('packStationError', 'Die Lieferung an eine Packstation ist mit dieser Zahlungsart leider nicht möglich', true));
             }
         }
 

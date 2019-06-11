@@ -1611,6 +1611,11 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             $sql = "ALTER TABLE `s_plugin_mopt_payone_paypal` "
                 . "ADD COLUMN pack_station_mode VARCHAR(50) DEFAULT 'allow';";
             $db->exec($sql);
+
+            $sql = "UPDATE s_plugin_mopt_payone_paypal SET pack_station_mode = 'allow';";
+            $db->exec($sql);
+
+
         }
 
     }

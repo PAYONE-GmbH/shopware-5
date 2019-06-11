@@ -12,8 +12,8 @@ Ext.define('Shopware.apps.MoptPayonePaypal.view.detail.Button', {
                 { type: 'string', name: 'name' }
             ],
             data: [
-                { value: 'allow', name: 'Allow' },
-                { value: 'deny', name: 'Deny' },
+                { value: 'allow', name: '{s name=packStation/allow}Erlauben{/s}' },
+                { value: 'deny', name: '{s name=packStation/allow}Verbieten{/s}' },
             ]
         });
 
