@@ -585,7 +585,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $prefix = 'mopt_payone';
         $tables = $this->assertMinimumVersion('5.2') ? $this->getInstallHelper()->moptAttributeExtensionsArray52($this->getId()) : $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
 
-        if (version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '<') && Shopware()->Container()->getParameter('shopware.release.version') !== '___VERSION___') {
+        if (version_compare(Shopware()->Config()->get('version'), '5.2.0', '<') && Shopware()->Config()->get('version') !== '___VERSION___') {
             foreach ($tables as $table => $attributes) {
                 foreach ($attributes as $attribute => $options) {
                     $type = is_array($options) ? $options[0] : $options;

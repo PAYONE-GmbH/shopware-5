@@ -227,7 +227,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $session['sRegister'] = $register;
         $session['sRegisterFinished'] = false;
         
-        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $newdata = $this->saveUser($register,$paymentId);
             $this->admin->sSYSTEM->_POST = $newdata['auth'];
             $this->admin->sLogin(true);            
@@ -252,7 +252,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         if (!$updated) {
             return null;
         }        
-        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $this->updateCustomer($personalData, $paymentId);
         }         
         return $personalData;
@@ -277,7 +277,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
                 'phone'=>array('required'=> intval(Shopware()->Config()->get('requirePhoneField'))),
                 'country'=>array('required' => 1, 'in' => $countryIds)
             );
-        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $this->updateBilling($userId, $personalData['billing']);
             return true;                        
         } else {            
@@ -305,7 +305,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         'city'=>array('required'=>1)
         );
         $this->admin->sSYSTEM->_POST = $personalData['shipping'];
-        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $this->updateShipping($userId, $personalData['billing']);
             return true;                        
         } else {      

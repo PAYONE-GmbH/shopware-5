@@ -333,7 +333,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         if ($controllerName == 'moptAjaxPayone') {
             // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
-            if (version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.3.0', '>=')
+            if (version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=')
             ) {
                 $view->assign('useMoptAccountController', true);
             }
@@ -402,7 +402,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
-                if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+                if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                     $birthday = explode('-', $userData['additional']['user']['birthday']);
                 } else {
                     $birthday = explode('-', $userData['billingaddress']['birthday']);
@@ -421,7 +421,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfigDebitnote']['payolutionCompanyName']);
-                if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+                if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                     if (!isset($userData['additional']['user']['birthday'])) {
                         $userData['billingaddress']['birthday'] = "0000-00-00";
                     } else {
@@ -448,7 +448,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfigInvoice']['payolutionCompanyName']);
-                if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+                if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                     if (!isset($userData['additional']['user']['birthday'])) {
                         $userData['billingaddress']['birthday'] = "0000-00-00";
                     } else {
@@ -475,7 +475,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfigInstallment']['payolutionCompanyName']);
-                if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+                if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                     if (!isset($userData['additional']['user']['birthday'])) {
                         $userData['billingaddress']['birthday'] = "0000-00-00";
                     } else {
@@ -507,7 +507,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['moptRatepayConfig']['deviceFingerPrint'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetRatepayDeviceFingerprint();
 
-                if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+                if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                     if (!isset($userData['additional']['user']['birthday'])) {
                         $userData['billingaddress']['birthday'] = "0000-00-00";
                     } else {
@@ -533,7 +533,7 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPayoneMain->getPaymentHelper()->isPayoneSafeInvoice($paymentMean['name'])
             ) {
 
-                if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
+                if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                     if (!isset($userData['additional']['user']['birthday'])) {
                         $userData['billingaddress']['birthday'] = "0000-00-00";
                     } else {
@@ -728,8 +728,8 @@ class FrontendPostDispatch implements SubscriberInterface
 
         // empty means default is set (>SW5.3 -> true)
         // so if there is an element in array it should be false
-        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' ||
-            version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.3.0', '>=')
+        if (Shopware()->Config()->get('version') === '___VERSION___' ||
+            version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=')
         ) {
             if (!empty($configVal) && !$configVal[0]->getValue()) {
                 return false;
