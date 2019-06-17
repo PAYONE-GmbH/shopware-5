@@ -244,7 +244,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     public function readPaymentStateAction()
     {
 
-        if (version_compare(Shopware()->Config()->version, '5.5', '>=')) {
+        if (version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.5', '>=') || Shopware()->Container()->getParameter('shopware.release.version') == '___VERSION___' ) {
             $orderRepository = Shopware()->Models()->getRepository(Order::class);
             $data = $orderRepository->getPaymentStatusQuery()->getArrayResult();
             $data = array_map(['Shopware_Controllers_Backend_MoptConfigPayone', 'getPaymentStatusTranslation'], $data);
