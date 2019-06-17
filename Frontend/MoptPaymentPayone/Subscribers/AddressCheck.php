@@ -308,7 +308,7 @@ class AddressCheck implements SubscriberInterface
     private function isBillingAttribWriteable(Customer $customer)
     {
         try {
-            if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
                 $billingObject = $customer->getDefaultBillingAddress();
             } else {
                 $billingObject = $customer->getBilling();
@@ -325,7 +325,7 @@ class AddressCheck implements SubscriberInterface
     private function isShippingAttribWriteable(Customer $customer)
     {
         try {
-            if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
                 $shippingObject = $customer->getDefaultShippingAddress();
             } else {
                 $shippingObject = $customer->getShipping();
@@ -580,8 +580,8 @@ class AddressCheck implements SubscriberInterface
                     $response = $this->performConsumerScoreCheck($config, $billingAddressData, $paymentId);
                     if ($forwardOnError && !$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
                         // cancel, redirect to payment choice
-                        if (\Shopware::VERSION === '___VERSION___' ||
-                            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' ||
+                            version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.3.0', '>=')
                         ) {
                             $subject->forward('shippingpayment', 'checkout', null);
 
@@ -973,7 +973,7 @@ class AddressCheck implements SubscriberInterface
             $userAttribute->setMoptPayoneConsumerscoreDate(0);
             Shopware()->Models()->persist($userAttribute);
             Shopware()->Models()->flush();
-            if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
                 $billing = $user->getDefaultBillingAddress();
             } else {
                 $billing = $user->getBilling();
@@ -982,7 +982,7 @@ class AddressCheck implements SubscriberInterface
             $billingAttribute->setMoptPayoneAddresscheckDate(0);
             Shopware()->Models()->persist($billingAttribute);
             Shopware()->Models()->flush();
-            if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
                 $shipping = $user->getDefaultShippingAddress();
             } else {
                 $shipping = $user->getShipping();;
@@ -1127,7 +1127,7 @@ class AddressCheck implements SubscriberInterface
                     $response = $this->performConsumerScoreCheck($config, $billingAddressData, 0);
                     if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
                         // cancel, redirect to payment choice
-                        if (version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        if (version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.3.0', '>=')
                         ) {
                             $subject->forward('shippingPayment', 'checkout');
                         } else {
@@ -1139,7 +1139,7 @@ class AddressCheck implements SubscriberInterface
                         // abort and delete payment data and set to payone prepayment
                         $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
                         $moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
-                        if (version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        if (version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.3.0', '>=')
                         ) {
                             $subject->forward('shippingPayment', 'checkout', null);
                         } else {
@@ -1403,8 +1403,8 @@ class AddressCheck implements SubscriberInterface
                         break;
 
                     case 1: // reenter address -> redirect to address form
-                        if (\Shopware::VERSION === '___VERSION___' ||
-                            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' ||
+                            version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.3.0', '>=')
                         ) {
                             $caller->forward('edit', 'moptaddresspayone', null, [
                                 'id' => $billingAddressData['id'],
@@ -1412,7 +1412,7 @@ class AddressCheck implements SubscriberInterface
                                 'sTargetAction' => 'confirm'
                             ]);
                         } elseif (
-                        version_compare(\Shopware::VERSION, '5.2.0', '>=')
+                        version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')
                         ) {
                             $caller->forward('edit', 'address', null, [
                                 'id' => $billingAddressData['id'],
@@ -1552,8 +1552,8 @@ class AddressCheck implements SubscriberInterface
             if ($forwardOnError) {
                 switch ($config['adresscheckFailureHandling']) {
                     case 0: // cancel transaction -> redirect to payment choice
-                        if (\Shopware::VERSION === '___VERSION___' ||
-                            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' ||
+                            version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.3.0', '>=')
                         ) {
                             $subject->forward('shippingPayment', 'checkout', null);
 
@@ -1563,15 +1563,15 @@ class AddressCheck implements SubscriberInterface
                         break;
 
                     case 1: // reenter address -> redirect to address form
-                        if (\Shopware::VERSION === '___VERSION___' ||
-                            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' ||
+                            version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.3.0', '>=')
                         ) {
                             $subject->forward('edit', 'moptaddresspayone', null, [
                                 'id' => $shippingAddressData['id'],
                                 'sTarget' => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
-                        } elseif (version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+                        } elseif (version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
 
                         } else {
                             $subject->forward('edit', 'address', null, ['sTarget' => 'checkout']);
@@ -1586,8 +1586,8 @@ class AddressCheck implements SubscriberInterface
                             );
 
                             if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
-                                if (\Shopware::VERSION === '___VERSION___' ||
-                                    version_compare(\Shopware::VERSION, '5.3.0', '>=')
+                                if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' ||
+                                    version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.3.0', '>=')
                                 ) {
                                     $subject->forward('shippingpayment', 'checkout', null);
                                 } else {

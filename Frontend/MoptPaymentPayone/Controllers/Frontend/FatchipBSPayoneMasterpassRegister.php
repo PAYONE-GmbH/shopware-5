@@ -81,7 +81,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayoneMasterpassRegister extends Sh
         // this has to be set so shipping methods will work
         $session->offsetSet('sPaymentID', $this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
 
-        if (version_compare(\Shopware::VERSION, '5.2', '>=')) {
+        if (version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2', '>=')) {
             $register = $this->View()->getAssign('errors');
             $errors = array_merge($register['personal'], $register['billing'], $register['shipping']);
         } else {

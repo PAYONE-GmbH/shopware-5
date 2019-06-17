@@ -1177,7 +1177,7 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
             $db->exec($sql);
         }
 
-        if (version_compare(\Shopware::VERSION, '5.5.0', '>=')) {
+        if (version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.5.0', '>=')) {
             $sql = "SELECT * FROM s_core_snippets
                 WHERE  name = 'amazon_failed' AND namespace = 'backend/static/payment_status'";
             $result = $db->query($sql);
@@ -1239,7 +1239,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             $db->exec($sql);
         }
 
-        if (version_compare(\Shopware::VERSION, '5.5.0', '>=')) {
+        if (version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.5.0', '>=')) {
             $sql = "SELECT * FROM s_core_snippets
                 WHERE  name = 'amazon_delayed' AND namespace = 'backend/static/payment_status'";
             $result = $db->query($sql);

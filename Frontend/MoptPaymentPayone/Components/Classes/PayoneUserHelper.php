@@ -36,7 +36,7 @@ class Mopt_PayoneUserHelper
         $session['sRegister'] = $register;
         $session['sRegisterFinished'] = false;
 
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
             $newdata = $this->saveUser($register, $paymentId);
             $this->admin->sSYSTEM->_POST = $newdata['auth'];
             $this->admin->sLogin(true);
@@ -268,7 +268,7 @@ class Mopt_PayoneUserHelper
         if (!$updated) {
             return null;
         }
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
             $this->updateCustomer($personalData, $paymentId);
         }
         return $personalData;
@@ -293,7 +293,7 @@ class Mopt_PayoneUserHelper
             'phone'=>array('required'=> intval(Shopware()->Config()->get('requirePhoneField'))),
             'country'=>array('required' => 1, 'in' => $countryIds)
         );
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
             $this->updateBilling($userId, $personalData['billing']);
             return true;
         } else {
@@ -321,7 +321,7 @@ class Mopt_PayoneUserHelper
             'city'=>array('required'=>1)
         );
         $this->admin->sSYSTEM->_POST = $personalData['shipping'];
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Container()->getParameter('shopware.release.version') === '___VERSION___' || version_compare(Shopware()->Container()->getParameter('shopware.release.version'), '5.2.0', '>=')) {
             $this->updateShipping($userId, $personalData['shipping']);
             return true;
         } else {
