@@ -575,6 +575,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // config option for AmazaonPay Packstation allow
         $this->getInstallHelper()->checkAndUpdateAmazonPackStationModelExtension();
+
+        // config option for PayPal Packstation allow
+        $this->getInstallHelper()->checkAndUpdatePayPalPackStationModelExtension();
     }
 
     /**

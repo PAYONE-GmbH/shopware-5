@@ -490,5 +490,4 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $customer->setPaymentId($paymentId);
         Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
     }
-    
 }

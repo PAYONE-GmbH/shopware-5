@@ -48,6 +48,12 @@ class MoptPayonePaypal extends ModelEntity
      */
     private $isDefault;
 
+    /**
+     * @var
+     * @ORM\Column(name="pack_station_mode", type="string", nullable=true)
+     */
+    protected $packStationMode;
+
     public function __construct()
     {
         $this->buttons = new \Doctrine\Common\Collections\ArrayCollection();
@@ -130,5 +136,21 @@ class MoptPayonePaypal extends ModelEntity
     public function setIsDefault($isDefault)
     {
         $this->isDefault = $isDefault;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPackStationMode()
+    {
+        return $this->packStationMode;
+    }
+
+    /**
+     * @param mixed $packStationMode
+     */
+    public function setPackStationMode($packStationMode)
+    {
+        $this->packStationMode = $packStationMode;
     }
 }

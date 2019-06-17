@@ -1593,4 +1593,30 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         }
 
     }
+
+    /**
+     * check if paypal configuration is already extended Pack station check
+     *
+     * @return void
+     */
+    function checkAndUpdatePayPalPackStationModelExtension(){
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='pack_station_mode'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_paypal` "
+                . "ADD COLUMN pack_station_mode VARCHAR(50) DEFAULT 'allow';";
+            $db->exec($sql);
+
+            $sql = "UPDATE s_plugin_mopt_payone_paypal SET pack_station_mode = 'allow';";
+            $db->exec($sql);
+
+
+        }
+
+    }
 }

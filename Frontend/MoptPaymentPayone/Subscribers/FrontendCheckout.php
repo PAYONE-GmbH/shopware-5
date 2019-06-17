@@ -181,6 +181,15 @@ class FrontendCheckout implements SubscriberInterface
         $orderVars = $session->get('sOrderVariables');
         $userPaymentId = $orderVars['sUserData']['additional']['payment']['id'];
 
+        //check if payment method is PayPal ecs
+        $helper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+        if ($helper->getPaymentNameFromId($userPaymentId) == 'mopt_payone__ewallet_paypal') {
+            if (!$this->isShippingAddressSupported($orderVars['sUserData']['shippingaddress'])) {
+                $view->assign('invalidShippingAddress', true);
+                $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                    ->get('packStationError', 'Die Lieferung an eine Packstation ist mit dieser Zahlungsart leider nicht möglich', true));
+            }
+        }
 
         if ($request->getActionName() === 'shippingPayment') {
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
@@ -327,5 +336,27 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         return $result['image'];
+    }
+
+    /**
+     * Check if address is confirm with PayPal Configuration (packStation check)
+     *
+     * @param $shippingData
+     * @return bool
+     */
+    private function isShippingAddressSupported($shippingData)
+    {
+        $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayonePayPalConfig();
+        if ($config->getPackStationMode() == 'deny') {
+            //Check if address is PackStation
+            foreach ($shippingData as $addressPart) {
+                if (!is_array($addressPart)) {
+                    if (strpos(strtolower($addressPart), 'packstation') !== false) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

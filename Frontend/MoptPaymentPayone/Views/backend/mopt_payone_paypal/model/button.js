@@ -10,6 +10,7 @@ Ext.define('Shopware.apps.MoptPayonePaypal.model.Button', {
     fields: [
         { name: 'id', type: 'int', useNull: true},
         { name: 'localeId', type: 'int' },
+        { name: 'packStationMode', type: 'string' },
         { name: 'image', type: 'string'},
         { name: 'isDefault', type: 'boolean'}
     ],
