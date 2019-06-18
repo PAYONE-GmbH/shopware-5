@@ -289,7 +289,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += ($positionPrice * $position->getQuantity());
             } else {
-                $amount += (($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100)));
+                $amount += round((($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100))),2);
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {
@@ -301,7 +301,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
             } else {
-                $amount += $order->getInvoiceShipping() * (1 + ($flTaxRate / 100));
+                $amount += $order->getInvoiceShipping();
             }
         }
 
