@@ -333,7 +333,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         if ($controllerName == 'moptAjaxPayone') {
             // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
-            if (version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=')
+            if (version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=') || Shopware()->Config()->get('version') == '___VERSION___'
             ) {
                 $view->assign('useMoptAccountController', true);
             }
