@@ -1127,7 +1127,8 @@ class AddressCheck implements SubscriberInterface
                     $response = $this->performConsumerScoreCheck($config, $billingAddressData, 0);
                     if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
                         // cancel, redirect to payment choice
-                        if (version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=')
+                        if (version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=') ||
+                            Shopware()->Config()->get('version') === '___VERSION___'
                         ) {
                             $subject->forward('shippingPayment', 'checkout');
                         } else {
@@ -1139,7 +1140,8 @@ class AddressCheck implements SubscriberInterface
                         // abort and delete payment data and set to payone prepayment
                         $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
                         $moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
-                        if (version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=')
+                        if (version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=') ||
+                            Shopware()->Config()->get('version') === '___VERSION___'
                         ) {
                             $subject->forward('shippingPayment', 'checkout', null);
                         } else {
@@ -1404,15 +1406,15 @@ class AddressCheck implements SubscriberInterface
 
                     case 1: // reenter address -> redirect to address form
                         if (Shopware()->Config()->get('version') === '___VERSION___' ||
-                            version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=')
+                            version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=') ||
+                            Shopware()->Config()->get('version') === '___VERSION___'
                         ) {
                             $caller->forward('edit', 'moptaddresspayone', null, [
                                 'id' => $billingAddressData['id'],
                                 'sTarget' => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
-                        } elseif (
-                        version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
+                        } elseif (version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
                         ) {
                             $caller->forward('edit', 'address', null, [
                                 'id' => $billingAddressData['id'],
