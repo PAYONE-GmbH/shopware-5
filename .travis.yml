@@ -5,10 +5,15 @@ php:
 env:
 - SWVER=5.4
 - SWVER=5.5
+- SWVER=5.6
+matrix:
+  exclude:
+    - php: '5.6'
+      env: MAGEVER=5.6
 services:
 - mysql
 before_script:
-- git clone --depth=10 -b $SWVER https://github.com/shopware/shopware.git /tmp/shopware
+- git clone --depth=1 -b $SWVER https://github.com/shopware/shopware.git /tmp/shopware
 - cd ..
 - cd /tmp/shopware
 - ant -f build/build.xml -Ddb.user=root -Ddb.host=127.0.0.1 -Ddb.name=shopware build-unit
