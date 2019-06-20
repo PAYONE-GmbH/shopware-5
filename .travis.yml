@@ -9,7 +9,7 @@ env:
 matrix:
   exclude:
     - php: '5.6'
-      env: MAGEVER=5.6
+      env: SWVER=5.6
 services:
 - mysql
 before_script:
