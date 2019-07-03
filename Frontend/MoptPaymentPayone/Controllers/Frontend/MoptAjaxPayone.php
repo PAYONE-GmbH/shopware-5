@@ -924,20 +924,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 return;
             }
 
-            //check telephonenumber
-            if (Shopware()->Config()->get('requirePhoneField')){
-                $shipping_telephonenumber = $responseAddress['shipping_telephonenumber'];
-                if (strlen($shipping_telephonenumber) < 5 || !is_numeric($shipping_telephonenumber)){
-                    $data['errormessage'] = Shopware()->Snippets()
-                        ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-                        ->get('phoneNumberRequired');
-                    $data['status'] = 'error';
-                    $encoded = json_encode($data);
-                    echo $encoded;
-                    return;
-                }
-            }
-
             if (!$this->isShippingAddressSupported($responseAddress)) {
                 $data['errormessage'] = Shopware()->Snippets()
                     ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
