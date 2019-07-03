@@ -682,6 +682,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'parent' => $item,
         ));
         $this->createMenuItem(array(
+            'label' => 'Payone PayDirekt',
+            'controller' => 'MoptPayonePayDirekt',
+            'action' => 'Index',
+            'class' => 'sprite-locale',
+            'active' => 1,
+            'parent' => $item,
+        ));
+        $this->createMenuItem(array(
             'label' => 'Payone Kreditkartenkonfiguration',
             'controller' => 'MoptPayoneCreditcardConfig',
             'action' => 'Index',
