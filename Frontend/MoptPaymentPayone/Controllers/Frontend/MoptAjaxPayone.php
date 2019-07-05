@@ -927,7 +927,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             //check telephonenumber
             if (Shopware()->Config()->get('requirePhoneField')){
                 $shipping_telephonenumber = $responseAddress['shipping_telephonenumber'];
-                if (strlen($shipping_telephonenumber) < 5 || !is_numeric($shipping_telephonenumber)){
+                if (strlen($shipping_telephonenumber) < 1){
                     $data['errormessage'] = Shopware()->Snippets()
                         ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                         ->get('phoneNumberRequired');
