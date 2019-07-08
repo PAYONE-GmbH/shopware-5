@@ -914,7 +914,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $responseAddress = $response->getPaydata()->toAssocArray();
 
             // check if billing country is active for amazon
-
             if (!$this->isBillingAddressSupported($responseAddress['billing_country'])) {
                 $data['errormessage'] = Shopware()->Snippets()
                     ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
@@ -923,6 +922,20 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $encoded = json_encode($data);
                 echo $encoded;
                 return;
+            }
+
+            //check telephonenumber
+            if (Shopware()->Config()->get('requirePhoneField')){
+                $shipping_telephonenumber = $responseAddress['shipping_telephonenumber'];
+                if (strlen($shipping_telephonenumber) < 1){
+                    $data['errormessage'] = Shopware()->Snippets()
+                        ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                        ->get('phoneNumberRequired');
+                    $data['status'] = 'error';
+                    $encoded = json_encode($data);
+                    echo $encoded;
+                    return;
+                }
             }
 
             if (!$this->isShippingAddressSupported($responseAddress)) {
