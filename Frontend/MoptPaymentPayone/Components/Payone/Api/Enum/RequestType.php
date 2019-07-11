@@ -48,7 +48,7 @@ class Payone_Api_Enum_RequestType
     const MANAGEMANDATE = 'managemandate';
     const GETFILE = 'getfile';
     const VAUTHORIZATION = 'vauthorization';
-    
+
     /*
      * init paypal express checkout
      */

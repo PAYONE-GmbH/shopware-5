@@ -128,8 +128,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $config = $moptPayoneMain->getPayoneConfig($paymentId);
         Shopware()->Session()->sComment = $this->Request()->getParam('sComment');
 
-        $response = $this->buildAndCallSetOrderReferenceDetails($config);
-
         $params = $moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
 
         if ($config['authorisationMethod'] === 'Autorisierung') {
@@ -345,51 +343,53 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
      */
     private function handleAmazonError($response)
     {
-        switch ($response->getErrorCode()) {
-            // TransactionTimedOut
+        $errorCode = $response->getErrorCode();
+
+        switch ($errorCode) {
+            // TransactionTimedOut (TimeOut)
             // log User out to prevent 902 Error on second try (check with PO)
             case '980':
-                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                $this->redirectToCart(true, $errorCode);
                 break;
 
-            // InvalidPaymentMethod
+            // InvalidPaymentMethod (ungültige Zahlungsart)
             case '981':
-                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
+                $this->redirectToCart(true, $errorCode);
                 break;
 
-            // AmazonRejected
+            // AmazonRejected (Zahlung durch Amazon zurückgewiesen)
             case '982':
-                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                $this->redirectToCart(true, $errorCode);
                 break;
 
-            //  ProcessingFailure
+            //  ProcessingFailure (Fehler bei Bearbeitung der Zahlung)
             case '983':
-                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                $this->redirectToCart(true, $errorCode);
                 break;
 
-            //  BuyerEqualsSeller
+            //  BuyerEqualsSeller (Käufer- und Verkäuferkonto identisch)
             case '984':
-                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                $this->redirectToCart(true, $errorCode);
                 break;
 
-            //  PaymentMethodNotAllowed
+            //  PaymentMethodNotAllowed (Zahlungsart nicht zulässig)
             case '985':
-                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
+                $this->redirectToCart(true, $errorCode);
                 break;
 
             //  PaymentPlanNotSet
             case '986':
-                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotherpayment');
+                $this->redirectToCart(true, $errorCode);
                 break;
 
             //  ShippingAddressNotSet
             //  old: 900
             case '987':
-                $this->redirectToWidgetsAndShowError($errorMessage = 'chooseotheraddress');
+                $this->redirectToCart(true, $errorCode);
                 break;
 
             default:
-                $this->redirectToCart($amazonLogout = true, $errorMessage = 'chooseotherpayment');
+                $this->redirectToCart(true, $errorCode);
                 break;
 
         }
@@ -451,7 +451,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $this->session->moptAmazonLogout = $amazonLogout;
         $this->redirect([
             'controller' => 'checkout',
-            'action' => 'cart'
+            'action' => 'cart',
+            'moptAmazonErrorCode' => $errorMessage,
         ]);
         return;
     }
@@ -835,49 +836,5 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $this->forward('index');
     }
 
-    /**
-     * prepare and do payment server api call
-     *
-     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
-     */
-    protected function buildAndCallSetOrderReferenceDetails($config)
-    {
-        $session = Shopware()->Session();
-        $clearingType = \Payone_Enum_ClearingType::WALLET;
-        $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
-        $params = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize($config['paymentId']);
-        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
-        $params['api_version'] = '3.10';
-        //create hash
-        $basket = Shopware()->Modules()->Basket()->sGetBasket();
-        $orderHash = md5(serialize($basket));
-        $session->moptOrderHash = $orderHash;
 
-        $request = new Payone_Api_Request_Genericpayment($params);
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::AMAZON_SETORDERREFERENCEDETAILS)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amazon_reference_id', 'data' => $session->moptPayoneAmazonReferenceId)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amazon_address_token', 'data' => $session->moptPayoneAmazonAccessToken)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'storename', 'data' => Shopware()->Shop()->getName())
-        ));
-
-        $request->setPaydata($paydata);
-        $request->setClearingtype($clearingType);
-        $request->setWallettype($walletType);
-        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
-        $request->setAmount($basket['AmountNumeric']);
-        $request->setWorkorderId($session->moptPayoneAmazonWorkOrderId);
-
-        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
-        $response = $service->request($request);
-        return $response;
-    }
 }
