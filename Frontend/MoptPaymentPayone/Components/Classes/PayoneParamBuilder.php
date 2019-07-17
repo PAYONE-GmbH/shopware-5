@@ -1259,7 +1259,7 @@ class Mopt_PayoneParamBuilder
                 $params['pr'] = round($article['priceNumeric'], 2); //brutto price
             }
             $params['no'] = $article['quantity']; // ordered quantity
-            $params['de'] = substr($article['articlename'], 0, 100); // description
+            $params['de'] = mb_substr($article['articlename'], 0, 100); // description
             $params['va'] = $taxFree ? 0 : number_format($article['tax_rate'], 0, '.', ''); // vat
             $params['va'] = round($params['va'] * 100);
             $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
