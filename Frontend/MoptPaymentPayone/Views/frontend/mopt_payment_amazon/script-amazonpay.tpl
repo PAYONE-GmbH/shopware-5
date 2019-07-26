@@ -5,6 +5,8 @@
      * listening on button click would bypass form validation
      */
     function prepareOrderReferenceConfirmation() {
+        console.log('prepare');
+
         $('#confirm--form').on('submit', function(e) {
             var sellerId = '{$payoneAmazonPayConfig->getSellerId()}';
             var orderReferenceId = moptAmazonReferenceId;
@@ -105,9 +107,6 @@
 
 
                         } else {
-
-                            prepareOrderReferenceConfirmation();
-
                             var moptAmazonCountryChanged = responseData.countryChanged;
                             $('#jsErrors').hide();
                             // Reload the site, to update dispatches in case country changed
@@ -161,5 +160,7 @@
         {else}
         $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js');
         {/if}
+
+        prepareOrderReferenceConfirmation();
     };
 </script>
