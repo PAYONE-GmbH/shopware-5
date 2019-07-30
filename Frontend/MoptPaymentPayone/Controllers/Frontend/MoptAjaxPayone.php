@@ -1226,6 +1226,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     }
 
      protected function isShippingAddressSupported($address){
+
+        if(!array_key_exists($address["shipping_firstname"])) {
+            return false;
+        }
+
         if (count($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries()) > 0 ){
             $amazonPaySupportedCountries = array();
             foreach ($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries() as $amazonCountry) {
