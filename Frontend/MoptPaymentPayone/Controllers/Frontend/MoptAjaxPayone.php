@@ -1227,7 +1227,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
      protected function isShippingAddressSupported($address){
 
-        if(!array_key_exists($address["shipping_firstname"])) {
+        if(!array_key_exists("shipping_firstname", $address)) {
             return false;
         }
 
