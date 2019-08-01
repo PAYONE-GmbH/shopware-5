@@ -107,7 +107,12 @@ Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.view.detail.Creditcardconfi
                             helpText: '{s name=fieldlabelhelp/creditcardMinValid}Gültigkeit der Kreditkarte in Tagen zudem eine Kreditkarte im Checkout akzeptiert wird.{/s}',
                             name: 'creditcardMinValid',
                             allowBlank: false
-                        }
+                        },
+                        enableAutoCardtypeDetection: {
+                            fieldLabel: '{s name=enableAutoCardtypeDetection}Automatische Kreditkarten Erkennung{/s}',
+                            name: 'enableAutoCardtypeDetection',
+                            allowBlank: true
+                        },
                     }
                 },
                 {
