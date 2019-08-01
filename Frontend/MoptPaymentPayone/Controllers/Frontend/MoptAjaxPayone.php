@@ -2,7 +2,6 @@
 
 use Shopware\Components\CSRFWhitelistAware;
 
-
 /**
  * Integrate Payone protect and Ajax call handling
  */
@@ -883,6 +882,134 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $this->View()->render();
     }
 
+    protected function amznConfirmOrderReferenceAction() {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+
+        //get/setorderreference calls have to be applied before confirmorderreference
+        $this->buildAndCallSetOrderReferenceDetails();
+        $isConfirmed = $this->buildAndCallConfirmOrderReference();
+
+        if($isConfirmed === false) {
+            unset($this->session->moptPayoneAmazonAccessToken);
+            unset($this->session->moptPayoneAmazonReferenceId);
+            unset($this->session->moptPayoneAmazonWorkOrderId);
+            unset($this->session->moptAmazonOrdernum);
+
+            $this->session->moptAmazonError = 'ConfirmOrderReference';
+            $this->session->moptAmazonLogout = true;
+            $this->Response()->setHttpResponseCode(418);
+            return;
+        }
+
+        echo json_encode('OK');
+    }
+
+    protected function buildAndCallConfirmOrderReference() {
+        $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
+        $moptPayoneMain = $this->moptPayoneMain;
+
+        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
+        $params = $moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
+
+        $request = new \Payone_Api_Request_Genericpayment($params);
+
+        $router = $this->Front()->Router();
+        $successurl = $router->assemble(array('controller' => 'MoptPaymentAmazon', 'action' => 'finish',
+            'forceSecure' => true, 'appendSession' => false));
+        $errorurl = $router->assemble(array('controller' => 'checkout', 'action' => 'cart',
+            'forceSecure' => true, 'appendSession' => false));
+
+        $request->setClearingType(\Payone_Enum_ClearingType::WALLET);
+        $request->setWallettype(\Payone_Api_Enum_WalletType::AMAZONPAY);
+        $request->setWorkorderid($this->session->moptPayoneAmazonWorkOrderId);
+        $request->setApiVersion("3.10");
+
+        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
+        $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
+        $request->setSuccessurl($successurl);
+        $request->setErrorurl($errorurl);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amazon_reference_id', 'data' => $this->session->moptPayoneAmazonReferenceId)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => 'confirmorderreference')
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'reference', 'data' => $moptPayoneMain->reserveOrdernumber())
+        ));
+
+        $request->setPaydata($paydata);
+
+        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+
+        $response = $service->request($request);
+
+        if($response->getStatus() === 'OK') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * prepare and do payment server api call
+     *
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     */
+    protected function buildAndCallSetOrderReferenceDetails()
+    {
+        $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
+        $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
+
+        $session = Shopware()->Session();
+        $clearingType = \Payone_Enum_ClearingType::WALLET;
+        $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
+        $params = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
+        $params['api_version'] = '3.10';
+        //create hash
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $orderHash = md5(serialize($basket));
+        $session->moptOrderHash = $orderHash;
+
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::AMAZON_SETORDERREFERENCEDETAILS)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amazon_reference_id', 'data' => $session->moptPayoneAmazonReferenceId)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'amazon_address_token', 'data' => $session->moptPayoneAmazonAccessToken)
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'storename', 'data' => Shopware()->Shop()->getName())
+        ));
+
+        $request->setPaydata($paydata);
+        $request->setClearingtype($clearingType);
+        $request->setWallettype($walletType);
+        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
+        $request->setAmount($basket['AmountNumeric']);
+        $request->setWorkorderId($session->moptPayoneAmazonWorkOrderId);
+
+        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
+
+        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+        $response = $service->request($request);
+
+        return $response;
+    }
+
     /**
      * get actual payment method id
      *
@@ -1099,6 +1226,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     }
 
      protected function isShippingAddressSupported($address){
+
+        if(!array_key_exists("shipping_firstname", $address)) {
+            return false;
+        }
+
         if (count($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries()) > 0 ){
             $amazonPaySupportedCountries = array();
             foreach ($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries() as $amazonCountry) {

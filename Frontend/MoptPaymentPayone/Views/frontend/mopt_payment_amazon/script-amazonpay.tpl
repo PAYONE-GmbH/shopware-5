@@ -1,4 +1,49 @@
 <script>
+    /**
+     * register listener for performing order reference confirmation
+     *
+     * listening on button click would bypass form validation
+     */
+    function prepareOrderReferenceConfirmation() {
+        console.log('prepare');
+
+        $('#confirm--form').on('submit', function(e) {
+            var sellerId = '{$payoneAmazonPayConfig->getSellerId()}';
+            var orderReferenceId = moptAmazonReferenceId;
+
+            e.preventDefault();
+
+            OffAmazonPayments.initConfirmationFlow(sellerId, orderReferenceId, function(confirmationFlow) {
+                $.loadingIndicator.open();
+                confirmOrderReference(confirmationFlow);
+            });
+
+        });
+    }
+
+    function confirmOrderReference(confirmationFlow) {
+        var url = '{url controller="moptAjaxPayone" action="amznConfirmOrderReference" forceSecure}';
+
+        $.ajax({
+                url: url,
+                success: function (data) {
+                    console.log('success');
+                    $.loadingIndicator.close();
+                    confirmationFlow.success();
+                },
+                error: function (data) {
+                    console.log('error');
+                    $.loadingIndicator.close();
+                    confirmationFlow.error();
+                    amazon.Login.logout();
+                    window.location.href = '{url controller="checkout" action="cart" forceSecure}';
+                },
+                timeout: 30000
+            }
+        );
+    }
+
+
     {if $smarty.server.HTTP_REFERER|strpos:'Amazon' == false}
     function getURLParameter(name, source) {
         return decodeURIComponent((new RegExp('[?|&|#]' + name + '=' +
@@ -62,7 +107,6 @@
 
 
                         } else {
-
                             var moptAmazonCountryChanged = responseData.countryChanged;
                             $('#jsErrors').hide();
                             // Reload the site, to update dispatches in case country changed
@@ -116,5 +160,7 @@
         {else}
         $.getScript('https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js');
         {/if}
+
+        prepareOrderReferenceConfirmation();
     };
 </script>

@@ -195,6 +195,12 @@ class FrontendCheckout implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment_core.tpl');
 
+            if($request->get('moptAmazonErrorCode')) {
+                $errorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $request->get('moptAmazonErrorCode'));
+                $view->assign('moptAmazonErrorMessage', $errorMessage);
+                $view->assign('moptAmazonErrorCode', $request->get('moptAmazonErrorCode'));
+            }
+
             // used for amazon error handling
             if ($session->moptAmazonError) {
                 $view->assign('moptAmazonError', $session->moptAmazonError);
@@ -233,6 +239,25 @@ class FrontendCheckout implements SubscriberInterface
             ) {
                 $paymenthelper = $moptPayoneMain->getPaymentHelper();
                 $config = $moptPayoneMain->getPayoneConfig($paymenthelper->getPaymentAmazonPay()->getId());
+
+                if($request->get('AuthenticationStatus') == 'Failure' || $request->get('AuthenticationStatus') == 'Abandoned') {
+                    //logout because confirmOrderReference failed
+                    unset($session->moptPayoneAmazonAccessToken);
+                    unset($session->moptPayoneAmazonReferenceId);
+                    unset($session->moptPayoneAmazonWorkOrderId);
+                    unset($session->moptAmazonOrdernum);
+                    $session->moptAmazonLogout = true;
+
+                    $errorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessageAuthentication');
+                    $view->assign('moptAmazonErrorMessage', $errorMessage);
+                }
+
+                if($request->get('moptAmazonErrorCode')) {
+                    $errorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $request->get('moptAmazonErrorCode'));
+                    $view->assign('moptAmazonErrorMessage', $errorMessage);
+                    $view->assign('moptAmazonErrorCode', $request->get('moptAmazonErrorCode'));
+                }
+
                 if ($session->moptAmazonError) {
                     $view->assign('moptAmazonError', $session->moptAmazonError);
                     unset($session->moptAmazonError);
