@@ -180,6 +180,7 @@ function moptPaymentReady() {
             moptCreditcardConfig: '',
             mopt_payone__cc_paymentshort: '',
             mopt_payone_credit_cards_short: '',
+            mopt_payone_available_cardtypes: '',
         },
         init: function () {
             var me = this;
@@ -408,6 +409,15 @@ function moptPaymentReady() {
             }
             if (me.opts.moptCreditcardConfig.default_translation_iframe_cvc && me.opts.moptCreditcardConfig.check_cc === '1') {
                 Payone.ClientApi.Language[fcpolang].placeholders.cvc = me.opts.moptCreditcardConfig.default_translation_iframe_cvc;
+            }
+
+            if (me.opts.moptCreditcardConfig.auto_cardtype_detection === '1') {
+                config.autoCardtypeDetection = {
+                    supportedCardtypes: me.opts.mopt_payone_available_cardtypes.split(','),
+                    callback: function (t) {
+                        console.debug('auto-cc-detection: ' + t);
+                    }
+                };
             }
 
             request = {
