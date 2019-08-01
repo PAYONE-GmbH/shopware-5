@@ -973,6 +973,16 @@ class MoptPayoneCreditcardConfig extends ModelEntity
     {
         $this->creditcardMinValid = $creditcardMinValid;
     }
+
+    public function getEnableAutoCardtypeDetection()
+    {
+        return $this->enableAutoCardtypeDetection;
+    }
+
+    public function setEnableAutoCardtypeDetection($enableAutoCardtypeDetection)
+    {
+        $this->enableAutoCardtypeDetection = $enableAutoCardtypeDetection;
+    }
     
     public function getDefaultTranslationIframeMonth1()
     {
