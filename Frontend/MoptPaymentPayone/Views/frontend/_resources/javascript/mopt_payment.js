@@ -412,6 +412,12 @@ function moptPaymentReady() {
             }
 
             if (me.opts.moptCreditcardConfig.auto_cardtype_detection === '1') {
+                var ccTypeSelect = document.getElementById('mopt_payone__cc_cardtype');
+
+                if (ccTypeSelect) {
+                    ccTypeSelect.disabled = true;
+                }
+
                 config.autoCardtypeDetection = {
                     supportedCardtypes: me.opts.mopt_payone_available_cardtypes.split(','),
                     callback: function (t) {
@@ -428,8 +434,6 @@ function moptPaymentReady() {
                         }
 
                         // Set cardtype select field based on the detected cardtype.
-                        var ccTypeSelect = document.getElementById('mopt_payone__cc_cardtype');
-
                         if (ccTypeSelect) {
                             ccTypeSelect.value = t;
                         }
