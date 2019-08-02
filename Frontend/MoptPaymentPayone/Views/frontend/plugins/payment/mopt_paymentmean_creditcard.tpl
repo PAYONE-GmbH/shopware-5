@@ -29,7 +29,7 @@
 
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
-    <div class="select-field">
+    <div id="mopt_payone__cc_cardtype_wrap" class="select-field">
         <select name="moptPaymentData[mopt_payone__cc_cardtype]"
                 id="mopt_payone__cc_cardtype"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -43,6 +43,9 @@
                 </option>
             {/foreach}
         </select>
+    </div>
+    <div>
+        <img id="mopt_payone__cc_cardtype_icon" src="" style="max-height: 100%; width: auto;">
     </div>
 
     {if $moptIsAjax}

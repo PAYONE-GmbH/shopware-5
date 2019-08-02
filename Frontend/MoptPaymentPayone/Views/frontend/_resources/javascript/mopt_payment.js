@@ -413,9 +413,12 @@ function moptPaymentReady() {
 
             if (me.opts.moptCreditcardConfig.auto_cardtype_detection === '1') {
                 var ccTypeSelect = document.getElementById('mopt_payone__cc_cardtype');
+                var ccTypeSelectWrap = document.getElementById('mopt_payone__cc_cardtype_wrap');
+                var ccTypeIcon = document.getElementById('mopt_payone__cc_cardtype_icon');
 
                 if (ccTypeSelect) {
                     ccTypeSelect.disabled = true;
+                    ccTypeSelectWrap.style.display = 'none';
                 }
 
                 config.autoCardtypeDetection = {
@@ -436,6 +439,11 @@ function moptPaymentReady() {
                         // Set cardtype select field based on the detected cardtype.
                         if (ccTypeSelect) {
                             ccTypeSelect.value = t;
+                        }
+
+                        // Set cardtype icon based on the detected cardtype.
+                        if (ccTypeIcon) {
+                            ccTypeIcon.src = 'https://cdn.pay1.de/cc/' + t.toLowerCase() + '/s/default.png';
                         }
                     }
                 };
