@@ -415,7 +415,24 @@ function moptPaymentReady() {
                 config.autoCardtypeDetection = {
                     supportedCardtypes: me.opts.mopt_payone_available_cardtypes.split(','),
                     callback: function (t) {
-                        console.debug('auto-cc-detection: ' + t);
+                        t = t.toUpperCase();
+
+                        if (t === '?') {
+                            console.debug('auto-cc-detection: UNKNOWN CARDTYPE');
+                        }
+                        else if (t === '-') {
+                            console.debug('auto-cc-detection: CARDTYPE NOT SUPPORTED');
+                        }
+                        else {
+                            console.debug('auto-cc-detection: ' + t);
+                        }
+
+                        // Set cardtype select field based on the detected cardtype.
+                        var ccTypeSelect = document.getElementById('mopt_payone__cc_cardtype');
+
+                        if (ccTypeSelect) {
+                            ccTypeSelect.value = t;
+                        }
                     }
                 };
             }
