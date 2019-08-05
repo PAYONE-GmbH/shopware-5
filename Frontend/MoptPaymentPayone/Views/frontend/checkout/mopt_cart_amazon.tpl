@@ -64,8 +64,12 @@ window.onload = function(){
 
 {block name='frontend_checkout_cart_error_messages'}
     <div>
-        {if $moptAmazonError}
-            {include file="frontend/_includes/messages.tpl" type="error" content="{s name='amazonDeclined ' namespace='frontend/MoptPaymentPayone/errorMessages'}{/s}" bold=false}
+        {if $moptAmazonError == 'ConfirmOrderReference'}
+            {include file="frontend/_includes/messages.tpl" type="error" content="{s name='amazonConfirmOrderReferenceFailed' namespace='frontend/MoptPaymentPayone/errorMessages'}{/s}" bold=false}
+        {elseif $moptAmazonErrorMessage }
+            {include file="frontend/_includes/messages.tpl" type="error" content="$moptAmazonErrorMessage" bold=false}
+        {elseif $moptAmazonError || $moptAmazonErrorCode }
+            {include file="frontend/_includes/messages.tpl" type="error" content="{s name='generalErrorMessage' namespace='frontend/MoptPaymentPayone/errorMessages'}{/s}" bold=false}
         {/if}
     </div>
 {$smarty.block.parent}

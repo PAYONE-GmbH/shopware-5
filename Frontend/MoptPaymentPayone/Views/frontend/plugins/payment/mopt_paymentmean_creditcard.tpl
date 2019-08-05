@@ -26,16 +26,8 @@
      >
 
 
-    <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >ändern</a>
+    <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
-    <input name="moptPaymentData[mopt_payone__cc_accountholder]"
-           type="text"
-           id="mopt_payone__cc_accountholder"
-           {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-           placeholder="{s name='creditCardHolder'}Karteninhaber{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-           value="{$form_data.mopt_payone__cc_accountholder|escape}"
-           class="payment--field is--required{if $error_flags.mopt_payone__cc_accountholder} has--error{/if}" />
-
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__cc_cardtype]"
                 id="mopt_payone__cc_cardtype"
