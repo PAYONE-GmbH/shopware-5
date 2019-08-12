@@ -283,6 +283,12 @@ class FrontendCheckout implements SubscriberInterface
                 $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
             }
 
+            //@ToDO: add check if PayDirekt is active and img is valid
+            if (true) {
+                $view->extendsTemplate('frontend/checkout/mopt_cart_paydirekt.tpl');
+                $view->extendsTemplate('frontend/checkout/ajax_cart_paydirekt.tpl');
+            }
+
         }
 
 

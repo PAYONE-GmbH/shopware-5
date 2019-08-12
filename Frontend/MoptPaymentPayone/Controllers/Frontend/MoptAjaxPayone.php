@@ -908,8 +908,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             return;
         }
         echo json_encode($result);
-
-
     }
 
     protected function buildAndCallConfirmOrderReference() {
