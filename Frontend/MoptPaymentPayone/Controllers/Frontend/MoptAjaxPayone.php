@@ -1324,9 +1324,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->setClearingType(\Payone_Enum_ClearingType::WALLET);
         $request->setWallettype(\Payone_Api_Enum_WalletType::PAYDIREKT_EXPRESS);
 
-        //@ToDo: where do i get Workorderid?
-        $request->setWorkorderid($this->session->moptPayoneAmazonWorkOrderId);
-
         $request->setApiVersion("3.10");
         $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
         $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
@@ -1334,10 +1331,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         //@ToDo: add another payData fields
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => 'checkout ')
+            array('key' => 'action', 'data' => 'checkout')
         ));
-        //@ToDo: authorization or preauthorization?
-
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'type', 'data' => 'directsale')
+        ));
 
         $request->setPaydata($paydata);
         $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
