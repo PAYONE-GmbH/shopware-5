@@ -5,7 +5,7 @@
  * $Id: $
  */
 
-class MoptPayonePayDirekt extends Shopware_Controllers_Backend_Application
+class Shopware_Controllers_Backend_MoptPayonePayDirekt extends Shopware_Controllers_Backend_Application
 {
     protected $model = 'Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt';
     protected $alias = 'moptPayonePayDirekt';
@@ -14,7 +14,7 @@ class MoptPayonePayDirekt extends Shopware_Controllers_Backend_Application
     {
         $builder = parent::getListQuery();
 
-        $builder->leftJoin('moptPayonePayDirekt.localeId', 'localeId');
+        $builder->leftJoin('moptPayonePayDirekt.locale', 'locale');
         $builder->addSelect(array('locale'));
 
         return $builder;
