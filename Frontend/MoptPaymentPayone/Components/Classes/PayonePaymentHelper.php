@@ -460,6 +460,17 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone paydirekt payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayonePaydirektExpress($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_paydirekt_express#', $paymentName) ? true : false;
+    }
+
+    /**
      * check if given payment name is a payone ewallet payment method
      *
      * @param string $paymentName
@@ -1209,6 +1220,10 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayonePaydirekt($paymentShortName)) {
             return 'paydirekt';
         }
+
+        if ($this->isPayonePaydirektExpress($paymentShortName)) {
+            return 'paydirekt';
+        }
         if ($this->isPayoneAlipay($paymentShortName)) {
             return 'alipay';
         }
@@ -1233,6 +1248,19 @@ class Mopt_PayonePaymentHelper
 
         $config = $payoneMain->getPayoneConfig($paymentMethod['id']);
         return (bool)$config['paypalEcsActive'];
+    }
+
+    /**
+     * checks if PayDirektExpress is enabled
+     *
+     * @return bool
+     */
+    public function isPaydirektExpressActive()
+    {
+        $paymentPayDirektExpress = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_paydirekt_express']
+        );
+        return $paymentPayDirektExpress->getActive();
     }
 
     /**

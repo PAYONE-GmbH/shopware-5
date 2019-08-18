@@ -222,6 +222,11 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                     ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten', true));
             }
+            if ($session->moptPaydirektExpressError) {
+                unset($session->moptPayDirektExpressError);
+                $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                    ->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten', true));
+            }
         }
 
         $templateSuffix = '';
@@ -283,14 +288,14 @@ class FrontendCheckout implements SubscriberInterface
                 $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
             }
 
-            //@ToDO: add check if PayDirekt is active and img is valid
-            if (true) {
-                $view->extendsTemplate('frontend/checkout/mopt_cart_paydirekt.tpl');
-                $view->extendsTemplate('frontend/checkout/ajax_cart_paydirekt.tpl');
-            }
-
         }
 
+
+        if ($templateSuffix === '' && $this->isPaydirektExpressActive($subject) && ($imageUrl = $this->moptPayonePaydirektShortcutImgURL())) {
+            $view->assign('moptPayDirektShortcutImgURL', $imageUrl);
+            $view->extendsTemplate('frontend/checkout/mopt_cart_paydirekt' . $templateSuffix . '.tpl');
+            $view->extendsTemplate('frontend/checkout/ajax_cart_paydirekt' . $templateSuffix . '.tpl');
+        }
 
         if (!empty($userPaymentId)) {
             $paymentId = $userPaymentId;
@@ -335,6 +340,26 @@ class FrontendCheckout implements SubscriberInterface
         return false;
     }
 
+    protected function isPaydirektExpressActive($checkoutController)
+    {
+        $payments = $checkoutController->getPayments();
+        $payoneMain = $this->container->get('MoptPayoneMain');
+        $payonePaymentHelper = $payoneMain->getPaymentHelper();
+
+        if ($payoneMain->getHelper()->isAboCommerceArticleInBasket()) {
+            return false;
+        }
+
+        foreach ($payments as $paymentMethod) {
+            if ($payonePaymentHelper->isPaydirektExpressActive($payoneMain, $paymentMethod)) {
+                Shopware()->Session()->moptPaydirektExpressPaymentId = $paymentMethod['id'];
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * get url to configured and uploaded paypal ecs button
      *
@@ -361,6 +386,29 @@ class FrontendCheckout implements SubscriberInterface
 
             $result = $builder->getQuery()->getOneOrNullResult();
         }
+
+        if (!$result) {
+            return false;
+        }
+
+        return $result['image'];
+    }
+
+    /**
+     * get url to configured and uploaded paydirekt express button
+     *
+     * @return boolean|string
+     */
+    protected function moptPayonePaydirektShortcutImgURL()
+    {
+        $builder = Shopware()->Models()->createQueryBuilder();
+
+        $builder->select('button.image')
+            ->from('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt', 'button')
+            ->where('button.id = 1')
+        ;
+
+        $result = $builder->getQuery()->getOneOrNullResult();
 
         if (!$result) {
             return false;
