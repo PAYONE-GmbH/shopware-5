@@ -47,7 +47,7 @@ class ControllerPath implements SubscriberInterface
             => 'moptRegisterController_Frontend_MoptShopNotification',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptPaymentEcs'
             => 'moptRegisterController_Frontend_MoptPaymentEcs',
-            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptPaymentPaydirektExpress'
+            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptPaymentPayDirekt'
             => 'onGetFrontendControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptAjaxPayone'
             => 'moptRegisterController_Frontend_MoptAjaxPayone',

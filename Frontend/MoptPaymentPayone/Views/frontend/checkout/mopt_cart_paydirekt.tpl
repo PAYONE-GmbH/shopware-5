@@ -4,8 +4,8 @@
     {$smarty.block.parent}
     {if !$sMinimumSurcharge && !$sDispatchNoOrder}
         <div class="button--container right">
-            <a href="{url controller='moptPaymentPayDirekt' action='initPayment'}">
-                <img src="{$moptPaypalShortcutImgURL}" />
+            <a href="{url controller='MoptPaymentPayDirekt' action='initPayment'}">
+                <img src="{$moptPayDirektShortcutImgURL}" />
             </a>
         </div>
         <div class="clear"></div>
