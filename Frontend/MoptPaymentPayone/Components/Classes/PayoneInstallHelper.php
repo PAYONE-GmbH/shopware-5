@@ -566,6 +566,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Ratenkauf powered by Paypal',
                 'template' => 'mopt_paymentmean_paypal_installment.tpl',
                 'position' => 37,),
+            array(
+                'name' => 'mopt_payone__ewallet_paydirekt_express',
+                'description' => 'PAYONE Paydirekt Express',
+                'template' => null,
+                'position' => 38,),
         );
     }
 

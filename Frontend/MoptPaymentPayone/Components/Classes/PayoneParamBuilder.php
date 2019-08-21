@@ -1788,4 +1788,85 @@ class Mopt_PayoneParamBuilder
 
         return $params;
     }
+
+    public function buildPayDirektExpressCheckout($paymentId, $router, $amount, $currencyName, $userData)
+    {
+        $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
+        $params = $this->getAuthParameters($paymentId);
+
+        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action',
+                'data' => Payone_Api_Enum_GenericpaymentAction::PAYDIREKTEXPRESS_CHECKOUT)
+        ));
+
+        // auth
+
+        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'type',
+                'data' => 'directsale')
+        ));
+
+        // preauth
+/*        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'type',
+                'data' => 'order')
+        ));
+*/
+
+        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'web_url_shipping_terms',
+                'data' => 'https://www.google.de')
+        ));
+
+        $walletParams = $this->buildPaydirektWalletParams($router);
+
+        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
+        $params['amount'] = $amount;
+        $params['currency'] = $currencyName;
+        $params['paydata'] = $payData;
+        $params['api_Version'] = '3.10';
+
+
+        return array_merge($params, $walletParams);
+    }
+
+    public function buildPaydirektExpressGetStatus($paymentId, $router, $amount, $currencyName, $userData, $workerId)
+    {
+        $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
+        $params = $this->getAuthParameters($paymentId);
+
+        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action',
+                'data' => Payone_Api_Enum_GenericpaymentAction::PAYDIREKTEXPRESS_GETSTATUS)
+        ));
+
+        $walletParams = $this->buildPaydirektWalletParams($router);
+        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
+        $params['workorderid'] = $workerId;
+        $params['amount'] = $amount;
+        $params['currency'] = $currencyName;
+        $params['paydata'] = $payData;
+        $params['wallet'] = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($walletParams);
+        $params['api_Version'] = '3.10';
+
+        return $params;
+    }
+
+    protected function buildPaydirektWalletParams($router)
+    {
+        $walletParams = array(
+            'wallettype' => Payone_Api_Enum_WalletType::PAYDIREKT_EXPRESS,
+            'successurl' => $router->assemble(array('action' => 'paydirektexpress',
+                'forceSecure' => true, 'appendSession' => true)),
+            'errorurl' => $router->assemble(array('action' => 'paydirektexpressAbort',
+                'forceSecure' => true, 'appendSession' => true)),
+            'backurl' => $router->assemble(array('action' => 'paydirektexpressAbort',
+                'forceSecure' => true, 'appendSession' => true)),
+        );
+
+        return $walletParams;
+    }
+
 }
