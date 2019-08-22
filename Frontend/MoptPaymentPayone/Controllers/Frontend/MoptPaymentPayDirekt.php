@@ -81,7 +81,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
     public function paydirektexpressAction()
     {
         $session = Shopware()->Session();
-        $paymentId = $session->moptPaydirektExpressPaymentId;
+        $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentPaydirektExpress()->getId();
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
 
         $userData = $this->getUserData();
@@ -105,6 +105,11 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         ));
 
         $response = $service->request($request);
+
+        //TODO: validate userdata
+        //TODO: set payment type
+
+        $session['sPaymentID'] = $paymentId;
 
         if ($response->getStatus() === Payone_Api_Enum_ResponseType::OK) {
             $session = Shopware()->Session();
@@ -189,6 +194,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $payData = $apiResponse->getPaydata()->toAssocArray();
 
         if ($this->isUserLoggedIn($session)) {
+            //TODO: st payment type
             $user = $this->updateUserAddresses($payData, $session, $paymentId);
             if ($user === null) {
                 return $this->paydirektexpressAbortAction();
@@ -225,9 +231,12 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
     {
         $register = $this->extractData($personalData);
         $register['payment']['object']['id'] = $paymentId;
+        $register['additional']['payment']['id'] = $paymentId;
 
         $session['sRegister'] = $register;
         $session['sRegisterFinished'] = false;
+
+
 
         if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
             $newdata = $this->saveUser($register,$paymentId);
@@ -241,6 +250,10 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
     protected function updateUserAddresses($personalData, $session, $paymentId)
     {
         $personalData = $this->extractData($personalData);
+
+        $personalData['payment']['object']['id'] = $paymentId;
+        $personalData['additional']['payment']['id'] = $paymentId;
+
         // use old phone number in case phone number is required
         if (Shopware()->Config()->get('requirePhoneField')) {
             $oldUserData = $this->admin->sGetUserData();
@@ -331,43 +344,49 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
    */
     protected function extractData($personalData)
     {
+        //TODO: check if array indizes that are accessed do exist
+
         $register = array();
-        $register['billing']['city']           = $personalData['shipping_city'];
-        $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['shipping_country']);
-        if ($personalData['shipping_state'] !== 'Empty') {
-            $register['billing']['state']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['shipping_state'], true);
+        $register['billing']['city']           = $personalData['billing_city'];
+        $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['billing_country']);
+
+        //TODO: check billing state
+        //TODO: check shipping state
+        if ($personalData['billing_state'] !== 'Empty') {
+            $register['billing']['state']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['billing_state'], true);
         }
-        $register['billing']['street']         = $personalData['shipping_street'];
-        $register['billing']['additionalAddressLine1'] = $personalData['shipping_addressaddition'];
-        $register['billing']['zipcode']        = $personalData['shipping_zip'];
-        $register['billing']['firstname']      = $personalData['shipping_firstname'];
-        $register['billing']['lastname']       = $personalData['shipping_lastname'];
+        $register['billing']['street']         = $personalData['billing_streetname'] . ' ' . $personalData['billing_streetnumber'];
+        $register['billing']['additionalAddressLine1'] = $personalData['billing_addressaddition'];
+        $register['billing']['zipcode']        = $personalData['billing_zip'];
+        $register['billing']['firstname']      = $personalData['billing_firstname'];
+        $register['billing']['lastname']       = $personalData['billing_lastname'];
         $register['billing']['salutation']     = 'mr';
         if (isset($personalData['shipping_company']) && !empty($personalData['shipping_company'])) {
-            $register['billing']['company']        = $personalData['shipping_company'];
+            $register['billing']['company']        = $personalData['billing_company'];
         } else {
+            //TODO: test if business addresses possible
             $register['billing']['company']        = '';
             $register['personal']['customer_type'] = 'private';
         }
-        $register['personal']['email']         = $personalData['email'];
-        $register['personal']['firstname']     = $personalData['shipping_firstname'];
-        $register['personal']['lastname']      = $personalData['shipping_lastname'];
+        $register['personal']['email']         = $personalData['buyer_email'];
+        $register['personal']['firstname']     = $personalData['billing_firstname'];
+        $register['personal']['lastname']      = $personalData['billing_lastname'];
         $register['personal']['salutation']    = 'mr';
         $register['personal']['skipLogin']     = 1;
-        $register['shipping']['salutation']   = 'mr';
-        $register['shipping']['firstname']    = $register['billing']['firstname'];
-        $register['shipping']['lastname']     = $register['billing']['lastname'];
-        $register['shipping']['street']       = $register['billing']['street'];
+        $register['shipping']['firstname']    = $personalData['shipping_firstname'];
+        $register['shipping']['lastname']     = $personalData['shipping_lastname'];
+        $register['shipping']['street']       = $personalData['shipping_streetname'] . ' ' . $personalData['shipping_streetnumber'];
         $register['shipping']['additionalAddressLine1'] = $personalData['shipping_addressaddition'];
-        $register['shipping']['zipcode']      = $register['billing']['zipcode'];
-        $register['shipping']['city']         = $register['billing']['city'];
-        $register['shipping']['country']      = $register['billing']['country'];
+        $register['shipping']['zipcode']      = $personalData['shipping_zip'];
+        $register['shipping']['city']         = $personalData['shipping_city'];
+        $register['shipping']['country']      = $this->moptPayone__helper->getCountryIdFromIso($personalData['shipping_country']);
+
         if ($personalData['shipping_state'] !== 'Empty') {
-            $register['shipping']['state']  = $register['billing']['state'];
+            $register['shipping']['state']      = $this->moptPayone__helper->getStateFromId($register['shipping']['country'], $personalData['shipping_state'], true);
         }
         $register['shipping']['company']      = $register['billing']['company'];
         $register['shipping']['department']   = '';
-        $register['auth']['email']            = $personalData['email'];
+        $register['auth']['email']            = $personalData['buyer_email'];
         $register['auth']['password']         = md5(uniqid('', true));
         $register['auth']['accountmode']      = 1;
         $register['auth']['encoderName']      = '';
