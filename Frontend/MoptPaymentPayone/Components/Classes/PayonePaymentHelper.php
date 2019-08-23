@@ -1312,6 +1312,20 @@ class Mopt_PayonePaymentHelper
      *
      * @return \Shopware\Models\Payment\Payment
      */
+    public function getPaymentPaydirektExpress()
+    {
+        //TODO: update var names
+        $paymentAmazonPay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_paydirekt_express']
+        );
+        return $paymentAmazonPay;
+    }
+
+    /**
+     * Fetches and returns amazon payment instance.
+     *
+     * @return \Shopware\Models\Payment\Payment
+     */
     public function getPaymentAmazonPay()
     {
         $paymentAmazonPay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
