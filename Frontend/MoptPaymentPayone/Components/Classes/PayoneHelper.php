@@ -1694,22 +1694,32 @@ class Mopt_PayoneHelper
 
     /**
      * Return the latest PayPalConfig
-     * @return \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
+     * @return bool|\Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
      */
     public function getPayonePayPalConfig()
     {
         // use latest config
-        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_paypal";
-        $latest = Shopware()->Db()->fetchOne($sql);
+        $latest = $this->getPayPalLatestConfig();
+        if ($latest) {
+            /**
+             * @var $config \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
+             */
+            $config = Shopware()->Models()->find(
+                'Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal',
+                $latest
+            );
+            return $config;
+        }
+        return false;
+    }
 
-        /**
-         * @var $config \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
-         */
-        $config = Shopware()->Models()->find(
-            'Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal',
-            $latest
-        );
-        return $config;
+    /**
+     * @return mixed
+     */
+    public function getPayPalLatestConfig()
+    {
+        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_paypal";
+        return Shopware()->Db()->fetchOne($sql);
     }
 
 }
