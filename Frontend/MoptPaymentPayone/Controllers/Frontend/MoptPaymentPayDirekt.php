@@ -106,9 +106,6 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
 
         $response = $service->request($request);
 
-        //TODO: validate userdata
-        //TODO: set payment type
-
         $session['sPaymentID'] = $paymentId;
 
         if ($response->getStatus() === Payone_Api_Enum_ResponseType::OK) {
@@ -194,12 +191,14 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $payData = $apiResponse->getPaydata()->toAssocArray();
 
         if ($this->isUserLoggedIn($session)) {
-            //TODO: st payment type
             $user = $this->updateUserAddresses($payData, $session, $paymentId);
             if ($user === null) {
                 return $this->paydirektexpressAbortAction();
             }
         } else {
+            if (!$this->validatePayData($payData)) {
+                return $this->paydirektexpressAbortAction();
+            }
             $this->createUserWithoutAccount($payData, $session, $paymentId);
         }
 
@@ -344,27 +343,25 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
    */
     protected function extractData($personalData)
     {
-        //TODO: check if array indizes that are accessed do exist
-
         $register = array();
         $register['billing']['city']           = $personalData['billing_city'];
         $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['billing_country']);
 
-        //TODO: check billing state
-        //TODO: check shipping state
         if ($personalData['billing_state'] !== 'Empty') {
             $register['billing']['state']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['billing_state'], true);
         }
         $register['billing']['street']         = $personalData['billing_streetname'] . ' ' . $personalData['billing_streetnumber'];
-        $register['billing']['additionalAddressLine1'] = $personalData['billing_addressaddition'];
+        if (isset($personalData['billing_addressaddition']) && !empty($personalData['billing_addressaddition'])) {
+            $register['billing']['additionalAddressLine1'] = $personalData['billing_addressaddition'];
+        }
         $register['billing']['zipcode']        = $personalData['billing_zip'];
         $register['billing']['firstname']      = $personalData['billing_firstname'];
         $register['billing']['lastname']       = $personalData['billing_lastname'];
         $register['billing']['salutation']     = 'mr';
         if (isset($personalData['shipping_company']) && !empty($personalData['shipping_company'])) {
             $register['billing']['company']        = $personalData['billing_company'];
+            $register['personal']['customer_type'] = 'company';
         } else {
-            //TODO: test if business addresses possible
             $register['billing']['company']        = '';
             $register['personal']['customer_type'] = 'private';
         }
@@ -510,6 +507,28 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $customer->fromArray($data);
         $customer->setPaymentId($paymentId);
         Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
+    }
+
+    /**
+     * @param $payData
+     * validate all important keys
+     * @return bool
+     */
+    private function validatePayData($payData)
+    {
+        $keysArray = array("billing_city",
+                            "billing_country",
+                            "billing_streetnumber",
+                            "billing_zip",
+                            "billing_firstname",
+                            "billing_lastname",
+                            "buyer_email");
+        foreach ($keysArray as $key) {
+            if (!array_key_exists($key, $payData)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

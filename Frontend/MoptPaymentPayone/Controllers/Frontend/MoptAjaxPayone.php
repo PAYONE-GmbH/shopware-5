@@ -1329,7 +1329,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
-        //@ToDo: add other payData fields
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'action', 'data' => 'checkout')
         ));
