@@ -1709,7 +1709,7 @@ class Mopt_PayoneHelper
                 $latest
             );
             return $config;
-        }else {
+        } else {
             return false;
         }
     }
