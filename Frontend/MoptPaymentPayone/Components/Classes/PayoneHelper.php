@@ -1709,11 +1709,13 @@ class Mopt_PayoneHelper
                 $latest
             );
             return $config;
-        }else {
-            return false;
         }
+        return false;
     }
 
+    /**
+     * @return mixed
+     */
     public function getPayPalLatestConfig()
     {
         $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_paypal";
