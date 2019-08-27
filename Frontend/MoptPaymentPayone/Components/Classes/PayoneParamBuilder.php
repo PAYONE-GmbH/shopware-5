@@ -289,7 +289,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += ($positionPrice * $position->getQuantity());
             } else {
-                $amount += (($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100)));
+                $amount += round((($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100))),2);
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {
@@ -301,7 +301,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += $order->getInvoiceShipping();
             } else {
-                $amount += $order->getInvoiceShipping() * (1 + ($flTaxRate / 100));
+                $amount += $order->getInvoiceShipping();
             }
         }
 
@@ -478,7 +478,7 @@ class Mopt_PayoneParamBuilder
 
         $params['gender'] = ($billingAddress['salutation'] === 'mr') ? 'm' : 'f';
         $params['salutation'] = ($billingAddress['salutation'] === 'mr') ? 'Herr' : 'Frau';
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             if ($userData['additional']['user']['birthday'] !== '0000-00-00') {
                 $params['birthday'] = str_replace('-', '', $userData['additional']['user']['birthday']); //YYYYMMDD
             }
@@ -572,7 +572,7 @@ class Mopt_PayoneParamBuilder
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
         $params['workorderid'] = $workorderId;
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
             $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
@@ -611,7 +611,7 @@ class Mopt_PayoneParamBuilder
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
         $params['workorderid'] = $workorderId;
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
             $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
@@ -651,7 +651,7 @@ class Mopt_PayoneParamBuilder
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
             $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
@@ -694,7 +694,7 @@ class Mopt_PayoneParamBuilder
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
             $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
@@ -744,7 +744,7 @@ class Mopt_PayoneParamBuilder
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
             $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
@@ -828,7 +828,7 @@ class Mopt_PayoneParamBuilder
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
             $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));
@@ -881,7 +881,7 @@ class Mopt_PayoneParamBuilder
         $params = array();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
         } else {
             $params['birthday'] = implode(explode('-', $userData['billingaddress']['birthday']));

@@ -426,12 +426,14 @@ class FrontendCheckout implements SubscriberInterface
     private function isShippingAddressSupported($shippingData)
     {
         $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayonePayPalConfig();
-        if ($config->getPackStationMode() == 'deny') {
-            //Check if address is PackStation
-            foreach ($shippingData as $addressPart) {
-                if (!is_array($addressPart)) {
-                    if (strpos(strtolower($addressPart), 'packstation') !== false) {
-                        return false;
+        if ($config) {
+            if ($config->getPackStationMode() == 'deny') {
+                //Check if address is PackStation
+                foreach ($shippingData as $addressPart) {
+                    if (!is_array($addressPart)) {
+                        if (strpos(strtolower($addressPart), 'packstation') !== false) {
+                            return false;
+                        }
                     }
                 }
             }

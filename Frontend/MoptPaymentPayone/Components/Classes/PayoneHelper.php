@@ -405,8 +405,8 @@ class Mopt_PayoneHelper
 
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
 
-        if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.2.0', '>=')
+        if (Shopware()->Config()->get('version') === '___VERSION___' ||
+            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
         ) {
             if ($addressType === 'billing') {
                 $billing = $user->getDefaultBillingAddress();
@@ -449,8 +449,8 @@ class Mopt_PayoneHelper
         }
 
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
-        if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.2.0', '>=')
+        if (Shopware()->Config()->get('version') === '___VERSION___' ||
+            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
         ) {
             $billing = $user->getDefaultBillingAddress();
         } else {
@@ -480,8 +480,8 @@ class Mopt_PayoneHelper
         }
 
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
-        if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.2.0', '>=')
+        if (Shopware()->Config()->get('version') === '___VERSION___' ||
+            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
         ) {
             $shipping = $user->getDefaultShippingAddress();
         } else {
@@ -622,8 +622,8 @@ class Mopt_PayoneHelper
      */
     public function saveCorrectedBillingAddress($userId, $response)
     {
-        if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' ||
+            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $orderVariables = Shopware()->Session()->sOrderVariables;
 
             // ordervariables are null until shippingPayment view
@@ -674,8 +674,8 @@ class Mopt_PayoneHelper
      */
     public function saveCorrectedShippingAddress($userId, $response)
     {
-        if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.2.0', '>=')
+        if (Shopware()->Config()->get('version') === '___VERSION___' ||
+            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
         ) {
             $orderVariables = Shopware()->Session()->sOrderVariables;
 
@@ -749,8 +749,8 @@ class Mopt_PayoneHelper
         $shippingAttributes['moptPayoneAddresscheckResult'] = null;
         $shippingAttributes['moptPayoneAddresscheckDate'] = null;
 
-        if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.2.0', '>=')
+        if (Shopware()->Config()->get('version') === '___VERSION___' ||
+            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
         ) {
             $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
             $shipping = $user->getDefaultShippingAddress();
@@ -847,7 +847,7 @@ class Mopt_PayoneHelper
      */
     public function getScoreFromUserAccordingToPaymentConfig($userArray, $config)
     {
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $repository = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer');
             $userID = $userArray['additional']['user']['id'];
 
@@ -1246,8 +1246,8 @@ class Mopt_PayoneHelper
         $userBillingAddressCheckData['moptPayoneAddresscheckResult'] = null;
         $userBillingAddressCheckData['moptPayoneAddresscheckDate'] = null;
 
-        if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.2.0', '>=')
+        if (Shopware()->Config()->get('version') === '___VERSION___' ||
+            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
         ) {
             $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
             $billing = $user->getDefaultBillingAddress();
@@ -1670,7 +1670,7 @@ class Mopt_PayoneHelper
         $customer = Shopware()->Models()
             ->getRepository('Shopware\Models\Customer\Customer')
             ->find($userId);
-        if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $billing = $customer->getDefaultBillingAddress();
         } else {
             $billing = $customer->getBilling();
@@ -1694,22 +1694,32 @@ class Mopt_PayoneHelper
 
     /**
      * Return the latest PayPalConfig
-     * @return \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
+     * @return bool|\Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
      */
     public function getPayonePayPalConfig()
     {
         // use latest config
-        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_paypal";
-        $latest = Shopware()->Db()->fetchOne($sql);
+        $latest = $this->getPayPalLatestConfig();
+        if ($latest) {
+            /**
+             * @var $config \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
+             */
+            $config = Shopware()->Models()->find(
+                'Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal',
+                $latest
+            );
+            return $config;
+        }
+        return false;
+    }
 
-        /**
-         * @var $config \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
-         */
-        $config = Shopware()->Models()->find(
-            'Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal',
-            $latest
-        );
-        return $config;
+    /**
+     * @return mixed
+     */
+    public function getPayPalLatestConfig()
+    {
+        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_paypal";
+        return Shopware()->Db()->fetchOne($sql);
     }
 
 }

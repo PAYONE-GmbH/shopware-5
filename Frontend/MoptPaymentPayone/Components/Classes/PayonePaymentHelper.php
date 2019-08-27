@@ -985,14 +985,14 @@ class Mopt_PayonePaymentHelper
     {
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
 
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
             $billing = $user->getDefaultBillingAddress();
         } else {
             $billing = $user->getBilling();
         }
 
         if (isset($paymentData['formData']['mopt_payone__klarna_birthyear'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                 $user->setBirthday($paymentData['formData']['mopt_payone__klarna_birthyear']
                     . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth']
                     . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
@@ -1006,7 +1006,7 @@ class Mopt_PayonePaymentHelper
             $billing->setPhone($paymentData['formData']['mopt_payone__klarna_telephone']);
         }
         if (isset($paymentData['formData']['mopt_payone__payolution_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                 $user->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
                 Shopware()->Models()->persist($user);
             } else {
@@ -1015,7 +1015,7 @@ class Mopt_PayonePaymentHelper
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                 $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
                 Shopware()->Models()->persist($user);
             } else {
@@ -1028,7 +1028,7 @@ class Mopt_PayonePaymentHelper
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                 $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate']);
                 Shopware()->Models()->persist($user);
             } else {
@@ -1041,7 +1041,7 @@ class Mopt_PayonePaymentHelper
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                 $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']);
                 Shopware()->Models()->persist($user);
             } else {
@@ -1054,7 +1054,7 @@ class Mopt_PayonePaymentHelper
         }
 
         if (isset($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
+            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
                 $user->setBirthday($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate']);
                 Shopware()->Models()->persist($user);
             } else {
