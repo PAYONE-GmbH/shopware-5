@@ -140,7 +140,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_finish' . $templateSuffix . '.tpl');
         }
 
-        if ($request->getActionName() == 'finish' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')  {
+        if ($request->getActionName() == 'finish' && $moptPaymentName === 'mopt_payone__fin_paypal_installment') {
             $installmentData = Shopware()->Session()->offsetGet('moptPaypalInstallmentData');
             $view->assign('Installment', $installmentData);
         }
@@ -255,7 +255,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
         }
 
-        if ((($controllerName == 'checkout' || $controllerName == 'FatchipBSPayonePaypalInstallmentCheckout')  && $request->getActionName() == 'confirm')) {
+        if ((($controllerName == 'checkout' || $controllerName == 'FatchipBSPayonePaypalInstallmentCheckout') && $request->getActionName() == 'confirm')) {
             if ($moptPaymentHelper->isPayonePaymentMethod($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     $action->redirect(
@@ -264,6 +264,34 @@ class FrontendPostDispatch implements SubscriberInterface
                             'action' => 'shippingPayment',
                         )
                     );
+                }
+            }
+        }
+
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
+            if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
+                if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
+                    $action->redirect(
+                        array(
+                            'controller' => 'checkout',
+                            'action' => 'cart',
+                        )
+                    );
+                }
+            }
+        }
+
+        if (($controllerName == 'checkout' && $request->getActionName() == 'cart')) {
+            if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
+                if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
+                    unset($session->moptBasketChanged);
+                    unset($session->moptPaydirektExpressWorkerId);
+                    $redirectnotice =
+                        'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
+                        . 'Bitte wiederholen Sie die Zahlung.<br>';
+
+                    $view->assign('moptBasketChanged', true);
+                    $view->assign('moptOverlayRedirectNotice', $redirectnotice);
                 }
             }
         }
@@ -295,10 +323,14 @@ class FrontendPostDispatch implements SubscriberInterface
                 // remove paypal for countries which need a state
                 // in case no state for the country is supplied
                 if ($payment['name'] === 'mopt_payone__ewallet_paypal') {
-                    if ($this->isStateNeeded())  {
+                    if ($this->isStateNeeded()) {
                         $paypalIndex = $index;
                         unset ($payments[$paypalIndex]);
                     }
+                }
+                if ($payment['name'] === 'mopt_payone__ewallet_paydirekt_express') {
+                    $paydirektexpressIndex = $index;
+                    unset ($payments[$paydirektexpressIndex]);
                 }
 
             }
@@ -692,8 +724,8 @@ class FrontendPostDispatch implements SubscriberInterface
         $countriesNeedState = array('JP', 'US', 'CA', 'MX', 'AR', 'BR', 'CN', 'ID', 'IN', 'TH');
         $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
         $shippingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['shippingaddress']['countryID']);
-        $billingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['billingaddress']['countryID'],$userData['billingaddress']['stateID']);
-        $shippingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['shippingaddress']['countryID'],$userData['shippingaddress']['stateID']);
+        $billingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['billingaddress']['countryID'], $userData['billingaddress']['stateID']);
+        $shippingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['shippingaddress']['countryID'], $userData['shippingaddress']['stateID']);
 
         if (!in_array($billingCountryIso, $countriesNeedState) && !in_array($shippingCountryIso, $countriesNeedState)) {
             return false;

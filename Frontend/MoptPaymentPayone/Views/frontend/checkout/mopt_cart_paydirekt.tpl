@@ -12,3 +12,11 @@
     {/if}
 
 {/block}
+
+{block name='frontend_checkout_cart_error_messages'}
+    <div>
+        {if $moptBasketChanged}
+            {include file="frontend/_includes/messages.tpl" type="error" content=$moptOverlayRedirectNotice}
+        {/if}
+    </div>
+{/block}

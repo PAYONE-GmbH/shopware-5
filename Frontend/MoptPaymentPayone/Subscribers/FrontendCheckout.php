@@ -92,6 +92,7 @@ class FrontendCheckout implements SubscriberInterface
         if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePayolutionInstallment($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalInstallment($userData['additional']['payment']['name'])
+            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypDirektExpress($userData['additional']['payment']['name'])
         ) {
             return;
         }
@@ -111,11 +112,16 @@ class FrontendCheckout implements SubscriberInterface
     {
         $ret = $arguments->getReturn();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalInstallment($userData['additional']['payment']['name'])) {
+        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalInstallment($userData['additional']['payment']['name']) &&
+            !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaydirektExpress($userData['additional']['payment']['name'])
+        ) {
             return;
         }
         // Set redirect flag
         if (isset(Shopware()->Session()->moptPaypalInstallmentWorkerId)) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
+        if (isset(Shopware()->Session()->moptPaydirektExpressWorkerId)) {
             Shopware()->Session()->moptBasketChanged = true;
         }
         $arguments->setReturn($ret);
