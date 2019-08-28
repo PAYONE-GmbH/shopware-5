@@ -17,6 +17,8 @@ class Mopt_PayoneConfig
       '185.60.20.*',
       );
 
+    const PAYDIREKT_EXPRESS_DISPATCHNAME = 'PaydirektExpress Versand';
+
     const PAYMENTS_ALL = [
         'mopt_payone__cc_visa',
         'mopt_payone__cc_mastercard',
@@ -111,4 +113,5 @@ class Mopt_PayoneConfig
     {
         return $this->validIPs;
     }
+
 }

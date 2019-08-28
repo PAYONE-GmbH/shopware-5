@@ -1183,8 +1183,7 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
         }
 
         if (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') ||
-            Shopware()->Config()->get('version') == '__VERSION___')
-        {
+            Shopware()->Config()->get('version') == '__VERSION___') {
             $sql = "SELECT * FROM s_core_snippets
                 WHERE  name = 'amazon_failed' AND namespace = 'backend/static/payment_status'";
             $result = $db->query($sql);
@@ -1247,8 +1246,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         }
 
         if (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') ||
-            Shopware()->Config()->get('version') == '__VERSION___')
-        {
+            Shopware()->Config()->get('version') == '__VERSION___') {
             $sql = "SELECT * FROM s_core_snippets
                 WHERE  name = 'amazon_delayed' AND namespace = 'backend/static/payment_status'";
             $result = $db->query($sql);
@@ -1587,7 +1585,8 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdateAmazonPackStationModelExtension(){
+    function checkAndUpdateAmazonPackStationModelExtension()
+    {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_amazon_pay'
@@ -1608,7 +1607,8 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdatePayPalPackStationModelExtension(){
+    function checkAndUpdatePayPalPackStationModelExtension()
+    {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
@@ -1628,4 +1628,28 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         }
 
     }
+
+    /**
+     * check if paydirekt exporess dispatch exits and create it if not
+     *
+     * @return void
+     */
+    function insertPaydirektExpressDispatch()
+    {
+        $db = Shopware()->Db();
+        $dispatchName = Mopt_PayoneConfig::PAYDIREKT_EXPRESS_DISPATCHNAME;
+
+        $checkSql = "SELECT * FROM s_premium_dispatch WHERE name = '" . $dispatchName . "';";
+        $result = Shopware()->Db()->query($checkSql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "
+                    INSERT INTO `s_premium_dispatch` (`name`, `type`, `description`, `comment`, `active`, `position`, `calculation`, `surcharge_calculation`, `tax_calculation`, `shippingfree`, `multishopID`, `customergroupID`, `bind_shippingfree`, `bind_time_from`, `bind_time_to`, `bind_instock`, `bind_laststock`, `bind_weekday_from`, `bind_weekday_to`, `bind_weight_from`, `bind_weight_to`, `bind_price_from`, `bind_price_to`, `bind_sql`, `status_link`, `calculation_sql`) VALUES
+    ('" . $dispatchName . "', 0, '', '', 1, 0, 0, 3, 0, NULL, NULL, NULL, 0, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL);";
+            $db->query($sql);
+        }
+
+    }
+
 }
+

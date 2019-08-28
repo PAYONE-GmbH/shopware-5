@@ -289,7 +289,7 @@ class Mopt_PayoneParamBuilder
             if (!$blDebitBrutto) {
                 $amount += ($positionPrice * $position->getQuantity());
             } else {
-                $amount += round((($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100))),2);
+                $amount += round((($positionPrice * $position->getQuantity()) * (1 + ($flTaxRate / 100))), 2);
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {
@@ -518,7 +518,7 @@ class Mopt_PayoneParamBuilder
 
         // Wunschpaket Packstation saves the packstation number in street
         // this has to be prefixed with 'Packstation' for the payone api to accept
-        $params['shipping_street'] = ($this->payoneHelper->isWunschpaketActive() && is_numeric($shippingAddress['street']))?
+        $params['shipping_street'] = ($this->payoneHelper->isWunschpaketActive() && is_numeric($shippingAddress['street'])) ?
             'Packstation' . ' ' . $shippingAddress['street'] : $shippingAddress['street'];
 
         $params['shipping_country'] = $this->getCountryFromId($shippingAddress['countryID']);
@@ -940,6 +940,34 @@ class Mopt_PayoneParamBuilder
 
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
         return $payment;
+    }
+
+    /**
+     * returns paydirekt payment data object
+     *
+     * @param type $router
+     * @param bool $intialRecurringRequest
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     */
+    public function getPaymentPaydirektExpress($router, $intialRecurringRequest = false)
+    {
+        $params = array();
+        $params['wallettype'] = 'PDT';
+
+        if ($intialRecurringRequest) {
+            // TODO implement and test AboCommerce
+            $params['successurl'] = $router->assemble(array('action' => 'paydirektexpressRecurringSuccess',
+                'forceSecure' => true, 'appendSession' => false));
+        } else {
+            $params['successurl'] = $router->assemble(array('action' => 'success',
+                'forceSecure' => true, 'appendSession' => false));
+        }
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+            'forceSecure' => true, 'appendSession' => false));
+
+        return new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
     }
 
     /**
@@ -1791,7 +1819,6 @@ class Mopt_PayoneParamBuilder
 
     public function buildPayDirektExpressCheckout($paymentId, $router, $amount, $currencyName, $userData)
     {
-        $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
         $params = $this->getAuthParameters($paymentId);
 
         $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
@@ -1800,20 +1827,17 @@ class Mopt_PayoneParamBuilder
                 'data' => Payone_Api_Enum_GenericpaymentAction::PAYDIREKTEXPRESS_CHECKOUT)
         ));
 
-        // auth
-
-        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'type',
-                'data' => 'directsale')
-        ));
-
-        // preauth
-/*        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'type',
-                'data' => 'order')
-        ));
-*/
-
+        if ($this->payoneConfig['authorisationMethod'] == 'Vorautorisierung') {
+            $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'type',
+                    'data' => 'order')
+            ));
+        } else {
+            $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'type',
+                    'data' => 'directsale')
+            ));
+        }
         $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'web_url_shipping_terms',
                 'data' => 'https://www.google.de')

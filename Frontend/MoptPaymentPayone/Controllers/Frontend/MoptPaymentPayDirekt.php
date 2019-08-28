@@ -29,14 +29,26 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $session = Shopware()->Session();
         $paymentId = $session->moptPaydirektExpressPaymentId;
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
+        $basket = $this->moptPayone__main->sGetBasket();
+
+        // set Dispatch to "PaydirektVersand"
+        $session['sDispatch'] = $this->getPaydirektExpressDispatchId();
+        $shippingCosts = $this->getShippingCosts();
+
+        $basket['sShippingcosts'] = $shippingCosts['brutto'];
+        $basket['sShippingcostsWithTax'] = $shippingCosts['brutto'];
+        $basket['sShippingcostsNet'] = $shippingCosts['netto'];
+        $basket['sShippingcostsTax'] = $shippingCosts['tax'];
 
         $userData = $this->getUserData();
         $amount = $this->getBasketAmount($userData);
 
+        $amountWithShipping = $amount + $shippingCosts['brutto'];
+
         $expressCheckoutRequestData = $paramBuilder->buildPaydirektExpressCheckout(
             $paymentId,
             $this->Front()->Router(),
-            $amount,
+            $amountWithShipping,
             $this->getCurrencyShortName(),
             $userData
         );
@@ -48,9 +60,8 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
             'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
-        // et BAsket Datafor Paydirekt call
-        $basket = Mopt_PayoneMain::getInstance()->sGetBasket();
-        $basketParams = $paramBuilder->getInvoicing($basket, false, $userData);
+
+        $basketParams = $paramBuilder->getInvoicing($basket, true, $userData);
         $request->setInvoicing($basketParams);
         // Response with new workorderid and redirect-url to paydirekt
 
@@ -529,6 +540,34 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
             }
         }
         return true;
+    }
+
+    /**
+     * @param $payData
+     * validate all important keys
+     * @return bool
+     */
+    private function getPaydirektExpressDispatchId()
+    {
+
+        return 11;
+    }
+
+    /**
+     * Get shipping costs as an array (brutto / netto) depending on selected country / payment
+     *
+     * @return array
+     */
+    public function getShippingCosts()
+    {
+        $session = Shopware()->Session();
+        $country = $session['sCountry'];
+        $payment = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentPaydirektExpress();
+        if (empty($country) || empty($payment)) {
+            return ['brutto' => 0, 'netto' => 0];
+        }
+        $shippingcosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts($country);
+        return empty($shippingcosts) ? ['brutto' => 0, 'netto' => 0] : $shippingcosts;
     }
 
 }

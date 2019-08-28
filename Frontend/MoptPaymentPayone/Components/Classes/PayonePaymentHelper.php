@@ -456,7 +456,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaydirekt($paymentName)
     {
-        return preg_match('#mopt_payone__ewallet_paydirekt#', $paymentName) ? true : false;
+        return preg_match('/^mopt_payone__ewallet_paydirekt$/', $paymentName) ? true : false;
     }
 
     /**
@@ -1217,11 +1217,10 @@ class Mopt_PayonePaymentHelper
             return 'barzahlen';
         }
 
-        if ($this->isPayonePaydirekt($paymentShortName)) {
-            return 'paydirekt';
-        }
-
         if ($this->isPayonePaydirektExpress($paymentShortName)) {
+            return 'paydirektexpress';
+        }
+        if ($this->isPayonePaydirekt($paymentShortName)) {
             return 'paydirekt';
         }
         if ($this->isPayoneAlipay($paymentShortName)) {
@@ -1314,11 +1313,10 @@ class Mopt_PayonePaymentHelper
      */
     public function getPaymentPaydirektExpress()
     {
-        //TODO: update var names
-        $paymentAmazonPay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+        $paymentPaydirektexpress = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
             ['name' => 'mopt_payone__ewallet_paydirekt_express']
         );
-        return $paymentAmazonPay;
+        return $paymentPaydirektexpress;
     }
 
     /**
