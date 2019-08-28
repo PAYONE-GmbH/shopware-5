@@ -1632,14 +1632,14 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     /**
      * check if paydirekt exporess dispatch exits and create it if not
      *
-     * @return void
+     * @return Paydirekt Payment id
      */
     function insertPaydirektExpressDispatch()
     {
         $db = Shopware()->Db();
         $dispatchName = Mopt_PayoneConfig::PAYDIREKT_EXPRESS_DISPATCHNAME;
 
-        $checkSql = "SELECT * FROM s_premium_dispatch WHERE name = '" . $dispatchName . "';";
+        $checkSql = "SELECT id FROM s_core_paymentmeans WHERE name = '" . $dispatchName . "';";
         $result = Shopware()->Db()->query($checkSql);
 
         if ($result->rowCount() === 0) {
@@ -1647,8 +1647,57 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
                     INSERT INTO `s_premium_dispatch` (`name`, `type`, `description`, `comment`, `active`, `position`, `calculation`, `surcharge_calculation`, `tax_calculation`, `shippingfree`, `multishopID`, `customergroupID`, `bind_shippingfree`, `bind_time_from`, `bind_time_to`, `bind_instock`, `bind_laststock`, `bind_weekday_from`, `bind_weekday_to`, `bind_weight_from`, `bind_weight_to`, `bind_price_from`, `bind_price_to`, `bind_sql`, `status_link`, `calculation_sql`) VALUES
     ('" . $dispatchName . "', 0, '', '', 1, 0, 0, 3, 0, NULL, NULL, NULL, 0, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL);";
             $db->query($sql);
+
+            $paymentId = $this->getPaydirektExpressPaymentId();
+            $dispatchId = $this->getPaydirektExpressDispatchId();
+
+            $sqlDispatchCountries = "
+            INSERT INTO `s_premium_dispatch_countries` (`dispatchID`, `countryID`) VALUES
+            (". $dispatchId .", 2)
+            ";
+            $db->query($sqlDispatchCountries);
+
+            $sqlDispatchPaymentmean = "
+            INSERT INTO `s_premium_dispatch_paymentmeans` (`dispatchID`, `paymentID`) VALUES
+            (". $dispatchId .", ". $paymentId .")
+            ";
+            $db->query($sqlDispatchPaymentmean);
+
+            $sqlDispatchShippingCosts = "
+            INSERT INTO `s_premium_shippingcosts` (`from`, `value`, `factor`, `dispatchID`) VALUES
+            ('0.000', '5.90', '0.00', ". $dispatchId .");
+            ";
+            $db->query($sqlDispatchShippingCosts);
         }
 
+    }
+
+    /**
+     * check if paydirekt exporess dispatch exits and create it if not
+     *
+     * @return Paydirekt Payment id
+     */
+    public function getPaydirektExpressPaymentId()
+    {
+        $checkSql = "SELECT id FROM s_core_paymentmeans WHERE name = 'mopt_payone__ewallet_paydirekt_express'";
+        $result = Shopware()->Db()->query($checkSql);
+        $return = $result->fetch(PDO::FETCH_ASSOC);
+
+        return $return['id'];
+    }
+
+    /**
+     * check if paydirekt exporess dispatch exits and create it if not
+     *
+     * @return Paydirekt Payment id
+     */
+    public function getPaydirektExpressDispatchId()
+    {
+        $checkSql = "SELECT id FROM s_premium_dispatch WHERE name = '" . Mopt_PayoneConfig::PAYDIREKT_EXPRESS_DISPATCHNAME . "'";
+        $result = Shopware()->Db()->query($checkSql);
+        $return = $result->fetch(PDO::FETCH_ASSOC);
+
+        return $return['id'];
     }
 
 }

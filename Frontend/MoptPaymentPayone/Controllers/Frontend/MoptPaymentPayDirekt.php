@@ -545,12 +545,13 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
     /**
      * @param $payData
      * validate all important keys
-     * @return bool
+     * @return integer
      */
     private function getPaydirektExpressDispatchId()
     {
+        $dispatch = Shopware()->Models()->getRepository('Shopware\Models\Dispatch\Dispatch')->findOneBy(['name' => Mopt_PayoneConfig::PAYDIREKT_EXPRESS_DISPATCHNAME]);
 
-        return 11;
+        return $dispatch->getId();
     }
 
     /**
@@ -561,7 +562,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
     public function getShippingCosts()
     {
         $session = Shopware()->Session();
-        $country = $session['sCountry'];
+        $country = [ 'id' =>  $session['sCountry'] ];
         $payment = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentPaydirektExpress();
         if (empty($country) || empty($payment)) {
             return ['brutto' => 0, 'netto' => 0];
