@@ -3,8 +3,8 @@ Ext.define('Shopware.apps.MoptPayonePayDirekt.view.list.Button', {
     alias: 'widget.mopt-payone-pay-direkt-listing-grid',
     region: 'center',
     snippets: {
-        language: '{s name=localeId}Sprache{/s}',
-        button: '{s name=image}Pay Direkt image{/s}',
+        language: 'Sprache',
+        button: '{s name=button}PayDirekt Button{/s}'
     },
     configure: function () {
         var me = this;
@@ -12,8 +12,8 @@ Ext.define('Shopware.apps.MoptPayonePayDirekt.view.list.Button', {
         return {
             detailWindow: 'Shopware.apps.MoptPayonePayDirekt.view.detail.Window',
             columns: {
-                localeId: { header: me.snippets.localeId },
-                image: { header: me.snippets.image },
+                localeId: { header: me.snippets.language },
+                image: { header: me.snippets.button },
             }
         };
     }
