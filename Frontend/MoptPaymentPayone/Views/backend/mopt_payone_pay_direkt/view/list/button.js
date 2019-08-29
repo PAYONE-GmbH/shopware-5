@@ -4,6 +4,7 @@ Ext.define('Shopware.apps.MoptPayonePayDirekt.view.list.Button', {
     region: 'center',
     snippets: {
         language: 'Sprache',
+        dispatch: 'Versandart',
         button: '{s name=button}PayDirekt Button{/s}'
     },
     configure: function () {
@@ -13,6 +14,7 @@ Ext.define('Shopware.apps.MoptPayonePayDirekt.view.list.Button', {
             detailWindow: 'Shopware.apps.MoptPayonePayDirekt.view.detail.Window',
             columns: {
                 localeId: { header: me.snippets.language },
+                dispatchId: { header: me.snippets.dispatch},
                 image: { header: me.snippets.button },
             }
         };

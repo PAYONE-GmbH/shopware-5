@@ -16,6 +16,11 @@ Ext.define('Shopware.apps.MoptPayonePayDirekt.view.detail.Button', {
                             name: 'localeId',
                             allowBlank: false
                         },
+                        dispatchId: {
+                            fieldLabel: '{s name=dispatchId}Versandart{/s}',
+                            name: 'dispatchId',
+                            allowBlank: false
+                        },
                         image: {
                             fieldLabel: '{s name=image}Pay Direkt image{/s}',
                             xtype: 'mediaselectionfield',

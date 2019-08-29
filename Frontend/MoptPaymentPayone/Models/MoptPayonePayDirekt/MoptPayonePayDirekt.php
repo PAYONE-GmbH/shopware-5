@@ -32,6 +32,12 @@ class MoptPayonePayDirekt extends ModelEntity
     protected $localeId;
 
     /**
+     * @var
+     * @ORM\Column(name="dispatch_id", type="integer", unique=true)
+     */
+    protected $dispatchId;
+
+    /**
      * @var Locale $locale
      * @ORM\ManyToOne(targetEntity="Shopware\Models\Shop\Locale")
      * @ORM\JoinColumn(name="locale_id", referencedColumnName="id")
@@ -43,48 +49,11 @@ class MoptPayonePayDirekt extends ModelEntity
      */
     private $image;
 
-    /**
-     * @ORM\Column(name="is_default", type="boolean", precision=0, scale=0, nullable=true, unique=false)
-     */
-    private $isDefault;
+
 
 
     public function __construct()
     {
-        $this->buttons = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * add button to collection
-     *
-     * @param \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal $button
-     */
-    public function addButton(\Shopware\CustomModels\MoptPayonePaydirekt\MoptPayonePayDirekt $button)
-    {
-        $this->buttons[] = $button;
-    }
-
-    /**
-     * Set button collection
-     *
-     * @param $buttons
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function setButtons($buttons)
-    {
-        $this->buttons = $buttons;
-        return $this;
-    }
-
-    /**
-     * Get button collection
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getButtons()
-    {
-        return $this->buttons;
     }
 
     /**
@@ -155,16 +124,6 @@ class MoptPayonePayDirekt extends ModelEntity
     {
         $this->image = $image;
         return $this;
-    }
-
-    public function getIsDefault()
-    {
-        return $this->isDefault;
-    }
-
-    public function setIsDefault($isDefault)
-    {
-        $this->isDefault = $isDefault;
     }
 
 
