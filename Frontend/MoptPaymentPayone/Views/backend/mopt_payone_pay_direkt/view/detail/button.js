@@ -12,12 +12,12 @@ Ext.define('Shopware.apps.MoptPayonePayDirekt.view.detail.Button', {
                     layout: 'fit',
                     fields: {
                         localeId: {
-                            fieldLabel: '{s name=localeId}localeId{/s}',
+                            fieldLabel: '{s name=language}Sprache{/s}',
                             name: 'localeId',
                             allowBlank: false
                         },
                         dispatchId: {
-                            fieldLabel: '{s name=dispatchId}Versandart{/s}',
+                            fieldLabel: '{s name=dispatch}Versandart{/s}',
                             name: 'dispatchId',
                             allowBlank: false
                         },

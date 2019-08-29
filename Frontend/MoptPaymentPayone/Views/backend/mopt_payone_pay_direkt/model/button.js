@@ -18,20 +18,18 @@ Ext.define('Shopware.apps.MoptPayonePayDirekt.model.Button', {
         {
             relation: 'ManyToOne',
             field: 'localeId',
-            
-            type: 'hasMany',
-            model: 'Shopware.apps.Order.model.Dispatch',
-            name: 'getDispatch',
-            associationKey: 'dispatch'
-        },
-        {
-            relation: 'ManyToOne',
-            field: 'dispatchId',
-
             type: 'hasMany',
             model: 'Shopware.apps.Base.model.Locale',
             name: 'getLocale',
             associationKey: 'locale'
+        },
+        {
+            relation: 'ManyToOne',
+            field: 'dispatchId',
+            type: 'hasMany',
+            model: 'Shopware.apps.Order.model.Dispatch',
+            name: 'getDispatch',
+            associationKey: 'dispatch'
         }
     ]
 });
