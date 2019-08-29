@@ -31,7 +31,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
         $basket = $this->moptPayone__main->sGetBasket();
 
-        // set Dispatch to "PaydirektVersand"
+        // set Dispatch
         $session['sDispatch'] = $this->getPaydirektExpressDispatchId();
         $shippingCosts = $this->getShippingCosts();
 
@@ -549,9 +549,8 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
      */
     private function getPaydirektExpressDispatchId()
     {
-        $dispatch = Shopware()->Models()->getRepository('Shopware\Models\Dispatch\Dispatch')->findOneBy(['name' => Mopt_PayoneConfig::PAYDIREKT_EXPRESS_DISPATCHNAME]);
-
-        return $dispatch->getId();
+        $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayDirektExpressConfig();
+        return $config->getDispatchId();
     }
 
     /**
