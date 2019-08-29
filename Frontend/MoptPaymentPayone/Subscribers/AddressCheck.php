@@ -47,18 +47,10 @@ class AddressCheck implements SubscriberInterface
             'sAdmin::executeRiskRule::replace' => 'sAdmin__executeRiskRule',
             // check if addresscheck is valid if activated and group creditcards
             'Shopware_Controllers_Frontend_Checkout::confirmAction::after' => 'onConfirmAction',
-            // hook for addresscheck
-            'Shopware_Modules_Admin_ValidateStep2_FilterResult' => 'onValidateStep2',
-            // hook for saving addresscheck result
-            'sAdmin::sUpdateBilling::after' => 'onUpdateBilling',
             // hook for saving addresscheck result during registration process
             'Shopware_Controllers_Frontend_Register::saveRegisterAction::after' => 'onSaveRegister',
-            // hook for shipmentaddresscheck
-            'Shopware_Modules_Admin_ValidateStep2Shipping_FilterResult' => 'onValidateStep2ShippingAddress',
             // hook for invalidating a changed address in Shopware versions > 5.2
             'Shopware_Controllers_Frontend_Address::ajaxSaveAction::after' => 'onUpdateAddress',
-            // hook for saving shipmentaddresscheck result
-            'sAdmin::sUpdateShipping::after' => 'onUpdateShipping',
             // hook for saving consumerscorecheck result
             'sAdmin::sUpdatePayment::after' => 'onUpdatePayment',
             // check if consumerscore is valid if activated
@@ -308,11 +300,7 @@ class AddressCheck implements SubscriberInterface
     private function isBillingAttribWriteable(Customer $customer)
     {
         try {
-            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-                $billingObject = $customer->getDefaultBillingAddress();
-            } else {
-                $billingObject = $customer->getBilling();
-            }
+            $billingObject = $customer->getDefaultBillingAddress();
 
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
             $moptPayoneMain->getHelper()->getOrCreateBillingAttribute($billingObject);
@@ -325,11 +313,8 @@ class AddressCheck implements SubscriberInterface
     private function isShippingAttribWriteable(Customer $customer)
     {
         try {
-            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-                $shippingObject = $customer->getDefaultShippingAddress();
-            } else {
-                $shippingObject = $customer->getShipping();
-            }
+            $shippingObject = $customer->getDefaultShippingAddress();
+
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
             $moptPayoneMain->getHelper()->getOrCreateShippingAttribute($shippingObject);
         } catch (\Exception $e) {
@@ -600,353 +585,6 @@ class AddressCheck implements SubscriberInterface
     }
 
     /**
-     * billingaddress addresscheck
-     *
-     * @param \Enlight_Event_EventArgs $arguments
-     */
-    public function onValidateStep2(\Enlight_Event_EventArgs $arguments)
-    {
-        $ret = $arguments->getReturn();
-
-        if (!empty($ret['sErrorMessages'])) {
-            $arguments->setReturn($ret);
-            return;
-        }
-
-        // get config data from main
-        /** @var \Mopt_PayoneMain $moptPayoneMain */
-        $moptPayoneMain = $this->container->get('MoptPayoneMain');
-        $config = $moptPayoneMain->getPayoneConfig();
-        $postData = $arguments->get('post');
-        $session = Shopware()->Session();
-        $basketAmount = $session->get('sBasketAmount');
-
-        $userId = $session->sUserId;
-        $paymentId =  $session->sPaymentID;
-
-        $paymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($paymentId);
-
-        if (in_array( $paymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
-            // check for paypal ecs
-            if ($paymentName == 'mopt_payone__ewallet_paypal' && Shopware()->Session()->moptPaypalEcsWorkerId) {
-                return;
-            } elseif ($paymentName == 'mopt_payone__ewallet_paypal' && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
-                // do nothing
-            } else {
-                return;
-            }
-
-        }
-
-        // perform check if addresscheck is enabled
-        $billingAddressCheckRequired = $moptPayoneMain->getHelper()->isBillingAddressToBeChecked(
-            $config,
-            $postData['register']['billing']['country']
-        );
-
-        if ($session->moptPayoneBillingAddresscheckResult) {
-            $billingAddressCheckRequired = false;
-        }
-
-        if ($billingAddressCheckRequired) {
-            // if nothing in basket, don't check and  just reset the validation date and result
-            if (!$basketAmount) {
-                $moptPayoneMain->getHelper()->resetAddressCheckData($userId);
-                return;
-            }
-
-            // no check when basket value outside configured values
-            if ($basketAmount < $config['adresscheckMinBasket'] || $basketAmount > $config['adresscheckMaxBasket']) {
-                return;
-            } else {
-                $billingFormData = $postData["register"]['billing'];
-                $personalFormData = $postData["register"]['personal'];
-
-                $params = $moptPayoneMain
-                    ->getParamBuilder()
-                    ->getAddressCheckParams(
-                        $billingFormData,
-                        $personalFormData
-                    );
-                $billingAddressChecktype = $moptPayoneMain->getHelper()
-                    ->getAddressChecktype($config, 'billing', $postData['register']['billing']['country']);
-                $response = $this->performAddressCheck(
-                    $config,
-                    $params,
-                    $this->container->get('MoptPayoneBuilder'),
-                    $moptPayoneMain,
-                    $billingAddressChecktype
-                );
-
-                // @TODO refactor, extract methods
-                if ($response instanceof \Payone_Api_Response_AddressCheck_Valid) {
-                    $session = Shopware()->Session();
-                    $secStatus = (int)$response->getSecstatus();
-                    // check secstatus and config
-                    if ($secStatus == 10) {
-                        // valid address returned -> save result to session
-                        $session->moptPayoneBillingAddresscheckResult = serialize($response);
-                    } else {
-                        // secstatus must be 20 - corrected address returned
-                        switch ($config['adresscheckAutomaticCorrection']) {
-                            case 0:
-                                // this works only for address changes via account controller
-                                $arguments->getSubject()->sSYSTEM->_POST['street'] = $response->getStreet();
-                                $arguments->getSubject()->sSYSTEM->_POST['zipcode'] = $response->getZip();
-                                $arguments->getSubject()->sSYSTEM->_POST['city'] = $response->getCity();
-                                $session->moptPayoneBillingAddresscheckResult = serialize($response);
-                                break;
-
-                            case 1: // no correction
-                                $session->moptPayoneBillingAddresscheckResult = serialize($response);
-                                break;
-
-                            case 2: // depends on user
-                                // add address data to template
-                                $session->moptAddressCheckNeedsUserVerification = true;
-                                $session->moptAddressCheckOriginalAddress = $billingFormData;
-                                $session->moptAddressCheckCorrectedAddress = serialize($response);
-                                break;
-                        }
-                    }
-
-                    // save corrected address or status to session in onUpdateShipping
-                    $arguments->setReturn($ret);
-                    return;
-                }
-                if ($response instanceof \Payone_Api_Response_AddressCheck_Invalid ||
-                    $response instanceof \Payone_Api_Response_Error
-                ) {
-                    $moptPayoneMain->getHelper()->saveBillingAddressError($userId, $response);
-                    $session->moptPayoneBillingAddresscheckResult = serialize($response);
-
-                    $request = $this->container->get('Front')->Request(); // used to forward user
-                    switch ($config['adresscheckFailureHandling']) {
-                        case 0: // cancel transaction -> redirect to address input
-                            $this->forward($request, 'billing', 'account', null, ['sTarget' => 'checkout']);
-                            $arguments->setReturn($ret);
-                            return;
-
-                        // reenter address -> redirect to address form
-                        case 1:
-                            $ret['sErrorFlag']['mopt_payone_configured_message'] = true;
-                            $ret['sErrorMessages']['mopt_payone_configured_message'] =
-                                $moptPayoneMain->getPaymentHelper()
-                                    ->moptGetErrorMessageFromErrorCodeViaSnippet(
-                                        'addresscheck',
-                                        $response->getErrorcode()
-                                    );
-                            if ($arguments->getSubject()->sCheckUser()) {
-                                $this->forward($request, 'billing', 'account', null, ['sTarget' => 'checkout']);
-                                $arguments->setReturn($ret);
-                                return;
-                            } else {
-                                $this->forward($request, 'index', 'register', null, ['sTarget' => 'checkout']);
-                                $arguments->setReturn($ret);
-                                return;
-                            }
-
-                        // perform consumerscore check
-                        case 2:
-                            $billingFormData['countryID'] = $billingFormData['country'];
-                            try {
-                                $response = $this->performConsumerScoreCheck($config, $billingFormData);
-
-                                if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
-                                    $this->forward($request, 'billing', 'account', null, ['sTarget' => 'checkout']);
-                                    return;
-                                }
-                                break;
-                            } catch (\Exception $e) {
-                                break;
-                            }
-
-                        // proceed
-                        case 3:
-                            return;
-                    }
-
-                    $arguments->setReturn($ret);
-                    return;
-                }
-            }
-        }
-
-        $arguments->setReturn($ret);
-    }
-
-    /**
-     *
-     * shipmentaddress addresscheck
-     *
-     * @param \Enlight_Event_EventArgs $arguments
-     */
-    public function onValidateStep2ShippingAddress(\Enlight_Event_EventArgs $arguments)
-    {
-        $ret = $arguments->getReturn();
-
-        if (!empty($ret['sErrorMessages'])) {
-            $arguments->setReturn($ret);
-            return;
-        }
-
-        // get config data from main
-        $moptPayoneMain = $this->container->get('MoptPayoneMain');
-        $config = $moptPayoneMain->getPayoneConfig();
-        $postData = $arguments->get('post');
-        $shippingAddressCountry = $moptPayoneMain->getHelper()
-            ->getAddressCountryFromUserData($postData, true);
-
-        // check if addresscheck is enabled
-        if ($config['adresscheckActive']) {
-            $shippingAddressChecktype = $moptPayoneMain->getHelper()
-                ->getAddressChecktypeFromId(
-                    $config['adresscheckShippingAdress'],
-                    $config['adresscheckShippingCountries'],
-                    $shippingAddressCountry
-                );
-
-            // return if shipping address checkmode is set to "no check"
-            if ($shippingAddressChecktype === false) {
-                return;
-            }
-
-            if (isset($postData['sSelectAddress'])) {
-                return;
-            }
-
-            $session = Shopware()->Session();
-            $userId = $session->sUserId;
-            $shippingFormData = $postData['register']['shipping'];
-            $paymentId =  $session->sPaymentID;
-            $paymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($paymentId);
-
-	    if (in_array( $paymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
-	      // check for paypal ecs
-	        if ($paymentName == 'mopt_payone__ewallet_paypal' && Shopware()->Session()->moptPaypalEcsWorkerId) {
-	            return;
-	        } elseif ($paymentName == 'mopt_payone__ewallet_paypal' && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
-	            // do nothing
-	        } else {
-	            return;
-	    }
-
-	}
-
-            // Do not check Packstation addresses
-            if ($moptPayoneMain->getPaymentHelper()->isWunschpaketActive() &&
-                is_numeric($postData['register']['shipping']['street']))
-            {
-                return;
-            }
-
-            $params = $moptPayoneMain->getParamBuilder()
-                ->getAddressCheckParams($shippingFormData, $shippingFormData);
-            $response = $this->performAddressCheck(
-                $config,
-                $params,
-                $this->container->get('MoptPayoneBuilder'),
-                $moptPayoneMain,
-                $shippingAddressChecktype
-            );
-
-            if ($response instanceof \Payone_Api_Response_AddressCheck_Valid) {
-                $secStatus = (int)$response->getSecstatus();
-                if ($secStatus === 10) {
-                    // valid address returned, save result to session
-                    $session->moptPayoneShippingAddresscheckResult = serialize($response);
-                } else {
-                    // secstatus must be 20 - corrected address returned
-                    switch ($config['adresscheckAutomaticCorrection']) {
-                        case 0: // auto correction
-                            // this works only for address changes via account controller
-                            $arguments->getSubject()->sSYSTEM->_POST['street'] = $response->getStreet();
-                            $arguments->getSubject()->sSYSTEM->_POST['zipcode'] = $response->getZip();
-                            $arguments->getSubject()->sSYSTEM->_POST['city'] = $response->getCity();
-                            $session->moptPayoneShippingAddresscheckResult = serialize($response);
-                            break;
-
-                        case 1: // no correction
-                            $session->moptPayoneShippingAddresscheckResult = serialize($response);
-                            break;
-
-                        case 2: // depends on user
-                            // add address data to template
-                            $session->moptShippingAddressCheckNeedsUserVerification = true;
-                            $session->moptShippingAddressCheckOriginalAddress = $shippingFormData;
-                            $session->moptShippingAddressCheckCorrectedAddress = serialize($response);
-                            break;
-                    }
-                }
-
-                // save corrected address or status to session in onUpdateShipping
-                $arguments->setReturn($ret);
-                return;
-            }
-            if ($response instanceof \Payone_Api_Response_AddressCheck_Invalid ||
-                $response instanceof \Payone_Api_Response_Error
-            ) {
-                $ret['sErrorFlag']['mopt_payone_configured_message'] = true;
-                $ret['sErrorMessages']['mopt_payone_configured_message'] = $moptPayoneMain->getPaymentHelper()
-                    ->moptGetErrorMessageFromErrorCodeViaSnippet('addresscheck', $response->getErrorcode());
-
-                $request = $this->container->get('Front')->Request(); // used to forward user
-                $session->moptPayoneShippingAddresscheckResult = serialize($response);
-
-                switch ($config['adresscheckFailureHandling']) {
-                    // cancel transaction -> redirect to payment choice
-                    case 0:
-                        $arguments->setReturn($ret);
-                        $this->forward($request, 'index', 'account', null, ['sTarget' => 'checkout']);
-                        return;
-
-                    // reenter address -> redirect to address form
-                    case 1:
-                        if ($arguments->getSubject()->sCheckUser()) {
-                            $this->forward($request, 'billing', 'account', null, ['sTarget' => 'checkout']);
-                            $arguments->setReturn($ret);
-                            return;
-                        } else {
-                            $this->forward($request, 'index', 'register', null, ['sTarget' => 'checkout']);
-                            $arguments->setReturn($ret);
-                            return;
-                        }
-
-                    // perform consumerscore check
-                    case 2:
-                        $shippingFormData['countryID'] = $shippingFormData['country'];
-                        try {
-                            $response = $this->performConsumerScoreCheck($config, $shippingFormData);
-
-                            if (!$this->handleConsumerScoreCheckResult($response, $config, $userId)) {
-                                //cancel transaction
-                                $arguments->setReturn($ret);
-                                $this->forward($request, 'index', 'account', null, ['sTarget' => 'checkout']);
-                                return;
-                            }
-                            unset($ret['sErrorFlag']['mopt_payone_addresscheck']);
-                            unset($ret['sErrorMessages']['mopt_payone_addresscheck']);
-                            return;
-
-                        } catch (\Exception $e) {
-                            break;
-                        }
-
-                    // proceed
-                    case 3:
-                        return;
-                }
-
-                $arguments->setReturn($ret);
-                return;
-            }
-        }
-
-        $arguments->setReturn($ret);
-        return;
-    }
-
-    /**
      * save addresscheck result
      *
      * @param \Enlight_Hook_HookArgs $arguments
@@ -973,20 +611,14 @@ class AddressCheck implements SubscriberInterface
             $userAttribute->setMoptPayoneConsumerscoreDate(0);
             Shopware()->Models()->persist($userAttribute);
             Shopware()->Models()->flush();
-            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-                $billing = $user->getDefaultBillingAddress();
-            } else {
-                $billing = $user->getBilling();
-            }
+            $billing = $user->getDefaultBillingAddress();
+
             $billingAttribute = $moptPayoneMain->getHelper()->getOrCreateBillingAttribute($billing);
             $billingAttribute->setMoptPayoneAddresscheckDate(0);
             Shopware()->Models()->persist($billingAttribute);
             Shopware()->Models()->flush();
-            if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-                $shipping = $user->getDefaultShippingAddress();
-            } else {
-                $shipping = $user->getShipping();;
-            }
+            $shipping = $user->getDefaultShippingAddress();
+
             $shippingAttribute = $moptPayoneMain->getHelper()->getOrCreateShippingAttribute($shipping);
             $shippingAttribute->setMoptPayoneAddresscheckDate(0);
             Shopware()->Models()->persist($shippingAttribute);
@@ -1414,15 +1046,12 @@ class AddressCheck implements SubscriberInterface
                                 'sTarget' => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
-                        } elseif (version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
-                        ) {
+                        } else {
                             $caller->forward('edit', 'address', null, [
                                 'id' => $billingAddressData['id'],
                                 'sTarget' => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
-                        } else {
-                            $caller->forward('billing', 'account', null, ['sTarget' => 'checkout']);
                         }
                         break;
                     case 2: // perform consumerscore check
@@ -1573,9 +1202,6 @@ class AddressCheck implements SubscriberInterface
                                 'sTarget' => 'checkout',
                                 'sTargetAction' => 'confirm'
                             ]);
-                        } elseif (version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-
-                        } else {
                             $subject->forward('edit', 'address', null, ['sTarget' => 'checkout']);
                         }
                         break;

@@ -405,27 +405,14 @@ class Mopt_PayoneHelper
 
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
 
-        if (Shopware()->Config()->get('version') === '___VERSION___' ||
-            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
-        ) {
-            if ($addressType === 'billing') {
-                $billing = $user->getDefaultBillingAddress();
-                $attribute = $this->getOrCreateBillingAttribute($billing);
-            } elseif ($addressType === 'shipping') {
-                $shipping = $user->getDefaultShippingAddress();
-                $attribute = $this->getOrCreateShippingAttribute($shipping);
-            }
-
-        } else {
-
-            if ($addressType === 'billing') {
-                $billing = $user->getBilling();
-                $attribute = $this->getOrCreateBillingAttribute($billing);
-            } elseif ($addressType === 'shipping') {
-                $shipping = $user->getShipping();
-                $attribute = $this->getOrCreateShippingAttribute($shipping);
-            }
+        if ($addressType === 'billing') {
+            $billing = $user->getDefaultBillingAddress();
+            $attribute = $this->getOrCreateBillingAttribute($billing);
+        } elseif ($addressType === 'shipping') {
+            $shipping = $user->getDefaultShippingAddress();
+            $attribute = $this->getOrCreateShippingAttribute($shipping);
         }
+
         $attribute->setMoptPayoneAddresscheckDate(date('Y-m-d'));
         $attribute->setMoptPayoneAddresscheckPersonstatus($response->getPersonstatus());
         $attribute->setMoptPayoneAddresscheckResult($response->getStatus());
@@ -449,13 +436,8 @@ class Mopt_PayoneHelper
         }
 
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
-        if (Shopware()->Config()->get('version') === '___VERSION___' ||
-            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
-        ) {
-            $billing = $user->getDefaultBillingAddress();
-        } else {
-            $billing = $user->getBilling();
-        }
+
+        $billing = $user->getDefaultBillingAddress();
 
         $billingAttribute = $this->getOrCreateBillingAttribute($billing);
         $billingAttribute->setMoptPayoneAddresscheckDate(date('Y-m-d'));
@@ -480,13 +462,8 @@ class Mopt_PayoneHelper
         }
 
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
-        if (Shopware()->Config()->get('version') === '___VERSION___' ||
-            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
-        ) {
-            $shipping = $user->getDefaultShippingAddress();
-        } else {
-            $shipping = $user->getShipping();
-        }
+
+        $shipping = $user->getDefaultShippingAddress();
 
         $shippingAttribute = $this->getOrCreateShippingAttribute($shipping);
         $shippingAttribute->setMoptPayoneAddresscheckDate(date('Y-m-d'));
@@ -622,48 +599,33 @@ class Mopt_PayoneHelper
      */
     public function saveCorrectedBillingAddress($userId, $response)
     {
-        if (Shopware()->Config()->get('version') === '___VERSION___' ||
-            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $orderVariables = Shopware()->Session()->sOrderVariables;
+        $orderVariables = Shopware()->Session()->sOrderVariables;
 
-            // ordervariables are null until shippingPayment view
-            if ($orderVariables !== null) {
-                $aOrderVars = $orderVariables->getArrayCopy();
-                $addressId = $aOrderVars['sUserData']['billingaddress']['id'];
-            } else {
-                /** @var \Shopware\Components\Model\ModelManager $em */
-                $em = Shopware()->Models();
-
-                /** @var \Shopware\Models\Customer\Customer $customer */
-                $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
-
-                /** @var \Shopware\Models\Customer\Address $address */
-                $addressId = $customer->getDefaultBillingAddress()->getId();
-
-            }
-
-            // Update Model and Flush for SW 5.3; when using sql like below this does not happen
-            $address = Shopware()->Models()->getRepository('Shopware\Models\Customer\Address')->find($addressId);
-            $address->setStreet($response->getStreet());
-            $address->setZipcode($response->getZip());
-            $address->setCity($response->getCity());
-            Shopware()->Models()->persist($address);
-            Shopware()->Models()->flush($address);
-            $session = Shopware()->Session();
-            $session->offsetSet('moptAddressCorrected', true);
+        // ordervariables are null until shippingPayment view
+        if ($orderVariables !== null) {
+            $aOrderVars = $orderVariables->getArrayCopy();
+            $addressId = $aOrderVars['sUserData']['billingaddress']['id'];
         } else {
-            $sql = 'UPDATE `s_user_billingaddress` SET street=?, zipcode=?, city=?  WHERE userID = ?';
+            /** @var \Shopware\Components\Model\ModelManager $em */
+            $em = Shopware()->Models();
 
-            Shopware()->Db()->query(
-                $sql,
-                array(
-                    $response->getStreet(),
-                    $response->getZip(),
-                    $response->getCity(),
-                    $userId)
-            );
+            /** @var \Shopware\Models\Customer\Customer $customer */
+            $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
+
+            /** @var \Shopware\Models\Customer\Address $address */
+            $addressId = $customer->getDefaultBillingAddress()->getId();
+
         }
 
+        // Update Model and Flush for SW 5.3; when using sql like below this does not happen
+        $address = Shopware()->Models()->getRepository('Shopware\Models\Customer\Address')->find($addressId);
+        $address->setStreet($response->getStreet());
+        $address->setZipcode($response->getZip());
+        $address->setCity($response->getCity());
+        Shopware()->Models()->persist($address);
+        Shopware()->Models()->flush($address);
+        $session = Shopware()->Session();
+        $session->offsetSet('moptAddressCorrected', true);
     }
 
     /**
@@ -674,45 +636,31 @@ class Mopt_PayoneHelper
      */
     public function saveCorrectedShippingAddress($userId, $response)
     {
-        if (Shopware()->Config()->get('version') === '___VERSION___' ||
-            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
-        ) {
-            $orderVariables = Shopware()->Session()->sOrderVariables;
+        $orderVariables = Shopware()->Session()->sOrderVariables;
 
-            if ($orderVariables !== null) {
-                $aOrderVars = $orderVariables->getArrayCopy();
-                $addressId = $aOrderVars['sUserData']['shippingaddress']['id'];
-            } else {
-                /** @var \Shopware\Components\Model\ModelManager $em */
-                $em = Shopware()->Models();
-
-                /** @var \Shopware\Models\Customer\Customer $customer */
-                $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
-
-                /** @var \Shopware\Models\Customer\Address $address */
-                $addressId = $customer->getDefaultShippingAddress()->getId();
-
-            }
-            // Update Model and Flush for SW 5.3; when using sql like below this does not happen
-            $address = Shopware()->Models()->getRepository('Shopware\Models\Customer\Address')->find($addressId);
-            $address->setStreet($response->getStreet());
-            $address->setZipcode($response->getZip());
-            $address->setCity($response->getCity());
-            Shopware()->Models()->persist($address);
-            Shopware()->Models()->flush($address);
-            $session = Shopware()->Session();
-            $session->offsetSet('moptAddressCorrected', true);
+        if ($orderVariables !== null) {
+            $aOrderVars = $orderVariables->getArrayCopy();
+            $addressId = $aOrderVars['sUserData']['shippingaddress']['id'];
         } else {
-            $sql = 'UPDATE `s_user_shippingaddress` SET street=?, zipcode=?, city=?  WHERE userID = ?';
-            Shopware()->Db()->query(
-                $sql,
-                array(
-                    $response->getStreet(),
-                    $response->getZip(),
-                    $response->getCity(),
-                    $userId)
-            );
+            /** @var \Shopware\Components\Model\ModelManager $em */
+            $em = Shopware()->Models();
+
+            /** @var \Shopware\Models\Customer\Customer $customer */
+            $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
+
+            /** @var \Shopware\Models\Customer\Address $address */
+            $addressId = $customer->getDefaultShippingAddress()->getId();
+
         }
+        // Update Model and Flush for SW 5.3; when using sql like below this does not happen
+        $address = Shopware()->Models()->getRepository('Shopware\Models\Customer\Address')->find($addressId);
+        $address->setStreet($response->getStreet());
+        $address->setZipcode($response->getZip());
+        $address->setCity($response->getCity());
+        Shopware()->Models()->persist($address);
+        Shopware()->Models()->flush($address);
+        $session = Shopware()->Session();
+        $session->offsetSet('moptAddressCorrected', true);
     }
 
     /**
@@ -749,37 +697,18 @@ class Mopt_PayoneHelper
         $shippingAttributes['moptPayoneAddresscheckResult'] = null;
         $shippingAttributes['moptPayoneAddresscheckDate'] = null;
 
-        if (Shopware()->Config()->get('version') === '___VERSION___' ||
-            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
-        ) {
-            $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
-            $shipping = $user->getDefaultShippingAddress();
-            $shippingAttribute = $this->getOrCreateShippingAttribute($shipping);
-            $shippingAttributes['moptPayoneAddresscheckResult'] = $shippingAttribute->getMoptPayoneAddresscheckResult();
-            $shippingAttributes['moptPayoneAddresscheckDate'] = $shippingAttribute->getMoptPayoneAddresscheckDate();
-            if (is_string($shippingAttributes['moptPayoneAddresscheckDate'])) {
-                $shippingAttributes['moptPayoneAddresscheckDate'] = DateTime::createFromFormat(
-                    'Y-m-d',
-                    $shippingAttribute->getMoptPayoneAddresscheckDate()
-                );
-            }
-        } else {
-
-            $sql = 'SELECT `id` FROM `s_user_shippingaddress` WHERE userID = ?';
-            $shippingId = Shopware()->Db()->fetchOne($sql, $userId);
-
-            $sql = 'SELECT `mopt_payone_addresscheck_result`, '
-                . '`mopt_payone_addresscheck_date` FROM `s_user_shippingaddress_attributes` WHERE shippingID = ?';
-            $result = Shopware()->Db()->fetchAll($sql, $shippingId);
-
-            if ($result) {
-                $shippingAttributes['moptPayoneAddresscheckResult'] = $result[0]['mopt_payone_addresscheck_result'];
-                $shippingAttributes['moptPayoneAddresscheckDate'] = DateTime::createFromFormat(
-                    'Y-m-d',
-                    $result[0]['mopt_payone_addresscheck_date']
-                );
-            }
+        $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
+        $shipping = $user->getDefaultShippingAddress();
+        $shippingAttribute = $this->getOrCreateShippingAttribute($shipping);
+        $shippingAttributes['moptPayoneAddresscheckResult'] = $shippingAttribute->getMoptPayoneAddresscheckResult();
+        $shippingAttributes['moptPayoneAddresscheckDate'] = $shippingAttribute->getMoptPayoneAddresscheckDate();
+        if (is_string($shippingAttributes['moptPayoneAddresscheckDate'])) {
+            $shippingAttributes['moptPayoneAddresscheckDate'] = DateTime::createFromFormat(
+                'Y-m-d',
+                $shippingAttribute->getMoptPayoneAddresscheckDate()
+            );
         }
+
         return $shippingAttributes;
     }
 
@@ -847,32 +776,26 @@ class Mopt_PayoneHelper
      */
     public function getScoreFromUserAccordingToPaymentConfig($userArray, $config)
     {
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $repository = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer');
-            $userID = $userArray['additional']['user']['id'];
+        $repository = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer');
+        $userID = $userArray['additional']['user']['id'];
 
-            $userObject = !empty($userID) ?
-                $repository->find($userID) : null;
+        $userObject = !empty($userID) ?
+            $repository->find($userID) : null;
 
-            $billingAddress = !empty($userObject) ?
-                $userObject->getDefaultBillingAddress() : null;
-            $billingAttribute = !empty($billingAddress) ?
-                $this->getOrCreateBillingAttribute($billingAddress) : null;
-            $moptBillingColor = !empty($billingAttribute) ?
-                $billingAttribute->getMoptPayoneConsumerscoreColor() : null;
+        $billingAddress = !empty($userObject) ?
+            $userObject->getDefaultBillingAddress() : null;
+        $billingAttribute = !empty($billingAddress) ?
+            $this->getOrCreateBillingAttribute($billingAddress) : null;
+        $moptBillingColor = !empty($billingAttribute) ?
+            $billingAttribute->getMoptPayoneConsumerscoreColor() : null;
 
-            $shippingAddress = !empty($userObject) ?
-                $userObject->getDefaultShippingAddress() : null;
-            $shippingAttribute = !empty($shippingAddress) ?
-                $this->getOrCreateShippingAttribute($shippingAddress) : null;
-            $moptShipmentColor = !empty($shippingAttribute) ?
-                $shippingAttribute->getMoptPayoneConsumerscoreColor() : null;
-            $moptScoreColor = $userArray['additional']['user']['mopt_payone_consumerscore_color'];
-        } else {
-            $moptBillingColor = $userArray['billingaddress']['moptPayoneConsumerscoreColor'];
-            $moptShipmentColor = $userArray['shippingaddress']['moptPayoneConsumerscoreColor'];
-            $moptScoreColor = $userArray['additional']['user']['moptPayoneConsumerscoreColor'];
-        }
+        $shippingAddress = !empty($userObject) ?
+            $userObject->getDefaultShippingAddress() : null;
+        $shippingAttribute = !empty($shippingAddress) ?
+            $this->getOrCreateShippingAttribute($shippingAddress) : null;
+        $moptShipmentColor = !empty($shippingAttribute) ?
+            $shippingAttribute->getMoptPayoneConsumerscoreColor() : null;
+        $moptScoreColor = $userArray['additional']['user']['mopt_payone_consumerscore_color'];
 
         $billingColor = $this->getSpecificScoreFromUser(
             $moptBillingColor,
@@ -1246,37 +1169,17 @@ class Mopt_PayoneHelper
         $userBillingAddressCheckData['moptPayoneAddresscheckResult'] = null;
         $userBillingAddressCheckData['moptPayoneAddresscheckDate'] = null;
 
-        if (Shopware()->Config()->get('version') === '___VERSION___' ||
-            version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
-        ) {
-            $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
-            $billing = $user->getDefaultBillingAddress();
-            $billingAttribute = $this->getOrCreateBillingAttribute($billing);
-            $userBillingAddressCheckData['moptPayoneAddresscheckResult'] = $billingAttribute->getMoptPayoneAddresscheckResult();
-            $userBillingAddressCheckData['moptPayoneAddresscheckDate'] = $billingAttribute->getMoptPayoneAddresscheckDate();
-            // Make sure this is a DateTime Object, sometimes?? string gets returned ???
-            if (is_string($userBillingAddressCheckData['moptPayoneAddresscheckDate'])) {
-                $userBillingAddressCheckData['moptPayoneAddresscheckDate'] = DateTime::createFromFormat(
-                    'Y-m-d',
-                    $billingAttribute->getMoptPayoneAddresscheckDate()
-                );
-            }
-        } else {
-
-            $sql = 'SELECT `id` FROM `s_user_billingaddress` WHERE userID = ?';
-            $billingId = Shopware()->Db()->fetchOne($sql, $userId);
-
-            $sql = 'SELECT `mopt_payone_addresscheck_result`, `mopt_payone_addresscheck_date` '
-                . 'FROM `s_user_billingaddress_attributes` WHERE billingID = ?';
-            $result = Shopware()->Db()->fetchAll($sql, $billingId);
-
-            if ($result) {
-                $userBillingAddressCheckData['moptPayoneAddresscheckResult'] = $result[0]['mopt_payone_addresscheck_result'];
-                $userBillingAddressCheckData['moptPayoneAddresscheckDate'] = DateTime::createFromFormat(
-                    'Y-m-d',
-                    $result[0]['mopt_payone_addresscheck_date']
-                );
-            }
+        $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
+        $billing = $user->getDefaultBillingAddress();
+        $billingAttribute = $this->getOrCreateBillingAttribute($billing);
+        $userBillingAddressCheckData['moptPayoneAddresscheckResult'] = $billingAttribute->getMoptPayoneAddresscheckResult();
+        $userBillingAddressCheckData['moptPayoneAddresscheckDate'] = $billingAttribute->getMoptPayoneAddresscheckDate();
+        // Make sure this is a DateTime Object, sometimes?? string gets returned ???
+        if (is_string($userBillingAddressCheckData['moptPayoneAddresscheckDate'])) {
+            $userBillingAddressCheckData['moptPayoneAddresscheckDate'] = DateTime::createFromFormat(
+                'Y-m-d',
+                $billingAttribute->getMoptPayoneAddresscheckDate()
+            );
         }
 
         return $userBillingAddressCheckData;
@@ -1670,11 +1573,9 @@ class Mopt_PayoneHelper
         $customer = Shopware()->Models()
             ->getRepository('Shopware\Models\Customer\Customer')
             ->find($userId);
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $billing = $customer->getDefaultBillingAddress();
-        } else {
-            $billing = $customer->getBilling();
-        }
+
+        $billing = $customer->getDefaultBillingAddress();
+
         $return = !empty($billing->getCompany()) ? true : false;
         return $return;
     }

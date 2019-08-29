@@ -202,14 +202,7 @@ class Mopt_PayoneMain
     public function sGetBasket()
     {
         if ($this->basketUpdated === true) {
-            // GH issue #145: sGetBasketData() is only available on SW >= 5.2.0
-            if (Shopware()->Config()->get('version') === '___VERSION___' ||
-                version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')
-            ) {
-                return Shopware()->Modules()->Basket()->sGetBasketData();
-            } else {
-                return Shopware()->Modules()->Basket()->sGetBasket();
-            }
+            return Shopware()->Modules()->Basket()->sGetBasketData();
         } else {
             return Shopware()->Modules()->Basket()->sGetBasket();
         }
