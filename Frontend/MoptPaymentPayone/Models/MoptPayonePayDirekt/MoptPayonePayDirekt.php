@@ -27,23 +27,34 @@ class MoptPayonePayDirekt extends ModelEntity
 
     /**
      * @var
-     * @ORM\Column(name="locale_id", type="integer", unique=true)
+     * @ORM\Column(name="locale_id", type="integer", unique=false)
      */
     protected $localeId;
 
     /**
+     * @var Locale $locale
+     * @ORM\ManyToOne(targetEntity="Shopware\Models\Shop\Locale")
+     * @ORM\JoinColumn(name="locale_id", referencedColumnName="id")
+     */
+    private $locale;
+
+    /**
      * @var
-     * @ORM\Column(name="dispatch_id", type="integer", unique=true)
+     * @ORM\Column(name="dispatch_id", type="integer", unique=false)
      */
     protected $dispatchId;
+
+    /**
+     * @var Dispatch $dispatch
+     * @ORM\ManyToOne(targetEntity="Shopware\Models\Dispatch\Dispatch")
+     * @ORM\JoinColumn(name="dispatch_id", referencedColumnName="id")
+     */
+    private $dispatch;
 
     /**
      * @ORM\Column(name="image", type="string", length=255, precision=0, scale=0, nullable=true, unique=false)
      */
     private $image;
-
-
-
 
     public function __construct()
     {
@@ -59,12 +70,10 @@ class MoptPayonePayDirekt extends ModelEntity
 
     /**
      * @param int $id
-     * @return MoptPayonePayDirekt
      */
     public function setId($id)
     {
         $this->id = $id;
-        return $this;
     }
 
     /**
@@ -82,7 +91,38 @@ class MoptPayonePayDirekt extends ModelEntity
     public function setLocaleId($localeId)
     {
         $this->localeId = $localeId;
-        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * @param mixed $locale
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDispatch()
+    {
+        return $this->dispatch;
+    }
+
+    /**
+     * @param mixed $dispatch
+     */
+    public function setDispatch($dispatch)
+    {
+        $this->dispatch = $dispatch;
     }
 
     /**
@@ -100,7 +140,6 @@ class MoptPayonePayDirekt extends ModelEntity
     public function setImage($image)
     {
         $this->image = $image;
-        return $this;
     }
 
     /**
