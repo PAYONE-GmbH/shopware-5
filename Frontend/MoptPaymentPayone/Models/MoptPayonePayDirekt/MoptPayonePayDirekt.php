@@ -26,13 +26,6 @@ class MoptPayonePayDirekt extends ModelEntity
     private $id;
 
     /**
-     * @var Locale $locale
-     * @ORM\ManyToOne(targetEntity="Shopware\Models\Shop\Locale")
-     * @ORM\JoinColumn(name="locale_id", referencedColumnName="id")
-     */
-    private $locale;
-
-    /**
      * @var
      * @ORM\Column(name="locale_id", type="integer", unique=false)
      */
@@ -163,23 +156,4 @@ class MoptPayonePayDirekt extends ModelEntity
     {
         $this->dispatchId = $dispatchId;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
-    /**
-     * @param $locale
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-    }
-
-
-
 }
