@@ -34,7 +34,7 @@
 
 {block name="frontend_checkout_actions_confirm_bottom_checkout"}
     {$smarty.block.parent}
-    <div class="button--container " style="display:table-cell; float:right; margin-right: 10px;">
+    <div class="button--container " style="display:table-cell;text-align:center;float:right; margin-right: 10px;">
         <img src="https://masterpass.com/dyn/img/btn/global/mp_chk_btn_147x034px.svg" onclick="getMasterPassData()">
         <a href="https://www.mastercard.com/mc_us/wallet/learnmore/{$Locale|replace:"_":"/"}/" target="_blank"><u>{s namespace='frontend/MoptPaymentPayone/payment' name=masterpassLearnMore}Mehr erfahren{/s}</u></a>
         <div class="clear"></div>

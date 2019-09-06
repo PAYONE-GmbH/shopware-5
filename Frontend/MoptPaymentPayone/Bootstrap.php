@@ -472,6 +472,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             // ignore
         }
 
+        try {
+            $schemaTool->createSchema(array(
+                $em->getClassMetadata('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt'),
+            ));
+        } catch (ToolsException $e) {
+            // ignore
+        }
+
         $this->getInstallHelper()->moptCreatePaymentDataTable();
         $this->getInstallHelper()->moptInsertDocumentsExtensionIntoDatabaseIfNotExist();
 
@@ -654,6 +662,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createMenuItem(array(
             'label' => 'Payone Amazon Pay',
             'controller' => 'MoptPayoneAmazonPay',
+            'action' => 'Index',
+            'class' => 'sprite-locale',
+            'active' => 1,
+            'parent' => $item,
+        ));
+        $this->createMenuItem(array(
+            'label' => 'Payone PayDirekt',
+            'controller' => 'MoptPayonePayDirekt',
             'action' => 'Index',
             'class' => 'sprite-locale',
             'active' => 1,

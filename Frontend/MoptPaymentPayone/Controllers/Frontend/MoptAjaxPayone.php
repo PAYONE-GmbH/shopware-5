@@ -881,27 +881,33 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->View()->assign(array('result' => $result));
         return $this->View()->render();
     }
-
     protected function amznConfirmOrderReferenceAction() {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-
         //get/setorderreference calls have to be applied before confirmorderreference
         $this->buildAndCallSetOrderReferenceDetails();
         $isConfirmed = $this->buildAndCallConfirmOrderReference();
-
         if($isConfirmed === false) {
             unset($this->session->moptPayoneAmazonAccessToken);
             unset($this->session->moptPayoneAmazonReferenceId);
             unset($this->session->moptPayoneAmazonWorkOrderId);
             unset($this->session->moptAmazonOrdernum);
-
             $this->session->moptAmazonError = 'ConfirmOrderReference';
             $this->session->moptAmazonLogout = true;
             $this->Response()->setHttpResponseCode(418);
             return;
         }
-
         echo json_encode('OK');
+    }
+
+    protected function payDirektOrderCallAction() {
+
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $result = $this->buildAndCallConfirmOrderPayDirektCall();
+        if($result->getStatus() != 'REDIRECT') {
+            $this->Response()->setHttpResponseCode(418);
+            return;
+        }
+        echo json_encode($result);
     }
 
     protected function buildAndCallConfirmOrderReference() {
@@ -1305,6 +1311,37 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         } else {
             echo json_encode($minExpiryDays);
         }
+    }
+
+    protected function buildAndCallConfirmOrderPayDirektCall()
+    {
+        $paymentId = Shopware()->Containler()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentIdFromName('mopt_payone__ewallet_pay_direkt');
+        $moptPayoneMain = $this->moptPayoneMain;
+        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
+        $params = $moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
+        $request = new \Payone_Api_Request_Genericpayment($params);
+        $router = $this->Front()->Router();
+        $request->setClearingType(\Payone_Enum_ClearingType::WALLET);
+        $request->setWallettype(\Payone_Api_Enum_WalletType::PAYDIREKT_EXPRESS);
+
+        $request->setApiVersion("3.10");
+        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
+        $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => 'checkout')
+        ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'type', 'data' => 'directsale')
+        ));
+
+        $request->setPaydata($paydata);
+        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
+        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+        return $service->request($request);
     }
 
 }

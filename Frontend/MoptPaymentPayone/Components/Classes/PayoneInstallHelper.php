@@ -566,6 +566,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Ratenkauf powered by Paypal',
                 'template' => 'mopt_paymentmean_paypal_installment.tpl',
                 'position' => 37,),
+            array(
+                'name' => 'mopt_payone__ewallet_paydirekt_express',
+                'description' => 'PAYONE Paydirekt Express',
+                'template' => null,
+                'position' => 38,),
         );
     }
 
@@ -1178,8 +1183,7 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
         }
 
         if (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') ||
-            Shopware()->Config()->get('version') == '__VERSION___')
-        {
+            Shopware()->Config()->get('version') == '__VERSION___') {
             $sql = "SELECT * FROM s_core_snippets
                 WHERE  name = 'amazon_failed' AND namespace = 'backend/static/payment_status'";
             $result = $db->query($sql);
@@ -1242,8 +1246,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         }
 
         if (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') ||
-            Shopware()->Config()->get('version') == '__VERSION___')
-        {
+            Shopware()->Config()->get('version') == '__VERSION___') {
             $sql = "SELECT * FROM s_core_snippets
                 WHERE  name = 'amazon_delayed' AND namespace = 'backend/static/payment_status'";
             $result = $db->query($sql);
@@ -1582,7 +1585,8 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdateAmazonPackStationModelExtension(){
+    function checkAndUpdateAmazonPackStationModelExtension()
+    {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_amazon_pay'
@@ -1603,7 +1607,8 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdatePayPalPackStationModelExtension(){
+    function checkAndUpdatePayPalPackStationModelExtension()
+    {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
         $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
@@ -1624,3 +1629,4 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
     }
 }
+

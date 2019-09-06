@@ -1593,6 +1593,22 @@ class Mopt_PayoneHelper
     }
 
 
+    public function getPayDirektExpressConfig(){
+        // use latest config
+        $latest = $this->getPayDirektExpressLatestConfig();
+        if ($latest) {
+            /**
+             * @var $config \Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt
+             */
+            $config = Shopware()->Models()->find(
+                'Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt',
+                $latest
+            );
+            return $config;
+        }
+        return false;
+    }
+
     /**
      * Return the latest PayPalConfig
      * @return bool|\Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
@@ -1622,5 +1638,12 @@ class Mopt_PayoneHelper
         $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_paypal";
         return Shopware()->Db()->fetchOne($sql);
     }
+
+    private function getPayDirektExpressLatestConfig()
+    {
+        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_pay_direkt";
+        return Shopware()->Db()->fetchOne($sql);
+    }
+
 
 }

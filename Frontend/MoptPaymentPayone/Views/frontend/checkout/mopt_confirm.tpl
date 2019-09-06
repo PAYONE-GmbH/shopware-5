@@ -42,3 +42,24 @@
     {/if}
     {$smarty.block.parent}
 {/block}
+
+{* SW 5.0, 5.1 Disable BillingAddress Action Buttons *}
+{block name="frontend_checkout_confirm_left_billing_address_actions"}
+{/block}
+
+
+{* SW 5.0 , 5.1 Disable ShippingAddress Action Buttons *}
+{block name="frontend_checkout_confirm_left_shipping_address_actions"}
+{/block}
+
+{block name='frontend_checkout_confirm_information_addresses_equal_panel_shipping_change_address'}
+{/block}
+
+{block name='frontend_checkout_confirm_information_addresses_equal_panel_shipping_select_address'}
+{/block}
+
+{block name='frontend_checkout_confirm_information_addresses_equal_panel_shipping_add_address'}
+{/block}
+
+{block name="frontend_checkout_confirm_information_addresses_equal_panel_actions_select_address"}
+{/block}

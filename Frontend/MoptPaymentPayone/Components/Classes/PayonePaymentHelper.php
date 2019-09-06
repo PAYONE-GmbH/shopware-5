@@ -456,7 +456,18 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaydirekt($paymentName)
     {
-        return preg_match('#mopt_payone__ewallet_paydirekt#', $paymentName) ? true : false;
+        return preg_match('/^mopt_payone__ewallet_paydirekt$/', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone paydirekt payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayonePaydirektExpress($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_paydirekt_express#', $paymentName) ? true : false;
     }
 
     /**
@@ -1176,6 +1187,9 @@ class Mopt_PayonePaymentHelper
             return 'barzahlen';
         }
 
+        if ($this->isPayonePaydirektExpress($paymentShortName)) {
+            return 'paydirektexpress';
+        }
         if ($this->isPayonePaydirekt($paymentShortName)) {
             return 'paydirekt';
         }
@@ -1203,6 +1217,19 @@ class Mopt_PayonePaymentHelper
 
         $config = $payoneMain->getPayoneConfig($paymentMethod['id']);
         return (bool)$config['paypalEcsActive'];
+    }
+
+    /**
+     * checks if PayDirektExpress is enabled
+     *
+     * @return bool
+     */
+    public function isPaydirektExpressActive()
+    {
+        $paymentPayDirektExpress = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_paydirekt_express']
+        );
+        return $paymentPayDirektExpress->getActive();
     }
 
     /**
@@ -1247,6 +1274,19 @@ class Mopt_PayonePaymentHelper
         $paymentMeans[$firstHit]['mopt_payone_credit_cards'] = $creditCardData;
 
         return $paymentMeans;
+    }
+
+    /**
+     * Fetches and returns amazon payment instance.
+     *
+     * @return \Shopware\Models\Payment\Payment
+     */
+    public function getPaymentPaydirektExpress()
+    {
+        $paymentPaydirektexpress = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_paydirekt_express']
+        );
+        return $paymentPaydirektexpress;
     }
 
     /**
