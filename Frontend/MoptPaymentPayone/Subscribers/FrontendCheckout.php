@@ -355,11 +355,12 @@ class FrontendCheckout implements SubscriberInterface
         if ($payoneMain->getHelper()->isAboCommerceArticleInBasket()) {
             return false;
         }
-
-        foreach ($payments as $paymentMethod) {
-            if ($payonePaymentHelper->isPaydirektExpressActive($payoneMain, $paymentMethod)) {
-                Shopware()->Session()->moptPaydirektExpressPaymentId = $paymentMethod['id'];
-                return true;
+        if ($payonePaymentHelper->isPaydirektExpressActive()) {
+            foreach ($payments as $paymentMethod) {
+                if ($payonePaymentHelper->isPayonePaydirektExpress($paymentMethod['name'])) {
+                    Shopware()->Session()->moptPaydirektExpressPaymentId = $paymentMethod['id'];
+                    return true;
+                }
             }
         }
 
@@ -407,14 +408,24 @@ class FrontendCheckout implements SubscriberInterface
      */
     protected function moptPayonePaydirektShortcutImgURL()
     {
+        $localeId = $this->container->get('shop')->getLocale()->getId();
+
         $builder = Shopware()->Models()->createQueryBuilder();
 
         $builder->select('button.image')
             ->from('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt', 'button')
-            ->where('button.id = 1')
-        ;
+            ->where('button.localeId = ?1')
+            ->setParameter(1, $localeId);
 
         $result = $builder->getQuery()->getOneOrNullResult();
+
+        if (!$result) {
+            $builder->resetDQLParts();
+            $builder->select('button.image')
+                ->from('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt', 'button')
+                ->where('button.id = 1');
+            $result = $builder->getQuery()->getOneOrNullResult();
+        }
 
         if (!$result) {
             return false;
