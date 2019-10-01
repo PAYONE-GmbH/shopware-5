@@ -456,7 +456,18 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaydirekt($paymentName)
     {
-        return preg_match('#mopt_payone__ewallet_paydirekt#', $paymentName) ? true : false;
+        return preg_match('/^mopt_payone__ewallet_paydirekt$/', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone paydirekt payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayonePaydirektExpress($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_paydirekt_express#', $paymentName) ? true : false;
     }
 
     /**
@@ -974,42 +985,24 @@ class Mopt_PayonePaymentHelper
     {
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
 
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-            $billing = $user->getDefaultBillingAddress();
-        } else {
-            $billing = $user->getBilling();
-        }
+        $billing = $user->getDefaultBillingAddress();
 
         if (isset($paymentData['formData']['mopt_payone__klarna_birthyear'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-                $user->setBirthday($paymentData['formData']['mopt_payone__klarna_birthyear']
-                    . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth']
-                    . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
-                Shopware()->Models()->persist($user);
+            $user->setBirthday($paymentData['formData']['mopt_payone__klarna_birthyear']
+                . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth']
+                . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
+            Shopware()->Models()->persist($user);
 
-            } else {
-                $billing->setBirthday($paymentData['formData']['mopt_payone__klarna_birthyear']
-                    . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth']
-                    . '-' . $paymentData['formData']['mopt_payone__klarna_birthday']);
-            }
             $billing->setPhone($paymentData['formData']['mopt_payone__klarna_telephone']);
         }
         if (isset($paymentData['formData']['mopt_payone__payolution_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-                $user->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
-                Shopware()->Models()->persist($user);
-            } else {
-                $billing->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
-            }
+            $user->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
+            Shopware()->Models()->persist($user);
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
-                Shopware()->Models()->persist($user);
-            } else {
-                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
-            }
+            $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
+            Shopware()->Models()->persist($user);
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_telephone'])) {
@@ -1017,12 +1010,8 @@ class Mopt_PayonePaymentHelper
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate']);
-                Shopware()->Models()->persist($user);
-            } else {
-                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate']);
-            }
+            $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate']);
+            Shopware()->Models()->persist($user);
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_installment_telephone'])) {
@@ -1030,12 +1019,8 @@ class Mopt_PayonePaymentHelper
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-                $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']);
-                Shopware()->Models()->persist($user);
-            } else {
-                $billing->setBirthday($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']);
-            }
+            $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']);
+            Shopware()->Models()->persist($user);
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'])) {
@@ -1043,12 +1028,8 @@ class Mopt_PayonePaymentHelper
         }
 
         if (isset($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate'])) {
-            if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-                $user->setBirthday($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate']);
-                Shopware()->Models()->persist($user);
-            } else {
-                $billing->setBirthday($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate']);
-            }
+            $user->setBirthday($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate']);
+            Shopware()->Models()->persist($user);
         }
 
         Shopware()->Models()->persist($billing);
@@ -1206,6 +1187,9 @@ class Mopt_PayonePaymentHelper
             return 'barzahlen';
         }
 
+        if ($this->isPayonePaydirektExpress($paymentShortName)) {
+            return 'paydirektexpress';
+        }
         if ($this->isPayonePaydirekt($paymentShortName)) {
             return 'paydirekt';
         }
@@ -1233,6 +1217,19 @@ class Mopt_PayonePaymentHelper
 
         $config = $payoneMain->getPayoneConfig($paymentMethod['id']);
         return (bool)$config['paypalEcsActive'];
+    }
+
+    /**
+     * checks if PayDirektExpress is enabled
+     *
+     * @return bool
+     */
+    public function isPaydirektExpressActive()
+    {
+        $paymentPayDirektExpress = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_paydirekt_express']
+        );
+        return $paymentPayDirektExpress->getActive();
     }
 
     /**
@@ -1277,6 +1274,19 @@ class Mopt_PayonePaymentHelper
         $paymentMeans[$firstHit]['mopt_payone_credit_cards'] = $creditCardData;
 
         return $paymentMeans;
+    }
+
+    /**
+     * Fetches and returns amazon payment instance.
+     *
+     * @return \Shopware\Models\Payment\Payment
+     */
+    public function getPaymentPaydirektExpress()
+    {
+        $paymentPaydirektexpress = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_paydirekt_express']
+        );
+        return $paymentPaydirektexpress;
     }
 
     /**

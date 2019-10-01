@@ -133,24 +133,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $tables = $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
 
         /** @var \Shopware\Bundle\AttributeBundle\Service\CrudService $attributeService */
-        $attributeService = $this->assertMinimumVersion('5.2') ?
-            Shopware()->Container()->get('shopware_attribute.crud_service') : null;
+        $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
 
         foreach ($tables as $table => $attributes) {
             foreach ($attributes as $attribute => $options) {
-                if ($this->assertMinimumVersion('5.2')) {
-                    try {
-                        $attributeService->delete($table, $prefix . '_' . $attribute);
-                    } catch (\Exception $e) {
-                        continue; // if table or column does not exist
-                    }
-                } else {
-                    try {
-                        /** @noinspection PhpDeprecationInspection */
-                        Shopware()->Models()->removeAttribute($table, $prefix, $attribute);
-                    } catch (\InvalidArgumentException $e) {
-                        continue; // if table or column does not exist
-                    }
+                try {
+                    $attributeService->delete($table, $prefix . '_' . $attribute);
+                } catch (\Exception $e) {
+                    continue; // if table or column does not exist
                 }
             }
         }
@@ -482,6 +472,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             // ignore
         }
 
+        try {
+            $schemaTool->createSchema(array(
+                $em->getClassMetadata('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt'),
+            ));
+        } catch (ToolsException $e) {
+            // ignore
+        }
+
         $this->getInstallHelper()->moptCreatePaymentDataTable();
         $this->getInstallHelper()->moptInsertDocumentsExtensionIntoDatabaseIfNotExist();
 
@@ -586,29 +584,17 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     protected function addAttributes()
     {
         $prefix = 'mopt_payone';
-        $tables = $this->assertMinimumVersion('5.2') ? $this->getInstallHelper()->moptAttributeExtensionsArray52($this->getId()) : $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
+        $tables = $this->getInstallHelper()->moptAttributeExtensionsArray52($this->getId());
 
-        if (version_compare(\Shopware::VERSION, '5.2.0', '<') && \Shopware::VERSION !== '___VERSION___') {
-            foreach ($tables as $table => $attributes) {
-                foreach ($attributes as $attribute => $options) {
-                    $type = is_array($options) ? $options[0] : $options;
-                    $type = $this->getInstallHelper()->unifiedToSQL($type);
-                    /** @noinspection PhpDeprecationInspection */
-                    Shopware()->Models()->addAttribute($table, $prefix, $attribute, $type, true, null);
-                }
+        $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
+        foreach ($tables as $table => $attributes) {
+            foreach ($attributes as $attribute => $options) {
+                $type = is_array($options) ? $options[0] : $options;
+                $data = is_array($options) ? $options[1] : [];
+                $attributeService->update($table, $prefix . '_' . $attribute, $type, $data);
             }
         }
 
-        if ($this->assertMinimumVersion('5.2')) {
-            $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
-            foreach ($tables as $table => $attributes) {
-                foreach ($attributes as $attribute => $options) {
-                    $type = is_array($options) ? $options[0] : $options;
-                    $data = is_array($options) ? $options[1] : [];
-                    $attributeService->update($table, $prefix . '_' . $attribute, $type, $data);
-                }
-            }
-        }
         Shopware()->Models()->generateAttributeModels(array_keys($tables));
     }
 
@@ -676,6 +662,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createMenuItem(array(
             'label' => 'Payone Amazon Pay',
             'controller' => 'MoptPayoneAmazonPay',
+            'action' => 'Index',
+            'class' => 'sprite-locale',
+            'active' => 1,
+            'parent' => $item,
+        ));
+        $this->createMenuItem(array(
+            'label' => 'Payone PayDirekt',
+            'controller' => 'MoptPayonePayDirekt',
             'action' => 'Index',
             'class' => 'sprite-locale',
             'active' => 1,

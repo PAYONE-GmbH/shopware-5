@@ -140,7 +140,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_finish' . $templateSuffix . '.tpl');
         }
 
-        if ($request->getActionName() == 'finish' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')  {
+        if ($request->getActionName() == 'finish' && $moptPaymentName === 'mopt_payone__fin_paypal_installment') {
             $installmentData = Shopware()->Session()->offsetGet('moptPaypalInstallmentData');
             $view->assign('Installment', $installmentData);
         }
@@ -255,7 +255,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
         }
 
-        if ((($controllerName == 'checkout' || $controllerName == 'FatchipBSPayonePaypalInstallmentCheckout')  && $request->getActionName() == 'confirm')) {
+        if ((($controllerName == 'checkout' || $controllerName == 'FatchipBSPayonePaypalInstallmentCheckout') && $request->getActionName() == 'confirm')) {
             if ($moptPaymentHelper->isPayonePaymentMethod($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     $action->redirect(
@@ -264,6 +264,34 @@ class FrontendPostDispatch implements SubscriberInterface
                             'action' => 'shippingPayment',
                         )
                     );
+                }
+            }
+        }
+
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
+            if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
+                if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
+                    $action->redirect(
+                        array(
+                            'controller' => 'checkout',
+                            'action' => 'cart',
+                        )
+                    );
+                }
+            }
+        }
+
+        if (($controllerName == 'checkout' && $request->getActionName() == 'cart')) {
+            if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
+                if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
+                    unset($session->moptBasketChanged);
+                    unset($session->moptPaydirektExpressWorkerId);
+                    $redirectnotice =
+                        'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
+                        . 'Bitte wiederholen Sie die Zahlung.<br>';
+
+                    $view->assign('moptBasketChanged', true);
+                    $view->assign('moptOverlayRedirectNotice', $redirectnotice);
                 }
             }
         }
@@ -295,10 +323,14 @@ class FrontendPostDispatch implements SubscriberInterface
                 // remove paypal for countries which need a state
                 // in case no state for the country is supplied
                 if ($payment['name'] === 'mopt_payone__ewallet_paypal') {
-                    if ($this->isStateNeeded())  {
+                    if ($this->isStateNeeded()) {
                         $paypalIndex = $index;
                         unset ($payments[$paypalIndex]);
                     }
+                }
+                if ($payment['name'] === 'mopt_payone__ewallet_paydirekt_express') {
+                    $paydirektexpressIndex = $index;
+                    unset ($payments[$paydirektexpressIndex]);
                 }
 
             }
@@ -333,7 +365,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         if ($controllerName == 'moptAjaxPayone') {
             // add var to view Guest Users are prohibited from account controller in SW 5.3 so we use our own
-            if (version_compare(\Shopware::VERSION, '5.3.0', '>=')
+            if (version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=') || Shopware()->Config()->get('version') == '___VERSION___'
             ) {
                 $view->assign('useMoptAccountController', true);
             }
@@ -350,13 +382,7 @@ class FrontendPostDispatch implements SubscriberInterface
         $shopContext = $this->container->get('bootstrap')->getResource('shop');
         $templateVersion = $shopContext->getTemplate()->getVersion();
 
-        if ($templateVersion >= 3) {
-            $this->container->get('Template')->addTemplateDir($this->path . 'Views/');
-        } elseif ($this->container->get('MoptPayoneMain')->getHelper()->isResponsive()) {
-            $this->container->get('Template')->addTemplateDir($this->path . 'Views/conecxoResponsive/');
-        } else {
-            $this->container->get('Template')->addTemplateDir($this->path . 'Views/shopware4/');
-        }
+        $this->container->get('Template')->addTemplateDir($this->path . 'Views/');
     }
 
     protected function moptPayoneCheckEnvironment($controllerName = false)
@@ -402,11 +428,8 @@ class FrontendPostDispatch implements SubscriberInterface
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
-                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-                    $birthday = explode('-', $userData['additional']['user']['birthday']);
-                } else {
-                    $birthday = explode('-', $userData['billingaddress']['birthday']);
-                }
+                $birthday = explode('-', $userData['additional']['user']['birthday']);
+
                 $data['mopt_payone__klarna_birthday'] = $birthday[2];
                 $data['mopt_payone__klarna_birthmonth'] = $birthday[1];
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
@@ -421,13 +444,13 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfigDebitnote']['payolutionCompanyName']);
-                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-                    if (!isset($userData['additional']['user']['birthday'])) {
-                        $userData['billingaddress']['birthday'] = "0000-00-00";
-                    } else {
-                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
-                    }
+
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
                 }
+
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__payolution_debitnote_birthday'] = $birthday[2];
@@ -448,13 +471,13 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfigInvoice']['payolutionCompanyName']);
-                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-                    if (!isset($userData['additional']['user']['birthday'])) {
-                        $userData['billingaddress']['birthday'] = "0000-00-00";
-                    } else {
-                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
-                    }
+
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
                 }
+
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__payolution_invoice_birthday'] = $birthday[2];
@@ -475,13 +498,13 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['moptPayolutionInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetPayolutionAdditionalInformation($shopLanguage[1], $data['payolutionConfigInstallment']['payolutionCompanyName']);
-                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-                    if (!isset($userData['additional']['user']['birthday'])) {
-                        $userData['billingaddress']['birthday'] = "0000-00-00";
-                    } else {
-                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
-                    }
+
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
                 }
+
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__payolution_installment_birthday'] = $birthday[2];
@@ -507,13 +530,12 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['moptRatepayConfig']['deviceFingerPrint'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetRatepayDeviceFingerprint();
 
-                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-                    if (!isset($userData['additional']['user']['birthday'])) {
-                        $userData['billingaddress']['birthday'] = "0000-00-00";
-                    } else {
-                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
-                    }
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
                 }
+
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__ratepay_invoice_birthday'] = $birthday[2];
@@ -533,13 +555,12 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPayoneMain->getPaymentHelper()->isPayoneSafeInvoice($paymentMean['name'])
             ) {
 
-                if (\Shopware::VERSION === '___VERSION___' || version_compare(\Shopware::VERSION, '5.2.0', '>=')) {
-                    if (!isset($userData['additional']['user']['birthday'])) {
-                        $userData['billingaddress']['birthday'] = "0000-00-00";
-                    } else {
-                        $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
-                    }
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
                 }
+
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__payone_safe_invoice_birthday'] = $birthday[2];
@@ -692,8 +713,8 @@ class FrontendPostDispatch implements SubscriberInterface
         $countriesNeedState = array('JP', 'US', 'CA', 'MX', 'AR', 'BR', 'CN', 'ID', 'IN', 'TH');
         $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
         $shippingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['shippingaddress']['countryID']);
-        $billingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['billingaddress']['countryID'],$userData['billingaddress']['stateID']);
-        $shippingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['shippingaddress']['countryID'],$userData['shippingaddress']['stateID']);
+        $billingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['billingaddress']['countryID'], $userData['billingaddress']['stateID']);
+        $shippingStateIso = $moptPayoneHelper->getStateShortcodeFromId($userData['shippingaddress']['countryID'], $userData['shippingaddress']['stateID']);
 
         if (!in_array($billingCountryIso, $countriesNeedState) && !in_array($shippingCountryIso, $countriesNeedState)) {
             return false;
@@ -728,8 +749,8 @@ class FrontendPostDispatch implements SubscriberInterface
 
         // empty means default is set (>SW5.3 -> true)
         // so if there is an element in array it should be false
-        if (\Shopware::VERSION === '___VERSION___' ||
-            version_compare(\Shopware::VERSION, '5.3.0', '>=')
+        if (Shopware()->Config()->get('version') === '___VERSION___' ||
+            version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=')
         ) {
             if (!empty($configVal) && !$configVal[0]->getValue()) {
                 return false;

@@ -36,14 +36,10 @@ class Mopt_PayoneUserHelper
         $session['sRegister'] = $register;
         $session['sRegisterFinished'] = false;
 
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-            $newdata = $this->saveUser($register, $paymentId);
-            $this->admin->sSYSTEM->_POST = $newdata['auth'];
-            $this->admin->sLogin(true);
-            $this->savePayment($paymentId);
-        } else {
-            $this->admin->sSaveRegister();
-        }
+        $newdata = $this->saveUser($register, $paymentId);
+        $this->admin->sSYSTEM->_POST = $newdata['auth'];
+        $this->admin->sLogin(true);
+        $this->savePayment($paymentId);
     }
 
     /**
@@ -268,9 +264,8 @@ class Mopt_PayoneUserHelper
         if (!$updated) {
             return null;
         }
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-            $this->updateCustomer($personalData, $paymentId);
-        }
+        $this->updateCustomer($personalData, $paymentId);
+
         return $personalData;
     }
 
@@ -293,20 +288,8 @@ class Mopt_PayoneUserHelper
             'phone'=>array('required'=> intval(Shopware()->Config()->get('requirePhoneField'))),
             'country'=>array('required' => 1, 'in' => $countryIds)
         );
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-            $this->updateBilling($userId, $personalData['billing']);
-            return true;
-        } else {
-            $checkData = $this->admin->sValidateStep2($rules, true);
-            if (!empty($checkData['sErrorMessages'])) {
-                $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-                $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-                return false;
-            } else {
-                $this->admin->sUpdateBilling();
-                return true;
-            }
-        }
+        $this->updateBilling($userId, $personalData['billing']);
+        return true;
     }
 
     protected function updateShippingAddress($personalData, $session)
@@ -321,20 +304,8 @@ class Mopt_PayoneUserHelper
             'city'=>array('required'=>1)
         );
         $this->admin->sSYSTEM->_POST = $personalData['shipping'];
-        if (Shopware::VERSION === '___VERSION___' || version_compare(Shopware::VERSION, '5.2.0', '>=')) {
-            $this->updateShipping($userId, $personalData['shipping']);
-            return true;
-        } else {
-            $checkData = $this->admin->sValidateStep2ShippingAddress($rules, true);
-            if (!empty($checkData['sErrorMessages'])) {
-                $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-                $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-                return false;
-            } else {
-                $this->admin->sUpdateShipping();
-                return true;
-            }
-        }
+        $this->updateShipping($userId, $personalData['shipping']);
+        return true;
     }
 
     public function createrOrUpdateUser($apiResponse, $paymentId, $session)

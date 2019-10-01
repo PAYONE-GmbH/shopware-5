@@ -189,6 +189,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleRedirectFeedback($response);
     }
 
+    public function paydirektexpressAction()
+    {
+        $response = $this->mopt_payone__paydirekt_express();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
     public function payolutioninvoiceAction()
     {
         $response = $this->mopt_payone__payolution();
@@ -337,6 +343,36 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPaydirekt($this->Front()->Router(), $isInitialRecurringRequest);
         $response = $this->buildAndCallPayment($config, 'wlt', $payment, false, $recurringOrder, $isInitialRecurringRequest, $forceAuthorize);
+
+        return $response;
+    }
+
+    /**
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__paydirekt_express()
+    {
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $recurringOrder = false;
+        $isInitialRecurringRequest = false;
+        $forceAuthorize = false;
+
+        if ($this->isRecurringOrder() || $this->moptPayoneMain->getHelper()->isAboCommerceArticleInBasket()) {
+            $recurringOrder = true;
+            $forceAuthorize = true;
+        }
+
+        if ($recurringOrder && !isset(Shopware()->Session()->moptIsPaypalRecurringOrder)) {
+            $isInitialRecurringRequest = true;
+            $forceAuthorize = false;
+        }
+
+        if (Shopware()->Session()->moptPaydirektExpressWorkerId) {
+            $moptPaydirektExpressWorkerId = Shopware()->Session()->moptPaydirektExpressWorkerId;
+            $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPaydirektExpress($this->Front()->Router());
+        }
+
+        $response = $this->buildAndCallPayment($config, 'wlt', $payment, $moptPaydirektExpressWorkerId, $recurringOrder, $isInitialRecurringRequest, $forceAuthorize);
 
         return $response;
     }
@@ -958,6 +994,15 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             ));
             $request->setPaydata($paydata);
         }
+
+        if ($this->moptPayonePaymentHelper->isPayonePaydirektExpress($paymentName)) {
+            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'terms_accepted_timestamp', 'data' => date(DateTime::ISO8601))
+            ));
+            $request->setPaydata($paydata);
+        }
+
         if ($config['paydirektOvercapture'] == 1 && $config['authorisationMethod'] == 'Vorautorisierung' && $this->moptPayonePaymentHelper->isPayonePaydirekt($paymentName)) {
             $paydirektdata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydirektdata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(

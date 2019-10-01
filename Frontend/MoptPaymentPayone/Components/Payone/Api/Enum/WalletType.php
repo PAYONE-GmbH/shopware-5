@@ -75,4 +75,5 @@ class Payone_Api_Enum_WalletType
      */
     const YAPITAL = 'YPL';
     const AMAZONPAY = 'AMZ';
+    const PAYDIREKT_EXPRESS = 'PDT';
 }
