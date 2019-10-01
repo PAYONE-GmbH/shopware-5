@@ -6,6 +6,8 @@
 
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
+<link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/checkout.css"}">
+
 <div class="payment--form-group" 
      id="mopt_payone_creditcard_form" 
      data-mopt_payone__cc_paymentid="{$form_data.mopt_payone__cc_paymentid}" 
@@ -29,7 +31,25 @@
 
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
-    <div id="mopt_payone__cc_cardtype_wrap" class="select-field">
+
+    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1'}
+        <div id="payone-cc-auto-detection-messages">
+            <span class="payone-auto-cc-detection-message" data-msg-type="unknown">
+                {s name='creditCardAutoDetectionMessageUnknown'}Leider können wir Ihre Kreditkartennummer nicht automatisch einem Kartentyp zuordnen. Bitte wählen Sie Ihren Kartentyp, indem Sie auf des entsprechende Logo klicken.{/s}
+            </span>
+            <span class="payone-auto-cc-detection-message" data-msg-type="unsupported">
+                {s name='creditCardAutoDetectionMessageUnsupported'}Leider wird Ihre angegebene Kreditkarte nicht unterstützt. Bitte verwenden Sie eine Kreditkarte, die einem der abgebildeten Logos entspricht.{/s}
+            </span>
+        </div>
+
+        <div id="payone-cc-icons-wrap">
+            {foreach from=$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards item=cc}
+                <img id="payone-cc-icon-{$cc.short|lower}" data-cc-type="{$cc.short}" class="payone-cc-icon{if $form_data.mopt_payone__cc_paymentname == $cc.name} payone-cc-icon--selected{elseif $form_data.mopt_payone__cc_pseudocardpan} payone-cc-icon--hidden{/if}" src="https://cdn.pay1.de/cc/{$cc.short|lower}/s/default.png" alt="{$cc.description}">
+            {/foreach}
+        </div>
+    {/if}
+
+    <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1'}style="display: none;"{/if}>
         <select name="moptPaymentData[mopt_payone__cc_cardtype]"
                 id="mopt_payone__cc_cardtype"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -43,9 +63,6 @@
                 </option>
             {/foreach}
         </select>
-    </div>
-    <div>
-        <img id="mopt_payone__cc_cardtype_icon" src="" style="max-height: 100%; width: auto;">
     </div>
 
     {if $moptIsAjax}
@@ -329,6 +346,9 @@
         // to update cvc length when creditcard is pre-selected
         $('#mopt_payone__cc_cardtype').trigger('change');
         {/if}
+
+        // Show all hidden CC icons.
+        $('.payone-cc-icon--hidden').removeClass('payone-cc-icon--hidden');
     };
 
     function ccCheck(data) {

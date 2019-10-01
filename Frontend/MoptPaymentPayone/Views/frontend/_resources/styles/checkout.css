@@ -1,0 +1,33 @@
+
+.payone-cc-icon {
+    width: auto;
+    height: 30px;
+    display: inline;
+    padding: 5px;
+}
+
+.payone-cc-icon--clickable:hover {
+    cursor: pointer;
+}
+
+.payone-cc-icon--selected {
+    border: 2px solid #f25620;
+    border-radius: 5px;
+}
+
+.payone-cc-icon--hidden {
+    display: none;
+}
+
+#payone-cc-auto-detection-messages {
+    display: none;
+    margin-bottom: 2em;
+    padding: 10px;
+    border: 2px solid #f25620;
+    border-radius: 5px;
+    max-width: 500px;
+}
+
+.payone-auto-cc-detection-message {
+    color: #f25620;
+}
