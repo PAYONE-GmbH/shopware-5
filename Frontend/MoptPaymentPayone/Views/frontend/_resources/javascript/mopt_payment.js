@@ -584,7 +584,6 @@ function moptPaymentReady() {
                  * results in an unknown card type.
                  */
                 prepareUnknownCardTypeMessage: function () {
-                    console.error('Cannot handle unknown card type, please select the card type manually by clicking on the credit card icon.');
                     PayoneAutoCcDetection.$detectionMessagesWrapper().find('.payone-auto-cc-detection-message').hide();
                     PayoneAutoCcDetection.$detectionMessagesWrapper().find('.payone-auto-cc-detection-message[data-msg-type="unknown"]').show();
                 },
@@ -594,7 +593,6 @@ function moptPaymentReady() {
                  * results in an unsupported card type.
                  */
                 prepareUnsupportedCardTypeMessage: function () {
-                    console.error('Cannot handle unsupported card type.');
                     PayoneAutoCcDetection.$detectionMessagesWrapper().find('.payone-auto-cc-detection-message').hide();
                     PayoneAutoCcDetection.$detectionMessagesWrapper().find('.payone-auto-cc-detection-message[data-msg-type="unsupported"]').show();
                 },
@@ -610,22 +608,19 @@ function moptPaymentReady() {
                         callback: function (type) {
                             // Prevent auto detection if the card type was set manually.
                             if (PayoneAutoCcDetection._cardTypeWasManuallySet) {
-                                console.debug('Ignore CC auto detection result because the card type was set manually.');
+                                // Ignore CC auto detection result because the card type was set manually.
                                 return;
                             }
 
                             type = type.toUpperCase();
 
                             if (type === '?') {
-                                console.debug('Detected UNKNOWN card type.');
                                 PayoneAutoCcDetection.handleUnknownCardType();
                             }
                             else if (type === '-') {
-                                console.debug('Detected UNSUPPORTED card type.');
                                 PayoneAutoCcDetection.handleUnsupportedCardType();
                             }
                             else {
-                                console.debug('Detected card type: ' + type);
                                 PayoneAutoCcDetection.handleDetectedCardType(type);
                             }
 
