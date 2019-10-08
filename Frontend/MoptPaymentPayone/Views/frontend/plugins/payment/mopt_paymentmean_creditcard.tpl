@@ -34,12 +34,26 @@
 
     {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1'}
         <div id="payone-cc-auto-detection-messages">
-            <span class="payone-auto-cc-detection-message" data-msg-type="unknown">
-                {s name='creditCardAutoDetectionMessageUnknown'}Leider können wir Ihre Kreditkartennummer nicht automatisch einem Kartentyp zuordnen. Bitte wählen Sie Ihren Kartentyp, indem Sie auf des entsprechende Logo klicken.{/s}
-            </span>
-            <span class="payone-auto-cc-detection-message" data-msg-type="unsupported">
-                {s name='creditCardAutoDetectionMessageUnsupported'}Leider wird Ihre angegebene Kreditkarte nicht unterstützt. Bitte verwenden Sie eine Kreditkarte, die einem der abgebildeten Logos entspricht.{/s}
-            </span>
+            <div class="payone-auto-cc-detection-message" data-msg-type="unknown">
+                <div class="alert is--warning is--rounded">
+                    <div class="alert--icon">
+                        <i class="icon--element icon--warning"></i>
+                    </div>
+                    <div class="alert--content">
+                        {s name='creditCardAutoDetectionMessageUnknown'}Leider können wir Ihre Kreditkartennummer nicht automatisch einem Kartentyp zuordnen. Bitte wählen Sie Ihren Kartentyp, indem Sie auf des entsprechende Logo klicken.{/s}
+                    </div>
+                </div>
+            </div>
+            <div class="payone-auto-cc-detection-message" data-msg-type="unsupported">
+                <div class="alert is--error is--rounded">
+                    <div class="alert--icon">
+                        <i class="icon--element icon--warning"></i>
+                    </div>
+                    <div class="alert--content">
+                        {s name='creditCardAutoDetectionMessageUnsupported'}Leider wird Ihre angegebene Kreditkarte nicht unterstützt. Bitte verwenden Sie eine Kreditkarte, die einem der abgebildeten Logos entspricht.{/s}
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="payone-cc-icons-wrap">
