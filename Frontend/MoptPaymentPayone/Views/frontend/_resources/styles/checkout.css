@@ -1,9 +1,12 @@
 
 .payone-cc-icon {
     width: auto;
-    height: 30px;
+    height: 20px;
     display: inline;
     padding: 5px;
+    box-sizing: content-box;
+    border: 2px solid transparent;
+    border-radius: 5px;
 }
 
 .payone-cc-icon--clickable:hover {
