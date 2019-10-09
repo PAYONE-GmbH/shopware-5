@@ -361,7 +361,8 @@
         $('#mopt_payone__cc_cardtype').trigger('change');
         {/if}
 
-        // Show all hidden CC icons.
+        // Show all hidden CC icons and remove any selection.
+        $('.payone-cc-icon--selected').removeClass('payone-cc-icon--selected');
         $('.payone-cc-icon--hidden').removeClass('payone-cc-icon--hidden');
     };
 
