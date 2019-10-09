@@ -609,6 +609,11 @@ function moptPaymentReady() {
                             // Prevent auto detection if the card type was set manually.
                             if (PayoneAutoCcDetection._cardTypeWasManuallySet) {
                                 // Ignore CC auto detection result because the card type was set manually.
+                                // The Hosted Iframe JS reports valid card types only after the card type was set manually.
+                                // Therefore we keep updating the card type icon.
+                                // Change the select field as well as the icon to the detected card type.
+                                PayoneAutoCcDetection.changeCardType(type);
+                                PayoneAutoCcDetection.changeIcon(type);
                                 return;
                             }
 
