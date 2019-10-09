@@ -205,7 +205,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
 
-                    <label for="stateFailed" class="text-left col-md-3 control-label">{s name=forwarding/status/failed}Fehlgeschlagen{/s}</label>
+                    <label for="stateFailed" class="text-left col-md-3 control-label">{s name=forwarding/status/failed}Failed{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateFailed" name="stateFailed" aria-describedby="stateFailed-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
