@@ -109,7 +109,7 @@ Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.view.detail.Creditcardconfi
                             allowBlank: false
                         },
                         enableAutoCardtypeDetection: {
-                            fieldLabel: '{s name=enableAutoCardtypeDetection}Automatische Kreditkarten Erkennung{/s}',
+                            fieldLabel: '{s name=enableAutoCardtypeDetection}Automatische Kreditkartenerkennung{/s}',
                             name: 'enableAutoCardtypeDetection',
                             allowBlank: true
                         },
