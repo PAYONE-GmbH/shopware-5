@@ -609,7 +609,6 @@ function moptPaymentReady() {
         if (!$msg.data('active')) {
             $msg.data('active', true);
             $msg.fadeIn(300);
-            console.log('show error msg');
             var errorCheck = function () {
                 if (iframes.isComplete()) {
                     $msg.fadeOut(200, function () {
