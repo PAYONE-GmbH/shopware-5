@@ -776,6 +776,14 @@ class Mopt_PayonePaymentHelper
             . 'AND s_core_countries.id = s_core_paymentmeans_countries.countryID;';
         $paymentCountries = Shopware()->Db()->fetchAll($sql, $paymentId);
 
+        $shopCountries = Shopware()->Container()->get('modules')->Admin()->sGetCountryList();
+
+        foreach ($paymentCountries as $index => $paymentCountry) {
+            if (array_key_exists($paymentCountry['countryID'], $shopCountries)) {
+                $paymentCountries[$index]['countryname'] = $shopCountries[$paymentCountry['countryID']]['name'];
+            }
+        }
+
         return $paymentCountries;
     }
 

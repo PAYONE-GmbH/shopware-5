@@ -20,7 +20,7 @@
                 class="select--country is--required{if $error_flags.mopt_payone__debit_bankcountry} has--error{/if}">
             <option disabled="disabled" value="" selected="selected">{s name='bankCountry'}Land{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
             {foreach from=$moptPaymentConfigParams.moptDebitCountries item=moptCountry}
-                <option value="{$moptCountry.countryiso}" 
+                <option value="{$moptCountry.countryiso}"
                         {if $form_data.mopt_payone__debit_bankcountry == $moptCountry.countryiso}selected="selected"{/if}>
                     {$moptCountry.countryname}
                 </option>
