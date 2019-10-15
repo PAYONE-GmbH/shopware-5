@@ -68,7 +68,7 @@ function populateForm($form, data)
                     $.each($ctrls, function (index)
                     {  // every individual element
                         $ctrl = $ctrls;
-                        if (value.toString() === "true") {
+                        if (value && value.toString() === "true") {
                             $ctrl.prop('checked', true);
                         }
 

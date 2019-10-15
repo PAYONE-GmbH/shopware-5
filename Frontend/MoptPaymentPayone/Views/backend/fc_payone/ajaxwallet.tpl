@@ -262,8 +262,11 @@
                     }
                     if (response.status === 'error') {
                     }
-                    imagelink = response.iframedata.image;
-                    changeImage(imagelink);
+
+                    if(response.iframedata) {
+                        imagelink = response.iframedata.image;
+                        changeImage(imagelink);
+                    }
                 }
             });
 

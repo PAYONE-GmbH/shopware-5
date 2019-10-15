@@ -104,7 +104,6 @@ class Mopt_PayoneMain
             if ($this->paymentHelper->isPayoneRatepay($paymentName) ||
                 $this->paymentHelper->isPayoneRatepayDirectDebit($paymentName) ||
                 $this->paymentHelper->isPayoneRatepayInstallment($paymentName) ||
-                $this->paymentHelper->isPayoneMasterpass($paymentName) ||
                 $this->paymentHelper->isPayoneAmazonPay($paymentName)
             ) {
                 $data['sendOrdernumberAsReference'] = true;

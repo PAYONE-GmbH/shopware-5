@@ -225,7 +225,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
      */
     protected function buildAndCallGetPayment($clearingType = 'fnc', $financingType = 'PPI')
     {
-        $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_masterpass'));
+        $config = $this->moptPayoneMain->getPayoneConfig($this->moptPayonePaymentHelper->getPaymentIdFromName('mopt_payone__ewallet_paypal'));
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
 
