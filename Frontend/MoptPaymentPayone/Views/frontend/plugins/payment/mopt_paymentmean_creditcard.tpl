@@ -66,7 +66,7 @@
     <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1'}style="display: none;"{/if}>
         <select name="moptPaymentData[mopt_payone__cc_cardtype]"
                 id="mopt_payone__cc_cardtype"
-                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
+                {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection !== '1'}required="required" aria-required="true"{/if}
                 class="select--country is--required{if $error_flags.mopt_payone__cc_cardtype} has--error{/if}">
             <option disabled="disabled" value="" selected="selected">{s name='creditCardType'}Kartentyp{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
             {foreach from=$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards item=credit_card}
