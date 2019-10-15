@@ -770,11 +770,16 @@ class Mopt_PayonePaymentHelper
 
     public function moptGetCountriesAssignedToPayment($paymentId)
     {
+//        $test = Shopware()->Modules()->Admin()->sGetCountryTranslation();
         $sql = 'SELECT s_core_paymentmeans_countries.countryID, s_core_countries.countryname, s_core_countries.countryiso '
             . 'FROM s_core_paymentmeans_countries, s_core_countries '
             . 'WHERE s_core_paymentmeans_countries.paymentID = ? '
             . 'AND s_core_countries.id = s_core_paymentmeans_countries.countryID;';
         $paymentCountries = Shopware()->Db()->fetchAll($sql, $paymentId);
+
+        foreach ($paymentCountries as $country) {
+//            $country['shop_locale'] =
+        }
 
         return $paymentCountries;
     }
