@@ -693,17 +693,6 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * check if given payment name is payone masterpass
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayoneMasterpass($paymentName)
-    {
-        return preg_match('#mopt_payone__ewallet_masterpass#', $paymentName) ? true : false;
-    }
-
-    /**
      * check if given payment name is payone paypal installments
      *
      * @param string $paymentName
@@ -1196,9 +1185,6 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayoneAlipay($paymentShortName)) {
             return 'alipay';
         }
-        if ($this->isPayoneMasterpass($paymentShortName)) {
-            return 'masterpass';
-        }
         return false;
     }
 
@@ -1313,19 +1299,6 @@ class Mopt_PayonePaymentHelper
             ['name' => 'mopt_payone__ewallet_amazon_pay']
         );
         return $paymentAmazonPay->getActive();
-    }
-
-    /**
-     * checks if Masterpass is enabled
-     *
-     * @return bool
-     */
-    public function isMasterpassActive()
-    {
-        $paymentMasterpass = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
-            ['name' => 'mopt_payone__ewallet_masterpass']
-        );
-        return $paymentMasterpass->getActive();
     }
 
     /**

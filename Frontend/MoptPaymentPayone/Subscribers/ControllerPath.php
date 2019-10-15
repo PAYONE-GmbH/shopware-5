@@ -57,12 +57,6 @@ class ControllerPath implements SubscriberInterface
             => 'moptRegisterController_Frontend_MoptAccountPayone',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptPaymentAmazon'
             => 'moptRegisterController_Frontend_MoptPaymentAmazon',
-            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_FatchipBSPayoneMasterpassRegister'
-            => 'onGetFrontendControllerPath',
-            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_FatchipBSPayoneMasterpassCheckout'
-            => 'onGetFrontendControllerPath',
-            'Enlight_Controller_Dispatcher_ControllerPath_Frontend_FatchipBSPayoneMasterpass'
-            => 'onGetFrontendControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptTransactionStatusForwarding'
             => 'onGetFrontendControllerPath',
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_FatchipBSPayonePaypalInstallment'

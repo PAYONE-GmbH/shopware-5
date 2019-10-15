@@ -328,9 +328,6 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             if ($paymentHelper->isPayoneSofortuerberweisung($paymentData['name'])) {
                 $data['extra'] = 'sofort';
             }
-            if ($paymentHelper->isPayoneMasterpass($paymentData['name'])) {
-                $data['extra'] = 'masterpass';
-            }
             if ($paymentHelper->isPayoneAmazonPay($paymentData['name'])) {
                 $data['extra'] = 'amazonpay';
             }
