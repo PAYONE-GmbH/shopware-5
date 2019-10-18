@@ -25,6 +25,16 @@
      data-moptCreditcardConfig='{$moptCreditCardCheckEnvironment.moptCreditcardConfig.jsonConfig}' 
      >
 
+    <div id="payone-general-iframe-error" style="display: none;">
+        <div class="alert is--error is--rounded">
+            <div class="alert--icon">
+                <i class="icon--element icon--warning"></i>
+            </div>
+            <div class="alert--content">
+                {s name='creditCardGeneralIframeError'}Bitte füllen Sie das Kreditkartenformular vollständig aus.{/s}
+            </div>
+        </div>
+    </div>
 
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>

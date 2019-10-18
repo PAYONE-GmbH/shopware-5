@@ -603,6 +603,26 @@ function moptPaymentReady() {
         });
     }
 
+    function moptShowGeneralIFrameError() {
+        var $msg = $('#payone-general-iframe-error');
+
+        if (!$msg.data('active')) {
+            $msg.data('active', true);
+            $msg.fadeIn(300);
+            var errorCheck = function () {
+                if (iframes.isComplete()) {
+                    $msg.fadeOut(200, function () {
+                        $msg.data('active', false);
+                    });
+                }
+                else {
+                    setTimeout(errorCheck, 200);
+                }
+            };
+            setTimeout(errorCheck, 200);
+        }
+    }
+
     $.subscribe("plugin/swShippingPayment/onInputChanged", function () {
         poBindDispatchChange();
     });
