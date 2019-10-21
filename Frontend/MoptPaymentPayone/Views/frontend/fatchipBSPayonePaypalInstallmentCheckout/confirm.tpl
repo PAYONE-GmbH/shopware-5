@@ -56,13 +56,11 @@
 {block name="frontend_checkout_confirm_left_billing_address_actions"}
 {/block}
 
-{* SW 5.2 - 5.3, 5.4? Change PaymentMean Selection Action Button to FatchipBSPayoneMasterpassCheckout  Controller *}
 {* for shippingAddress != billingAddress *}
 {* Billing: *}
 {block name="frontend_checkout_confirm_information_addresses_billing_panel_actions"}
 {/block}
 
-{* SW 5.2 - 5.3, 5.4? Change PaymentMean Selection Action Button to FatchipBSPayoneMasterpassCheckout Controller *}
 {* for shippingAddress = billingAddress *}
 {* Billing and Shipping: *}
 {* both template overrides do not work in 5.3? WTF *}
@@ -82,7 +80,6 @@
 {block name="frontend_checkout_confirm_left_shipping_address_actions"}
 {/block}
 
-{* SW 5.2 - 5.3, 5.4? Change PaymentMean Selection Action Button to FatchipBSPayoneMasterpassCheckout Controller *}
 {* for shippingAddress != billingAddress *}
 {block name="frontend_checkout_confirm_information_addresses_shipping_panel_actions"}
 {/block}

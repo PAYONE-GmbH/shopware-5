@@ -283,12 +283,6 @@ class FrontendCheckout implements SubscriberInterface
                 $view->extendsTemplate('frontend/checkout/mopt_cart_amazon.tpl');
             }
 
-
-            if ($moptPayoneMain->getPaymentHelper()->isMasterpassActive()) {
-                $view->extendsTemplate('frontend/checkout/ajax_cart_masterpass.tpl');
-                $view->extendsTemplate('frontend/checkout/mopt_cart_masterpass.tpl');
-            }
-
             if ($this->isPayPalEcsActive($subject) && ($imageUrl = $this->moptPayoneShortcutImgURL())) {
                 $view->assign('moptPaypalShortcutImgURL', $imageUrl);
                 $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
