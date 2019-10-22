@@ -17,6 +17,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     /** @var Logger $logger */
     protected $logger = null;
     protected $rotatingLogger = null;
+    protected $payoneConfig = null;
 
     /**
      * init notification controller for processing status updates
@@ -28,6 +29,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->moptPayone__helper = $this->moptPayone__main->getHelper();
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
 
+        $this->initForwardRotatingLogger();
         $this->logger = new Logger('moptPayone');
         $streamHandler = new StreamHandler(
             $this->buildPayoneTransactionLogPath(),
@@ -35,6 +37,23 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         );
         $this->logger->pushHandler($streamHandler);
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+    }
+
+    /**
+     * Initializes rotating logger for tracing forward requests
+     *
+     * @param void
+     * @return void
+     */
+    protected function initForwardRotatingLogger()
+    {
+        $this->moptPayone__main = $this->Plugin()->Application()->MoptPayoneMain();
+        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logFile = $logPath . '/MoptPaymentPayone_txredirect_production.log';
+
+        $rfh = new RotatingFileHandler($logFile, 14);
+        $this->rotatingLogger = new Logger('MoptPaymentPayone');
+        $this->rotatingLogger->pushHandler($rfh);
     }
 
     /**
@@ -95,6 +114,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         }
 
         $config = $this->moptPayone__main->getPayoneConfig($paymentId, true);
+        $this->payoneConfig = $config;
         Shopware()->Config()->mopt_payone__paymentId = $paymentId; //store in config for log
         $key = $config['apiKey'];
 
@@ -240,6 +260,13 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $url = Shopware()->Front()->Router()->assemble(array('controller' => 'MoptTransactionStatusForwarding', 'action' => 'index'));
         $rawPost['paymentID'] = $paymentID;
 
+        $logentry = [
+            'DEBUG',
+            'Trying to forward to own controller',
+            $url,
+        ];
+        $this->forwardLog($logentry);
+
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $rawPost);
@@ -249,8 +276,34 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         curl_setopt($curl, CURLOPT_TIMEOUT_MS, 100);
 
         $result = curl_exec($curl);
+        // using old alias for CURLINFO_RESPONSE_CODE
+        $response_code = (string) curl_getinfo($curl,  CURLINFO_HTTP_CODE);
 
+        $logentry = [
+            'DEBUG',
+            'Responsecode of request was: '.$response_code,
+        ];
+        $this->forwardLog($logentry);
     }
+
+    /**
+     * Logs an entry of transaction forward controller
+     *
+     * @param array $logentry
+     * @return void
+     */
+    protected function forwardLog($logentry)
+    {
+        $logAllowed = (
+            $this->payoneConfig['transLogging'] === true
+        );
+
+        if ($logAllowed) {
+            $log=implode(";",$logentry);
+            $this->rotatingLogger->debug($log);
+        }
+    }
+
 
     /**
      * get plugin bootstrap
