@@ -3,6 +3,7 @@
 use Shopware\Components\CSRFWhitelistAware;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\RotatingFileHandler;
 
 /**
  * updated and finish transactions
@@ -47,7 +48,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     protected function initForwardRotatingLogger()
     {
-        $this->moptPayone__main = $this->Plugin()->Application()->MoptPayoneMain();
         $logPath = Shopware()->Application()->Kernel()->getLogDir();
         $logFile = $logPath . '/MoptPaymentPayone_txredirect_production.log';
 
