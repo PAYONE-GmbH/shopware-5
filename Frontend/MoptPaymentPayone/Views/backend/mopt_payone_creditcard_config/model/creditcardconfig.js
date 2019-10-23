@@ -85,7 +85,8 @@ Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.model.Creditcardconfig', {
         { name: 'apiKey', type: 'string' },
         { name: 'liveMode', type: 'boolean' },
         { name: 'checkCc', type: 'boolean'},
-        { name: 'creditcardMinValid', type: 'int'}
+        { name: 'creditcardMinValid', type: 'int'},
+        { name: 'enableAutoCardtypeDetection', type: 'boolean'},
     ],
     
     associations: [

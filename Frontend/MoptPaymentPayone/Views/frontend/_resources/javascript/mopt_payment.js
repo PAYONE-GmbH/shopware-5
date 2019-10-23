@@ -180,6 +180,7 @@ function moptPaymentReady() {
             moptCreditcardConfig: '',
             mopt_payone__cc_paymentshort: '',
             mopt_payone_credit_cards_short: '',
+            mopt_payone_available_cardtypes: '',
         },
         init: function () {
             var me = this;
@@ -410,6 +411,243 @@ function moptPaymentReady() {
                 Payone.ClientApi.Language[fcpolang].placeholders.cvc = me.opts.moptCreditcardConfig.default_translation_iframe_cvc;
             }
 
+            // -- Auto CC Detection Start --
+
+            window.PayoneAutoCcDetection = {
+
+                /**
+                 * Indicates whether the card type was set manually.
+                 */
+                _cardTypeWasManuallySet: false,
+
+                /**
+                 * Stores the last detection result.
+                 */
+                _lastDetectionResult: null,
+
+                /**
+                 * Returns true if the auto CC detection is enabled.
+                 *
+                 * @returns {boolean} True if auto CC detection is enabled.
+                 */
+                isEnabled: function () {
+                    return me.opts.moptCreditcardConfig.auto_cardtype_detection === '1';
+                },
+
+                /**
+                 * Returns the CC icon elements.
+                 *
+                 * @returns {jQuery}
+                 */
+                $ccIcons: function () {
+                    return $('.payone-cc-icon');
+                },
+
+                /**
+                 * Returns the card type select field element.
+                 *
+                 * @returns {jQuery}
+                 */
+                $ccTypeSelect: function () {
+                    return $('#mopt_payone__cc_cardtype');
+                },
+
+                /**
+                 * Returns the wrapper element for detection messages.
+                 *
+                 * @returns {jQuery}
+                 */
+                $detectionMessagesWrapper: function () {
+                    return $('#payone-cc-auto-detection-messages');
+                },
+
+                /**
+                 * Unselect all CC icons.
+                 */
+                unselectIcons: function () {
+                    // Remove any --selected modifier class from CC icons.
+                    PayoneAutoCcDetection.$ccIcons().removeClass('payone-cc-icon--selected');
+                },
+
+                /**
+                 * Changes the selected icon based on the provided card type.
+                 *
+                 * @param {string} type The card type.
+                 */
+                changeIcon: function (type) {
+                    PayoneAutoCcDetection.unselectIcons();
+                    $('#payone-cc-icon-' + type.toLowerCase()).addClass('payone-cc-icon--selected');
+                },
+
+                /**
+                 * Changes the value of the card type select field and triggers a change event.
+                 *
+                 * @param {string} type The new select field value.
+                 */
+                changeCardType: function (type) {
+                    // Change value of card type select field and trigger change event manually.
+                    PayoneAutoCcDetection.$ccTypeSelect()
+                        .val(type.toUpperCase())
+                        .trigger('change');
+                },
+
+                /**
+                 * Marks the CC icons as clickable and registers the click handler.
+                 */
+                enableClickableIcons: function () {
+                    PayoneAutoCcDetection.$ccIcons()
+                        .addClass('payone-cc-icon--clickable')
+                        .on('click.payone', PayoneAutoCcDetection.handleIconClick);
+                },
+
+                /**
+                 * Un-marks the CC icons as clickable and unregisters the click handler.
+                 */
+                disableClickableIcons: function () {
+                    PayoneAutoCcDetection.$ccIcons()
+                        .removeClass('payone-cc-icon--clickable')
+                        .off('click.payone');
+                },
+
+                /**
+                 * Handles an icon click event.
+                 */
+                handleIconClick: function () {
+                    // Hide error message.
+                    PayoneAutoCcDetection.hideMessage();
+
+                    // Get card type from the data-cc-type attribute value of the clicked icon.
+                    var type = $(this).data('ccType').toUpperCase();
+
+                    // Change card type select field to type.
+                    PayoneAutoCcDetection.changeCardType(type);
+
+                    // We need to set the card type manually here.
+                    // Keep in mind that we cannot go back to valid auto detection
+                    // state after setting the card type manually.
+                    PayoneAutoCcDetection._cardTypeWasManuallySet = true;
+                    iframes.setCardType(type);
+                },
+
+                /**
+                 * Handles the unknown card type detection result.
+                 */
+                handleUnknownCardType: function () {
+                    PayoneAutoCcDetection.unselectIcons();
+                    PayoneAutoCcDetection.enableClickableIcons();
+                    PayoneAutoCcDetection.prepareUnknownCardTypeMessage();
+                    PayoneAutoCcDetection.showMessage();
+                },
+
+                /**
+                 * Handles the unsupported card type detection result.
+                 */
+                handleUnsupportedCardType: function () {
+                    PayoneAutoCcDetection.unselectIcons();
+                    PayoneAutoCcDetection.disableClickableIcons();
+                    PayoneAutoCcDetection.prepareUnsupportedCardTypeMessage();
+                    PayoneAutoCcDetection.showMessage();
+                },
+
+                /**
+                 * Handles a detected card type.
+                 *
+                 * @param {string} type
+                 */
+                handleDetectedCardType: function (type) {
+                    PayoneAutoCcDetection.disableClickableIcons();
+
+                    // Hide error message.
+                    PayoneAutoCcDetection.hideMessage();
+
+                    // Change the select field as well as the icon to the detected card type.
+                    PayoneAutoCcDetection.changeCardType(type);
+                    PayoneAutoCcDetection.changeIcon(type);
+                },
+
+                /**
+                 * Shows the user message.
+                 */
+                showMessage: function () {
+                    PayoneAutoCcDetection.$detectionMessagesWrapper().fadeIn(300);
+                },
+
+                /**
+                 * Hides the user message.
+                 */
+                hideMessage: function () {
+                    PayoneAutoCcDetection.$detectionMessagesWrapper().fadeOut(200);
+                },
+
+                /**
+                 * Shows a user message that the current PAN
+                 * results in an unknown card type.
+                 */
+                prepareUnknownCardTypeMessage: function () {
+                    PayoneAutoCcDetection.$detectionMessagesWrapper().find('.payone-auto-cc-detection-message').hide();
+                    PayoneAutoCcDetection.$detectionMessagesWrapper().find('.payone-auto-cc-detection-message[data-msg-type="unknown"]').show();
+                },
+
+                /**
+                 * Shows a user message that the current PAN
+                 * results in an unsupported card type.
+                 */
+                prepareUnsupportedCardTypeMessage: function () {
+                    PayoneAutoCcDetection.$detectionMessagesWrapper().find('.payone-auto-cc-detection-message').hide();
+                    PayoneAutoCcDetection.$detectionMessagesWrapper().find('.payone-auto-cc-detection-message[data-msg-type="unsupported"]').show();
+                },
+
+                /**
+                 * Initializes the automatic card type detection.
+                 */
+                init: function () {
+                    // Update hosted iFrame config to enable auto CC detection.
+                    config.autoCardtypeDetection = {
+                        deactivate: false,
+                        supportedCardtypes: me.opts.mopt_payone_available_cardtypes.split(','),
+                        callback: function (type) {
+                            // Prevent auto detection if the card type was set manually.
+                            if (PayoneAutoCcDetection._cardTypeWasManuallySet) {
+                                // Ignore CC auto detection result because the card type was set manually.
+                                // The Hosted Iframe JS reports valid card types only after the card type was set manually.
+                                // Therefore we keep updating the card type icon.
+                                // Change the select field as well as the icon to the detected card type.
+                                PayoneAutoCcDetection.changeCardType(type);
+                                PayoneAutoCcDetection.changeIcon(type);
+                                return;
+                            }
+
+                            type = type.toUpperCase();
+
+                            if (type === '?') {
+                                PayoneAutoCcDetection.handleUnknownCardType();
+                            }
+                            else if (type === '-') {
+                                PayoneAutoCcDetection.handleUnsupportedCardType();
+                            }
+                            else {
+                                PayoneAutoCcDetection.handleDetectedCardType(type);
+                            }
+
+                            // Store current detection result as last result for next call.
+                            PayoneAutoCcDetection._lastDetectionResult = type;
+                        },
+                    };
+
+                    // Listen on card type field change for CC icon changes.
+                    PayoneAutoCcDetection.$ccTypeSelect().on('change', function () {
+                        PayoneAutoCcDetection.changeIcon(this.value);
+                    });
+                },
+
+            };
+
+            if (PayoneAutoCcDetection.isEnabled()) {
+                PayoneAutoCcDetection.init();
+            }
+
+            // -- Auto CC Detection End --
+
             request = {
                 request: 'creditcardcheck',
                 responsetype: 'JSON',
@@ -424,15 +662,18 @@ function moptPaymentReady() {
 
             iframes = new Payone.ClientApi.HostedIFrames(config, request);
 
-            if (me.opts.mopt_payone__cc_paymentshort) {
-                iframes.setCardType(me.opts.mopt_payone__cc_paymentshort);
-            } else {
-                iframes.setCardType(me.opts.mopt_payone_credit_cards_short);
-            }
+            // Prevent setting card type manually due to strange behaviour of hosted iFrame API.
+            if (!PayoneAutoCcDetection.isEnabled()) {
+                if (me.opts.mopt_payone__cc_paymentshort) {
+                    iframes.setCardType(me.opts.mopt_payone__cc_paymentshort);
+                } else {
+                    iframes.setCardType(me.opts.mopt_payone_credit_cards_short);
+                }
 
-            $('#mopt_payone__cc_cardtype').change(function () {
-                iframes.setCardType(this.value);
-            });
+                $('#mopt_payone__cc_cardtype').change(function () {
+                    iframes.setCardType(this.value);
+                });
+            }
         },
         destroy: function () {
             var me = this;

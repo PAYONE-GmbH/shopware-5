@@ -328,6 +328,12 @@ class MoptPayoneCreditcardConfig extends ModelEntity
      * @ORM\Column(name="creditcard_min_valid", type="integer", nullable=true, unique=false)
      */
     private $creditcardMinValid;
+
+    /**
+     * @var bool $enableAutoCardtypeDetection
+     * @ORM\Column(name="auto_cardtype_detection", type="boolean", precision=0, scale=0, nullable=true, unique=false)
+     */
+    private $enableAutoCardtypeDetection;
     
     /**
      * @ORM\Column(name="default_translation_iframe_month1", type="string", length=60, precision=0, scale=0, nullable=false)
@@ -966,6 +972,16 @@ class MoptPayoneCreditcardConfig extends ModelEntity
     public function setCreditcardMinValid($creditcardMinValid)
     {
         $this->creditcardMinValid = $creditcardMinValid;
+    }
+
+    public function getEnableAutoCardtypeDetection()
+    {
+        return $this->enableAutoCardtypeDetection;
+    }
+
+    public function setEnableAutoCardtypeDetection($enableAutoCardtypeDetection)
+    {
+        $this->enableAutoCardtypeDetection = $enableAutoCardtypeDetection;
     }
     
     public function getDefaultTranslationIframeMonth1()
