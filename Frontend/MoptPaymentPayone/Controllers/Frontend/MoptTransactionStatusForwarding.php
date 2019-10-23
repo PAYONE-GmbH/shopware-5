@@ -171,6 +171,7 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
         );
         $this->zendHttpClient = new Zend_Http_Client();
         $this->zendHttpClient->setConfig($zendClientConfig);
+        $this->zendHttpClient->setParameterPost($this->rawPost);
     }
 
     /**
