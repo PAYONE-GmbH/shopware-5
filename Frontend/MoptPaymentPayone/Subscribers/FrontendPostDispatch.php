@@ -233,9 +233,6 @@ class FrontendPostDispatch implements SubscriberInterface
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay' && $session->offsetGet('moptFormSubmitted') === true)) {
             $action->forward('finish', 'moptPaymentAmazon', null, array('sAGB' => 'on'));
         }
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_masterpass' && $session->offsetGet('moptFormSubmitted') === true)) {
-            $action->forward('finish', 'FatchipBSPayoneMasterpassCheckout', null, array('sAGB' => 'on'));
-        }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')) {
             if (isset($session->moptPaypalInstallmentWorkerId)) {
@@ -317,9 +314,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
                     $amazonPayIndex = $index;
                 }
-                if ($payment['name'] === 'mopt_payone__ewallet_masterpass') {
-                    $masterpassIndex = $index;
-                }
                 // remove paypal for countries which need a state
                 // in case no state for the country is supplied
                 if ($payment['name'] === 'mopt_payone__ewallet_paypal') {
@@ -335,7 +329,6 @@ class FrontendPostDispatch implements SubscriberInterface
 
             }
             unset ($payments[$amazonPayIndex]);
-            unset ($payments[$masterpassIndex]);
             $view->assign('sPayments', $payments);
         }
 

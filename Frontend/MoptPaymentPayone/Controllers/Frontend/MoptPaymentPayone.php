@@ -105,10 +105,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
-        if ($action === 'masterpass') {
-            return $this->redirect(array('controller' => 'FatchipBSPayoneMasterpass', 'action' => 'gateway', 'forceSecure' => true));
-        }
-
         if ($action === 'paypalinstallment') {
             return $this->redirect(array('controller' => 'FatchipBSPayonePaypalInstallment', 'action' => 'pay', 'forceSecure' => true));
         }
@@ -919,7 +915,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $shopwareTemporaryId = $this->admin->sSYSTEM->sSESSION_ID;
 
         if ($this->moptPayonePaymentHelper->isPayoneRatepay($paymentName) ||
-            $this->moptPayonePaymentHelper->isPayoneMasterpass($paymentName) ||
             $this->moptPayonePaymentHelper->isPayoneAmazonPay($paymentName) ||
             $config['sendOrdernumberAsReference'] === true
         ) {

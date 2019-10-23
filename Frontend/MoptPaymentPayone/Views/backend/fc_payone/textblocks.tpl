@@ -34,7 +34,6 @@
 {/block}
 
 {block name="resources/javascript" append}  
-    <script type="text/javascript" src="{link file="backend/_resources/js/ajax/ajaxriskcheck.js"}"></script>
 
     <script type="text/javascript">
 

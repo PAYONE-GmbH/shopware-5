@@ -557,11 +557,6 @@ class Mopt_PayoneInstallHelper
                 'template' => 'mopt_paymentmean_alipay_ewallet.tpl',
                 'position' => 35,),
             array(
-                'name' => 'mopt_payone__ewallet_masterpass',
-                'description' => 'PAYONE Masterpass',
-                'template' => null,
-                'position' => 36,),
-            array(
                 'name' => 'mopt_payone__fin_paypal_installment',
                 'description' => 'PAYONE Ratenkauf powered by Paypal',
                 'template' => 'mopt_paymentmean_paypal_installment.tpl',

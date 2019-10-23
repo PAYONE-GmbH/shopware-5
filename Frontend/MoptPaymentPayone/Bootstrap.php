@@ -76,6 +76,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $riskRules = new RiskRules();
         $riskRules->createRiskRules();
         $this->removePayment('mopt_payone__fin_klarna_installment');
+        $this->removePayment('mopt_payone__ewallet_masterpass');
 
         return array('success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme'));
     }
@@ -312,7 +313,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_account.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_shipping.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_amazonpay.js',
-            $this->Path() . 'Views/frontend/_resources/javascript/fatchipBSPayoneMasterpass.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
     }
