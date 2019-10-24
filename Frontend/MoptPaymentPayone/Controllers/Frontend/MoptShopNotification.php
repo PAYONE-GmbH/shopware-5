@@ -257,13 +257,20 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     protected function moptPayoneForwardTransactionStatus($rawPost, $paymentID)
     {
-        $url = Shopware()->Front()->Router()->assemble(array('controller' => 'MoptTransactionStatusForwarding', 'action' => 'index'));
+        $url = Shopware()->Front()->Router()
+            ->assemble(
+                array(
+                    'controller' => 'MoptTransactionStatusForwarding',
+                    'action' => 'index'
+                )
+            );
+
         $rawPost['paymentID'] = $paymentID;
 
         $logentry = [
-            'DEBUG',
-            'Trying to forward to own controller',
-            $url,
+            'Trying to forward to own controller: '.$url,
+            'action='.$rawPost['txaction'],
+            'txid='.$rawPost['txid'],
         ];
         $this->forwardLog($logentry);
 
@@ -279,11 +286,12 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         // using old alias for CURLINFO_RESPONSE_CODE
         $response_code = (string) curl_getinfo($curl,  CURLINFO_HTTP_CODE);
 
+        $curldebug = (array) curl_getinfo($curl);
+        $curldebug_json = json_encode($curldebug);
+
         $logentry = [
-            'DEBUG',
             'Responsecode of request was: '.$response_code,
-            'action='.$rawPost['txaction'],
-            'txid='.$rawPost['txid'],
+            'curl info: '.$curldebug_json,
         ];
 
         curl_close($curl);
