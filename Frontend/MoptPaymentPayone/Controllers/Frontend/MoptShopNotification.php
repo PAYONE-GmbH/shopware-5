@@ -282,7 +282,12 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $logentry = [
             'DEBUG',
             'Responsecode of request was: '.$response_code,
+            'action='.$rawPost['txaction'],
+            'txid='.$rawPost['txid'],
         ];
+
+        curl_close($curl);
+
         $this->forwardLog($logentry);
     }
 
