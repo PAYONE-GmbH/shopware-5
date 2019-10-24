@@ -273,7 +273,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_TIMEOUT_MS, 100);
+        curl_setopt($curl, CURLOPT_TIMEOUT_MS, 500);
 
         $result = curl_exec($curl);
         // using old alias for CURLINFO_RESPONSE_CODE
