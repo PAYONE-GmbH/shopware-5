@@ -423,7 +423,8 @@ class FrontendCheckout implements SubscriberInterface
             $builder->resetDQLParts();
             $builder->select('button.image')
                 ->from('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt', 'button')
-                ->where('button.id = 1');
+                ->where('button.id = ?1')
+                ->setParameter(1, 1);
             $result = $builder->getQuery()->getOneOrNullResult();
         }
 
