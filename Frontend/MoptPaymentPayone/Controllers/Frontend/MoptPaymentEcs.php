@@ -311,6 +311,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $register['billing']['firstname']      = $personalData['shipping_firstname'];
         $register['billing']['lastname']       = $personalData['shipping_lastname'];
         $register['billing']['salutation']     = 'mr';
+        $register['billing']['phone']     = $personalData['telephonenumber'];
+
         if (isset($personalData['shipping_company']) && !empty($personalData['shipping_company'])) {
             $register['billing']['company']        = $personalData['shipping_company'];
         } else {
