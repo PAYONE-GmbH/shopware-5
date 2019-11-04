@@ -779,8 +779,12 @@ class Mopt_PayonePaymentHelper
         $shopCountries = Shopware()->Container()->get('modules')->Admin()->sGetCountryList();
 
         foreach ($paymentCountries as $index => $paymentCountry) {
-            if (array_key_exists($paymentCountry['countryID'], $shopCountries)) {
-                $paymentCountries[$index]['countryname'] = $shopCountries[$paymentCountry['countryID']]['name'];
+            foreach ($shopCountries as $k => $shopCountry) {
+                if ((int)$paymentCountry['countryID'] === (int)$shopCountry['id']) {
+                    $paymentCountries[$index]['countryname'] = $shopCountry['countryname'];
+
+                    break;
+                }
             }
         }
 
