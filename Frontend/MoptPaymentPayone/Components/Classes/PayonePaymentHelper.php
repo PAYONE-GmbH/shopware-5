@@ -1293,13 +1293,14 @@ class Mopt_PayonePaymentHelper
      *
      * @return bool
      */
-    public function isAmazonPayActive($payoneMain, $paymentMethod)
+    public function isAmazonPayActive($paymentMethod)
     {
         if (!$this->isPayoneAmazonPay($paymentMethod['name'])) {
             return false;
         } else {
             return true;
-	}
+	    }
+    }
 
     /**
      * Marks all OrderDetails and Shipping as Fully Captured

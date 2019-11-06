@@ -331,7 +331,7 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         foreach ($payments as $paymentMethod) {
-            if ($payonePaymentHelper->isAmazonPayActive($payoneMain, $paymentMethod)) {
+            if ($payonePaymentHelper->isAmazonPayActive($paymentMethod)) {
                 return true;
             }
         }
