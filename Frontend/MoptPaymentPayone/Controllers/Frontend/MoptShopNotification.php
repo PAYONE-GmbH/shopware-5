@@ -254,6 +254,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      * forward request to configured urls
      *
      * @param array $rawPost
+     * @param $paymentID
      */
     protected function moptPayoneForwardTransactionStatus($rawPost, $paymentID)
     {
@@ -267,12 +268,12 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
         $rawPost['paymentID'] = $paymentID;
 
-        $logentry = [
+        $log_msg = [
             'Trying to forward to own controller: '.$url,
             'action='.$rawPost['txaction'],
             'txid='.$rawPost['txid'],
         ];
-        $this->forwardLog($logentry);
+        $this->forwardLog($log_msg);
 
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_POST, 1);
@@ -280,23 +281,51 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_TIMEOUT_MS, 500);
 
-        $result = curl_exec($curl);
-        // using old alias for CURLINFO_RESPONSE_CODE
-        $response_code = (string) curl_getinfo($curl,  CURLINFO_HTTP_CODE);
+        $curl_timeout = 200;
+        $curl_timeout_raise = 100;
+        $curl_trials_max = 3;
 
-        $curldebug = (array) curl_getinfo($curl);
-        $curldebug_json = json_encode($curldebug);
+        if ($this->payoneConfig['transTimeout']) {
+            $curl_timeout = $this->payoneConfig['transTimeout'];
+        }
 
-        $logentry = [
-            'Responsecode of request was: '.$response_code,
-            'curl info: '.$curldebug_json,
-        ];
+        if ($this->payoneConfig['transTimeoutRaise']) {
+            $curl_timeout_raise = $this->payoneConfig['transTimeoutRaise'];
+        }
+
+        if ($this->payoneConfig['transMaxTrials']) {
+            $curl_trials_max = $this->payoneConfig['transMaxTrials'];
+        }
+
+        $curl_trials = 0;
+
+        do {
+            $curl_trials++;
+
+            curl_setopt($curl, CURLOPT_TIMEOUT_MS, $curl_timeout);
+
+            $result = curl_exec($curl);
+
+            $curl_info = curl_getinfo($curl);
+
+            $response_code = $curl_info['http_code'];
+            $curl_info_json = json_encode($curl_info);
+
+            $log_msg = [
+                'Responsecode of request was: ' . $response_code,
+                'Trials: ' . $curl_trials,
+                'curl_timeout: ' . $curl_timeout,
+                'curl_result: ' . $result,
+                'curl info: ' . $curl_info_json,
+                'raw_post: ' . json_encode($rawPost),
+            ];
+            $this->forwardLog($log_msg);
+
+            $curl_timeout += $curl_timeout_raise;
+        } while ($curl_trials < $curl_trials_max && $response_code !== 100);
 
         curl_close($curl);
-
-        $this->forwardLog($logentry);
     }
 
     /**

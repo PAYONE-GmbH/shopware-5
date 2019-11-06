@@ -50,53 +50,56 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
     public function indexAction()
     {
         $request = $this->Request();
-        
+        $paymentId = $request->getParam('paymentID');
+        $this->payoneConfig = $this->moptPayone__main->getPayoneConfig($paymentId, true);
+
         if (!$request->isPost()) {
-            $logentry = [
+            $log_msg = [
                 'ERROR',
                 'Request is not of type post',
                 'Request was: ' . print_r($request, true),
             ];
-            $this->forwardLog($logentry);
+            $this->forwardLog($log_msg);
             exit;
+        } else {
+            $log_msg = [
+                'Request: TransactionStatusForwarding'
+            ];
+            $this->forwardLog($log_msg);
         }
 
         $rawPost = $_POST;
-        $paymentId = $request->getParam('paymentID');
-        $config = $this->moptPayone__main->getPayoneConfig($paymentId, true);
-        $this->moptPayoneForwardTransactionStatus($config, $rawPost, $request->getParam('txaction'));
+        $this->moptPayoneForwardTransactionStatus($rawPost, $request->getParam('txaction'));
         exit;
     }
 
     /**
      * forward request to configured urls
      *
-     * @param array $payoneConfig
      * @param array $rawPost
      * @param string $payoneAction
      * @return void
      */
-    protected function moptPayoneForwardTransactionStatus($payoneConfig, $rawPost, $payoneAction)
+    protected function moptPayoneForwardTransactionStatus($rawPost, $payoneAction)
     {
-        $this->payoneConfig = $payoneConfig;
         $this->rawPost = $rawPost;
         $this->payoneAction = $payoneAction;
 
         $configKey = 'trans' . ucfirst($payoneAction);
-        $valid = isset($payoneConfig[$configKey]);
+        $valid = isset($this->payoneConfig[$configKey]);
 
         if (!$valid) {
             $logentry = [
                 'ERROR',
                 'configKey: '. $configKey .
                 ' does not exist in payoneConfig array!',
-                'payoneConfig: ' . print_r($payoneConfig, true),
+                'payoneConfig: ' . print_r($this->payoneConfig, true),
             ];
             $this->forwardLog($logentry);
             return;
         }
 
-        $forwardingUrls = explode(';', $payoneConfig[$configKey]);
+        $forwardingUrls = explode(';', $this->payoneConfig[$configKey]);
         $this->handleForwardingUrls($forwardingUrls);
     }
 
