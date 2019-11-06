@@ -597,6 +597,89 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
+     * Extends transaction forwarding config with timeout, timeout raise and max trials if not exits
+     */
+    public function moptExtendConfigTransactionTimeoutTrials()
+    {
+        $queries = [];
+        if (!$this->moptConfigTransactionTimeoutExist()) {
+            $queries[] = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN trans_timeout int(11) NOT NULL;";
+        }
+        if (!$this->moptConfigTransactionTimeoutRaiseExist()) {
+            $queries[] = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN trans_timeout_raise int(11) NOT NULL;";
+        }
+        if (!$this->moptConfigTransactionTrialsExist()) {
+            $queries[] = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN trans_max_trials int(11) NOT NULL;";
+        }
+
+        if (count($queries) > 0) {
+            foreach ($queries as $query) {
+                try {
+                    Shopware()->Db()->exec($query);
+                } catch (Zend_Db_Adapter_Exception $e) {
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks the existence of trans_timeout
+     */
+    public function moptConfigTransactionTimeoutExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND TABLE_NAME='s_plugin_mopt_payone_config'
+                AND COLUMN_NAME ='trans_timeout'";
+        try {
+            $result = Shopware()->Db()->query($sql);
+
+            return $result->rowCount() !== 0;
+        } catch (Zend_Db_Statement_Exception $e) {
+        } catch (Zend_Db_Adapter_Exception $e) {
+        }
+    }
+
+    /**
+     * Checks the existence of trans_timeout_raise
+     */
+    public function moptConfigTransactionTimeoutRaiseExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND TABLE_NAME='s_plugin_mopt_payone_config'
+                AND COLUMN_NAME ='trans_timeout_raise'";
+        try {
+            $result = Shopware()->Db()->query($sql);
+
+            return $result->rowCount() !== 0;
+        } catch (Zend_Db_Statement_Exception $e) {
+        } catch (Zend_Db_Adapter_Exception $e) {
+        }
+    }
+
+    /**
+     * Checks the existence of trans_max_trials
+     */
+    public function moptConfigTransactionTrialsExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND TABLE_NAME='s_plugin_mopt_payone_config'
+                AND COLUMN_NAME ='trans_max_trials'";
+        try {
+            $result = Shopware()->Db()->query($sql);
+
+            return $result->rowCount() !== 0;
+        } catch (Zend_Db_Statement_Exception $e) {
+        } catch (Zend_Db_Adapter_Exception $e) {
+        }
+    }
+
+    /**
      * extend config data table with extended address check attributes
      */
     public function moptExtendConfigAddressCheckDataTable()

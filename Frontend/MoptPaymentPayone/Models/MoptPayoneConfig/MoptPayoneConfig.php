@@ -372,6 +372,21 @@ class MoptPayoneConfig extends ModelEntity
     private $transLogging;
 
     /**
+     * @ORM\Column(name="trans_timeout", type="integer", precision=0, scale=0, nullable=false, unique=false)
+     */
+    private $transTimeout;
+
+    /**
+     * @ORM\Column(name="trans_timeout_raise", type="integer", precision=0, scale=0, nullable=false, unique=false)
+     */
+    private $transTimeoutRaise;
+
+    /**
+     * @ORM\Column(name="trans_max_trials", type="integer", precision=0, scale=0, nullable=false, unique=false)
+     */
+    private $transMaxTrials;
+
+    /**
      * @ORM\Column(name="trans_appointed", type="text", nullable=true, unique=false)
      */
     private $transAppointed;
@@ -2052,5 +2067,53 @@ class MoptPayoneConfig extends ModelEntity
     public function setSendOrdernumberAsReference($sendOrdernumberAsReference)
     {
         $this->sendOrdernumberAsReference = $sendOrdernumberAsReference;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTransTimeout()
+    {
+        return $this->transTimeout;
+    }
+
+    /**
+     * @param mixed $transTimeout
+     */
+    public function setTransTimeout($transTimeout)
+    {
+        $this->transTimeout = $transTimeout;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTransMaxTrials()
+    {
+        return $this->transMaxTrials;
+    }
+
+    /**
+     * @param mixed $transMaxTrials
+     */
+    public function setTransMaxTrials($transMaxTrials)
+    {
+        $this->transMaxTrials = $transMaxTrials;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTransTimeoutRaise()
+    {
+        return $this->transTimeoutRaise;
+    }
+
+    /**
+     * @param mixed $transTimeoutRaise
+     */
+    public function setTransTimeoutRaise($transTimeoutRaise)
+    {
+        $this->transTimeoutRaise = $transTimeoutRaise;
     }
 }
