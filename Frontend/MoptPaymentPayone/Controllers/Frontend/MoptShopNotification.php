@@ -282,9 +282,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-        $curl_timeout = 200;
-        $curl_timeout_raise = 100;
-        $curl_trials_max = 3;
+        $curl_timeout = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'];
+        $curl_timeout_raise = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout_raise'];
+        $curl_trials_max = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_trials_max'];
 
         if ($this->payoneConfig['transTimeout']) {
             $curl_timeout = $this->payoneConfig['transTimeout'];
