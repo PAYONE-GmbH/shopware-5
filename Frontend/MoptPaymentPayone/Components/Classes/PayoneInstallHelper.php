@@ -603,13 +603,13 @@ class Mopt_PayoneInstallHelper
     {
         $queries = [];
         if (!$this->moptConfigTransactionTimeoutExist()) {
-            $queries[] = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN trans_timeout int(11) NOT NULL;";
+            $queries[] = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN trans_timeout int(11) NOT NULL DEFAULT 0;";
         }
         if (!$this->moptConfigTransactionTimeoutRaiseExist()) {
-            $queries[] = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN trans_timeout_raise int(11) NOT NULL;";
+            $queries[] = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN trans_timeout_raise int(11) NOT NULL DEFAULT 0;";
         }
         if (!$this->moptConfigTransactionTrialsExist()) {
-            $queries[] = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN trans_max_trials int(11) NOT NULL;";
+            $queries[] = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN trans_max_trials int(11) NOT NULL DEFAULT 0;";
         }
 
         if (count($queries) > 0) {
