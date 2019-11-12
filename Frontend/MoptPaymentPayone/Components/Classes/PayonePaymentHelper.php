@@ -1289,17 +1289,32 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * checks if AmazonPay is active
+     *
+     * @return bool
+     */
+    public function isAmazonPayActive($paymentMethod)
+    {
+        if (!$this->isPayoneAmazonPay($paymentMethod['name'])) {
+            return false;
+        } else {
+            return true;
+	    }
+    }
+
+    /**
      * checks if AmazonPay is enabled
      *
      * @return bool
      */
-    public function isAmazonPayActive()
+    public function isAmazonPayEnabled()
     {
         $paymentAmazonPay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
             ['name' => 'mopt_payone__ewallet_amazon_pay']
         );
         return $paymentAmazonPay->getActive();
     }
+
 
     /**
      * Marks all OrderDetails and Shipping as Fully Captured

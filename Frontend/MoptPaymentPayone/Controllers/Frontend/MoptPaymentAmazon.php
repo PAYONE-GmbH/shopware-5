@@ -56,7 +56,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->payoneAmazonReadOnly = $this->Request()->getParam("moptAmazonReadonly");
         }
 
-        if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayActive()
+        if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayEnabled()
             && ($payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
         ) {
             $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();

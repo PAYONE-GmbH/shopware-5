@@ -245,7 +245,7 @@ class FrontendCheckout implements SubscriberInterface
         if (!($moptPayoneMain->getHelper()->isAboCommerceArticleInBasket())
             && $templateSuffix === '') {
 
-            if ($moptPayoneMain->getPaymentHelper()->isAmazonPayActive()
+            if ($this->isAmazonPayActive($subject)
                 && ($payoneAmazonPayConfig = $moptPayoneMain->getHelper()->getPayoneAmazonPayConfig())
             ) {
                 $paymenthelper = $moptPayoneMain->getPaymentHelper();
@@ -318,6 +318,25 @@ class FrontendCheckout implements SubscriberInterface
 
         $view->assign('moptAgbChecked', $session->moptAgbChecked);
         $view->assign('BSPayoneMode', $config['liveMode']);
+    }
+
+    protected function isAmazonPayActive($checkoutController)
+    {
+        $payments = $checkoutController->getPayments();
+        $payoneMain = $this->container->get('MoptPayoneMain');
+        $payonePaymentHelper = $payoneMain->getPaymentHelper();
+
+        if ($payoneMain->getHelper()->isAboCommerceArticleInBasket()) {
+            return false;
+        }
+
+        foreach ($payments as $paymentMethod) {
+            if ($payonePaymentHelper->isAmazonPayActive($paymentMethod)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function isPayPalEcsActive($checkoutController)
