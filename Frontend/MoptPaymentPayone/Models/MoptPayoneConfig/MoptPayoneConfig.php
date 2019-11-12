@@ -372,17 +372,17 @@ class MoptPayoneConfig extends ModelEntity
     private $transLogging;
 
     /**
-     * @ORM\Column(name="trans_timeout", type="integer", precision=0, scale=0, nullable=false, unique=false)
+     * @ORM\Column(name="trans_timeout", type="integer", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
      */
     private $transTimeout;
 
     /**
-     * @ORM\Column(name="trans_timeout_raise", type="integer", precision=0, scale=0, nullable=false, unique=false)
+     * @ORM\Column(name="trans_timeout_raise", type="integer", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
      */
     private $transTimeoutRaise;
 
     /**
-     * @ORM\Column(name="trans_max_trials", type="integer", precision=0, scale=0, nullable=false, unique=false)
+     * @ORM\Column(name="trans_max_trials", type="integer", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
      */
     private $transMaxTrials;
 
