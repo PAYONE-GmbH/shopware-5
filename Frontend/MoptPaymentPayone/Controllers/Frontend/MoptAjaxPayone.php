@@ -920,8 +920,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request = new \Payone_Api_Request_Genericpayment($params);
 
         $router = $this->Front()->Router();
-        $successurl = $router->assemble(array('controller' => 'MoptPaymentAmazon', 'action' => 'finish',
+
+        $successurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentAmazon', 'action' => 'finish',
             'forceSecure' => true, 'appendSession' => false));
+
         $errorurl = $router->assemble(array('controller' => 'checkout', 'action' => 'cart',
             'forceSecure' => true, 'appendSession' => false));
 

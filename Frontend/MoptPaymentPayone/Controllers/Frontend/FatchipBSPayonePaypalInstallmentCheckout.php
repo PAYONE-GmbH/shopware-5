@@ -172,7 +172,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout ext
 
         // $request->setCountry();
         $request->setSuccessurl(
-            $router->assemble(['controller' => 'FatchipBSPayonePaypalInstallment', 'action' => 'success', 'forceSecure' => true, 'appendSession' => false])
+            $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, ['controller' => 'FatchipBSPayonePaypalInstallment', 'action' => 'success', 'forceSecure' => true, 'appendSession' => false], null)
         );
         $request->setErrorurl(
             $router->assemble(['controller' => 'FatchipBSPayonePaypalInstallment', 'action' => 'error', 'forceSecure' => true, 'appendSession' => false])
