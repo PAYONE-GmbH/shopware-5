@@ -5,6 +5,12 @@
  */
 class Mopt_PayoneConfig
 {
+
+    public static $MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS = [
+        'curl_timeout' => 200,
+        'curl_timeout_raise' => 100,
+        'curl_trials_max' => 3,
+    ];
   /**
    * standard valid IPs, add load balancer IP here if any problems occur
    *

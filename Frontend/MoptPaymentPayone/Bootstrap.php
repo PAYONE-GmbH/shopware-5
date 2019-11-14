@@ -539,6 +539,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->getInstallHelper()->fcExtendConfigRatepayInstallmentModeDataTable();
         }
 
+        // config option for transaction forwarding timeout and max trials
+        $this->getInstallHelper()->moptExtendConfigTransactionTimeoutTrials();
+
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModel($this->getPayoneLogger());
 
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModelExtension();

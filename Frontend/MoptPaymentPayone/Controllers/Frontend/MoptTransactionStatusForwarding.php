@@ -11,6 +11,10 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
 {
     protected $moptPayone__main = null;
     protected $rotatingLogger = null;
+    protected $payoneConfig = null;
+    protected $zendHttpClient = null;
+    protected $rawPost = null;
+    protected $payoneAction = null;
 
     /**
      * init notification controller for processing status updates
@@ -46,80 +50,159 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
     public function indexAction()
     {
         $request = $this->Request();
-        
+        $paymentId = $request->getParam('paymentID');
+        $this->payoneConfig = $this->moptPayone__main->getPayoneConfig($paymentId, true);
+
         if (!$request->isPost()) {
+            $log_msg = [
+                'ERROR',
+                'Request is not of type post',
+                'Request was: ' . print_r($request, true),
+            ];
+            $this->forwardLog($log_msg);
             exit;
+        } else {
+            $log_msg = [
+                'Request: TransactionStatusForwarding'
+            ];
+            $this->forwardLog($log_msg);
         }
 
         $rawPost = $_POST;
-        $paymentId = $request->getParam('paymentID');
-        $config = $this->moptPayone__main->getPayoneConfig($paymentId, true);
-        $this->moptPayoneForwardTransactionStatus($config, $rawPost, $request->getParam('txaction'));
+        $this->moptPayoneForwardTransactionStatus($rawPost, $request->getParam('txaction'));
         exit;
     }
 
     /**
      * forward request to configured urls
      *
-     * @param array $payoneConfig
      * @param array $rawPost
-     * @param string $payoneStatus
+     * @param string $payoneAction
+     * @return void
      */
-    protected function moptPayoneForwardTransactionStatus($payoneConfig, $rawPost, $payoneStatus)
+    protected function moptPayoneForwardTransactionStatus($rawPost, $payoneAction)
     {
-        $configKey = 'trans' . ucfirst($payoneStatus);
-        if (isset($payoneConfig[$configKey])) {
-            $forwardingUrls = explode(';', $payoneConfig[$configKey]);
+        $this->rawPost = $rawPost;
+        $this->payoneAction = $payoneAction;
 
-            $zendClientConfig = array(
-                'adapter' => 'Zend_Http_Client_Adapter_Curl',
-                'curloptions' => array(
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_SSL_VERIFYPEER => false,
-                    CURLOPT_SSL_VERIFYHOST => false
-                )
-            );
+        $configKey = 'trans' . ucfirst($payoneAction);
+        $valid = isset($this->payoneConfig[$configKey]);
 
-            foreach ($forwardingUrls as $url) {
-                if (empty($url)) {
-                    continue;
-                }
-                $logentry = array( "payone-status=".$payoneStatus , "txid=".$rawPost['txid'],"url=". $url );
-                $client = new Zend_Http_Client($url, $zendClientConfig);
-                $client->setConfig(array('timeout' => 50));
-                $client->setParameterPost($rawPost);
-                $requestStart = microtime(true);
-                try {
-                    $client->request(Zend_Http_Client::POST);
-                } catch (Zend_Http_Client_Exception $e) {
-                    // do nothing
-                }
-                $requestStop = microtime(true);
-                $requestDuration = ($requestStop - $requestStart);
-                $logentry []= "duration=".$requestDuration;
-                $response = $client->getLastResponse();
-                if ($response !== null) {
-                    $logentry []= "response-status=".$response->getStatus();
-                    $logentry []= "response-message=".$response->getMessage();
-                } else {
-                    $logentry []= "response-status=" . $e->getCode();
-                    $logentry []= "response-message=". $e->getMessage();
-                }
-                if ($payoneConfig['transLogging'] === true) {
-                    $log=implode(";",$logentry);
-                    $this->rotatingLogger->debug($log);
-                }
-            }
+        if (!$valid) {
+            $logentry = [
+                'ERROR',
+                'configKey: '. $configKey .
+                ' does not exist in payoneConfig array!',
+                'payoneConfig: ' . print_r($this->payoneConfig, true),
+            ];
+            $this->forwardLog($logentry);
+            return;
         }
+
+        $forwardingUrls = explode(';', $this->payoneConfig[$configKey]);
+        $this->handleForwardingUrls($forwardingUrls);
+    }
+
+    /**
+     * Takes care on the list of urls that shall be forwarded
+     *
+     * @param $forwardingUrls
+     * @return void
+     */
+    protected function handleForwardingUrls($forwardingUrls)
+    {
+        $this->initRequestClient();
+
+        foreach ($forwardingUrls as $url) {
+            if (empty($url)) {
+                $logentry = [
+                    "ERROR",
+                    "URL is empty",
+                    "txid=".$this->rawPost['txid'],
+                    "url=". $url,
+                ];
+                $this->forwardLog($logentry);
+                continue;
+            }
+
+            $this->zendHttpClient->setUri($url);
+            $logentry = [
+                "payone-status=".$this->payoneAction,
+                "txid=".$this->rawPost['txid'],
+                "url=". $url,
+            ];
+
+            try {
+                $requestStart = microtime(true);
+                $this->zendHttpClient->request(Zend_Http_Client::POST);
+                $requestStop = microtime(true);
+            } catch (Zend_Http_Client_Exception $e) {
+                $logentry []= "response-status=" . $e->getCode();
+                $logentry []= "response-message=". $e->getMessage();
+                $this->forwardLog($logentry);
+                continue;
+            }
+
+            $requestDuration = ($requestStop - $requestStart);
+            $logentry [] = "duration=".$requestDuration;
+
+            $response = $this->zendHttpClient->getLastResponse();
+
+            $logentry []= "response-status=".$response->getStatus();
+            $logentry []= "response-message=".$response->getMessage();
+            $this->forwardLog($logentry);
+        }
+
+    }
+
+    /**
+     * Initializes request client
+     *
+     * @param void
+     * @return void
+     */
+    protected function initRequestClient()
+    {
+        $zendClientConfig = array(
+            'adapter' => 'Zend_Http_Client_Adapter_Curl',
+            'curloptions' => array(
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false
+            ),
+            'timeout' => 50,
+        );
+        $this->zendHttpClient = new Zend_Http_Client();
+        $this->zendHttpClient->setConfig($zendClientConfig);
+        $this->zendHttpClient->setParameterPost($this->rawPost);
     }
 
     /**
      * get plugin bootstrap
      *
+     * @param void
      * @return plugin
      */
     public function Plugin()
     {
         return Shopware()->Plugins()->Frontend()->MoptPaymentPayone();
+    }
+
+    /**
+     * Logs an entry of transaction forward controller
+     *
+     * @param array $logentry
+     * @return void
+     */
+    protected function forwardLog($logentry)
+    {
+        $logAllowed = (
+            $this->payoneConfig['transLogging'] === true
+        );
+
+        if ($logAllowed) {
+            $log=implode(";",$logentry);
+            $this->rotatingLogger->debug($log);
+        }
     }
 }

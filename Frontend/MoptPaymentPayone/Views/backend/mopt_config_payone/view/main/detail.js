@@ -269,6 +269,27 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 labelWidth: 200
             },
             {
+                name: 'transTimeout',
+                xtype: 'numberfield',
+                fieldLabel: '{s name=forwarding/status/timeout}Timeout{/s}',
+                allowBlank: true,
+                labelWidth: 200
+            },
+            {
+                name: 'transTimeoutRaise',
+                xtype: 'numberfield',
+                fieldLabel: '{s name=forwarding/status/timeout_raise}TimeoutRaise{/s}',
+                allowBlank: true,
+                labelWidth: 200
+            },
+            {
+                name: 'transMaxTrials',
+                xtype: 'numberfield',
+                fieldLabel: '{s name=forwarding/status/max_Trials}MaxTrials{/s}',
+                allowBlank: true,
+                labelWidth: 200,
+            },
+            {
                 xtype: 'textfield',
                 fieldLabel: '{s name=forwarding/status/appointed}Appointed{/s}',
                 name: 'transAppointed',
