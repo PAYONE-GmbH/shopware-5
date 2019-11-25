@@ -120,7 +120,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         /** @var Plugin $plugin */
         $plugin = Shopware()->Models()->getRepository(Plugin::class)->findOneBy(['name' => $pluginName]);
 
-        return $plugin->getActive();
+        return $plugin && $plugin->getActive();
     }
 
     /**
