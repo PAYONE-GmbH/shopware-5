@@ -1164,7 +1164,16 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $response;
     }
 
+    /**
+     * @param $country
+     * @return bool
+     */
     protected function isBillingAddressSupported($country){
+
+        //Check if country is set. If no, return true
+        if (!$country) {
+            return true;
+        }
 
         $countries = $this->moptPayoneMain->getPaymentHelper()
             ->moptGetCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
