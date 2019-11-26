@@ -32,6 +32,7 @@
 require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
 use \Doctrine\ORM\Tools\ToolsException;
+use Shopware\Models\Plugin\Plugin;
 use Shopware\Plugins\MoptPaymentPayone\Bootstrap\RiskRules;
 
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
@@ -50,6 +51,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
     /**
      * registers the custom plugin models and plugin namespaces
+     * @throws ReflectionException
      */
     public function afterInit()
     {
@@ -58,6 +60,67 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->get('Loader')->registerNamespace('Payone', $this->Path() . 'Components/Payone/');
         $this->get('Snippets')->addConfigDir($this->Path() . 'Snippets/');
         $this->get('Loader')->registerNamespace('Mopt', $this->Path() . 'Components/Classes/');
+
+        if (version_compare(self::getShopwareVersion(), '5.6.0', '<') || !$this->isPluginActive()) {
+            return;
+        }
+
+        $proxies = array('Shopware_Proxies_sAdminProxy', 'Shopware_Proxies_sBasketProxy');
+        $this->revalidateCoreProxies($proxies);
+    }
+
+    /**
+     * switching language will immediately produce core proxies not containing hooked methods. as rework we will revalidate those.
+     * proxies will be automatically regenerated if needed
+     *
+     * @param array $proxies
+     * @throws ReflectionException
+     */
+    public function revalidateCoreProxies($proxies = []) {
+        foreach($proxies as $proxy) {
+            if(class_exists($proxy)) {
+                $hooks = $proxy::getHookMethods();
+
+                if(is_array($hooks) && count($hooks) > 0) {
+                    continue;
+                }
+
+                $proxy = new \ReflectionClass($proxy);
+                $proxyFile = $proxy->getFileName();
+
+                @unlink($proxyFile);
+            }
+        }
+    }
+
+    public static function getShopwareVersion() {
+        $currentVersion = '';
+
+        if(defined('\Shopware::VERSION')) {
+            $currentVersion = \Shopware::VERSION;
+        }
+
+        //get old composer versions
+        if($currentVersion === '___VERSION___' && class_exists('ShopwareVersion') && class_exists('PackageVersions\Versions')) {
+            $currentVersion = \ShopwareVersion::parseVersion(
+                \PackageVersions\Versions::getVersion('shopware/shopware')
+            )['version'];
+        }
+
+        if(!$currentVersion || $currentVersion === '___VERSION___') {
+            $currentVersion = Shopware()->Container()->getParameter('shopware.release.version');
+        }
+
+        return $currentVersion;
+    }
+
+    public function isPluginActive() {
+        $pluginName = $this->getName();
+
+        /** @var Plugin $plugin */
+        $plugin = Shopware()->Models()->getRepository(Plugin::class)->findOneBy(['name' => $pluginName]);
+
+        return $plugin && $plugin->getActive();
     }
 
     /**
