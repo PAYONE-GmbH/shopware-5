@@ -1058,7 +1058,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             }
 
             //check telephonenumber
-            if (Shopware()->Config()->get('requirePhoneField')){
+            //Check only if the billing country is provided
+            if (Shopware()->Config()->get('requirePhoneField') && $responseAddress['billing_country']){
                 $shipping_telephonenumber = $responseAddress['shipping_telephonenumber'];
                 if (strlen($shipping_telephonenumber) < 1){
                     $data['errormessage'] = Shopware()->Snippets()
