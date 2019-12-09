@@ -893,11 +893,10 @@ class Mopt_PayoneParamBuilder
         $params['wallettype'] = 'PDT';
 
         if ($intialRecurringRequest) {
-            $params['successurl'] = $router->assemble(array('action' => 'paydirektRecurringSuccess',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'paydirektRecurringSuccess',
                 'forceSecure' => true, 'appendSession' => false));
         } else {
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
         }
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
@@ -923,11 +922,10 @@ class Mopt_PayoneParamBuilder
 
         if ($intialRecurringRequest) {
             // TODO implement and test AboCommerce
-            $params['successurl'] = $router->assemble(array('action' => 'paydirektexpressRecurringSuccess',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'paydirektexpressRecurringSuccess',
                 'forceSecure' => true, 'appendSession' => false));
         } else {
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
         }
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
@@ -979,8 +977,7 @@ class Mopt_PayoneParamBuilder
             $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__sofort_bic']);
             $params['bankaccount'] = $this->removeWhitespaces($paymentData['mopt_payone__sofort_bankaccount']);
             $params['bankcode'] = $this->removeWhitespaces($paymentData['mopt_payone__sofort_bankcode']);
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
                 'forceSecure' => true, 'appendSession' => false));
@@ -991,8 +988,7 @@ class Mopt_PayoneParamBuilder
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'BCT') {
             $params['onlinebanktransfertype'] = 'BCT';
             $params['bankcountry'] = $paymentData['mopt_payone__bancontact_bankcountry'];
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
                 'forceSecure' => true, 'appendSession' => false));
@@ -1005,8 +1001,7 @@ class Mopt_PayoneParamBuilder
             $params['bankcountry'] = $paymentData['mopt_payone__giropay_bankcountry'];
             $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__giropay_iban']);
             $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__giropay_bic']);
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
                 'forceSecure' => true, 'appendSession' => false));
@@ -1018,8 +1013,7 @@ class Mopt_PayoneParamBuilder
             $params['onlinebanktransfertype'] = 'EPS';
             $params['bankcountry'] = $paymentData['mopt_payone__eps_bankcountry'];
             $params['bankgrouptype'] = $paymentData['mopt_payone__eps_bankgrouptype'];
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
                 'forceSecure' => true, 'appendSession' => false));
@@ -1033,8 +1027,7 @@ class Mopt_PayoneParamBuilder
             $params['onlinebanktransfertype'] = 'IDL';
             $params['bankcountry'] = $paymentData['mopt_payone__ideal_bankcountry'];
             $params['bankgrouptype'] = $paymentData['mopt_payone__ideal_bankgrouptype'];
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
                 'forceSecure' => true, 'appendSession' => false));
@@ -1045,8 +1038,7 @@ class Mopt_PayoneParamBuilder
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'PFF') {
             $params['onlinebanktransfertype'] = 'PFF';
             $params['bankcountry'] = 'CH';
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
                 'forceSecure' => true, 'appendSession' => false));
@@ -1057,8 +1049,7 @@ class Mopt_PayoneParamBuilder
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'PFC') {
             $params['onlinebanktransfertype'] = 'PFC';
             $params['bankcountry'] = 'CH';
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
                 'forceSecure' => true, 'appendSession' => false));
@@ -1069,8 +1060,7 @@ class Mopt_PayoneParamBuilder
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'P24') {
             $params['onlinebanktransfertype'] = 'P24';
             $params['bankcountry'] = 'PL';
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
                 'forceSecure' => true, 'appendSession' => false));
@@ -1110,8 +1100,7 @@ class Mopt_PayoneParamBuilder
         $params = array();
 
         $params['financingtype'] = $financeType;
-        //TODO: add token param
-        $params['successurl'] = $router->assemble(array('action' => 'success',
+        $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
             'forceSecure' => true, 'appendSession' => false));
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
             'forceSecure' => true, 'appendSession' => false));
@@ -1156,8 +1145,7 @@ class Mopt_PayoneParamBuilder
         $params = array();
 
         $params['pseudocardpan'] = $paymentData['mopt_payone__cc_pseudocardpan'];
-        //TODO: add token param
-        $params['successurl'] = $router->assemble(array('action' => 'success',
+        $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
             'forceSecure' => true, 'appendSession' => false));
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
             'forceSecure' => true, 'appendSession' => false));
@@ -1182,8 +1170,7 @@ class Mopt_PayoneParamBuilder
             $params['successurl'] = $router->assemble(array('action' => 'alipayRecurringSuccess',
                 'forceSecure' => true, 'appendSession' => false));
         } else {
-            //TODO: add token param
-            $params['successurl'] = $router->assemble(array('action' => 'success',
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
         }
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
@@ -1862,8 +1849,7 @@ class Mopt_PayoneParamBuilder
     {
         $walletParams = array(
             'wallettype' => Payone_Api_Enum_WalletType::PAYDIREKT_EXPRESS,
-            //TODO: add token param
-            'successurl' => $router->assemble(array('action' => 'paydirektexpress',
+            'successurl' => $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'paydirektexpress',
                 'forceSecure' => true, 'appendSession' => true)),
             'errorurl' => $router->assemble(array('action' => 'paydirektexpressAbort',
                 'forceSecure' => true, 'appendSession' => true)),
