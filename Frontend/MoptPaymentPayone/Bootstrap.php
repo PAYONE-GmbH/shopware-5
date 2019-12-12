@@ -362,9 +362,30 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS'
         );
         $this->subscribeEvent(
+            'CookieCollector_Collect_Cookies',
+            'registerAmazonCookie'
+        );
+        $this->subscribeEvent(
             'Shopware_Modules_Admin_Execute_Risk_Rule_sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT',
             'sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT'
         );
+    }
+
+    public function registerAmazonCookie()
+    {
+        if(class_exists('Shopware\\Bundle\\CookieBundle\\CookieCollection')) {
+            $collection = new \Shopware\Bundle\CookieBundle\CookieCollection();
+            $collection->add(new \Shopware\Bundle\CookieBundle\Structs\CookieStruct(
+                'moptamazon',
+                '/^amazon/',
+                'Amazon Payment Cookies',
+                \Shopware\Bundle\CookieBundle\Structs\CookieGroupStruct::TECHNICAL
+            ));
+
+            return $collection;
+        }
+
+        return;
     }
 
     public function addJsFiles(Enlight_Event_EventArgs $args)
