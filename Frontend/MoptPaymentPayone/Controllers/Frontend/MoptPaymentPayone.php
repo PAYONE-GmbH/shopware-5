@@ -908,7 +908,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $request = $this->mopt_payone__prepareRequest($config['paymentId'], $session->moptIsAuthorized);
 
         $currency = $this->moptGetCurrency();
-        $request->setAmount($this->getAmount());
+        $request->setAmount(round($this->getAmount(), 0));
         $request->setCurrency($currency);
 
         //get shopware temporary order id - session id
