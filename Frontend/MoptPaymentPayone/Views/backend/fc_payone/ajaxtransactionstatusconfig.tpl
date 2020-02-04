@@ -155,6 +155,16 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
+                <div class="form-group has-feedback has-error menu-level-experte">
+
+                    <label for="transFailed" class="text-left col-md-3 control-label">{s name=forwarding/status/failed}Failed{/s}</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transFailed" name="transFailed" aria-describedby="transFailed-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="transFailed-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>
         </div>
