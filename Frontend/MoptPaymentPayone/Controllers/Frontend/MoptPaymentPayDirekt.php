@@ -331,7 +331,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         );
         $this->admin->sSYSTEM->_POST = $personalData['shipping'];
         if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $this->updateShipping($userId, $personalData['billing']);
+            $this->updateShipping($userId, $personalData['shipping']);
             return true;
         } else {
             $checkData = $this->admin->sValidateStep2ShippingAddress($rules, true);
