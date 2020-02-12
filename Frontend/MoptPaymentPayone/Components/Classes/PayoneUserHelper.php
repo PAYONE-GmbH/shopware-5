@@ -47,7 +47,7 @@ class Mopt_PayoneUserHelper
      *
      * @param array $data
      */
-    private function saveUser($data, $paymentId)
+    public function saveUser($data, $paymentId)
     {
 
         $plainbilling = array_merge($data['auth'], $data['billing']);
