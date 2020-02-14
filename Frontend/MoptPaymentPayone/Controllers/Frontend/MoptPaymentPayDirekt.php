@@ -213,7 +213,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
             $this->createUserWithoutAccount($payData, $session, $paymentId);
         }
 
-        Shopware()->Session()->sPaymentID = $session->moptPaypayEcsPaymentId;
+        Shopware()->Session()->sPaymentID = $session->moptPaydirektExpressPaymentId;
 
         $user = $this->getUserData();
         //set user data
