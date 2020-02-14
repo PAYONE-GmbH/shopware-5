@@ -73,6 +73,8 @@ class Mopt_PayoneUserHelper
             $shippingaddress = new Shopware\Models\Customer\Address();
             $form = $this->createForm('Shopware\Bundle\AccountBundle\Form\Account\AddressFormType', $shippingaddress);
             $form->submit($plainshipping);
+        } else {
+            $shippingaddress = $billingaddress;
         }
 
         /** @var Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface $context */

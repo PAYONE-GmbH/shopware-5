@@ -269,6 +269,9 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
             $oldUserData = $this->admin->sGetUserData();
             $personalData['billing']['phone'] = $oldUserData['billingaddress']['phone'];
         }
+
+        $this->seperateAddressesIfEqual($personalData, $session);
+
         $updated = $this->updateBillingAddress($personalData, $session);
         if (!$updated) {
             return null;
@@ -281,6 +284,53 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
             $this->updateCustomer($personalData, $paymentId);
         }
         return $personalData;
+    }
+
+    protected function seperateAddressesIfEqual($personalData, $session)
+    {
+        $userId = $session->offsetGet('sUserId');
+        /** @var \Shopware\Components\Model\ModelManager $em */
+        $em = $this->get('models');
+
+        /** @var \Shopware\Models\Customer\Customer $customer */
+        $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
+        $queryBuilder = $this->container->get('dbal_connection')->createQueryBuilder();
+        $queryBuilder->select('*')
+            ->from('s_user_addresses')
+            ->where('user_id = :user_id')
+            ->setParameter('user_id', $userId);
+
+        $addresses = $queryBuilder->execute()->fetchAll(PDO::FETCH_CLASS, \Shopware\Models\Customer\Address::class);
+
+        /** @var \Shopware\Models\Customer\Address $address */
+        $billingAddress = $customer->getDefaultBillingAddress();
+        $shippingAddress = $customer->getDefaultShippingAddress();
+
+        if ($billingAddress->getId() === $shippingAddress->getId()) {
+            $country = $em->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $personalData['shipping']['country'] ));
+            $countryState = $em->getRepository('\Shopware\Models\Country\State')->findOneBy(array('id' => $personalData['shipping']['state'] ));
+            $personalData['shipping']['country'] = $country;
+            $personalData['shipping']['state'] = $countryState;
+            $address = new \Shopware\Models\Customer\Address();
+            $address->fromArray($personalData['shipping']);
+            $this->get('shopware_account.address_service')->create($address, $customer);
+            // get newly created address and set as defaultshippingaddress
+            $queryBuilder = $this->container->get('dbal_connection')->createQueryBuilder();
+            $queryBuilder->select('*')
+                ->from('s_user_addresses')
+                ->where('user_id = :user_id')
+                ->setParameter('user_id', $userId);
+
+            $newAddresses = $queryBuilder->execute()->fetchAll(PDO::FETCH_CLASS, \Shopware\Models\Customer\Address::class);
+            foreach ($newAddresses AS $checkAddress) {
+                if (! in_array($checkAddress, $addresses)) {
+                    $newAddress = $em->getRepository('Shopware\Models\Customer\Address')->findOneBy(array('id' => $checkAddress->getId()));
+                    $customer->setDefaultShippingAddress($newAddress);
+                    Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
+                }
+            }
+        }
+
     }
 
     protected function updateBillingAddress($personalData, $session)
@@ -445,6 +495,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
 
         /** @var \Shopware\Models\Customer\Address $address */
         $address = $customer->getDefaultShippingAddress();
+        $billingAddress = $customer->getDefaultBillingAddress();
 
          /** @var \Shopware\Models\Country\Country $country */
         $country = $em->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $shippingData['country'] ));
@@ -453,7 +504,12 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $shippingData['state'] = $countryState;
         $address->fromArray($shippingData);
 
-        $this->get('shopware_account.address_service')->update($address);
+        if ($address != $billingAddress) {
+            $this->get('shopware_account.address_service')->update($address);
+        } else {
+            $customer->setDefaultShippingAddress($billingAddress);
+            Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
+        }
     }
 
     /**
