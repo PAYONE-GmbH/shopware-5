@@ -202,7 +202,21 @@
                         <span id="stateInvoice-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
                     </div>
-                </div>                        
+                </div>
+                <div class="form-group has-feedback has-error menu-level-experte">
+
+                    <label for="stateFailed" class="text-left col-md-3 control-label">{s name=forwarding/status/failed}Failed{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateFailed" name="stateFailed" aria-describedby="stateFailed-status" >
+                            {foreach from=$payonepaymentstates item=paymentstate}
+                                <option value="{$paymentstate.id}">{$paymentstate.description}</option>
+                            {/foreach}
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="stateFailed-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>
         </div>
