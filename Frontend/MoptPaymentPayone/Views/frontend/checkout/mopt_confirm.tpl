@@ -45,21 +45,58 @@
 
 {* SW 5.0, 5.1 Disable BillingAddress Action Buttons *}
 {block name="frontend_checkout_confirm_left_billing_address_actions"}
+    {if $sUserData.additional.payment.name == 'mopt_payone__ewallet_paydirekt_express'}
+    {else}
+        {$smarty.block.parent}
+    {/if}
 {/block}
-
 
 {* SW 5.0 , 5.1 Disable ShippingAddress Action Buttons *}
 {block name="frontend_checkout_confirm_left_shipping_address_actions"}
+    {if $sUserData.additional.payment.name == 'mopt_payone__ewallet_paydirekt_express'}
+    {else}
+        {$smarty.block.parent}
+    {/if}
+{/block}
+
+{block name="frontend_checkout_confirm_information_addresses_shipping_panel_actions"}
+    {if $sUserData.additional.payment.name == 'mopt_payone__ewallet_paydirekt_express'}
+    {else}
+        {$smarty.block.parent}
+    {/if}
+{/block}
+
+{block name="frontend_checkout_confirm_information_addresses_billing_panel_actions"}
+    {if $sUserData.additional.payment.name == 'mopt_payone__ewallet_paydirekt_express'}
+    {else}
+        {$smarty.block.parent}
+    {/if}
 {/block}
 
 {block name='frontend_checkout_confirm_information_addresses_equal_panel_shipping_change_address'}
+    {if $sUserData.additional.payment.name == 'mopt_payone__ewallet_paydirekt_express'}
+    {else}
+        {$smarty.block.parent}
+    {/if}
 {/block}
 
 {block name='frontend_checkout_confirm_information_addresses_equal_panel_shipping_select_address'}
+    {if $sUserData.additional.payment.name == 'mopt_payone__ewallet_paydirekt_express'}
+    {else}
+        {$smarty.block.parent}
+    {/if}
 {/block}
 
 {block name='frontend_checkout_confirm_information_addresses_equal_panel_shipping_add_address'}
+    {if $sUserData.additional.payment.name == 'mopt_payone__ewallet_paydirekt_express'}
+    {else}
+        {$smarty.block.parent}
+    {/if}
 {/block}
 
 {block name="frontend_checkout_confirm_information_addresses_equal_panel_actions_select_address"}
+    {if $sUserData.additional.payment.name == 'mopt_payone__ewallet_paydirekt_express'}
+    {else}
+        {$smarty.block.parent}
+    {/if}
 {/block}
