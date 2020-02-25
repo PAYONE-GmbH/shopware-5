@@ -12,6 +12,7 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
     protected $moptPayone__main = null;
     protected $rotatingLogger = null;
     protected $payoneConfig = null;
+    /** @var $zendHttpClient Zend_Http_Client */
     protected $zendHttpClient = null;
     protected $rawPost = null;
     protected $payoneAction = null;
@@ -150,6 +151,17 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
 
             $logentry []= "response-status=".$response->getStatus();
             $logentry []= "response-message=".$response->getMessage();
+
+            // TODO: move to catch block
+            $transactionForwardingQueue = new Mopt_PayoneTransactionForwardingQueueWorker();
+
+            $transactionForwardingQueue->queuePush(
+                (string)$this->zendHttpClient->getLastRequest(),
+                (string)$this->zendHttpClient->getLastResponse(),
+                $this->rawPost['txid'],
+                $url
+            );
+
             $this->forwardLog($logentry);
         }
 
