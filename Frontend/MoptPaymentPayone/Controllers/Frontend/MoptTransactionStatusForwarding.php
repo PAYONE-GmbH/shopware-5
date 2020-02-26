@@ -159,6 +159,7 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
                 (string)$this->zendHttpClient->getLastRequest(),
                 (string)$this->zendHttpClient->getLastResponse(),
                 $this->rawPost['txid'],
+                json_encode($this->rawPost),
                 $url
             );
 

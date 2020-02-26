@@ -51,6 +51,11 @@ class MoptPayoneTransactionForwardQueue extends ModelEntity
     private $numtries;
 
     /**
+     * @ORM\Column(name="json_post", type="text", nullable=false, unique=false)
+     */
+    private $jsonPost;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -146,7 +151,21 @@ class MoptPayoneTransactionForwardQueue extends ModelEntity
         $this->numtries = $numtries;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getJsonPost()
+    {
+        return $this->jsonPost;
+    }
 
+    /**
+     * @param mixed $jsonPost
+     */
+    public function setJsonPost($jsonPost)
+    {
+        $this->jsonPost = $jsonPost;
+    }
 
 
 }
