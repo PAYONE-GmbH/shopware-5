@@ -8,8 +8,6 @@ namespace Shopware\CustomModels\MoptPayoneTransactionForwardQueue;
 
 use Shopware\Components\Model\ModelEntity;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Table(name="s_plugin_mopt_payone_transaction_forward_queue")
@@ -66,7 +64,7 @@ class MoptPayoneTransactionForwardQueue extends ModelEntity
     /**
      * @param mixed $id
      */
-    public function setId($id): void
+    public function setId($id)
     {
         $this->id = $id;
     }
@@ -82,7 +80,7 @@ class MoptPayoneTransactionForwardQueue extends ModelEntity
     /**
      * @param mixed $transactionId
      */
-    public function setTransactionId($transactionId): void
+    public function setTransactionId($transactionId)
     {
         $this->transactionId = $transactionId;
     }
@@ -98,7 +96,7 @@ class MoptPayoneTransactionForwardQueue extends ModelEntity
     /**
      * @param mixed $request
      */
-    public function setRequest($request): void
+    public function setRequest($request)
     {
         $this->request = $request;
     }
@@ -114,7 +112,7 @@ class MoptPayoneTransactionForwardQueue extends ModelEntity
     /**
      * @param mixed $response
      */
-    public function setResponse($response): void
+    public function setResponse($response)
     {
         $this->response = $response;
     }
@@ -130,7 +128,7 @@ class MoptPayoneTransactionForwardQueue extends ModelEntity
     /**
      * @param mixed $endpoint
      */
-    public function setEndpoint($endpoint): void
+    public function setEndpoint($endpoint)
     {
         $this->endpoint = $endpoint;
     }
@@ -146,7 +144,7 @@ class MoptPayoneTransactionForwardQueue extends ModelEntity
     /**
      * @param mixed $numtries
      */
-    public function setNumtries($numtries): void
+    public function setNumtries($numtries)
     {
         $this->numtries = $numtries;
     }
