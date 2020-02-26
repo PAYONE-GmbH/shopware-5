@@ -13,6 +13,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     protected $moptPayone__serviceBuilder = null;
     protected $moptPayone__main = null;
+    /** @var $moptPayone__helper Mopt_PayoneHelper */
     protected $moptPayone__helper = null;
     protected $moptPayone__paymentHelper = null;
     /** @var Logger $logger */
@@ -273,7 +274,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             'action='.$rawPost['txaction'],
             'txid='.$rawPost['txid'],
         ];
-        $this->forwardLog($log_msg);
+        $this->moptPayone__helper->forwardLog($log_msg, $this->payoneConfig);
 
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_POST, 1);
@@ -320,30 +321,12 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 'curl info: ' . $curl_info_json,
                 'raw_post: ' . json_encode($rawPost),
             ];
-            $this->forwardLog($log_msg);
+            $this->moptPayone__helper->forwardLog($log_msg, $this->payoneConfig);
 
             $curl_timeout += $curl_timeout_raise;
         } while ($curl_trials < $curl_trials_max && $response_code !== 100);
 
         curl_close($curl);
-    }
-
-    /**
-     * Logs an entry of transaction forward controller
-     *
-     * @param array $logentry
-     * @return void
-     */
-    protected function forwardLog($logentry)
-    {
-        $logAllowed = (
-            $this->payoneConfig['transLogging'] === true
-        );
-
-        if ($logAllowed) {
-            $log=implode(";",$logentry);
-            $this->rotatingLogger->debug($log);
-        }
     }
 
 

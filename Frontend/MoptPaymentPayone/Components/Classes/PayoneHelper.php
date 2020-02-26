@@ -1,10 +1,14 @@
 <?php
 
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
+
 /**
  * $Id: $
  */
 class Mopt_PayoneHelper
 {
+    protected $rotatingLogger = null;
 
     /**
      * check if Responsive Template is installed and activated for current subshop
@@ -1645,5 +1649,107 @@ class Mopt_PayoneHelper
         return Shopware()->Db()->fetchOne($sql);
     }
 
+    /**
+     * Initializes request client
+     *
+     * @return Zend_Http_Client
+     */
+    public function initRequestClient()
+    {
+        $zendClientConfig = array(
+            'adapter' => 'Zend_Http_Client_Adapter_Curl',
+            'curloptions' => array(
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false
+            ),
+            'timeout' => 50,
+        );
+        $zendHttpClient = new Zend_Http_Client();
+        try {
+            $zendHttpClient->setConfig($zendClientConfig);
+        } catch (Zend_Http_Client_Exception $e) {
+        }
+        $zendHttpClient->setParameterPost($this->rawPost);
 
+        return $zendHttpClient;
+    }
+
+    /**
+     * Returns true if
+     *
+     * @param Zend_Http_Client $zendHttpClient
+     * @param $url
+     * @param $action
+     * @param $tx_id
+     * @param $payoneConfig
+     * @return bool
+     */
+    public function forwardTransactionStatus($zendHttpClient, $url, $action, $tx_id, $payoneConfig) {
+        try {
+            $zendHttpClient->setUri($url);
+        } catch (Zend_Http_Client_Exception $e) {
+        }
+        $logentry = [
+            "payone-status=".$action,
+            "txid=".$tx_id,
+            "url=". $url,
+        ];
+
+        try {
+            $requestStart = microtime(true);
+            $zendHttpClient->request(Zend_Http_Client::POST);
+            $requestStop = microtime(true);
+        } catch (Zend_Http_Client_Exception $e) {
+            $logentry []= "response-status=" . $e->getCode();
+            $logentry []= "response-message=". $e->getMessage();
+            $this->forwardLog($logentry, $payoneConfig);
+            return false;
+        }
+
+        $requestDuration = ($requestStop - $requestStart);
+        $logentry [] = "duration=".$requestDuration;
+
+        $response = $zendHttpClient->getLastResponse();
+
+        $logentry []= "response-status=".$response->getStatus();
+        $logentry []= "response-message=".$response->getMessage();
+
+        $this->forwardLog($logentry, $payoneConfig);
+
+        return true;
+    }
+
+    /**
+     * Logs an entry of transaction forward controller
+     *
+     * @param array $logentry
+     * @return void
+     */
+    public function forwardLog($logentry, $payoneConfig)
+    {
+        $logAllowed = (
+            $payoneConfig['transLogging'] === true
+        );
+
+        if ($logAllowed) {
+            $log=implode(";",$logentry);
+            $this->getOrInitForwardLogger()->debug($log);
+        }
+    }
+
+    protected function getOrInitForwardLogger() {
+        if ($this->rotatingLogger) {
+            return $this->rotatingLogger;
+        }
+
+        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logFile = $logPath . '/MoptPaymentPayone_txredirect_production.log';
+
+        $rfh = new RotatingFileHandler($logFile, 14);
+        $this->rotatingLogger = new Logger('MoptPaymentPayone');
+        $this->rotatingLogger->pushHandler($rfh);
+
+        return $this->rotatingLogger;
+    }
 }
