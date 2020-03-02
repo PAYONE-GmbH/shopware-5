@@ -1650,90 +1650,19 @@ class Mopt_PayoneHelper
     }
 
     /**
-     * Initializes request client
-     *
-     * @return Zend_Http_Client
-     */
-    public function initRequestClient()
-    {
-        $zendClientConfig = array(
-            'adapter' => 'Zend_Http_Client_Adapter_Curl',
-            'curloptions' => array(
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => false
-            ),
-            'timeout' => 50,
-        );
-        $zendHttpClient = new Zend_Http_Client();
-        try {
-            $zendHttpClient->setConfig($zendClientConfig);
-        } catch (Zend_Http_Client_Exception $e) {
-        }
-        $zendHttpClient->setParameterPost($this->rawPost);
-
-        return $zendHttpClient;
-    }
-
-    /**
-     * Returns true if
-     *
-     * @param Zend_Http_Client $zendHttpClient
-     * @param $url
-     * @param $action
-     * @param $tx_id
-     * @param $payoneConfig
-     * @return bool
-     */
-    public function forwardTransactionStatus($zendHttpClient, $url, $action, $tx_id, $payoneConfig) {
-        try {
-            $zendHttpClient->setUri($url);
-        } catch (Zend_Http_Client_Exception $e) {
-        }
-        $logentry = [
-            "payone-status=".$action,
-            "txid=".$tx_id,
-            "url=". $url,
-        ];
-
-        try {
-            $requestStart = microtime(true);
-            $zendHttpClient->request(Zend_Http_Client::POST);
-            $requestStop = microtime(true);
-        } catch (Zend_Http_Client_Exception $e) {
-            $logentry []= "response-status=" . $e->getCode();
-            $logentry []= "response-message=". $e->getMessage();
-            $this->forwardLog($logentry, $payoneConfig);
-            return false;
-        }
-
-        $requestDuration = ($requestStop - $requestStart);
-        $logentry [] = "duration=".$requestDuration;
-
-        $response = $zendHttpClient->getLastResponse();
-
-        $logentry []= "response-status=".$response->getStatus();
-        $logentry []= "response-message=".$response->getMessage();
-
-        $this->forwardLog($logentry, $payoneConfig);
-
-        return true;
-    }
-
-    /**
      * Logs an entry of transaction forward controller
      *
-     * @param array $logentry
+     * @param array $log_msg
      * @return void
      */
-    public function forwardLog($logentry, $payoneConfig)
+    public function forwardLog($log_msg, $payoneConfig)
     {
         $logAllowed = (
             $payoneConfig['transLogging'] === true
         );
 
         if ($logAllowed) {
-            $log=implode(";",$logentry);
+            $log=implode("; ",$log_msg);
             $this->getOrInitForwardLogger()->debug($log);
         }
     }
@@ -1751,5 +1680,161 @@ class Mopt_PayoneHelper
         $this->rotatingLogger->pushHandler($rfh);
 
         return $this->rotatingLogger;
+    }
+
+    /**
+     * Initializes request client
+     *
+     * @param $url
+     * @param $post
+     * @return Zend_Http_Client
+     * @throws Zend_Http_Client_Exception
+     */
+    protected function initRequestClient($url, $post)
+    {
+        $zendClientConfig = array(
+            'adapter' => 'Zend_Http_Client_Adapter_Curl',
+            'curloptions' => array(
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false
+            ),
+            'timeout' => 50,
+        );
+        $zendHttpClient = new Zend_Http_Client();
+        $zendHttpClient->setConfig($zendClientConfig);
+        $zendHttpClient->setUri($url);
+        $zendHttpClient->setParameterPost($post);
+
+        return $zendHttpClient;
+    }
+
+    /**
+     * Returns an array with 'success' = true if no error occurred and the request was successful. The last request and
+     * last response should also be included. When not included, an 'error_msg' has more info and the url and post is
+     * added.
+     *
+     * @param $url
+     * @param $post
+     * @param $tx_action
+     * @param $tx_id
+     * @param $payoneConfig
+     * @return array
+     */
+    public function forwardTransactionStatus($url, $post, $tx_action, $tx_id, $payoneConfig) {
+        try {
+            $zendHttpClient = $this->initRequestClient($url, $post);
+        } catch (Zend_Http_Client_Exception $e) {
+            return [
+                'error_msg' => $e->getMessage(),
+                'url=' => $url,
+                'success' => false,
+            ];
+        }
+
+        $log_msg = [
+            "payone-status=".$tx_action,
+            "txid=".$tx_id,
+            "url=". $url,
+        ];
+
+        try {
+            $requestStart = microtime(true);
+            $zendHttpClient->request(Zend_Http_Client::POST);
+            $requestStop = microtime(true);
+        } catch (Zend_Http_Client_Exception $e) {
+            $log_msg [] = "response-status=" . $e->getCode();
+            $log_msg [] = "response-message=" . $e->getMessage();
+            $this->forwardLog($log_msg, $payoneConfig);
+            return [
+                'request' => (string) $zendHttpClient->getLastRequest(),
+                'response' => (string) $zendHttpClient->getLastResponse(),
+                'success' => false,
+            ];
+        }
+
+        $requestDuration = ($requestStop - $requestStart);
+        $response = $zendHttpClient->getLastResponse();
+
+        $log_msg [] = "duration=".$requestDuration;
+        $log_msg []= "response-status=".$response->getStatus();
+        $log_msg []= "response-message=".$response->getMessage();
+
+        $this->forwardLog($log_msg, $payoneConfig);
+
+        return [
+            'request' => (string) $zendHttpClient->getLastRequest(),
+            'response' => (string) $zendHttpClient->getLastResponse(),
+            'success' => true,
+        ];
+    }
+
+    /**
+     * @param $post
+     * @param $forwardingUrl
+     * @param $payoneConfig
+     */
+    public function callTransactionStatusForwardingController($post, $forwardingUrl, $payoneConfig)
+    {
+        $log_msg = [
+            'Trying to forward to own controller: ' . $forwardingUrl,
+            'action=' . $post['txaction'],
+            'txid=' . $post['txid'],
+        ];
+
+        $this->forwardLog($log_msg, $payoneConfig);
+
+        $curl = curl_init($forwardingUrl);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        $curl_timeout = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'];
+        $curl_timeout_raise = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout_raise'];
+        $curl_trials_max = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_trials_max'];
+
+        if ($payoneConfig['transTimeout']) {
+            $curl_timeout = $payoneConfig['transTimeout'];
+        }
+
+        if ($payoneConfig['transTimeoutRaise']) {
+            $curl_timeout_raise = $payoneConfig['transTimeoutRaise'];
+        }
+
+        if ($payoneConfig['transMaxTrials']) {
+            $curl_trials_max = $payoneConfig['transMaxTrials'];
+        }
+
+        $curl_trials = 0;
+
+        do {
+            $curl_trials++;
+
+            curl_setopt($curl, CURLOPT_TIMEOUT_MS, $curl_timeout);
+
+            $result = curl_exec($curl);
+
+            $curl_info = curl_getinfo($curl);
+            $response_code = $curl_info['http_code'];
+
+            $curl_info_json = json_encode($curl_info);
+            $log_msg = [
+                'Responsecode of request was: ' . $response_code,
+                'Trials: ' . $curl_trials,
+                'curl_timeout: ' . $curl_timeout,
+                'curl_result: ' . $result,
+                'curl info: ' . $curl_info_json,
+                'raw_post: ' . json_encode($post),
+            ];
+
+            $this->forwardLog($log_msg, $payoneConfig);
+
+            $curl_timeout += $curl_timeout_raise;
+        } while ($curl_trials < $curl_trials_max && $response_code !== 100);
+
+        curl_close($curl);
     }
 }

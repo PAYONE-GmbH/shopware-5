@@ -9,8 +9,6 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
 {
     protected $moptPayone__main = null;
     protected $payoneConfig = null;
-    protected $rawPost = null;
-    protected $payoneAction = null;
     /** @var $payoneHelper Mopt_PayoneHelper */
     protected $payoneHelper = null;
 
@@ -37,24 +35,20 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
     }
 
     /**
-     * index action called by Payone platform to transmit transaction status updates
+     * index action called by Payone platform to triger the transaction status queue
      *
      * @return mixed
      */
     public function indexAction()
     {
-        $transactionForwardingQueue = new Mopt_PayoneTransactionForwardingQueueWorker();
-        $transactionForwardingQueue->processQueue();
-        exit();
-
         $request = $this->Request();
         $paymentId = $request->getParam('paymentID');
         $this->payoneConfig = $this->moptPayone__main->getPayoneConfig($paymentId, true);
 
-        if (!$request->isPost()) {
+        if (!$paymentId) {
             $log_msg = [
                 'ERROR',
-                'Request is not of type post',
+                'Request has no parameter paymentID',
                 'Request was: ' . print_r($request, true),
             ];
             $this->payoneHelper->forwardLog($log_msg, $this->payoneConfig);
@@ -66,83 +60,10 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
             $this->payoneHelper->forwardLog($log_msg, $this->payoneConfig);
         }
 
-        $rawPost = $_POST;
-        $this->moptPayoneForwardTransactionStatus($rawPost, $request->getParam('txaction'));
+        $transactionForwardingQueue = new Mopt_PayoneTransactionForwardingQueueWorker();
+        $transactionForwardingQueue->processQueue();
+
         exit;
-    }
-
-    /**
-     * forward request to configured urls
-     *
-     * @param array $rawPost
-     * @param string $payoneAction
-     * @return void
-     */
-    protected function moptPayoneForwardTransactionStatus($rawPost, $payoneAction)
-    {
-        $this->rawPost = $rawPost;
-        $this->payoneAction = $payoneAction;
-
-        $configKey = 'trans' . ucfirst($payoneAction);
-        $valid = isset($this->payoneConfig[$configKey]);
-
-        if (!$valid) {
-            $logentry = [
-                'ERROR',
-                'configKey: '. $configKey .
-                ' does not exist in payoneConfig array!',
-                'payoneConfig: ' . print_r($this->payoneConfig, true),
-            ];
-            $this->payoneHelper->forwardLog($logentry, $this->payoneConfig);
-            return;
-        }
-
-        $forwardingUrls = explode(';', $this->payoneConfig[$configKey]);
-        $this->handleForwardingUrls($forwardingUrls);
-    }
-
-    /**
-     * Takes care on the list of urls that shall be forwarded
-     *
-     * @param $forwardingUrls
-     * @return void
-     */
-    protected function handleForwardingUrls($forwardingUrls)
-    {
-        $zendHttpClient = $this->payoneHelper->initRequestClient();
-
-        foreach ($forwardingUrls as $url) {
-            if (empty($url)) {
-                $logentry = [
-                    "ERROR",
-                    "URL is empty",
-                    "txid=".$this->rawPost['txid'],
-                    "url=". $url,
-                ];
-                $this->payoneHelper->forwardLog($logentry, $this->payoneConfig);
-                continue;
-            }
-
-            $this->payoneHelper->forwardTransactionStatus(
-                $zendHttpClient,
-                $url,
-                $this->payoneAction,
-                $this->rawPost['txid'],
-                $this->payoneConfig
-            );
-
-            // TODO: move to catch block
-            $transactionForwardingQueue = new Mopt_PayoneTransactionForwardingQueueWorker();
-
-            $transactionForwardingQueue->queuePush(
-                (string)$zendHttpClient->getLastRequest(),
-                (string)$zendHttpClient->getLastResponse(),
-                $this->rawPost['txid'],
-                json_encode($this->rawPost),
-                $url
-            );
-        }
-
     }
 
     /**

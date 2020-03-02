@@ -382,8 +382,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         $logPath = Shopware()->Application()->Kernel()->getLogDir();
         $logFile = $logPath . '/MoptPaymentPayone_transaction_forward_cronjob.log';
-//        $test = new Mopt_PayoneMain();
+
         $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
+        $queueWorker->processQueue();
 
         $rfh = new RotatingFileHandler($logFile, 14);
         $rotatingLogger = new Logger('MoptPaymentPayone');
