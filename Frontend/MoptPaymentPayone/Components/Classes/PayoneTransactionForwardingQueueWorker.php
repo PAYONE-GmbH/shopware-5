@@ -2,6 +2,8 @@
 
 use Doctrine\ORM\ORMException;
 use Shopware\Components\Model\ModelManager;
+use Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig;
+use Shopware\CustomModels\MoptPayoneConfig\Repository as MoptPayoneConfigRepository;
 use Shopware\CustomModels\MoptPayoneTransactionForwardQueue\MoptPayoneTransactionForwardQueue;
 use Shopware\CustomModels\MoptPayoneTransactionForwardQueue\Repository as MoptPayoneTransactionForwardQueueRepository;
 
@@ -57,6 +59,10 @@ class Mopt_PayoneTransactionForwardingQueueWorker
     {
         /** @var ModelManager $modelManager */
         $modelManager = Shopware()->Models();
+
+        /** @var MoptPayoneConfigRepository $configRepository */
+        $configRepository = $modelManager->getRepository(MoptPayoneConfig::class);
+
         /** @var MoptPayoneTransactionForwardQueueRepository $queueRepository */
         $queueRepository = $modelManager->getRepository(MoptPayoneTransactionForwardQueue::class);
 
@@ -73,13 +79,7 @@ class Mopt_PayoneTransactionForwardingQueueWorker
             $post = json_decode($jsonPost, true);
 
             $paymentId = $post['paymentID'];
-            $payoneConfig = Shopware()
-                ->Plugins()
-                ->Frontend()
-                ->MoptPaymentPayone()
-                ->Application()
-                ->MoptPayoneMain()
-                ->getPayoneConfig($paymentId, true);
+            $payoneConfig = $configRepository->findOneBy(['paymentId' => $paymentId]);
 
             $log_msg = [
                 'Process notification from queue',
