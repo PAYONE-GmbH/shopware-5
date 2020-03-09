@@ -47,7 +47,7 @@ class Payone_Api_Enum_CreditcardType
     //U: Maestro UK
     const MAESTRO_UK = 'U';
     //C: Discover
-    const DISCOVER = 'C';
+    const DISCOVER = 'D';
     //B: Carte Bleue
     const CARTE_BLEUE = 'B';
 }

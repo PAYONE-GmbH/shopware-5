@@ -105,7 +105,7 @@ class Mopt_PayonePaymentHelper
                     $creditCard['short'] = 'O';
                     break;
                 case 'mopt_payone__cc_dis':
-                    $creditCard['short'] = 'C';
+                    $creditCard['short'] = 'D';
                     break;
                 case 'mopt_payone__cc_car':
                     $creditCard['short'] = 'B';
