@@ -47,11 +47,18 @@ class Mopt_PayoneUserHelper
      *
      * @param array $data
      */
-    private function saveUser($data, $paymentId)
+    public function saveUser($data, $paymentId)
     {
 
         $plainbilling = array_merge($data['auth'], $data['billing']);
         $plainshipping = array_merge($data['auth'], $data['shipping']);
+        $adressesEqual = (
+            $data['billing']['firstname'] == $data['shipping']['firstname'] &&
+            $data['billing']['lastname'] == $data['shipping']['lastname'] &&
+            $data['billing']['city'] == $data['shipping']['city'] &&
+            $data['billing']['street'] == $data['shipping']['street'] &&
+            $data['billing']['zipcode'] == $data['shipping']['zipcode']
+        ) ;
 
         //Create forms and validate the input
         $customer = new Shopware\Models\Customer\Customer();
@@ -62,10 +69,13 @@ class Mopt_PayoneUserHelper
         $form = $this->createForm('Shopware\Bundle\AccountBundle\Form\Account\AddressFormType', $billingaddress);
         $form->submit($plainbilling);
 
-        $shippingaddress = new Shopware\Models\Customer\Address();
-        $form = $this->createForm('Shopware\Bundle\AccountBundle\Form\Account\AddressFormType', $shippingaddress);
-        $form->submit($plainshipping);
-
+        if (! $adressesEqual) {
+            $shippingaddress = new Shopware\Models\Customer\Address();
+            $form = $this->createForm('Shopware\Bundle\AccountBundle\Form\Account\AddressFormType', $shippingaddress);
+            $form->submit($plainshipping);
+        } else {
+            $shippingaddress = $billingaddress;
+        }
 
         /** @var Shopware\Bundle\StoreFrontBundle\Struct\ShopContextInterface $context */
         $context =  Shopware()->Container()->get('shopware_storefront.context_service')->getShopContext();
