@@ -108,6 +108,7 @@ class Mopt_PayoneTransactionForwardingQueueWorker
                             'tx_action=' . $post['txaction'],
                             'tx_id=' . $post['txid'],
                         ];
+                        $this->helper->forwardLog($log_msg, $payoneConfig);
                     }
                 } else {
                     $notification->setNumtries($notification->getNumtries() + 1);
@@ -122,6 +123,7 @@ class Mopt_PayoneTransactionForwardingQueueWorker
                             'tx_action=' . $post['txaction'],
                             'tx_id=' . $post['txid'],
                         ];
+                        $this->helper->forwardLog($log_msg, $payoneConfig);
                     }
 
                     $log_msg = [
@@ -132,9 +134,8 @@ class Mopt_PayoneTransactionForwardingQueueWorker
                         'Request Header: ' . $transactionResult['request'],
                         'Debug Info: ' .  $transactionResult['curlinfo'],
                     ];
-
+                    $this->helper->forwardLog($log_msg, $payoneConfig);
                 }
-                $this->helper->forwardLog($log_msg, $payoneConfig);
             } else {
                 $log_msg = [
                     'Skipped ' . $post['txid']. ' because Maximum Number of retries reached',
