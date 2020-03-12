@@ -13,6 +13,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     protected $moptPayone__serviceBuilder = null;
     protected $moptPayone__main = null;
+    /** @var $moptPayone__helper Mopt_PayoneHelper */
     protected $moptPayone__helper = null;
     protected $moptPayone__paymentHelper = null;
     /** @var Logger $logger */
@@ -253,96 +254,31 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     /**
      * forward request to configured urls
      *
-     * @param array $rawPost
+     * @param array $post
      * @param $paymentID
      */
-    protected function moptPayoneForwardTransactionStatus($rawPost, $paymentID)
+    protected function moptPayoneForwardTransactionStatus($post, $paymentID)
     {
-        $url = Shopware()->Front()->Router()
-            ->assemble(
-                array(
-                    'controller' => 'MoptTransactionStatusForwarding',
-                    'action' => 'index'
-                )
-            );
+        $post = array_map('utf8_encode', $post); // utf8 encode all post params to avoid encoding issues
 
-        $rawPost['paymentID'] = $paymentID;
+        $post['paymentID'] = $paymentID;
 
-        $log_msg = [
-            'Trying to forward to own controller: '.$url,
-            'action='.$rawPost['txaction'],
-            'txid='.$rawPost['txid'],
-        ];
-        $this->forwardLog($log_msg);
+        $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
 
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $rawPost);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $configKey = 'trans' . ucfirst($post['txaction']);
+        $forwardingUrls = explode(';', $this->payoneConfig[$configKey]);
 
-        $curl_timeout = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'];
-        $curl_timeout_raise = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout_raise'];
-        $curl_trials_max = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_trials_max'];
-
-        if ($this->payoneConfig['transTimeout']) {
-            $curl_timeout = $this->payoneConfig['transTimeout'];
-        }
-
-        if ($this->payoneConfig['transTimeoutRaise']) {
-            $curl_timeout_raise = $this->payoneConfig['transTimeoutRaise'];
-        }
-
-        if ($this->payoneConfig['transMaxTrials']) {
-            $curl_trials_max = $this->payoneConfig['transMaxTrials'];
-        }
-
-        $curl_trials = 0;
-
-        do {
-            $curl_trials++;
-
-            curl_setopt($curl, CURLOPT_TIMEOUT_MS, $curl_timeout);
-
-            $result = curl_exec($curl);
-
-            $curl_info = curl_getinfo($curl);
-
-            $response_code = $curl_info['http_code'];
-            $curl_info_json = json_encode($curl_info);
-
-            $log_msg = [
-                'Responsecode of request was: ' . $response_code,
-                'Trials: ' . $curl_trials,
-                'curl_timeout: ' . $curl_timeout,
-                'curl_result: ' . $result,
-                'curl info: ' . $curl_info_json,
-                'raw_post: ' . json_encode($rawPost),
-            ];
-            $this->forwardLog($log_msg);
-
-            $curl_timeout += $curl_timeout_raise;
-        } while ($curl_trials < $curl_trials_max && $response_code !== 100);
-
-        curl_close($curl);
-    }
-
-    /**
-     * Logs an entry of transaction forward controller
-     *
-     * @param array $logentry
-     * @return void
-     */
-    protected function forwardLog($logentry)
-    {
-        $logAllowed = (
-            $this->payoneConfig['transLogging'] === true
-        );
-
-        if ($logAllowed) {
-            $log=implode(";",$logentry);
-            $this->rotatingLogger->debug($log);
+        foreach ($forwardingUrls as $url) {
+            if (trim($url !== '')) {
+                $queueWorker->queuePush(
+                    '',
+                    '',
+                    $post['txid'],
+                    $post,
+                    trim($url),
+                    $this->payoneConfig
+                );
+            }
         }
     }
 
