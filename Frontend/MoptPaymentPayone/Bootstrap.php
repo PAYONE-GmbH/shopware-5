@@ -663,6 +663,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // config option for PayPal Packstation allow
         $this->getInstallHelper()->checkAndUpdatePayPalPackStationModelExtension();
+
+        // Add auto_cardtype_detection config table column if needed.
+        $this->getInstallHelper()->checkAndAddAutoCardtypeDetectionColumn();
     }
 
     /**

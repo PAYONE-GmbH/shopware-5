@@ -1710,5 +1710,32 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         }
 
     }
+
+    /**
+     * Check if auto_cardtype_detection column is present and create the
+     * column if it is not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    function checkAndAddAutoCardtypeDetectionColumn()
+    {
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_creditcard_config'
+                AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                AND COLUMN_NAME = 'auto_cardtype_detection'";
+
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config`
+                    ADD COLUMN `auto_cardtype_detection` BOOLEAN NULL;";
+
+            $db->exec($sql);
+        }
+    }
 }
 
