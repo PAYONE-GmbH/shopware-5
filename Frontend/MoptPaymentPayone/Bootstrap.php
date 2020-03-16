@@ -482,6 +482,19 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->flush();
         }
 
+        /** @var Shopware\Models\Payment\Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__cc_discover')
+        );
+        if ($payment === null) {
+            // do nothing
+
+        } else {
+            $payment->setActive(false);
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
+
 
     }
 
