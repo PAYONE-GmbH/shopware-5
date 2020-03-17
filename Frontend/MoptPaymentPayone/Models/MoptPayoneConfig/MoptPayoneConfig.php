@@ -537,6 +537,46 @@ class MoptPayoneConfig extends ModelEntity
     private $sendOrdernumberAsReference;
 
     /**
+     * @ORM\Column(name="state_reminder2", type="integer", nullable=true, unique=false)
+     */
+    private $stateReminder2;
+
+    /**
+     * @ORM\Column(name="state_reminder3", type="integer", nullable=true, unique=false)
+     */
+    private $stateReminder3;
+
+    /**
+     * @ORM\Column(name="state_reminder4", type="integer", nullable=true, unique=false)
+     */
+    private $stateReminder4;
+
+    /**
+     * @ORM\Column(name="state_reminder5", type="integer", nullable=true, unique=false)
+     */
+    private $stateReminder5;
+
+    /**
+     * @ORM\Column(name="state_reminderA", type="integer", nullable=true, unique=false)
+     */
+    private $stateReminderA;
+
+    /**
+     * @ORM\Column(name="state_reminderM", type="integer", nullable=true, unique=false)
+     */
+    private $stateReminderM;
+
+    /**
+     * @ORM\Column(name="state_reminderS", type="integer", nullable=true, unique=false)
+     */
+    private $stateReminderS;
+
+    /**
+     * @ORM\Column(name="state_reminderI", type="integer", nullable=true, unique=false)
+     */
+    private $stateReminderI;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -2115,5 +2155,133 @@ class MoptPayoneConfig extends ModelEntity
     public function setTransTimeoutRaise($transTimeoutRaise)
     {
         $this->transTimeoutRaise = $transTimeoutRaise;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStateReminder2()
+    {
+        return $this->stateReminder2;
+    }
+
+    /**
+     * @param $stateReminder
+     */
+    public function setStateReminder2($stateReminder)
+    {
+        $this->stateReminder2 = $stateReminder;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStateReminder3()
+    {
+        return $this->stateReminder3;
+    }
+
+    /**
+     * @param $stateReminder
+     */
+    public function setStateReminder3($stateReminder)
+    {
+        $this->stateReminder3 = $stateReminder;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStateReminder4()
+    {
+        return $this->stateReminder4;
+    }
+
+    /**
+     * @param $stateReminder
+     */
+    public function setStateReminder4($stateReminder)
+    {
+        $this->stateReminder4 = $stateReminder;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStateReminder5()
+    {
+        return $this->stateReminder5;
+    }
+
+    /**
+     * @param $stateReminder
+     */
+    public function setStateReminder5($stateReminder)
+    {
+        $this->stateReminder5 = $stateReminder;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStateReminderA()
+    {
+        return $this->stateReminderA;
+    }
+
+    /**
+     * @param $stateReminder
+     */
+    public function setStateReminderA($stateReminder)
+    {
+        $this->stateReminderA = $stateReminder;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStateReminderM()
+    {
+        return $this->stateReminderM;
+    }
+
+    /**
+     * @param $stateReminder
+     */
+    public function setStateReminderM($stateReminder)
+    {
+        $this->stateReminderM = $stateReminder;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStateReminderS()
+    {
+        return $this->stateReminderS;
+    }
+
+    /**
+     * @param $stateReminder
+     */
+    public function setStateReminderS($stateReminder)
+    {
+        $this->stateReminderS = $stateReminder;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStateReminderI()
+    {
+        return $this->stateReminderI;
+    }
+
+    /**
+     * @param $stateReminder
+     */
+    public function setStateReminderI($stateReminder)
+    {
+        $this->stateReminderI = $stateReminder;
     }
 }

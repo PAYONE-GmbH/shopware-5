@@ -666,6 +666,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Add auto_cardtype_detection config table column if needed.
         $this->getInstallHelper()->checkAndAddAutoCardtypeDetectionColumn();
+
+        // Add new reminder level config table columns if needed.
+        $this->getInstallHelper()->checkAndAddReminderLevelColumns();
     }
 
     /**
