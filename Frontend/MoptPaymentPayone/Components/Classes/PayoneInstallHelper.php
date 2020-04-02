@@ -390,11 +390,6 @@ class Mopt_PayoneInstallHelper
                 'template' => 'mopt_paymentmean_creditcard.tpl',
                 'position' => 5,),
             array(
-                'name' => 'mopt_payone__cc_discover',
-                'description' => 'PAYONE Discover',
-                'template' => 'mopt_paymentmean_creditcard.tpl',
-                'position' => 6,),
-            array(
                 'name' => 'mopt_payone__cc_jcb',
                 'description' => 'PAYONE JCB',
                 'template' => 'mopt_paymentmean_creditcard.tpl',
