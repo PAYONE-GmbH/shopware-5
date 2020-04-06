@@ -37,6 +37,7 @@ class Mopt_PayoneTransactionForwardingQueueWorker
             'Add notification to queue',
             'tx_action=' . $post['txaction'],
             'tx_id=' . $post['txid'],
+            'endpoint=' . $url,
             'post=' . $jsonPost,
         ];
         $this->helper->forwardLog($log_msg, $payoneConfig);
@@ -84,6 +85,7 @@ class Mopt_PayoneTransactionForwardingQueueWorker
                 'Process notification from queue',
                 'tx_action=' . $post['txaction'],
                 'tx_id=' . $post['txid'],
+                'endpoint=' . $notification->getEndpoint(),
                 'post=' . $jsonPost,
             ];
             $this->helper->forwardLog($log_msg, $payoneConfig);
@@ -102,6 +104,16 @@ class Mopt_PayoneTransactionForwardingQueueWorker
                     try {
                         $modelManager->remove($notification);
                         $modelManager->flush();
+                        $log_msg = [
+                            'Successfully processed',
+                            'tx_action=' . $post['txaction'],
+                            'tx_id=' . $post['txid'],
+                            'endpoint=' . $notification->getEndpoint(),
+                            'Response: ' . $transactionResult['response'],
+                            'Request Header: ' . $transactionResult['request'],
+                            'Debug Info: ' .  $transactionResult['curlinfo'],
+                        ];
+                        $this->helper->forwardLog($log_msg, $payoneConfig);
                     } catch (ORMException $e) {
                         $log_msg = [
                             'Error removing successful notification from queue',
@@ -130,6 +142,7 @@ class Mopt_PayoneTransactionForwardingQueueWorker
                         'Error Processing',
                         'tx_action=' . $post['txaction'],
                         'tx_id=' . $post['txid'],
+                        'endpoint=' . $notification->getEndpoint(),
                         'Response: ' . $transactionResult['response'],
                         'Request Header: ' . $transactionResult['request'],
                         'Debug Info: ' .  $transactionResult['curlinfo'],

@@ -1704,6 +1704,8 @@ class Mopt_PayoneHelper
         curl_setopt($curl, CURLINFO_HEADER_OUT, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_TIMEOUT_MS, $timeout);
+        // uncomment to override dns resolution
+        // curl_setopt($curl, CURLOPT_RESOLVE, ["shop.testing.fatchip.local:443:127.0.0.1",]);
 
         return $curl;
     }
@@ -1727,7 +1729,7 @@ class Mopt_PayoneHelper
         $log_msg = [
             "payone-status=".$tx_action,
             "txid=".$tx_id,
-            "url=". $url,
+            "endpoint=". $url,
         ];
         $requestStart = microtime(true);
         $response = curl_exec($curl);
@@ -1745,6 +1747,13 @@ class Mopt_PayoneHelper
                 'curlinfo' => (string) json_encode($curl_info),
                 'success' => false,
             ];
+        } elseif ($response !== 'TSOK') {
+            return [
+                'request' => (string) $curl_info['request_header'],
+                'response' => (string) $response,
+                'curlinfo' => (string) json_encode($curl_info),
+                'success' => false,
+            ];
         }
 
         $log_msg [] = "duration=".$requestDuration;
@@ -1754,8 +1763,9 @@ class Mopt_PayoneHelper
         $this->forwardLog($log_msg, $payoneConfig);
 
         return [
-            'request' => (string) $response,
+            'request' => (string) $curl_info['request_header'],
             'response' => (string) $response,
+            'curlinfo' => (string) json_encode($curl_info),
             'success' => true,
         ];
     }
