@@ -31,7 +31,9 @@
 // needed for CSRF Protection compatibility SW versions < 5.2
 require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
-use \Doctrine\ORM\Tools\ToolsException;
+use Doctrine\ORM\Tools\ToolsException;
+use Shopware\Models\Payment\Payment;
+use Shopware\Models\Payment\Repository as PaymentRepository;
 use Shopware\Models\Plugin\Plugin;
 use Shopware\Plugins\MoptPaymentPayone\Bootstrap\RiskRules;
 
@@ -374,6 +376,15 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     public function registerAmazonCookie()
     {
         if(class_exists('Shopware\\Bundle\\CookieBundle\\CookieCollection')) {
+            /** @var PaymentRepository $paymentRepository */
+            $paymentRepository = Shopware()->Models()->getRepository(Payment::class);
+
+            /** @var Payment $payment */
+            $payment = $paymentRepository->findOneBy(['name' => 'mopt_payone__ewallet_amazon_pay']);
+            if (!($payment and $payment->getActive())) {
+                return;
+            }
+
             $collection = new \Shopware\Bundle\CookieBundle\CookieCollection();
             $collection->add(new \Shopware\Bundle\CookieBundle\Structs\CookieStruct(
                 'moptamazon',
