@@ -67,7 +67,7 @@
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
             >
                 <option disabled="disabled" value="">----</option>
-                {section name="birthyear" loop=2000 max=100 step=-1}
+                {section name="birthyear" loop=2021 max=120 step=-1}
                     {$isSelected = $smarty.section.birthyear.index == $moptCreditCardCheckEnvironment.mopt_payone__klarna_birthyear}
                     <option value="{$smarty.section.birthyear.index}" {if $isSelected}selected{/if}>
                         {$smarty.section.birthyear.index}
