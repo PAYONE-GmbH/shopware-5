@@ -508,6 +508,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'payment_type', 'data' => $paymenttype)
         ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
+        ));
 
         if ($paymentData && $paymentData['mopt_payone__payolution_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
