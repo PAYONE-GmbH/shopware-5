@@ -508,6 +508,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'payment_type', 'data' => $paymenttype)
         ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
+        ));
 
         if ($paymentData && $paymentData['mopt_payone__payolution_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
@@ -1295,4 +1298,30 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $service->request($request);
     }
 
+    public function ajaxGetPaySafeTokenAction() {
+        $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
+        $this->Response()->headers->set('content-type', 'application/json');
+
+        $tokenArray = $this->session->paySafeToken;
+
+        if (!$tokenArray) {
+            $tokenArray = $this->generatePaySafeToken();
+            $this->session->paySafeToken = $tokenArray['token'];
+        }
+
+        echo json_encode($tokenArray);
+    }
+
+    protected function generatePaySafeToken() {
+        $config = $this->moptPayoneMain->getPayoneConfig();
+        $sessionID = $this->session->sessionId;
+        $merchantID = $config['merchantId'];
+        $timestamp = microtime(false);
+        $tokenInput = $sessionID . $merchantID . $timestamp;
+        $apiKey = $config['apiKey'];
+        $token = hash_hmac('sha384', $tokenInput, $apiKey);
+        return [
+            'token' => $token,
+        ];
+    }
 }

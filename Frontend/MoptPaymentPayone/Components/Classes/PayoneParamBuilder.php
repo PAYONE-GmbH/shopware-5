@@ -574,16 +574,22 @@ class Mopt_PayoneParamBuilder
 
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
 
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+
         if ($paymentData['mopt_payone__payolution_b2bmode']) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
             ));
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__company_trade_registry_number'])
             ));
-            $payment->setPaydata($paydata);
         }
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
+        ));
+
+        $payment->setPaydata($paydata);
 
         return $payment;
     }
@@ -609,18 +615,25 @@ class Mopt_PayoneParamBuilder
         $params['financingtype'] = $financeType;
         $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_iban']);
         $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__payolution_debitnote_bic']);
+
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
 
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+
         if ($paymentData['mopt_payone__payolution_b2bmode']) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
             ));
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__company_trade_registry_number'])
             ));
-            $payment->setPaydata($paydata);
         }
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
+        ));
+
+        $payment->setPaydata($paydata);
 
         return $payment;
     }
@@ -647,9 +660,6 @@ class Mopt_PayoneParamBuilder
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
 
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'installment_duration', 'data' => $paymentData['mopt_payone__payolution_installment_duration'])
-        ));
 
         if ($paymentData['mopt_payone__payolution_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
@@ -659,6 +669,15 @@ class Mopt_PayoneParamBuilder
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__company_trade_registry_number'])
             ));
         }
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'installment_duration', 'data' => $paymentData['mopt_payone__payolution_installment_duration'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
+        ));
+
         $payment->setPaydata($paydata);
 
         return $payment;

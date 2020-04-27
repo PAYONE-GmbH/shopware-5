@@ -757,6 +757,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session->offsetUnset('isIdealredirect');
         $session->offsetUnset('moptPaypalInstallmentWorkerId');
         $session->offsetUnset('moptPaydirektExpressWorkerId');
+        $session->offsetUnset('paySafeToken');
     }
 
     /**
@@ -1099,6 +1100,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'payment_type', 'data' => $paymenttype)
         ));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
+        ));
 
         if ($paymentData['mopt_payone__payolution_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
@@ -1230,6 +1234,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     public function payolutionErrorAction()
     {
         $session = Shopware()->Session();
+        $session->offsetUnset('paySafeToken');
         $errorCode = $session->payolutionErrorCode;
         $errorMessage = $session->payolutionErrorMsg;
         $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $errorCode, $errorMessage . ' (Fehler ' . $session->payolutionErrorCode . ')', true);

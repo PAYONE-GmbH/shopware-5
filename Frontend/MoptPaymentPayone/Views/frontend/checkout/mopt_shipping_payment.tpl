@@ -24,3 +24,10 @@
     {/if}
     {$smarty.block.parent}
 {/block}
+
+{block name="frontend_index_content"}
+    <div id="fatchipMoptPaySafeInformation" hidden
+         data-get-session-id--URL="{url controller="MoptAjaxPayone" action="ajaxGetPaySafeToken" forceSecure}"
+    ></div>
+    {$smarty.block.parent}
+{/block}

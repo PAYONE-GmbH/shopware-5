@@ -95,9 +95,6 @@
            class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_debitnote_bic} has--error{/if} moptPayoneIbanBic" />        
     <p class="none clearfix">
         <input name="moptPaymentData[mopt_payone__payolution_debitnote_agreement]" type="checkbox" id="mopt_payone__payolution_debitnote_agreement" value="true"
-               {if $form_data.mopt_payone__payolution_debitnote_agreement eq "on"}
-                   checked="checked"
-               {/if}
                class="checkbox"/>
         <label class="{if $error_flags.mopt_payone__payolution_debitnote_agreement} has--error {/if}" for="mopt_payone__payolution_debitnote_agreement"  style="float:none; width:100%; display:inline">{$moptCreditCardCheckEnvironment.moptPayolutionInformation.consentDebit}</label>
     </p>
