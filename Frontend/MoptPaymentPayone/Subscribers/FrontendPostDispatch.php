@@ -30,6 +30,7 @@
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
+use Mopt_PayonePaymentHelper;
 use Shopware\Models\Shop\Template;
 use Shopware\Models\Shop\TemplateConfig\Element;
 
@@ -121,6 +122,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         // get paymentId from view instead of sGetUserData
         $paymentId = $view->sPayment['id'];
+        /** @var Mopt_PayonePaymentHelper $moptPaymentHelper */
         $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
         $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($paymentId);
 
@@ -164,6 +166,9 @@ class FrontendPostDispatch implements SubscriberInterface
             $paymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
             if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_creditcard';
+            }
+            if ($moptPaymentHelper->isPayoneKlarna($paymentName)) {
+                $moptPayoneFormData['payment'] = 'mopt_payone_klarna';
             }
             $view->assign('sFormData', $moptPayoneFormData);
             $view->assign('moptPaymentConfigParams', $this->moptPaymentConfigParams($session->moptMandateDataDownload));
@@ -395,8 +400,12 @@ class FrontendPostDispatch implements SubscriberInterface
         $data['moptPayolutionInformation'] = null;
         $data['moptRatepayConfig'] = null;
 
+        /** @var Mopt_PayonePaymentHelper $paymentHelper */
+        $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+
         if ($controllerName && $controllerName === 'checkout') {
-            $groupedPaymentMeans = $moptPayoneMain->getPaymentHelper()->groupCreditcards($paymentMeans);
+            $paymentMeansWithGroupedCreditcard = $paymentHelper->groupCreditcards($paymentMeans);
+            $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($paymentMeansWithGroupedCreditcard);
         }
 
         if ($groupedPaymentMeans) {
@@ -407,7 +416,15 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($paymentMean['id'] == 'mopt_payone_creditcard') {
                 $paymentMean['mopt_payone_credit_cards'] = $moptPayoneMain->getPaymentHelper()
                     ->mapCardLetter($paymentMean['mopt_payone_credit_cards']);
-                $data['payment_mean'] = $paymentMean;
+                $data['mopt_payone_creditcard'] = $paymentMean;
+            }
+
+            if ($paymentHelper->isPayoneKlarnaGrouped($paymentMean['name'])) {
+                foreach ($paymentMean['mopt_payone_klarna_payments'] as &$klarna_payment) {
+                    $klarna_payment['short'] = $paymentHelper->mapKlarnaPaymentShortName($klarna_payment['name']);
+                }
+
+                $data['mopt_payone_klarna'] = $paymentMean;
             }
 
 
@@ -417,7 +434,10 @@ class FrontendPostDispatch implements SubscriberInterface
             }
 
             //prepare additional Klarna information and retrieve birthday and phone nr from user data
-            if ($moptPayoneMain->getPaymentHelper()->isPayoneKlarna($paymentMean['name'])) {
+            if (
+                $moptPayoneMain->getPaymentHelper()->isPayoneKlarna_old($paymentMean['name'])
+                || $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaGrouped($paymentMean['name'])
+            ) {
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);

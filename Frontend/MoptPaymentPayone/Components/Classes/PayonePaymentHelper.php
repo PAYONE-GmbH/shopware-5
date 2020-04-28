@@ -550,14 +550,71 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * check if given payment name is payone klarna payment
+     * check if given payment name is old payone klarna payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarna_old($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_klarna_old#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is any of the existing payone klarna payment, except Klarna OLD
      *
      * @param string $paymentName
      * @return boolean
      */
     public function isPayoneKlarna($paymentName)
     {
-        return preg_match('#mopt_payone__fin_klarna#', $paymentName) ? true : false;
+        return $this->isPayoneKlarnaInstallments($paymentName)
+            || $this->isPayoneKlarnaInvoice($paymentName)
+            || $this->isPayoneKlarnaDirectDebit($paymentName);
+    }
+
+    /**
+     * check if given payment name is the virtual grouped klarna payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarnaGrouped($paymentName)
+    {
+        return preg_match('#mopt_payone_klarna#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone klarna installments payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarnaInstallments($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_kis_klarna_installments#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone klarna invoice payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarnaInvoice($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_kiv_klarna_invoice#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone klarna direct debit payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarnaDirectDebit($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_kdd_klarna_direct_debit#', $paymentName) ? true : false;
     }
 
     /**
@@ -1152,8 +1209,20 @@ class Mopt_PayonePaymentHelper
             return 'cashondel';
         }
 
-        if ($this->isPayoneKlarna($paymentShortName)) {
-            return 'klarna';
+        if ($this->isPayoneKlarna_old($paymentShortName)) {
+            return 'klarnaold';
+        }
+
+        if ($this->isPayoneKlarnaInstallments($paymentShortName)) {
+            return 'klarnainstallments';
+        }
+
+        if ($this->isPayoneKlarnaInvoice($paymentShortName)) {
+            return 'klarnainvoice';
+        }
+
+        if ($this->isPayoneKlarnaDirectDebit($paymentShortName)) {
+            return 'klarnadirectdebit';
         }
 
         if ($this->isPayonePayolutionDebitNote($paymentShortName)) {
@@ -1234,25 +1303,66 @@ class Mopt_PayonePaymentHelper
      * group credit cards to single payment method creditcard
      *
      * @param array $paymentMeans
-     * @return bool|array
+     * @return array
      */
     public function groupCreditcards($paymentMeans)
     {
+        $snippetObject = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment');
+        $paymentGroupData = [
+            'id' => 'mopt_payone_creditcard',
+            'name' => 'mopt_payone_creditcard',
+            'description' => $snippetObject->get('PaymentMethodCreditCard', 'Kreditkarte', true),
+            'key' => 'mopt_payone_credit_cards',
+        ];
+
+        return $this->groupPayments(array($this, 'isPayoneCreditcardNotGrouped'), $paymentMeans, $paymentGroupData);
+    }
+
+    /**
+     * group Klarna payments to single payment method Klarna, except Klarna OLD
+     *
+     * @param array $paymentMeans
+     * @return array
+     */
+    public function groupKlarnaPayments($paymentMeans)
+    {
+        $snippetObject = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment');
+        $paymentGroupData = [
+            'id' => 'mopt_payone_klarna',
+            'name' => 'mopt_payone_klarna',
+            'description' => $snippetObject->get('PaymentMethodKlarna', 'PAYONE Klarna Payments', true),
+            'key' => 'mopt_payone_klarna_payments',
+        ];
+
+        return $this->groupPayments(array($this, 'isPayoneKlarna'), $paymentMeans, $paymentGroupData);
+    }
+
+    /**
+     * group payment methods to single payment method
+     *
+     * @param callable $paymentCheckCallback callback, to check a payment, whether it belongs to a defined group of payments
+     * @param array    $paymentMeans
+     * @param array    $paymentGroupData an array with an id, a name, a description and a key
+     *
+     * @return array
+     */
+    protected function groupPayments($paymentCheckCallback, $paymentMeans, $paymentGroupData)
+    {
         $firstHit = 'not_set';
-        $creditCardData = array();
+        $payments = array();
 
         foreach ($paymentMeans as $key => $paymentmean) {
-            if ($this->isPayoneCreditcardNotGrouped($paymentmean['name'])) {
+            if ($paymentCheckCallback($paymentmean['name'])) {
                 if ($firstHit === 'not_set') {
                     $firstHit = $key;
                 }
 
-                $creditCard = array();
-                $creditCard['id'] = $paymentmean['id'];
-                $creditCard['name'] = $paymentmean['name'];
-                $creditCard['description'] = $paymentmean['description'];
+                $payment = array();
+                $payment['id'] = $paymentmean['id'];
+                $payment['name'] = $paymentmean['name'];
+                $payment['description'] = $paymentmean['description'];
 
-                $creditCardData[] = $creditCard;
+                $payments[] = $payment;
 
                 if ($firstHit != $key) {
                     unset($paymentMeans[$key]);
@@ -1260,18 +1370,37 @@ class Mopt_PayonePaymentHelper
             }
         }
 
-        // don't assign anything if no creditcard was found
+        // don't assign anything if no payment to be grouped was found
         if ($firstHit === 'not_set') {
-            return false;
+            return $paymentMeans;
         }
 
-        $snippetObject = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment');
-        $paymentMeans[$firstHit]['id'] = 'mopt_payone_creditcard';
-        $paymentMeans[$firstHit]['name'] = 'mopt_payone_creditcard';
-        $paymentMeans[$firstHit]['description'] = $snippetObject->get('PaymentMethodCreditCard', 'Kreditkarte', true);
-        $paymentMeans[$firstHit]['mopt_payone_credit_cards'] = $creditCardData;
+        $paymentMeans[$firstHit]['id'] = $paymentGroupData['id'];
+        $paymentMeans[$firstHit]['name'] = $paymentGroupData['name'];
+        $paymentMeans[$firstHit]['description'] = $paymentGroupData['description'];
+        $paymentMeans[$firstHit][$paymentGroupData['key']] = $payments;
 
         return $paymentMeans;
+    }
+
+    /**
+     * adds Payone API value for creditcard
+     *
+     * @param string $paymentName
+     * @return string
+     */
+    public function mapKlarnaPaymentShortName($paymentName)
+    {
+        switch ($paymentName) {
+            case 'mopt_payone__fin_kis_klarna_installments':
+                return 'KIS';
+            case 'mopt_payone__fin_kiv_klarna_invoice':
+                return 'KIV';
+            case 'mopt_payone__fin_kdd_klarna_direct_debit':
+                return 'KDD';
+            default:
+                return '';
+        }
     }
 
     /**

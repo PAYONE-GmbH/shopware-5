@@ -465,20 +465,35 @@ class Mopt_PayoneInstallHelper
                 'template' => null,
                 'position' => 21,),
             array(
-                'name' => 'mopt_payone__fin_klarna',
-                'description' => 'PAYONE Klarna',
-                'template' => 'mopt_paymentmean_klarna.tpl',
+                'name' => 'mopt_payone__fin_klarna_old',
+                'description' => 'PAYONE Klarna OLD',
+                'template' => 'mopt_paymentmean_klarna_old.tpl',
                 'position' => 22,),
+            array(
+                'name' => 'mopt_payone__fin_kis_klarna_installments',
+                'description' => 'PAYONE Klarna Slice It',
+                'template' => 'mopt_paymentmean_klarna.tpl',
+                'position' => 23,),
+            array(
+                'name' => 'mopt_payone__fin_kiv_klarna_invoice',
+                'description' => 'PAYONE Klarna Pay Later',
+                'template' => 'mopt_paymentmean_klarna.tpl',
+                'position' => 24,),
+            array(
+                'name' => 'mopt_payone__fin_kdd_klarna_direct_debit',
+                'description' => 'PAYONE Klarna Pay Now',
+                'template' => 'mopt_paymentmean_klarna.tpl',
+                'position' => 25,),
             array(
                 'name' => 'mopt_payone__ibt_p24',
                 'description' => 'PAYONE P24',
                 'template' => null,
-                'position' => 23,),
+                'position' => 26,),
             array(
                 'name' => 'mopt_payone__csh_barzahlen',
                 'description' => 'PAYONE Barzahlen',
                 'template' => null,
-                'position' => 24,
+                'position' => 27,
                 'additionalDescription' => '<label for="payment_barzahlen">'
                     . '  <img style="height: 3em; vertical-align: -1em;" src="https://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen">'
                     . '</label>'
@@ -500,67 +515,67 @@ class Mopt_PayoneInstallHelper
                 'name' => 'mopt_payone__ewallet_paydirekt',
                 'description' => 'PAYONE Paydirekt',
                 'template' => null,
-                'position' => 25,),
+                'position' => 28,),
             array(
                 'name' => 'mopt_payone__fin_payolution_invoice',
                 'description' => 'PAYONE Paysafe Pay Later™ Rechnungskauf',
                 'template' => 'mopt_paymentmean_payolution_invoice.tpl',
-                'position' => 26,),
+                'position' => 29,),
             array(
                 'name' => 'mopt_payone__fin_payolution_debitnote',
                 'description' => 'PAYONE Paysafe Pay Later™ Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
-                'position' => 27,),
+                'position' => 30,),
             array(
                 'name' => 'mopt_payone__fin_payolution_installment',
                 'description' => 'PAYONE Paysafe Pay Later™ Ratenkauf',
                 'template' => 'mopt_paymentmean_payolution_installment.tpl',
-                'position' => 28,),
+                'position' => 31,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_invoice',
                 'description' => 'PAYONE Ratepay Rechnungskauf',
                 'template' => 'mopt_paymentmean_ratepay_invoice.tpl',
-                'position' => 29,),
+                'position' => 32,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_installment',
                 'description' => 'PAYONE Ratepay Ratenkauf',
                 'template' => 'mopt_paymentmean_ratepay_installment.tpl',
-                'position' => 30,),
+                'position' => 33,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_direct_debit',
                 'description' => 'PAYONE Ratepay Lastschrift',
                 'template' => 'mopt_paymentmean_ratepay_direct_debit.tpl',
-                'position' => 31,),
+                'position' => 34,),
             array(
                 'name' => 'mopt_payone__acc_payone_safe_invoice',
                 'description' => 'PAYONE Rechnung mit Zahlungsgarantie',
                 'template' => 'mopt_paymentmean_payone_safe_invoice.tpl',
-                'position' => 32,),
+                'position' => 35,),
             array(
                 'name' => 'mopt_payone__ibt_bancontact',
                 'description' => 'PAYONE Bancontact',
                 'template' => 'mopt_paymentmean_bancontact.tpl',
-                'position' => 33,),
+                'position' => 36,),
             array(
                 'name' => 'mopt_payone__ewallet_amazon_pay',
                 'description' => 'PAYONE Amazon Pay',
                 'template' => 'mopt_paymentmean_amazon_ewallet.tpl',
-                'position' => 34,),
+                'position' => 37,),
             array(
                 'name' => 'mopt_payone__ewallet_alipay',
                 'description' => 'PAYONE AliPay',
                 'template' => 'mopt_paymentmean_alipay_ewallet.tpl',
-                'position' => 35,),
+                'position' => 38,),
             array(
                 'name' => 'mopt_payone__fin_paypal_installment',
                 'description' => 'PAYONE Ratenkauf powered by Paypal',
                 'template' => 'mopt_paymentmean_paypal_installment.tpl',
-                'position' => 37,),
+                'position' => 39,),
             array(
                 'name' => 'mopt_payone__ewallet_paydirekt_express',
                 'description' => 'PAYONE Paydirekt Express',
                 'template' => null,
-                'position' => 38,),
+                'position' => 40,),
         );
     }
 

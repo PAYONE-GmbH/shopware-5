@@ -82,8 +82,20 @@ class Mopt_PayoneFormHandler
             return $this->proccessDebitNote($formData);
         }
 
-        if ($paymentHelper->isPayoneKlarna($paymentId)) {
-            return $this->proccessKlarna($formData);
+        if ($paymentHelper->isPayoneKlarna_old($paymentId)) {
+            return $this->proccessKlarna_old($formData);
+        }
+
+        if ($paymentHelper->isPayoneKlarnaInstallments($paymentId)) {
+            return $this->proccessKlarnaInstallments($formData);
+        }
+
+        if ($paymentHelper->isPayoneKlarnaInvoice($paymentId)) {
+            return $this->proccessKlarnaInvoice($formData);
+        }
+
+        if ($paymentHelper->isPayoneKlarnaDirectDebit($paymentId)) {
+            return $this->proccessKlarnaDirectDebit($formData);
         }
 
         if ($paymentHelper->isPayonePayolutionDebitNote($paymentId)) {
@@ -376,7 +388,7 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array
      */
-    protected function proccessKlarna($formData)
+    protected function proccessKlarna_old($formData)
     {
         $paymentData = array();
 

@@ -161,9 +161,27 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
-    public function klarnaAction()
+    public function klarnaoldAction()
     {
-        $response = $this->mopt_payone__klarna();
+        $response = $this->mopt_payone__klarna_old();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
+    public function klarnainstallmentsAction()
+    {
+        $response = $this->mopt_payone__klarna_installments();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
+    public function klarnainvoiceAction()
+    {
+        $response = $this->mopt_payone__klarna_invoice();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
+    public function klarnadirectdebitAction()
+    {
+        $response = $this->mopt_payone__klarna_direct_debit();
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
@@ -457,13 +475,62 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
-    protected function mopt_payone__klarna()
+    protected function mopt_payone__klarna_old()
     {
-        $financeType = Payone_Api_Enum_FinancingType::KLV;
+        return $this->mopt_payone__klarna('old');
+    }
+
+    /**
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__klarna_installments()
+    {
+        return $this->mopt_payone__klarna('installments');
+    }
+
+    /**
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__klarna_invoice()
+    {
+        return $this->mopt_payone__klarna('invoice');
+    }
+
+    /**
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__klarna_direct_debit()
+    {
+        return $this->mopt_payone__klarna('direct_debit');
+    }
+
+        /**
+         * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+         */
+        protected function mopt_payone__klarna($payment)
+    {
+        switch ($payment) {
+            case 'old':
+                $financeType = Payone_Api_Enum_FinancingType::KLV;
+                break;
+            case 'installments':
+                $financeType = Payone_Api_Enum_FinancingType::KIS;
+                break;
+            case 'invoice':
+                $financeType = Payone_Api_Enum_FinancingType::KIV;
+                break;
+            case 'direct_debit':
+                $financeType = Payone_Api_Enum_FinancingType::KDD;
+                break;
+            default:
+                return null;
+        }
+
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
 
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financeType);
 
+        /** @var Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Authorization_Redirect $response */
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
 
         return $response;
