@@ -191,7 +191,8 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         if (!$orderIsCorrupted) {
             $mappedShopwareState = $this->moptPayone__helper->getMappedShopwarePaymentStatusId(
                 $config,
-                $request->getParam('txaction')
+                $request->getParam('txaction'),
+                $request->getParam('reminderlevel')
             );
 
             $transaction_status = $request->getParam('transaction_status');
@@ -215,8 +216,11 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 } else {
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
                 }
-                // !Amazonpay
+
+            } elseif ($request->getParam('txaction') === 'reminder' && $request->getParam('reminderlevel') === '0')  {
+                // ignore txaction reminder with reminderlevel 0 since this only marks the end of dunning process
             } else {
+                // ! Amazonpay
                 $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
             }
         }

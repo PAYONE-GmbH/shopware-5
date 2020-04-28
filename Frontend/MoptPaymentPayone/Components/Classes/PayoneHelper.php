@@ -1011,17 +1011,25 @@ class Mopt_PayoneHelper
      * @param object $order
      * @param array $payoneConfig
      * @param string $payoneStatus
+     * @param string $reminderLevel
      * @param bool $useOrm
      */
-    public function getMappedShopwarePaymentStatusId($payoneConfig, $payoneStatus = null)
+    public function getMappedShopwarePaymentStatusId($payoneConfig, $payoneStatus = null, $reminderLevel = null)
     {
         //if nothing is submitted, set payment state to "open"
         if ($payoneStatus === null) {
             return 17;
         }
 
-        //map payone status to shopware payment-status
-        $configKey = 'state' . ucfirst($payoneStatus);
+        if ($payoneStatus === 'reminder' && $reminderLevel === '1') {
+            $configKey = 'state' . ucfirst($payoneStatus);
+        } elseif ($payoneStatus === 'reminder') {
+            $configKey = 'state' . ucfirst($payoneStatus).$reminderLevel;
+        } else {
+            //map payone status to shopware payment-status
+            $configKey = 'state' . ucfirst($payoneStatus);
+        }
+
         if (isset($payoneConfig[$configKey])) {
             if ($shopwareState = Shopware()->Models()->getRepository('Shopware\Models\Order\Status')
                 ->find($payoneConfig[$configKey])) {
