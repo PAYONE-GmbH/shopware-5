@@ -398,10 +398,10 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__klarna_telephone'] = $formData['mopt_payone__klarna_telephone'];
         }
 
-        if (!$formData['mopt_payone__klarna_agreement'] || !in_array($formData['mopt_payone__klarna_agreement'], array('on', true))) {
-            $paymentData['sErrorFlag']['mopt_payone__klarna_agreement'] = true;
+        if (!$formData['mopt_payone__klarna_old_agreement'] || !in_array($formData['mopt_payone__klarna_old_agreement'], array('on', true))) {
+            $paymentData['sErrorFlag']['mopt_payone__klarna_old_agreement'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__klarna_agreement'] = $formData['mopt_payone__klarna_agreement'];
+            $paymentData['formData']['mopt_payone__klarna_old_agreement'] = $formData['mopt_payone__klarna_old_agreement'];
         }
 
         if (!$formData['mopt_payone__klarna_birthyear']) {

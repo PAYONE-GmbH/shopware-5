@@ -19,4 +19,22 @@
             {/foreach}
         </select>
     </div>
+
+    <p class="none clearfix">
+        <input name="moptPaymentData[mopt_payone__klarna_agreement]" type="checkbox"
+               id="mopt_payone__klarna_agreement" value="true"
+               class="checkbox{if $error_flags.mopt_payone__klarna_agreement} has--error{/if}"
+               {if $form_data.mopt_payone__klarna_agreement eq "on"}checked="checked"{/if}
+        />
+        <label for="mopt_payone__klarna_agreement" style="float: none; width: 100%; display: inline">
+            {block name="frontend_checkout_payment_payone_consent"}
+                {$moptCreditCardCheckEnvironment.moptKlarnaInformation.consent}
+            {/block}
+        </label>
+    </p>
+    <div class="register--required-info">
+        {block name="frontend_checkout_payment_payone_legaltermn"}
+            {$moptCreditCardCheckEnvironment.moptKlarnaInformation.legalTerm}
+        {/block}
+    </div>
 </div>
