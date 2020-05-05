@@ -1,11 +1,30 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
 <div class="payment--form-group">
+    <div id="mopt_payone__klarna_information" hidden
+         data-payment-type="{$paymentType}"
+         data-billing-address--street-address="{$billingAddressStreetAddress}"
+         data-billing-address--city="{$billingAddressCity}"
+         data-billing-address--given-name="{$billingAddressGivenName}"
+         data-billing-address--postal-code="{$billingAddressPostalCode}"
+         data-billing-address--family-name="{$billingAddressFamilyName}"
+         data-billing-address--email="{$billingAddressEmail}"
+         data-purchase-currency="{$purchaseCurrency}"
+         data-locale="{$locale}"
+         data-billing-address--country="{$billingAddressCountry}"
+{*         data-get-access-token--URL="{url controller="FatchipCTKlarnaPayments" action="getAccessToken" forceSecure}"*}
+{*         data-store-authorization-token--URL="{url controller="FatchipCTKlarnaPayments" action="storeAuthorizationToken" forceSecure}"*}
+    ></div>
     <div id="mopt_payone__klarna_paymenttype_wrap" class="select-field">
         <label for="mopt_payone__klarna_paymenttype"></label>
         <select name="moptPaymentData[mopt_payone__klarna_paymenttype]"
                 id="mopt_payone__klarna_paymenttype"
-                class="select--country">
+                {if $payment_mean.id == $form_data.payment}
+                    required="required"
+                    aria-required="true"
+                {/if}
+                class="select--country"
+        >
             <option disabled="disabled" value=""
                     selected="selected">{s name='klarna-paymentType'}Klarna Zahlart{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
             {foreach from=$moptCreditCardCheckEnvironment.mopt_payone_klarna.mopt_payone_klarna_payments item=klarna_payment}
@@ -21,9 +40,14 @@
     </div>
 
     <p class="none clearfix">
-        <input name="moptPaymentData[mopt_payone__klarna_agreement]" type="checkbox"
+        <input name="moptPaymentData[mopt_payone__klarna_agreement]"
+               type="checkbox"
                id="mopt_payone__klarna_agreement" value="true"
-               class="checkbox{if $error_flags.mopt_payone__klarna_agreement} has--error{/if}"
+               class="checkbox {if $error_flags.mopt_payone__klarna_agreement}has--error{/if}"
+                {if $payment_mean.id == $form_data.payment}
+                    required="required"
+                    aria-required="true"
+                {/if}
                {if $form_data.mopt_payone__klarna_agreement eq "on"}checked="checked"{/if}
         />
         <label for="mopt_payone__klarna_agreement" style="float: none; width: 100%; display: inline">
@@ -32,7 +56,7 @@
             {/block}
         </label>
     </p>
-    <div class="register--required-info">
+    <div class="register--}ired-info">
         {block name="frontend_checkout_payment_payone_legaltermn"}
             {$moptCreditCardCheckEnvironment.moptKlarnaInformation.legalTerm}
         {/block}
