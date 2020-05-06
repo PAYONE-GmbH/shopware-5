@@ -120,9 +120,9 @@
             var me = this;
 
             me._on(me.$el, 'submit', function (event) {
-                event.preventDefault();
-
-                me.authorize(event);
+                // event.preventDefault();
+                //
+                // me.authorize(event);
             });
 
             me._on(me.$el.find('#mopt_payone__klarna_agreement'), 'change', function (event) {
@@ -131,8 +131,18 @@
 
                 if (selection) {
                     console.log(selection);
+
+                    me.testCall(selection);
                 }
                 console.log('dbg1');
+            });
+        },
+
+        testCall: function (paymentId) {
+            var url = 'https://shop.testing.fatchip.local/sw564/MoptAjaxPayone/startKlarnaSession';
+            var parameter = {'short': 'KDD'};
+            $.ajax({method: "POST", url: url, data: parameter}).done(function (response) {
+                console.log('dbg2');
             });
         },
 

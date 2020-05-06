@@ -1295,4 +1295,29 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $service->request($request);
     }
 
+    public function startKlarnaSessionAction()
+    {
+        try {
+            $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        } catch (Exception $e) {
+        }
+
+        $paymentData = $this->session->moptPayment;
+        $short = $this->Request()->getParam('short');
+        $name = $this->moptPayonePaymentHelper->getKlarnaNameByShort($short);
+        $id = $this->moptPayonePaymentHelper->getPaymentIdFromName($name);
+
+        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSessionStart($id, $short);
+
+        if ($result->getStatus() === 'ERROR') {
+            echo json_encode([
+                'status' => $result->getStatus(),
+                'errorCode' => $result->getErrorcode(),
+                'errorMessage' => $result->getErrormessage(),
+                'customerMessage' => $result->getCustomermessage(),
+            ]);
+        } else {
+            echo json_encode($result->getStatus());
+        }
+    }
 }

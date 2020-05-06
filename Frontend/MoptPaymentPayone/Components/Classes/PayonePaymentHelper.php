@@ -1384,23 +1384,41 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * adds Payone API value for creditcard
+     * Returns the Klarna name by short
      *
-     * @param string $paymentName
+     * @param $short
+     *
      * @return string
      */
-    public function mapKlarnaPaymentShortName($paymentName)
+    public function getKlarnaNameByShort($short)
     {
-        switch ($paymentName) {
-            case 'mopt_payone__fin_kis_klarna_installments':
-                return 'KIS';
-            case 'mopt_payone__fin_kiv_klarna_invoice':
-                return 'KIV';
-            case 'mopt_payone__fin_kdd_klarna_direct_debit':
-                return 'KDD';
-            default:
-                return '';
-        }
+        return array_search($short, $this->klarnaPaymentShortNameMapping());
+    }
+
+    /**
+     * Returns the Klarna short by name
+     *
+     * @param $paymentName
+     *
+     * @return string
+     */
+    public function getKlarnaShortByName($paymentName)
+    {
+        return $this->klarnaPaymentShortNameMapping()[$paymentName];
+    }
+
+    /**
+     * Maps Payone API value for Klarna
+     *
+     * @return string[]
+     */
+    private function klarnaPaymentShortNameMapping()
+    {
+        return [
+            'mopt_payone__fin_kis_klarna_installments' => Payone_Api_Enum_FinancingType::KIS,
+            'mopt_payone__fin_kiv_klarna_invoice' => Payone_Api_Enum_FinancingType::KIV,
+            'mopt_payone__fin_kdd_klarna_direct_debit' => Payone_Api_Enum_FinancingType::KDD,
+        ];
     }
 
     /**
@@ -1513,5 +1531,50 @@ class Mopt_PayonePaymentHelper
         $input = array_slice($input, 0, $offset, TRUE)
             + $replacement
             + array_slice($input, $offset + $length, NULL, TRUE);
+    }
+
+    public function buildAndCallKlarnaStartSessionStart($paymentId, $financingType)
+    {
+        $bootstrap = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
+
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        /** @var Mopt_PayoneMain $moptPayoneMain */
+        $moptPayoneMain = $bootstrap->Application()->MoptPayoneMain();
+        $paramBuilder = $moptPayoneMain->getParamBuilder();
+        $basket = $moptPayoneMain->sGetBasket();
+
+        /** @var Payone_Builder $payoneBuilder */
+        $payoneBuilder = $bootstrap->Application()->MoptPayoneBuilder();
+        $service = $payoneBuilder->buildServicePaymentGenericpayment();
+
+        $repositoryNamespace = 'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog';
+        /** @var Payone_Api_Persistence_Interface $moptPayoneApiLogRepository */
+        $moptPayoneApiLogRepository = Shopware()->Models()->getRepository($repositoryNamespace);
+        $service->getServiceProtocol()->addRepository($moptPayoneApiLogRepository);
+
+        $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
+        $params = $paramBuilder->buildKlarnaSessionStartParams($paymentId, $financingType, $basket, $userData, $shippingCosts);
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $basket['sShippingcosts'] = $shippingCosts['brutto'];
+        $basket['sShippingcostsWithTax'] = $shippingCosts['brutto'];
+        $basket['sShippingcostsNet'] = $shippingCosts['netto'];
+        $basket['sShippingcostsTax'] = $shippingCosts['tax'];
+
+        // TODO: find selected disptch
+        $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch(9);
+
+        $invoicing = $paramBuilder->getInvoicing($basket, $dispatch, $userData);
+        $request->setInvoicing($invoicing);
+
+        $result = null;
+
+        try {
+            $result = $service->request($request);
+        } catch (Exception $e) {
+        }
+
+        return $result;
     }
 }

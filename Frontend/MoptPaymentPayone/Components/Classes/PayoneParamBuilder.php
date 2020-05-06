@@ -1860,4 +1860,32 @@ class Mopt_PayoneParamBuilder
         return $walletParams;
     }
 
+    public function buildKlarnaSessionStartParams($paymentId, $financingType, $basket, $userData, $shippingCosts)
+    {
+        $params = $this->getAuthParameters($paymentId);
+        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
+
+        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(array(
+            'key'  => 'action',
+            'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION,
+        )));
+
+        if (!empty($userData['additional']['country']['countryiso'])) {
+            $country = $userData['additional']['country']['countryiso'];
+        } else {
+            $country = $this->getCountryFromId($userData['billingaddress']['countryID']);
+        }
+
+        $params['clearingtype'] = 'fnc';
+        $params['financingtype'] = $financingType;
+        $params['paydata'] = $payData;
+        $params['amount'] = $basket['AmountNumeric'] + $shippingCosts['brutto'];
+        $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
+        $params['country'] = $country;
+        foreach ($basket['content'] as $id => $article) {
+            $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
+        }
+
+        return $params;
+    }
 }

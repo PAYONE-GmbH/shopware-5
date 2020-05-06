@@ -421,7 +421,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
             if ($paymentHelper->isPayoneKlarnaGrouped($paymentMean['name'])) {
                 foreach ($paymentMean['mopt_payone_klarna_payments'] as &$klarna_payment) {
-                    $klarna_payment['short'] = $paymentHelper->mapKlarnaPaymentShortName($klarna_payment['name']);
+                    $klarna_payment['short'] = $paymentHelper->getKlarnaShortByName($klarna_payment['name']);
                 }
 
                 $data['mopt_payone_klarna'] = $paymentMean;
