@@ -1860,8 +1860,10 @@ class Mopt_PayoneParamBuilder
         return $walletParams;
     }
 
-    public function buildKlarnaSessionStartParams($paymentId, $financingType, $basket, $userData, $shippingCosts)
+    public function buildKlarnaSessionStartParams($paymentShort, $basket, $userData, $shippingCosts)
     {
+        $name = $this->payonePaymentHelper->getKlarnaNameByShort($paymentShort);
+        $paymentId = $this->payonePaymentHelper->getPaymentIdFromName($name);
         $params = $this->getAuthParameters($paymentId);
         $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
@@ -1877,7 +1879,7 @@ class Mopt_PayoneParamBuilder
         }
 
         $params['clearingtype'] = 'fnc';
-        $params['financingtype'] = $financingType;
+        $params['financingtype'] = $paymentShort;
         $params['paydata'] = $payData;
         $params['amount'] = $basket['AmountNumeric'] + $shippingCosts['brutto'];
         $params['currency'] = Shopware()->Container()->get('currency')->getShortName();

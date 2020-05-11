@@ -1303,10 +1303,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
 
         $short = $this->Request()->getParam('short');
-        $name = $this->moptPayonePaymentHelper->getKlarnaNameByShort($short);
-        $id = $this->moptPayonePaymentHelper->getPaymentIdFromName($name);
 
-        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSessionStart($id, $short);
+        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession($short);
 
         if ($result->getStatus() === 'ERROR') {
             echo json_encode([
