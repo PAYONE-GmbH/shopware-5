@@ -36,46 +36,41 @@
 
         // delete window.fatchipCTPaymentType;
     }
-    //
-    // function fatchipCTLoadKlarna(paymentType, accessToken) {
-    //
-    //     if (!accessToken || accessToken.length === 0) {
-    //         console.log('no token');
-    //         return;
-    //     }
-    //
-    //     window.Klarna.Payments.init({
-    //         client_token: accessToken
-    //     });
-    //
-    //     var payTypeTranslations = {
-    //         pay_now:
-    //             'pay_now',
-    //         pay_later:
-    //             'pay_later',
-    //         slice_it:
-    //             'pay_over_time',
-    //         direct_bank_transfer:
-    //             'direct_bank_transfer',
-    //         direct_debit:
-    //             'direct_debit'
-    //     };
-    //
-    //     window.fatchipCTKlarnaPaymentType = payTypeTranslations[paymentType];
-    //
-    //     if (!window.Klarna) {
-    //         return;
-    //     }
-    //
-    //     Klarna.Payments.load({
-    //         container: '#fatchip-computop-payment-klarna-form-' + paymentType,
-    //         payment_method_category: payTypeTranslations[paymentType]
-    //     }, function (res) {
-    //         console.log('Klarna.Payments.load');
-    //         console.log(res);
-    //     });
-    // }
-    //
+
+    function loadKlarnaWidget(paymentType, accessToken) {
+
+        if (!accessToken || accessToken.length === 0) {
+            console.log('no token');
+            return;
+        }
+
+        window.Klarna.Payments.init({
+            client_token: accessToken
+        });
+
+        var payTypeTranslations = {
+            KDD: 'pay_now',
+            KIV: 'pay_later',
+            KIS: 'pay_over_time'
+        };
+
+        if (!window.Klarna) {
+            return;
+        }
+
+        window.Klarna.Payments.load({
+            container: '#mopt_payone__klarna_payments_widget_container',
+            payment_method_category: payTypeTranslations[paymentType]
+        }, function (res) {
+            console.log('Klarna.Payments.load');
+            console.log(res);
+        });
+    }
+
+    function unloadKlarnaWidget() {
+        $('#mopt_payone__klarna_payments_widget_container').empty();
+    }
+
     // function fatchipCTFetchAccessToken(paymentType) {
     //     var url = data['getAccessToken-Url'];
     //     var parameter = {paymentType: paymentType};
@@ -125,25 +120,34 @@
                 // me.authorize(event);
             });
 
-            me._on(me.$el.find('#mopt_payone__klarna_agreement'), 'change', function (event) {
-                var select = document.getElementById("mopt_payone__klarna_paymenttype");
-                var selection = select.options[select.selectedIndex].value;
+            me._on(me.$el.find('#mopt_payone__klarna_paymenttype'), 'change', function() {
+                me.handleInputChange();
+            });
 
-                if (selection) {
-                    console.log(selection);
-
-                    me.testCall(selection);
-                }
-                console.log('dbg1');
+            me._on(me.$el.find('#mopt_payone__klarna_agreement'), 'change', function() {
+                me.handleInputChange();
             });
         },
 
-        testCall: function (paymentId) {
+        handleInputChange: function() {
+            var me = this;
+            var $select = $("#mopt_payone__klarna_paymenttype");
+            var $checkbox = $('#mopt_payone__klarna_agreement');
+            var paymentId = $select.val();
+
+            unloadKlarnaWidget();
+
+            if (paymentId && $checkbox.is(':checked')) {
+                me.startKlarnaSessionCall(paymentId).done(function(response) {
+                    loadKlarnaWidget(paymentId, $.parseJSON(response)['client_token']);
+                });
+            }
+        },
+
+        startKlarnaSessionCall: function (paymentId) {
             var url = 'https://shop.testing.fatchip.local/sw564/MoptAjaxPayone/startKlarnaSession';
             var parameter = {'short': 'KDD'};
-            $.ajax({method: "POST", url: url, data: parameter}).done(function (response) {
-                console.log('dbg2');
-            });
+            return $.ajax({method: "POST", url: url, data: parameter});
         },
 
         authorize: function (event) {

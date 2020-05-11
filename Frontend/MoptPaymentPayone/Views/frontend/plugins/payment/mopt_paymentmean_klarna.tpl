@@ -61,4 +61,11 @@
             {$moptCreditCardCheckEnvironment.moptKlarnaInformation.legalTerm}
         {/block}
     </div>
+    <div id="mopt_payone__klarna_payments_widget_container"></div>
+    <script>
+        window.klarnaAsyncCallback = function () {
+            window.Klarna = Klarna;
+        };
+    </script>
+    <script src="https://x.klarnacdn.net/kp/lib/v1/api.js" async></script>
 </div>

@@ -1302,7 +1302,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         } catch (Exception $e) {
         }
 
-        $paymentData = $this->session->moptPayment;
         $short = $this->Request()->getParam('short');
         $name = $this->moptPayonePaymentHelper->getKlarnaNameByShort($short);
         $id = $this->moptPayonePaymentHelper->getPaymentIdFromName($name);
@@ -1317,7 +1316,12 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 'customerMessage' => $result->getCustomermessage(),
             ]);
         } else {
-            echo json_encode($result->getStatus());
+            $result_json = $result->getRawResponse();
+            echo json_encode([
+                'status' => $result->getStatus(),
+//                'raw_response' => $result_json,
+                'client_token' => $result->getPaydata()->toAssocArray()['client_token'],
+            ]);
         }
     }
 }

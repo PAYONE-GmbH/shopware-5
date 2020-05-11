@@ -1562,8 +1562,8 @@ class Mopt_PayonePaymentHelper
         $basket['sShippingcostsNet'] = $shippingCosts['netto'];
         $basket['sShippingcostsTax'] = $shippingCosts['tax'];
 
-        // TODO: find selected disptch
-        $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch(9);
+        $selectedDispatchId = Shopware()->Session()['sDispatch'];
+        $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);
 
         $invoicing = $paramBuilder->getInvoicing($basket, $dispatch, $userData);
         $request->setInvoicing($invoicing);
