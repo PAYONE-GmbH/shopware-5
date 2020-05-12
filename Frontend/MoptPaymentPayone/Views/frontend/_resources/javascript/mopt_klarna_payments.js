@@ -57,6 +57,7 @@
         defaults: {},
         financingtype: null,
         submitPressed: false,
+        authorizationToken: null,
         data: data,
 
         init: function () {
@@ -78,23 +79,7 @@
             var me = this;
 
             me._on(me.$el, 'submit', function (event) {
-                if ($('input[name=payment]:checked', '#shippingPaymentForm').val() !== 'mopt_payone_klarna') {
-                    return;
-                }
-
-                event.preventDefault();
-
-                me.submitPressed = true;
-                console.log('submit');
-
-                $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
-                    element.disabled = true;
-                });
-
-                if (widgetLoaded) {
-                    console.log('call authorize [submit]');
-                    me.authorize();
-                }
+                me.submitHandler(event);
             });
 
             me._on(me.$el.find('#mopt_payone__klarna_paymenttype'), 'change', function () {
@@ -104,6 +89,32 @@
             me._on(me.$el.find('#mopt_payone__klarna_agreement'), 'change', function () {
                 me.inputChangeHandler();
             });
+        },
+
+        submitHandler: function (event) {
+            var me = this;
+
+            if ($('input[name=payment]:checked', '#shippingPaymentForm').val() !== 'mopt_payone_klarna') {
+                return;
+            }
+
+            if (me.authorizationToken) {
+                return;
+            }
+
+            event.preventDefault();
+
+            me.submitPressed = true;
+            console.log('submit');
+
+            $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
+                element.disabled = true;
+            });
+
+            if (widgetLoaded) {
+                console.log('call authorize [submit]');
+                me.authorize();
+            }
         },
 
         inputChangeHandler: function () {
@@ -191,17 +202,19 @@
                 authorizeData,
                 function (res) {
                     var storeAuthorizationTokenUrl = data['storeAuthorizationToken-Url'];
-                    var parameter = {'authorizationToken': res['authorization_token']};
 
                     if (res['approved'] && res['authorization_token']) {
                         console.log('authorize approved');
                         console.log(res);
+
+                        var parameter = {'authorizationToken': res['authorization_token']};
+                        me.authorizationToken = res['authorization_token'];
+
                         // store authorization_token
                         $.ajax({method: "POST", url: storeAuthorizationTokenUrl, data: parameter}).done(function () {
-                            $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
-                                element.submit();
-                                return false;
-                            });
+                            console.log('Authorization token stored');
+
+                            me.$el.submit();
                         });
                     } else {
                         $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {

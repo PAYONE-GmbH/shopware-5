@@ -12,8 +12,8 @@
          data-billing-address--street-address="{$billingAddressStreetAddress}"
          data-purchase-currency="{$purchaseCurrency}"
          data-locale="{$locale}"
+         data-store-authorization-token--URL="{url controller="MoptAjaxPayone" action="storeAuthorizationToken" forceSecure}"
 {*         data-get-access-token--URL="{url controller="FatchipCTKlarnaPayments" action="getAccessToken" forceSecure}"*}
-{*         data-store-authorization-token--URL="{url controller="FatchipCTKlarnaPayments" action="storeAuthorizationToken" forceSecure}"*}
     ></div>
     <div id="mopt_payone__klarna_paymenttype_wrap" class="select-field">
         <label for="mopt_payone__klarna_paymenttype"></label>
