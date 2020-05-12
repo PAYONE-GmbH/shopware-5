@@ -2,7 +2,6 @@
 
 <div class="payment--form-group">
     <div id="mopt_payone__klarna_information" hidden
-         data-payment-type="{$paymentType}"
          data-billing-address--city="{$billingAddressCity}"
          data-billing-address--country="{$billingAddressCountry}"
          data-billing-address--email="{$billingAddressEmail}"
@@ -13,7 +12,6 @@
          data-purchase-currency="{$purchaseCurrency}"
          data-locale="{$locale}"
          data-store-authorization-token--URL="{url controller="MoptAjaxPayone" action="storeAuthorizationToken" forceSecure}"
-{*         data-get-access-token--URL="{url controller="FatchipCTKlarnaPayments" action="getAccessToken" forceSecure}"*}
     ></div>
     <div id="mopt_payone__klarna_paymenttype_wrap" class="select-field">
         <label for="mopt_payone__klarna_paymenttype"></label>

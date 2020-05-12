@@ -223,14 +223,7 @@ class FrontendCheckout implements SubscriberInterface
             }
 
             $userData = Shopware()->Modules()->Admin()->sGetUserData();
-            /** @var Mopt_PayoneMain $container */
-            $container = $this->container->get('MoptPayoneMain');
-            $paymentHelper = $container->getPaymentHelper();
-            $paymentName = $paymentHelper->getPaymentNameFromId($userData['additional']['payment']['id']);
 
-            $paymentType = $paymentHelper->getKlarnaFinancingtypeByName($paymentName);
-
-            $view->assign('paymentType', $paymentType);
             $view->assign('billingAddressCity', $userData['billingaddress']['city']);
             $view->assign('billingAddressCountry', $userData['additional']['country']['countryiso']);
             $view->assign('billingAddressEmail', $userData['additional']['user']['email']);

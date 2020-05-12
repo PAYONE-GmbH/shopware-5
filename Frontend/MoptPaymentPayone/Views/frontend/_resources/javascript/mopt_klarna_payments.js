@@ -165,11 +165,13 @@
                 client_token: accessToken
             });
 
+            console.log('load Klarna widget');
             return $.Deferred(function (defer) {
                 window.Klarna.Payments.load({
                     container: '#mopt_payone__klarna_payments_widget_container',
                     payment_method_category: payTypeTranslations[paymentType]
                 }, function (res) {
+                    // TODO: error handling
                     widgetLoaded = true;
                     console.log('Klarna widget loaded');
                     console.log(res);
