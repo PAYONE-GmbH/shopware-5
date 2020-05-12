@@ -1302,9 +1302,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         } catch (Exception $e) {
         }
 
-        $short = $this->Request()->getParam('short');
+        $financingtype = $this->Request()->getParam('financingtype');
 
-        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession($short);
+        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession($financingtype);
 
         if ($result->getStatus() === 'ERROR') {
             echo json_encode([

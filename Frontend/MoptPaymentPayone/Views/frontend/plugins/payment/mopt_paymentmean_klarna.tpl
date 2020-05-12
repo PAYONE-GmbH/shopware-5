@@ -3,15 +3,15 @@
 <div class="payment--form-group">
     <div id="mopt_payone__klarna_information" hidden
          data-payment-type="{$paymentType}"
-         data-billing-address--street-address="{$billingAddressStreetAddress}"
          data-billing-address--city="{$billingAddressCity}"
+         data-billing-address--country="{$billingAddressCountry}"
+         data-billing-address--email="{$billingAddressEmail}"
+         data-billing-address--family-name="{$billingAddressFamilyName}"
          data-billing-address--given-name="{$billingAddressGivenName}"
          data-billing-address--postal-code="{$billingAddressPostalCode}"
-         data-billing-address--family-name="{$billingAddressFamilyName}"
-         data-billing-address--email="{$billingAddressEmail}"
+         data-billing-address--street-address="{$billingAddressStreetAddress}"
          data-purchase-currency="{$purchaseCurrency}"
          data-locale="{$locale}"
-         data-billing-address--country="{$billingAddressCountry}"
 {*         data-get-access-token--URL="{url controller="FatchipCTKlarnaPayments" action="getAccessToken" forceSecure}"*}
 {*         data-store-authorization-token--URL="{url controller="FatchipCTKlarnaPayments" action="storeAuthorizationToken" forceSecure}"*}
     ></div>
@@ -28,7 +28,7 @@
             <option disabled="disabled" value=""
                     selected="selected">{s name='klarna-paymentType'}Klarna Zahlart{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
             {foreach from=$moptCreditCardCheckEnvironment.mopt_payone_klarna.mopt_payone_klarna_payments item=klarna_payment}
-                <option value="{$klarna_payment.short}"
+                <option value="{$klarna_payment.financingtype}"
                         {if $form_data.mopt_payone__klarna_paymentname == $klarna_payment.name}selected="selected"{/if}
                         mopt_payone__klarna_paymentname="{$klarna_payment.name}"
                         mopt_payone__klarna_paymentid="{$klarna_payment.id}"

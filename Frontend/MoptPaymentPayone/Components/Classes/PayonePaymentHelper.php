@@ -1384,27 +1384,27 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * Returns the Klarna name by short
+     * Returns the Klarna name by financingtype
      *
-     * @param $short
+     * @param $financingtype
      *
      * @return string
      */
-    public function getKlarnaNameByShort($short)
+    public function getKlarnaNameByFinancingtype($financingtype)
     {
-        return array_search($short, $this->klarnaPaymentShortNameMapping());
+        return array_search($financingtype, $this->klarnaPaymentFinancingtypeNameMapping());
     }
 
     /**
-     * Returns the Klarna short by name
+     * Returns the Klarna financingtype by name
      *
      * @param $paymentName
      *
      * @return string
      */
-    public function getKlarnaShortByName($paymentName)
+    public function getKlarnaFinancingtypeByName($paymentName)
     {
-        return $this->klarnaPaymentShortNameMapping()[$paymentName];
+        return $this->klarnaPaymentFinancingtypeNameMapping()[$paymentName];
     }
 
     /**
@@ -1412,7 +1412,7 @@ class Mopt_PayonePaymentHelper
      *
      * @return string[]
      */
-    private function klarnaPaymentShortNameMapping()
+    private function klarnaPaymentFinancingtypeNameMapping()
     {
         return [
             'mopt_payone__fin_kis_klarna_installments' => Payone_Api_Enum_FinancingType::KIS,
@@ -1533,7 +1533,7 @@ class Mopt_PayonePaymentHelper
             + array_slice($input, $offset + $length, NULL, TRUE);
     }
 
-    public function buildAndCallKlarnaStartSession($paymentShort)
+    public function buildAndCallKlarnaStartSession($paymentFinancingtype)
     {
         $bootstrap = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
 
@@ -1554,7 +1554,7 @@ class Mopt_PayonePaymentHelper
         $service->getServiceProtocol()->addRepository($moptPayoneApiLogRepository);
 
         $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
-        $params = $paramBuilder->buildKlarnaSessionStartParams($paymentShort, $basket, $userData, $shippingCosts);
+        $params = $paramBuilder->buildKlarnaSessionStartParams($paymentFinancingtype, $basket, $userData, $shippingCosts);
         $request = new Payone_Api_Request_Genericpayment($params);
 
         $basket['sShippingcosts'] = $shippingCosts['brutto'];

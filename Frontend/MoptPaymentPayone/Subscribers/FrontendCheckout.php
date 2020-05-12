@@ -3,6 +3,7 @@
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
+use Mopt_PayoneMain;
 
 class FrontendCheckout implements SubscriberInterface
 {
@@ -220,6 +221,25 @@ class FrontendCheckout implements SubscriberInterface
             if ($session->moptPaypalEcsWorkerId) {
                 unset($session->moptPaypalEcsWorkerId);
             }
+
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            /** @var Mopt_PayoneMain $container */
+            $container = $this->container->get('MoptPayoneMain');
+            $paymentHelper = $container->getPaymentHelper();
+            $paymentName = $paymentHelper->getPaymentNameFromId($userData['additional']['payment']['id']);
+
+            $paymentType = $paymentHelper->getKlarnaFinancingtypeByName($paymentName);
+
+            $view->assign('paymentType', $paymentType);
+            $view->assign('billingAddressCity', $userData['billingaddress']['city']);
+            $view->assign('billingAddressCountry', $userData['additional']['country']['countryiso']);
+            $view->assign('billingAddressEmail', $userData['additional']['user']['email']);
+            $view->assign('billingAddressFamilyName', $userData['billingaddress']['lastname']);
+            $view->assign('billingAddressGivenName', $userData['billingaddress']['firstname']);
+            $view->assign('billingAddressPostalCode', $userData['billingaddress']['zipcode']);
+            $view->assign('billingAddressStreetAddress', $userData['billingaddress']['street']);
+            $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
+            $view->assign('locale', str_replace('_', '-', Shopware()->Shop()->getLocale()->getLocale()));
         }
 
         if ($request->getActionName() === 'cart') {

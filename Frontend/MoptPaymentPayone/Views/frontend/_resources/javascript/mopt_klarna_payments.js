@@ -3,7 +3,14 @@
 
     var data = $('#mopt_payone__klarna_information').data();
 
+    var payTypeTranslations = {
+        KDD: 'pay_now',
+        KIV: 'pay_later',
+        KIS: 'pay_over_time'
+    };
+
     var pluginRegistered = false;
+    var widgetLoaded = false;
 
     // no Klarna payment activated
     if (!data) {
@@ -18,7 +25,7 @@
     });
 
     function reset() {
-        // TODO: remove '&& false'
+        // TODO: remove '&& false' and ALL console.log()'s
         if (!window.moptPayonePaymentType && false) {
             destroyPlugin();
 
@@ -31,54 +38,7 @@
             registerPlugin();
             pluginRegistered = true;
         }
-
-        // fatchipCTFetchAccessToken(window.fatchipCTPaymentType);
-
-        // delete window.fatchipCTPaymentType;
     }
-
-    function loadKlarnaWidget(paymentType, accessToken) {
-
-        if (!accessToken || accessToken.length === 0) {
-            console.log('no token');
-            return;
-        }
-
-        window.Klarna.Payments.init({
-            client_token: accessToken
-        });
-
-        var payTypeTranslations = {
-            KDD: 'pay_now',
-            KIV: 'pay_later',
-            KIS: 'pay_over_time'
-        };
-
-        if (!window.Klarna) {
-            return;
-        }
-
-        window.Klarna.Payments.load({
-            container: '#mopt_payone__klarna_payments_widget_container',
-            payment_method_category: payTypeTranslations[paymentType]
-        }, function (res) {
-            console.log('Klarna.Payments.load');
-            console.log(res);
-        });
-    }
-
-    function unloadKlarnaWidget() {
-        $('#mopt_payone__klarna_payments_widget_container').empty();
-    }
-
-    // function fatchipCTFetchAccessToken(paymentType) {
-    //     var url = data['getAccessToken-Url'];
-    //     var parameter = {paymentType: paymentType};
-    //
-    //     $.ajax({method: "POST", url: url, data: parameter}).done(function (response) {
-    //         fatchipCTLoadKlarna(paymentType, JSON.parse(response));
-    //     });
-    // }
 
     function registerPlugin() {
         StateManager.addPlugin('#shippingPaymentForm', 'payoneKlarnaPayments', null, null);
@@ -95,6 +55,9 @@
 
     $.plugin('payoneKlarnaPayments', {
         defaults: {},
+        financingtype: null,
+        submitPressed: false,
+        data: data,
 
         init: function () {
             var me = this;
@@ -115,42 +78,98 @@
             var me = this;
 
             me._on(me.$el, 'submit', function (event) {
-                // event.preventDefault();
-                //
-                // me.authorize(event);
+                if ($('input[name=payment]:checked', '#shippingPaymentForm').val() !== 'mopt_payone_klarna') {
+                    return;
+                }
+
+                event.preventDefault();
+
+                me.submitPressed = true;
+                console.log('submit');
+
+                $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
+                    element.disabled = true;
+                });
+
+                if (widgetLoaded) {
+                    console.log('call authorize [submit]');
+                    me.authorize();
+                }
             });
 
-            me._on(me.$el.find('#mopt_payone__klarna_paymenttype'), 'change', function() {
-                me.handleInputChange();
+            me._on(me.$el.find('#mopt_payone__klarna_paymenttype'), 'change', function () {
+                me.inputChangeHandler();
             });
 
-            me._on(me.$el.find('#mopt_payone__klarna_agreement'), 'change', function() {
-                me.handleInputChange();
+            me._on(me.$el.find('#mopt_payone__klarna_agreement'), 'change', function () {
+                me.inputChangeHandler();
             });
         },
 
-        handleInputChange: function() {
+        inputChangeHandler: function () {
+            console.log('inputChangeHandler');
             var me = this;
             var $select = $("#mopt_payone__klarna_paymenttype");
             var $checkbox = $('#mopt_payone__klarna_agreement');
-            var paymentId = $select.val();
+            var financingtype = $select.val();
+            me.financingtype = financingtype;
 
-            unloadKlarnaWidget();
+            me.unloadKlarnaWidget();
 
-            if (paymentId && $checkbox.is(':checked')) {
-                me.startKlarnaSessionCall(paymentId).done(function(response) {
-                    loadKlarnaWidget(paymentId, $.parseJSON(response)['client_token']);
+            if (financingtype && $checkbox.is(':checked')) {
+                me.startKlarnaSessionCall(financingtype).done(function (response) {
+                    me.loadKlarnaWidget(financingtype, $.parseJSON(response)['client_token']).done(function () {
+                        console.log('widget loaded');
+                        if (me.submitPressed) {
+                            console.log('call authorize [change]');
+                            me.authorize();
+                        }
+                    });
                 });
             }
         },
 
-        startKlarnaSessionCall: function (paymentId) {
+        startKlarnaSessionCall: function (financingtype) {
             var url = 'https://shop.testing.fatchip.local/sw564/MoptAjaxPayone/startKlarnaSession';
-            var parameter = {'short': 'KDD'};
+            var parameter = {'financingtype': financingtype};
             return $.ajax({method: "POST", url: url, data: parameter});
         },
 
-        authorize: function (event) {
+
+        unloadKlarnaWidget: function () {
+            $('#mopt_payone__klarna_payments_widget_container').empty();
+        },
+
+        loadKlarnaWidget: function (paymentType, accessToken) {
+            if (!accessToken || accessToken.length === 0) {
+                console.log('no token');
+                return;
+            }
+
+            if (!window.Klarna) {
+                return;
+            }
+
+            window.Klarna.Payments.init({
+                client_token: accessToken
+            });
+
+            return $.Deferred(function (defer) {
+                window.Klarna.Payments.load({
+                    container: '#mopt_payone__klarna_payments_widget_container',
+                    payment_method_category: payTypeTranslations[paymentType]
+                }, function (res) {
+                    widgetLoaded = true;
+                    console.log('Klarna widget loaded');
+                    console.log(res);
+                    defer.resolve();
+                });
+            }).promise();
+        },
+
+        authorize: function () {
+            var me = this;
+            var data = me.data;
             var authorizeData = {
                 purchase_country: data['billingAddress-Country'],
                 purchase_currency: data['purchaseCurrency'],
@@ -166,9 +185,8 @@
                 }
             };
 
-            event.target[0].disabled = true;
             window.Klarna.Payments.authorize({
-                    payment_method_category: window.fatchipCTKlarnaPaymentType
+                    payment_method_category: payTypeTranslations[me.financingtype]
                 },
                 authorizeData,
                 function (res) {
@@ -176,12 +194,19 @@
                     var parameter = {'authorizationToken': res['authorization_token']};
 
                     if (res['approved'] && res['authorization_token']) {
+                        console.log('authorize approved');
+                        console.log(res);
                         // store authorization_token
                         $.ajax({method: "POST", url: storeAuthorizationTokenUrl, data: parameter}).done(function () {
-                            event.target.submit();
+                            $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
+                                element.submit();
+                                return false;
+                            });
                         });
                     } else {
-                        event.target[0].disabled = false;
+                        $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
+                            element.disabled = false;
+                        });
                     }
                 });
         }
