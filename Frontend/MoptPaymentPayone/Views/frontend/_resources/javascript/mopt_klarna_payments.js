@@ -129,7 +129,10 @@
 
             if (financingtype && $checkbox.is(':checked')) {
                 me.startKlarnaSessionCall(financingtype).done(function (response) {
-                    me.loadKlarnaWidget(financingtype, $.parseJSON(response)['client_token']).done(function () {
+                    response = $.parseJSON(response);
+                    $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
+
+                    me.loadKlarnaWidget(financingtype, response['client_token']).done(function () {
                         console.log('widget loaded');
                         if (me.submitPressed) {
                             console.log('call authorize [change]');
@@ -141,7 +144,7 @@
         },
 
         startKlarnaSessionCall: function (financingtype) {
-            var url = 'https://shop.testing.fatchip.local/sw564/MoptAjaxPayone/startKlarnaSession';
+            var url = data['startKlarnaSession-Url'];
             var parameter = {'financingtype': financingtype};
             return $.ajax({method: "POST", url: url, data: parameter});
         },

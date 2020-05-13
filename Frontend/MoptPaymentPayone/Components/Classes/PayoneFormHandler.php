@@ -83,19 +83,19 @@ class Mopt_PayoneFormHandler
         }
 
         if ($paymentHelper->isPayoneKlarna_old($paymentId)) {
-            return $this->proccessKlarna_old($formData);
+            return $this->processKlarna_old($formData);
         }
 
         if ($paymentHelper->isPayoneKlarnaInstallments($paymentId)) {
-            return $this->proccessKlarnaInstallments($formData);
+            return $this->processKlarnaInstallments($formData);
         }
 
         if ($paymentHelper->isPayoneKlarnaInvoice($paymentId)) {
-            return $this->proccessKlarnaInvoice($formData);
+            return $this->processKlarnaInvoice($formData);
         }
 
         if ($paymentHelper->isPayoneKlarnaDirectDebit($paymentId)) {
-            return $this->proccessKlarnaDirectDebit($formData);
+            return $this->processKlarnaDirectDebit($formData);
         }
 
         if ($paymentHelper->isPayonePayolutionDebitNote($paymentId)) {
@@ -388,7 +388,61 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array
      */
-    protected function proccessKlarna_old($formData)
+    protected function processKlarnaInstallments($formData)
+    {
+        return $this->processKlarnaGeneric($formData);
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function processKlarnaInvoice($formData)
+    {
+        return $this->processKlarnaGeneric($formData);
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function processKlarnaDirectDebit($formData)
+    {
+        return $this->processKlarnaGeneric($formData);
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function processKlarnaGeneric($formData)
+    {
+        $paymentData = array();
+
+        if (!$formData['mopt_payone__klarna_old_agreement'] || !in_array($formData['mopt_payone__klarna_old_agreement'], array('on', true))) {
+            $paymentData['sErrorFlag']['mopt_payone__klarna_old_agreement'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__klarna_old_agreement'] = $formData['mopt_payone__klarna_old_agreement'];
+        }
+
+        $this->setFormSubmittedFlag();
+
+        return $paymentData;
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function processKlarna_old($formData)
     {
         $paymentData = array();
 

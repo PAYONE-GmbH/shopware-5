@@ -1312,6 +1312,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
 
         $financingtype = $this->Request()->getParam('financingtype');
+        $name = $this->moptPayonePaymentHelper->getKlarnaNameByFinancingtype($financingtype);
+        $paymentId = $this->moptPayonePaymentHelper->getPaymentIdFromName($name);
 
         $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession($financingtype);
 
@@ -1328,6 +1330,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 'status' => $result->getStatus(),
 //                'raw_response' => $result_json,
                 'client_token' => $result->getPaydata()->toAssocArray()['client_token'],
+                'paymentId' => $paymentId,
             ]);
         }
     }
