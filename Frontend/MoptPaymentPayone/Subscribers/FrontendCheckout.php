@@ -3,7 +3,7 @@
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
-use Mopt_PayoneMain;
+use Mopt_PayonePaymentHelper;
 
 class FrontendCheckout implements SubscriberInterface
 {
@@ -189,6 +189,7 @@ class FrontendCheckout implements SubscriberInterface
         $userPaymentId = $orderVars['sUserData']['additional']['payment']['id'];
 
         //check if payment method is PayPal ecs
+        /** @var Mopt_PayonePaymentHelper $helper */
         $helper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
         if ($helper->getPaymentNameFromId($userPaymentId) == 'mopt_payone__ewallet_paypal') {
             if (!$this->isShippingAddressSupported($orderVars['sUserData']['shippingaddress'])) {
@@ -196,6 +197,32 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                     ->get('packStationError', 'Die Lieferung an eine Packstation ist mit dieser Zahlungsart leider nicht möglich', true));
             }
+        }
+
+        $paymentName = $helper->getPaymentNameFromId($request->getParam('payment'));
+        if ($request->getActionName() === 'saveShippingPayment' && $helper->isPayoneKlarna($paymentName)) {
+            $router = $this->container->get('router');
+
+            $successUrl = $router->assemble(array(
+                'action'        => 'success',
+                'forceSecure'   => true,
+                'appendSession' => false,
+            ));
+            $backUrl = $router->assemble(array(
+                'action'        => 'cancel',
+                'forceSecure'   => true,
+                'appendSession' => false,
+            ));
+            $errorUrl = $router->assemble(array(
+                'action'        => 'failure',
+                'forceSecure'   => true,
+                'appendSession' => false,
+            ));
+
+            // TODO: clean session vars
+            $session->offsetSet('successUrl', $successUrl);
+            $session->offsetSet('backUrl', $backUrl);
+            $session->offsetSet('errorUrl', $errorUrl);
         }
 
         if ($request->getActionName() === 'shippingPayment') {

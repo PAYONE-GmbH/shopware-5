@@ -86,6 +86,22 @@
                 me.inputChangeHandler();
             });
 
+            me._on(me.$el.find('#mopt_payone__klarna_telephone'), 'change', function () {
+                me.inputChangeHandler();
+            });
+
+            me._on(me.$el.find('#mopt_payone__klarna_birthday'), 'change', function () {
+                me.inputChangeHandler();
+            });
+
+            me._on(me.$el.find('#mopt_payone__klarna_birthmonth'), 'change', function () {
+                me.inputChangeHandler();
+            });
+
+            me._on(me.$el.find('#mopt_payone__klarna_birthyear'), 'change', function () {
+                me.inputChangeHandler();
+            });
+
             me._on(me.$el.find('#mopt_payone__klarna_agreement'), 'change', function () {
                 me.inputChangeHandler();
             });
@@ -108,6 +124,7 @@
             me.submitPressed = true;
             console.log('submit');
 
+            // disable submit buttons
             $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
                 element.disabled = true;
             });
@@ -121,15 +138,31 @@
         inputChangeHandler: function () {
             console.log('inputChangeHandler');
             var me = this;
-            var $select = $("#mopt_payone__klarna_paymenttype");
+            var $paymenttype = $("#mopt_payone__klarna_paymenttype");
+            var $telefone = $('#mopt_payone__klarna_telephone');
+            var $birthdate_day = $('#mopt_payone__klarna_birthday');
+            var $birthdate_month = $('#mopt_payone__klarna_birthmonth');
+            var $birthdate_year = $('#mopt_payone__klarna_birthyear');
             var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
-            var financingtype = $select.val();
+            var financingtype = $paymenttype.val();
             me.financingtype = financingtype;
 
             me.unloadKlarnaWidget();
 
-            if (financingtype && $gdpr_agreement.is(':checked')) {
-                me.startKlarnaSessionCall(financingtype).done(function (response) {
+            var birthdate_day = (Array(2).join("0") + $birthdate_day.val()).slice(-2);
+            var birthdate_month = (Array(2).join("0") + $birthdate_month.val()).slice(-2);
+            var birthdate_year = $birthdate_year.val();
+            var birthdate = birthdate_year + birthdate_month + birthdate_day// yyyymmdd
+
+            var telefoneNo = $telefone.val();
+            var loadWidgetIsAllowed =
+                financingtype
+                && birthdate
+                && telefoneNo.length >= 5
+                && $gdpr_agreement.is(':checked');
+
+            if (loadWidgetIsAllowed) {
+                me.startKlarnaSessionCall(financingtype, birthdate, telefoneNo).done(function (response) {
                     response = $.parseJSON(response);
                     $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
@@ -146,9 +179,13 @@
             }
         },
 
-        startKlarnaSessionCall: function (financingtype) {
+        startKlarnaSessionCall: function (financingtype, birthdate, telefoneNo) {
             var url = data['startKlarnaSession-Url'];
-            var parameter = {'financingtype': financingtype};
+            var parameter = {
+                'financingtype': financingtype,
+                'birthdate': birthdate,
+                'telefoneNo': telefoneNo
+            };
             return $.ajax({method: "POST", url: url, data: parameter});
         },
 

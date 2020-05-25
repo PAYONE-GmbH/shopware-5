@@ -504,31 +504,23 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         return $this->mopt_payone__klarna('direct_debit');
     }
 
-        /**
-         * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
-         */
-        protected function mopt_payone__klarna($payment)
+    /**
+     * @param $payment
+     *
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__klarna($payment)
     {
-        switch ($payment) {
-            case 'old':
-                $financeType = Payone_Api_Enum_FinancingType::KLV;
-                break;
-            case 'installments':
-                $financeType = Payone_Api_Enum_FinancingType::KIS;
-                break;
-            case 'invoice':
-                $financeType = Payone_Api_Enum_FinancingType::KIV;
-                break;
-            case 'direct_debit':
-                $financeType = Payone_Api_Enum_FinancingType::KDD;
-                break;
-            default:
-                return null;
-        }
+        $financingTypes = [
+            'old' => Payone_Api_Enum_FinancingType::KLV,
+            'installments' => Payone_Api_Enum_FinancingType::KIS,
+            'invoice' => Payone_Api_Enum_FinancingType::KIV,
+            'direct_debit' => Payone_Api_Enum_FinancingType::KDD,
+        ];
 
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
 
-        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financeType);
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financingTypes[$payment]);
 
         /** @var Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Authorization_Redirect $response */
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);

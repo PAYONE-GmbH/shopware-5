@@ -3,13 +3,13 @@
 <div class="payment--form-group">
     {block name="frontend_checkout_payment_payone_telephone_label"}
         <p class="none">
-            <label for="mopt_payone__klarna_telephone">{s name='klarnaTelephoneLabel'}Telefonnummer{/s}</label>
+            <label for="mopt_payone__klarna_old_telephone">{s name='klarnaTelephoneLabel'}Telefonnummer{/s}</label>
         </p>
     {/block}
 
     {block name="frontend_checkout_payment_payone_telephone_input"}
         <input name="moptPaymentData[mopt_payone__klarna_telephone]" type="text"
-               id="mopt_payone__klarna_telephone"
+               id="mopt_payone__klarna_old_telephone"
                class="payment--field is--required{if $error_flags.mopt_payone__klarna_telephone} has--error{/if}"
                placeholder="{s name='telephoneNumber'}Telefonnummer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -19,14 +19,14 @@
 
     {block name="frontend_checkout_payment_payone_birthday_label"}
         <p class="none">
-            <label for="mopt_payone__klarna_birthday">{s name='birthdate'}Geburtsdatum{/s}</label>
+            <label for="mopt_payone__klarna_old_birthday">{s name='birthdate'}Geburtsdatum{/s}</label>
         </p>
     {/block}
 
     <div class="select-field">
         {block name="frontend_checkout_payment_payone_birthday_day_input"}
             <select name="moptPaymentData[mopt_payone__klarna_birthday]"
-                    id="mopt_payone__klarna_birthday"
+                    id="mopt_payone__klarna_old_birthday"
                     class="select--country is--required{if $error_flags.mopt_payone__klarna_birthday} has--error{/if}"
                     {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
             >
@@ -44,7 +44,7 @@
     <div class="select-field">
         {block name="frontend_checkout_payment_payone_birthday_month_input"}
             <select name="moptPaymentData[mopt_payone__klarna_birthmonth]"
-                    id="mopt_payone__klarna_birthmonth"
+                    id="mopt_payone__klarna_old_birthmonth"
                     class="select--country is--required{if $error_flags.mopt_payone__klarna_birthmonth} has--error{/if}"
                     {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
             >
@@ -62,7 +62,7 @@
     <div class="select-field">
         {block name="frontend_checkout_payment_payone_birthday_year_input"}
             <select name="moptPaymentData[mopt_payone__klarna_birthyear]"
-                    id="mopt_payone__klarna_birthyear"
+                    id="mopt_payone__klarna_old_birthyear"
                     class="select--country is--required{if $error_flags.mopt_payone__klarna_birthyear} has--error{/if}"
                     {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
             >
@@ -78,10 +78,10 @@
     </div>
 
     <p class="none clearfix">
-        <input name="moptPaymentData[mopt_payone__klarna_old_agreement]" type="checkbox"
+        <input name="moptPaymentData[mopt_payone__klarna_agreement]" type="checkbox"
                id="mopt_payone__klarna_old_agreement" value="true"
-               class="checkbox{if $error_flags.mopt_payone__klarna_old_agreement} has--error{/if}"
-               {if $form_data.mopt_payone__klarna_old_agreement eq "on"}checked="checked"{/if}
+               class="checkbox{if $error_flags.mopt_payone__klarna_agreement} has--error{/if}"
+               {if $form_data.mopt_payone__klarna_agreement eq "on"}checked="checked"{/if}
         />
         <label for="mopt_payone__klarna_old_agreement" style="float: none; width: 100%; display: inline">
             {block name="frontend_checkout_payment_payone_consent"}

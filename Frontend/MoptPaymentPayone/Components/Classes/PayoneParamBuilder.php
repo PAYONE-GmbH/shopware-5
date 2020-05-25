@@ -1076,7 +1076,7 @@ class Mopt_PayoneParamBuilder
      * create klarna payment object
      *
      * @param string $financeType
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
+     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
      */
     public function getPaymentKlarna($financeType)
     {
@@ -1085,6 +1085,35 @@ class Mopt_PayoneParamBuilder
         $params['financingtype'] = $financeType;
 
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing($params);
+
+        // if payment is Klarna old
+        if ($financeType === Payone_Api_Enum_FinancingType::KLV) {
+            return $payment;
+        }
+
+        return $this->addKlarnaPaymentParameters($payment);
+    }
+
+    /**
+     * @param Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing $payment
+     *
+     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
+     */
+    public function addKlarnaPaymentParameters($payment) {
+        $session = Shopware()->Session();
+        $authorizationToken = $session->offsetGet('moptKlarnaPaymentTokenExt');
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'authorization_token', 'data' => $authorizationToken)
+        ));
+
+        $payment->setPaydata($paydata);
+
+        $payment->setSuccessurl($session->offsetGet('successUrl'));
+        $payment->setBackurl($session->offsetGet('backUrl'));
+        $payment->setErrorurl($session->offsetGet('errorUrl'));
+
         return $payment;
     }
 
@@ -1860,11 +1889,8 @@ class Mopt_PayoneParamBuilder
         return $walletParams;
     }
 
-    public function buildKlarnaSessionStartParams($paymentFinancingtype, $basket, $userData, $shippingCosts)
+    public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts)
     {
-        $name = $this->payonePaymentHelper->getKlarnaNameByFinancingtype($paymentFinancingtype);
-        $paymentId = $this->payonePaymentHelper->getPaymentIdFromName($name);
-        $params = $this->getAuthParameters($paymentId);
         $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
         $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(array(
@@ -1872,18 +1898,14 @@ class Mopt_PayoneParamBuilder
             'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION,
         )));
 
-        if (!empty($userData['additional']['country']['countryiso'])) {
-            $country = $userData['additional']['country']['countryiso'];
-        } else {
-            $country = $this->getCountryFromId($userData['billingaddress']['countryID']);
-        }
-
-        $params['clearingtype'] = 'fnc';
+        $name = $this->payonePaymentHelper->getKlarnaNameByFinancingtype($paymentFinancingtype);
+        $paymentId = $this->payonePaymentHelper->getPaymentIdFromName($name);
+        $params = $this->getAuthParameters($paymentId);
+        $params['clearingtype'] = $clearingtype;
         $params['financingtype'] = $paymentFinancingtype;
-        $params['paydata'] = $payData;
         $params['amount'] = $basket['AmountNumeric'] + $shippingCosts['brutto'];
+        $params['paydata'] = $payData;
         $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
-        $params['country'] = $country;
         foreach ($basket['content'] as $id => $article) {
             $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
         }
