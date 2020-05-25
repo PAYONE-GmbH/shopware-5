@@ -94,7 +94,8 @@
         submitHandler: function (event) {
             var me = this;
 
-            if ($('input[name=payment]:checked', '#shippingPaymentForm').val() !== 'mopt_payone_klarna') {
+            var checkedRadioId = $('input[name=payment]:checked', '#shippingPaymentForm').attr('id');
+            if (checkedRadioId !== 'payment_meanmopt_payone_klarna') {
                 return;
             }
 
@@ -121,23 +122,25 @@
             console.log('inputChangeHandler');
             var me = this;
             var $select = $("#mopt_payone__klarna_paymenttype");
-            var $checkbox = $('#mopt_payone__klarna_agreement');
+            var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
             var financingtype = $select.val();
             me.financingtype = financingtype;
 
             me.unloadKlarnaWidget();
 
-            if (financingtype && $checkbox.is(':checked')) {
+            if (financingtype && $gdpr_agreement.is(':checked')) {
                 me.startKlarnaSessionCall(financingtype).done(function (response) {
                     response = $.parseJSON(response);
                     $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
                     me.loadKlarnaWidget(financingtype, response['client_token']).done(function () {
                         console.log('widget loaded');
-                        if (me.submitPressed) {
-                            console.log('call authorize [change]');
-                            me.authorize();
+                        if (!me.submitPressed) {
+                            return;
                         }
+
+                        console.log('call authorize [change]');
+                        me.authorize();
                     });
                 });
             }
