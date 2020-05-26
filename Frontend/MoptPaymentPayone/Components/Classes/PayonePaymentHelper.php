@@ -1558,7 +1558,7 @@ class Mopt_PayonePaymentHelper
 
         $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
 
-        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts);
+        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts, $userData);
         $request = new Payone_Api_Request_Genericpayment($params);
 
         $basket['sShippingcosts'] = $shippingCosts['brutto'];
@@ -1568,6 +1568,10 @@ class Mopt_PayonePaymentHelper
 
         $personalData = $paramBuilder->getPersonalData($userData);
         $request->setPersonalData($personalData);
+        $deliveryData = $paramBuilder->getDeliveryData($userData);
+        $request->setDeliveryData($deliveryData);
+
+
 
         $selectedDispatchId = Shopware()->Session()['sDispatch'];
         $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);

@@ -1103,7 +1103,7 @@ class Mopt_PayoneParamBuilder
         $session = Shopware()->Session();
         $authorizationToken = $session->offsetGet('moptKlarnaPaymentTokenExt');
 
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata = $this->buildKlarnaPaydata();
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'authorization_token', 'data' => $authorizationToken)
         ));
@@ -1891,12 +1891,11 @@ class Mopt_PayoneParamBuilder
 
     public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts)
     {
-        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata = $this->buildKlarnaPaydata();
 
-        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(array(
-            'key'  => 'action',
-            'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION,
-        )));
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key'  => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION)
+        ));
 
         $name = $this->payonePaymentHelper->getKlarnaNameByFinancingtype($paymentFinancingtype);
         $paymentId = $this->payonePaymentHelper->getPaymentIdFromName($name);
@@ -1904,12 +1903,26 @@ class Mopt_PayoneParamBuilder
         $params['clearingtype'] = $clearingtype;
         $params['financingtype'] = $paymentFinancingtype;
         $params['amount'] = $basket['AmountNumeric'] + $shippingCosts['brutto'];
-        $params['paydata'] = $payData;
+        $params['paydata'] = $paydata;
         $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
         foreach ($basket['content'] as $id => $article) {
             $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
         }
 
         return $params;
+    }
+
+    /**
+     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     */
+    protected function buildKlarnaPaydata() {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key'  => 'shipping_email', 'data' => $userData['additional']['user']['email'])
+        ));
+
+        return $paydata;
     }
 }
