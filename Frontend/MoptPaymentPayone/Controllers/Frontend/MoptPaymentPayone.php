@@ -505,11 +505,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * @param $payment
+     * @param $paymentShortName
      *
      * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
      */
-    protected function mopt_payone__klarna($payment)
+    protected function mopt_payone__klarna($paymentShortName)
     {
         $financingTypes = [
             'old' => Payone_Api_Enum_FinancingType::KLV,
@@ -520,7 +520,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
 
-        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financingTypes[$payment]);
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financingTypes[$paymentShortName]);
 
         /** @var Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Authorization_Redirect $response */
         $response = $this->buildAndCallPayment($config, 'fnc', $payment);
