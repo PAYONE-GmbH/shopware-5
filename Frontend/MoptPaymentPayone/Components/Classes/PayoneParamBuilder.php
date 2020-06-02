@@ -106,6 +106,10 @@ class Mopt_PayoneParamBuilder
             $params['financingtype'] = Payone_Api_Enum_FinancingType::PPI;
         }
 
+        if ($this->payonePaymentHelper->isPayoneKlarna($paymentName)) {
+            $params['capturemode'] = $finalize ? 'completed' : 'notcompleted';
+        }
+
 
         //create business object (used for settleaccount param)
         $business = new Payone_Api_Request_Parameter_Capture_Business();
