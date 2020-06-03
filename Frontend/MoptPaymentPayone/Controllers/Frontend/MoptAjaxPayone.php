@@ -1314,11 +1314,11 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $financingtype = $this->Request()->getParam('financingtype');
         $birthdate = $this->Request()->getParam('birthdate');
-        $telefoneNo = $this->Request()->getParam('telefoneNo');
+        $phoneNumber = $this->Request()->getParam('phoneNumber');
         $name = $this->moptPayonePaymentHelper->getKlarnaNameByFinancingtype($financingtype);
         $paymentId = $this->moptPayonePaymentHelper->getPaymentIdFromName($name);
 
-        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession($financingtype, $birthdate, $telefoneNo);
+        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession($financingtype, $birthdate, $phoneNumber);
 
         if ($result->getStatus() === 'ERROR') {
             echo json_encode([
