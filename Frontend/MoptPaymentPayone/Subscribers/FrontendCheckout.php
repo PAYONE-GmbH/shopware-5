@@ -304,8 +304,8 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('billingAddressStreetAddress', $userData['billingaddress']['street']);
 
             // customer
-            $view->assign('customerDateOfBirth', '');
-            $view->assign('customerGender', '');
+            $view->assign('customerDateOfBirth', $userData['additional']['user']['birthday']);
+            $view->assign('customerGender', $userData['additional']['user']['salutation']);
             $view->assign('customerNationalIdentificationNumber', '');
 
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
