@@ -129,38 +129,56 @@
             }
         },
 
-        inputChangeHandler: function () {
-            console.log('inputChangeHandler');
-            var me = this;
-            var $paymenttype = $("#mopt_payone__klarna_paymenttype");
-            var $telefone = $('#mopt_payone__klarna_telephone');
+        generateBirthDate: function (customerDateOfBirth_fromTemplate) {
+            if (customerDateOfBirth_fromTemplate) {
+                return customerDateOfBirth_fromTemplate
+            }
+
+            var birthdate;
+
             var $birthdate_day = $('#mopt_payone__klarna_birthday');
             var $birthdate_month = $('#mopt_payone__klarna_birthmonth');
             var $birthdate_year = $('#mopt_payone__klarna_birthyear');
-            var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
-            var financingtype = $paymenttype.val();
-            me.financingtype = financingtype;
-
-            me.unloadKlarnaWidget();
 
             var birthdate_day = (Array(2).join("0") + $birthdate_day.val()).slice(-2);
             var birthdate_month = (Array(2).join("0") + $birthdate_month.val()).slice(-2);
             var birthdate_year = $birthdate_year.val();
-            var birthdate = birthdate_year + birthdate_month + birthdate_day// yyyymmdd
+            birthdate = birthdate_year + '-' + birthdate_month + '-' + birthdate_day // yyyy-mm-dd
 
-            var telefoneNo = $telefone.val();
+            return birthdate;
+        },
+
+        generatePhoneNumber: function (phoneNumber_fromTemplate) {
+            if (phoneNumber_fromTemplate) {
+                return phoneNumber_fromTemplate;
+            }
+
+            return $('#mopt_payone__klarna_telephone').val();
+        },
+
+        inputChangeHandler: function () {
+            console.log('inputChangeHandler');
+            var me = this;
+
+            me.unloadKlarnaWidget();
+
+            me.birthdate = me.generateBirthDate(me.data['customerDateOfBirth']);
+            me.billingAddressPhone = me.generatePhoneNumber(me.data['billingAddress-Phone'])
+
+            me.financingtype = $("#mopt_payone__klarna_paymenttype").val();
+            var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
             var loadWidgetIsAllowed =
-                financingtype
-                && birthdate
-                && telefoneNo.length >= 5
+                me.financingtype
+                && me.birthdate
+                && me.billingAddressPhone.length >= 5
                 && $gdpr_agreement.is(':checked');
 
             if (loadWidgetIsAllowed) {
-                me.startKlarnaSessionCall(financingtype, birthdate, telefoneNo).done(function (response) {
+                me.startKlarnaSessionCall(me.financingtype, me.birthdate, me.billingAddressPhone).done(function (response) {
                     response = $.parseJSON(response);
                     $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
-                    me.loadKlarnaWidget(financingtype, response['client_token']).done(function () {
+                    me.loadKlarnaWidget(me.financingtype, response['client_token']).done(function () {
                         console.log('widget loaded');
                         if (!me.submitPressed) {
                             return;
@@ -173,13 +191,13 @@
             }
         },
 
-        startKlarnaSessionCall: function (financingtype, birthdate, telefoneNo) {
+        startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber) {
             var me = this;
             var url = me.data['startKlarnaSession-Url'];
             var parameter = {
                 'financingtype': financingtype,
-                'birthdate': birthdate,
-                'telefoneNo': telefoneNo
+                'birthdate': birthdate.replace('-', ''),
+                'phoneNumber': phoneNumber
             };
             return $.ajax({method: "POST", url: url, data: parameter});
         },
@@ -236,7 +254,8 @@
                     family_name: data['shippingAddress-FamilyName'],
                     email: data['shippingAddress-Email'],
                     country: data['shippingAddress-Country'],
-                    title: data['shippingAddress-title']
+                    title: data['shippingAddress-Title'],
+                    phone: data['shippingAddress-Phone'] ? data['shippingAddress-Phone'] : me.billingAddressPhone
                 },
                 billing_address: {
                     street_address: data['billingAddress-StreetAddress'],
@@ -246,11 +265,14 @@
                     family_name: data['billingAddress-FamilyName'],
                     email: data['billingAddress-Email'],
                     country: data['billingAddress-Country'],
-                    title: data['billingAddress-title']
+                    title: data['billingAddress-Title'],
+                    phone: me.billingAddressPhone
                 },
-                customer_date_of_birth: data['customerDateOfBirth'],
-                customer_gender: data['customerGender'],
-                customer_national_identification_number: data['customerNationalIdentificationNumber']
+                customer: {
+                    date_of_birth: me.birthdate,
+                    gender: data['customerGender'],
+                    national_identification_number: data['customerNationalIdentificationNumber']
+                }
             };
 
             console.log('authorizeData:');
@@ -277,6 +299,9 @@
                             me.$el.submit();
                         });
                     } else {
+                        console.log('authorize declined');
+                        console.log(res);
+
                         $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
                             element.disabled = false;
                         });
