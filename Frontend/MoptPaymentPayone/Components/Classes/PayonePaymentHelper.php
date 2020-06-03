@@ -1533,7 +1533,7 @@ class Mopt_PayonePaymentHelper
             + array_slice($input, $offset + $length, NULL, TRUE);
     }
 
-    public function buildAndCallKlarnaStartSession($paymentFinancingtype, $birthdate, $telefoneNo)
+    public function buildAndCallKlarnaStartSession($paymentFinancingtype, $birthdate, $phoneNumber)
     {
         $bootstrap = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
 
@@ -1554,11 +1554,11 @@ class Mopt_PayonePaymentHelper
         $service->getServiceProtocol()->addRepository($moptPayoneApiLogRepository);
 
         $userData['additional']['user']['birthday'] = $birthdate;
-        $userData['additional']['user']['telephonenumber'] = $telefoneNo;
+        $userData['additional']['user']['telephonenumber'] = $phoneNumber;
 
         $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
 
-        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts, $userData);
+        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts);
         $request = new Payone_Api_Request_Genericpayment($params);
 
         $basket['sShippingcosts'] = $shippingCosts['brutto'];
