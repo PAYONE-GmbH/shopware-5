@@ -9,6 +9,7 @@
          data-shipping-address--given-name="{$shippingAddressGivenName}"
          data-shipping-address--postal-code="{$shippingAddressPostalCode}"
          data-shipping-address--street-address="{$shippingAddressStreetAddress}"
+         data-shipping-address--title="{$shippingAddressStreetTitle}"
          data-billing-address--city="{$billingAddressCity}"
          data-billing-address--country="{$billingAddressCountry}"
          data-billing-address--email="{$billingAddressEmail}"
@@ -16,6 +17,7 @@
          data-billing-address--given-name="{$billingAddressGivenName}"
          data-billing-address--postal-code="{$billingAddressPostalCode}"
          data-billing-address--street-address="{$billingAddressStreetAddress}"
+         data-billing-address--title="{$billingAddressStreetTitle}"
          data-order-lines='{$klarnaOrderLines}'
          data-customer-date-of-birth="{$customerDateOfBirth}"
          data-customer-gender="{$customerGender}"

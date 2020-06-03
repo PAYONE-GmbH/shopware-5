@@ -235,7 +235,8 @@
                     postal_code: data['shippingAddress-PostalCode'],
                     family_name: data['shippingAddress-FamilyName'],
                     email: data['shippingAddress-Email'],
-                    country: data['shippingAddress-Country']
+                    country: data['shippingAddress-Country'],
+                    title: data['shippingAddress-title']
                 },
                 billing_address: {
                     street_address: data['billingAddress-StreetAddress'],
@@ -244,11 +245,12 @@
                     postal_code: data['billingAddress-PostalCode'],
                     family_name: data['billingAddress-FamilyName'],
                     email: data['billingAddress-Email'],
-                    country: data['billingAddress-Country']
+                    country: data['billingAddress-Country'],
+                    title: data['billingAddress-title']
                 },
-                customerDateOfBirth: data['customerDateOfBirth'],
-                customerGender: data['customerGender'],
-                customerNationalIdentificationNumber: data['customerNationalIdentificationNumber']
+                customer_date_of_birth: data['customerDateOfBirth'],
+                customer_gender: data['customerGender'],
+                customer_national_identification_number: data['customerNationalIdentificationNumber']
             };
 
             console.log('authorizeData:');

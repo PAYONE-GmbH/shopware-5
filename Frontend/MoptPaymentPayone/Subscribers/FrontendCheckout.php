@@ -284,6 +284,30 @@ class FrontendCheckout implements SubscriberInterface
                 ];
             }
 
+            $countryIso2 = $userData['additional']['country']['countryiso'];
+            $salutation = $userData['additional']['user']['salutation'];
+            switch ($countryIso2) {
+                case 'AT':
+                case 'DE':
+                    $title = ($salutation === 'mr') ? 'Herr' : 'Frau';
+                    break;
+                /** @noinspection PhpDuplicateSwitchCaseBodyInspection */
+                case 'CH':
+                    $title = ($salutation === 'mr') ? 'Herr' : 'Frau';
+                    break;
+                case 'GB':
+                case 'US':
+                    $title = ($salutation === 'mr') ? 'Mr' : 'Ms';
+                    break;
+                case 'DK':
+                case 'FI':
+                case 'SE':
+                case 'NL':
+                case 'NO':
+                    $title = ($salutation === 'mr') ? 'Dhr.' : 'Mevr.';
+                    break;
+            }
+
             $view->assign('klarnaOrderLines', json_encode($orderLines));
 
             //shipping
@@ -294,6 +318,7 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('shippingAddressGivenName', $userData['shippingaddress']['firstname']);
             $view->assign('shippingAddressPostalCode', $userData['shippingaddress']['zipcode']);
             $view->assign('shippingAddressStreetAddress', $userData['shippingaddress']['street']);
+            $view->assign('shippingAddressStreetTitle', $title);
             // billing
             $view->assign('billingAddressCity', $userData['billingaddress']['city']);
             $view->assign('billingAddressCountry', $userData['additional']['country']['countryiso']);
@@ -302,10 +327,11 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('billingAddressGivenName', $userData['billingaddress']['firstname']);
             $view->assign('billingAddressPostalCode', $userData['billingaddress']['zipcode']);
             $view->assign('billingAddressStreetAddress', $userData['billingaddress']['street']);
+            $view->assign('billingAddressStreetTitle', $title);
 
             // customer
             $view->assign('customerDateOfBirth', $userData['additional']['user']['birthday']);
-            $view->assign('customerGender', $userData['additional']['user']['salutation']);
+            $view->assign('customerGender', $salutation === 'mr' ? 'male' : 'female');
             $view->assign('customerNationalIdentificationNumber', '');
 
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
