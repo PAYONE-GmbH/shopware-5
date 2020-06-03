@@ -425,6 +425,8 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
+        file_put_contents("/var/www/sw564/var/log/klarna_authorize.json", $formData['klarna-authorize']);
+
         if (!$formData['mopt_payone__klarna_telephone']) {
             $paymentData['sErrorFlag']['mopt_payone__klarna_telephone'] = true;
         } else {

@@ -275,6 +275,11 @@
                 }
             };
 
+            // TODO: remove
+            $('<input>').attr('type','hidden').attr('name', 'moptPaymentData[klarna-authorize]').val(
+                JSON.stringify(authorizeData)
+            ).appendTo(me.$el);
+
             console.log('authorizeData:');
             console.log(authorizeData);
 
