@@ -3,6 +3,7 @@
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
+use Mopt_PayoneMain;
 use Mopt_PayonePaymentHelper;
 
 class FrontendCheckout implements SubscriberInterface
@@ -200,9 +201,9 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         $paymentName = $helper->getPaymentNameFromId($request->getParam('payment'));
-        if ($request->getActionName() === 'saveShippingPayment' && $helper->isPayoneKlarna($paymentName)) {
-            $router = $this->container->get('router');
+        $router = $this->container->get('router');
 
+        if ($request->getActionName() === 'saveShippingPayment' && $helper->isPayoneKlarna($paymentName)) {
             $successUrl = $router->assemble(array(
                 'action'        => 'success',
                 'forceSecure'   => true,
@@ -249,8 +250,51 @@ class FrontendCheckout implements SubscriberInterface
                 unset($session->moptPaypalEcsWorkerId);
             }
 
-            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            // order lines
+            /** @var Mopt_PayoneMain $moptPayoneMain */
+            $moptPayoneMain = $this->container->get('MoptPayoneMain');
 
+            $selectedDispatchId = Shopware()->Session()['sDispatch'];
+            $basket = $moptPayoneMain->sGetBasket();
+            $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            $invoicing = $moptPayoneMain->getParamBuilder()->getInvoicing($basket, $dispatch, $userData);
+
+            $orderLines = [];
+            foreach ($invoicing->getItems() as $item) {
+                $price = (int)($item->getPr() * 100);
+                $quantity = $item->getNo();
+                /** the current items index in $basket['content'] */
+                $basketItemIndex = array_search($item->getId(), array_column($basket['content'], 'ordernumber'));
+                $itemUrl = $router->assemble([
+                    'module' => 'frontend',
+                    'sViewport' => 'detail',
+                    'sArticle' => $basket['content'][$basketItemIndex]['articleID'],
+                ]);
+
+                $orderLines[] = [
+                    'reference'    => $item->getId(),
+                    'name'         => $item->getDe(),
+                    'tax_rate'     => (int)($item->getVa()),
+                    'unit_price'   => $price,
+                    'quantity'     => $quantity,
+                    'total_amount' => $price * $quantity,
+                    'image_url'    => $basket['content'][$basketItemIndex]['image']['source'],
+                    'product_url'  => $itemUrl,
+                ];
+            }
+
+            $view->assign('klarnaOrderLines', json_encode($orderLines));
+
+            //shipping
+            $view->assign('shippingAddressCity', $userData['shippingaddress']['city']);
+            $view->assign('shippingAddressCountry', $userData['additional']['country']['countryiso']);
+            $view->assign('shippingAddressEmail', $userData['additional']['user']['email']);
+            $view->assign('shippingAddressFamilyName', $userData['shippingaddress']['lastname']);
+            $view->assign('shippingAddressGivenName', $userData['shippingaddress']['firstname']);
+            $view->assign('shippingAddressPostalCode', $userData['shippingaddress']['zipcode']);
+            $view->assign('shippingAddressStreetAddress', $userData['shippingaddress']['street']);
+            // billing
             $view->assign('billingAddressCity', $userData['billingaddress']['city']);
             $view->assign('billingAddressCountry', $userData['additional']['country']['countryiso']);
             $view->assign('billingAddressEmail', $userData['additional']['user']['email']);
@@ -258,6 +302,12 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('billingAddressGivenName', $userData['billingaddress']['firstname']);
             $view->assign('billingAddressPostalCode', $userData['billingaddress']['zipcode']);
             $view->assign('billingAddressStreetAddress', $userData['billingaddress']['street']);
+
+            // customer
+            $view->assign('customerDateOfBirth', '');
+            $view->assign('customerGender', '');
+            $view->assign('customerNationalIdentificationNumber', '');
+
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
             $view->assign('locale', str_replace('_', '-', Shopware()->Shop()->getLocale()->getLocale()));
         }

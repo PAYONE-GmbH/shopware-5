@@ -2,6 +2,13 @@
 
 <div class="payment--form-group">
     <div id="mopt_payone__klarna_information" hidden
+         data-shipping-address--city="{$shippingAddressCity}"
+         data-shipping-address--country="{$shippingAddressCountry}"
+         data-shipping-address--email="{$shippingAddressEmail}"
+         data-shipping-address--family-name="{$shippingAddressFamilyName}"
+         data-shipping-address--given-name="{$shippingAddressGivenName}"
+         data-shipping-address--postal-code="{$shippingAddressPostalCode}"
+         data-shipping-address--street-address="{$shippingAddressStreetAddress}"
          data-billing-address--city="{$billingAddressCity}"
          data-billing-address--country="{$billingAddressCountry}"
          data-billing-address--email="{$billingAddressEmail}"
@@ -9,6 +16,10 @@
          data-billing-address--given-name="{$billingAddressGivenName}"
          data-billing-address--postal-code="{$billingAddressPostalCode}"
          data-billing-address--street-address="{$billingAddressStreetAddress}"
+         data-order-lines='{$klarnaOrderLines}'
+         data-customer-date-of-birth="{$customerDateOfBirth}"
+         data-customer-gender="{$customerGender}"
+         data-customer-national-indentification-number="{$customerNationalIdentificationNumber}"
          data-purchase-currency="{$purchaseCurrency}"
          data-locale="{$locale}"
          data-store-authorization-token--URL="{url controller="MoptAjaxPayone" action="storeAuthorizationToken" forceSecure}"

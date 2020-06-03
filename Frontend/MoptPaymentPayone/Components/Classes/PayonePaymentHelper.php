@@ -1571,8 +1571,6 @@ class Mopt_PayonePaymentHelper
         $deliveryData = $paramBuilder->getDeliveryData($userData);
         $request->setDeliveryData($deliveryData);
 
-
-
         $selectedDispatchId = Shopware()->Session()['sDispatch'];
         $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);
 

@@ -1,21 +1,9 @@
+// TODO: remove ALL console.log()'s
 ;(function ($, window) {
     'use strict';
 
-    var data = $('#mopt_payone__klarna_information').data();
-
-    var payTypeTranslations = {
-        KDD: 'pay_now',
-        KIV: 'pay_later',
-        KIS: 'pay_over_time'
-    };
-
     var pluginRegistered = false;
     var widgetLoaded = false;
-
-    // no Klarna payment activated
-    if (!data) {
-        return;
-    }
 
     reset();
 
@@ -25,8 +13,7 @@
     });
 
     function reset() {
-        // TODO: remove '&& false' and ALL console.log()'s
-        if (!window.moptPayonePaymentType && false) {
+        if (!window.Klarna) {
             destroyPlugin();
 
             return;
@@ -58,11 +45,18 @@
         financingtype: null,
         submitPressed: false,
         authorizationToken: null,
-        data: data,
+        data: $('#mopt_payone__klarna_information').data(),
+        payTypeTranslations: {
+            KDD: 'pay_now',
+            KIV: 'pay_later',
+            KIS: 'pay_over_time'
+        },
 
         init: function () {
             var me = this;
 
+            console.log('data:');
+            console.log(me.data);
             me.registerEventListeners();
         },
 
@@ -180,7 +174,8 @@
         },
 
         startKlarnaSessionCall: function (financingtype, birthdate, telefoneNo) {
-            var url = data['startKlarnaSession-Url'];
+            var me = this;
+            var url = me.data['startKlarnaSession-Url'];
             var parameter = {
                 'financingtype': financingtype,
                 'birthdate': birthdate,
@@ -195,6 +190,8 @@
         },
 
         loadKlarnaWidget: function (paymentType, accessToken) {
+            var me = this;
+
             if (!accessToken || accessToken.length === 0) {
                 console.log('no token');
                 return;
@@ -212,7 +209,7 @@
             return $.Deferred(function (defer) {
                 window.Klarna.Payments.load({
                     container: '#mopt_payone__klarna_payments_widget_container',
-                    payment_method_category: payTypeTranslations[paymentType]
+                    payment_method_category: me.payTypeTranslations[paymentType]
                 }, function (res) {
                     // TODO: error handling
                     widgetLoaded = true;
@@ -230,6 +227,16 @@
                 purchase_country: data['billingAddress-Country'],
                 purchase_currency: data['purchaseCurrency'],
                 locale: data['locale'],
+                order_lines: data['orderLines'],
+                shipping_address: {
+                    street_address: data['shippingAddress-StreetAddress'],
+                    city: data['shippingAddress-City'],
+                    given_name: data['shippingAddress-GivenName'],
+                    postal_code: data['shippingAddress-PostalCode'],
+                    family_name: data['shippingAddress-FamilyName'],
+                    email: data['shippingAddress-Email'],
+                    country: data['shippingAddress-Country']
+                },
                 billing_address: {
                     street_address: data['billingAddress-StreetAddress'],
                     city: data['billingAddress-City'],
@@ -238,11 +245,17 @@
                     family_name: data['billingAddress-FamilyName'],
                     email: data['billingAddress-Email'],
                     country: data['billingAddress-Country']
-                }
+                },
+                customerDateOfBirth: data['customerDateOfBirth'],
+                customerGender: data['customerGender'],
+                customerNationalIdentificationNumber: data['customerNationalIdentificationNumber']
             };
 
+            console.log('authorizeData:');
+            console.log(authorizeData);
+
             window.Klarna.Payments.authorize({
-                    payment_method_category: payTypeTranslations[me.financingtype]
+                    payment_method_category: me.payTypeTranslations[me.financingtype]
                 },
                 authorizeData,
                 function (res) {
