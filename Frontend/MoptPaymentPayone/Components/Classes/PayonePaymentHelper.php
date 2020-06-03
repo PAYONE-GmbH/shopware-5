@@ -1554,7 +1554,7 @@ class Mopt_PayonePaymentHelper
         $service->getServiceProtocol()->addRepository($moptPayoneApiLogRepository);
 
         $userData['additional']['user']['birthday'] = $birthdate;
-        $userData['additional']['user']['telephonenumber'] = $phoneNumber;
+        Shopware()->Session()->offsetSet('mopt_klarna_phoneNumber', $phoneNumber);
 
         $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
 
@@ -1585,5 +1585,38 @@ class Mopt_PayonePaymentHelper
         }
 
         return $result;
+    }
+
+    public function getKlarnaGender($userData) {
+        $salutation = $userData['additional']['user']['salutation'];
+
+        return $salutation === 'mr' ? 'male' : 'female';
+    }
+
+    public function getKlarnaTitle($userData) {
+        $countryIso2 = $userData['additional']['country']['countryiso'];
+        $salutation = $userData['additional']['user']['salutation'];
+        switch ($countryIso2) {
+            case 'AT':
+            case 'DE':
+            case 'CH':
+                $title = ($salutation === 'mr') ? 'Herr' : 'Frau';
+                break;
+            case 'GB':
+            case 'US':
+                $title = ($salutation === 'mr') ? 'Mr' : 'Ms';
+                break;
+            case 'DK':
+            case 'FI':
+            case 'SE':
+            case 'NL':
+            case 'NO':
+                $title = ($salutation === 'mr') ? 'Dhr.' : 'Mevr.';
+                break;
+            default:
+                $title = '';
+        }
+
+        return $title;
     }
 }

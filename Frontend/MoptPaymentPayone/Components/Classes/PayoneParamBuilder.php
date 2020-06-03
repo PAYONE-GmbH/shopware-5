@@ -1895,6 +1895,7 @@ class Mopt_PayoneParamBuilder
 
     public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts)
     {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $paydata = $this->buildKlarnaPaydata();
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
@@ -1909,6 +1910,8 @@ class Mopt_PayoneParamBuilder
         $params['amount'] = $basket['AmountNumeric'] + $shippingCosts['brutto'];
         $params['paydata'] = $paydata;
         $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
+        $params['telephonenumber'] = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
+        $params['title'] = $this->payonePaymentHelper->getKlarnaTitle($userData);
         foreach ($basket['content'] as $id => $article) {
             $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
         }
@@ -1920,11 +1923,21 @@ class Mopt_PayoneParamBuilder
      * @return Payone_Api_Request_Parameter_Paydata_Paydata
      */
     protected function buildKlarnaPaydata() {
+        // TODO: unset
+        $phoneNumber = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key'  => 'shipping_email', 'data' => $userData['additional']['user']['email'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key'  => 'shipping_title', 'data' => $this->payonePaymentHelper->getKlarnaTitle($userData))
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key'  => 'shipping_telephonenumber', 'data' => $phoneNumber)
         ));
 
         return $paydata;

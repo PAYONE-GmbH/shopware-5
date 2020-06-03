@@ -292,28 +292,7 @@ class FrontendCheckout implements SubscriberInterface
                 ];
             }
 
-            $countryIso2 = $userData['additional']['country']['countryiso'];
-            $salutation = $userData['additional']['user']['salutation'];
-            switch ($countryIso2) {
-                case 'AT':
-                case 'DE':
-                case 'CH':
-                    $title = ($salutation === 'mr') ? 'Herr' : 'Frau';
-                    break;
-                case 'GB':
-                case 'US':
-                    $title = ($salutation === 'mr') ? 'Mr' : 'Ms';
-                    break;
-                case 'DK':
-                case 'FI':
-                case 'SE':
-                case 'NL':
-                case 'NO':
-                    $title = ($salutation === 'mr') ? 'Dhr.' : 'Mevr.';
-                    break;
-                default:
-                    $title = '';
-            }
+            $title = $helper->getKlarnaTitle($userData);
 
             $view->assign('klarnaOrderLines', json_encode($orderLines));
 
@@ -340,7 +319,7 @@ class FrontendCheckout implements SubscriberInterface
 
             // customer
             $view->assign('customerDateOfBirth', $userData['additional']['user']['birthday']);
-            $view->assign('customerGender', $salutation === 'mr' ? 'male' : 'female');
+            $view->assign('customerGender', $helper->getKlarnaGender($userData));
             $view->assign('customerNationalIdentificationNumber', '');
 
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
