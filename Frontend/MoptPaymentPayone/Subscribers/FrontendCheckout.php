@@ -250,12 +250,20 @@ class FrontendCheckout implements SubscriberInterface
                 unset($session->moptPaypalEcsWorkerId);
             }
 
+            // Klarna
             // order lines
             /** @var Mopt_PayoneMain $moptPayoneMain */
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
 
             $selectedDispatchId = Shopware()->Session()['sDispatch'];
             $basket = $moptPayoneMain->sGetBasket();
+
+            $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
+            $basket['sShippingcosts'] = $shippingCosts['brutto'];
+            $basket['sShippingcostsWithTax'] = $shippingCosts['brutto'];
+            $basket['sShippingcostsNet'] = $shippingCosts['netto'];
+            $basket['sShippingcostsTax'] = $shippingCosts['tax'];
+
             $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);
             $userData = Shopware()->Modules()->Admin()->sGetUserData();
             $invoicing = $moptPayoneMain->getParamBuilder()->getInvoicing($basket, $dispatch, $userData);
@@ -289,9 +297,6 @@ class FrontendCheckout implements SubscriberInterface
             switch ($countryIso2) {
                 case 'AT':
                 case 'DE':
-                    $title = ($salutation === 'mr') ? 'Herr' : 'Frau';
-                    break;
-                /** @noinspection PhpDuplicateSwitchCaseBodyInspection */
                 case 'CH':
                     $title = ($salutation === 'mr') ? 'Herr' : 'Frau';
                     break;
@@ -306,6 +311,8 @@ class FrontendCheckout implements SubscriberInterface
                 case 'NO':
                     $title = ($salutation === 'mr') ? 'Dhr.' : 'Mevr.';
                     break;
+                default:
+                    $title = '';
             }
 
             $view->assign('klarnaOrderLines', json_encode($orderLines));
@@ -318,7 +325,8 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('shippingAddressGivenName', $userData['shippingaddress']['firstname']);
             $view->assign('shippingAddressPostalCode', $userData['shippingaddress']['zipcode']);
             $view->assign('shippingAddressStreetAddress', $userData['shippingaddress']['street']);
-            $view->assign('shippingAddressStreetTitle', $title);
+            $view->assign('shippingAddressTitle', $title);
+            $view->assign('shippingAddressPhone', $userData['shippingaddress']['phone']);
             // billing
             $view->assign('billingAddressCity', $userData['billingaddress']['city']);
             $view->assign('billingAddressCountry', $userData['additional']['country']['countryiso']);
@@ -327,7 +335,8 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('billingAddressGivenName', $userData['billingaddress']['firstname']);
             $view->assign('billingAddressPostalCode', $userData['billingaddress']['zipcode']);
             $view->assign('billingAddressStreetAddress', $userData['billingaddress']['street']);
-            $view->assign('billingAddressStreetTitle', $title);
+            $view->assign('billingAddressTitle', $title);
+            $view->assign('billingAddressPhone', $userData['billingaddress']['phone']);
 
             // customer
             $view->assign('customerDateOfBirth', $userData['additional']['user']['birthday']);
