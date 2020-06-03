@@ -36,6 +36,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     protected $payoneServiceBuilder;
     protected $service = null;
+    /** @var Enlight_Components_Session_Namespace $session */
     protected $session;
 
     /**
@@ -1327,6 +1328,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 'customerMessage' => $result->getCustomermessage(),
             ]);
         } else {
+            $this->session->offsetSet('mopt_klarna_workorderid', $result->getWorkorderId());
+
             // TODO: cleanup $result_json
             $result_json = $result->getRawResponse();
             echo json_encode([

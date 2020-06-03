@@ -33,6 +33,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     protected $payoneServiceBuilder = null;
     protected $service = null;
+    /** @var Enlight_Components_Session_Namespace $session*/
     protected $session = null;
 
     /**
@@ -522,8 +523,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financingTypes[$paymentShortName]);
 
+        $workorderid = $this->session->offsetGet('mopt_klarna_workorderid');
+
         /** @var Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Authorization_Redirect $response */
-        $response = $this->buildAndCallPayment($config, 'fnc', $payment);
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment, $workorderid);
 
         return $response;
     }
