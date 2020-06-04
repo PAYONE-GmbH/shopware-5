@@ -171,19 +171,19 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     public function klarnainstallmentsAction()
     {
         $response = $this->mopt_payone__klarna_installments();
-        $this->mopt_payone__handleDirectFeedback($response);
+        $this->mopt_payone__handleRedirectFeedback($response);
     }
 
     public function klarnainvoiceAction()
     {
         $response = $this->mopt_payone__klarna_invoice();
-        $this->mopt_payone__handleDirectFeedback($response);
+        $this->mopt_payone__handleRedirectFeedback($response);
     }
 
     public function klarnadirectdebitAction()
     {
         $response = $this->mopt_payone__klarna_direct_debit();
-        $this->mopt_payone__handleDirectFeedback($response);
+        $this->mopt_payone__handleRedirectFeedback($response);
     }
 
     public function barzahlenAction()
@@ -519,9 +519,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             'direct_debit' => Payone_Api_Enum_FinancingType::KDD,
         ];
 
+        $router = $this->Front()->Router();
+
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
 
-        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financingTypes[$paymentShortName]);
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentKlarna($financingTypes[$paymentShortName], $router);
 
         $workorderid = $this->session->offsetGet('mopt_klarna_workorderid');
 

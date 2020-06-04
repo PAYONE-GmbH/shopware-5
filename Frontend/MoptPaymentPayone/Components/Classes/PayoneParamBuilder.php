@@ -1080,13 +1080,20 @@ class Mopt_PayoneParamBuilder
      * create klarna payment object
      *
      * @param string $financeType
+     * @param $router
      * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
      */
-    public function getPaymentKlarna($financeType)
+    public function getPaymentKlarna($financeType, $router)
     {
         $params = array();
-
         $params['financingtype'] = $financeType;
+
+        $params['successurl'] = $router->assemble(array('action' => 'success',
+                                                      'forceSecure' => true, 'appendSession' => false));
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+                                                      'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+                                                     'forceSecure' => true, 'appendSession' => false));
 
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing($params);
 
@@ -1113,10 +1120,6 @@ class Mopt_PayoneParamBuilder
         ));
 
         $payment->setPaydata($paydata);
-
-        $payment->setSuccessurl($session->offsetGet('successUrl'));
-        $payment->setBackurl($session->offsetGet('backUrl'));
-        $payment->setErrorurl($session->offsetGet('errorUrl'));
 
         return $payment;
     }
