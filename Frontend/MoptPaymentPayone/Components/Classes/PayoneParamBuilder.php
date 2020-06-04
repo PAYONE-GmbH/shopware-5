@@ -1915,9 +1915,6 @@ class Mopt_PayoneParamBuilder
         $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
         $params['telephonenumber'] = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
         $params['title'] = $this->payonePaymentHelper->getKlarnaTitle($userData);
-        foreach ($basket['content'] as $id => $article) {
-            $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
-        }
 
         return $params;
     }
