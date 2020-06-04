@@ -332,6 +332,13 @@ class FrontendPostDispatch implements SubscriberInterface
                     unset ($payments[$paydirektexpressIndex]);
                 }
 
+                // remove Klarna payments according to supported country and currency combination
+                if ($payment['name'] === 'mopt_payone_klarna' && !$this->isCountryCurrencySupportedFromKlarna()
+                ) {
+                    $klarnaIndex = $index;
+                    unset ($payments[$klarnaIndex]);
+                }
+
             }
             unset ($payments[$amazonPayIndex]);
             $view->assign('sPayments', $payments);
@@ -771,5 +778,35 @@ class FrontendPostDispatch implements SubscriberInterface
                 return true;
             }
         }
+    }
+
+    /**
+     * Checks if klarna supports the user's billing country in combination
+     * with currency
+     * @see https://developers.klarna.com/documentation/klarna-payments/in-depth-knowledge/puchase-countries-currencies-locales/
+     * @return bool
+     */
+    protected function isCountryCurrencySupportedFromKlarna()
+    {
+        $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $currency = Shopware()->Config()->currency;
+
+        $map = array (
+            'DE' => 'EUR',
+            'AT' => 'EUR',
+            'CH' => 'CHF',
+            'NL' => 'EUR',
+            'DK' => 'DKK',
+            'NO' => 'NOK',
+            'SE' => 'SEK',
+            'FI' => 'EUR',
+            'GB' => 'GBP',
+            'US' => 'USD',
+            'AU' => 'AUD',
+        );
+
+        return ($map[$billingCountryIso] === $currency);
     }
 }

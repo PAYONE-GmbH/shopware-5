@@ -1940,6 +1940,16 @@ class Mopt_PayoneParamBuilder
             array('key'  => 'shipping_telephonenumber', 'data' => $phoneNumber)
         ));
 
+/*        if ($userData['billingaddress']['company']) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key'  => 'organization_entity_type', 'data' => 'OTHER')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key'  => 'organization_registry_id', 'data' => $userData['billingaddress']['vatId'])
+            ));
+        }
+*/
+
         return $paydata;
     }
 }
