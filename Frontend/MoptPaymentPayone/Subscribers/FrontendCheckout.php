@@ -273,6 +273,7 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('klarnaOrderLines', json_encode($orderLines));
             $view->assign('isKlarnaBirthdayNeeded', $this->isKlarnaBirthdayNeeded());
             $view->assign('isKlarnaTelephoneNeeded', $this->isKlarnaTelephoneNeeded());
+            $view->assign('isKlarnaPersonalIdNeeded', $this->isKlarnaPersonalIdNeeded());
             //shipping
             $view->assign('shippingAddressCity', $userData['shippingaddress']['city']);
             $view->assign('shippingAddressCountry', $userData['additional']['country']['countryiso']);
@@ -301,7 +302,7 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('customerDateOfBirth', '0000-00-00');
             }
             $view->assign('customerGender', $helper->getKlarnaGender($userData));
-            $view->assign('customerNationalIdentificationNumber', '');
+            $view->assign('customerNationalIdentificationNumber',$userData['additional']['user']['mopt_payone_klarna_personalid']);
 
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
             $view->assign('locale', str_replace('_', '-', Shopware()->Shop()->getLocale()->getLocale()));
@@ -580,6 +581,19 @@ class FrontendCheckout implements SubscriberInterface
         $isTelephoneValid = $this->isTelephoneValid();
         $isTelephoneNeededByCountry = $this->isTelephoneNeededByCountry();
         $needed = !$isTelephoneValid && $isTelephoneNeededByCountry;
+         return $needed;
+    }
+
+    /**
+     * Check if telephone field needs to be shown
+     *
+     * @return bool
+     */
+    private function isKlarnaPersonalIdNeeded()
+    {
+        $isPersonalIdValid = $this->isPersonalIdValid();
+        $isPersonalIdNeededByCountry = $this->isPersonalIdNeededByCountry();
+        $needed = !$isPersonalIdValid && $isPersonalIdNeededByCountry;
         return $needed;
     }
 
@@ -608,6 +622,18 @@ class FrontendCheckout implements SubscriberInterface
     }
 
     /**
+     * Checks if current users personalid number is valid
+     *
+     * @return bool
+     */
+    private function isPersonalIdValid()
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        return !is_null($userData['additional']['user']['mopt_payone_klarna_personalid']) && $userData['additional']['user']['mopt_payone_klarna_personalid'] !== '';
+    }
+
+    /**
      * Checks if birthday is mandatory for klarna payments depending on country
      *
      * @return bool
@@ -633,5 +659,19 @@ class FrontendCheckout implements SubscriberInterface
         $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
         $klarnaTelephoneNeededCountries = array('NO', 'SE', 'DK');
         return in_array($billingCountryIso, $klarnaTelephoneNeededCountries);
+    }
+
+    /**
+     * Checks if personalid is mandatory for klarna payments depending on country
+     *
+     * @return bool
+     */
+    private function isPersonalIdNeededByCountry()
+    {
+        $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $klarnaPersonalIdNeededCountries = array('NO', 'SE', 'DK'); // SE verified FI unsure
+        return in_array($billingCountryIso, $klarnaPersonalIdNeededCountries);
     }
 }
