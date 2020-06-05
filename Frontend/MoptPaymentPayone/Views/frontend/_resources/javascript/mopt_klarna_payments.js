@@ -131,9 +131,15 @@
 
         generateBirthDate: function (customerDateOfBirth_fromTemplate) {
             if (customerDateOfBirth_fromTemplate) {
+                console.log('from Template');
+                if (customerDateOfBirth_fromTemplate == '0000-00-00') {
+                    return '';
+                } else {
                 return customerDateOfBirth_fromTemplate
+                }
             }
 
+            console.log('from SELECT');
             var birthdate;
 
             var $birthdate_day = $('#mopt_payone__klarna_birthday');
@@ -159,18 +165,24 @@
         inputChangeHandler: function () {
             console.log('inputChangeHandler');
             var me = this;
+            var birthdate_day = $('#mopt_payone__klarna_birthday');
+            var birthdate_month = $('#mopt_payone__klarna_birthmonth');
+            var birthdate_year = $('#mopt_payone__klarna_birthyear');
 
             me.unloadKlarnaWidget();
 
             me.birthdate = me.generateBirthDate(me.data['customerDateOfBirth']);
+            console.log('me.birthdate');
+            console.log(me.birthdate);
             me.billingAddressPhone = me.generatePhoneNumber(me.data['billingAddress-Phone'])
 
             me.financingtype = $("#mopt_payone__klarna_paymenttype").val();
             var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
             var loadWidgetIsAllowed =
                 me.financingtype
-                && me.birthdate
-                && me.billingAddressPhone.length >= 5
+                // && me.birthdate
+                && birthdate_day && birthdate_month && birthdate_year
+                // && me.billingAddressPhone.length >= 5
                 && $gdpr_agreement.is(':checked');
 
             if (loadWidgetIsAllowed) {

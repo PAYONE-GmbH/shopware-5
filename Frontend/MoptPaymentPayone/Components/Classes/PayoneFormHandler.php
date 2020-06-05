@@ -427,40 +427,12 @@ class Mopt_PayoneFormHandler
 
         file_put_contents("/var/www/sw564/var/log/klarna_authorize.json", $formData['klarna-authorize']);
 
-        if (!$formData['mopt_payone__klarna_telephone']) {
-            $paymentData['sErrorFlag']['mopt_payone__klarna_telephone'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__klarna_telephone'] = $formData['mopt_payone__klarna_telephone'];
-        }
-
-        if (!$formData['mopt_payone__klarna_birthyear']) {
-            $paymentData['sErrorFlag']['mopt_payone__klarna_birthyear'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__klarna_birthyear'] = $formData['mopt_payone__klarna_birthyear'];
-        }
-
-        if (!$formData['mopt_payone__klarna_birthmonth']) {
-            $paymentData['sErrorFlag']['mopt_payone__klarna_birthmonth'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__klarna_birthmonth'] = $formData['mopt_payone__klarna_birthmonth'];
-        }
-
-        if (!$formData['mopt_payone__klarna_birthday']) {
-            $paymentData['sErrorFlag']['mopt_payone__klarna_birthday'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__klarna_birthday'] = $formData['mopt_payone__klarna_birthday'];
-        }
+        // validation of fields was already done in klarna widget
+        $paymentData['formData']['mopt_payone__klarna_telephone'] = $formData['mopt_payone__klarna_telephone'];
+        $paymentData['formData']['mopt_payone__klarna_birthyear'] = $formData['mopt_payone__klarna_birthyear'];
+        $paymentData['formData']['mopt_payone__klarna_birthmonth'] = $formData['mopt_payone__klarna_birthmonth'];
+        $paymentData['formData']['mopt_payone__klarna_birthday'] = $formData['mopt_payone__klarna_birthday'];
         $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
-
-        if (!$formData['mopt_payone__klarna_agreement'] || !in_array($formData['mopt_payone__klarna_agreement'], array('on', true))) {
-            $paymentData['sErrorFlag']['mopt_payone__klarna_agreement'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__klarna_agreement'] = $formData['mopt_payone__klarna_agreement'];
-        }
-
-        if ($paymentData['sErrorFlag']['mopt_payone__klarna_telephone'] || $paymentData['sErrorFlag']['mopt_payone__klarna_birthyear'] || $paymentData['sErrorFlag']['mopt_payone__klarna_birthmonth'] || $paymentData['sErrorFlag']['mopt_payone__klarna_birthday']) {
-            $paymentData['formData']['mopt_save_birthday_and_phone'] = false;
-        }
 
         $this->setFormSubmittedFlag();
 

@@ -200,31 +200,7 @@ class FrontendCheckout implements SubscriberInterface
             }
         }
 
-        $paymentName = $helper->getPaymentNameFromId($request->getParam('payment'));
         $router = $this->container->get('router');
-
-        if ($request->getActionName() === 'saveShippingPayment' && $helper->isPayoneKlarna($paymentName)) {
-            $successUrl = $router->assemble(array(
-                'action'        => 'success',
-                'forceSecure'   => true,
-                'appendSession' => false,
-            ));
-            $backUrl = $router->assemble(array(
-                'action'        => 'cancel',
-                'forceSecure'   => true,
-                'appendSession' => false,
-            ));
-            $errorUrl = $router->assemble(array(
-                'action'        => 'failure',
-                'forceSecure'   => true,
-                'appendSession' => false,
-            ));
-
-            // TODO: clean session vars
-            $session->offsetSet('successUrl', $successUrl);
-            $session->offsetSet('backUrl', $backUrl);
-            $session->offsetSet('errorUrl', $errorUrl);
-        }
 
         if ($request->getActionName() === 'shippingPayment') {
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
@@ -295,7 +271,8 @@ class FrontendCheckout implements SubscriberInterface
             $title = $helper->getKlarnaTitle($userData);
 
             $view->assign('klarnaOrderLines', json_encode($orderLines));
-
+            $view->assign('isKlarnaBirthdayNeeded', $this->isKlarnaBirthdayNeeded());
+            $view->assign('isKlarnaTelephoneNeeded', $this->isKlarnaTelephoneNeeded());
             //shipping
             $view->assign('shippingAddressCity', $userData['shippingaddress']['city']);
             $view->assign('shippingAddressCountry', $userData['additional']['country']['countryiso']);
@@ -318,7 +295,11 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('billingAddressPhone', $userData['billingaddress']['phone']);
 
             // customer
-            $view->assign('customerDateOfBirth', $userData['additional']['user']['birthday']);
+            if (!is_null($userData['additional']['user']['birthday'])) {
+                $view->assign('customerDateOfBirth', $userData['additional']['user']['birthday']);
+            } else {
+                $view->assign('customerDateOfBirth', '0000-00-00');
+            }
             $view->assign('customerGender', $helper->getKlarnaGender($userData));
             $view->assign('customerNationalIdentificationNumber', '');
 
@@ -574,5 +555,83 @@ class FrontendCheckout implements SubscriberInterface
             }
         }
         return true;
+    }
+
+    /**
+     * Check if birthday field needs to be shown
+     *
+     * @return bool
+     */
+    private function isKlarnaBirthdayNeeded()
+    {
+        $isBirthdayValid = $this->isBirthdayValid();
+        $isBirthdayNeededByCountry = $this->isBirthdayNeededByCountry();
+        $needed = !$isBirthdayValid && $isBirthdayNeededByCountry;
+        return $needed;
+    }
+
+    /**
+     * Check if telephone field needs to be shown
+     *
+     * @return bool
+     */
+    private function isKlarnaTelephoneNeeded()
+    {
+        $isTelephoneValid = $this->isTelephoneValid();
+        $isTelephoneNeededByCountry = $this->isTelephoneNeededByCountry();
+        $needed = !$isTelephoneValid && $isTelephoneNeededByCountry;
+        return $needed;
+    }
+
+    /**
+     * Checks if current users birthday is valid
+     *
+     * @return bool
+     */
+    private function isBirthdayValid()
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        return !is_null($userData['additional']['user']['birthday']) && $userData['additional']['user']['birthday'] !== '' && $userData['additional']['user']['birthday'] !== '0000-00-00';
+    }
+
+    /**
+     * Checks if current users telephone number is valid
+     *
+     * @return bool
+     */
+    private function isTelephoneValid()
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        return !is_null($userData['additional']['user']['phone']) && $userData['additional']['user']['phone'] !== '';
+    }
+
+    /**
+     * Checks if birthday is mandatory for klarna payments depending on country
+     *
+     * @return bool
+     */
+    private function isBirthdayNeededByCountry()
+    {
+        $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $klarnaBirthdayNeededCountries = array('DE', 'NL', 'AT', 'CH');
+        return in_array($billingCountryIso, $klarnaBirthdayNeededCountries);
+    }
+
+    /**
+     * Checks if telephone is mandatory for klarna payments depending on country
+     *
+     * @return bool
+     */
+    private function isTelephoneNeededByCountry()
+    {
+        $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $klarnaTelephoneNeededCountries = array('NO', 'SE', 'DK');
+        return in_array($billingCountryIso, $klarnaTelephoneNeededCountries);
     }
 }

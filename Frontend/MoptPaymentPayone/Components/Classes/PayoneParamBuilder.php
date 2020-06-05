@@ -482,7 +482,7 @@ class Mopt_PayoneParamBuilder
 
         $params['gender'] = ($billingAddress['salutation'] === 'mr') ? 'm' : 'f';
         $params['salutation'] = ($billingAddress['salutation'] === 'mr') ? 'Herr' : 'Frau';
-        if ($userData['additional']['user']['birthday'] !== '0000-00-00') {
+        if (!is_null($userData['additional']['user']['birthday']) && $userData['additional']['user']['birthday'] !== '0000-00-00') {
             $params['birthday'] = str_replace('-', '', $userData['additional']['user']['birthday']); //YYYYMMDD
         }
 

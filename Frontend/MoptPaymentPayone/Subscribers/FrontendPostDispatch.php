@@ -448,8 +448,13 @@ class FrontendPostDispatch implements SubscriberInterface
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
-                $birthday = explode('-', $userData['additional']['user']['birthday']);
 
+                if (is_null($userData['additional']['user']['birthday'])) {
+                    $birthday = '0000-00-00';
+
+                } else {
+                    $birthday = explode('-', $userData['additional']['user']['birthday']);
+                }
                 $data['mopt_payone__klarna_birthday'] = $birthday[2];
                 $data['mopt_payone__klarna_birthmonth'] = $birthday[1];
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
