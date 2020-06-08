@@ -84,6 +84,10 @@
                 me.inputChangeHandler();
             });
 
+            me._on(me.$el.find('#mopt_payone__klarna_personalId'), 'change', function () {
+                me.inputChangeHandler();
+            });
+
             me._on(me.$el.find('#mopt_payone__klarna_birthday'), 'change', function () {
                 me.inputChangeHandler();
             });
@@ -159,10 +163,7 @@
         inputChangeHandler: function () {
             console.log('inputChangeHandler');
             var me = this;
-            var birthdate_day = $('#mopt_payone__klarna_birthday');
-            var birthdate_month = $('#mopt_payone__klarna_birthmonth');
-            var birthdate_year = $('#mopt_payone__klarna_birthyear');
-            var personalId = $('#mopt_payone__klarna_personalId');
+            var personalId = $('#mopt_payone__klarna_personalId').val();
 
             me.unloadKlarnaWidget();
 

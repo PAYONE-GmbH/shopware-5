@@ -79,7 +79,7 @@
         <input name="moptPaymentData[mopt_payone__klarna_personalId]" type="text" {if ! $isKlarnaPersonalIdNeeded} style="display: none;" {/if}
                id="mopt_payone__klarna_personalId"
                class="payment--field {if $isKlarnaPersonalIdNeeded}is--required{/if} {if $error_flags.mopt_payone__klarna_personalId} has--error{/if}"
-               placeholder="{s name='personalId'}PersonalId :$isKlarnaTelephoneNeeded:{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+               placeholder="{s name='personalId'}PersonalId :{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
                 {if $payment_mean.id == $form_data.payment && $isKlarnaPersonalIdNeeded}required="required" aria-required="true"{/if}
                value="{$moptCreditCardCheckEnvironment.mopt_payone__klarna_personalId|escape}"
         />
