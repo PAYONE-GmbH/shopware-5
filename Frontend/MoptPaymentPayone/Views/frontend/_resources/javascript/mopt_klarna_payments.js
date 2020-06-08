@@ -168,6 +168,7 @@
             var birthdate_day = $('#mopt_payone__klarna_birthday');
             var birthdate_month = $('#mopt_payone__klarna_birthmonth');
             var birthdate_year = $('#mopt_payone__klarna_birthyear');
+            var personalid = $('#mopt_payone__klarna_personalid');
 
             me.unloadKlarnaWidget();
 
@@ -182,11 +183,12 @@
                 me.financingtype
                 // && me.birthdate
                 && birthdate_day && birthdate_month && birthdate_year
+                && personalid
                 // && me.billingAddressPhone.length >= 5
                 && $gdpr_agreement.is(':checked');
 
             if (loadWidgetIsAllowed) {
-                me.startKlarnaSessionCall(me.financingtype, me.birthdate, me.billingAddressPhone).done(function (response) {
+                me.startKlarnaSessionCall(me.financingtype, me.birthdate, me.billingAddressPhone, personalid).done(function (response) {
                     response = $.parseJSON(response);
                     $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
@@ -203,13 +205,14 @@
             }
         },
 
-        startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber) {
+        startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber, personalid) {
             var me = this;
             var url = me.data['startKlarnaSession-Url'];
             var parameter = {
                 'financingtype': financingtype,
                 'birthdate': birthdate.replace('-', ''),
-                'phoneNumber': phoneNumber
+                'phoneNumber': phoneNumber,
+                'personalid' : personalid
             };
             return $.ajax({method: "POST", url: url, data: parameter});
         },
