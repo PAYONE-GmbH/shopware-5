@@ -130,16 +130,10 @@
         },
 
         generateBirthDate: function (customerDateOfBirth_fromTemplate) {
-            if (customerDateOfBirth_fromTemplate) {
-                console.log('from Template');
-                if (customerDateOfBirth_fromTemplate == '0000-00-00') {
-                    return '';
-                } else {
+            if (customerDateOfBirth_fromTemplate && customerDateOfBirth_fromTemplate !== '0000-00-00') {
                 return customerDateOfBirth_fromTemplate
-                }
             }
 
-            console.log('from SELECT');
             var birthdate;
 
             var $birthdate_day = $('#mopt_payone__klarna_birthday');
@@ -168,27 +162,24 @@
             var birthdate_day = $('#mopt_payone__klarna_birthday');
             var birthdate_month = $('#mopt_payone__klarna_birthmonth');
             var birthdate_year = $('#mopt_payone__klarna_birthyear');
-            var personalid = $('#mopt_payone__klarna_personalid');
+            var personalId = $('#mopt_payone__klarna_personalId');
 
             me.unloadKlarnaWidget();
 
             me.birthdate = me.generateBirthDate(me.data['customerDateOfBirth']);
-            console.log('me.birthdate');
-            console.log(me.birthdate);
             me.billingAddressPhone = me.generatePhoneNumber(me.data['billingAddress-Phone'])
 
             me.financingtype = $("#mopt_payone__klarna_paymenttype").val();
             var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
             var loadWidgetIsAllowed =
                 me.financingtype
-                // && me.birthdate
-                && birthdate_day && birthdate_month && birthdate_year
-                && personalid
-                // && me.billingAddressPhone.length >= 5
+                && me.birthdate
+                && personalId
+                && me.billingAddressPhone.length >= 5
                 && $gdpr_agreement.is(':checked');
 
             if (loadWidgetIsAllowed) {
-                me.startKlarnaSessionCall(me.financingtype, me.birthdate, me.billingAddressPhone, personalid).done(function (response) {
+                me.startKlarnaSessionCall(me.financingtype, me.birthdate, me.billingAddressPhone, personalId).done(function (response) {
                     response = $.parseJSON(response);
                     $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
@@ -205,14 +196,14 @@
             }
         },
 
-        startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber, personalid) {
+        startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber, personalId) {
             var me = this;
             var url = me.data['startKlarnaSession-Url'];
             var parameter = {
                 'financingtype': financingtype,
                 'birthdate': birthdate.replace('-', ''),
                 'phoneNumber': phoneNumber,
-                'personalid' : personalid
+                'personalid' : personalId
             };
             return $.ajax({method: "POST", url: url, data: parameter});
         },
@@ -291,7 +282,7 @@
             };
 
             // TODO: remove
-            $('<input>').attr('type','hidden').attr('name', 'moptPaymentData[klarna-authorize]').val(
+            $('<input>').attr('type', 'hidden').attr('name', 'moptPaymentData[klarna-authorize]').val(
                 JSON.stringify(authorizeData)
             ).appendTo(me.$el);
 

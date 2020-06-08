@@ -69,19 +69,19 @@
         />
     {/block}
 
-    {block name="frontend_checkout_payment_payone_personalid_label"}
+    {block name="frontend_checkout_payment_payone_personalId_label"}
         <p class="none" {if ! $isKlarnaPersonalIdNeeded} style="display: none;" {/if}>
-            <label for="mopt_payone__klarna_personalid">{s name='klarnaPersonalidLabel'}{/s}Personalid</label>
+            <label for="mopt_payone__klarna_personalId">{s name='klarnaPersonalIdLabel'}{/s}Personal Id</label>
         </p>
     {/block}
 
-    {block name="frontend_checkout_payment_payone_personalid_input"}
-        <input name="moptPaymentData[mopt_payone__klarna_personalid]" type="text" {if ! $isKlarnaPersonalIdNeeded} style="display: none;" {/if}
-               id="mopt_payone__klarna_personalid"
-               class="payment--field {if $isKlarnaPersonalIdNeeded}is--required{/if} {if $error_flags.mopt_payone__klarna_personalid} has--error{/if}"
-               placeholder="{s name='personalid'}PersonalId :$isKlarnaTelephoneNeeded:{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+    {block name="frontend_checkout_payment_payone_personalId_input"}
+        <input name="moptPaymentData[mopt_payone__klarna_personalId]" type="text" {if ! $isKlarnaPersonalIdNeeded} style="display: none;" {/if}
+               id="mopt_payone__klarna_personalId"
+               class="payment--field {if $isKlarnaPersonalIdNeeded}is--required{/if} {if $error_flags.mopt_payone__klarna_personalId} has--error{/if}"
+               placeholder="{s name='personalId'}PersonalId :$isKlarnaTelephoneNeeded:{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
                 {if $payment_mean.id == $form_data.payment && $isKlarnaPersonalIdNeeded}required="required" aria-required="true"{/if}
-               value="{$moptCreditCardCheckEnvironment.mopt_payone__klarna_personalid|escape}"
+               value="{$moptCreditCardCheckEnvironment.mopt_payone__klarna_personalId|escape}"
         />
     {/block}
 
