@@ -40,7 +40,10 @@
                 class="select--country"
         >
             <option disabled="disabled" value=""
-                    selected="selected">{s name='klarna-paymentType'}Klarna Zahlart{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
+                    {if $form_data.mopt_payone__klarna_paymentname == ''}selected="selected"{/if}
+                    >
+                {s name='klarna-paymentType'}Klarna Zahlart{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}
+            </option>
             {foreach from=$moptCreditCardCheckEnvironment.mopt_payone_klarna.mopt_payone_klarna_payments item=klarna_payment}
                 <option value="{$klarna_payment.financingtype}"
                         {if $form_data.mopt_payone__klarna_paymentname == $klarna_payment.name}selected="selected"{/if}

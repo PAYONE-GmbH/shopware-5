@@ -170,6 +170,11 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPaymentHelper->isPayoneKlarna($paymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_klarna';
             }
+
+            if (!isset($moptPayoneFormData['mopt_payone__klarna_paymentname'])) {
+                $moptPayoneFormData['mopt_payone__klarna_paymentname'] = $moptPaymentHelper->getPaymentNameFromId($session['sPaymentID']);
+            }
+
             $view->assign('sFormData', $moptPayoneFormData);
             $view->assign('moptPaymentConfigParams', $this->moptPaymentConfigParams($session->moptMandateDataDownload));
             $view->assign('moptMandateAgreementError', $session->moptMandateAgreementError);
