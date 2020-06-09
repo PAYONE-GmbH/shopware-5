@@ -154,7 +154,7 @@
                     required="required"
                     aria-required="true"
                 {/if}
-               {if $form_data.mopt_payone__klarna_agreement eq "on"}checked="checked"{/if}
+               autocomplete="off"
         />
         <label for="mopt_payone__klarna_agreement" style="float: none; width: 100%; display: inline">
             {block name="frontend_checkout_payment_payone_consent"}
