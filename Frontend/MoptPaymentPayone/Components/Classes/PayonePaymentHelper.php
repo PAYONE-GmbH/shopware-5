@@ -1,6 +1,8 @@
 <?php
 
 use Shopware\Components\Routing\Router;
+use Shopware\Models\Customer\Address;
+use Shopware\Models\Customer\Customer;
 
 /**
  * $Id: $
@@ -1041,8 +1043,10 @@ class Mopt_PayonePaymentHelper
 
     public function moptUpdateUserInformation($userId, $paymentData)
     {
+        /** @var Customer $user */
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
 
+        /** @var Address $billing */
         $billing = $user->getDefaultBillingAddress();
 
         if (isset($paymentData['formData']['mopt_payone__klarna_birthyear'])) {
@@ -1053,6 +1057,7 @@ class Mopt_PayonePaymentHelper
 
             $billing->setPhone($paymentData['formData']['mopt_payone__klarna_telephone']);
         }
+
         if (isset($paymentData['formData']['mopt_payone__payolution_birthdaydate'])) {
             $user->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
             Shopware()->Models()->persist($user);
@@ -1065,6 +1070,10 @@ class Mopt_PayonePaymentHelper
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_telephone'])) {
             $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_invoice_telephone']);
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__klarna_personalId'])) {
+            $user->getAttribute()->setMoptPayoneKlarnaPersonalid($paymentData['formData']['mopt_payone__klarna_personalId']);
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'])) {
@@ -1533,7 +1542,7 @@ class Mopt_PayonePaymentHelper
             + array_slice($input, $offset + $length, NULL, TRUE);
     }
 
-    public function buildAndCallKlarnaStartSession($paymentFinancingtype, $birthdate, $phoneNumber)
+    public function buildAndCallKlarnaStartSession($paymentFinancingtype, $birthdate, $phoneNumber, $personalId)
     {
         $bootstrap = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
 
@@ -1554,6 +1563,7 @@ class Mopt_PayonePaymentHelper
         $service->getServiceProtocol()->addRepository($moptPayoneApiLogRepository);
 
         $userData['additional']['user']['birthday'] = $birthdate;
+        $userData['additional']['user']['mopt_payone_klarna_personalid'] = $personalId;
         Shopware()->Session()->offsetSet('mopt_klarna_phoneNumber', $phoneNumber);
 
         $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();

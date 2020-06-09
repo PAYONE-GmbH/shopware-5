@@ -466,6 +466,7 @@ class Mopt_PayoneParamBuilder
         $params['language'] = $this->getLanguageFromActiveShop();
         $params['vatid'] = $billingAddress['ustid'];
         $params['ip'] = $_SERVER['REMOTE_ADDR'];
+        $params['personalId'] = $userData['additional']['user']['mopt_payone_klarna_personalid'];
 
         // GitHub #29 wrong customer ip with loadbalancer setup
         if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {

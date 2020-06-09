@@ -429,6 +429,7 @@ class Mopt_PayoneFormHandler
 
         // validation of fields was already done in klarna widget
         $paymentData['formData']['mopt_payone__klarna_telephone'] = $formData['mopt_payone__klarna_telephone'];
+        $paymentData['formData']['mopt_payone__klarna_personalId'] = $formData['mopt_payone__klarna_personalId'];
         $paymentData['formData']['mopt_payone__klarna_birthyear'] = $formData['mopt_payone__klarna_birthyear'];
         $paymentData['formData']['mopt_payone__klarna_birthmonth'] = $formData['mopt_payone__klarna_birthmonth'];
         $paymentData['formData']['mopt_payone__klarna_birthday'] = $formData['mopt_payone__klarna_birthday'];

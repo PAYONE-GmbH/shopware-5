@@ -133,9 +133,9 @@
             }
         },
 
-        generateBirthDate: function (customerDateOfBirth_fromTemplate) {
-            if (customerDateOfBirth_fromTemplate && customerDateOfBirth_fromTemplate !== '0000-00-00') {
-                return customerDateOfBirth_fromTemplate
+        generateBirthDate: function (customerDateOfBirth_fromData) {
+            if (customerDateOfBirth_fromData && customerDateOfBirth_fromData !== '0000-00-00') {
+                return customerDateOfBirth_fromData
             }
 
             var birthdate;
@@ -152,35 +152,43 @@
             return birthdate;
         },
 
-        generatePhoneNumber: function (phoneNumber_fromTemplate) {
-            if (phoneNumber_fromTemplate) {
-                return phoneNumber_fromTemplate;
+        generatePhoneNumber: function (phoneNumber_fromData) {
+            if (phoneNumber_fromData) {
+                return phoneNumber_fromData;
             }
 
             return $('#mopt_payone__klarna_telephone').val();
         },
 
+        generatePersonalId: function (personalId_fromData) {
+            if (personalId_fromData) {
+                return personalId_fromData;
+            }
+
+            return $('#mopt_payone__klarna_personalId').val();
+        },
+
         inputChangeHandler: function () {
             console.log('inputChangeHandler');
             var me = this;
-            var personalId = $('#mopt_payone__klarna_personalId').val();
 
             me.unloadKlarnaWidget();
 
             me.birthdate = me.generateBirthDate(me.data['customerDateOfBirth']);
             me.billingAddressPhone = me.generatePhoneNumber(me.data['billingAddress-Phone'])
+            me.personalId = me.generatePersonalId(me.data['customerNationalIdentificationNumber']);
 
             me.financingtype = $("#mopt_payone__klarna_paymenttype").val();
             var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
             var loadWidgetIsAllowed =
                 me.financingtype
                 && me.birthdate
-                && personalId
-                && me.billingAddressPhone.length >= 5
+                && me.personalId
+                && ((String)(me.billingAddressPhone)).length >= 5
                 && $gdpr_agreement.is(':checked');
 
             if (loadWidgetIsAllowed) {
-                me.startKlarnaSessionCall(me.financingtype, me.birthdate, me.billingAddressPhone, personalId).done(function (response) {
+                me.startKlarnaSessionCall(me.financingtype, me.birthdate, me.billingAddressPhone, me.personalId).done(function (response) {
                     response = $.parseJSON(response);
                     $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
@@ -204,7 +212,7 @@
                 'financingtype': financingtype,
                 'birthdate': birthdate.replace('-', ''),
                 'phoneNumber': phoneNumber,
-                'personalid' : personalId
+                'personalId' : personalId
             };
             return $.ajax({method: "POST", url: url, data: parameter});
         },
@@ -278,7 +286,7 @@
                 customer: {
                     date_of_birth: me.birthdate,
                     gender: data['customerGender'],
-                    national_identification_number: data['customerNationalIdentificationNumber']
+                    national_identification_number: me.personalId
                 }
             };
 

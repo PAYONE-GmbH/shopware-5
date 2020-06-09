@@ -1317,8 +1317,14 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $phoneNumber = $this->Request()->getParam('phoneNumber');
         $name = $this->moptPayonePaymentHelper->getKlarnaNameByFinancingtype($financingtype);
         $paymentId = $this->moptPayonePaymentHelper->getPaymentIdFromName($name);
+        $personalId = $this->Request()->getParam('personalId');
 
-        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession($financingtype, $birthdate, $phoneNumber);
+        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession(
+            $financingtype,
+            $birthdate,
+            $phoneNumber,
+            $personalId
+        );
 
         if ($result->getStatus() === 'ERROR') {
             echo json_encode([
@@ -1328,6 +1334,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 'customerMessage' => $result->getCustomermessage(),
             ]);
         } else {
+            // TODO: cleanup session variable
             $this->session->offsetSet('mopt_klarna_workorderid', $result->getWorkorderId());
 
             // TODO: cleanup $result_json
