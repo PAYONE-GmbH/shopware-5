@@ -494,6 +494,18 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->flush();
         }
 
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_klarna')
+        );
+        if ($payment) {
+            $payment->setName('mopt_payone__fin_klarna_old');
+            $payment->setDescription('PAYONE Klarna OLD');
+            $payment->setTemplate('mopt_paymentmean_klarna_old.tpl');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
+
         /** @var Shopware\Models\Payment\Payment $payment */
         $payment = $this->Payments()->findOneBy(
             array('name' => 'mopt_payone__cc_discover')

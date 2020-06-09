@@ -466,9 +466,9 @@ class Mopt_PayoneInstallHelper
                 'template' => null,
                 'position' => 21,),
             array(
-                'name' => 'mopt_payone__fin_klarna_old',
-                'description' => 'PAYONE Klarna OLD',
-                'template' => 'mopt_paymentmean_klarna_old.tpl',
+                'name' => 'mopt_payone__fin_klarna',
+                'description' => 'PAYONE Klarna',
+                'template' => 'mopt_paymentmean_klarna.tpl',
                 'position' => 22,),
             array(
                 'name' => 'mopt_payone__fin_kis_klarna_installments',
