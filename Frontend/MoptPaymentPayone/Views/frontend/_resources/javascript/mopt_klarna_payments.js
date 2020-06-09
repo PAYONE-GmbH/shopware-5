@@ -156,19 +156,21 @@
         },
 
         generatePhoneNumber: function (phoneNumber_fromData) {
-            if (phoneNumber_fromData) {
-                return phoneNumber_fromData;
+            var phoneNumber_fromInput = $('#mopt_payone__klarna_telephone').val();
+            if (phoneNumber_fromInput) {
+                return phoneNumber_fromInput;
             }
 
-            return $('#mopt_payone__klarna_telephone').val();
+            return phoneNumber_fromData;
         },
 
         generatePersonalId: function (personalId_fromData) {
-            if (personalId_fromData) {
-                return personalId_fromData;
+            var personalId_fromInput = $('#mopt_payone__klarna_personalId').val();
+            if (personalId_fromInput) {
+                return personalId_fromInput;
             }
 
-            return $('#mopt_payone__klarna_personalId').val();
+            return personalId_fromData;
         },
 
         inputChangeHandler: function () {
