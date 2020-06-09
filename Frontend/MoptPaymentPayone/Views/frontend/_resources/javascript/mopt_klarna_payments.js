@@ -1,4 +1,4 @@
-// TODO: remove ALL console.log()'s
+// TODO: rw remove ALL console.log()'s
 ;(function ($, window) {
     'use strict';
 
@@ -261,7 +261,7 @@
                     container: '#mopt_payone__klarna_payments_widget_container',
                     payment_method_category: me.payTypeTranslations[paymentType]
                 }, function (res) {
-                    // TODO: error handling
+                    // TODO: rw error handling
                     widgetLoaded = true;
                     console.log('Klarna widget loaded');
                     console.log(res);
@@ -307,7 +307,7 @@
                 }
             };
 
-            // TODO: remove
+            // TODO: rw remove
             $('<input>').attr('type', 'hidden').attr('name', 'moptPaymentData[klarna-authorize]').val(
                 JSON.stringify(authorizeData)
             ).appendTo(me.$el);

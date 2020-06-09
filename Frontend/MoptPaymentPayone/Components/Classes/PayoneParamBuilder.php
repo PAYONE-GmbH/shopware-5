@@ -1924,7 +1924,7 @@ class Mopt_PayoneParamBuilder
      * @return Payone_Api_Request_Parameter_Paydata_Paydata
      */
     protected function buildKlarnaPaydata() {
-        // TODO: unset
+        // TODO: rw unset
         $phoneNumber = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
