@@ -1690,7 +1690,7 @@ class Mopt_PayonePaymentHelper
     {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
 
-        return !is_null($userData['additional']['user']['phone']) && $userData['additional']['user']['phone'] !== '';
+        return !is_null($userData['billingaddress']['phone']) && $userData['billingaddress']['phone'] !== '';
     }
 
     /**
