@@ -1629,4 +1629,121 @@ class Mopt_PayonePaymentHelper
 
         return $title;
     }
+
+    /**
+     * Check if birthday field needs to be shown
+     *
+     * @return bool
+     */
+    public function isKlarnaBirthdayNeeded()
+    {
+        $isBirthdayValid = $this->isBirthdayValid();
+        $isBirthdayNeededByCountry = $this->isKlarnaBirthdayNeededByCountry();
+
+        return !$isBirthdayValid && $isBirthdayNeededByCountry;
+    }
+
+    /**
+     * Check if telephone field needs to be shown
+     *
+     * @return bool
+     */
+    public function isKlarnaTelephoneNeeded()
+    {
+        $isTelephoneValid = $this->isTelephoneValid();
+        $isTelephoneNeededByCountry = $this->isKlarnaTelephoneNeededByCountry();
+
+        return !$isTelephoneValid && $isTelephoneNeededByCountry;
+    }
+
+    /**
+     * Check if telephone field needs to be shown
+     *
+     * @return bool
+     */
+    public function isKlarnaPersonalIdNeeded()
+    {
+        $isPersonalIdValid = $this->isPersonalIdValid();
+        $isPersonalIdNeededByCountry = $this->isKlarnaPersonalIdNeededByCountry();
+
+        return !$isPersonalIdValid && $isPersonalIdNeededByCountry;
+    }
+
+    /**
+     * Checks if current users birthday is valid
+     *
+     * @return bool
+     */
+    private function isBirthdayValid()
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        return !is_null($userData['additional']['user']['birthday']) && $userData['additional']['user']['birthday'] !== '' && $userData['additional']['user']['birthday'] !== '0000-00-00';
+    }
+
+    /**
+     * Checks if current users telephone number is valid
+     *
+     * @return bool
+     */
+    private function isTelephoneValid()
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        return !is_null($userData['additional']['user']['phone']) && $userData['additional']['user']['phone'] !== '';
+    }
+
+    /**
+     * Checks if current users personalid number is valid
+     *
+     * @return bool
+     */
+    private function isPersonalIdValid()
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        return !is_null($userData['additional']['user']['mopt_payone_klarna_personalid']) && $userData['additional']['user']['mopt_payone_klarna_personalid'] !== '';
+    }
+
+    /**
+     * Checks if birthday is mandatory for klarna payments depending on country
+     *
+     * @return bool
+     */
+    private function isKlarnaBirthdayNeededByCountry()
+    {
+        $moptPayoneHelper = Shopware()->Container()->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $klarnaBirthdayNeededCountries = array('DE', 'NL', 'AT', 'CH');
+        return in_array($billingCountryIso, $klarnaBirthdayNeededCountries);
+    }
+
+    /**
+     * Checks if telephone is mandatory for klarna payments depending on country
+     *
+     * @return bool
+     */
+    public function isKlarnaTelephoneNeededByCountry()
+    {
+        $moptPayoneHelper = Shopware()->Container()->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $klarnaTelephoneNeededCountries = array('NO', 'SE', 'DK');
+        return in_array($billingCountryIso, $klarnaTelephoneNeededCountries);
+    }
+
+    /**
+     * Checks if personalid is mandatory for klarna payments depending on country
+     *
+     * @return bool
+     */
+    public function isKlarnaPersonalIdNeededByCountry()
+    {
+        $moptPayoneHelper = Shopware()->Container()->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $klarnaPersonalIdNeededCountries = array('NO', 'SE', 'DK'); // SE verified FI unsure
+        return in_array($billingCountryIso, $klarnaPersonalIdNeededCountries);
+    }
 }
