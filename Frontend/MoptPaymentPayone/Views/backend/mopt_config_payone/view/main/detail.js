@@ -260,7 +260,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             {
                 name: 'transLogging',
                 xtype: 'combobox',
-                fieldLabel: '{s name=forwarding/logging}Logging{/s}',
+                fieldLabel: '{s name=forwarding/logging}Protokollierung{/s}',
+                helpText: '{s name=forwarding/logging/help}(de)aktivieren des Protokolls zur Weiterleitung (var/log/MoptPaymentPayone_txredirect_*.log){/s}',
                 store: me.data.yesno,
                 queryMode: 'local',
                 displayField: 'display',
@@ -272,20 +273,23 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'transTimeout',
                 xtype: 'numberfield',
                 fieldLabel: '{s name=forwarding/status/timeout}Timeout{/s}',
+                helpText: '{s name=forwarding/status/timeout/help}Antwort Wartezeit in Millisekunden bis zu einem Abbruch{/s}',
                 allowBlank: true,
                 labelWidth: 200
             },
             {
                 name: 'transTimeoutRaise',
                 xtype: 'numberfield',
-                fieldLabel: '{s name=forwarding/status/timeout_raise}TimeoutRaise{/s}',
+                fieldLabel: '{s name=forwarding/status/timeoutraise}Timeout Erhöhung{/s}',
+                helpText: '{s name=forwarding/status/timeoutraise/help}Antwort Wartezeit in Millisekunden bis zu einem Abbruch{/s}',
                 allowBlank: true,
                 labelWidth: 200
             },
             {
                 name: 'transMaxTrials',
                 xtype: 'numberfield',
-                fieldLabel: '{s name=forwarding/status/max_Trials}MaxTrials{/s}',
+                fieldLabel: '{s name=forwarding/status/maxtries}max. Anzahl Versuche{/s}',
+                helpText: '{s name=forwarding/status/maxtries/help}max. Anzahl Versuche bis zu einem Abbruch{/s}',
                 allowBlank: true,
                 labelWidth: 200,
             },
