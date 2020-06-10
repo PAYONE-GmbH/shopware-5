@@ -1240,6 +1240,15 @@ class Mopt_PayonePaymentHelper
     {
         $firstHit = 'not_set';
         $creditCardData = array();
+        $shortCodes = array (
+            'mopt_payone__cc_visa' => 'v',
+            'mopt_payone__cc_mastercard' => 'm',
+            'mopt_payone__cc_american_express' => 'a',
+            'mopt_payone__cc_carte_blue' => 'b',
+            'mopt_payone__cc_diners_club' => 'd',
+            'mopt_payone__cc_jcb' => 'j',
+            'mopt_payone__cc_maestro_international' => 'o',
+        );
 
         foreach ($paymentMeans as $key => $paymentmean) {
             if ($this->isPayoneCreditcardNotGrouped($paymentmean['name'])) {
@@ -1253,6 +1262,7 @@ class Mopt_PayonePaymentHelper
                 $creditCard['description'] = $paymentmean['description'];
 
                 $creditCardData[] = $creditCard;
+                $creditCardDescriptions[$creditCard['name']] = '<div class="payone_additionalDescriptions" id="' . $shortCodes[$creditCard['name']]  . '_additionalDescription" style="display:none">' . $paymentmean['additionaldescription'] . '</div>';
 
                 if ($firstHit != $key) {
                     unset($paymentMeans[$key]);
@@ -1270,6 +1280,7 @@ class Mopt_PayonePaymentHelper
         $paymentMeans[$firstHit]['name'] = 'mopt_payone_creditcard';
         $paymentMeans[$firstHit]['description'] = $snippetObject->get('PaymentMethodCreditCard', 'Kreditkarte', true);
         $paymentMeans[$firstHit]['mopt_payone_credit_cards'] = $creditCardData;
+        $paymentMeans[$firstHit]['additionaldescription'] = implode('',$creditCardDescriptions);
 
         return $paymentMeans;
     }

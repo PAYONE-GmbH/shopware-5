@@ -480,6 +480,16 @@ function moptPaymentReady() {
                 },
 
                 /**
+                 * Changes the payment additional description based on the provided card type.
+                 *
+                 * @param {string} type The card type.
+                 */
+                changeAdditionalDescription: function (type) {
+                    $('.payone_additionalDescriptions').hide();
+                    $('#' + type.toLowerCase() + '_additionalDescription').show();
+                },
+
+                /**
                  * Changes the value of the card type select field and triggers a change event.
                  *
                  * @param {string} type The new select field value.
@@ -637,6 +647,7 @@ function moptPaymentReady() {
                     // Listen on card type field change for CC icon changes.
                     PayoneAutoCcDetection.$ccTypeSelect().on('change', function () {
                         PayoneAutoCcDetection.changeIcon(this.value);
+                        PayoneAutoCcDetection.changeAdditionalDescription(this.value);
                     });
                 },
 
@@ -844,6 +855,18 @@ function moptPaymentReady() {
         });
     }
 
+    function poBindCCSelectChange() {
+        // show already pre selected description
+        $('.payone_additionalDescriptions').hide();
+        var selected = $('#mopt_payone__cc_cardtype').val().toLowerCase();
+        $('#' + selected + '_additionalDescription').show();
+
+        $('#mopt_payone__cc_cardtype').on('change', function () {
+            $('.payone_additionalDescriptions').hide();
+            $('#' + this.value.toLowerCase() + '_additionalDescription').show();
+        });
+    }
+
     function moptShowGeneralIFrameError() {
         var $msg = $('#payone-general-iframe-error');
 
@@ -874,6 +897,7 @@ function moptPaymentReady() {
 
 //call the plugins
     poBindDispatchChange();
+    poBindCCSelectChange();
 
     $('.moptPayoneIbanBic').moptPayoneIbanBicValidator();
     $('.moptPayoneNumber').moptPayoneNumberValidator();
