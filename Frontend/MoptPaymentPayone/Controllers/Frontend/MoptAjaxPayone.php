@@ -1334,14 +1334,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 'customerMessage' => $result->getCustomermessage(),
             ]);
         } else {
-            // TODO: rw cleanup session variable
             $this->session->offsetSet('mopt_klarna_workorderid', $result->getWorkorderId());
 
-            // TODO: rw cleanup $result_json
-            $result_json = $result->getRawResponse();
             echo json_encode([
                 'status' => $result->getStatus(),
-//                'raw_response' => $result_json,
                 'client_token' => $result->getPaydata()->toAssocArray()['client_token'],
                 'paymentId' => $paymentId,
             ]);

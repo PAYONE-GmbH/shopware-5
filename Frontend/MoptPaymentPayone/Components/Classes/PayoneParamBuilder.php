@@ -1115,12 +1115,17 @@ class Mopt_PayoneParamBuilder
         $session = Shopware()->Session();
         $authorizationToken = $session->offsetGet('moptKlarnaPaymentTokenExt');
 
-        $paydata = $this->buildKlarnaPaydata();
+        $phoneNumber = $session['mopt_klarna_phoneNumber'];
+
+        $paydata = $this->buildKlarnaPaydata($phoneNumber);
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'authorization_token', 'data' => $authorizationToken)
         ));
 
         $payment->setPaydata($paydata);
+
+        unset($session['moptKlarnaPaymentTokenExt']);
+        unset($session['mopt_klarna_phoneNumber']);
 
         return $payment;
     }
@@ -1900,8 +1905,9 @@ class Mopt_PayoneParamBuilder
     public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts)
     {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $paydata = $this->buildKlarnaPaydata();
+        $phoneNumber = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
 
+        $paydata = $this->buildKlarnaPaydata($phoneNumber);
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key'  => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION)
         ));
@@ -1921,11 +1927,11 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
+     * @param $phoneNumber
+     *
      * @return Payone_Api_Request_Parameter_Paydata_Paydata
      */
-    protected function buildKlarnaPaydata() {
-        // TODO: rw unset
-        $phoneNumber = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
+    protected function buildKlarnaPaydata($phoneNumber) {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
 

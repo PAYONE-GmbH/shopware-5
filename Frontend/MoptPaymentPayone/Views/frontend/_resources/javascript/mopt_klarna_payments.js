@@ -1,4 +1,3 @@
-// TODO: rw remove ALL console.log()'s
 ;(function ($, window) {
     'use strict';
 
@@ -55,8 +54,6 @@
         init: function () {
             var me = this;
 
-            console.log('data:');
-            console.log(me.data);
             me.registerEventListeners();
         },
 
@@ -120,7 +117,6 @@
             event.preventDefault();
 
             me.submitPressed = true;
-            console.log('submit');
 
             // disable submit buttons
             $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
@@ -128,7 +124,6 @@
             });
 
             if (widgetLoaded) {
-                console.log('call authorize [submit]');
                 me.authorize();
             }
         },
@@ -174,7 +169,6 @@
         },
 
         inputChangeHandler: function () {
-            console.log('inputChangeHandler');
             var me = this;
 
             me.unloadKlarnaWidget();
@@ -210,12 +204,10 @@
                     $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
                     me.loadKlarnaWidget(me.financingtype, response['client_token']).done(function () {
-                        console.log('widget loaded');
                         if (!me.submitPressed) {
                             return;
                         }
 
-                        console.log('call authorize [change]');
                         me.authorize();
                     });
                 });
@@ -227,9 +219,9 @@
             var url = me.data['startKlarnaSession-Url'];
             var parameter = {
                 'financingtype': financingtype,
-                'birthdate': birthdate.replace('-', ''),
+                'birthdate': birthdate,
                 'phoneNumber': phoneNumber,
-                'personalId' : personalId
+                'personalId': personalId
             };
             return $.ajax({method: "POST", url: url, data: parameter});
         },
@@ -243,7 +235,6 @@
             var me = this;
 
             if (!accessToken || accessToken.length === 0) {
-                console.log('no token');
                 return;
             }
 
@@ -255,16 +246,12 @@
                 client_token: accessToken
             });
 
-            console.log('load Klarna widget');
             return $.Deferred(function (defer) {
                 window.Klarna.Payments.load({
                     container: '#mopt_payone__klarna_payments_widget_container',
                     payment_method_category: me.payTypeTranslations[paymentType]
                 }, function (res) {
-                    // TODO: rw error handling
                     widgetLoaded = true;
-                    console.log('Klarna widget loaded');
-                    console.log(res);
                     defer.resolve();
                 });
             }).promise();
@@ -307,14 +294,6 @@
                 }
             };
 
-            // TODO: rw remove
-            $('<input>').attr('type', 'hidden').attr('name', 'moptPaymentData[klarna-authorize]').val(
-                JSON.stringify(authorizeData)
-            ).appendTo(me.$el);
-
-            console.log('authorizeData:');
-            console.log(authorizeData);
-
             window.Klarna.Payments.authorize({
                     payment_method_category: me.payTypeTranslations[me.financingtype]
                 },
@@ -323,22 +302,14 @@
                     var storeAuthorizationTokenUrl = data['storeAuthorizationToken-Url'];
 
                     if (res['approved'] && res['authorization_token']) {
-                        console.log('authorize approved');
-                        console.log(res);
-
                         var parameter = {'authorizationToken': res['authorization_token']};
                         me.authorizationToken = res['authorization_token'];
 
                         // store authorization_token
                         $.ajax({method: "POST", url: storeAuthorizationTokenUrl, data: parameter}).done(function () {
-                            console.log('Authorization token stored');
-
                             me.$el.submit();
                         });
                     } else {
-                        console.log('authorize declined');
-                        console.log(res);
-
                         $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
                             element.disabled = false;
                         });
