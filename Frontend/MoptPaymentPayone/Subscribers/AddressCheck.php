@@ -602,6 +602,13 @@ class AddressCheck implements SubscriberInterface
      */
     public function onUpdateAddress(\Enlight_Hook_HookArgs $arguments)
     {
+        // @see https://github.com/PAYONE-GmbH/shopware-5/issues/324
+        $moptPayoneMain = $this->container->get('MoptPayoneMain');
+        $payoneConfig = $moptPayoneMain->getPayoneConfig();
+        if (!$payoneConfig['consumerscoreActive'] && !$payoneConfig['adresscheckActive'] ) {
+            return;
+        }
+
         try {
             /** @var \Mopt_PayoneMain $moptPayoneMain */
             $userId = Shopware()->Session()->sUserId;
