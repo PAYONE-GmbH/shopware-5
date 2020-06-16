@@ -22,24 +22,24 @@
             updatePlugin();
         } else {
             registerPlugin();
-            pluginRegistered = true;
         }
     }
 
     function registerPlugin() {
-        StateManager.addPlugin('#shippingPaymentForm', 'payoneKlarnaPayments', null, null);
+        StateManager.addPlugin('#shippingPaymentForm', 'payoneKlarnaShippingPayment', null, null);
+        pluginRegistered = true;
     }
 
     function updatePlugin() {
-        StateManager.updatePlugin('#shippingPaymentForm', 'payoneKlarnaPayments');
+        StateManager.updatePlugin('#shippingPaymentForm', 'payoneKlarnaShippingPayment');
     }
 
     function destroyPlugin() {
-        StateManager.destroyPlugin('#shippingPaymentForm', 'payoneKlarnaPayments');
-        StateManager.removePlugin('#shippingPaymentForm', 'payoneKlarnaPayments', null);
+        StateManager.destroyPlugin('#shippingPaymentForm', 'payoneKlarnaShippingPayment');
+        StateManager.removePlugin('#shippingPaymentForm', 'payoneKlarnaShippingPayment', null);
     }
 
-    $.plugin('payoneKlarnaPayments', {
+    $.plugin('payoneKlarnaShippingPayment', {
         defaults: {},
         financingtype: null,
         submitPressed: false,
@@ -217,13 +217,13 @@
         startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber, personalId) {
             var me = this;
             var url = me.data['startKlarnaSession-Url'];
-            var parameter = {
+            var parameters = {
                 'financingtype': financingtype,
                 'birthdate': birthdate,
                 'phoneNumber': phoneNumber,
                 'personalId': personalId
             };
-            return $.ajax({method: "POST", url: url, data: parameter});
+            return $.ajax({method: "POST", url: url, data: parameters});
         },
 
 
@@ -314,7 +314,8 @@
                             element.disabled = false;
                         });
                     }
-                });
+                }
+            );
         }
     });
 })(jQuery, window);

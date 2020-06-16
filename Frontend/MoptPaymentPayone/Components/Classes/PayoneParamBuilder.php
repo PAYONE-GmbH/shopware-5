@@ -1113,7 +1113,7 @@ class Mopt_PayoneParamBuilder
      */
     public function addKlarnaPaymentParameters($payment) {
         $session = Shopware()->Session();
-        $authorizationToken = $session->offsetGet('moptKlarnaPaymentTokenExt');
+        $authorizationToken = $session->offsetGet('mopt_klarna_authorization_token');
 
         $phoneNumber = $session['mopt_klarna_phoneNumber'];
 
@@ -1124,7 +1124,7 @@ class Mopt_PayoneParamBuilder
 
         $payment->setPaydata($paydata);
 
-        unset($session['moptKlarnaPaymentTokenExt']);
+        unset($session['mopt_klarna_authorization_token']);
         unset($session['mopt_klarna_phoneNumber']);
 
         return $payment;

@@ -1300,9 +1300,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     {
         $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
 
-        $tokenExt = $this->request->getParam('authorizationToken');
+        $token = $this->request->getParam('authorizationToken');
 
-        $this->session->offsetSet('moptKlarnaPaymentTokenExt', $tokenExt);
+        $this->session->offsetSet('mopt_klarna_authorization_token', $token);
     }
 
     public function startKlarnaSessionAction()
