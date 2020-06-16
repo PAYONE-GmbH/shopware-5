@@ -408,7 +408,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_account.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_shipping.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_amazonpay.js',
-            $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_payments.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_shipping_payment.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_confirm.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
     }

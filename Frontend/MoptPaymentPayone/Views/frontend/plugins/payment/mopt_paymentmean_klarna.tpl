@@ -28,6 +28,7 @@
          data-locale="{$locale}"
          data-store-authorization-token--URL="{url controller="MoptAjaxPayone" action="storeAuthorizationToken" forceSecure}"
          data-start-klarna-session--URL="{url controller="MoptAjaxPayone" action="startKlarnaSession" forceSecure}"
+         data-unset-session-vars--URL="{url controller="MoptAjaxPayone" action="unsetSessionVars" forceSecure}"
     ></div>
     <div id="mopt_payone__klarna_paymenttype_wrap" class="select-field">
         <label for="mopt_payone__klarna_paymenttype"></label>

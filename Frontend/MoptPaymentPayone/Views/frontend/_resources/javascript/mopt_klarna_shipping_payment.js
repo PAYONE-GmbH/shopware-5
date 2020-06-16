@@ -43,7 +43,7 @@
         defaults: {},
         financingtype: null,
         submitPressed: false,
-        authorizationToken: null,
+        authorizeApproved: false,
         data: $('#mopt_payone__klarna_information').data(),
         payTypeTranslations: {
             KDD: 'pay_now',
@@ -110,7 +110,7 @@
                 return;
             }
 
-            if (me.authorizationToken) {
+            if (me.authorizeApproved) {
                 return;
             }
 
@@ -170,48 +170,51 @@
 
         inputChangeHandler: function () {
             var me = this;
+            var afterUnloadKlarnaWidget = function () {
+                me.birthdate = me.generateBirthDate(me.data['customerDateOfBirth']);
+                me.billingAddressPhone = me.generatePhoneNumber(me.data['billingAddress-Phone'])
+                me.personalId = me.generatePersonalId(me.data['customerNationalIdentificationNumber']);
 
-            me.unloadKlarnaWidget();
+                me.financingtype = $("#mopt_payone__klarna_paymenttype").val();
+                var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
+                var loadWidgetIsAllowed =
+                    me.financingtype
+                    && me.birthdate
+                    && me.personalId
+                    && ((String)(me.billingAddressPhone)).length >= 5
+                    && $gdpr_agreement.is(':checked');
 
-            me.birthdate = me.generateBirthDate(me.data['customerDateOfBirth']);
-            me.billingAddressPhone = me.generatePhoneNumber(me.data['billingAddress-Phone'])
-            me.personalId = me.generatePersonalId(me.data['customerNationalIdentificationNumber']);
+                if (loadWidgetIsAllowed) {
 
-            me.financingtype = $("#mopt_payone__klarna_paymenttype").val();
-            var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
-            var loadWidgetIsAllowed =
-                me.financingtype
-                && me.birthdate
-                && me.personalId
-                && ((String)(me.billingAddressPhone)).length >= 5
-                && $gdpr_agreement.is(':checked');
+                    // startKlarnaSessionCall is a PO call and needs no minus delimiter
+                    var birthdate = me.birthdate.replace(/-/g, '');
 
-            if (loadWidgetIsAllowed) {
+                    if (me.billingAddressPhone === 'notNeededByCountry') {
+                        me.billingAddressPhone = '';
+                    }
 
-                // startKlarnaSessionCall is a PO call and needs no minus delimiter
-                var birthdate = me.birthdate.replace(/-/g, '');
+                    if (me.personalId === 'notNeededByCountry') {
+                        me.personalId = '';
+                    }
 
-                if (me.billingAddressPhone === 'notNeededByCountry') {
-                    me.billingAddressPhone = '';
-                }
+                    me.startKlarnaSessionCall(me.financingtype, birthdate, me.billingAddressPhone, me.personalId).done(function (response) {
+                        response = $.parseJSON(response);
+                        $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
-                if (me.personalId === 'notNeededByCountry') {
-                    me.personalId = '';
-                }
+                        me.loadKlarnaWidget(me.financingtype, response['client_token']).done(function () {
+                            if (!me.submitPressed) {
+                                return;
+                            }
 
-                me.startKlarnaSessionCall(me.financingtype, birthdate, me.billingAddressPhone, me.personalId).done(function (response) {
-                    response = $.parseJSON(response);
-                    $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
-
-                    me.loadKlarnaWidget(me.financingtype, response['client_token']).done(function () {
-                        if (!me.submitPressed) {
-                            return;
-                        }
-
-                        me.authorize();
+                            me.authorize();
+                        });
                     });
-                });
-            }
+                }
+            };
+
+            me.unloadKlarnaWidget().done(function () {
+                afterUnloadKlarnaWidget()
+            });
         },
 
         startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber, personalId) {
@@ -228,13 +231,24 @@
 
 
         unloadKlarnaWidget: function () {
+            var url = this.data['unsetSessionVars-Url'];
+            var parameters = {
+                'vars': [
+                    'mopt_klarna_client_token',
+                    'mopt_klarna_authorization_token',
+                    'mopt_klarna_workorderid'
+                ]
+            }
+
             $('#mopt_payone__klarna_payments_widget_container').empty();
+
+            return $.ajax({method: "POST", url: url, data: parameters});
         },
 
-        loadKlarnaWidget: function (paymentType, accessToken) {
+        loadKlarnaWidget: function (paymentType, client_token) {
             var me = this;
 
-            if (!accessToken || accessToken.length === 0) {
+            if (!client_token || client_token.length === 0) {
                 return;
             }
 
@@ -243,7 +257,7 @@
             }
 
             window.Klarna.Payments.init({
-                client_token: accessToken
+                client_token: client_token
             });
 
             return $.Deferred(function (defer) {
@@ -260,6 +274,8 @@
         authorize: function () {
             var me = this;
             var data = me.data;
+            var payType = me.payTypeTranslations[me.financingtype];
+            var isAutoFinalize = payType !== 'pay_now';
             var authorizeData = {
                 purchase_country: data['billingAddress-Country'],
                 purchase_currency: data['purchaseCurrency'],
@@ -295,20 +311,25 @@
             };
 
             window.Klarna.Payments.authorize({
-                    payment_method_category: me.payTypeTranslations[me.financingtype]
+                    payment_method_category: payType,
+                    auto_finalize: isAutoFinalize
                 },
                 authorizeData,
                 function (res) {
-                    var storeAuthorizationTokenUrl = data['storeAuthorizationToken-Url'];
+                    var url = data['storeAuthorizationToken-Url'];
 
-                    if (res['approved'] && res['authorization_token']) {
-                        var parameter = {'authorizationToken': res['authorization_token']};
-                        me.authorizationToken = res['authorization_token'];
+                    if (res['approved']) {
+                        me.authorizeApproved = true;
 
-                        // store authorization_token
-                        $.ajax({method: "POST", url: storeAuthorizationTokenUrl, data: parameter}).done(function () {
-                            me.$el.submit();
-                        });
+                        if (res['authorization_token']) {
+                            var parameters = {'authorizationToken': res['authorization_token']};
+
+                            // store authorization_token
+                            $.ajax({method: "POST", url: url, data: parameters});
+                        }
+
+                        me.$el.submit();
+
                     } else {
                         $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
                             element.disabled = false;

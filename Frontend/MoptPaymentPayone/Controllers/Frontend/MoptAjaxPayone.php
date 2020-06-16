@@ -1334,13 +1334,32 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 'customerMessage' => $result->getCustomermessage(),
             ]);
         } else {
+            $clientToken = $result->getPaydata()->toAssocArray()['client_token'];
+
             $this->session->offsetSet('mopt_klarna_workorderid', $result->getWorkorderId());
+            $this->session->offsetSet('mopt_klarna_client_token', $clientToken);
 
             echo json_encode([
                 'status' => $result->getStatus(),
-                'client_token' => $result->getPaydata()->toAssocArray()['client_token'],
+                'client_token' => $clientToken,
                 'paymentId' => $paymentId,
             ]);
+        }
+    }
+
+    public function unsetSessionVarsAction()
+    {
+        try {
+            $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        } catch (Exception $e) {
+        }
+
+        $varsToUnset = $this->Request()->getParam('vars');
+
+        foreach ($varsToUnset as $var) {
+            if ($this->session->offsetGet($var)) {
+                unset($this->session[$var]);
+            }
         }
     }
 }

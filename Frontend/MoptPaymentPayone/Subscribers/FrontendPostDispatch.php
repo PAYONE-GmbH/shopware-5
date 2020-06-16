@@ -220,6 +220,11 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->extendsTemplate('frontend/checkout/mopt_confirm' . $templateSuffix . '.tpl');
             }
 
+            if (is_null($session->offsetGet('mopt_klarna_authorization_token'))) {
+                $view->assign('mopt_klarna_client_token', $session->offsetGet('mopt_klarna_client_token'));
+                $view->extendsTemplate('frontend/checkout/mopt_klarna_confirm' . $templateSuffix . '.tpl');
+            }
+
             if ($request->getParam('moptShippingAddressCheckNeedsUserVerification')) {
                 $view->assign('moptShippingAddressCheckNeedsUserVerification', $request->getParam('moptShippingAddressCheckNeedsUserVerification'));
                 $session->moptShippingAddressCheckOriginalAddress = $request->getParam('moptShippingAddressCheckOriginalAddress');
@@ -259,6 +264,11 @@ class FrontendPostDispatch implements SubscriberInterface
             // cleanup sComment see #SW-151
             if (isset($session['sComment'])) {
                 unset($session['sComment']);
+            }
+
+            // Klarna PayNow
+            if ($session->offsetGet('mopt_klarna_client_token')) {
+                unset($session['mopt_klarna_client_token']);
             }
         }
 
