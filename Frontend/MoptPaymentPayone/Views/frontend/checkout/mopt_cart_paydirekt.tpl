@@ -19,6 +19,7 @@
             {include file="frontend/_includes/messages.tpl" type="error" content=$moptOverlayRedirectNotice}
         {/if}
     </div>
+    {$smarty.block.parent}
 {/block}
 
 {block name="frontend_checkout_actions_confirm_bottom_checkout"}
