@@ -94,9 +94,6 @@
     
     <p class="none clearfix">
         <input name="moptPaymentData[mopt_payone__payolution_installment_agreement]" type="checkbox" id="mopt_payone__payolution_installment_agreement" value="true"
-               {if $form_data.mopt_payone__payolution_installment_agreement}
-                   checked="checked"
-               {/if}
                class="checkbox"/>
         <label class="{if $error_flags.mopt_payone__payolution_installment_agreement} has--error{/if}" for="mopt_payone__payolution_installment_agreement"  style="float:none; width:100%; display:inline">{$moptCreditCardCheckEnvironment.moptPayolutionInformation.consentInstallment}</label>
     </p>

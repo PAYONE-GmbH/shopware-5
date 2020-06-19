@@ -36,6 +36,8 @@ use Shopware\Models\Payment\Payment;
 use Shopware\Models\Payment\Repository as PaymentRepository;
 use Shopware\Models\Plugin\Plugin;
 use Shopware\Plugins\MoptPaymentPayone\Bootstrap\RiskRules;
+use Monolog\Logger;
+use Monolog\Handler\RotatingFileHandler;
 
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
@@ -142,6 +144,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $riskRules->createRiskRules();
         $this->removePayment('mopt_payone__fin_klarna_installment');
         $this->removePayment('mopt_payone__ewallet_masterpass');
+        $this->createCronJob('Payone Transaktionsweiterleitung', 'PayoneTransactionForward', 60);
 
         return array('success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme'));
     }
@@ -371,6 +374,25 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'Shopware_Modules_Admin_Execute_Risk_Rule_sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT',
             'sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT'
         );
+        $this->subscribeEvent('Shopware_CronJob_PayoneTransactionForward', 'onRunCronJob');
+    }
+
+    /**
+     * @param Enlight_Components_Cron_EventArgs $job
+     */
+    public function onRunCronJob(Enlight_Components_Cron_EventArgs $job)
+    {
+        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logFile = $logPath . '/MoptPaymentPayone_transaction_forward_cronjob.log';
+
+        $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
+        $queueWorker->processQueue();
+
+        $rfh = new RotatingFileHandler($logFile, 14);
+        $rotatingLogger = new Logger('MoptPaymentPayone');
+        $rotatingLogger->pushHandler($rfh);
+        $rotatingLogger->info(date('Y-m-d H:i:s > ') . 'Payone transactionqueue cronjob started.');
+        $rotatingLogger->info(date('Y-m-d H:i:s > ') . 'Payone transactionqueue cronjob stopped.');
     }
 
     public function registerAmazonCookie()
@@ -408,6 +430,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_account.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_shipping.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_amazonpay.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_payolution.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_shipping_payment.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_confirm.js',
         ];
@@ -602,6 +625,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             // ignore
         }
 
+        try {
+            $schemaTool->createSchema(array(
+                $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionForwardQueue\MoptPayoneTransactionForwardQueue'),
+            ));
+        } catch (ToolsException $e) {
+            // ignore
+        }
+
         $this->getInstallHelper()->moptCreatePaymentDataTable();
         $this->getInstallHelper()->moptInsertDocumentsExtensionIntoDatabaseIfNotExist();
 
@@ -704,6 +735,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Add auto_cardtype_detection config table column if needed.
         $this->getInstallHelper()->checkAndAddAutoCardtypeDetectionColumn();
+
+        // Add new reminder level config table columns if needed.
+        $this->getInstallHelper()->checkAndAddReminderLevelColumns();
     }
 
     /**

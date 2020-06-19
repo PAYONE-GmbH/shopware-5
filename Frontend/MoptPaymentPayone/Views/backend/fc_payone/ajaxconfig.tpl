@@ -71,7 +71,7 @@
             Hier können Sie einen Verbindungstest zur PAYONE Plattform mit den oben angegebenen Daten starten <BR>
             Bitte prüfen Sie das Ergebnis und eventuell vorhandene Hinweise im unten sichtbaren Protokollfenster <BR>
             <BR>
-            <button id="startTest" type="button" class="btn-payone btn disabled" >Verbindungstest starten</button>                
+            <button id="startTest" type="button" class="btn-payone btn" >Verbindungstest starten</button>
             <BR>
             <div id="data" style="font-size: 12px; color: #FFFFFF; background-color: #000000; margin-top: 15px; width: 640px; height: 300px;"></div>
         </div>
@@ -89,7 +89,6 @@
         var testurl = "{url controller=FcPayone action=connectiontest forceSecure}";
         var statusurl = "{url controller=FcPayone action=ajaxgetTestResults forceSecure}";
         var paymentid = 0;
-        var startable = false;
 
         function getLog() {
             $.ajax({
@@ -147,8 +146,6 @@
 
         form.on("submit", function (event) {
             event.preventDefault();
-            startable = true;
-            $("#startTest").removeClass("disabled");
             var checkboxes = form.find('input[type="checkbox"]');
             $.each(checkboxes, function (key, value) {
                 if (value.checked === false) {
@@ -171,7 +168,6 @@
         });
 
         $("#startTest").on('click', function () {
-            if (startable) {
                 var mid = document.getElementById('merchantId').value;
                 var aid = document.getElementById('subaccountId').value;
                 var pid = document.getElementById('portalId').value;
@@ -183,10 +179,7 @@
                     dataType: 'json', 
 
                 });
-                startable = false;
-                $("#startTest").addClass("disabled");
                 getLog();
-            }
         });
 
         $(function () {

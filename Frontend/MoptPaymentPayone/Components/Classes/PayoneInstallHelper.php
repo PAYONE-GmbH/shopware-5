@@ -1748,5 +1748,35 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             $db->exec($sql);
         }
     }
+
+    /**
+     * Checks if reminder level columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    function checkAndAddReminderLevelColumns()
+    {
+        $reminderLevels = array('2', '3', '4', '5', 'A', 'S', 'M', 'I');
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($reminderLevels AS $reminderLevel) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = 'state_reminder$reminderLevel'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `state_reminder$reminderLevel` INT(11) NULL;";
+
+                $db->exec($sql);
+            }
+        }
+    }
 }
 
