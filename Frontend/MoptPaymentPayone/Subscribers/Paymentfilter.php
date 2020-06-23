@@ -48,6 +48,20 @@ class Paymentfilter implements SubscriberInterface
             ->moptGetRatepayConfig($billingCountry);
 
         if (!$ratepayconfig) {
+            foreach ($result as $index=>$payment) {
+                if ($payment['name'] === 'mopt_payone__fin_ratepay_installment') {
+                    $installmentIndex = $index;
+                }
+                if ($payment['name'] === 'mopt_payone__fin_ratepay_invoice') {
+                    $invoiceIndex = $index;
+                }
+                if ($payment['name'] === 'mopt_payone__fin_ratepay_direct_debit') {
+                    $directdebitIndex = $index;
+                }
+            }
+            unset ($result[$installmentIndex]);
+            unset ($result[$invoiceIndex]);
+            unset ($result[$directdebitIndex]);
             return $result;
         }
 

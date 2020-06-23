@@ -629,6 +629,7 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__ratepay_invoice_device_fingerprint'] = $formData['mopt_payone__ratepay_invoice_device_fingerprint'];
 
         $this->setFormSubmittedFlag();
+        Shopware()->Session()->offsetSet('moptRatepayCountry', $this->getUserCountyIso());
 
         return $paymentData;
     }
@@ -705,6 +706,7 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__ratepay_installment_interest_rate'] = $formData['mopt_payone__ratepay_installment_interest_rate'];
 
         $this->setFormSubmittedFlag();
+        Shopware()->Session()->offsetSet('moptRatepayCountry', $this->getUserCountyIso());
 
         return $paymentData;
     }
@@ -768,6 +770,7 @@ class Mopt_PayoneFormHandler
         $paymentData['formData']['mopt_payone__ratepay_direct_debit_device_fingerprint'] = $formData['mopt_payone__ratepay_direct_debit_device_fingerprint'];
 
         $this->setFormSubmittedFlag();
+        Shopware()->Session()->offsetSet('moptRatepayCountry', $this->getUserCountyIso());
 
         return $paymentData;
     }

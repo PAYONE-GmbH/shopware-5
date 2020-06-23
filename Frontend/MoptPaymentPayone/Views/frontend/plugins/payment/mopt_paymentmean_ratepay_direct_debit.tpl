@@ -2,6 +2,21 @@
 
 {if $payment_mean.id == $form_data.payment}
 <div class="payment--form-group">
+    {if $moptBillingCountryChanged}
+        <div id="ratepay_overlay_direct_debit_redirect_notice" class="js--modal content" style="width:40%; height:40%; opacity: 0.9; margin: 75px auto;">
+            <a href="#" onclick="removeRatepayOverlayDirectDebitRedirectNotice();
+            return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
+            {$moptOverlayRedirectNotice}
+        </div>
+        <div id="ratepay_overlay_direct_debit_redirect_notice_bg" class="js--overlay is--open" style="opacity: 0.8;"></div>
+
+    <script type="text/javascript">
+        function removeRatepayOverlayDirectDebitRedirectNotice() {
+            document.getElementById('ratepay_overlay_direct_debit_redirect_notice').style.display = "none";
+            document.getElementById('ratepay_overlay_direct_debit_redirect_notice_bg').style.display = "none";
+        }
+    </script>
+    {/if}
     <div id="mopt_payone__ratepay_direct_debit_abg">
         Es gelten die <a target="_blank" href="https://www.ratepay.com/zgb-dse">zusätzlichen Allgemeinen Geschäftsbedingungen und der Datenschutzhinweis</a> der RatePAY GmbH.</br>
         <p></p>
@@ -144,6 +159,7 @@
     <div id="ratepay_overlay_debit_bg" class="js--overlay is--open" style="opacity: 0.8; display: none"></div>
 
 </div>
+
 {if $moptRatepayConfig.deviceFingerPrint && $moptRatepayConfig.deviceFingerprintSnippetId}
     <!-- Only Include if moptRatepayConfig is configured in Backend to prevent 404 errors -->
     <script language="JavaScript">
