@@ -425,7 +425,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
-        file_put_contents("/var/www/sw564/var/log/klarna_authorize.json", $formData['klarna-authorize']);
+        // file_put_contents("/var/www/sw564/var/log/klarna_authorize.json", $formData['klarna-authorize']);
 
         // validation of fields was already done in klarna widget
         $paymentData['formData']['mopt_payone__klarna_telephone'] = $formData['mopt_payone__klarna_telephone'];

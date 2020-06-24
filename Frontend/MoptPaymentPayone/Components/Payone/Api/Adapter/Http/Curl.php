@@ -40,11 +40,11 @@ class Payone_Api_Adapter_Http_Curl extends Payone_Api_Adapter_Http_Abstract
     {
         $response = array();
 
-        $testmode = true;
+        $testmode = false;
         $capture_testmode = $testmode && $this->params['request'] === 'capture';
         $preauthorization_testmode = $testmode && $this->params['request'] === 'preauthorization';
         $genericpayment_testmode = $testmode && $this->params['request'] === 'genericpayment';
-        $compareRequests = $testmode && false;
+        $compareRequests = $testmode;
 
         if ($capture_testmode) {
             $this->changeCaptureRequest();

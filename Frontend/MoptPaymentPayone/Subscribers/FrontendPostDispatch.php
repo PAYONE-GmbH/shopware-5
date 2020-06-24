@@ -220,9 +220,12 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->extendsTemplate('frontend/checkout/mopt_confirm' . $templateSuffix . '.tpl');
             }
 
-            if (is_null($session->offsetGet('mopt_klarna_authorization_token'))) {
-                $view->assign('mopt_klarna_client_token', $session->offsetGet('mopt_klarna_client_token'));
-                $view->extendsTemplate('frontend/checkout/mopt_klarna_confirm' . $templateSuffix . '.tpl');
+            $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
+            if ($moptPaymentHelper->isPayoneKlarna($moptPayoneFormData['mopt_payone__klarna_paymentname'])) {
+                if (is_null($session->offsetGet('mopt_klarna_authorization_token'))) {
+                    $view->assign('mopt_klarna_client_token', $session->offsetGet('mopt_klarna_client_token'));
+                    $view->extendsTemplate('frontend/checkout/mopt_klarna_confirm' . $templateSuffix . '.tpl');
+                }
             }
 
             if ($request->getParam('moptShippingAddressCheckNeedsUserVerification')) {
