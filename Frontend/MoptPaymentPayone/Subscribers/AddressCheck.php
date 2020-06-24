@@ -612,9 +612,12 @@ class AddressCheck implements SubscriberInterface
             $moptPayoneMain->getPaymentHelper()->isPayoneRatepayDirectDebit($paymentName) ||
             $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentName)
         ) {
-            $params = $arguments->getSubject()->Request()->getParams();
-            $moptPayoneHelper = \Mopt_PayoneMain::getInstance()->getHelper();
-            $changedBillingCountry = $moptPayoneHelper->getCountryIsoFromId($params['address']['country']);
+            // $params = $arguments->getSubject()->Request()->getParams();
+            // $moptPayoneHelper = \Mopt_PayoneMain::getInstance()->getHelper();
+            // $changedBillingCountry = $moptPayoneHelper->getCountryIsoFromId($params['address']['country']);
+
+            $user = Shopware()->Modules()->Admin()->sGetUserData();
+            $changedBillingCountry = $user['additional']['country']['countryiso'];
             $currentRatepayCountry = Shopware()->Session()->offsetGet('moptRatepayCountry');
 
             if ($changedBillingCountry !== $currentRatepayCountry) {

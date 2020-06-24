@@ -38,7 +38,6 @@ class Paymentfilter implements SubscriberInterface
     public function onGetPaymentsDataFilter(\Enlight_Event_EventArgs $args)
     {
         $result = $args->getReturn();
-        // $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find(Shopware()->Session()->sUserId);
         $user = Shopware()->Modules()->Admin()->sGetUserData();
         $billingCountry = $user['additional']['country']['countryiso'];
 
