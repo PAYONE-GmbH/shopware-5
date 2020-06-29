@@ -106,6 +106,10 @@ class Mopt_PayoneParamBuilder
             $params['financingtype'] = Payone_Api_Enum_FinancingType::PPI;
         }
 
+        if ($this->payonePaymentHelper->isPayoneKlarna($paymentName)) {
+            $params['capturemode'] = $finalize ? 'completed' : 'notcompleted';
+        }
+
 
         //create business object (used for settleaccount param)
         $business = new Payone_Api_Request_Parameter_Capture_Business();
@@ -462,6 +466,7 @@ class Mopt_PayoneParamBuilder
         $params['language'] = $this->getLanguageFromActiveShop();
         $params['vatid'] = $billingAddress['ustid'];
         $params['ip'] = $_SERVER['REMOTE_ADDR'];
+        $params['personalId'] = $userData['additional']['user']['mopt_payone_klarna_personalid'];
 
         // GitHub #29 wrong customer ip with loadbalancer setup
         if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
@@ -478,7 +483,7 @@ class Mopt_PayoneParamBuilder
 
         $params['gender'] = ($billingAddress['salutation'] === 'mr') ? 'm' : 'f';
         $params['salutation'] = ($billingAddress['salutation'] === 'mr') ? 'Herr' : 'Frau';
-        if ($userData['additional']['user']['birthday'] !== '0000-00-00') {
+        if (!is_null($userData['additional']['user']['birthday']) && $userData['additional']['user']['birthday'] !== '0000-00-00') {
             $params['birthday'] = str_replace('-', '', $userData['additional']['user']['birthday']); //YYYYMMDD
         }
 
@@ -1095,15 +1100,52 @@ class Mopt_PayoneParamBuilder
      * create klarna payment object
      *
      * @param string $financeType
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
+     * @param $router
+     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
      */
-    public function getPaymentKlarna($financeType)
+    public function getPaymentKlarna($financeType, $router)
     {
         $params = array();
-
         $params['financingtype'] = $financeType;
 
+        $params['successurl'] = $router->assemble(array('action' => 'success',
+                                                      'forceSecure' => true, 'appendSession' => false));
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+                                                      'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+                                                     'forceSecure' => true, 'appendSession' => false));
+
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing($params);
+
+        // if payment is Klarna old
+        if ($financeType === Payone_Api_Enum_FinancingType::KLV) {
+            return $payment;
+        }
+
+        return $this->addKlarnaPaymentParameters($payment);
+    }
+
+    /**
+     * @param Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing $payment
+     *
+     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
+     */
+    public function addKlarnaPaymentParameters($payment) {
+        $session = Shopware()->Session();
+        $authorizationToken = $session->offsetGet('mopt_klarna_authorization_token');
+
+        $phoneNumber = $session['mopt_klarna_phoneNumber'];
+
+        $paydata = $this->buildKlarnaPaydata($phoneNumber);
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'authorization_token', 'data' => $authorizationToken)
+        ));
+
+        $payment->setPaydata($paydata);
+
+        unset($session['mopt_klarna_authorization_token']);
+        unset($session['mopt_klarna_phoneNumber']);
+
         return $payment;
     }
 
@@ -1879,4 +1921,61 @@ class Mopt_PayoneParamBuilder
         return $walletParams;
     }
 
+    public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts)
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $phoneNumber = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
+
+        $paydata = $this->buildKlarnaPaydata($phoneNumber);
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key'  => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION)
+        ));
+
+        $name = $this->payonePaymentHelper->getKlarnaNameByFinancingtype($paymentFinancingtype);
+        $paymentId = $this->payonePaymentHelper->getPaymentIdFromName($name);
+        $params = $this->getAuthParameters($paymentId);
+        $params['clearingtype'] = $clearingtype;
+        $params['financingtype'] = $paymentFinancingtype;
+        $params['amount'] = $basket['AmountNumeric'] + $shippingCosts['brutto'];
+        $params['paydata'] = $paydata;
+        $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
+        $params['telephonenumber'] = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
+        $params['title'] = $this->payonePaymentHelper->getKlarnaTitle($userData);
+
+        return $params;
+    }
+
+    /**
+     * @param $phoneNumber
+     *
+     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     */
+    protected function buildKlarnaPaydata($phoneNumber) {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key'  => 'shipping_email', 'data' => $userData['additional']['user']['email'])
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key'  => 'shipping_title', 'data' => $this->payonePaymentHelper->getKlarnaTitle($userData))
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key'  => 'shipping_telephonenumber', 'data' => $phoneNumber)
+        ));
+
+/*        if ($userData['billingaddress']['company']) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key'  => 'organization_entity_type', 'data' => 'OTHER')
+            ));
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key'  => 'organization_registry_id', 'data' => $userData['billingaddress']['vatId'])
+            ));
+        }
+*/
+
+        return $paydata;
+    }
 }

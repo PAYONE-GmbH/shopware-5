@@ -3,6 +3,7 @@
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
+use Mopt_PayonePaymentHelper;
 
 class Payment implements SubscriberInterface
 {
@@ -249,10 +250,13 @@ class Payment implements SubscriberInterface
             return;
         }
 
-        $paymentMeansWithGroupedCreditcard = $this->container->get('MoptPayoneMain')->getPaymentHelper()
-                ->groupCreditcards($arguments->getReturn());
+        /** @var Mopt_PayonePaymentHelper $paymentHelper */
+        $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
 
-        if (!$paymentMeansWithGroupedCreditcard) {
+        $groupedPaymentMeans = $paymentHelper->groupCreditcards($arguments->getReturn());
+        $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($groupedPaymentMeans);
+
+        if (!$groupedPaymentMeans) {
             return;
         }
 
@@ -260,11 +264,11 @@ class Payment implements SubscriberInterface
         $this->container->get('events')->notify(
             'MoptPaymentPayone_Subscriber_Payment_onGetPaymentMeans_paymentsGrouped',
             [
-                'groupedPaymentMeans' => $paymentMeansWithGroupedCreditcard
+                'groupedPaymentMeans' => $groupedPaymentMeans
             ]
         );
 		
-        $arguments->setReturn($paymentMeansWithGroupedCreditcard);
+        $arguments->setReturn($groupedPaymentMeans);
     }
 
     /**
@@ -315,7 +319,11 @@ class Payment implements SubscriberInterface
         $subject = $arguments->getSubject();
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
 
-        $groupedPaymentMeans = $moptPayoneMain->getPaymentHelper()->groupCreditcards($subject->View()->sPayments);
+        /** @var Mopt_PayonePaymentHelper $paymentHelper */
+        $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+
+        $groupedPaymentMeans = $paymentHelper->groupCreditcards($subject->View()->sPayments);
+        $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($groupedPaymentMeans);
         if ($groupedPaymentMeans) {
             $subject->View()->sPayments = $groupedPaymentMeans;
 

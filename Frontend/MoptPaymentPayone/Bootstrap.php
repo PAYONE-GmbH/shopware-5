@@ -431,6 +431,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_shipping.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_amazonpay.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_payolution.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_shipping_payment.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_confirm.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
     }
@@ -512,6 +514,18 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         } else {
             $payment->setTemplate('mopt_paymentmean_payone_safe_invoice.tpl');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
+
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_klarna')
+        );
+        if ($payment) {
+            $payment->setName('mopt_payone__fin_klarna_old');
+            $payment->setDescription('PAYONE Klarna OLD');
+            $payment->setTemplate('mopt_paymentmean_klarna_old.tpl');
             Shopware()->Models()->persist($payment);
             Shopware()->Models()->flush();
         }

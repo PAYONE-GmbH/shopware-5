@@ -66,6 +66,8 @@ class Payone_Api_Service_Payment_Capture extends Payone_Api_Service_Payment_Abst
 
             $requestParams = $this->getMapperRequest()->map($request);
 
+            unset($requestParams['add_paydata[capturemode]']);
+
             $responseRaw = $this->getAdapter()->request($requestParams);
 
             $response = $this->getMapperResponse()->map($responseRaw);
