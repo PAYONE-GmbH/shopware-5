@@ -858,9 +858,10 @@ function moptPaymentReady() {
     function poBindCCSelectChange() {
         // show already pre selected description
         $('.payone_additionalDescriptions').hide();
-        var selected = $('#mopt_payone__cc_cardtype').val().toLowerCase();
-        $('#' + selected + '_additionalDescription').show();
-
+        if ($('#mopt_payone__cc_cardtype').val()) {
+            var selected = $('#mopt_payone__cc_cardtype').val().toLowerCase();
+            $('#' + selected + '_additionalDescription').show();
+        }
         $('#mopt_payone__cc_cardtype').on('change', function () {
             $('.payone_additionalDescriptions').hide();
             $('#' + this.value.toLowerCase() + '_additionalDescription').show();
