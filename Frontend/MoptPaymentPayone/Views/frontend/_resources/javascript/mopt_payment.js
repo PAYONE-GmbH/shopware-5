@@ -890,6 +890,7 @@ function moptPaymentReady() {
 
     $.subscribe("plugin/swShippingPayment/onInputChanged", function () {
         poBindDispatchChange();
+        poBindCCSelectChange();
     });
 
 
