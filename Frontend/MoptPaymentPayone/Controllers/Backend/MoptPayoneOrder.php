@@ -4,6 +4,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 {
 
     protected $moptPayone__sdk__Builder   = null;
+    /** @var Mopt_PayoneMain $moptPayoneMain */
     protected $moptPayone__main           = null;
     protected $moptPayone__helper         = null;
     protected $moptPayone__paymentHelper  = null;

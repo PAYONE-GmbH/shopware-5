@@ -12,9 +12,9 @@
      id="mopt_payone_creditcard_form" 
      data-mopt_payone__cc_paymentid="{$form_data.mopt_payone__cc_paymentid}" 
      data-mopt_payone__cc_paymentshort="{$form_data.mopt_payone__cc_cardtype}" 
-     data-mopt_payone_credit_cards_id="{$payment_mean.mopt_payone_credit_cards[0]['id']}" 
-     data-mopt_payone_credit_cards_short="{$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards[0]['short']}"
-     data-mopt_payone_available_cardtypes="{foreach from=$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards item=cc name=cc_types}{$cc.short}{if not $smarty.foreach.cc_types.last},{/if}{/foreach}"
+     data-mopt_payone_credit_cards_id="{$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards[0]['id']}"
+     data-mopt_payone_credit_cards_short="{$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards[0]['short']}"
+     data-mopt_payone_available_cardtypes="{foreach from=$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards item=cc name=cc_types}{$cc.short}{if not $smarty.foreach.cc_types.last},{/if}{/foreach}"
      data-mopt_payone__cc_Year="{$form_data.mopt_payone__cc_Year}" 
      data-messageCreditCardCvcProcessed="{s name='creditCardCvcProcessed'}Kartenprüfziffer wurde verarbeitet{/s}" 
      data-moptPayoneParamsMode="{$moptCreditCardCheckEnvironment.moptPayoneParams.mode}" 
@@ -67,7 +67,7 @@
         </div>
 
         <div id="payone-cc-icons-wrap">
-            {foreach from=$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards item=cc}
+            {foreach from=$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards item=cc}
                 <img id="payone-cc-icon-{$cc.short|lower}" data-cc-type="{$cc.short}" class="payone-cc-icon{if $form_data.mopt_payone__cc_paymentname == $cc.name} payone-cc-icon--selected{elseif $form_data.mopt_payone__cc_pseudocardpan} payone-cc-icon--hidden{/if}" src="https://cdn.pay1.de/cc/{$cc.short|lower}/s/default.png" alt="{$cc.description}">
             {/foreach}
         </div>
@@ -79,7 +79,7 @@
                 {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection !== '1'}required="required" aria-required="true"{/if}
                 class="select--country is--required{if $error_flags.mopt_payone__cc_cardtype} has--error{/if}">
             <option disabled="disabled" value="" selected="selected">{s name='creditCardType'}Kartentyp{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
-            {foreach from=$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards item=credit_card}
+            {foreach from=$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards item=credit_card}
                 <option value="{$credit_card.short}"
                         {if $form_data.mopt_payone__cc_paymentname == $credit_card.name}selected="selected"{/if}
                         mopt_payone__cc_paymentname="{$credit_card.name}" mopt_payone__cc_paymentid="{$credit_card.id}">

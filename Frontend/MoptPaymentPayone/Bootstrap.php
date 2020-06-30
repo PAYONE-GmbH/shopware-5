@@ -36,6 +36,8 @@ use Shopware\Models\Payment\Payment;
 use Shopware\Models\Payment\Repository as PaymentRepository;
 use Shopware\Models\Plugin\Plugin;
 use Shopware\Plugins\MoptPaymentPayone\Bootstrap\RiskRules;
+use Monolog\Logger;
+use Monolog\Handler\RotatingFileHandler;
 
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
@@ -142,6 +144,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $riskRules->createRiskRules();
         $this->removePayment('mopt_payone__fin_klarna_installment');
         $this->removePayment('mopt_payone__ewallet_masterpass');
+        $this->createCronJob('Payone Transaktionsweiterleitung', 'PayoneTransactionForward', 60);
 
         return array('success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme'));
     }
@@ -371,6 +374,25 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'Shopware_Modules_Admin_Execute_Risk_Rule_sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT',
             'sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT'
         );
+        $this->subscribeEvent('Shopware_CronJob_PayoneTransactionForward', 'onRunCronJob');
+    }
+
+    /**
+     * @param Enlight_Components_Cron_EventArgs $job
+     */
+    public function onRunCronJob(Enlight_Components_Cron_EventArgs $job)
+    {
+        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logFile = $logPath . '/MoptPaymentPayone_transaction_forward_cronjob.log';
+
+        $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
+        $queueWorker->processQueue();
+
+        $rfh = new RotatingFileHandler($logFile, 14);
+        $rotatingLogger = new Logger('MoptPaymentPayone');
+        $rotatingLogger->pushHandler($rfh);
+        $rotatingLogger->info(date('Y-m-d H:i:s > ') . 'Payone transactionqueue cronjob started.');
+        $rotatingLogger->info(date('Y-m-d H:i:s > ') . 'Payone transactionqueue cronjob stopped.');
     }
 
     public function registerAmazonCookie()
@@ -409,6 +431,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_shipping.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_amazonpay.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_payolution.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_shipping_payment.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_confirm.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
     }
@@ -490,6 +514,18 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         } else {
             $payment->setTemplate('mopt_paymentmean_payone_safe_invoice.tpl');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
+
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_klarna')
+        );
+        if ($payment) {
+            $payment->setName('mopt_payone__fin_klarna_old');
+            $payment->setDescription('PAYONE Klarna OLD');
+            $payment->setTemplate('mopt_paymentmean_klarna_old.tpl');
             Shopware()->Models()->persist($payment);
             Shopware()->Models()->flush();
         }
@@ -584,6 +620,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         try {
             $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt'),
+            ));
+        } catch (ToolsException $e) {
+            // ignore
+        }
+
+        try {
+            $schemaTool->createSchema(array(
+                $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionForwardQueue\MoptPayoneTransactionForwardQueue'),
             ));
         } catch (ToolsException $e) {
             // ignore

@@ -1,6 +1,8 @@
 <?php
 
 use Shopware\Components\Routing\Router;
+use Shopware\Models\Customer\Address;
+use Shopware\Models\Customer\Customer;
 
 /**
  * $Id: $
@@ -550,14 +552,71 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * check if given payment name is payone klarna payment
+     * check if given payment name is old payone klarna payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarna_old($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_klarna_old#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is any of the existing payone klarna payment, except Klarna OLD
      *
      * @param string $paymentName
      * @return boolean
      */
     public function isPayoneKlarna($paymentName)
     {
-        return preg_match('#mopt_payone__fin_klarna#', $paymentName) ? true : false;
+        return $this->isPayoneKlarnaInstallments($paymentName)
+            || $this->isPayoneKlarnaInvoice($paymentName)
+            || $this->isPayoneKlarnaDirectDebit($paymentName);
+    }
+
+    /**
+     * check if given payment name is the virtual grouped klarna payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarnaGrouped($paymentName)
+    {
+        return preg_match('#mopt_payone_klarna#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone klarna installments payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarnaInstallments($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_kis_klarna_installments#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone klarna invoice payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarnaInvoice($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_kiv_klarna_invoice#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone klarna direct debit payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneKlarnaDirectDebit($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_kdd_klarna_direct_debit#', $paymentName) ? true : false;
     }
 
     /**
@@ -984,8 +1043,10 @@ class Mopt_PayonePaymentHelper
 
     public function moptUpdateUserInformation($userId, $paymentData)
     {
+        /** @var Customer $user */
         $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
 
+        /** @var Address $billing */
         $billing = $user->getDefaultBillingAddress();
 
         if (isset($paymentData['formData']['mopt_payone__klarna_birthyear'])) {
@@ -996,6 +1057,7 @@ class Mopt_PayonePaymentHelper
 
             $billing->setPhone($paymentData['formData']['mopt_payone__klarna_telephone']);
         }
+
         if (isset($paymentData['formData']['mopt_payone__payolution_birthdaydate'])) {
             $user->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
             Shopware()->Models()->persist($user);
@@ -1008,6 +1070,10 @@ class Mopt_PayonePaymentHelper
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_telephone'])) {
             $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_invoice_telephone']);
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__klarna_personalId'])) {
+            $user->getAttribute()->setMoptPayoneKlarnaPersonalid($paymentData['formData']['mopt_payone__klarna_personalId']);
         }
 
         if (isset($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'])) {
@@ -1152,8 +1218,20 @@ class Mopt_PayonePaymentHelper
             return 'cashondel';
         }
 
-        if ($this->isPayoneKlarna($paymentShortName)) {
-            return 'klarna';
+        if ($this->isPayoneKlarna_old($paymentShortName)) {
+            return 'klarnaold';
+        }
+
+        if ($this->isPayoneKlarnaInstallments($paymentShortName)) {
+            return 'klarnainstallments';
+        }
+
+        if ($this->isPayoneKlarnaInvoice($paymentShortName)) {
+            return 'klarnainvoice';
+        }
+
+        if ($this->isPayoneKlarnaDirectDebit($paymentShortName)) {
+            return 'klarnadirectdebit';
         }
 
         if ($this->isPayonePayolutionDebitNote($paymentShortName)) {
@@ -1286,6 +1364,109 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * group Klarna payments to single payment method Klarna, except Klarna OLD
+     *
+     * @param array $paymentMeans
+     * @return array
+     */
+    public function groupKlarnaPayments($paymentMeans)
+    {
+        $snippetObject = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment');
+        $paymentGroupData = [
+            'id' => 'mopt_payone_klarna',
+            'name' => 'mopt_payone_klarna',
+            'description' => $snippetObject->get('PaymentMethodKlarna', 'PAYONE Klarna Payments', true),
+            'key' => 'mopt_payone_klarna_payments',
+        ];
+
+        return $this->groupPayments(array($this, 'isPayoneKlarna'), $paymentMeans, $paymentGroupData);
+    }
+
+    /**
+     * group payment methods to single payment method
+     *
+     * @param callable $paymentCheckCallback callback, to check a payment, whether it belongs to a defined group of payments
+     * @param array    $paymentMeans
+     * @param array    $paymentGroupData an array with an id, a name, a description and a key
+     *
+     * @return array
+     */
+    protected function groupPayments($paymentCheckCallback, $paymentMeans, $paymentGroupData)
+    {
+        $firstHit = 'not_set';
+        $payments = array();
+
+        foreach ($paymentMeans as $key => $paymentmean) {
+            if ($paymentCheckCallback($paymentmean['name'])) {
+                if ($firstHit === 'not_set') {
+                    $firstHit = $key;
+                }
+
+                $payment = array();
+                $payment['id'] = $paymentmean['id'];
+                $payment['name'] = $paymentmean['name'];
+                $payment['description'] = $paymentmean['description'];
+
+                $payments[] = $payment;
+
+                if ($firstHit != $key) {
+                    unset($paymentMeans[$key]);
+                }
+            }
+        }
+
+        // don't assign anything if no payment to be grouped was found
+        if ($firstHit === 'not_set') {
+            return $paymentMeans;
+        }
+
+        $paymentMeans[$firstHit]['id'] = $paymentGroupData['id'];
+        $paymentMeans[$firstHit]['name'] = $paymentGroupData['name'];
+        $paymentMeans[$firstHit]['description'] = $paymentGroupData['description'];
+        $paymentMeans[$firstHit][$paymentGroupData['key']] = $payments;
+
+        return $paymentMeans;
+    }
+
+    /**
+     * Returns the Klarna name by financingtype
+     *
+     * @param $financingtype
+     *
+     * @return string
+     */
+    public function getKlarnaNameByFinancingtype($financingtype)
+    {
+        return array_search($financingtype, $this->klarnaPaymentFinancingtypeNameMapping());
+    }
+
+    /**
+     * Returns the Klarna financingtype by name
+     *
+     * @param $paymentName
+     *
+     * @return string
+     */
+    public function getKlarnaFinancingtypeByName($paymentName)
+    {
+        return $this->klarnaPaymentFinancingtypeNameMapping()[$paymentName];
+    }
+
+    /**
+     * Maps Payone API value for Klarna
+     *
+     * @return string[]
+     */
+    private function klarnaPaymentFinancingtypeNameMapping()
+    {
+        return [
+            'mopt_payone__fin_kis_klarna_installments' => Payone_Api_Enum_FinancingType::KIS,
+            'mopt_payone__fin_kiv_klarna_invoice' => Payone_Api_Enum_FinancingType::KIV,
+            'mopt_payone__fin_kdd_klarna_direct_debit' => Payone_Api_Enum_FinancingType::KDD,
+        ];
+    }
+
+    /**
      * Fetches and returns amazon payment instance.
      *
      * @return \Shopware\Models\Payment\Payment
@@ -1395,5 +1576,210 @@ class Mopt_PayonePaymentHelper
         $input = array_slice($input, 0, $offset, TRUE)
             + $replacement
             + array_slice($input, $offset + $length, NULL, TRUE);
+    }
+
+    public function buildAndCallKlarnaStartSession($paymentFinancingtype, $birthdate, $phoneNumber, $personalId)
+    {
+        $bootstrap = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
+
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        /** @var Mopt_PayoneMain $moptPayoneMain */
+        $moptPayoneMain = $bootstrap->Application()->MoptPayoneMain();
+        $paramBuilder = $moptPayoneMain->getParamBuilder();
+        $basket = $moptPayoneMain->sGetBasket();
+
+        /** @var Payone_Builder $payoneBuilder */
+        $payoneBuilder = $bootstrap->Application()->MoptPayoneBuilder();
+        $service = $payoneBuilder->buildServicePaymentGenericpayment();
+
+        $repositoryNamespace = 'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog';
+        /** @var Payone_Api_Persistence_Interface $moptPayoneApiLogRepository */
+        $moptPayoneApiLogRepository = Shopware()->Models()->getRepository($repositoryNamespace);
+        $service->getServiceProtocol()->addRepository($moptPayoneApiLogRepository);
+
+        $userData['additional']['user']['birthday'] = $birthdate;
+        $userData['additional']['user']['mopt_payone_klarna_personalid'] = $personalId;
+        Shopware()->Session()->offsetSet('mopt_klarna_phoneNumber', $phoneNumber);
+
+        $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
+
+        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts);
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $basket['sShippingcosts'] = $shippingCosts['brutto'];
+        $basket['sShippingcostsWithTax'] = $shippingCosts['brutto'];
+        $basket['sShippingcostsNet'] = $shippingCosts['netto'];
+        $basket['sShippingcostsTax'] = $shippingCosts['tax'];
+
+        $personalData = $paramBuilder->getPersonalData($userData);
+        $request->setPersonalData($personalData);
+        $deliveryData = $paramBuilder->getDeliveryData($userData);
+        $request->setDeliveryData($deliveryData);
+
+        $selectedDispatchId = Shopware()->Session()['sDispatch'];
+        $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);
+
+        $invoicing = $paramBuilder->getInvoicing($basket, $dispatch, $userData);
+        $request->setInvoicing($invoicing);
+
+        $result = null;
+
+        try {
+            $result = $service->request($request);
+        } catch (Exception $e) {
+        }
+
+        return $result;
+    }
+
+    public function getKlarnaGender($userData) {
+        $salutation = $userData['additional']['user']['salutation'];
+
+        return $salutation === 'mr' ? 'male' : 'female';
+    }
+
+    public function getKlarnaTitle($userData) {
+        $countryIso2 = $userData['additional']['country']['countryiso'];
+        $salutation = $userData['additional']['user']['salutation'];
+        switch ($countryIso2) {
+            case 'AT':
+            case 'DE':
+            case 'CH':
+                $title = ($salutation === 'mr') ? 'Herr' : 'Frau';
+                break;
+            case 'GB':
+            case 'US':
+                $title = ($salutation === 'mr') ? 'Mr' : 'Ms';
+                break;
+            case 'DK':
+            case 'FI':
+            case 'SE':
+            case 'NL':
+            case 'NO':
+                $title = ($salutation === 'mr') ? 'Dhr.' : 'Mevr.';
+                break;
+            default:
+                $title = '';
+        }
+
+        return $title;
+    }
+
+    /**
+     * Check if birthday field needs to be shown
+     *
+     * @return bool
+     */
+    public function isKlarnaBirthdayNeeded()
+    {
+        $isBirthdayValid = $this->isBirthdayValid();
+        $isBirthdayNeededByCountry = $this->isKlarnaBirthdayNeededByCountry();
+
+        return !$isBirthdayValid && $isBirthdayNeededByCountry;
+    }
+
+    /**
+     * Check if telephone field needs to be shown
+     *
+     * @return bool
+     */
+    public function isKlarnaTelephoneNeeded()
+    {
+        $isTelephoneValid = $this->isTelephoneValid();
+        $isTelephoneNeededByCountry = $this->isKlarnaTelephoneNeededByCountry();
+
+        return !$isTelephoneValid && $isTelephoneNeededByCountry;
+    }
+
+    /**
+     * Check if telephone field needs to be shown
+     *
+     * @return bool
+     */
+    public function isKlarnaPersonalIdNeeded()
+    {
+        $isPersonalIdValid = $this->isPersonalIdValid();
+        $isPersonalIdNeededByCountry = $this->isKlarnaPersonalIdNeededByCountry();
+
+        return !$isPersonalIdValid && $isPersonalIdNeededByCountry;
+    }
+
+    /**
+     * Checks if current users birthday is valid
+     *
+     * @return bool
+     */
+    private function isBirthdayValid()
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        return !is_null($userData['additional']['user']['birthday']) && $userData['additional']['user']['birthday'] !== '' && $userData['additional']['user']['birthday'] !== '0000-00-00';
+    }
+
+    /**
+     * Checks if current users telephone number is valid
+     *
+     * @return bool
+     */
+    private function isTelephoneValid()
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        return !is_null($userData['billingaddress']['phone']) && $userData['billingaddress']['phone'] !== '';
+    }
+
+    /**
+     * Checks if current users personalid number is valid
+     *
+     * @return bool
+     */
+    private function isPersonalIdValid()
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+
+        return !is_null($userData['additional']['user']['mopt_payone_klarna_personalid']) && $userData['additional']['user']['mopt_payone_klarna_personalid'] !== '';
+    }
+
+    /**
+     * Checks if birthday is mandatory for klarna payments depending on country
+     *
+     * @return bool
+     */
+    private function isKlarnaBirthdayNeededByCountry()
+    {
+        $moptPayoneHelper = Shopware()->Container()->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $klarnaBirthdayNeededCountries = array('DE', 'NL', 'AT', 'CH');
+        return in_array($billingCountryIso, $klarnaBirthdayNeededCountries);
+    }
+
+    /**
+     * Checks if telephone is mandatory for klarna payments depending on country
+     *
+     * @return bool
+     */
+    public function isKlarnaTelephoneNeededByCountry()
+    {
+        $moptPayoneHelper = Shopware()->Container()->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $klarnaTelephoneNeededCountries = array('NO', 'SE', 'DK');
+        return in_array($billingCountryIso, $klarnaTelephoneNeededCountries);
+    }
+
+    /**
+     * Checks if personalid is mandatory for klarna payments depending on country
+     *
+     * @return bool
+     */
+    public function isKlarnaPersonalIdNeededByCountry()
+    {
+        $moptPayoneHelper = Shopware()->Container()->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $klarnaPersonalIdNeededCountries = array('NO', 'SE', 'DK'); // SE verified FI unsure
+        return in_array($billingCountryIso, $klarnaPersonalIdNeededCountries);
     }
 }
