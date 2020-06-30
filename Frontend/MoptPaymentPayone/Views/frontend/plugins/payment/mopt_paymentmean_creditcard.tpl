@@ -42,7 +42,7 @@
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
 
-    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1'}
+    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1' && ! $moptIsAjax}
         <div id="payone-cc-auto-detection-messages">
             <div class="payone-auto-cc-detection-message" data-msg-type="unknown">
                 <div class="alert is--warning is--rounded">
@@ -73,7 +73,7 @@
         </div>
     {/if}
 
-    <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1'}style="display: none;"{/if}>
+    <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1' && !$moptIsAjax}style="display: none;"{/if}>
         <select name="moptPaymentData[mopt_payone__cc_cardtype]"
                 id="mopt_payone__cc_cardtype"
                 {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection !== '1'}required="required" aria-required="true"{/if}
