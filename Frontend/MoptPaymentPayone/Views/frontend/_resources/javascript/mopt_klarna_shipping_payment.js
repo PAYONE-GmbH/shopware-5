@@ -46,7 +46,7 @@
         authorizeApproved: false,
         data: $('#mopt_payone__klarna_information').data(),
         payTypeTranslations: {
-            KDD: 'pay_now',
+            KDD: 'direct_debit',
             KIV: 'pay_later',
             KIS: 'pay_over_time'
         },
