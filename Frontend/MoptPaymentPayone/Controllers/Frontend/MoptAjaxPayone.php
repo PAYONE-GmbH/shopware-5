@@ -36,6 +36,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     protected $payoneServiceBuilder;
     protected $service = null;
+    /** @var Enlight_Components_Session_Namespace $session */
     protected $session;
 
     /**
@@ -1296,6 +1297,73 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
         ));
         return $service->request($request);
+    }
+
+    protected function storeAuthorizationTokenAction()
+    {
+        $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
+
+        $token = $this->request->getParam('authorizationToken');
+
+        $this->session->offsetSet('mopt_klarna_authorization_token', $token);
+    }
+
+    public function startKlarnaSessionAction()
+    {
+        try {
+            $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        } catch (Exception $e) {
+        }
+
+        $financingtype = $this->Request()->getParam('financingtype');
+        $birthdate = $this->Request()->getParam('birthdate');
+        $phoneNumber = $this->Request()->getParam('phoneNumber');
+        $name = $this->moptPayonePaymentHelper->getKlarnaNameByFinancingtype($financingtype);
+        $paymentId = $this->moptPayonePaymentHelper->getPaymentIdFromName($name);
+        $personalId = $this->Request()->getParam('personalId');
+
+        $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession(
+            $financingtype,
+            $birthdate,
+            $phoneNumber,
+            $personalId
+        );
+
+        if ($result->getStatus() === 'ERROR') {
+            echo json_encode([
+                'status' => $result->getStatus(),
+                'errorCode' => $result->getErrorcode(),
+                'errorMessage' => $result->getErrormessage(),
+                'customerMessage' => $result->getCustomermessage(),
+            ]);
+        } else {
+            $clientToken = $result->getPaydata()->toAssocArray()['client_token'];
+
+            $this->session->offsetSet('mopt_klarna_workorderid', $result->getWorkorderId());
+            $this->session->offsetSet('mopt_klarna_client_token', $clientToken);
+
+            echo json_encode([
+                'status' => $result->getStatus(),
+                'client_token' => $clientToken,
+                'paymentId' => $paymentId,
+            ]);
+        }
+    }
+
+    public function unsetSessionVarsAction()
+    {
+        try {
+            $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        } catch (Exception $e) {
+        }
+
+        $varsToUnset = $this->Request()->getParam('vars');
+
+        foreach ($varsToUnset as $var) {
+            if ($this->session->offsetGet($var)) {
+                unset($this->session[$var]);
+            }
+        }
     }
 
     public function ajaxGetPaySafeTokenAction() {

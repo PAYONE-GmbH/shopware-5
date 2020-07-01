@@ -715,7 +715,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=consumerscoreCheckModeB2C/active}Prüfungsart B2C{/s}',
+                fieldLabel: '{s name=fieldlabel/consumerscoreCheckModeB2C}Prüfungsart B2C{/s}',
                 store: me.data.infoscoreb2c,
                 queryMode: 'local',
                 displayField: 'display',
@@ -726,7 +726,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=consumerscoreCheckModeB2B/active}Prüfungsart B2B{/s}',
+                fieldLabel: '{s name=fieldlabel/consumerscoreCheckModeB2B}Prüfungsart B2B{/s}',
                 store: me.data.infoscoreb2b,
                 queryMode: 'local',
                 displayField: 'display',

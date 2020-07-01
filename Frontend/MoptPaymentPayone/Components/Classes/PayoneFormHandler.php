@@ -82,8 +82,20 @@ class Mopt_PayoneFormHandler
             return $this->proccessDebitNote($formData);
         }
 
-        if ($paymentHelper->isPayoneKlarna($paymentId)) {
-            return $this->proccessKlarna($formData);
+        if ($paymentHelper->isPayoneKlarna_old($paymentId)) {
+            return $this->processKlarna_old($formData);
+        }
+
+        if ($paymentHelper->isPayoneKlarnaInstallments($paymentId)) {
+            return $this->processKlarnaInstallments($formData);
+        }
+
+        if ($paymentHelper->isPayoneKlarnaInvoice($paymentId)) {
+            return $this->processKlarnaInvoice($formData);
+        }
+
+        if ($paymentHelper->isPayoneKlarnaDirectDebit($paymentId)) {
+            return $this->processKlarnaDirectDebit($formData);
         }
 
         if ($paymentHelper->isPayonePayolutionDebitNote($paymentId)) {
@@ -376,38 +388,96 @@ class Mopt_PayoneFormHandler
      * @param array $formData
      * @return array
      */
-    protected function proccessKlarna($formData)
+    protected function processKlarnaInstallments($formData)
+    {
+        return $this->processKlarnaGeneric($formData);
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function processKlarnaInvoice($formData)
+    {
+        return $this->processKlarnaGeneric($formData);
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function processKlarnaDirectDebit($formData)
+    {
+        return $this->processKlarnaGeneric($formData);
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function processKlarnaGeneric($formData)
     {
         $paymentData = array();
 
-        if (!$formData['mopt_payone__klarna_telephone']) {
+        // file_put_contents("/var/www/sw564/var/log/klarna_authorize.json", $formData['klarna-authorize']);
+
+        // validation of fields was already done in klarna widget
+        $paymentData['formData']['mopt_payone__klarna_telephone'] = $formData['mopt_payone__klarna_telephone'];
+        $paymentData['formData']['mopt_payone__klarna_personalId'] = $formData['mopt_payone__klarna_personalId'];
+        $paymentData['formData']['mopt_payone__klarna_birthyear'] = $formData['mopt_payone__klarna_birthyear'];
+        $paymentData['formData']['mopt_payone__klarna_birthmonth'] = $formData['mopt_payone__klarna_birthmonth'];
+        $paymentData['formData']['mopt_payone__klarna_birthday'] = $formData['mopt_payone__klarna_birthday'];
+        $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
+
+        $this->setFormSubmittedFlag();
+
+        return $paymentData;
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function processKlarna_old($formData)
+    {
+        $paymentData = array();
+
+        if (!$formData['mopt_payone__klarna_old_telephone']) {
             $paymentData['sErrorFlag']['mopt_payone__klarna_telephone'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__klarna_telephone'] = $formData['mopt_payone__klarna_telephone'];
+            $paymentData['formData']['mopt_payone__klarna_telephone'] = $formData['mopt_payone__klarna_old_telephone'];
         }
 
-        if (!$formData['mopt_payone__klarna_agreement'] || !in_array($formData['mopt_payone__klarna_agreement'], array('on', true))) {
+        if (!$formData['mopt_payone__klarna_old_agreement'] || !in_array($formData['mopt_payone__klarna_old_agreement'], array('on', true))) {
             $paymentData['sErrorFlag']['mopt_payone__klarna_agreement'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__klarna_agreement'] = $formData['mopt_payone__klarna_agreement'];
+            $paymentData['formData']['mopt_payone__klarna_agreement'] = $formData['mopt_payone__klarna_old_agreement'];
         }
 
-        if (!$formData['mopt_payone__klarna_birthyear']) {
+        if (!$formData['mopt_payone__klarna_old_birthyear']) {
             $paymentData['sErrorFlag']['mopt_payone__klarna_birthyear'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__klarna_birthyear'] = $formData['mopt_payone__klarna_birthyear'];
+            $paymentData['formData']['mopt_payone__klarna_birthyear'] = $formData['mopt_payone__klarna_old_birthyear'];
         }
 
-        if (!$formData['mopt_payone__klarna_birthmonth']) {
+        if (!$formData['mopt_payone__klarna_old_birthmonth']) {
             $paymentData['sErrorFlag']['mopt_payone__klarna_birthmonth'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__klarna_birthmonth'] = $formData['mopt_payone__klarna_birthmonth'];
+            $paymentData['formData']['mopt_payone__klarna_birthmonth'] = $formData['mopt_payone__klarna_old_birthmonth'];
         }
 
-        if (!$formData['mopt_payone__klarna_birthday']) {
+        if (!$formData['mopt_payone__klarna_old_birthday']) {
             $paymentData['sErrorFlag']['mopt_payone__klarna_birthday'] = true;
         } else {
-            $paymentData['formData']['mopt_payone__klarna_birthday'] = $formData['mopt_payone__klarna_birthday'];
+            $paymentData['formData']['mopt_payone__klarna_birthday'] = $formData['mopt_payone__klarna_old_birthday'];
         }
         $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
 

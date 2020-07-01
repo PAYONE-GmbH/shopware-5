@@ -30,6 +30,7 @@
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
+use Mopt_PayonePaymentHelper;
 use Shopware\Models\Shop\Template;
 use Shopware\Models\Shop\TemplateConfig\Element;
 
@@ -121,6 +122,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         // get paymentId from view instead of sGetUserData
         $paymentId = $view->sPayment['id'];
+        /** @var Mopt_PayonePaymentHelper $moptPaymentHelper */
         $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
         $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($paymentId);
 
@@ -165,6 +167,14 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_creditcard';
             }
+            if ($moptPaymentHelper->isPayoneKlarna($paymentName)) {
+                $moptPayoneFormData['payment'] = 'mopt_payone_klarna';
+            }
+
+            if (!isset($moptPayoneFormData['mopt_payone__klarna_paymentname'])) {
+                $moptPayoneFormData['mopt_payone__klarna_paymentname'] = $moptPaymentHelper->getPaymentNameFromId($session['sPaymentID']);
+            }
+
             $view->assign('sFormData', $moptPayoneFormData);
             $view->assign('moptPaymentConfigParams', $this->moptPaymentConfigParams($session->moptMandateDataDownload));
             $view->assign('moptMandateAgreementError', $session->moptMandateAgreementError);
@@ -210,6 +220,14 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->extendsTemplate('frontend/checkout/mopt_confirm' . $templateSuffix . '.tpl');
             }
 
+            $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
+            if ($moptPaymentHelper->isPayoneKlarna($moptPayoneFormData['mopt_payone__klarna_paymentname'])) {
+                if (is_null($session->offsetGet('mopt_klarna_authorization_token'))) {
+                    $view->assign('mopt_klarna_client_token', $session->offsetGet('mopt_klarna_client_token'));
+                    $view->extendsTemplate('frontend/checkout/mopt_klarna_confirm' . $templateSuffix . '.tpl');
+                }
+            }
+
             if ($request->getParam('moptShippingAddressCheckNeedsUserVerification')) {
                 $view->assign('moptShippingAddressCheckNeedsUserVerification', $request->getParam('moptShippingAddressCheckNeedsUserVerification'));
                 $session->moptShippingAddressCheckOriginalAddress = $request->getParam('moptShippingAddressCheckOriginalAddress');
@@ -249,6 +267,11 @@ class FrontendPostDispatch implements SubscriberInterface
             // cleanup sComment see #SW-151
             if (isset($session['sComment'])) {
                 unset($session['sComment']);
+            }
+
+            // Klarna PayNow
+            if ($session->offsetGet('mopt_klarna_client_token')) {
+                unset($session['mopt_klarna_client_token']);
             }
         }
 
@@ -327,6 +350,13 @@ class FrontendPostDispatch implements SubscriberInterface
                     unset ($payments[$paydirektexpressIndex]);
                 }
 
+                // remove Klarna payments according to supported country and currency combination
+                if ($payment['name'] === 'mopt_payone_klarna' && !$this->isCountryCurrencySupportedFromKlarna()
+                ) {
+                    $klarnaIndex = $index;
+                    unset ($payments[$klarnaIndex]);
+                }
+
             }
             unset ($payments[$amazonPayIndex]);
             $view->assign('sPayments', $payments);
@@ -395,8 +425,12 @@ class FrontendPostDispatch implements SubscriberInterface
         $data['moptPayolutionInformation'] = null;
         $data['moptRatepayConfig'] = null;
 
+        /** @var Mopt_PayonePaymentHelper $paymentHelper */
+        $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
+
         if ($controllerName && $controllerName === 'checkout') {
-            $groupedPaymentMeans = $moptPayoneMain->getPaymentHelper()->groupCreditcards($paymentMeans);
+            $paymentMeansWithGroupedCreditcard = $paymentHelper->groupCreditcards($paymentMeans);
+            $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($paymentMeansWithGroupedCreditcard);
         }
 
         if ($groupedPaymentMeans) {
@@ -407,7 +441,15 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($paymentMean['id'] == 'mopt_payone_creditcard') {
                 $paymentMean['mopt_payone_credit_cards'] = $moptPayoneMain->getPaymentHelper()
                     ->mapCardLetter($paymentMean['mopt_payone_credit_cards']);
-                $data['payment_mean'] = $paymentMean;
+                $data['mopt_payone_creditcard'] = $paymentMean;
+            }
+
+            if ($paymentHelper->isPayoneKlarnaGrouped($paymentMean['name'])) {
+                foreach ($paymentMean['mopt_payone_klarna_payments'] as &$klarna_payment) {
+                    $klarna_payment['financingtype'] = $paymentHelper->getKlarnaFinancingtypeByName($klarna_payment['name']);
+                }
+
+                $data['mopt_payone_klarna'] = $paymentMean;
             }
 
 
@@ -417,16 +459,25 @@ class FrontendPostDispatch implements SubscriberInterface
             }
 
             //prepare additional Klarna information and retrieve birthday and phone nr from user data
-            if ($moptPayoneMain->getPaymentHelper()->isPayoneKlarna($paymentMean['name'])) {
+            if (
+                $moptPayoneMain->getPaymentHelper()->isPayoneKlarna_old($paymentMean['name'])
+                || $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaGrouped($paymentMean['name'])
+            ) {
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
-                $birthday = explode('-', $userData['additional']['user']['birthday']);
 
+                if (is_null($userData['additional']['user']['birthday'])) {
+                    $birthday = '0000-00-00';
+
+                } else {
+                    $birthday = explode('-', $userData['additional']['user']['birthday']);
+                }
                 $data['mopt_payone__klarna_birthday'] = $birthday[2];
                 $data['mopt_payone__klarna_birthmonth'] = $birthday[1];
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
                 $data['mopt_payone__klarna_telephone'] = $userData['billingaddress']['phone'];
+                $data['mopt_payone__klarna_personalId'] = $userData['additional']['user']['mopt_payone_klarna_personalid'];
             }
 
 
@@ -751,5 +802,35 @@ class FrontendPostDispatch implements SubscriberInterface
                 return true;
             }
         }
+    }
+
+    /**
+     * Checks if klarna supports the user's billing country in combination
+     * with currency
+     * @see https://developers.klarna.com/documentation/klarna-payments/in-depth-knowledge/puchase-countries-currencies-locales/
+     * @return bool
+     */
+    protected function isCountryCurrencySupportedFromKlarna()
+    {
+        $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+        $currency = Shopware()->Config()->currency;
+
+        $map = array (
+            'DE' => 'EUR',
+            'AT' => 'EUR',
+            'CH' => 'CHF',
+            'NL' => 'EUR',
+            'DK' => 'DKK',
+            'NO' => 'NOK',
+            'SE' => 'SEK',
+            'FI' => 'EUR',
+            'GB' => 'GBP',
+            'US' => 'USD',
+            'AU' => 'AUD',
+        );
+
+        return ($map[$billingCountryIso] === $currency);
     }
 }

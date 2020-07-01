@@ -53,4 +53,6 @@ class Payone_Api_Enum_GenericpaymentAction
     const PAYPAL_INSTALLMENT_SALE = "installment_sale";
 
     const PAYPAL_INSTALLMENT_GET_PAYMENT = "get_Payment";
+
+    const KLARNA_START_SESSION = "start_session";
 }
