@@ -31,6 +31,7 @@
 // needed for CSRF Protection compatibility SW versions < 5.2
 require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Tools\ToolsException;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Payment\Repository as PaymentRepository;
@@ -140,13 +141,28 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createDatabase();
         $this->addAttributes();
         $this->createMenu();
+
         $riskRules = new RiskRules();
         $riskRules->createRiskRules();
+
         $this->removePayment('mopt_payone__fin_klarna_installment');
         $this->removePayment('mopt_payone__ewallet_masterpass');
-        $this->createCronJob('Payone Transaktionsweiterleitung', 'PayoneTransactionForward', 60);
+        $this->removePayment('mopt_payone__fin_billsafe');
+
+        // Only relevant for update, not for reinstall
+        if (!$this->doesCronJobExist('PayoneTransactionForward')) {
+            $this->createCronJob('Payone Transaktionsweiterleitung', 'PayoneTransactionForward', 60);
+        }
 
         return array('success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme'));
+    }
+
+    private function doesCronJobExist($cronJobAction)
+    {
+        /** @var Connection $connection */
+        $connection = $this->get('dbal_connection');
+        $result = $connection->fetchAll("SELECT * FROM `s_crontab` WHERE `action` = ?",[$cronJobAction]);
+        return count($result) > 0;
     }
 
     /**

@@ -461,11 +461,6 @@ class Mopt_PayoneInstallHelper
                 'template' => null,
                 'position' => 20,),
             array(
-                'name' => 'mopt_payone__fin_billsafe',
-                'description' => 'PAYONE BillSAFE',
-                'template' => null,
-                'position' => 21,),
-            array(
                 'name' => 'mopt_payone__fin_kis_klarna_installments',
                 'description' => 'PAYONE Klarna Slice It',
                 'template' => 'mopt_paymentmean_klarna.tpl',
