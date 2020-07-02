@@ -21,4 +21,4 @@ jobs:
     - name: Check PHP Version
       run: php -v
     - name: PHP Syntax Checker
-      run: find . -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
+      run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
