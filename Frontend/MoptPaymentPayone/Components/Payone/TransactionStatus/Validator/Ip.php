@@ -114,6 +114,12 @@ class Payone_TransactionStatus_Validator_Ip extends Payone_TransactionStatus_Val
                     }
                 }
             }
+            // Cloudflare sends a special Proxy Header, see:
+            // https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-Cloudflare-handle-HTTP-Request-headers-
+            // In theory, CF should respect X-Forwarded-For, but in some instances this failed
+            if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+                return $_SERVER['HTTP_CF_CONNECTING_IP'];
+            }
         }
         return $remoteAddr;
 
