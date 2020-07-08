@@ -536,7 +536,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->setZip($personalData->getZip());
         $request->setCity($personalData->getCity());
         $request->setCountry($personalData->getCountry());
-        if ($personalData->getBirthday() !== "00000000" && $personalData->getBirthday() !== "") {
+        if ($personalData->getBirthday() !== "00000000" && $personalData->getBirthday() !== "" && !is_null($personalData->getBirthday())) {
             $request->setBirthday($personalData->getBirthday());
         } else {
             $request->setBirthday($paymentData['dob']);
