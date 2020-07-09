@@ -1,1 +1,0 @@
-MoptAjaxPayone->startKlarnaSessionAction() and PayonePaymentHelper->buildAndCallKlarnaStartSession() needs a working session. Maybe we should build error handling for MoptAjaxPayone->startKlarnaSessionAction(), when session is broken?
