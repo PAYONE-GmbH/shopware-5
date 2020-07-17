@@ -38,16 +38,29 @@ class Paymentfilter implements SubscriberInterface
     public function onGetPaymentsDataFilter(\Enlight_Event_EventArgs $args)
     {
         $result = $args->getReturn();
-        $shopLocale = Shopware()->Shop()->getLocale()->getLocale();
-        $locale = explode('_', $shopLocale);
-        $country = isset($locale[1]) ? $locale[1] : $locale[0];
+        $user = Shopware()->Modules()->Admin()->sGetUserData();
+        $billingCountry = $user['additional']['country']['countryiso'];
 
         /** @var \Mopt_PayoneMain $moptPayoneMain */
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $ratepayconfig = $moptPayoneMain->getPaymentHelper()
-            ->moptGetRatepayConfig($country);
+            ->moptGetRatepayConfig($billingCountry);
 
         if (!$ratepayconfig) {
+            foreach ($result as $index=>$payment) {
+                if ($payment['name'] === 'mopt_payone__fin_ratepay_installment') {
+                    $installmentIndex = $index;
+                }
+                if ($payment['name'] === 'mopt_payone__fin_ratepay_invoice') {
+                    $invoiceIndex = $index;
+                }
+                if ($payment['name'] === 'mopt_payone__fin_ratepay_direct_debit') {
+                    $directdebitIndex = $index;
+                }
+            }
+            unset ($result[$installmentIndex]);
+            unset ($result[$invoiceIndex]);
+            unset ($result[$directdebitIndex]);
             return $result;
         }
 

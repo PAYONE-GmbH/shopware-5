@@ -6,6 +6,7 @@
     {assign var="moptRequired" value=0}
 {/if}
 
+{if $payment_mean.id == $form_data.payment}
 <div class="payment--form-group">
     {if $moptBasketChanged}
         <div id="paypal_overlay_installment_redirect_notice" class="js--modal content" style="width:40%; height:40%; opacity: 0.9; margin: 75px auto;">
@@ -23,3 +24,4 @@
         document.getElementById('paypal_overlay_installment_redirect_notice_bg').style.display = "none";
     }
 </script>
+{/if}

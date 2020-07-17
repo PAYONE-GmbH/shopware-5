@@ -301,6 +301,22 @@ class FrontendPostDispatch implements SubscriberInterface
             }
         }
 
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
+            if ($moptPaymentHelper->isPayoneRatepayInvoice($moptPaymentName) ||
+                $moptPaymentHelper->isPayoneRatepayDirectDebit($moptPaymentName) ||
+                $moptPaymentHelper->isPayoneRatepayInstallment($moptPaymentName)
+            ) {
+                if ($session->moptBillingCountryChanged) {
+                    $action->redirect(
+                        array(
+                            'controller' => 'checkout',
+                            'action' => 'shippingPayment',
+                        )
+                    );
+                }
+            }
+        }
+
         if (($controllerName == 'checkout' && $request->getActionName() == 'cart')) {
             if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
@@ -321,12 +337,21 @@ class FrontendPostDispatch implements SubscriberInterface
                 unset($session->moptBasketChanged);
                 unset($session->moptPaypalInstallmentWorkerId);
                 unset($session->moptPaypalInstallmentData);
-                $redirectnotice =
-                    '<center><b>Ratenzahlung</b></center>'
-                    . 'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
-                    . 'Bitte rufen Sie Ihre aktuellen Ratenzahlungskonditionen ab und wählen Sie den gewünschten Zahlplan aus.<br>';
+                $redirectnotice =                     Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                    ->get('installmentsBasketChanged',"<div style='text-align: center'><b>Ratenzahlung<br>Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>Bitte rufen Sie Ihre aktuellen Ratenzahlungskonditionen ab und wählen Sie den gewünschten Zahlplan aus.<br></b></div>");
+
 
                 $view->assign('moptBasketChanged', true);
+                $view->assign('moptOverlayRedirectNotice', $redirectnotice);
+            }
+
+            if ($session->moptBillingCountryChanged) {
+                unset($session->moptBillingCountryChanged);
+                $redirectnotice =
+                    Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                        ->get('ratepayCountryChanged',"<div style='text-align: center'><b><br></b><b>Sie haben Ihr Rechungsland geändert.<br>Bitte wiederholen Sie Ihre Zahlung oder wählen Sie eine andere Zahlart.<br></div>");
+
+                $view->assign('moptBillingCountryChanged', true);
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
 

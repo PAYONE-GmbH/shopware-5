@@ -605,6 +605,27 @@ class AddressCheck implements SubscriberInterface
         // @see https://github.com/PAYONE-GmbH/shopware-5/issues/324
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $payoneConfig = $moptPayoneMain->getPayoneConfig();
+
+        // Handle Ratepay billing country changes
+        $paymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId(Shopware()->Session()->offsetGet('sPaymentID'));
+        if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayoneRatepayDirectDebit($paymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentName)
+        ) {
+            // $params = $arguments->getSubject()->Request()->getParams();
+            // $moptPayoneHelper = \Mopt_PayoneMain::getInstance()->getHelper();
+            // $changedBillingCountry = $moptPayoneHelper->getCountryIsoFromId($params['address']['country']);
+
+            $user = Shopware()->Modules()->Admin()->sGetUserData();
+            $changedBillingCountry = $user['additional']['country']['countryiso'];
+            $currentRatepayCountry = Shopware()->Session()->offsetGet('moptRatepayCountry');
+
+            if ($changedBillingCountry !== $currentRatepayCountry) {
+                Shopware()->Session()->offsetSet('moptBillingCountryChanged', true);
+                Shopware()->Session()->offsetUnset('moptRatepayCountry');
+            }
+        }
+
         if (!$payoneConfig['consumerscoreActive'] && !$payoneConfig['adresscheckActive'] ) {
             return;
         }

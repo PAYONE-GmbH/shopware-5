@@ -9,7 +9,21 @@
 {if $payment_mean.id == $form_data.payment}
 <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/ratepay.css"}" />
 <div class="payment--form-group">
+    {if $moptBillingCountryChanged}
+        <div id="ratepay_overlay_installment_redirect_notice" class="js--modal content" style="width:40%; height:40%; opacity: 0.9; margin: 75px auto;">
+            <a href="#" onclick="removeRatepayOverlayInstallmentRedirectNotice();
+            return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
+            {$moptOverlayRedirectNotice}
+        </div>
+        <div id="ratepay_overlay_installment_redirect_notice_bg" class="js--overlay is--open" style="opacity: 0.8;"></div>
 
+        <script type="text/javascript">
+            function removeRatepayOverlayInstallmentRedirectNotice() {
+                document.getElementById('ratepay_overlay_installment_redirect_notice').style.display = "none";
+                document.getElementById('ratepay_overlay_installment_redirect_notice_bg').style.display = "none";
+            }
+        </script>
+    {/if}
     <div id="mopt_payone__ratepay_installment_abg">
         Es gelten die <a target="_blank" href="https://www.ratepay.com/zgb-dse">zusätzlichen Allgemeinen Geschäftsbedingungen und der Datenschutzhinweis</a> der RatePAY GmbH.</br>
         <p></p>
