@@ -189,7 +189,11 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
         } else {
             fieldset.items.getAt(24).disable();
         }
-
+        if (!field) {
+            fieldset.items.getAt(25).enable();
+        } else {
+            fieldset.items.getAt(25).disable();
+        }
     },
     /**
      * creates form child elements
@@ -1122,6 +1126,19 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 fieldLabel: '{s name=fieldlabel/sendOrdernumberAsReference}Benutze Shopware-Bestellnummer{/s}',
                 helpText: '{s name=fieldlabelhelp/sendOrdernumberAsReference}Sendet die Shopware Bestellnummer anstatt einen Zufallswert an Payone{/s}',
                 name: 'sendOrdernumberAsReference',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: true,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/changeOrderOnTXS}Bestellung geändert bei TX Status{/s}',
+                helpText: '{s name=fieldlabelhelp/changeOrderOnTXS}Setze das changed Datum einer Bestellung, wenn ein Transaktions-Status erfolgreich war{/s}',
+                name: 'changeOrderOnTXS',
                 store: me.data.yesno,
                 queryMode: 'local',
                 displayField: 'display',
