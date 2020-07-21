@@ -1137,7 +1137,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             {
                 xtype: 'combobox',
                 fieldLabel: '{s name=fieldlabel/changeOrderOnTXS}Bestellung geändert bei TX Status{/s}',
-                helpText: '{s name=fieldlabelhelp/changeOrderOnTXS}Setze das changed Datum einer Bestellung, wenn ein Transaktions-Status erfolgreich war{/s}',
+                helpText: '{s name=fieldlabelhelp/changeOrderOnTXS}Setze das changed Datum einer Bestellung, wenn ein Transaktions-Status erfolgreich war. Greift erst ab Shopware Version 5.5.0{/s}',
                 name: 'changeOrderOnTXS',
                 store: me.data.yesno,
                 queryMode: 'local',

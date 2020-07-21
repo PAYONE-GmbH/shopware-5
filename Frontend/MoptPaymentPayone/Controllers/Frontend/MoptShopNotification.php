@@ -4,6 +4,7 @@ use Shopware\Components\CSRFWhitelistAware;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RotatingFileHandler;
+use Shopware\Models\Order\Order;
 
 /**
  * updated and finish transactions
@@ -162,6 +163,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'));
                 }
                 $order = $this->loadOrderByOrderNumber($orderNumber);
+
+                if ($config['changeOrderOnTXS'] && (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') || Shopware()->Config()->get('version') == '___VERSION___')) {
+                    $order->updateChangedTimestamp();
+                }
             } else {
                 $this->logger->debug('finished, output TSOK');
                 echo $response->getStatus();
@@ -229,6 +234,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->logger->debug('save attribute data', $attributeData);
         $this->saveOrderAttributeData($order, $attributeData, $saveOrderHash, $saveClearingData);
 
+        if ($config['changeOrderOnTXS'] && (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') || Shopware()->Config()->get('version') == '___VERSION___')) {
+            $order->updateChangedTimestamp();
+        }
 
         $this->logger->debug('finished, output TSOK');
         echo $response->getStatus();
