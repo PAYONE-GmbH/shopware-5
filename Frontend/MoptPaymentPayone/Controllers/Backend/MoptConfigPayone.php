@@ -168,6 +168,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'paydirektOvercapture',
             'sendOrdernumberAsReference',
             'transLogging',
+            'changeOrderOnTXS',
         );
 
         foreach ($fields as $field) {
