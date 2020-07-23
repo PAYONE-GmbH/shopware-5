@@ -165,7 +165,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 $order = $this->loadOrderByOrderNumber($orderNumber);
 
                 if ($config['changeOrderOnTXS'] && (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') || Shopware()->Config()->get('version') == '___VERSION___')) {
-                    $order->updateChangedTimestamp();
+                    // get order as object to update timestamp
+                    $orderObj = Shopware()->Models()->getRepository(Order::class)->findOneBy(['number' => $order['ordernumber']]);
+                    $orderObj->updateChangedTimestamp();
                 }
             } else {
                 $this->logger->debug('finished, output TSOK');
@@ -235,7 +237,8 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->saveOrderAttributeData($order, $attributeData, $saveOrderHash, $saveClearingData);
 
         if ($config['changeOrderOnTXS'] && (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') || Shopware()->Config()->get('version') == '___VERSION___')) {
-            $order->updateChangedTimestamp();
+            $orderObj = Shopware()->Models()->getRepository(Order::class)->findOneBy(['number' => $order['ordernumber']]);
+            $orderObj->updateChangedTimestamp();
         }
 
         $this->logger->debug('finished, output TSOK');
