@@ -537,7 +537,7 @@ class MoptPayoneConfig extends ModelEntity
     private $sendOrdernumberAsReference;
 
     /**
-     * @ORM\Column(name="change_order_on_txs", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+     * @ORM\Column(name="change_order_on_txs", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
      */
     private $changeOrderOnTXS;
 
