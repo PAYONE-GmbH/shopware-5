@@ -886,6 +886,7 @@ function moptPaymentReady() {
             };
             setTimeout(errorCheck, 200);
         }
+        document.getElementById('payone-general-iframe-error').scrollIntoView({behavior: "smooth", block: "end", inline: "center"});;
     }
 
     $.subscribe("plugin/swShippingPayment/onInputChanged", function () {
