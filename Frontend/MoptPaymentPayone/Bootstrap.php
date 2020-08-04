@@ -32,6 +32,7 @@
 require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Tools\ToolsException;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Payment\Repository as PaymentRepository;
@@ -565,6 +566,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
     /**
      * create tables, add coloumns
+     *
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     * @throws DBALException
      */
     protected function createDatabase()
     {
@@ -710,6 +715,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // config option for transaction forwarding timeout and max trials
         $this->getInstallHelper()->moptExtendConfigTransactionTimeoutTrials();
+
+        // config option for order change on transaction status
+        $this->getInstallHelper()->moptExtendConfigChangeOrderOnTXS();
 
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModel($this->getPayoneLogger());
 

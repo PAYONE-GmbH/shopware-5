@@ -619,6 +619,40 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
+     * Extends main config with change_order_on_txs if not exits
+     *
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function moptExtendConfigChangeOrderOnTXS()
+    {
+        if (!$this->moptConfigChangeOrderOnTXSExist()) {
+            $query = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN change_order_on_txs TINYINT(1) NOT NULL DEFAULT 0;";
+
+            Shopware()->Db()->exec($query);
+        }
+    }
+
+    /**
+     * Checks the existence of change_order_on_txs
+     *
+     * @throws Zend_Db_Statement_Exception
+     * @throws Zend_Db_Adapter_Exception
+     */
+    public function moptConfigChangeOrderOnTXSExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND TABLE_NAME='s_plugin_mopt_payone_config'
+                AND COLUMN_NAME ='change_order_on_txs'";
+
+        $result = Shopware()->Db()->query($sql);
+
+        return $result->rowCount() !== 0;
+    }
+
+    /**
      * Checks the existence of trans_timeout
      */
     public function moptConfigTransactionTimeoutExist()

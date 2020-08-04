@@ -537,6 +537,11 @@ class MoptPayoneConfig extends ModelEntity
     private $sendOrdernumberAsReference;
 
     /**
+     * @ORM\Column(name="change_order_on_txs", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
+     */
+    private $changeOrderOnTXS;
+
+    /**
      * @ORM\Column(name="state_reminder2", type="integer", nullable=true, unique=false)
      */
     private $stateReminder2;
@@ -2107,6 +2112,22 @@ class MoptPayoneConfig extends ModelEntity
     public function setSendOrdernumberAsReference($sendOrdernumberAsReference)
     {
         $this->sendOrdernumberAsReference = $sendOrdernumberAsReference;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getChangeOrderOnTXS()
+    {
+        return $this->changeOrderOnTXS;
+    }
+
+    /**
+     * @param $changeOrderOnTXS
+     */
+    public function setChangeOrderOnTXS($changeOrderOnTXS)
+    {
+        $this->changeOrderOnTXS = $changeOrderOnTXS;
     }
 
     /**
