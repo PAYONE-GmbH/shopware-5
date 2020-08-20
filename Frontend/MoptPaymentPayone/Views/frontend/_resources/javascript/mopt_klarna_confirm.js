@@ -42,6 +42,10 @@
         init: function () {
             var me = this;
 
+            if (typeof me.data == 'undefined') {
+                return;
+            }
+
             me.registerEventListeners();
         },
 
