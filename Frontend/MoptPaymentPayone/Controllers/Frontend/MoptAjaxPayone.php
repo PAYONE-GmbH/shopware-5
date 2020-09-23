@@ -1368,7 +1368,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
     public function ajaxGetPaySafeTokenAction() {
         $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
-        $this->Response()->headers->set('content-type', 'application/json');
+        $this->Response()->setHeader('content-type', 'application/json', true);
 
         $tokenArray = $this->session->paySafeToken;
 
