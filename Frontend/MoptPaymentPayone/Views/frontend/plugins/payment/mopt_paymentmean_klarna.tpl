@@ -1,5 +1,21 @@
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
+{if $moptKlarnaAddressChanged}
+    <div id="mopt_payone__klarna_redirect_notice" class="js--modal content" style="width:40%; height:40%; opacity: 0.9; margin: 75px auto;">
+        <a href="#" onclick="removeKlarnaOverlayRedirectNotice();
+            return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
+        {$moptOverlayRedirectNotice}
+    </div>
+    <div id="mopt_payone__klarna_redirect_notice_bg" class="js--overlay is--open" style="opacity: 0.8;"></div>
+
+    <script type="text/javascript">
+        function removeKlarnaOverlayRedirectNotice() {
+            document.getElementById('mopt_payone__klarna_redirect_notice').style.display = "none";
+            document.getElementById('mopt_payone__klarna_redirect_notice_bg').style.display = "none";
+        }
+    </script>
+{/if}
+
 <div class="payment--form-group">
     <div id="mopt_payone__klarna_information" hidden
          data-shipping-address--city="{$shippingAddressCity}"

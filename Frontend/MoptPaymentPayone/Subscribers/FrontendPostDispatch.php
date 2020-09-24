@@ -313,6 +313,20 @@ class FrontendPostDispatch implements SubscriberInterface
                     );
                 }
             }
+            if ($moptPaymentHelper->isPayoneKlarnaInvoice($moptPaymentName) ||
+                $moptPaymentHelper->isPayoneKlarnaDirectDebit($moptPaymentName) ||
+                $moptPaymentHelper->isPayoneKlarnaInstallments($moptPaymentName)
+            ) {
+                if ($session->moptKlarnaAddressChanged) {
+                    $action->redirect(
+                        array(
+                            'controller' => 'checkout',
+                            'action' => 'shippingPayment',
+                        )
+                    );
+                }
+            }
+
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'cart')) {
@@ -347,9 +361,20 @@ class FrontendPostDispatch implements SubscriberInterface
                 unset($session->moptBillingCountryChanged);
                 $redirectnotice =
                     Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-                        ->get('ratepayCountryChanged',"<div style='text-align: center'><b><br></b><b>Sie haben Ihr Rechungsland geändert.<br>Bitte wiederholen Sie Ihre Zahlung oder wählen Sie eine andere Zahlart.<br></div>");
+                        ->get('ratepayCountryChanged',"<div style='text-align: center'><br><b>Sie haben Ihr Rechungsland geändert.<br>Bitte wiederholen Sie Ihre Zahlung oder wählen Sie eine andere Zahlart.<br></b></div>");
 
                 $view->assign('moptBillingCountryChanged', true);
+                $view->assign('moptOverlayRedirectNotice', $redirectnotice);
+            }
+
+            if ($session->moptKlarnaAddressChanged) {
+                unset($session->moptKlarnaAddressChanged);
+                $redirectnotice =
+                    Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                        ->get('klarnaAddressChanged',"<div style='text-align: center'><br><b>Sie haben Ihre Adresse nachträglich geändert.<br>Bitte wiederholen Sie Ihre Zahlung oder wählen Sie eine andere Zahlart.<br></b></div>");
+
+                $session->offsetUnset('mopt_klarna_client_token');
+                $view->assign('moptKlarnaAddressChanged', true);
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
 
@@ -383,6 +408,13 @@ class FrontendPostDispatch implements SubscriberInterface
             }
             unset ($payments[$amazonPayIndex]);
             $view->assign('sPayments', $payments);
+        }
+
+        if ($controllerName === 'address' &&
+            $request->getActionName() === 'handleExtra' &&
+            $session->offsetGet('mopt_klarna_client_token')
+        ){
+            $session->offsetSet('moptKlarnaAddressChanged', true);
         }
 
         if (($controllerName == 'account' && $request->getActionName() == 'payment')) {
