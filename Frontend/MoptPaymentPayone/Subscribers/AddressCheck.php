@@ -626,6 +626,14 @@ class AddressCheck implements SubscriberInterface
             }
         }
 
+        // Handle address changes for Klarna payments
+        if ($moptPayoneMain->getPaymentHelper()->isPayoneKlarnaDirectDebit($paymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaInstallments($paymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaInvoice($paymentName)
+        ) {
+            Shopware()->Session()->offsetSet('moptKlarnaAddressChanged', true);
+        }
+
         if (!$payoneConfig['consumerscoreActive'] && !$payoneConfig['adresscheckActive'] ) {
             return;
         }
