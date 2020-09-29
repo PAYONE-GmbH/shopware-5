@@ -18,8 +18,7 @@
     </script>
     {/if}
     <div id="mopt_payone__ratepay_invoice_abg">
-        Es gelten die <a target="_blank" href="https://www.ratepay.com/zgb-dse">zusätzlichen Allgemeinen Geschäftsbedingungen und der Datenschutzhinweis</a> der RatePAY GmbH.</br>
-        <p></p>
+        <p>{s name='ratepayLegalText'}Mit Klicken auf "Zahlungspflichtig bestellen" erklären Sie sich mit den <a target="_blank" href="https://www.ratepay.com/legal-payment-terms">Zahlungsbedingungen unseres Zahlungspartners</a> sowie mit der Durchführung einer <a target="_blank" href="https://www.ratepay.com/legal-payment-dataprivacy">Risikoprüfung durch unseren Zahlungspartner</a> einverstanden.{/s}</p>
     </div>
 
     {if ! $sUserData.billingaddress.company}
