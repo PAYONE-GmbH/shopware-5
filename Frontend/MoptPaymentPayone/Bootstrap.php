@@ -151,7 +151,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->removePayment('mopt_payone__fin_billsafe');
 
         // Only relevant for update, not for reinstall
-        if (!$this->doesCronJobExist('PayoneTransactionForward')) {
+        if (!$this->doesCronJobExist('PayoneTransactionForward') && !$this->doesCronJobExist('Shopware_CronJob_PayoneTransactionForward')) {
             $this->createCronJob('Payone Transaktionsweiterleitung', 'PayoneTransactionForward', 60);
         }
 
