@@ -94,7 +94,7 @@
                             var parameters = {'authorizationToken': res['authorization_token']};
 
                             // store authorization_token
-                            $.ajax({method: "POST", url: url, data: parameters});
+                            $.ajax({method: "POST", url: url, data: parameters, async: false});
                         }
 
                         me.$el.submit();
