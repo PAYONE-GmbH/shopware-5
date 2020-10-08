@@ -922,6 +922,8 @@ class Mopt_PayonePaymentHelper
                 break;
         }
 
+        $storeId = ($storeId) ? $storeId : '5223'; // use storeid 5223 as fallback
+
         $information['consent'] = str_replace('##storeid##', $storeId, $information['consent']);
         $information['legalTerm'] = str_replace('##storeid##', $storeId, $information['legalTerm']);
 
