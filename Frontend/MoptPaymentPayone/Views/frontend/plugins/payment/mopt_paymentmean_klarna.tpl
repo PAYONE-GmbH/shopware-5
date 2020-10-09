@@ -79,7 +79,6 @@
     {else}
     <div id="mopt_payone__klarna_paymenttype_wrap" >
         <label for="mopt_payone__klarna_paymenttype"></label>
-        <div>{$moptCreditCardCheckEnvironment.mopt_payone_klarna_financingtype}</div>
         <input type="text" hidden
                name="moptPaymentData[mopt_payone__klarna_paymenttype]"
                id="mopt_payone__klarna_paymenttype"
