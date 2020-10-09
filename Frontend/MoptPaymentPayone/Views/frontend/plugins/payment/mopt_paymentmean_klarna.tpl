@@ -46,7 +46,10 @@
          data-start-klarna-session--URL="{url controller="MoptAjaxPayone" action="startKlarnaSession" forceSecure}"
          data-unset-session-vars--URL="{url controller="MoptAjaxPayone" action="unsetSessionVars" forceSecure}"
          data-update-klarna-legal-links--URL="{url controller="MoptAjaxPayone" action="updateKlarnaLegalLinks" forceSecure}"
+         data-klarna-grouped="{$moptPayoneKlarnaGrouped}"
     ></div>
+
+    {if $moptPayoneKlarnaGrouped}
     <div id="mopt_payone__klarna_paymenttype_wrap" class="select-field">
         <label for="mopt_payone__klarna_paymenttype"></label>
         <select name="moptPaymentData[mopt_payone__klarna_paymenttype]"
@@ -73,6 +76,24 @@
             {/foreach}
         </select>
     </div>
+    {else}
+    <div id="mopt_payone__klarna_paymenttype_wrap" >
+        <label for="mopt_payone__klarna_paymenttype"></label>
+        <div>{$moptCreditCardCheckEnvironment.mopt_payone_klarna_financingtype}</div>
+        <input type="text" hidden
+               name="moptPaymentData[mopt_payone__klarna_paymenttype]"
+               id="mopt_payone__klarna_paymenttype"
+               value="{$moptCreditCardCheckEnvironment.mopt_payone_klarna_financingtype}"
+                {if $payment_mean.id == $form_data.payment }
+                   required="required"
+                   aria-required="true"
+               {/if}
+        >
+        <input type="text" hidden name="moptPaymentData[mopt_payone_klarna_paymentid]"
+               id="mopt_payone_klarna_paymentid"
+               value="{$moptCreditCardCheckEnvironment.mopt_payone_klarna_paymentid}"
+    </div>
+    {/if}
 
     {block name="frontend_checkout_payment_payone_telephone_label"}
         <p class="none" {if ! $isKlarnaTelephoneNeeded} style="display: none;" {/if}>
