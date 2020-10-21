@@ -16,7 +16,10 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.list.Config', {
         return {
             detailWindow: 'Shopware.apps.MoptPayoneRatepay.view.detail.Window',
             columns: {
-                shopid: { header: 'Shop ID' },  
+                shopid: { header: 'Shop ID' },
+                deviceFingerprintSnippetId: {
+                    header: 'Snippet ID'
+                },
                 currencyId: { header: me.snippets.currency },
                 ratepayInstallmentMode: {
                     header: me.snippets.ratepaymode,

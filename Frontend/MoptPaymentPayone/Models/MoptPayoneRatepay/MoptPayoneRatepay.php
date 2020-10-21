@@ -652,6 +652,9 @@ class MoptPayoneRatepay extends ModelEntity
     public function setCurrency($currency) {
         $this->currency = $currency;
     }
+    public function setCurrencId($currencyId) {
+        $this->currencyId = $currencyId;
+    }
 
     public function setShippingCountry($shippingCountry) {
         $this->shippingCountry = $shippingCountry;

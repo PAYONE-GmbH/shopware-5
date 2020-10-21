@@ -167,11 +167,12 @@
         <div id="ratepayconfigs" class="form-group" >
             <form role="form" id="ajaxratepay" enctype="multipart/form-data">
                 <table class="table-condensed" id="ratepaytable"> 
-                    <tr><th>id</th><th>Shopid</th><th>Währung</th><th>Ratenkauf Modus</th><th>Land</th></tr>
+                    <tr><th>id</th><th>Shopid</th><th>SnippetId</th><th>Währung</th><th>Ratenkauf Modus</th><th>Land</th></tr>
                     {foreach from=$ratepayconfigs key=mykey item=ratepayconfig}
                         <tr id="row{$ratepayconfig->getId()}">
                             <td><input name="row[{$ratepayconfig->getId()}][id]" id="id_{$ratepayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$ratepayconfig->getId()}" readonly="readonly" ></td>                        
                             <td><input name="row[{$ratepayconfig->getId()}][shopid]" id="shopid_{$ratepayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$ratepayconfig->getShopid()}"></td>
+                            <td><input name="row[{$ratepayconfig->getId()}][deviceFingerprintSnippetId]" id="deviceFingerprintSnippetId_{$ratepayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$ratepayconfig->getDeviceFingerprintSnippetId()}"></td>
                             <td><select class="form-control" name="row[{$ratepayconfig->getId()}][currency]" id="currency_{$ratepayconfig->getId()}">
                                     {foreach from=$currencies item=currency}
                                         <option value="{$currency->getId()}" {if $currency->getId() == $ratepayconfig->getCurrency()->getId()}selected="selected"{/if}>{$currency->getName()}</option>
@@ -394,6 +395,7 @@
             var len = $('#ratepaytable tbody tr').length;
             var newRow = "<tr id='row" + len + "'><td><input name='row[" + len + "][id] id='id_" + len + "' type='text' style='max-width:125px;' class='form-control' value='' readonly='readonly' ></td>" +
                     "<td><input name='row[" + len + "][shopid] id='shopid_" + len + "' type='text' style='max-width:125px;' class='form-control'value=></td>" +
+                    "<td><input name='row[" + len + "][deviceFingerprintSnippetId] id='deviceFingerprintSnippetId_" + len + "' type='text' style='max-width:125px;' class='form-control'value='ratepay'></td>" +
                     "<td>"+ "<select class='form-control' name='row[" + len + "][currency]' id='currency_" + len + "'>"+
                     "{foreach from=$currencies item=currency}<option value='{$currency->getId()}'>{$currency->getName()}</option>{/foreach}"+
                     "</select></td>"+

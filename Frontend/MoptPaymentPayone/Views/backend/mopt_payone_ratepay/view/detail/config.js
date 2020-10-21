@@ -25,6 +25,12 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.detail.Config', {
                     layout: 'fit',
                     fields: {
                        shopid: {},
+                       deviceFingerprintSnippetId: {
+                           fieldLabel: 'SnippetId',
+                           value: 'ratepay',
+                           allowBlank: false,
+                           emptyText: 'ratepay'
+                       },
                        currencyId: {
                             fieldLabel: '{s name=currency}Währung{/s}',
                             name: 'currencyId',

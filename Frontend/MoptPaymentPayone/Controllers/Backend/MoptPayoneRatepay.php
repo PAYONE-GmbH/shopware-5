@@ -138,14 +138,13 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
                 $config = new \Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay;
             }
 
-            $ratepayProfile = [];
-            $ratepayProfile['shopid'] = $dataset['shopid'];
             $currencies = Shopware()->Models()->getRepository('Shopware\Models\Shop\Currency');
             $currencyObj =$currencies->find($dataset['currency']);
-            $ratepayProfile['currency'] = $currencyObj;
-            $ratepayProfile['currencyId'] = $currencyObj->getId();
-            $ratepayProfile['ratepayInstallmentMode'] = $dataset['ratepayInstallmentMode'];
-            $config->fromArray($ratepayProfile);
+            $config->setCurrency($currencyObj);
+            $config->setCurrencId($currencyObj->getId());
+            $config->setShopid($dataset['shopid']);
+            $config->setRatepayInstallmentMode($dataset['ratepayInstallmentMode']);
+            $config->setDeviceFingerprintSnippetId($dataset['deviceFingerprintSnippetId']);
             $this->getManager()->persist($config);
         }
         $this->getManager()->flush($config);

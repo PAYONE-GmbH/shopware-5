@@ -9,6 +9,7 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.model.Config', {
  
     fields: [
         { name: 'shopid', type: 'int', useNull: true},
+        { name: 'deviceFingerprintSnippetId', type: 'string', useNull: true},
         { name: 'currencyId', type: 'int'},
         { name: 'ratepayInstallmentMode', type: 'boolean'},
         { name: 'countryCodeBilling', type: 'string', useNull: true, hidden: true}
