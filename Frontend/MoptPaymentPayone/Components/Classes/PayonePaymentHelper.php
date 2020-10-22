@@ -922,6 +922,8 @@ class Mopt_PayonePaymentHelper
                 break;
         }
 
+        $storeId = ($storeId) ? $storeId : '5223'; // use storeid 5223 as fallback
+
         $information['consent'] = str_replace('##storeid##', $storeId, $information['consent']);
         $information['legalTerm'] = str_replace('##storeid##', $storeId, $information['legalTerm']);
 
@@ -1394,6 +1396,7 @@ class Mopt_PayonePaymentHelper
     protected function groupPayments($paymentCheckCallback, $paymentMeans, $paymentGroupData)
     {
         $firstHit = 'not_set';
+        $moreThanOnePayments = false;
         $payments = array();
 
         foreach ($paymentMeans as $key => $paymentmean) {
@@ -1410,6 +1413,7 @@ class Mopt_PayonePaymentHelper
                 $payments[] = $payment;
 
                 if ($firstHit != $key) {
+                    $moreThanOnePayments = true;
                     unset($paymentMeans[$key]);
                 }
             }
@@ -1417,6 +1421,9 @@ class Mopt_PayonePaymentHelper
 
         // don't assign anything if no payment to be grouped was found
         if ($firstHit === 'not_set') {
+            return $paymentMeans;
+        }
+        if (! $moreThanOnePayments) {
             return $paymentMeans;
         }
 

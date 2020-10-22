@@ -106,7 +106,8 @@
             var me = this;
 
             var checkedRadioId = $('input[name=payment]:checked', '#shippingPaymentForm').attr('id');
-            if (checkedRadioId !== 'payment_meanmopt_payone_klarna') {
+            var paymentid = 'payment_mean' + $('#mopt_payone_klarna_paymentid').val();
+            if (! (checkedRadioId === 'payment_meanmopt_payone_klarna' || checkedRadioId === paymentid)) {
                 return;
             }
 
@@ -211,10 +212,26 @@
                     });
                 }
             };
-
+            if (me.data['klarnaGrouped'] == "1") {
+                me.getKlarnaLegalLinks().done(function (response) {
+                    var result = $.parseJSON(response);
+                    $('#mopt_payone__klarna_consent').html(result.consent);
+                    $('#mopt_payone__klarna_legalterm').html(result.legalTerm);
+                });
+            }
             me.unloadKlarnaWidget().done(function () {
                 afterUnloadKlarnaWidget()
             });
+        },
+
+        getKlarnaLegalLinks: function () {
+            var me = this;
+            var url = me.data['updateKlarnaLegalLinks-Url'];
+            var parameters = {
+                'country' : me.data['billingAddress-Country'],
+                'paymentid' : $('#mopt_payone__klarna_paymenttype option:selected').attr('mopt_payone__klarna_paymentid')
+            };
+            return $.ajax({method: "POST", url: url, data: parameters});
         },
 
         startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber, personalId) {
@@ -325,7 +342,7 @@
                             var parameters = {'authorizationToken': res['authorization_token']};
 
                             // store authorization_token
-                            $.ajax({method: "POST", url: url, data: parameters});
+                            $.ajax({method: "POST", url: url, data: parameters, async: false});
                         }
 
                         me.$el.submit();

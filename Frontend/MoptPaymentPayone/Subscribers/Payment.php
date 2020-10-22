@@ -323,7 +323,11 @@ class Payment implements SubscriberInterface
         $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
 
         $groupedPaymentMeans = $paymentHelper->groupCreditcards($subject->View()->sPayments);
-        $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($groupedPaymentMeans);
+        if ($groupedPaymentMeans) {
+            $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($groupedPaymentMeans);
+        } else {
+            $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($subject->View()->sPayments);
+        }
         if ($groupedPaymentMeans) {
             $subject->View()->sPayments = $groupedPaymentMeans;
 

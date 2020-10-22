@@ -167,14 +167,14 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_creditcard';
             }
-            if ($moptPaymentHelper->isPayoneKlarna($paymentName)) {
+            if ($moptPaymentHelper->isPayoneKlarna($paymentName) && $moptPaymentHelper->isPayoneKlarnaGrouped($moptPayoneData['mopt_payone_klarna']['name'])) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_klarna';
             }
 
             if (!isset($moptPayoneFormData['mopt_payone__klarna_paymentname'])) {
                 $moptPayoneFormData['mopt_payone__klarna_paymentname'] = $moptPaymentHelper->getPaymentNameFromId($session['sPaymentID']);
             }
-
+            $view->assign('moptPayoneKlarnaGrouped', $moptPaymentHelper->isPayoneKlarnaGrouped($moptPayoneData['mopt_payone_klarna']['name']));
             $view->assign('sFormData', $moptPayoneFormData);
             $view->assign('moptPaymentConfigParams', $this->moptPaymentConfigParams($session->moptMandateDataDownload));
             $view->assign('moptMandateAgreementError', $session->moptMandateAgreementError);
@@ -221,7 +221,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
 
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
-            if ($moptPayoneFormData['mopt_payone__klarna_paymentname'] === 'mopt_payone__fin_kdd_klarna_direct_debit') {
+            if ($moptPayoneFormData['mopt_payone__klarna_paymentname'] === 'mopt_payone__fin_kdd_klarna_direct_debit' || $moptPaymentName == 'mopt_payone__fin_kdd_klarna_direct_debit') {
                 $view->assign('mopt_klarna_client_token', $session->offsetGet('mopt_klarna_client_token'));
                 $view->extendsTemplate('frontend/checkout/mopt_klarna_confirm' . $templateSuffix . '.tpl');
             }
@@ -485,7 +485,12 @@ class FrontendPostDispatch implements SubscriberInterface
 
         if ($controllerName && $controllerName === 'checkout') {
             $paymentMeansWithGroupedCreditcard = $paymentHelper->groupCreditcards($paymentMeans);
-            $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($paymentMeansWithGroupedCreditcard);
+            if ($paymentMeansWithGroupedCreditcard) {
+                $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($paymentMeansWithGroupedCreditcard);
+            } else {
+                $groupedPaymentMeans = $paymentHelper->groupKlarnaPayments($paymentMeans);
+            }
+
         }
 
         if ($groupedPaymentMeans) {
@@ -506,7 +511,6 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['mopt_payone_klarna'] = $paymentMean;
             }
-
 
             if ($moptPayoneMain->getPaymentHelper()->isPayoneSofortuerberweisung($paymentMean['name'])) {
                 $sofortConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
@@ -533,6 +537,13 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
                 $data['mopt_payone__klarna_telephone'] = $userData['billingaddress']['phone'];
                 $data['mopt_payone__klarna_personalId'] = $userData['additional']['user']['mopt_payone_klarna_personalid'];
+            } elseif ($moptPayoneMain->getPaymentHelper()->isPayoneKlarna($paymentMean['name'])) {
+                $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+                $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
+                    ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
+                $data['mopt_payone_klarna_financingtype'] = $paymentHelper->getKlarnaFinancingtypeByName($paymentMean['name']);
+                $data['mopt_payone__klarna_paymentname'] = $paymentMean['name'];
+                $data['mopt_payone_klarna_paymentid'] = $paymentMean['id'];
             }
 
 
