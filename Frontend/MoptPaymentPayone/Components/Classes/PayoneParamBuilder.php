@@ -118,7 +118,7 @@ class Mopt_PayoneParamBuilder
             $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName)
         ) {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::NO);
-        } elseif ($this->payonePaymentHelper->isPayoneInvoice($paymentName)) {
+        } elseif ($this->payonePaymentHelper->isPayoneInvoice($paymentName) || $this->payonePaymentHelper->isPayoneWechatpay($paymentName) ) {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::NO);
         } else {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::AUTO);
@@ -1234,6 +1234,28 @@ class Mopt_PayoneParamBuilder
             $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
         }
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+            'forceSecure' => true, 'appendSession' => false));
+
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
+        return $payment;
+    }
+
+    /**
+     * returns WeChatPay payment data object
+     *
+     * @param type $router
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     */
+    public function getPaymentWechatpay($router)
+    {
+        $params = array();
+        $params['wallettype'] = 'WCP';
+
+        $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
+            'forceSecure' => true, 'appendSession' => false));
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
             'forceSecure' => true, 'appendSession' => false));
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
