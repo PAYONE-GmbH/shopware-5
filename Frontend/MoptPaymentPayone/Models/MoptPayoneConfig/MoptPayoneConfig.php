@@ -582,6 +582,11 @@ class MoptPayoneConfig extends ModelEntity
     private $stateReminderI;
 
     /**
+     * @ORM\Column(name="ratepay_snippet_id", type="string", length=50, nullable=true, unique=false, options={"default" : "ratepay"})
+     */
+    private $ratepaySnippetId;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -2304,5 +2309,21 @@ class MoptPayoneConfig extends ModelEntity
     public function setStateReminderI($stateReminder)
     {
         $this->stateReminderI = $stateReminder;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRatepaySnippetId()
+    {
+        return $this->ratepaySnippetId;
+    }
+
+    /**
+     * @param $ratepaySnippetId
+     */
+    public function setRatepaySnippetId($ratepaySnippetId)
+    {
+        $this->ratepaySnippetId = $ratepaySnippetId;
     }
 }

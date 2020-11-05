@@ -157,11 +157,17 @@ class FrontendPostDispatch implements SubscriberInterface
 
         if (in_array($controllerName, array('account', 'checkout', 'register'))) {
             $moptPayoneData = $this->moptPayoneCheckEnvironment($controllerName);
+            // replace Ratepay Snippet ID with  value from global setting
+            /** @var \Shopware\CustomModels\MoptPayoneConfig\Repository $repository */
+            $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig');
+            $global_config = $repository->getConfigByPaymentId(0, true);
+            $moptPayoneData['moptRatepayConfig']['deviceFingerprintSnippetId'] = $global_config['ratepaySnippetId'];
             $view->assign('moptCreditCardCheckEnvironment', $moptPayoneData);
             $view->assign('fcPayolutionConfigDebitnote', $moptPayoneData['payolutionConfigDebitnote']);
             $view->assign('fcPayolutionConfigInvoice', $moptPayoneData['payolutionConfigInvoice']);
             $view->assign('fcPayolutionConfigInstallment', $moptPayoneData['payolutionConfigInstallment']);
             $view->assign('moptRatepayConfig', $moptPayoneData['moptRatepayConfig']);
+
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
             $paymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
             if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {

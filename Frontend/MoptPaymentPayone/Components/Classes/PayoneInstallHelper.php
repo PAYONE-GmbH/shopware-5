@@ -1802,5 +1802,27 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             }
         }
     }
+
+    /**
+     * Checks if ratepay global snippetid column is present and creates
+     * column if not present.
+     * @return void
+     */
+    function checkAndAddRatepaySnippetIdColumn()
+    {
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='ratepay_snippet_id'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN ratepay_snippet_id VARCHAR(50) DEFAULT 'ratepay';";
+            $db->exec($sql);
+        }
+
+    }
 }
 

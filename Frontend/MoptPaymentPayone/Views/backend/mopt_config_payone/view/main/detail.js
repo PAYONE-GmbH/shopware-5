@@ -1147,6 +1147,15 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 disabled: true,
                 labelWidth: 200
             },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name=fieldlabel/ratepaySnippetId}Ratepay SnippetId{/s}',
+                helpText: '{s name=fieldlabelhelp/ratepaySnippetId}Ratepay SnippetId{/s}',
+                name: 'ratepaySnippetId',
+                allowBlank: true,
+                disabled: false,
+                labelWidth: 200
+            },
         ];
     },
     getPaymentStatus: function () {
