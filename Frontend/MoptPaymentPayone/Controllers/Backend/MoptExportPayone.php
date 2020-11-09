@@ -28,7 +28,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
       
         $globalPayoneConfig = $this->moptPayone__main->getPayoneConfig();
-      
+
       /** @var $service Payone_Settings_Service_XmlGenerate */
         $service = $this->moptPayone__sdk__Builder->buildServiceSettingsXmlGenerate();
      
@@ -36,7 +36,9 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
         $global->setMid($globalPayoneConfig['merchantId']);
         $global->setAid($globalPayoneConfig['subaccountId']);
         $global->setPortalid($globalPayoneConfig['portalId']);
-      
+        $global->setSendOrdernumberAsReference($globalPayoneConfig['sendOrdernumberAsReference']);
+        $global->setChangeOrderOnTXS($globalPayoneConfig['changeOrderOnTXS']);
+        $global->setRatepaySnippetId($globalPayoneConfig['ratepaySnippetId']);
         $global->setParameterInvoice(array()); // nothing to set
         $globalCreditCardConfig = $this->getGlobalCreditcardConfig();
         $global->setPaymentCreditcard($globalCreditCardConfig); // creditcard payment methods are handled separately
