@@ -762,6 +762,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Add new reminder level config table columns if needed.
         $this->getInstallHelper()->checkAndAddReminderLevelColumns();
+
+        // Add config field for global Ratepay SnippetId setting.
+        $this->getInstallHelper()->checkAndAddRatepaySnippetIdColumn();
     }
 
     /**

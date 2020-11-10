@@ -111,7 +111,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'payolutionDraftPassword', type: 'string'},
     { name: 'paydirektOvercapture', type: 'boolean'},
     { name: 'sendOrdernumberAsReference', type: 'boolean'},
-    { name: 'changeOrderOnTXS', type: 'boolean'}
+    { name: 'changeOrderOnTXS', type: 'boolean'},
+    { name: 'ratepaySnippetId', type: 'string'},
 
   ],
   /**
