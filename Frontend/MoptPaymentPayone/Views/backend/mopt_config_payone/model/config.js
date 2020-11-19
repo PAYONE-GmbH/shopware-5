@@ -113,7 +113,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'sendOrdernumberAsReference', type: 'boolean'},
     { name: 'changeOrderOnTXS', type: 'boolean'},
     { name: 'ratepaySnippetId', type: 'string'},
-
+    { name: 'trustlyShowIbanBic', type: 'boolean'},
   ],
   /**
    * Validation

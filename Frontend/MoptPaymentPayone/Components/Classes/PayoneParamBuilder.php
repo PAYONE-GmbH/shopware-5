@@ -114,11 +114,12 @@ class Mopt_PayoneParamBuilder
         //create business object (used for settleaccount param)
         $business = new Payone_Api_Request_Parameter_Capture_Business();
 
-        if ($this->payonePaymentHelper->isPayonePayInAdvance($paymentName) ||
-            $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName)
+        if (($this->payonePaymentHelper->isPayonePayInAdvance($paymentName) ||
+            $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName)) &&
+            ! $this->payonePaymentHelper->isPayoneTrustly($paymentName)
         ) {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::NO);
-        } elseif ($this->payonePaymentHelper->isPayoneInvoice($paymentName)) {
+        } elseif ($this->payonePaymentHelper->isPayoneInvoice($paymentName) || $this->payonePaymentHelper->isPayoneTrustly($paymentName) ) {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::NO);
         } else {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::AUTO);
@@ -1084,6 +1085,19 @@ class Mopt_PayoneParamBuilder
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'P24') {
             $params['onlinebanktransfertype'] = 'P24';
             $params['bankcountry'] = 'PL';
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
+                'forceSecure' => true, 'appendSession' => false));
+            $params['errorurl'] = $router->assemble(array('action' => 'failure',
+                'forceSecure' => true, 'appendSession' => false));
+            $params['backurl'] = $router->assemble(array('action' => 'cancel',
+                'forceSecure' => true, 'appendSession' => false));
+        }
+
+        if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'TRL') {
+            $params['onlinebanktransfertype'] = 'TRL';
+            $params['bankcountry'] = 'DE';
+            $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__trustly_iban']);
+            $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__trustly_bic']);
             $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',

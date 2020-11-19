@@ -523,6 +523,11 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['moptShowSofortIbanBic'] = $sofortConfig['showSofortIbanBic'];
             }
 
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneTrustly($paymentMean['name'])) {
+                $trustlyConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
+                $data['moptTrustlyShowIbanBic'] = (int) $trustlyConfig['trustlyShowIbanBic'];
+            }
+
             //prepare additional Klarna information and retrieve birthday and phone nr from user data
             if (
                 $moptPayoneMain->getPaymentHelper()->isPayoneKlarna_old($paymentMean['name'])

@@ -124,7 +124,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 items: fieldsets,
                 renderTo: document.body,
                 width: 880,
-                height: 980
+                height: 1080
             }];
     },
     activateField: function (me, field) {
@@ -189,11 +189,19 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
         } else {
             fieldset.items.getAt(24).disable();
         }
+        ;
         if (!field) {
-            fieldset.items.getAt(25).enable();
+            fieldset.items.getAt(26).enable();
         } else {
-            fieldset.items.getAt(25).disable();
+            fieldset.items.getAt(26).disable();
         }
+        ;
+        if (field === 'p1') {
+            fieldset.items.getAt(27).enable();
+        } else {
+            fieldset.items.getAt(27).disable();
+        }
+        ;
     },
     /**
      * creates form child elements
@@ -1154,6 +1162,19 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'ratepaySnippetId',
                 allowBlank: true,
                 disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/trustlyShowIbanBic}Trustly: IBAN / BIC abfragen?{/s}',
+                helpText: '{s name=fieldlabelhelp/trustlyShowIbanBic}Bei Trustly IBAN und BIC abfragen?{/s}',
+                name: 'trustlyShowIbanBic',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: true,
                 labelWidth: 200
             },
         ];

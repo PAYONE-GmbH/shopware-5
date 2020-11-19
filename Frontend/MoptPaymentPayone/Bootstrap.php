@@ -765,6 +765,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Add config field for global Ratepay SnippetId setting.
         $this->getInstallHelper()->checkAndAddRatepaySnippetIdColumn();
+
+        // Add config field for trustly show iban bic setting.
+        $this->getInstallHelper()->checkAndAddTrustlyShowIbanBic();
     }
 
     /**
