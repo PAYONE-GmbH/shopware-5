@@ -567,6 +567,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Paydirekt Express',
                 'template' => null,
                 'position' => 39,),
+            array(
+                'name' => 'mopt_payone__ewallet_wechatpay',
+                'description' => 'PAYONE WeChatPay',
+                'template' => null,
+                'position' => 40,),
         );
     }
 

@@ -776,6 +776,17 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone alipay payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneWechatpay($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_wechatpay#', $paymentName) ? true : false;
+    }
+
+    /**
      * get online bank transfer type for api communication
      *
      * @param string $paymentName
@@ -1276,6 +1287,9 @@ class Mopt_PayonePaymentHelper
         }
         if ($this->isPayoneAlipay($paymentShortName)) {
             return 'alipay';
+        }
+        if ($this->isPayoneWechatpay($paymentShortName)) {
+            return 'wechatpay';
         }
         return false;
     }
