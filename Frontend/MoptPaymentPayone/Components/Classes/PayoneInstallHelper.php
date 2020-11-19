@@ -568,6 +568,11 @@ class Mopt_PayoneInstallHelper
                 'template' => null,
                 'position' => 39,),
             array(
+                'name' => 'mopt_payone__ewallet_wechatpay',
+                'description' => 'PAYONE WeChatPay',
+                'template' => null,
+                'position' => 40,),
+            array(
                 'name' => 'mopt_payone__ibt_trustly',
                 'description' => 'PAYONE Trustly',
                 'template' => 'mopt_paymentmean_trustly.tpl',
