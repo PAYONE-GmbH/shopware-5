@@ -1356,7 +1356,8 @@ class Mopt_PayonePaymentHelper
                 $creditCard['description'] = $paymentmean['description'];
 
                 $creditCardData[] = $creditCard;
-                $creditCardDescriptions[$creditCard['name']] = '<div class="payone_additionalDescriptions" id="' . $shortCodes[$creditCard['name']]  . '_additionalDescription" style="display:none">' . $paymentmean['additionaldescription'] . '</div>';
+                $display = (count($creditCardData) === 1) ? '' : 'display:none';
+                $creditCardDescriptions[$creditCard['name']] = '<div class="payone_additionalDescriptions" id="' . $shortCodes[$creditCard['name']]  . '_additionalDescription" style="' . $display . '">' . $paymentmean['additionaldescription'] . '</div>';
 
                 if ($firstHit != $key) {
                     unset($paymentMeans[$key]);
