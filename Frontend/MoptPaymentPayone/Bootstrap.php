@@ -931,7 +931,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         if (!$this->moptPayoneLogger) {
             $this->moptPayoneLogger = new Monolog\Logger('moptPayone');
-            $streamHandler = new Monolog\Handler\StreamHandler(Shopware()->Application()->Kernel()->getLogDir()
+            $streamHandler = new Monolog\Handler\StreamHandler($this->get('kernel')->getLogDir()
                 . '/moptPayone.log', Monolog\Logger::ERROR);
             $this->moptPayoneLogger->pushHandler($streamHandler);
         }
