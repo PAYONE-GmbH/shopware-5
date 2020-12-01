@@ -28,6 +28,15 @@
      data-moptCreditcardConfig='{$moptCreditCardCheckEnvironment.moptCreditcardConfig.jsonConfig}' 
      >
 
+    <input name="moptPaymentData[mopt_payone__cc_cardholder]"
+           type="text"
+           id="mopt_payone__cc_cardholder"
+           {if $moptRequired}required="required" aria-required="true"{/if}
+           placeholder="{s name='bankAccoutHolder'}Karteninhaber{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+           value="{$form_data.mopt_payone__cc_cardholder|escape}"
+           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__cc_cardholder} has--error{/if}"
+    />
+
     <div id="payone-general-iframe-error" style="display: none;">
         <div class="alert is--error is--rounded">
             <div class="alert--icon">

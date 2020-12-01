@@ -104,6 +104,40 @@ function moptPaymentReady() {
         }
     });
 
+    $.plugin('moptPayoneCardholderValidator', {
+        defaults: {
+            cardholderReg: /^[A-Za-z ]{3,50}$/,
+            errorMessageClass: 'register--error-msg',
+            moptCardholderErrorMessage: 'Karteninhaber darf nur a-z, A-Z und Leerzeichen enthalten'
+        },
+        init: function () {
+            var me = this;
+            me.applyDataAttributes();
+
+            me.$el.bind('keyup change', function (e) {
+                $('#moptcardholder--message').remove();
+                if (me.$el.val() && !me.opts.bankCodeReg.test(me.$el.val())) {
+                    me.$el.addClass('has--error');
+                    $('<div>', {
+                        'html': '<p>' + me.opts.moptBankCodeErrorMessage + '</p>',
+                        'id': 'moptcardholder--message',
+                        'class': me.opts.errorMessageClass
+                    }).insertAfter(me.$el);
+
+                } else {
+                    me.$el.removeClass('has--error');
+                    $('#moptcardholder--message').remove();
+                }
+                ;
+            });
+
+        },
+        destroy: function () {
+            var me = this;
+            me._destroy();
+        }
+    });
+
     $.plugin('moptPayoneSubmitPaymentForm', {
         init: function () {
             var me = this;
