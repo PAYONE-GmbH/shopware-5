@@ -8,7 +8,7 @@ Ext.define('Shopware.apps.Payment.view.main.MoptPayoneWindow', {
     var toolbar = me.callParent(arguments);
     
     me.moptPayoneDuplicatePaymentButton = Ext.create('Ext.button.Button', {
-      text: '{s name=duplicatePayment/title}Zahlart Duplizieren{/s}',
+      text: '{s name="duplicatePayment/title"}Zahlart Duplizieren{/s}',
       cls: 'primary',
       action: 'moptPayoneDuplicatePayment',
       handler: function() {

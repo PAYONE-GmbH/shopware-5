@@ -10,8 +10,8 @@ Ext.define('Shopware.apps.RiskManagement.store.MoptPayone__Risks', {
       
       if(!me.mopt_payone__isExtended())
       {
-        me.data.push({ description: '{s name=risks_store/comboBox/moptTrafficLight}Ampel IST{/s}', value: 'MOPT_PAYONE__TRAFFIC_LIGHT_IS' });
-        me.data.push({ description: '{s name=risks_store/comboBox/moptTrafficLightNot}Ampel IST NICHT{/s}', value: 'MOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT' });
+        me.data.push({ description: '{s name="risks_store/comboBox/moptTrafficLight"}Ampel IST{/s}', value: 'MOPT_PAYONE__TRAFFIC_LIGHT_IS' });
+        me.data.push({ description: '{s name="risks_store/comboBox/moptTrafficLightNot"}Ampel IST NICHT{/s}', value: 'MOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT' });
       }
       
       me.callParent(arguments);

@@ -47,7 +47,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
       if(moptShowShippingCosts)
       {
         return Ext.create('Ext.panel.Panel', {
-          title: '{s name=overview/title}PAYONE: Versandkosten{/s}',
+          title: '{s name="overview/title"}PAYONE: Versandkosten{/s}',
           bodyPadding: 10,
           flex: 1,
           paddingRight: 5,
@@ -65,7 +65,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
       else
       {
         return Ext.create('Ext.panel.Panel', {
-          title: '{s name=overview/title}PAYONE: Versandkosten{/s}',
+          title: '{s name="overview/title"}PAYONE: Versandkosten{/s}',
           bodyPadding: 10,
           flex: 1,
           paddingRight: 5,
@@ -89,7 +89,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
     var me = this;
     
     return Ext.create('Ext.panel.Panel', {
-      title: '{s name=overview/title}PAYONE: Versandkosten{/s}',
+      title: '{s name="overview/title"}PAYONE: Versandkosten{/s}',
       bodyPadding: 10,
       flex: 1,
       paddingRight: 5,
@@ -112,7 +112,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
       var me = this;
       
       return Ext.create('Ext.panel.Panel', {
-        title: '{s name=overview/payolutiontitle}PAYONE Informationen:{/s}',
+        title: '{s name="overview/payolutiontitle"}PAYONE Informationen:{/s}',
         bodyPadding: 10,
         flex: 1,
         paddingRight: 5,
@@ -135,8 +135,8 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
    */
   createMoptPayoneShippingCostTemplate:function () 
   {
-      var labelCaptured = '{s name=overview/captured}Bisher eingezogenen: {/s}';
-      var labelDebited = '{s name=overview/debited}Bisher gutgeschrieben: {/s}';
+      var labelCaptured = '{s name="overview/captured"}Bisher eingezogenen: {/s}';
+      var labelDebited = '{s name="overview/debited"}Bisher gutgeschrieben: {/s}';
       
       return new Ext.XTemplate(
           '{literal}<tpl for=".">',
@@ -161,7 +161,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
    */
   createMoptPayoneShippingCostTemplateExtraPosition:function () 
   {
-      var labelExtraPositon = '{s name=overview/extraPosition}Die Versandkosten sind als eigener Artikel in der Positionsliste verfügbar.{/s}';
+      var labelExtraPositon = '{s name="overview/extraPosition"}Die Versandkosten sind als eigener Artikel in der Positionsliste verfügbar.{/s}';
       
       return new Ext.XTemplate(
           '{literal}<tpl for=".">',
@@ -183,7 +183,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
    */
   createMoptPayoneNoPayoneOrderTemplate:function () 
   {
-      var labelNotPayone = '{s name=overview/notPayone}Diese Bestellung wurde nicht mit einer PAYONE Zahlart durchgeführt.{/s}';
+      var labelNotPayone = '{s name="overview/notPayone"}Diese Bestellung wurde nicht mit einer PAYONE Zahlart durchgeführt.{/s}';
       
       return new Ext.XTemplate(
           '{literal}<tpl for=".">',
@@ -205,10 +205,10 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
    */
   createFcPayonePayolutionTemplate:function () 
   {
-      var labelIsB2bMode = '{s name=overview/is_b2bmode}Business Modus: {/s}';
-      var labelTradeRegistryNumber = '{s name=overview/trade_registry_number}Handelsregisternummer: {/s}';
-      var labelWorkOrderId = '{s name=overview/workorder_id}WorkOrderId: {/s}';
-      var labelClearingReference = '{s name=overview/clearing_reference}Clearing Reference: {/s}';      
+      var labelIsB2bMode = '{s name="overview/is_b2bmode"}Business Modus: {/s}';
+      var labelTradeRegistryNumber = '{s name="overview/trade_registry_number"}Handelsregisternummer: {/s}';
+      var labelWorkOrderId = '{s name="overview/workorder_id"}WorkOrderId: {/s}';
+      var labelClearingReference = '{s name="overview/clearing_reference"}Clearing Reference: {/s}';
       
       return new Ext.XTemplate(
           '{literal}<tpl for=".">',

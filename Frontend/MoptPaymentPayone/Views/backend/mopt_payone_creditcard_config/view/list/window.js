@@ -4,7 +4,7 @@ Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.view.list.Window', {
     alias: 'widget.mopt-payone-creditcard-config-list-window',
     height: 450,
     width: 600,
-    title : '{s name=window/title}Payone Kreditkartenkonfiguration{/s}',
+    title : '{s name="window/title"}Payone Kreditkartenkonfiguration{/s}',
  
     configure: function() {
         return {

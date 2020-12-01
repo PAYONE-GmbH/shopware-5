@@ -3,7 +3,7 @@
 Ext.define('Shopware.apps.MoptConfigPayone.view.main.Window', {
   extend: 'Enlight.app.Window',
   alias: 'widget.config-main-window',
-  title: '{s name=window/main/title}PAYONE Konfiguration{/s}',
+  title: '{s name="window/main/title"}PAYONE Konfiguration{/s}',
   border: false,
   autoShow: true,
   layout: 'fit',
