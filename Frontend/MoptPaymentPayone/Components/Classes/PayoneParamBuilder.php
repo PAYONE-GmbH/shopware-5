@@ -1204,7 +1204,7 @@ class Mopt_PayoneParamBuilder
     public function getPaymentCreditCard($router, $paymentData)
     {
         $params = array();
-
+        $params['cardholder'] = $paymentData['mopt_payone__cc_cardholder'];
         $params['pseudocardpan'] = $paymentData['mopt_payone__cc_pseudocardpan'];
         $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
             'forceSecure' => true, 'appendSession' => false));
