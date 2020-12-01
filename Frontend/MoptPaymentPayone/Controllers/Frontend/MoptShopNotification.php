@@ -50,7 +50,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     protected function initForwardRotatingLogger()
     {
-        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logPath = $this->get('kernel')->getLogDir();
         $logFile = $logPath . '/MoptPaymentPayone_txredirect_production.log';
 
         $rfh = new RotatingFileHandler($logFile, 14);
@@ -503,7 +503,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     protected function buildPayoneTransactionLogPath()
     {
-        $logDir = Shopware()->Application()->Kernel()->getLogDir();
+        $logDir = $this->get('kernel')->getLogDir();
         return  $logDir . '/moptPayoneTransactionStatus.log';
     }
 }

@@ -399,7 +399,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     public function onRunCronJob(Enlight_Components_Cron_EventArgs $job)
     {
-        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logPath = $this->get('kernel')->getLogDir();
         $logFile = $logPath . '/MoptPaymentPayone_transaction_forward_cronjob.log';
 
         $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
