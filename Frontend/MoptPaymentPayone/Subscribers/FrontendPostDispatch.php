@@ -466,7 +466,7 @@ class FrontendPostDispatch implements SubscriberInterface
         $shopContext = $this->container->get('bootstrap')->getResource('shop');
         $templateVersion = $shopContext->getTemplate()->getVersion();
 
-        $this->container->get('Template')->addTemplateDir($this->path . 'Views/');
+        $this->container->get('template')->addTemplateDir($this->path . 'Views/');
     }
 
     protected function moptPayoneCheckEnvironment($controllerName = false)
