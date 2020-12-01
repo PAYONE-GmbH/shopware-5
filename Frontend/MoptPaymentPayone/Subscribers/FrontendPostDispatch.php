@@ -88,7 +88,7 @@ class FrontendPostDispatch implements SubscriberInterface
         if (!$request->isDispatched() || $response->isException()) {
             return;
         }
-        $this->container->get('Template')->addTemplateDir($this->path . 'Views/');
+        $this->container->get('template')->addTemplateDir($this->path . 'Views/');
     }
 
     /**
