@@ -252,6 +252,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleRedirectFeedback($response);
     }
 
+    public function trustlyAction()
+    {
+        $response = $this->mopt_payone__instanttransfer();
+        $this->mopt_payone__handleRedirectFeedback($response);
+    }
+
     public function wechatpayAction()
     {
         $response = $this->mopt_payone__wechatpay();
@@ -663,6 +669,32 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         }
 
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentAlipay($this->Front()->Router(), $isInitialRecurringRequest);
+        $response = $this->buildAndCallPayment($config, 'wlt', $payment, false, $recurringOrder, $isInitialRecurringRequest, $forceAuthorize);
+
+        return $response;
+    }
+
+    /**
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__trustly()
+    {
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $recurringOrder = false;
+        $isInitialRecurringRequest = false;
+        $forceAuthorize = false;
+
+        if ($this->isRecurringOrder() || $this->moptPayoneMain->getHelper()->isAboCommerceArticleInBasket()) {
+            $recurringOrder = true;
+            $forceAuthorize = true;
+        }
+
+        if ($recurringOrder && !isset(Shopware()->Session()->moptIsTrustlyRecurringOrder)) {
+            $isInitialRecurringRequest = true;
+            $forceAuthorize = false;
+        }
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentTrustly($this->Front()->Router(), $isInitialRecurringRequest);
         $response = $this->buildAndCallPayment($config, 'wlt', $payment, false, $recurringOrder, $isInitialRecurringRequest, $forceAuthorize);
 
         return $response;
@@ -1411,6 +1443,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         if ($this->moptPayonePaymentHelper->isPayoneAlipay($this->getPaymentShortName())) {
             Shopware()->Session()->moptIsAlipayRecurringOrder = true;
+        }
+
+        if ($this->moptPayonePaymentHelper->isPayoneTrustly($this->getPaymentShortName())) {
+            Shopware()->Session()->moptIsTrustlyRecurringOrder = true;
         }
 
         $action = 'mopt_payone__' . $this->moptPayonePaymentHelper

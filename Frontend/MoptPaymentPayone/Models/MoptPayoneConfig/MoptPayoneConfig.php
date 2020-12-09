@@ -587,6 +587,11 @@ class MoptPayoneConfig extends ModelEntity
     private $ratepaySnippetId;
 
     /**
+     * @ORM\Column(name="trustly_show_iban_bic", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+     */
+    private $trustlyShowIbanBic;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -2325,5 +2330,21 @@ class MoptPayoneConfig extends ModelEntity
     public function setRatepaySnippetId($ratepaySnippetId)
     {
         $this->ratepaySnippetId = $ratepaySnippetId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTrustlyShowIbanBic()
+    {
+        return $this->trustlyShowIbanBic;
+    }
+
+    /**
+     * @param $trustlyShowIbanBic
+     */
+    public function setTrustlyShowIbanBic($trustlyShowIbanBic)
+    {
+        $this->trustlyShowIbanBic = $trustlyShowIbanBic;
     }
 }

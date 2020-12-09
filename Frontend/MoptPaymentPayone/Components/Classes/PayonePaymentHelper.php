@@ -776,6 +776,17 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone trustly payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneTrustly($paymentName)
+    {
+        return preg_match('#mopt_payone__ibt_trustly#', $paymentName) ? true : false;
+    }
+
+    /**
      * check if given payment name is payone alipay payment
      *
      * @param string $paymentName
@@ -824,6 +835,10 @@ class Mopt_PayonePaymentHelper
 
         if ($this->isPayoneP24($paymentName)) {
             return Payone_Api_Enum_OnlinebanktransferType::P24;
+        }
+
+        if ($this->isPayoneTrustly($paymentName)) {
+            return Payone_Api_Enum_OnlinebanktransferType::TRUSTLY;
         }
 
         return '';
@@ -1290,6 +1305,9 @@ class Mopt_PayonePaymentHelper
         }
         if ($this->isPayoneWechatpay($paymentShortName)) {
             return 'wechatpay';
+        }
+        if ($this->isPayoneTrustly($paymentShortName)) {
+            return 'trustly';
         }
         return false;
     }
