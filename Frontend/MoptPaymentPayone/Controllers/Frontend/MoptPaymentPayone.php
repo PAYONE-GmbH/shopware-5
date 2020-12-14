@@ -769,6 +769,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     public function errorAction()
     {
         $session = Shopware()->Session();
+        $session->offsetUnset('moptPaymentReference');
         $this->View()->errormessage = $session->payoneErrorMessage;
         if ($session->otherErrorMessages !== false) {
             $this->View()->contactShopOwner = $session->otherErrorMessages['contactShopOwner'];
@@ -1353,6 +1354,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         $session = Shopware()->Session();
         $session->offsetUnset('paySafeToken');
+        $session->offsetUnset('moptPaymentReference');
         $errorCode = $session->payolutionErrorCode;
         $errorMessage = $session->payolutionErrorMsg;
         $this->View()->errormessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $errorCode, $errorMessage . ' (Fehler ' . $session->payolutionErrorCode . ')', true);
@@ -1364,6 +1366,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     public function ratepayErrorAction()
     {
         $session = Shopware()->Session();
+        $session->offsetUnset('moptPaymentReference');
         $errorMessage = $session->ratepayError;
         $this->View()->errormessage = $errorMessage;
     }
