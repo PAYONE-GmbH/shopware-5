@@ -719,6 +719,9 @@ function moptPaymentReady() {
                     iframes.setCardType(me.opts.mopt_payone_credit_cards_short);
                 }
 
+                $('#mopt_payone__cc_cardtype').change(function () {
+                    iframes.setCardType(this.value);
+                });
             }
         },
         destroy: function () {
