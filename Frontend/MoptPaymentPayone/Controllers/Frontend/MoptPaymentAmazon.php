@@ -64,12 +64,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             $this->session['sPaymentID'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $this->View()->sPayment = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
-            $userAdditionalArray = [];
-            $userAdditionalArray['additional']['charge_vat'] = 1;
-            $userAdditionalArray['additional']['payment']['id'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $userData = $this->getUserData();
-            $userAdditionalArray['additional']['countryShipping'] = $userData['additional']['countryShipping'];
-            $this->View()->assign('sUserData', $userAdditionalArray);
+            $this->View()->assign('sUserData', $userData);
 
             $basket = $this->get('modules')->Basket()->sGetBasket();
 
@@ -739,7 +735,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 $userData['additional']['show_net'] = false;
                 Shopware()->Session()->sOutputNet = true;
             } else {
-                $userData['additional']['charge_vat'] = true;
+                $userData['additional']['charge_vat'] = $system->sUSERGROUPDATA['tax'];
                 $userData['additional']['show_net'] = !empty($system->sUSERGROUPDATA['tax']);
                 Shopware()->Session()->sOutputNet = empty($system->sUSERGROUPDATA['tax']);
             }
