@@ -47,7 +47,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->session->moptPayoneAmazonAccessToken = $this->Request()->getCookie("amazon_Login_accessToken");
         }
 
-
         if (!empty($this->Request()->getParam("moptAmazonError"))) {
             $this->View()->moptPayoneAmazonError = $this->Request()->getParam("moptAmazonError");
         }
@@ -108,10 +107,33 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->sBasket = $basket;
             $this->View()->sComment = isset($this->session['sComment']) ? $this->session['sComment'] : null;
             $this->View()->amazonCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
+            $this->View()->sMinimumSurcharge = $this->getMinimumSurchage();
 
             $this->session->offsetSet('moptFormSubmitted', true);
             $this->session['sOrderVariables'] = new ArrayObject($this->View()->getAssign(), ArrayObject::ARRAY_AS_PROPS);
         }
+    }
+
+    /**
+     * Check if minimum charging is reached
+     * Used only in CheckoutController::getMinimumCharge()
+     *
+     * @return float|false Minimum order value in current currency, or false
+     */
+    private function getMinimumSurchage()
+    {
+        $system = Shopware()->System();
+        $minimumOrder = $system->sUSERGROUPDATA['minimumorder'];
+        $factor = $system->sCurrency['factor'];
+
+        if ($minimumOrder && !$system->sUSERGROUPDATA['minimumordersurcharge']) {
+            $amount = $this->View()->sAmount;
+            if ($amount < ($minimumOrder * $factor)) {
+                return $minimumOrder * $factor;
+            }
+        }
+
+        return false;
     }
 
     public function finishAction()

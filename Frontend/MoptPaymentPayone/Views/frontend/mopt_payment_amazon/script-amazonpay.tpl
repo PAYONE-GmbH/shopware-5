@@ -5,7 +5,6 @@
      * listening on button click would bypass form validation
      */
     function prepareOrderReferenceConfirmation() {
-        console.log('prepare');
 
         $('#confirm--form').on('submit', function(e) {
             var sellerId = '{$payoneAmazonPayConfig->getSellerId()}';
@@ -115,7 +114,9 @@
                                 location.reload(true);
                             } else {
                                 $.loadingIndicator.close();
-                                $('#moptAmazonPayButton').removeAttr("disabled");
+                                {if ! $sMinimumSurcharge}
+                                    $('#moptAmazonPayButton').removeAttr("disabled");
+                                {/if}
                             }
                         }
                     })
