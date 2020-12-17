@@ -5,11 +5,11 @@ Ext.define('Shopware.apps.MoptConfigPayone.store.ComboPoint', {
   model: 'Shopware.apps.MoptConfigPayone.model.Comboint',
   data: [
     {
-      display: '{s name=fieldvalue/beforepaymentchoice}Vor der Zahlartenauswahl{/s}',
+      display: '{s name="fieldvalue/beforepaymentchoice"}Vor der Zahlartenauswahl{/s}',
       value: 0
     },
     {
-      display: '{s name=fieldvalue/afterpaymentchoice}Nach der Zahlartenauswahl{/s}',
+      display: '{s name="fieldvalue/afterpaymentchoice"}Nach der Zahlartenauswahl{/s}',
       value: 1
     }
   ]

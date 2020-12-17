@@ -45,21 +45,21 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
       }
     }
     
-    var moptMessageBoxText =  '<p>{s name=detail/debit1}Sie haben{/s} ' + positionIds.length + ' {s name=detail/debit2}Position(en) mit einem Gesamtbetrag von{/s} ' 
-            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency +' </span>{s name=detail/debit3}markiert{/s}.</p><br>'
-            + '<p><label for="mopt_payone__capture_shipment">{s name=detail/debit4}Versandkosten mit gutschreiben{/s}</label>'
+    var moptMessageBoxText =  '<p>{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
+            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency +' </span>{s name="detail/debit3"}markiert{/s}.</p><br>'
+            + '<p><label for="mopt_payone__capture_shipment">{s name="detail/debit4"}Versandkosten mit gutschreiben{/s}</label>'
             + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"' 
             + 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/></p>' 
-            + '<br><p>{s name=detail/debit5}Sind Sie sicher{/s}?</p>';
+            + '<br><p>{s name="detail/debit5"}Sind Sie sicher{/s}?</p>';
     
     if(!showShippingCostsCheckbox)
     {
-      moptMessageBoxText =  '{s name=detail/debit1}Sie haben{/s} ' + positionIds.length + ' {s name=detail/debit2}Position(en) mit einem Gesamtbetrag von{/s} ' 
-            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency +' </span>{s name=detail/debit3}markiert{/s}. '
-            + '<br> {s name=detail/debit5}Sind Sie sicher{/s}?';
+      moptMessageBoxText =  '{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
+            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency +' </span>{s name="detail/debit3"}markiert{/s}. '
+            + '<br> {s name="detail/debit5"}Sind Sie sicher{/s}?';
     }
     
-    Ext.MessageBox.confirm('{s name=detail/debit}Gutschrift{/s}', 
+    Ext.MessageBox.confirm('{s name="detail/debit"}Gutschrift{/s}',
     moptMessageBoxText, function (response) {
       if ( response !== 'yes' ) {
         return;
@@ -82,14 +82,14 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
           var jsonData = Ext.JSON.decode(response.responseText);
           if (jsonData.success)
           {
-            Ext.Msg.alert('{s name=detail/debit}Gutschrift{/s}', '{s name=detail/debitSuccess}Die Gutschrift wurde erfolgreich durchgeführt.{/s}');
+            Ext.Msg.alert('{s name="detail/debit"}Gutschrift{/s}', '{s name="detail/debitSuccess"}Die Gutschrift wurde erfolgreich durchgeführt.{/s}');
 
             //reload form
             options.callback(order);
           }
           else
           {
-            Ext.Msg.alert('{s name=detail/debit}Gutschrift{/s}', jsonData.error_message);
+            Ext.Msg.alert('{s name="detail/debit"}Gutschrift{/s}', jsonData.error_message);
           }
         }
       });
@@ -127,32 +127,32 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
       }
     }
 
-    var moptMessageBoxText =  '<p>{s name=detail/debit1}Sie haben{/s} ' + positionIds.length 
-            + ' {s name=detail/debit2}Position(en) mit einem Gesamtbetrag von{/s} <span style="color: red;">' 
-              + amount.toFixed(2) + ' ' + currency +' </span> {s name=detail/debit3}markiert{/s}.</p><br>'
-              + '<p><label for="mopt_payone__capture_shipment">{s name=detail/debit6}Versandkosten auch Einziehen{/s}</label>' 
+    var moptMessageBoxText =  '<p>{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length
+            + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} <span style="color: red;">'
+              + amount.toFixed(2) + ' ' + currency +' </span> {s name="detail/debit3"}markiert{/s}.</p><br>'
+              + '<p><label for="mopt_payone__capture_shipment">{s name="detail/debit6"}Versandkosten auch Einziehen{/s}</label>'
               + '<input type="checkbox" id="mopt_payone__capture_shipment" class="x-form-field x-form-checkbox"' 
               + 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;" checked/>'
               + '</p><br>' 
-              + '<p>{s name=detail/debit7}Welche Art des Zahlungseinzugs möchten Sie vornehmen{/s}?</p>';
+              + '<p>{s name="detail/debit7"}Welche Art des Zahlungseinzugs möchten Sie vornehmen{/s}?</p>';
     
     if(!showShippingCostsCheckbox)
     {
-      moptMessageBoxText =  '{s name=detail/debit1}Sie haben{/s} ' + positionIds.length 
-              + ' {s name=detail/debit2}Position(en) mit einem Gesamtbetrag von{/s} <span style="color: red;">' 
-              + amount.toFixed(2) + ' ' + currency +' </span> {s name=detail/debit3}markiert{/s}. <br>'
-              + ' {s name=detail/debit7}Welche Art des Zahlungseinzugs möchten Sie vornehmen{/s}?';
+      moptMessageBoxText =  '{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length
+              + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} <span style="color: red;">'
+              + amount.toFixed(2) + ' ' + currency +' </span> {s name="detail/debit3"}markiert{/s}. <br>'
+              + ' {s name="detail/debit7"}Welche Art des Zahlungseinzugs möchten Sie vornehmen{/s}?';
     }
 
     if (paymentName == 'mopt_payone__fin_paypal_installment'){
-      var moptButtonText = { no: '{s name=detail/captureFinal}Finaler Geldeinzug{/s}', cancel: '{s name=detail/cancel}Abbrechen{/s}' }
+      var moptButtonText = { no: '{s name="detail/captureFinal"}Finaler Geldeinzug{/s}', cancel: '{s name="detail/cancel"}Abbrechen{/s}' }
     } else {
-      var moptButtonText = { yes: '{s name=detail/capturePartly}(Teil-)Geldeinzug{/s}', no: '{s name=detail/captureFinal}Finaler Geldeinzug{/s}', cancel: '{s name=detail/cancel}Abbrechen{/s}' }
+      var moptButtonText = { yes: '{s name="detail/capturePartly"}(Teil-)Geldeinzug{/s}', no: '{s name="detail/captureFinal"}Finaler Geldeinzug{/s}', cancel: '{s name="detail/cancel"}Abbrechen{/s}' }
     }
     //bit wierd message-box... plausible way doesn't seem to work 
     //(see: http://stackoverflow.com/questions/12263291/extjs-4-or-4-1-messagebox-custom-buttons)
     Ext.MessageBox.show({
-      title: '{s name=detail/captureConfirm}Zahlung einziehen{/s}',
+      title: '{s name="detail/captureConfirm"}Zahlung einziehen{/s}',
       msg: moptMessageBoxText,
       buttonText: moptButtonText,
       fn: function(btn){
@@ -189,14 +189,14 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
         var jsonData = Ext.JSON.decode(response.responseText);
         if (jsonData.success)
         {
-          Ext.Msg.alert('{s name=detail/captureMoney}Geldeinzug{/s}', '{s name=detail/captureSuccess}Der Geldeinzug wurde erfolgreich durchgeführt.{/s}');
+          Ext.Msg.alert('{s name="detail/captureMoney"}Geldeinzug{/s}', '{s name="detail/captureSuccess"}Der Geldeinzug wurde erfolgreich durchgeführt.{/s}');
           
           //reload form
           options.callback(order);
         }
         else
         {
-          Ext.Msg.alert('{s name=detail/captureMoney}Geldeinzug{/s}', jsonData.error_message);
+          Ext.Msg.alert('{s name="detail/captureMoney"}Geldeinzug{/s}', jsonData.error_message);
         }
       }
     });

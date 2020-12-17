@@ -938,7 +938,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=fieldlabel/checkCc}Abfrage Kreditkartenprüfziffer<br>(nur global konfigurierbar){/s}',
+                fieldLabel: '{s name="fieldlabel/checkCc"}Abfrage Kreditkartenprüfziffer<br>(nur global konfigurierbar){/s}',
                 name: 'checkCc',
                 store: me.data.yesno,
                 queryMode: 'local',
