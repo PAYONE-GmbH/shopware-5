@@ -399,7 +399,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     public function onRunCronJob(Enlight_Components_Cron_EventArgs $job)
     {
-        $logPath = $this->get('kernel')->getLogDir();
+        $logPath = Shopware()->Container()->get('kernel')->getLogDir();
         $logFile = $logPath . '/MoptPaymentPayone_transaction_forward_cronjob.log';
 
         $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
@@ -931,7 +931,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         if (!$this->moptPayoneLogger) {
             $this->moptPayoneLogger = new Monolog\Logger('moptPayone');
-            $streamHandler = new Monolog\Handler\StreamHandler($this->get('kernel')->getLogDir()
+            $streamHandler = new Monolog\Handler\StreamHandler( Shopware()->Container()->get('kernel')->getLogDir()
                 . '/moptPayone.log', Monolog\Logger::ERROR);
             $this->moptPayoneLogger->pushHandler($streamHandler);
         }
