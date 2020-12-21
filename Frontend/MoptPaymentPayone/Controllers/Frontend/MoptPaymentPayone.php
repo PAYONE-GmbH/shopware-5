@@ -1525,7 +1525,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         // check 1: isRecurring value in session
         // $session = Shopware()->Session();
-        $session = $this->container->get('Session');
+        $session = $this->container->get('session');
         $isRecurringAboOrder = $session->offsetGet('isRecurringAboOrder');
         if (!$isRecurringAboOrder) {
             // this isn't a recurring abo order, so we can

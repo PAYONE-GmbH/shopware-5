@@ -168,7 +168,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('fcPayolutionConfigInstallment', $moptPayoneData['payolutionConfigInstallment']);
             $view->assign('moptRatepayConfig', $moptPayoneData['moptRatepayConfig']);
 
-            $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
+            $moptPayoneFormData = array_merge((array)$view->sFormData, $moptPayoneData['sFormData']);
             $paymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
             if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_creditcard';
