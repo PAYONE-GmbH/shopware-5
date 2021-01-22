@@ -75,41 +75,37 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->assign('payoneAmazonPayMode', $config['liveMode']);
             $this->View()->sDispatches = $this->getDispatches(Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
             $this->View()->sAmount = $basket['Amount'];
+            // get amount for minimum check before shipping costs are added
+            $this->View()->sMinimumSurcharge = $this->getMinimumSurchage();
+
             $this->View()->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
             $this->View()->sDispatch = $this->getSelectedDispatch();
             $shippingCosts = $this->getShippingCosts();
 
             // basket content neccessary for minibasket
-
-            $basket['sShippingcosts'] = $shippingCosts['brutto'];
+            $basket['sShippingcosts'] = (!Shopware()->System()->sUSERGROUPDATA['tax'] && Shopware()->System()->sUSERGROUPDATA['id']) ? $shippingCosts['netto'] :  $shippingCosts['brutto'];
             $basket['sShippingcostsWithTax'] = $shippingCosts['brutto'];
             $basket['sShippingcostsNet'] = $shippingCosts['netto'];
             $basket['sShippingcostsTax'] = $shippingCosts['tax'];
-
-            $basket['AmountWithTaxNumeric'] = floatval(
-                    str_replace(',', '.', $basket['Amount'])
-                ) + floatval(
-                    str_replace(',', '.', $shippingCosts['brutto'])
-                );
-            $basket['AmountNetNumeric'] = floatval(str_replace(',', '.', $basket['AmountNet']));
             $basket['sAmountNet'] = floatval($basket['AmountNetNumeric']) + floatval($shippingCosts['netto']);
             $basket['sTaxRates'] = $this->getTaxRates($basket);
+            $basket['AmountWithTaxNumeric'] = (!Shopware()->System()->sUSERGROUPDATA['tax'] && Shopware()->System()->sUSERGROUPDATA['id']) ? $basket['AmountWithTaxNumeric'] += $shippingCosts['brutto'] : $basket['AmountWithTaxNumeric'] = $basket['AmountNumeric'] +  $shippingCosts['brutto'];
+            $basket['AmountWithTax'] = str_replace('.', ',', $basket['AmountWithTaxNumeric']);
             $basket['sCurrencyId'] = Shopware()->Shop()->getCurrency()->getId();
             $basket['sCurrencyName'] = Shopware()->Shop()->getCurrency()->getCurrency();
 
-            $this->View()->sShippingcosts = $shippingCosts['brutto'];
+            $this->View()->sShippingcosts = $basket['sShippingcosts'];
             $this->View()->sShippingcostsWithTax = $shippingCosts['brutto'];
             $this->View()->sShippingcostsNet = $shippingCosts['netto'];
             $this->View()->sShippingcostsTax = $shippingCosts['tax'];
+            $this->View()->sAmountWithTax = $basket['AmountWithTax'];
             $this->View()->sAmount = $basket['AmountWithTaxNumeric'];
             $this->View()->sAmountNet = $basket['sAmountNet'];
             $this->View()->sAmountTax = $basket['sAmountTax'];
             $this->View()->sBasket = $basket;
             $this->View()->sComment = isset($this->session['sComment']) ? $this->session['sComment'] : null;
             $this->View()->amazonCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
-            $this->View()->sMinimumSurcharge = $this->getMinimumSurchage();
 
-            $this->session->offsetSet('moptFormSubmitted', true);
             $this->session['sOrderVariables'] = new ArrayObject($this->View()->getAssign(), ArrayObject::ARRAY_AS_PROPS);
         }
     }
@@ -757,7 +753,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
                 $userData['additional']['show_net'] = false;
                 Shopware()->Session()->sOutputNet = true;
             } else {
-                $userData['additional']['charge_vat'] = $system->sUSERGROUPDATA['tax'];
+                $userData['additional']['charge_vat'] = true;
                 $userData['additional']['show_net'] = !empty($system->sUSERGROUPDATA['tax']);
                 Shopware()->Session()->sOutputNet = empty($system->sUSERGROUPDATA['tax']);
             }
