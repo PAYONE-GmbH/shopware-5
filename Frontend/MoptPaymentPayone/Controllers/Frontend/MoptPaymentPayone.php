@@ -1065,10 +1065,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session->moptPaymentReference = $paymentReference;
         $session->shopwareTemporaryId = $shopwareTemporaryId;
 
-        $personalData = $paramBuilder->getPersonalData($this->getUserData());
-        $request->setPersonalData($personalData);
-        $deliveryData = $paramBuilder->getDeliveryData($this->getUserData());
-        $request->setDeliveryData($deliveryData);
+        if (! is_null($this->getUserData())) {
+            $personalData = $paramBuilder->getPersonalData($this->getUserData());
+            $request->setPersonalData($personalData);
+            $deliveryData = $paramBuilder->getDeliveryData($this->getUserData());
+            $request->setDeliveryData($deliveryData);
+        }
 
         $request->setClearingtype($clearingType);
 
