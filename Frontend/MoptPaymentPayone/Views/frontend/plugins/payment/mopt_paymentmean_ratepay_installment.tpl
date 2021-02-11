@@ -145,7 +145,6 @@
 <div id="ratepay-main-cont" style="display: block">
     <div id="ratepay-Header">
         <div class="ratepay-FullWidth">
-            <img class="ratepay-LogoImg" src="{link file='frontend/_resources/images/ratepay_ratenrechner.png'}" alt="{s name='RateCalculator'}Ratenrechner{/s}" style="height: 240px">
             <h2 class="ratepay-H2">{s name='CalculateHereYourOwnRate'}HIER persönliche Rate berechnen!{/s}</h2>
         </div>
         <br class="ratepay-ClearFix" />
