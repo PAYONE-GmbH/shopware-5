@@ -272,16 +272,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $paymentData = $this->getPaymentData();
         $paymendId = $paymentData['mopt_payone__cc_paymentid'];
         $config = $this->moptPayoneMain->getPayoneConfig($paymendId);
-        $recurring = false;
-
         $payment = $this->moptPayoneMain->getParamBuilder()
             ->getPaymentCreditCard($this->Front()->Router(), $paymentData);
-        if (Shopware()->Session()->moptOverwriteEcommerceMode) {
-            $payment->setEcommercemode(Shopware()->Session()->moptOverwriteEcommerceMode);
-            $recurring = true;
-            unset(Shopware()->Session()->moptOverwriteEcommerceMode);
-        }
-        $response = $this->buildAndCallPayment($config, 'cc', $payment, false, $recurring);
+        $response = $this->buildAndCallPayment($config, 'cc', $payment);
 
         return $response;
     }
@@ -1150,7 +1143,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         } else {
             $response = $this->service->authorize($request);
         }
-
         return $response;
     }
 
