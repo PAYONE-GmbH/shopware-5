@@ -100,7 +100,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         } else {
             $this->restoreSession($request->getParam('param'));
             $session = Shopware()->Session();
-            if (!property_exists($session, 'sOrderVariables')) {
+            if (!$session->has('sOrderVariables')) {
                 $message = 'The session could not be restored. It might help to configure the server\'s gc_probability:'
                     . '\n\n   https://developers.shopware.com/sysadmins-guide/sessions/#blocking-transactions'
                     . '\n   https://www.php.net/manual/de/session.configuration.php#ini.session.gc-probability';
@@ -348,9 +348,15 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     {
         $sessionParam = explode('|', $customParam);
 
-        \Enlight_Components_Session::writeClose();
-        \Enlight_Components_Session::setId($sessionParam[1]);
-        \Enlight_Components_Session::start();
+        if (version_compare(Shopware()->Config()->get('version'), '5.7.0', '>=')) {
+            Shopware()->Session()->save();
+            Shopware()->Session()->setId($sessionParam[1]);
+            Shopware()->Session()->start();
+        } else {
+            \Enlight_Components_Session::writeClose();
+            \Enlight_Components_Session::setId($sessionParam[1]);
+            \Enlight_Components_Session::start();
+        }
     }
 
     /**
