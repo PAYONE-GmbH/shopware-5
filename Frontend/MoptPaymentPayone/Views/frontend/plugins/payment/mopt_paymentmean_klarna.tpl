@@ -91,6 +91,7 @@
         <input type="text" hidden name="moptPaymentData[mopt_payone_klarna_paymentid]"
                id="mopt_payone_klarna_paymentid"
                value="{$moptCreditCardCheckEnvironment.mopt_payone_klarna_paymentid}"
+        >
     </div>
     {/if}
 

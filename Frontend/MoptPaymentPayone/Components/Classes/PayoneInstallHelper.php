@@ -572,6 +572,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE WeChatPay',
                 'template' => null,
                 'position' => 40,),
+            array(
+                'name' => 'mopt_payone__ibt_trustly',
+                'description' => 'PAYONE Trustly',
+                'template' => 'mopt_paymentmean_trustly.tpl',
+                'position' => 41,),
         );
     }
 
@@ -1825,6 +1830,28 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN ratepay_snippet_id VARCHAR(50) DEFAULT 'ratepay';";
+            $db->exec($sql);
+        }
+
+    }
+
+    /**
+     * Checks if ratepay global snippetid column is present and creates
+     * column if not present.
+     * @return void
+     */
+    function checkAndAddTrustlyShowIbanBic()
+    {
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='trustly_show_iban_bic'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN `trustly_show_iban_bic` BOOLEAN NULL DEFAULT false;";
             $db->exec($sql);
         }
 

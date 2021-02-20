@@ -104,6 +104,40 @@ function moptPaymentReady() {
         }
     });
 
+    $.plugin('moptPayoneCardholderValidator', {
+        defaults: {
+            cardholderReg: /^[A-Za-z \-äöüÄÖÜß]{1,50}$/,
+            errorMessageClass: 'register--error-msg',
+            moptCardholderErrorMessage: 'Karteninhaber darf nur a-z, A-Z und Leerzeichen enthalten'
+        },
+        init: function () {
+            var me = this;
+            me.applyDataAttributes();
+
+            me.$el.bind('keyup change', function (e) {
+                $('#moptcardholder--message').remove();
+                if (me.$el.val() && !me.opts.cardholderReg.test(me.$el.val())) {
+                    me.$el.addClass('has--error');
+                    $('<div>', {
+                        'html': '<p>' + me.opts.moptCardholderErrorMessage + '</p>',
+                        'id': 'moptcardholder--message',
+                        'class': me.opts.errorMessageClass
+                    }).insertAfter(me.$el);
+
+                } else {
+                    me.$el.removeClass('has--error');
+                    $('#moptcardholder--message').remove();
+                }
+                ;
+            });
+
+        },
+        destroy: function () {
+            var me = this;
+            me._destroy();
+        }
+    });
+
     $.plugin('moptPayoneSubmitPaymentForm', {
         init: function () {
             var me = this;
@@ -118,6 +152,10 @@ function moptPaymentReady() {
                 var creditcardCheckType = $('#mopt_payone_creditcard_form').attr('data-moptCreditcardIntegration');
                 if (typeof $('#mopt_payone_creditcard_form') !== "undefined") {
                     me.$el.bind('submit', function (e) {
+                        if ($('#mopt_payone__cc_cardholder').hasClass('has--error')) {
+                            e.preventDefault();
+                        }
+
                         if ($('#payment_meanmopt_payone_creditcard').is(":checked")
                             && $('#mopt_payone__cc_truncatedcardpan').val().indexOf("XXXX") <= 0
                             && creditcardCheckType === '1') {
@@ -905,6 +943,7 @@ function moptPaymentReady() {
     $('.moptPayoneIbanBic').moptPayoneIbanBicValidator();
     $('.moptPayoneNumber').moptPayoneNumberValidator();
     $('.moptPayoneBankcode').moptPayoneBankcodeValidator();
+    $('.moptPayoneCardholder').moptPayoneCardholderValidator();
     $('#shippingPaymentForm').moptPayoneSubmitPaymentForm();
     $('form[name="frmRegister"]').moptPayoneSubmitPaymentForm();
 

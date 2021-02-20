@@ -169,6 +169,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'sendOrdernumberAsReference',
             'transLogging',
             'changeOrderOnTXS',
+            'trustlyShowIbanBic',
         );
 
         foreach ($fields as $field) {
