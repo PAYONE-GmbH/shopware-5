@@ -1680,7 +1680,7 @@ class Mopt_PayoneHelper
             return $this->rotatingLogger;
         }
 
-        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logPath = Shopware()->Container()->get('kernel')->getLogDir();
         $logFile = $logPath . '/MoptPaymentPayone_txredirect_production.log';
 
         $rfh = new RotatingFileHandler($logFile, 14);
