@@ -10,7 +10,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
-        - 3306
+        - 3306:3306
     strategy:
       max-parallel: 15
       fail-fast: false
@@ -32,8 +32,6 @@ jobs:
         java-version: 1.8
     - name: Check PHP Version
       run: php -v
-    - name: Start MySQL
-      run: sudo /etc/init.d/mysql start
     - name: PHP Syntax Checker
       run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
     - name: Install Shopware and Plugin
