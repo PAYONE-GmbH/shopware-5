@@ -71,6 +71,15 @@ class Payone_Api_Service_Payment_Preauthorize extends Payone_Api_Service_Payment
             $this->validateRequest($request);
 
             $requestParams = $this->getMapperRequest()->map($request);
+
+            // @see SW-343 make sure customer_is_present and recurrence are not set for creditcard abocommerce payments
+            if (Shopware()->Session()->moptOverwriteEcommerceMode) {
+                unset($requestParams['customer_is_present']);
+                unset($requestParams['recurrence']);
+                $requestParams['ecommercemode'] = Shopware()->Session()->moptOverwriteEcommerceMode;
+                unset(Shopware()->Session()->moptOverwriteEcommerceMode);
+            }
+
             $responseRaw = $this->getAdapter()->request($requestParams);
 
             $response = $this->getMapperResponse()->map($responseRaw);
