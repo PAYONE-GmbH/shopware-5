@@ -197,7 +197,7 @@ class FrontendCheckout implements SubscriberInterface
         //check if payment method is PayPal ecs
         /** @var Mopt_PayonePaymentHelper $helper */
         $helper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-        if ($helper->getPaymentNameFromId($userPaymentId) == 'mopt_payone__ewallet_paypal') {
+        if (strpos($helper->getPaymentNameFromId($userPaymentId),'mopt_payone__ewallet_paypal') === 0) {
             if (!$this->isShippingAddressSupported($orderVars['sUserData']['shippingaddress'])) {
                 $view->assign('invalidShippingAddress', true);
                 $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')

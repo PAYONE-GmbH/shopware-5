@@ -393,7 +393,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
                 // remove paypal for countries which need a state
                 // in case no state for the country is supplied
-                if ($payment['name'] === 'mopt_payone__ewallet_paypal') {
+                if ($moptPaymentHelper->isPayonePaypal($payment['name'])) {
                     if ($this->isStateNeeded()) {
                         $paypalIndex = $index;
                         unset ($payments[$paypalIndex]);
