@@ -1488,7 +1488,9 @@ class Mopt_PayonePaymentHelper
      */
     public function getKlarnaFinancingtypeByName($paymentName)
     {
-        return $this->klarnaPaymentFinancingtypeNameMapping()[$paymentName];
+        // remove _1 ,_2 ... from duplicated payments before matching
+        $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
+        return $this->klarnaPaymentFinancingtypeNameMapping()[$cleanedPaymentName];
     }
 
     /**
