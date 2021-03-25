@@ -137,7 +137,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             $autoSettleAccount = false;
             $doNotSendCaptureMode = false;
 
-            if ($paymentName === 'mopt_payone__acc_payone_safe_invoice'){
+            if ($this->moptPayone__main->getPaymentHelper()->isPayoneSafeInvoice($paymentName)){
                 $autoSettleAccount = true;
                 $doNotSendCaptureMode = true;
             }
