@@ -1957,7 +1957,7 @@ class Mopt_PayoneParamBuilder
         return $walletParams;
     }
 
-    public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts)
+    public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts, $paymentId)
     {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $phoneNumber = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
@@ -1967,8 +1967,6 @@ class Mopt_PayoneParamBuilder
             array('key'  => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION)
         ));
 
-        $name = $this->payonePaymentHelper->getKlarnaNameByFinancingtype($paymentFinancingtype);
-        $paymentId = $this->payonePaymentHelper->getPaymentIdFromName($name);
         $params = $this->getAuthParameters($paymentId);
         $params['clearingtype'] = $clearingtype;
         $params['financingtype'] = $paymentFinancingtype;

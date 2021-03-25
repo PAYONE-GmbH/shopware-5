@@ -1468,18 +1468,6 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * Returns the Klarna name by financingtype
-     *
-     * @param $financingtype
-     *
-     * @return string
-     */
-    public function getKlarnaNameByFinancingtype($financingtype)
-    {
-        return array_search($financingtype, $this->klarnaPaymentFinancingtypeNameMapping());
-    }
-
-    /**
      * Returns the Klarna financingtype by name
      *
      * @param $paymentName
@@ -1619,7 +1607,7 @@ class Mopt_PayonePaymentHelper
             + array_slice($input, $offset + $length, NULL, TRUE);
     }
 
-    public function buildAndCallKlarnaStartSession($paymentFinancingtype, $birthdate, $phoneNumber, $personalId)
+    public function buildAndCallKlarnaStartSession($paymentFinancingtype, $birthdate, $phoneNumber, $personalId, $paymentId)
     {
         $bootstrap = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
 
@@ -1645,7 +1633,7 @@ class Mopt_PayonePaymentHelper
 
         $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
 
-        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts);
+        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts, $paymentId);
         $request = new Payone_Api_Request_Genericpayment($params);
 
         $basket['sShippingcosts'] = $shippingCosts['brutto'];
