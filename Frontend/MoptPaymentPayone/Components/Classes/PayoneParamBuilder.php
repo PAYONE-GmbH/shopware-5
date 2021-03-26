@@ -128,7 +128,7 @@ class Mopt_PayoneParamBuilder
 
         $params['business'] = $business;
 
-        if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
+        if ($this->payonePaymentHelper->isPayonePayolutionInvoice($paymentName)  || $this->payonePaymentHelper->isPayonePayolutionDebitNote($paymentName)) {
             if ($order->getBilling()->getCompany()) {
                 $params['payolution_b2b'] = true;
             }
@@ -175,7 +175,7 @@ class Mopt_PayoneParamBuilder
         $params['business'] = $business;
         $params['payolution_b2b'] = false;
 
-        if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
+        if ($this->payonePaymentHelper->isPayonePayolutionInvoice($paymentName)  || $this->payonePaymentHelper->isPayonePayolutionDebitNote($paymentName)) {
             if ($order->getBilling()->getCompany()) {
                 $params['payolution_b2b'] = true;
             }
@@ -202,7 +202,7 @@ class Mopt_PayoneParamBuilder
         $params['amount'] = $this->getParamDebitAmount($order, $postionIds, $includeShipment);
         $params['currency'] = $order->getCurrency();
 
-        if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
+        if ($this->payonePaymentHelper->isPayonePayolutionInvoice($paymentName)  || $this->payonePaymentHelper->isPayonePayolutionDebitNote($paymentName)) {
             if ($order->getBilling()->getCompany()) {
                 $params['payolution_b2b'] = true;
             }
