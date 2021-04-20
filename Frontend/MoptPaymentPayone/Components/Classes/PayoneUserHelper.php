@@ -129,9 +129,12 @@ class Mopt_PayoneUserHelper
         $register = array();
         $register['billing']['city']           = $personalData['billing_city'];
         $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['billing_country']);
-        if ($personalData['shipping_state'] !== 'Empty') {
+
+        // handle Paypal ECS states
+        if (!empty($personalData['shipping_state']) && $personalData['shipping_state'] !== 'Empty') {
             $register['billing']['stateID']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['billing_state']);
         }
+
         $register['billing']['street']         = $personalData['billing_street'];
         $register['billing']['additionalAddressLine1'] = $personalData['billing_addressaddition'];
         $register['billing']['zipcode']        = $personalData['billing_zip'];
