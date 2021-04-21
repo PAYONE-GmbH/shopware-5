@@ -292,12 +292,18 @@ class Mopt_PayoneUserHelper
         if (!$updated) {
             return null;
         }
-        $updated = $this->updateShippingAddress($personalData, $session);
-        if (!$updated) {
-            return null;
+        // amazonpay: check if original billingaddress is the same as shipping address
+        // in this case add a new shipping address
+        if ($paymentName === 'mopt_payone__ewallet_amazon_pay' && $oldUserData['billingaddress']['id'] == $oldUserData['shippingaddress']['id']) {
+            $this->saveSeperateShippingAddress($personalData, $session);
+        } else {
+            $updated = $this->updateShippingAddress($personalData, $session);
+            if (!$updated) {
+                return null;
+            }
         }
-        $this->updateCustomer($personalData, $paymentId);
 
+        $this->updateCustomer($personalData, $paymentId);
         return $personalData;
     }
 
@@ -401,6 +407,44 @@ class Mopt_PayoneUserHelper
         }
 
         return $userData;
+    }
+
+    protected function saveSeperateShippingAddress($personalData, $session)
+    {
+        $userId = $session->offsetGet('sUserId');
+
+        /** @var \Shopware\Models\Customer\Customer $customer */
+        $customer = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
+        $queryBuilder = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();
+        $queryBuilder->select('*')
+            ->from('s_user_addresses')
+            ->where('user_id = :user_id')
+            ->setParameter('user_id', $userId);
+
+        $addresses = $queryBuilder->execute()->fetchAll(PDO::FETCH_CLASS, \Shopware\Models\Customer\Address::class);
+
+        $country = Shopware()->Models()->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $personalData['shipping']['country']));
+        $countryState = Shopware()->Models()->getRepository('\Shopware\Models\Country\State')->findOneBy(array('id' => $personalData['shipping']['state']));
+        $personalData['shipping']['country'] = $country;
+        $personalData['shipping']['state'] = $countryState;
+        $address = new \Shopware\Models\Customer\Address();
+        $address->fromArray($personalData['shipping']);
+        Shopware()->Container()->get('shopware_account.address_service')->create($address, $customer);
+        // get newly created address and set as defaultshippingaddress
+        $queryBuilder = Shopware()->Container()->get('dbal_connection')->createQueryBuilder();
+        $queryBuilder->select('*')
+            ->from('s_user_addresses')
+            ->where('user_id = :user_id')
+            ->setParameter('user_id', $userId);
+
+        $newAddresses = $queryBuilder->execute()->fetchAll(PDO::FETCH_CLASS, \Shopware\Models\Customer\Address::class);
+        foreach ($newAddresses as $checkAddress) {
+            if (!in_array($checkAddress, $addresses)) {
+                $newAddress = Shopware()->Models()->getRepository('Shopware\Models\Customer\Address')->findOneBy(array('id' => $checkAddress->getId()));
+                $customer->setDefaultShippingAddress($newAddress);
+                Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
+            }
+        }
     }
 
 }
