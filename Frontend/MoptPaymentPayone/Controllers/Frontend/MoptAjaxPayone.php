@@ -1326,7 +1326,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             $birthdate,
             $phoneNumber,
             $personalId,
-            $paymentId,
+            $paymentId
         );
 
         if ($result->getStatus() === 'ERROR') {
