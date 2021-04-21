@@ -260,12 +260,34 @@ class Mopt_PayoneUserHelper
 
     protected function updateUserAddresses($personalData, $session, $paymentId)
     {
+        $paymentHelper = new Mopt_PayonePaymentHelper();
+        $paymentName = $paymentHelper->getPaymentNameFromId($paymentId);
+        $oldUserData = $this->admin->sGetUserData();
+
+        // in some cases the api does not provide billing address data when using amazonpay
+        // since the user is already logged in use existing billing address instead
+        // uncomment the following lines to test this
+        // unset($personalData['billing_street']);
+        // unset($personalData['billing_country']);
+        if ($paymentName === 'mopt_payone__ewallet_amazon_pay' && empty($personalData['billing_street'])) {
+            $personalData['billing_city'] = $oldUserData['billingaddress']['city'];
+            $personalData['billing_country'] = $this->moptPayone__helper->getCountryIsoFromId($oldUserData['billingaddress']['country']['id']);
+            $personalData['billing_street'] = $oldUserData['billingaddress']['street'];
+            $personalData['billing_addressaddition'] = $oldUserData['billingaddress']['additionalAddressLine1'];
+            $personalData['billing_zip'] = $oldUserData['billingaddress']['zipcode'];
+            $personalData['billing_firstname'] = $oldUserData['billingaddress']['firstname'];
+            $personalData['billing_lastname'] = $oldUserData['billingaddress']['lastname'];
+            $personalData['billing_phone'] = $oldUserData['billingaddress']['phone'];
+            $personalData['billing_company'] = $oldUserData['billingaddress']['company'];
+        }
+
         $personalData = $this->extractData($personalData);
+
         // use old phone number in case phone number is required
         if (Shopware()->Config()->get('requirePhoneField')) {
-            $oldUserData = $this->admin->sGetUserData();
             $personalData['billing']['phone'] = $oldUserData['billingaddress']['phone'];
         }
+
         $updated = $this->updateBillingAddress($personalData, $session);
         if (!$updated) {
             return null;
