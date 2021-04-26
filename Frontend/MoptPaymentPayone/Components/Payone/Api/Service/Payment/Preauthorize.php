@@ -86,8 +86,16 @@ class Payone_Api_Service_Payment_Preauthorize extends Payone_Api_Service_Payment
 
             $this->protocol($request, $response);
         } catch (Exception $e) {
-            $this->protocolException($e, $request);
-            throw $e;
+            // @Shopware() kernel is unavailable when triggering preauthorize from FcPayone custom Backend
+            // handle all other exceptions normally
+            if (get_class($e) !== 'Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException'  ) {
+                $this->protocolException($e, $request);
+                throw $e;
+            } else {
+                $responseRaw = $this->getAdapter()->request($requestParams);
+                $response = $this->getMapperResponse()->map($responseRaw);
+                $this->protocol($request, $response);
+            }
         }
 
         return $response;
