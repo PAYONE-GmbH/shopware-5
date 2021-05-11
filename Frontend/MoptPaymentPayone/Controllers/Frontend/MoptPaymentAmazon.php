@@ -24,6 +24,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $this->session = Shopware()->Session();
         $this->plugin = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
         $this->basket = Shopware()->Modules()->Basket();
+        $this->admin->sSYSTEM->_POST['sPayment'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
+        $this->admin->sUpdatePayment(Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
     }
 
     /**
@@ -71,6 +73,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $userAdditionalArray['additional']['countryShipping'] = $userData['additional']['countryShipping'];
             $this->View()->assign('sUserData', $userAdditionalArray);
 
+            $this->get('modules')->Basket()->sRefreshBasket();
             $basket = $this->get('modules')->Basket()->sGetBasket();
 
             if ($this->Request()->getParam("sDispatch")) {
