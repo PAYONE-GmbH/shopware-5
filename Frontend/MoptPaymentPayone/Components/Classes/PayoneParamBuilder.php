@@ -128,7 +128,7 @@ class Mopt_PayoneParamBuilder
 
         $params['business'] = $business;
 
-        if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
+        if ($this->payonePaymentHelper->isPayonePayolutionInvoice($paymentName)  || $this->payonePaymentHelper->isPayonePayolutionDebitNote($paymentName)) {
             if ($order->getBilling()->getCompany()) {
                 $params['payolution_b2b'] = true;
             }
@@ -175,7 +175,7 @@ class Mopt_PayoneParamBuilder
         $params['business'] = $business;
         $params['payolution_b2b'] = false;
 
-        if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
+        if ($this->payonePaymentHelper->isPayonePayolutionInvoice($paymentName)  || $this->payonePaymentHelper->isPayonePayolutionDebitNote($paymentName)) {
             if ($order->getBilling()->getCompany()) {
                 $params['payolution_b2b'] = true;
             }
@@ -202,7 +202,7 @@ class Mopt_PayoneParamBuilder
         $params['amount'] = $this->getParamDebitAmount($order, $postionIds, $includeShipment);
         $params['currency'] = $order->getCurrency();
 
-        if ($paymentName == "mopt_payone__fin_payolution_invoice" || $paymentName == "mopt_payone__fin_payolution_debitnote") {
+        if ($this->payonePaymentHelper->isPayonePayolutionInvoice($paymentName)  || $this->payonePaymentHelper->isPayonePayolutionDebitNote($paymentName)) {
             if ($order->getBilling()->getCompany()) {
                 $params['payolution_b2b'] = true;
             }
@@ -1957,7 +1957,7 @@ class Mopt_PayoneParamBuilder
         return $walletParams;
     }
 
-    public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts)
+    public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts, $paymentId)
     {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $phoneNumber = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
@@ -1967,8 +1967,6 @@ class Mopt_PayoneParamBuilder
             array('key'  => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION)
         ));
 
-        $name = $this->payonePaymentHelper->getKlarnaNameByFinancingtype($paymentFinancingtype);
-        $paymentId = $this->payonePaymentHelper->getPaymentIdFromName($name);
         $params = $this->getAuthParameters($paymentId);
         $params['clearingtype'] = $clearingtype;
         $params['financingtype'] = $paymentFinancingtype;

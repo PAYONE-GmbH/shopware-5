@@ -134,13 +134,16 @@ class AddressCheck implements SubscriberInterface
             $shippingAddressData = $user['shippingaddress'];
             $shippingAddressData['country'] = $billingAddressData['countryId'];
             $basketAmount = $basket['AmountNumeric'];
+            $isPayonePaypal = $moptPayoneMain->getPaymentHelper()->isPayonePaypal($paymentName);
+            // remove _1 ,_2 ... from duplicated payments before matching
+            $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
 
-            if (in_array( $paymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
+            if (in_array($cleanedPaymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
                 // check for paypal ecs
-                if ($paymentName == 'mopt_payone__ewallet_paypal' && Shopware()->Session()->moptPaypalEcsWorkerId) {
+                if ($isPayonePaypal && Shopware()->Session()->moptPaypalEcsWorkerId) {
                     $arguments->setReturn(false);
                     return;
-                } elseif ($paymentName == 'mopt_payone__ewallet_paypal' && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
+                } elseif ($isPayonePaypal && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
                     // do nothing
                 } else {
                     $arguments->setReturn(false);
@@ -389,13 +392,16 @@ class AddressCheck implements SubscriberInterface
         $session = Shopware()->Session();
         $userId = $session->sUserId;
         $paymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($paymentId);
+        $isPayonePaypal = $moptPayoneMain->getPaymentHelper()->isPayonePaypal($paymentName);
+        // remove _1 ,_2 ... from duplicated payments before matching
+        $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
 
-        if (in_array( $paymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
+        if (in_array( $cleanedPaymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
             // check for paypal ecs
-            if ($paymentName == 'mopt_payone__ewallet_paypal' && Shopware()->Session()->moptPaypalEcsWorkerId) {
+            if ($isPayonePaypal && Shopware()->Session()->moptPaypalEcsWorkerId) {
                 $arguments->setReturn(false);
                 return;
-            } elseif ($paymentName == 'mopt_payone__ewallet_paypal' && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
+            } elseif ($isPayonePaypal && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
                 // do nothing
             } else {
                 $arguments->setReturn(false);

@@ -175,13 +175,18 @@
                 me.birthdate = me.generateBirthDate(me.data['customerDateOfBirth']);
                 me.billingAddressPhone = me.generatePhoneNumber(me.data['billingAddress-Phone'])
                 me.personalId = me.generatePersonalId(me.data['customerNationalIdentificationNumber']);
-
+                if (me.data['klarnaGrouped'] == "1") {
+                    me.paymentId = $('#mopt_payone__klarna_paymenttype option:selected').attr('mopt_payone__klarna_paymentid');
+                } else {
+                    me.paymentId = $('#mopt_payone_klarna_paymentid').val();
+                }
                 me.financingtype = $("#mopt_payone__klarna_paymenttype").val();
                 var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
                 var loadWidgetIsAllowed =
                     me.financingtype
                     && me.birthdate
                     && me.personalId
+                    && me.paymentId
                     && ((String)(me.billingAddressPhone)).length >= 5
                     && $gdpr_agreement.is(':checked');
 
@@ -198,7 +203,7 @@
                         me.personalId = '';
                     }
 
-                    me.startKlarnaSessionCall(me.financingtype, birthdate, me.billingAddressPhone, me.personalId).done(function (response) {
+                    me.startKlarnaSessionCall(me.financingtype, birthdate, me.billingAddressPhone, me.personalId, me.paymentId).done(function (response) {
                         response = $.parseJSON(response);
                         $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
@@ -234,14 +239,15 @@
             return $.ajax({method: "POST", url: url, data: parameters});
         },
 
-        startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber, personalId) {
+        startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber, personalId, paymentId) {
             var me = this;
             var url = me.data['startKlarnaSession-Url'];
             var parameters = {
                 'financingtype': financingtype,
                 'birthdate': birthdate,
                 'phoneNumber': phoneNumber,
-                'personalId': personalId
+                'personalId': personalId,
+                'paymentId': paymentId,
             };
             return $.ajax({method: "POST", url: url, data: parameters});
         },

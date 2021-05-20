@@ -227,7 +227,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
 
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
-            if ($moptPayoneFormData['mopt_payone__klarna_paymentname'] === 'mopt_payone__fin_kdd_klarna_direct_debit' || $moptPaymentName == 'mopt_payone__fin_kdd_klarna_direct_debit') {
+            if (strpos($moptPayoneFormData['mopt_payone__klarna_paymentname'],'mopt_payone__fin_kdd_klarna_direct_debit') === 0 || strpos($moptPaymentName, 'mopt_payone__fin_kdd_klarna_direct_debit') === 0) {
                 $view->assign('mopt_klarna_client_token', $session->offsetGet('mopt_klarna_client_token'));
                 $view->extendsTemplate('frontend/checkout/mopt_klarna_confirm' . $templateSuffix . '.tpl');
             }
@@ -393,7 +393,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
                 // remove paypal for countries which need a state
                 // in case no state for the country is supplied
-                if ($payment['name'] === 'mopt_payone__ewallet_paypal') {
+                if ($moptPaymentHelper->isPayonePaypal($payment['name'])) {
                     if ($this->isStateNeeded()) {
                         $paypalIndex = $index;
                         unset ($payments[$paypalIndex]);

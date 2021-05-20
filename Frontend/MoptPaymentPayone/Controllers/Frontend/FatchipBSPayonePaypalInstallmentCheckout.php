@@ -188,7 +188,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallmentCheckout ext
 
         $response = $this->service->request($request);
         switch ($response->getStatus()) {
-            case\Payone_Api_Enum_ResponseType::REDIRECT;
+            case \Payone_Api_Enum_ResponseType::REDIRECT;
                 $this->session->offsetSet('moptPaypalInstallmentWorkerId', $response->getWorkorderId());
                 $this->redirect($response->getRedirecturl());
                 break;

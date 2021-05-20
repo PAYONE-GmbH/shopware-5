@@ -252,7 +252,7 @@ class Shopware_Controllers_Frontend_FatchipBSPayonePaypalInstallment extends Sho
 
         $response = $this->service->request($request);
         switch ($response->getStatus()) {
-            case\Payone_Api_Enum_ResponseType::OK;
+            case \Payone_Api_Enum_ResponseType::OK;
                 $installmentData = $response->getPayData()->toAssocArray();
                 $this->session->offsetSet('moptPaypalInstallmentData', $installmentData);
                 $clearingData = $this->extractClearingDataFromInstallmentData($installmentData);
