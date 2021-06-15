@@ -388,7 +388,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $payments = $view->getAssign('sPayments');
 
             foreach ($payments as $index => $payment) {
-                if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
+                if (strpos($payment['name'], 'mopt_payone__ewallet_amazon_pay') !== false ) {
                     $amazonPayIndex = $index;
                 }
                 // remove paypal for countries which need a state
@@ -429,7 +429,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $payments = $view->getAssign('sPaymentMeans');
 
             foreach ($payments as $index => $payment) {
-                if ($payment['name'] === 'mopt_payone__ewallet_amazon_pay') {
+                if (strpos($payment['name'], 'mopt_payone__ewallet_amazon_pay') !== false ) {
                     $amazonPayIndex = $index;
                 }
             }
