@@ -509,17 +509,17 @@ class Mopt_PayoneInstallHelper
                 'position' => 27,),
             array(
                 'name' => 'mopt_payone__fin_payolution_invoice',
-                'description' => 'Unzer Rechnungskauf',
+                'description' => 'PAYONE Unzer Rechnungskauf',
                 'template' => 'mopt_paymentmean_payolution_invoice.tpl',
                 'position' => 28,),
             array(
                 'name' => 'mopt_payone__fin_payolution_debitnote',
-                'description' => 'Unzer Lastschrift',
+                'description' => 'PAYONE Unzer Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
                 'position' => 29,),
             array(
                 'name' => 'mopt_payone__fin_payolution_installment',
-                'description' => 'Unzer Ratenkauf',
+                'description' => 'PAYONE Unzer Ratenkauf',
                 'template' => 'mopt_paymentmean_payolution_installment.tpl',
                 'position' => 30,),
             array(
