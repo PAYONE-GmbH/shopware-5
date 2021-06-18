@@ -509,17 +509,17 @@ class Mopt_PayoneInstallHelper
                 'position' => 27,),
             array(
                 'name' => 'mopt_payone__fin_payolution_invoice',
-                'description' => 'PAYONE Paysafe Pay Later™ Rechnungskauf',
+                'description' => 'Unzer Rechnungskauf',
                 'template' => 'mopt_paymentmean_payolution_invoice.tpl',
                 'position' => 28,),
             array(
                 'name' => 'mopt_payone__fin_payolution_debitnote',
-                'description' => 'PAYONE Paysafe Pay Later™ Lastschrift',
+                'description' => 'Unzer Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
                 'position' => 29,),
             array(
                 'name' => 'mopt_payone__fin_payolution_installment',
-                'description' => 'PAYONE Paysafe Pay Later™ Ratenkauf',
+                'description' => 'Unzer Ratenkauf',
                 'template' => 'mopt_paymentmean_payolution_installment.tpl',
                 'position' => 30,),
             array(
