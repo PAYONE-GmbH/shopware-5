@@ -978,7 +978,7 @@ class Mopt_PayonePaymentHelper
 
 
                     $information['consentInstallment'] = 'Mit der Übermittlung der für die Abwicklung des Ratenkaufes '
-                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an die payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
                         . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInstallment();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
