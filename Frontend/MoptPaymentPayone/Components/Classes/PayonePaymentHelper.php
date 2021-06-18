@@ -49,7 +49,7 @@ class Mopt_PayonePaymentHelper
                 <li>infoscore Consumer Data GmbH, Rheinstraße 99, D-76532 Baden-Baden</li>
                 <li>ProfileAddress Direktmarketing GmbH, Altmannsdorfer Strasse 311, A-1230 Wien</li>
                 <li>Deutsche Post Direkt GmbH, Junkersring 57, D-53844 Troisdorf</li>
-                <li>payolution GmbH, Am Euro Platz 2, A-1120 Wien</li>
+                <li>Payolution GmbH, Columbusplatz 7-8, A-1120 Wien</li>
             </ul>
             <p>payolution wird Ihre Angaben zur Bankverbindung (insbesondere Bankleitzahl und Kontonummer) zum Zwecke der Kontonummernprüfung an die SCHUFA Holding AG übermitteln. Die SCHUFA prüft anhand dieser Daten zunächst, ob die von Ihnen gemachten Angaben zur Bankverbindung plausibel sind. Die SCHUFA überprüft, ob die zur Prüfung verwendeten Daten ggf. in Ihrem Datenbestand gespeichert sind und übermittelt sodann das Ergebnis der Überprüfung an payolution zurück. Ein weiterer Datenaustausch wie die Bekanntgabe von Bonitätsinformationen oder eine Übermittlung abweichender Bankverbindungsdaten sowie Speicherung Ihrer Daten im SCHUFA-Datenbestand finden im Rahmen der Kontonummernprüfung nicht statt. Es wird aus Nachweisgründen allein die Tatsache der Überprüfung der Bankverbindungsdaten bei der SCHUFA gespeichert.</p>
             <p>payolution ist berechtigt, auch Daten zu etwaigem nicht-vertragsgemäßen Verhalten (z.B. unbestrittene offene Forderungen) zu speichern, zu verarbeiten, zu nutzen und an oben genannte Auskunfteien zu übermitteln.</p>
@@ -62,8 +62,8 @@ class Mopt_PayonePaymentHelper
 
         <footer>Sachbearbeiter für Datenschutz<br />
             datenschutz@payolution.com<br />
-            payolution GmbH<br />
-            Am Euro Platz 2<br />
+            Payolution GmbH<br />
+            Columbusplatz 7-8<br />
             1120 Wien<br />
             DVR: 4008655
         </footer>
@@ -963,19 +963,19 @@ class Mopt_PayonePaymentHelper
         switch ($country) {
             case 'DE':
                 {
-                    $information['consentDebit'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
-                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                    $information['consentDebit'] = 'Mit der Übermittlung der für die Abwicklung des Lastschriftkaufes '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an die payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
                         . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayDebit();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
-                    $information['consentInvoice'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
-                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                    $information['consentInvoice'] = 'Mit der Übermittlung der für die Abwicklung des Rechnungskaufes '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an die payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
                         . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInvoice();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
 
-                    $information['consentInstallment'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
-                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                    $information['consentInstallment'] = 'Mit der Übermittlung der für die Abwicklung des Ratenkaufes '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
                         . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInstallment();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
