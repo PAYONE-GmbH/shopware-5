@@ -560,7 +560,36 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->flush();
         }
 
+        // Update PAYONE Paysafe Payment Names
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_payolution_invoice')
+        );
+        if ($payment) {
+            $payment->setDescription('PAYONE Unzer Rechnungskauf');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
 
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_payolution_debitnote')
+        );
+        if ($payment) {
+            $payment->setDescription('PAYONE Unzer Lastschrift');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
+
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_payolution_installment')
+        );
+        if ($payment) {
+            $payment->setDescription('PAYONE Unzer Ratenkauf');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
     }
 
 
