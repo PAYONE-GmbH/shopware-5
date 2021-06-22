@@ -235,8 +235,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
     protected function updateUserAddresses($personalData, $session, $paymentId)
     {
         $personalData = $this->extractData($personalData);
-        // use old phone number in case phone number is required
-        if (Shopware()->Config()->get('requirePhoneField')) {
+        // use existing phone number in case phone number was not sent from Payone
+        if ($personalData['billing']['phone'] === '00000000' || empty($personalData['billing']['phone'])) {
             $oldUserData = $this->admin->sGetUserData();
             $personalData['billing']['phone'] = $oldUserData['billingaddress']['phone'];
         }
@@ -261,16 +261,6 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
             $countryIds[$key] = $country['id'];
         }
         $this->admin->sSYSTEM->_POST  = $personalData['billing'];
-        $rules = array(
-                'salutation'=>array('required'=>1),
-                'firstname'=>array('required'=>1),
-                'lastname'=>array('required'=>1),
-                'street'=>array('required'=>1),
-                'zipcode'=>array('required'=>1),
-                'city'=>array('required'=>1),
-                'phone'=>array('required'=> intval(Shopware()->Config()->get('requirePhoneField'))),
-                'country'=>array('required' => 1, 'in' => $countryIds)
-            );
         $this->updateBilling($userId, $personalData['billing']);
         return true;
     }
@@ -278,14 +268,6 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
     protected function updateShippingAddress($personalData, $session)
     {
         $userId = $session->offsetGet('sUserId');
-        $rules = array(
-        'salutation'=>array('required'=>1),
-        'firstname'=>array('required'=>1),
-        'lastname'=>array('required'=>1),
-        'street'=>array('required'=>1),
-        'zipcode'=>array('required'=>1),
-        'city'=>array('required'=>1)
-        );
         $this->admin->sSYSTEM->_POST = $personalData['shipping'];
         $this->updateShipping($userId, $personalData['billing']);
         return true;
@@ -299,6 +281,10 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
    */
     protected function extractData($personalData)
     {
+        // uncomment to simulate missing paypal phone number
+        // unset($personalData['telephonenumber']);
+        $isPhoneMandatory = Shopware()->Config()->get('requirePhoneField');
+
         $register = array();
         $register['billing']['city']           = $personalData['shipping_city'];
         $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['shipping_country']);
@@ -317,6 +303,13 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
             $register['billing']['company']        = '';
             $register['personal']['customer_type'] = 'private';
         }
+
+        if ($isPhoneMandatory) {
+            $register['billing']['phone'] = (isset($personalData['telephonenumber']) && !empty($personalData['telephonenumber'])) ? $personalData['telephonenumber'] : '00000000' ;
+        } else {
+            $register['billing']['phone'] = $personalData['telephonenumber'];
+        }
+
         $register['personal']['email']         = $personalData['email'];
         $register['personal']['firstname']     = $personalData['shipping_firstname'];
         $register['personal']['lastname']      = $personalData['shipping_lastname'];
@@ -330,6 +323,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $register['shipping']['zipcode']      = $register['billing']['zipcode'];
         $register['shipping']['city']         = $register['billing']['city'];
         $register['shipping']['country']      = $register['billing']['country'];
+        $register['shipping']['phone']        = $register['billing']['phone'];
         if ($personalData['shipping_state'] !== 'Empty') {
             $register['shipping']['state']  = $register['billing']['state'];
         }

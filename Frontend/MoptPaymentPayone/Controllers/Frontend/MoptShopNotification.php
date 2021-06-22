@@ -242,6 +242,21 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         echo $response->getStatus();
         $this->logger->debug('starting tx forwards');
         $this->moptPayoneForwardTransactionStatus($rawPost, $paymentId);
+
+        // fire event to do some custom stuff, e.g. synchronising with merchandise management software
+        // please note that processing this event has to be fast because Payone will mark this request as
+        // failed if it is not processed within 10 seconds
+        $this->container->get('events')->notify(
+            'Payone_Controller_MoptShopNotification',
+            [
+                'txaction'        => $request->getParam('txaction'),
+                'reference'       => $request->getParam('reference'),
+                'ordernumber'     => $order['ordernumber'],
+                'sequencenumber'  => $payoneRequest->getSequencenumber(),
+                'paymentId'       => $order['paymentID'],
+            ]
+        );
+
         $this->logger->debug('finished all tasks, exit');
         exit;
     }

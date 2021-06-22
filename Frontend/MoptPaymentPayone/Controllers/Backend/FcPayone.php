@@ -217,6 +217,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         $request->setPersonalData($pData);
         $request->setPayment($paymentData);
+        $request->setSuccessurl('https://payone.com');
         $request->setMode('test');
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Visa)</span>');
@@ -275,6 +276,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $request->setPayment($paymentData);
 
         $paymentData->setEcommercemode('internet');
+        $request->setSuccessurl('https://payone.com');
         $request->setMode('test');
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Mastercard)</span>');

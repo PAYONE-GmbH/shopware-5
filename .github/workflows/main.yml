@@ -10,14 +10,19 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
-        - 3306
+        - 3306:3306
     strategy:
       max-parallel: 15
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['7.2', '7.3']
+        php-versions: ['7.3', '7.4']
         shopware-versions: ['5.6', '5.5', '5.4']
+        exclude:
+          - php-versions: '7.4' 
+            shopware-versions: '5.4'
+          - php-versions: '7.4' 
+            shopware-versions: '5.5'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -25,15 +30,13 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
-        extensions: mbstring, xdebug
+        extensions: mbstring, xdebug, curl, dom, fileinfo, gd, iconv, intl, json, xml, mbstring, pdo, phar, zip
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
     - name: Check PHP Version
       run: php -v
-    - name: Start MySQL
-      run: sudo /etc/init.d/mysql start
     - name: PHP Syntax Checker
       run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
     - name: Install Shopware and Plugin
