@@ -99,7 +99,16 @@ class FrontendCheckout implements SubscriberInterface
             return;
         }
         // Set redirect flag
-        Shopware()->Session()->moptBasketChanged = true;
+        if (isset(Shopware()->Session()->moptPaypalInstallmentWorkerId)) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
+        if (isset(Shopware()->Session()->moptPaydirektExpressWorkerId)) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
+
+        if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
         $arguments->setReturn($ret);
     }
 

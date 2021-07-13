@@ -293,7 +293,7 @@ class FrontendPostDispatch implements SubscriberInterface
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
-            if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
+            if (isset(Shopware()->Session()->moptPaydirektExpressWorkerId) && $moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     $action->redirect(
                         array(
@@ -339,6 +339,7 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     unset($session->moptBasketChanged);
+                    unset($session->moptFormSubmitted);
                     unset($session->moptPaydirektExpressWorkerId);
                     $redirectnotice =
                         'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
