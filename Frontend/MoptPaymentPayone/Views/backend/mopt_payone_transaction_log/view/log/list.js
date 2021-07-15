@@ -76,44 +76,44 @@ Ext.define('Shopware.apps.MoptPayoneTransactionLog.view.log.List',
             var me = this;
 
             var columns = [{
-                header: '{s name=mopt_payone_transaction_log/grid/column_id}ID{/s}',
+                header: '{s name="mopt_payone_transaction_log/grid/column_id"}ID{/s}',
                 dataIndex: 'id',
                 flex: 1
               }, {
-                header: '{s name=mopt_payone_transaction_log/grid/column_transactionId}Transaktionsid{/s}',
+                header: '{s name="mopt_payone_transaction_log/grid/column_transactionId"}Transaktionsid{/s}',
                 dataIndex: 'transactionId',
                 flex: 1
               }, {
-                header: '{s name=mopt_payone_transaction_log/grid/column_orderNr}Bestellnummer{/s}',
+                header: '{s name="mopt_payone_transaction_log/grid/column_orderNr"}Bestellnummer{/s}',
                 dataIndex: 'orderNr',
                 flex: 1
               }, {
-                header: '{s name=mopt_payone_transaction_log/grid/column_mode}Betriebsmodus{/s}',
+                header: '{s name="mopt_payone_transaction_log/grid/column_mode"}Betriebsmodus{/s}',
                 dataIndex: 'liveMode',
                 flex: 1,
                 renderer: me.renderLivemode
               }, {
-                header: '{s name=mopt_payone_transaction_log/grid/column_portal_id}Portal ID{/s}',
+                header: '{s name="mopt_payone_transaction_log/grid/column_portal_id"}Portal ID{/s}',
                 dataIndex: 'portalId',
                 flex: 1
               }, {
-                header: '{s name=mopt_payone_transaction_log/grid/column_status}Status{/s}',
+                header: '{s name="mopt_payone_transaction_log/grid/column_status"}Status{/s}',
                 dataIndex: 'status',
                 flex: 1
               }, {
-                header: '{s name=mopt_payone_transaction_log/grid/column_creation_date}erstellt{/s}',
+                header: '{s name="mopt_payone_transaction_log/grid/column_creation_date"}erstellt{/s}',
                 dataIndex: 'creationDate',
                 flex: 1,
                 xtype: 'datecolumn',
                 renderer: me.renderDate
               }, {
-                header: '{s name=mopt_payone_transaction_log/grid/column_update_date}geändert{/s}',
+                header: '{s name="mopt_payone_transaction_log/grid/column_update_date"}geändert{/s}',
                 dataIndex: 'updateDate',
                 flex: 1,
                 xtype: 'datecolumn',
                 renderer: me.renderDate
               }, {
-                header: '{s name=mopt_payone_transaction_log/grid/column_transaction_date}Transaktionsdatum{/s}',
+                header: '{s name="mopt_payone_transaction_log/grid/column_transaction_date"}Transaktionsdatum{/s}',
                 dataIndex: 'transactionDate',
                 flex: 1,
                 xtype: 'datecolumn',
@@ -141,12 +141,12 @@ Ext.define('Shopware.apps.MoptPayoneTransactionLog.view.log.List',
                 xtype: 'textfield',
                 name: 'searchTrans',
                 id: 'searchTransField',
-                fieldLabel: '{s name=toolbar/searchField}Freitext{/s}'
+                fieldLabel: '{s name="toolbar/searchField"}Freitext{/s}'
               },
               {
                 xtype: 'button',
                 name: 'searchbtntrans',
-                text: '{s name=toolbar/searchButton}Suchen{/s}',
+                text: '{s name="toolbar/searchButton"}Suchen{/s}',
                 id: 'searchBtnTrans',
                 width: '50px',
                 dock: 'top',
@@ -165,7 +165,7 @@ Ext.define('Shopware.apps.MoptPayoneTransactionLog.view.log.List',
               {
                 xtype: 'button',
                 name: 'resetTransBtn',
-                text: '{s name=toolbar/searchReset}Suche zurücksetzen{/s}',
+                text: '{s name="toolbar/searchReset"}Suche zurücksetzen{/s}',
                 id: 'resetTransBtn',
                 dock: 'top',
                 handler: function(btn, event) {

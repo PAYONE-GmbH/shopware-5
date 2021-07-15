@@ -88,7 +88,7 @@ class FrontendPostDispatch implements SubscriberInterface
         if (!$request->isDispatched() || $response->isException()) {
             return;
         }
-        $this->container->get('Template')->addTemplateDir($this->path . 'Views/');
+        $this->container->get('template')->addTemplateDir($this->path . 'Views/');
     }
 
     /**
@@ -168,7 +168,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('fcPayolutionConfigInstallment', $moptPayoneData['payolutionConfigInstallment']);
             $view->assign('moptRatepayConfig', $moptPayoneData['moptRatepayConfig']);
 
-            $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
+            $moptPayoneFormData = array_merge((array)$view->sFormData, $moptPayoneData['sFormData']);
             $paymentName = $moptPaymentHelper->getPaymentNameFromId($moptPayoneFormData['payment']);
             if ($moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {
                 $moptPayoneFormData['payment'] = 'mopt_payone_creditcard';
@@ -293,7 +293,7 @@ class FrontendPostDispatch implements SubscriberInterface
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
-            if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
+            if (isset(Shopware()->Session()->moptPaydirektExpressWorkerId) && $moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     $action->redirect(
                         array(
@@ -339,6 +339,7 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     unset($session->moptBasketChanged);
+                    unset($session->moptFormSubmitted);
                     unset($session->moptPaydirektExpressWorkerId);
                     $redirectnotice =
                         'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
@@ -466,7 +467,7 @@ class FrontendPostDispatch implements SubscriberInterface
         $shopContext = $this->container->get('bootstrap')->getResource('shop');
         $templateVersion = $shopContext->getTemplate()->getVersion();
 
-        $this->container->get('Template')->addTemplateDir($this->path . 'Views/');
+        $this->container->get('template')->addTemplateDir($this->path . 'Views/');
     }
 
     protected function moptPayoneCheckEnvironment($controllerName = false)

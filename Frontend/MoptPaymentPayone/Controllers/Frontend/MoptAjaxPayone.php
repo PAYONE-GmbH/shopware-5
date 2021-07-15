@@ -724,7 +724,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     public function getCurrencyShortName()
     {
-        return Shopware()->Currency()->getShortName();
+        return Shopware()->Container()->get('currency')->getShortName();
     }
 
     public function getWhitelistedCSRFActions()

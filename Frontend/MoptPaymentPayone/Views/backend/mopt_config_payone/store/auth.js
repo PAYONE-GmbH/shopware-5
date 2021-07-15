@@ -5,10 +5,10 @@ Ext.define('Shopware.apps.MoptConfigPayone.store.Auth', {
   model: 'Shopware.apps.MoptConfigPayone.model.Combostring',
   data: [
     {
-      display: '{s name=fieldvalue/preauthorisation}Vorautorisierung{/s}',
+      display: '{s name="fieldvalue/preauthorisation"}Vorautorisierung{/s}',
       value: 'Vorautorisierung'
     }, {
-      display: '{s name=fieldvalue/authorisation}Autorisierung{/s}',
+      display: '{s name="fieldvalue/authorisation"}Autorisierung{/s}',
       value: 'Autorisierung'
     }]
 });

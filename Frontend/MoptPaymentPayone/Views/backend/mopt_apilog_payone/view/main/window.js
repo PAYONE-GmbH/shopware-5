@@ -6,7 +6,7 @@
 //{block name="backend/mopt_apilog_payone/view/main/window"}
 Ext.define('Shopware.apps.MoptApilogPayone.view.main.Window', {
   extend: 'Enlight.app.Window',
-  title: '{s name=window_title}API-Log{/s}',
+  title: '{s name="window_title"}API-Log{/s}',
   cls: Ext.baseCSSPrefix + 'log-window',
   alias: 'widget.log-main-window-api',
   border: false,

@@ -8,7 +8,7 @@
 
 <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/checkout.css"}">
 
-<p class="payment--form-group"
+<div class="payment--form-group"
      id="mopt_payone_creditcard_form" 
      data-mopt_payone__cc_paymentid="{$form_data.mopt_payone__cc_paymentid}" 
      data-mopt_payone__cc_paymentshort="{$form_data.mopt_payone__cc_cardtype}" 

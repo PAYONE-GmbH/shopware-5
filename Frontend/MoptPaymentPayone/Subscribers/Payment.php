@@ -110,7 +110,7 @@ class Payment implements SubscriberInterface
             $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
         }
 
-        if (count($paymentData['sErrorFlag'])) {
+        if (isset($paymentData['sErrorFlag']) && count($paymentData['sErrorFlag'])) {
             $error = true;
             $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
         }

@@ -33,7 +33,7 @@ Ext.define('Shopware.apps.MoptExportPayone.controller.Main', {
   onMoptDownloadConfigExport: function(view) {
 
     var loadMask = new Ext.LoadMask(Ext.getBody(), {
-        msg: '{s name=loadmask}Erstelle Konfigurationsexport...{/s}',
+        msg: '{s name="loadmask"}Erstelle Konfigurationsexport...{/s}',
         removeMask: true
     });
 
@@ -75,7 +75,7 @@ Ext.define('Shopware.apps.MoptExportPayone.controller.Main', {
             }
             else
             {
-                Ext.Msg.alert('{s name=download/error}Download fehlgeschlagen{/s}', jsonData.error_message);
+                Ext.Msg.alert('{s name="download/error"}Download fehlgeschlagen{/s}', jsonData.error_message);
             }
         }
     });

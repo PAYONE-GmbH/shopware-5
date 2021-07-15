@@ -6,7 +6,7 @@
 //{block name="backend/mopt_payone_transaction_log/view/main/detailwindow"}
 Ext.define('Shopware.apps.MoptPayoneTransactionLog.view.main.Detailwindow', {
 	extend: 'Enlight.app.Window',
-    title: '{s name=window_title_detail_trans}Transaktionsstatus-Detail{/s}',
+    title: '{s name="window_title_detail_trans"}Transaktionsstatus-Detail{/s}',
     cls: Ext.baseCSSPrefix + 'detail-window',
     alias: 'widget.moptPayoneTransactionLogMainDetailWindow',
     border: false,
@@ -25,7 +25,7 @@ Ext.define('Shopware.apps.MoptPayoneTransactionLog.view.main.Detailwindow', {
      */
     initComponent: function() {
         var me = this;
-        me.title = '{s name=transaction_log_details_for}Transaktionsstatus-Detail zu ID {/s}' + me.itemSelected;
+        me.title = '{s name="transaction_log_details_for"}Transaktionsstatus-Detail zu ID {/s}' + me.itemSelected;
         me.items = [{
             xtype: 'moptPayoneTransactionLogMainDetail',
             itemSelected: me.itemSelected

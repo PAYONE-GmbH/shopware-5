@@ -49,7 +49,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function init()
     {
         $this->logging = new Logging();
-        $this->logging->lfile(Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log');
+        $this->logging->lfile(Shopware()->Container()->get('kernel')->getLogDir() . '/moptPayoneConnectionTest.log');
     }
 
     public function getWhitelistedCSRFActions()
@@ -148,7 +148,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->pid = $_GET['pid'];
         $this->apikey = $_GET['apikey'];
 
-        unlink(Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log');
+        unlink(Shopware()->Container()->get('kernel')->getLogDir() . '/moptPayoneConnectionTest.log');
         $this->logging->lwrite('<span style="color: green;">Starte Verbindungstest</span>', $this->aLogcontext);
         if (!$this->testfailed) {
             $this->creditcardCheckVisa(true);
@@ -453,7 +453,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data = array();
         sleep(2);
         $this->Front()->Plugins()->Json()->setRenderer(true);
-        $filename = Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log';
+        $filename = Shopware()->Container()->get('kernel')->getLogDir() . '/moptPayoneConnectionTest.log';
         $resultfile = fopen($filename, "r");
         $aLines = '';
         while (!feof($resultfile)) {

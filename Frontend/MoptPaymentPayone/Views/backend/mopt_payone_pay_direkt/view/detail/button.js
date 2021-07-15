@@ -8,21 +8,21 @@ Ext.define('Shopware.apps.MoptPayonePayDirekt.view.detail.Button', {
         return {
             controller: 'MoptPayonePayDirekt',
             fieldSets: [{
-                    title: '{s name=details/title}Payone Pay Direkt Button-Details{/s}',
+                    title: '{s name="details/title"}Payone Pay Direkt Button-Details{/s}',
                     layout: 'fit',
                     fields: {
                         localeId: {
-                            fieldLabel: '{s name=language}Sprache{/s}',
+                            fieldLabel: '{s name="language"}Sprache{/s}',
                             name: 'localeId',
                             allowBlank: false
                         },
                         dispatchId: {
-                            fieldLabel: '{s name=dispatch}Versandart{/s}',
+                            fieldLabel: '{s name="dispatch"}Versandart{/s}',
                             name: 'dispatchId',
                             allowBlank: false
                         },
                         image: {
-                            fieldLabel: '{s name=image}Pay Direkt image{/s}',
+                            fieldLabel: '{s name="image"}Pay Direkt image{/s}',
                             xtype: 'mediaselectionfield',
                             allowBlank: false
                         }

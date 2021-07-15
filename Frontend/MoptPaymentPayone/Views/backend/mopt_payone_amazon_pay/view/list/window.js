@@ -4,7 +4,7 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.list.Window', {
     alias: 'widget.mopt-payone-amazon-pay-list-window',
     height: 450,
     width: 600,
-    title : '{s name=window/title}Payone Amazon Pay{/s}',
+    title : '{s name="window/title"}Payone Amazon Pay{/s}',
  
     configure: function() {
         return {
