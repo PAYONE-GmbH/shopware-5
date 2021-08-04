@@ -1541,7 +1541,7 @@ class Mopt_PayoneHelper
             ->innerJoin('basket.attribute', 'attribute')
             ->where('basket.sessionId = :sessionId')
             ->andWhere('attribute.swagAboCommerceDeliveryInterval IS NOT NULL')
-            ->setParameters(array('sessionId' => Shopware()->SessionID()));
+            ->setParameters(array('sessionId' => Shopware()->Session()->get('sessionId')));
 
         $count = $builder->getQuery()->getSingleScalarResult();
 
