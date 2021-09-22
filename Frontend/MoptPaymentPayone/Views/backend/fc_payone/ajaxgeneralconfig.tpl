@@ -218,6 +218,7 @@
                     </div>
                 </div>
 
+                <!--
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                     <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayAmex}Erlaubt American Express Karten über Apple Pay{/s}">
                     <label for="applepayAmex" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayAmex}Apple Pay American Express erlauben{/s}</label>
@@ -244,7 +245,7 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
-
+                -->
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
                     <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayCertificate}Apple Pay Pfad zur Zertifikats Datei{/s}">
                     <label for="applepayCertificate" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayCertificate}Apple Pay Zertifikat{/s}</label>

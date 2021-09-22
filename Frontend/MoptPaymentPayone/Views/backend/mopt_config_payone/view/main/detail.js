@@ -1225,6 +1225,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 disabled: false,
                 labelWidth: 200
             },
+            /*
            {
                 xtype: 'combobox',
                 fieldLabel: '{s name=fieldlabel/applepayAmex}Apple Pay American Express erlauben{/s}',
@@ -1251,6 +1252,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 disabled: false,
                 labelWidth: 200
             },
+            */
             {
                 xtype: 'textfield',
                 fieldLabel: '{s name="fieldlabel/applepayCertificate"}Apple Pay Zertifikat{/s}',
