@@ -798,6 +798,17 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone applepay payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneApplepay($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_applepay#', $paymentName) ? true : false;
+    }
+
+    /**
      * get online bank transfer type for api communication
      *
      * @param string $paymentName
@@ -1308,6 +1319,9 @@ class Mopt_PayonePaymentHelper
         }
         if ($this->isPayoneTrustly($paymentShortName)) {
             return 'trustly';
+        }
+        if ($this->isPayoneApplepay($paymentShortName)) {
+            return 'applepay';
         }
         return false;
     }

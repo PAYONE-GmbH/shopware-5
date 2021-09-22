@@ -1164,6 +1164,54 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
+     * create applepay payment object
+     *
+     * @param $router
+     * @param $token
+     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     */
+    public function getPaymentApplepay($router, $token)
+    {
+        $params = array();
+        $params['clearingtype'] = 'wlt';
+        $params['wallettype'] = 'APL';
+
+        $params['successurl'] = $router->assemble(array('action' => 'success',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+            'forceSecure' => true, 'appendSession' => false));
+
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
+
+        return $this->addApplepayPaymentParameters($payment, $token);
+    }
+
+    /**
+     * @param Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet $payment
+     * @param $token
+     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     */
+    public function addApplepayPaymentParameters($payment, $token) {
+
+        $cardTypeMappings = [
+            'visa'       => 'V',
+            'mastercard' => 'M',
+            'girocard'   => 'G',
+            'default'    => '?',
+        ];
+
+        $paydata = $this->buildApplepayPaydata($token);
+
+        $payment->setPaydata($paydata);
+
+        $payment->setCardtype($cardTypeMappings[strtolower($token['paymentMethod']['network'] ?? 'default')]);
+
+        return $payment;
+    }
+
+    /**
      * create finance payment object
      *
      * @param string $financeType
@@ -2009,6 +2057,58 @@ class Mopt_PayoneParamBuilder
             ));
         }
 */
+
+        return $paydata;
+    }
+
+    /**
+     *
+     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     */
+    protected function buildApplepayPaydata($tokenData) {
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            [
+                'key'  => 'paymentdata_token_data',
+                'data' => $tokenData['paymentData']['data'] ?? '' ,
+            ]
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            [
+                'key'  => 'paymentdata_token_ephemeral_publickey',
+                'data' => $tokenData['paymentData']['header']['ephemeralPublicKey'] ?? '',
+            ]
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            [
+                'key'  => 'paymentdata_token_publickey_hash',
+                'data' => $tokenData['paymentData']['header']['publicKeyHash'] ?? '',
+            ]
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            [
+                'key'  => 'paymentdata_token_signature',
+                'data' => $tokenData['paymentData']['signature'] ?? '',
+            ]
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            [
+                'key'  => 'paymentdata_token_transaction_id',
+                'data' => $tokenData['paymentData']['header']['transactionId'] ?? '',
+            ]
+        ));
+
+        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            [
+                'key'  => 'paymentdata_token_version',
+                'data' => $tokenData['paymentData']['version'] ?? 'EC_v1',
+            ]
+        ));
 
         return $paydata;
     }
