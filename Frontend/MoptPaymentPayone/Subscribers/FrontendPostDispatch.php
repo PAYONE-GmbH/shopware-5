@@ -274,7 +274,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->extendsTemplate('frontend/checkout/mopt_confirm_applepay.tpl');
         }
         if ($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
-            $view->assign('applepayNotConfiguredError', $this->isApplepayConfigured($moptPayoneData['moptApplepayConfig']));
+            $view->assign('applepayNotConfiguredError', ! $this->isApplepayConfigured($moptPayoneData['moptApplepayConfig']));
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')) {
