@@ -1901,7 +1901,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
-                        ADD COLUMN `$column` TINYINT(1) NOT NULL DEFAULT '0';";
+                        ADD COLUMN `$column` TINYINT(1) NULL DEFAULT '0';";
                 $db->exec($sql);
             }
         }

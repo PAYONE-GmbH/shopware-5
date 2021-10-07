@@ -612,32 +612,32 @@ class MoptPayoneConfig extends ModelEntity
     private $applepayPrivateKeyPassword;
 
     /**
-     * @ORM\Column(name="applepay_visa", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
+     * @ORM\Column(name="applepay_visa", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
      */
     private $applepayVisa;
 
     /**
-     * @ORM\Column(name="applepay_mastercard", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
+     * @ORM\Column(name="applepay_mastercard", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
      */
     private $applepayMastercard;
 
     /**
-     * @ORM\Column(name="applepay_girocard", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
+     * @ORM\Column(name="applepay_girocard", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
      */
     private $applepayGirocard;
 
     /**
-     * @ORM\Column(name="applepay_amex", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
+     * @ORM\Column(name="applepay_amex", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
      */
     private $applepayAmex;
 
     /**
-     * @ORM\Column(name="applepay_discover", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
+     * @ORM\Column(name="applepay_discover", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
      */
     private $applepayDiscover;
 
     /**
-     * @ORM\Column(name="applepay_debug", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
+     * @ORM\Column(name="applepay_debug", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
      */
     private $applepayDebug;
 
