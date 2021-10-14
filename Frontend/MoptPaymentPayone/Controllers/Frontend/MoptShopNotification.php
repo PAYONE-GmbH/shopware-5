@@ -100,7 +100,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         } else {
             $this->restoreSession($request->getParam('param'));
             $session = Shopware()->Session();
-            if (!$session->has('sOrderVariables')) {
+            if (is_null($session) || !$session->offsetExists('sOrderVariables')) {
                 $message = 'The session could not be restored. It might help to configure the server\'s gc_probability:'
                     . '\n\n   https://developers.shopware.com/sysadmins-guide/sessions/#blocking-transactions'
                     . '\n   https://www.php.net/manual/de/session.configuration.php#ini.session.gc-probability';
