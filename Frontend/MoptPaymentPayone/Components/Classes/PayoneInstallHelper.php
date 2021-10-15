@@ -1685,7 +1685,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         $result = $db->query($sql);
 
         if ($result->rowCount() === 0) {
-            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `send_ordernumber_as_reference` TINYINT(1) NOT NULL DEFAULT 0;";
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `send_ordernumber_as_reference` TINYINT(1) NULL DEFAULT 1;";
             $db->exec($sql);
         }
     }
