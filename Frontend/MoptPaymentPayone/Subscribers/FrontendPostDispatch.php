@@ -121,7 +121,11 @@ class FrontendPostDispatch implements SubscriberInterface
         $session = Shopware()->Session();
 
         // get paymentId from view instead of sGetUserData
-        $paymentId = $view->sPayment['id'];
+         $paymentId = $view->sPayment['id'];
+        // fallback to session if above does not work
+        if (empty($paymentId)){
+            $paymentId = $this->container->get('session')->offsetGet('sPaymentID');
+        }
         /** @var Mopt_PayonePaymentHelper $moptPaymentHelper */
         $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
         $moptPaymentName = $moptPaymentHelper->getPaymentNameFromId($paymentId);
@@ -254,6 +258,23 @@ class FrontendPostDispatch implements SubscriberInterface
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay' && $session->offsetGet('moptFormSubmitted') === true)) {
             $action->forward('finish', 'moptPaymentAmazon', null, array('sAGB' => 'on'));
+        }
+
+        if ($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
+
+                $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+                $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                $view->assign('mopt_applepay_country',  $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']));
+                $view->assign('mopt_applepay_currency', Shopware()->Config()->get('currency'));
+                $view->assign('mopt_applepay_supportedNetworks', $this->getApplePayCreditcards($moptPayoneData['moptApplepayConfig']));
+                $view->assign('mopt_applepay_merchantCapabilities', "['supports3DS', 'supportsDebit', 'supportsCredit']");
+                $view->assign('mopt_applepay_label', Shopware()->Config()->get('shopname'));
+                $view->assign('mopt_applepay_merchantIdentifier', $moptPayoneData['moptApplepayConfig']['applepayMerchantId']);
+                $view->assign('mopt_applepay_debug', $moptPayoneData['moptApplepayConfig']['applepayDebug']);
+                $view->extendsTemplate('frontend/checkout/mopt_confirm_applepay.tpl');
+        }
+        if ($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
+            $view->assign('applepayNotConfiguredError', ! $this->isApplepayConfigured($moptPayoneData['moptApplepayConfig']));
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')) {
@@ -404,6 +425,10 @@ class FrontendPostDispatch implements SubscriberInterface
                     $paydirektexpressIndex = $index;
                     unset ($payments[$paydirektexpressIndex]);
                 }
+                if ($payment['name'] === 'mopt_payone__ewallet_applepay' && $session->get('moptAllowApplePay', false) !== true  ) {
+                    $applepayIndex = $index;
+                    unset ($payments[$applepayIndex]);
+                }
 
                 // remove Klarna payments according to supported country and currency combination
                 if ($payment['name'] === 'mopt_payone_klarna' && !$this->isCountryCurrencySupportedFromKlarna()
@@ -433,8 +458,12 @@ class FrontendPostDispatch implements SubscriberInterface
                 if (strpos($payment['name'], 'mopt_payone__ewallet_amazon_pay') !== false ) {
                     $amazonPayIndex = $index;
                 }
+                if (strpos($payment['name'], 'mopt_payone__ewallet_applepay') !== false && $session->get('moptAllowApplePay', false) !== true ) {
+                    $applepayIndex = $index;
+                }
             }
             unset ($payments[$amazonPayIndex]);
+            unset ($payments[$applepayIndex]);
             $view->assign('sPaymentMeans', $payments);
         }
 
@@ -527,6 +556,10 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPayoneMain->getPaymentHelper()->isPayoneTrustly($paymentMean['name'])) {
                 $trustlyConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptTrustlyShowIbanBic'] = (int) $trustlyConfig['trustlyShowIbanBic'];
+            }
+
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneApplepay($paymentMean['name'])) {
+                $data['moptApplepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
             }
 
             //prepare additional Klarna information and retrieve birthday and phone nr from user data
@@ -911,4 +944,45 @@ class FrontendPostDispatch implements SubscriberInterface
 
         return ($map[$billingCountryIso] === $currency);
     }
+
+    /**
+     * @param $applepayConfig
+     * @return string
+     */
+    protected function getApplePayCreditcards($applepayConfig)
+    {
+        //"['visa', 'masterCard', 'amex', 'discover', 'girocard']"
+        $cards = "[";
+        if ($applepayConfig['applepayVisa']){
+            $cards .= "'visa',";
+        }
+        if ($applepayConfig['applepayMastercard']){
+            $cards .= "'masterCard',";
+        }
+        if ($applepayConfig['applepayAmex']){
+            $cards .= "'amex',";
+        }
+        if ($applepayConfig['applepayDiscover']){
+            $cards .= "'discover',";
+        }
+        if ($applepayConfig['applepayGirocard']){
+            $cards .= "'girocard',";
+        }
+        $cards .= "]";
+        return $cards;
+    }
+
+    /**
+     * @param $applepayConfig
+     * @return int
+     */
+    protected function isApplepayConfigured($applepayConfig)
+    {
+        $return = 1;
+        if (empty($applepayConfig['applepayMerchantId']) || empty($applepayConfig['applepayPrivateKey']) || empty($applepayConfig['applepayCertificate'])) {
+            $return = 0;
+        }
+        return $return;
+    }
+
 }

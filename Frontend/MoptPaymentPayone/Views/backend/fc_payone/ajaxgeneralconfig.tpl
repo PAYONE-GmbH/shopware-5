@@ -168,6 +168,136 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayMerchantID}Ihre Apple Pay MerchantId{/s}">
+                    <label for="applepayMerchantId" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayMerchantID}Apple Pay MerchantId{/s}</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayMerchantId" name="applepayMerchantId" aria-describedby="applepayMerchantId-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayMerchantId-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayVisa}Erlaubt Visa Karten über Apple Pay{/s}">
+                    <label for="applepayVisa" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayVisa}Apple Pay Visa erlauben{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayVisa" name="applepayVisa" aria-describedby="applepayVisa-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayVisa-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayMastercard}Erlaubt Mastercard Karten über Apple Pay{/s}">
+                    <label for="applepayMastercard" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayMastercard}Apple Pay Mastercard erlauben{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayMastercard" name="applepayMastercard" aria-describedby="applepayMastercard-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayMastercard-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayGirocard}Erlaubt Girocard Karten über Apple Pay{/s}">
+                    <label for="applepayGirocard" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayGirocard}Apple Pay Girocard erlauben{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayGirocard" name="applepayGirocard" aria-describedby="applepayGirocard-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayGirocard-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+
+                <!--
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayAmex}Erlaubt American Express Karten über Apple Pay{/s}">
+                    <label for="applepayAmex" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayAmex}Apple Pay American Express erlauben{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayAmex" name="applepayAmex" aria-describedby="applepayAmex-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayAmex-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayDiscover}Erlaubt Discover Karten über Apple Pay{/s}">
+                    <label for="applepayDiscover" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayDisover}Apple Pay Discover erlauben{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayDiscover" name="applepayDiscover" aria-describedby="applepayDiscover-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayDiscover-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                -->
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayCertificate}Apple Pay Pfad zur Zertifikats Datei{/s}">
+                    <label for="applepayCertificate" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayCertificate}Apple Pay Zertifikat{/s}</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayCertificate" name="applepayCertificate" aria-describedby="applepayCertificate-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayCertificate-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+
+                <input type="file" accept=".pem" id="applepayCertificateFile" name="applepayCertificateFile" />
+                <button type="button" class="btn-payone btn" id="applecertupload" >{s name=fieldlabel/uploadbutton}Hochladen{/s}</button>
+
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayPrivateKey}Absoluter Pfad zum Private Key{/s}">
+                    <label for="applepayPrivateKey" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayPrivateKey}Apple Pay Private Key{/s}</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayPrivateKey" name="applepayPrivateKey" aria-describedby="applepayPrivateKey-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayPrivateKey-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+
+                <input type="file" accept=".key" id="applepayKeyFile" name="applepayKeyFile" />
+                <button type="button" class="btn-payone btn" id="applekeyupload" >{s name=fieldlabel/uploadbutton}Hochladen{/s}</button>
+
+                <div id="applepayPrivateKeyPassword" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayPrivateKeyPassword}Kann auch dann gesetzt werden, wenn der Key unverschlüsselt ist{/s}">
+                    <label for="applepayPrivateKeyPassword" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayPrivateKeyPassword}Apple Pay Private Key Passwort{/s}</label>
+                    <div class="col-md-6">
+                        <input type="password" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayPrivateKeyPassword" name="applepayPrivateKeyPassword" aria-describedby="applepayPrivateKeyPassword-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayPrivateKeyPassword-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayDebug}Zeigt im Frontend die Debugging Informationen an{/s}">
+                    <label for="applepayDebug" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayDebug}Apple Pay Debug{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayDebug" name="applepayDebug" aria-describedby="applepayDebug-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="applepayDebug-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
             </form>
         </div>
@@ -248,6 +378,66 @@
                 showalert("Die Daten wurden gespeichert", "alert-success");
                 
             });
+        });
+
+        $("#applecertupload").click(function(){
+            var fd = new FormData();
+            var files = $('#applepayCertificateFile')[0].files;
+
+            // Check file selected or not
+            if(files.length > 0 ){
+                fd.append('file',files[0]);
+
+                $.ajax({
+                    url: 'ajaxsaveApplepayCert',
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function(response){
+                        if(response != 0){
+                            console.log(response);
+                            $('#applepayCertificate').val(response);
+                            form.submit();
+                            showalert("Das Zertifikat wurde gespeichert", "alert-success");
+                        }else{
+                            showalert("Fehler beim Speichern des Zertifikats", "alert-error");
+                        }
+                    },
+                });
+            }else{
+                showalert("Bitte eine Zertifikats Datei .pem auswählen", "alert-error");
+            }
+        });
+
+        $("#applekeyupload").click(function(){
+            var fd = new FormData();
+            var files = $('#applepayKeyFile')[0].files;
+
+            // Check file selected or not
+            if(files.length > 0 ){
+                fd.append('file',files[0]);
+
+                $.ajax({
+                    url: 'ajaxsaveApplepayKey',
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function(response){
+                        if(response != 0){
+                            console.log(response);
+                            $('#applepayPrivateKey').val(response);
+                            form.submit();
+                            showalert("Die Schlüsseldatei wurde gespeichert", "alert-success");
+                        }else{
+                            showalert("Fehler beim Speichern des Schlüssels", "alert-error");
+                        }
+                    },
+                });
+            }else{
+                showalert("Bitte eine Key Datei .key auswählen", "alert-error");
+            }
         });
 
         $(function () {

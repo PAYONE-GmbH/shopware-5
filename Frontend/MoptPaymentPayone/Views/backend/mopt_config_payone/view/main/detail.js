@@ -124,7 +124,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 items: fieldsets,
                 renderTo: document.body,
                 width: 880,
-                height: 1080
+                height: 1400
             }];
     },
     activateField: function (me, field) {
@@ -1175,6 +1175,123 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 valueField: 'value',
                 allowBlank: false,
                 disabled: true,
+                labelWidth: 200
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name="fieldlabel/applepayMerchantID"}Apple Pay MerchantId{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayMerchantID"}Ihre Apple Pay MerchantId{/s}',
+                name: 'applepayMerchantId',
+                allowBlank: true,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/applepayVisa}Apple Pay Visa erlauben{/s}',
+                helpText: '{s name=fieldlabelhelp/applepayVisa}Erlaubt Visa Karten über Apple Pay{/s}',
+                name: 'applepayVisa',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/applepayMastercard}Apple Pay Mastercard erlauben{/s}',
+                helpText: '{s name=fieldlabelhelp/applepayMastercard}Erlaubt Mastercard Karten über Apple Pay{/s}',
+                name: 'applepayMastercard',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/applepayGirocard}Apple Pay Girocard erlauben{/s}',
+                helpText: '{s name=fieldlabelhelp/applepayGirocard}Erlaubt Girocard Karten über Apple Pay{/s}',
+                name: 'applepayGirocard',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            /*
+           {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/applepayAmex}Apple Pay American Express erlauben{/s}',
+                helpText: '{s name=fieldlabelhelp/applepayAmex}Erlaubt American Express Karten über Apple Pay{/s}',
+                name: 'applepayAmex',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/applepayDisover}Apple Pay Discover erlauben{/s}',
+                helpText: '{s name=fieldlabelhelp/applepayDiscover}Erlaubt Discover Karten über Apple Pay{/s}',
+                name: 'applepayDiscover',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            */
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name="fieldlabel/applepayCertificate"}Apple Pay Zertifikat{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayCertificate"}Absoluter Pfad zum Zertifikat. Wird beim Hochladen automatisch gesetzt{/s}',
+                name: 'applepayCertificate',
+                allowBlank: true,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name="fieldlabel/applepayPrivateKey"}Apple Pay Private Key{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayPrivateKey"}Absoluter Pfad zum Private Key. Wird beim Hochladen automatisch gesetzt{/s}',
+                name: 'applepayPrivateKey',
+                allowBlank: true,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'textfield',
+                inputType: 'password',
+                fieldLabel: '{s name="fieldlabel/applepayPrivateKeyPassword"}Apple Pay Private Key Passwort{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayPrivateKeyPassword"}Kann auch dann gesetzt werden, wenn der Key unverschlüsselt ist{/s}',
+                name: 'applepayPrivateKeyPassword',
+                allowBlank: true,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name=fieldlabel/applepayDebug}Apple Pay Debug{/s}',
+                helpText: '{s name=fieldlabelhelp/applepayDebug}Zeigt im Frontend die Debugging Informationen an{/s}',
+                name: 'applepayDebug',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
                 labelWidth: 200
             },
         ];

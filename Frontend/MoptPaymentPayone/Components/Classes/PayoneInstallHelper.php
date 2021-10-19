@@ -577,6 +577,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Trustly',
                 'template' => 'mopt_paymentmean_trustly.tpl',
                 'position' => 41,),
+            array(
+                'name' => 'mopt_payone__ewallet_applepay',
+                'description' => 'PAYONE Apple Pay',
+                'template' => 'mopt_paymentmean_applepay.tpl',
+                'position' => 42,),
         );
     }
 
@@ -1855,6 +1860,51 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             $db->exec($sql);
         }
 
+    }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    function checkAndAddApplepayConfig()
+    {
+        $textColumns = ['applepay_merchant_id', 'applepay_certificate', 'applepay_private_key'];
+        $tinyIntColumns = ['applepay_visa', 'applepay_mastercard', 'applepay_girocard', 'applepay_amex', 'applepay_discover', 'applepay_debug'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCAHR(255) NULL DEFAULT '';";
+
+                $db->exec($sql);
+            }
+        }
+
+        foreach ($tinyIntColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` TINYINT(1) NULL DEFAULT '0';";
+                $db->exec($sql);
+            }
+        }
     }
 }
 
