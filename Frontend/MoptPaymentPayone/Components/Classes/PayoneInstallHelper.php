@@ -1872,7 +1872,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     function checkAndAddApplepayConfig()
     {
-        $textColumns = ['applepay_merchant_id', 'applepay_certificate', 'applepay_private_key'];
+        $textColumns = ['applepay_merchant_id', 'applepay_certificate', 'applepay_private_key', 'applepay_private_key_password'];
         $tinyIntColumns = ['applepay_visa', 'applepay_mastercard', 'applepay_girocard', 'applepay_amex', 'applepay_discover', 'applepay_debug'];
         $db = Shopware()->Db();
         $dbConfig = $db->getConfig();
