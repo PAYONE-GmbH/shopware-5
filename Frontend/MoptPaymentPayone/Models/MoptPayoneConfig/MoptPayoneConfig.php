@@ -532,7 +532,7 @@ class MoptPayoneConfig extends ModelEntity
     private $paydirektOvercapture;
 
     /**
-     * @ORM\Column(name="send_ordernumber_as_reference", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+     * @ORM\Column(name="send_ordernumber_as_reference", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
      */
     private $sendOrdernumberAsReference;
 
