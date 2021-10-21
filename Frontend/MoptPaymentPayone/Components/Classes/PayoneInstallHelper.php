@@ -1886,7 +1886,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
-                        ADD COLUMN `$column` VARCAHR(255) NULL DEFAULT '';";
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
 
                 $db->exec($sql);
             }
