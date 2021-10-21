@@ -1399,8 +1399,8 @@ class Mopt_PayoneParamBuilder
             }
             $params['no'] = $article['quantity']; // ordered quantity
             $params['de'] = mb_substr($article['articlename'], 0, 100); // description
-            $params['va'] = $taxFree ? 0 : number_format($article['tax_rate'], 0, '.', ''); // vat
-            $params['va'] = round($params['va'] * 100);
+            $params['va'] = $taxFree ? 0 : number_format($article['tax_rate'], 2, '.', ''); // vat
+            $params['va'] = $params['va'] * 100;
             $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
             if ($article['modus'] == 2) {
                 $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
@@ -1433,8 +1433,8 @@ class Mopt_PayoneParamBuilder
 
             $params['no'] = 1; // ordered quantity
             $params['de'] = substr($shipment['name'], 0, 100); // description check length
-            $params['va'] = $taxFree ? 0 : number_format($basket['sShippingcostsTax'], 0, '.', ''); // vat
-            $params['va'] = round($params['va'] * 100);
+            $params['va'] = $taxFree ? 0 : number_format($basket['sShippingcostsTax'], 2, '.', ''); // vat
+            $params['va'] = $params['va'] * 100;
             $params['it'] = Payone_Api_Enum_InvoicingItemType::SHIPMENT;
             $params = array_map(function ($param) {
                 if (is_string($param) && !preg_match('!!u', $param)) {
@@ -1516,11 +1516,11 @@ class Mopt_PayoneParamBuilder
             } elseif ($position->getTaxRate() == 0 &&
                 $position->getTax()->getId() !== 0
                 && !$isAboCommerceDiscount) {
-                $params['va'] = number_format($position->getTax()->getTax(), 0, '.', '');
+                $params['va'] = number_format($position->getTax()->getTax(), 2, '.', '');
             } else {
-                $params['va'] = number_format($position->getTaxRate(), 0, '.', ''); // vat
+                $params['va'] = number_format($position->getTaxRate(), 2, '.', ''); // vat
             }
-            $params['va'] = round($params['va'] * 100);
+            $params['va'] = $params['va'] * 100;
             $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
             $mode = $position->getMode();
             if ($mode == 2) {
@@ -1576,9 +1576,9 @@ class Mopt_PayoneParamBuilder
             $params['no'] = 1;
             $params['va'] = 0;
             if ($order->getInvoiceShipping() != 0) { // Tax rate calculation below would divide by zero otherwise
-                $params['va'] = round(($order->getInvoiceShipping() / $order->getInvoiceShippingNet() - 1) * 100);
+                $params['va'] = number_format($order->getInvoiceShipping() / $order->getInvoiceShippingNet() - 1,2,'.') * 100;
             }
-            $params['va'] = round($params['va'] * 100);
+            $params['va'] = $params['va'] * 100;
 
             $params = array_map('htmlspecialchars_decode', $params);
             $item = new Payone_Api_Request_Parameter_Invoicing_Item($params);
