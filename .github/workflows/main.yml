@@ -1,8 +1,9 @@
-name: Legacy CI
+name: CI
 on: [push, pull_request]
 
 jobs:
-  run:
+  legacy-CI:
+    name: Legacy CI
     runs-on: ${{ matrix.operating-system }}
     services:
       mysql:
@@ -53,12 +54,8 @@ jobs:
         php bin/console sw:plugin:activate MoptPaymentPayone
         php bin/console sw:generate:attributes
         php bin/console orm:generate:proxies
-        
-name: Current CI
-on: [push, pull_request]
-
-jobs:
-  run:
+  current-CI:
+    name: current CI
     runs-on: ${{ matrix.operating-system }}
     env:
       DB_USER: root
