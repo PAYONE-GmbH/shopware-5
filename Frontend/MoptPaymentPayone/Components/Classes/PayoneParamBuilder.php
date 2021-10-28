@@ -1713,7 +1713,7 @@ class Mopt_PayoneParamBuilder
         $params = $this->getAuthParameters($paymentId);
 
         $params['clearingtype'] = 'elv';
-        $params['currency'] = Shopware()->Currency()->getShortName();
+        $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
         $params['payment'] = $this->getPaymentDebitNote($bankData);
         $params['personalData'] = $this->getPersonalData($userData);
 
