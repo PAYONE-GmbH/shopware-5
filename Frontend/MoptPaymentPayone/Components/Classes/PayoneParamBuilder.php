@@ -2073,45 +2073,63 @@ class Mopt_PayoneParamBuilder
     protected function buildApplepayPaydata($tokenData) {
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
+        if (!isset($tokenData['paymentData']['data']) || is_null($tokenData['paymentData']['data'])) {
+            $tokenData['paymentData']['data'] = ''
+        }
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             [
                 'key'  => 'paymentdata_token_data',
-                'data' => $tokenData['paymentData']['data'] ?? '' ,
+                'data' => $tokenData['paymentData']['data'],
             ]
         ));
 
+        if (!isset($tokenData['paymentData']['header']['ephemeralPublicKey']) || is_null($tokenData['paymentData']['header']['ephemeralPublicKey'])) {
+            $tokenData['paymentData']['header']['ephemeralPublicKey'] = ''
+        }
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             [
                 'key'  => 'paymentdata_token_ephemeral_publickey',
-                'data' => $tokenData['paymentData']['header']['ephemeralPublicKey'] ?? '',
+                'data' => $tokenData['paymentData']['header']['ephemeralPublicKey'],
             ]
         ));
 
+        if (!isset($tokenData['paymentData']['header']['publicKeyHash']) || is_null($tokenData['paymentData']['header']['publicKeyHash'])) {
+            $tokenData['paymentData']['header']['publicKeyHash'] = ''
+        }
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             [
                 'key'  => 'paymentdata_token_publickey_hash',
-                'data' => $tokenData['paymentData']['header']['publicKeyHash'] ?? '',
+                'data' => $tokenData['paymentData']['header']['publicKeyHash'],
             ]
         ));
 
+        if (!isset($tokenData['paymentData']['signature']) || is_null($tokenData['paymentData']['signature'])) {
+            $tokenData['paymentData']['signature'] = ''
+        }
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             [
                 'key'  => 'paymentdata_token_signature',
-                'data' => $tokenData['paymentData']['signature'] ?? '',
+                'data' => $tokenData['paymentData']['signature'],
             ]
         ));
 
+        if (!isset($tokenData['paymentData']['header']['transactionId']) || is_null($tokenData['paymentData']['header']['transactionId'])) {
+            $tokenData['paymentData']['header']['transactionId'] = ''
+        }
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             [
                 'key'  => 'paymentdata_token_transaction_id',
-                'data' => $tokenData['paymentData']['header']['transactionId'] ?? '',
+                'data' => $tokenData['paymentData']['header']['transactionId'],
             ]
         ));
 
+        if (!isset($tokenData['paymentData']['version']) || is_null($tokenData['paymentData']['version'])) {
+            $tokenData['paymentData']['version'] = 'EC_v1'
+        }
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             [
                 'key'  => 'paymentdata_token_version',
-                'data' => $tokenData['paymentData']['version'] ?? 'EC_v1',
+                'data' => $tokenData['paymentData']['version'],
             ]
         ));
 
