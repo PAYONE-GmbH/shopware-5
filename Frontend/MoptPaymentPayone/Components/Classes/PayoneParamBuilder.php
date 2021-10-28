@@ -1206,7 +1206,12 @@ class Mopt_PayoneParamBuilder
 
         $payment->setPaydata($paydata);
 
-        $payment->setCardtype($cardTypeMappings[strtolower($token['paymentMethod']['network'] ?? 'default')]);
+        if (!isset($token['paymentMethod']['network']) || is_null($token['paymentMethod']['network'])) {
+            $cardType = 'default';
+        } else {
+            $cardType = $token['paymentMethod']['network'];
+        }
+        $payment->setCardtype($cardTypeMappings[strtolower($cardType)]);
 
         return $payment;
     }
