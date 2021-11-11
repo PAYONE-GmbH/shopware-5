@@ -31,11 +31,15 @@
 // needed for CSRF Protection compatibility SW versions < 5.2
 require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Tools\ToolsException;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Payment\Repository as PaymentRepository;
 use Shopware\Models\Plugin\Plugin;
 use Shopware\Plugins\MoptPaymentPayone\Bootstrap\RiskRules;
+use Monolog\Logger;
+use Monolog\Handler\RotatingFileHandler;
 
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
@@ -58,10 +62,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     public function afterInit()
     {
         $this->registerCustomModels();
-        $this->get('Loader')->registerNamespace('Shopware\\Plugins\\MoptPaymentPayone', $this->Path());
-        $this->get('Loader')->registerNamespace('Payone', $this->Path() . 'Components/Payone/');
-        $this->get('Snippets')->addConfigDir($this->Path() . 'Snippets/');
-        $this->get('Loader')->registerNamespace('Mopt', $this->Path() . 'Components/Classes/');
+        $this->get('loader')->registerNamespace('Shopware\\Plugins\\MoptPaymentPayone', $this->Path());
+        $this->get('loader')->registerNamespace('Payone', $this->Path() . 'Components/Payone/');
+        $this->get('snippets')->addConfigDir($this->Path() . 'Snippets/');
+        $this->get('loader')->registerNamespace('Mopt', $this->Path() . 'Components/Classes/');
 
         if (version_compare(self::getShopwareVersion(), '5.6.0', '<') || !$this->isPluginActive()) {
             return;
@@ -138,12 +142,28 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createDatabase();
         $this->addAttributes();
         $this->createMenu();
+
         $riskRules = new RiskRules();
         $riskRules->createRiskRules();
+
         $this->removePayment('mopt_payone__fin_klarna_installment');
         $this->removePayment('mopt_payone__ewallet_masterpass');
+        $this->removePayment('mopt_payone__fin_billsafe');
+
+        // Only relevant for update, not for reinstall
+        if (!$this->doesCronJobExist('PayoneTransactionForward') && !$this->doesCronJobExist('Shopware_CronJob_PayoneTransactionForward')) {
+            $this->createCronJob('Payone Transaktionsweiterleitung', 'PayoneTransactionForward', 60);
+        }
 
         return array('success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme'));
+    }
+
+    private function doesCronJobExist($cronJobAction)
+    {
+        /** @var Connection $connection */
+        $connection = $this->get('dbal_connection');
+        $result = $connection->fetchAll("SELECT * FROM `s_crontab` WHERE `action` = ?",[$cronJobAction]);
+        return count($result) > 0;
     }
 
     /**
@@ -371,6 +391,25 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'Shopware_Modules_Admin_Execute_Risk_Rule_sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT',
             'sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT'
         );
+        $this->subscribeEvent('Shopware_CronJob_PayoneTransactionForward', 'onRunCronJob');
+    }
+
+    /**
+     * @param Enlight_Components_Cron_EventArgs $job
+     */
+    public function onRunCronJob(Enlight_Components_Cron_EventArgs $job)
+    {
+        $logPath = Shopware()->Container()->get('kernel')->getLogDir();
+        $logFile = $logPath . '/MoptPaymentPayone_transaction_forward_cronjob.log';
+
+        $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
+        $queueWorker->processQueue();
+
+        $rfh = new RotatingFileHandler($logFile, 14);
+        $rotatingLogger = new Logger('MoptPaymentPayone');
+        $rotatingLogger->pushHandler($rfh);
+        $rotatingLogger->info(date('Y-m-d H:i:s > ') . 'Payone transactionqueue cronjob started.');
+        $rotatingLogger->info(date('Y-m-d H:i:s > ') . 'Payone transactionqueue cronjob stopped.');
     }
 
     public function registerAmazonCookie()
@@ -409,6 +448,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_shipping.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_amazonpay.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_payolution.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_shipping_payment.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_confirm.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
     }
@@ -494,6 +535,18 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->flush();
         }
 
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_klarna')
+        );
+        if ($payment) {
+            $payment->setName('mopt_payone__fin_klarna_old');
+            $payment->setDescription('PAYONE Klarna OLD');
+            $payment->setTemplate('mopt_paymentmean_klarna_old.tpl');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
+
         /** @var Shopware\Models\Payment\Payment $payment */
         $payment = $this->Payments()->findOneBy(
             array('name' => 'mopt_payone__cc_discover')
@@ -507,12 +560,45 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->flush();
         }
 
+        // Update PAYONE Paysafe Payment Names
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_payolution_invoice')
+        );
+        if ($payment) {
+            $payment->setDescription('PAYONE Unzer Rechnungskauf');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
 
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_payolution_debitnote')
+        );
+        if ($payment) {
+            $payment->setDescription('PAYONE Unzer Lastschrift');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
+
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_payolution_installment')
+        );
+        if ($payment) {
+            $payment->setDescription('PAYONE Unzer Ratenkauf');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
     }
 
 
     /**
      * create tables, add coloumns
+     *
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     * @throws DBALException
      */
     protected function createDatabase()
     {
@@ -589,6 +675,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             // ignore
         }
 
+        try {
+            $schemaTool->createSchema(array(
+                $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionForwardQueue\MoptPayoneTransactionForwardQueue'),
+            ));
+        } catch (ToolsException $e) {
+            // ignore
+        }
+
         $this->getInstallHelper()->moptCreatePaymentDataTable();
         $this->getInstallHelper()->moptInsertDocumentsExtensionIntoDatabaseIfNotExist();
 
@@ -651,6 +745,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // config option for transaction forwarding timeout and max trials
         $this->getInstallHelper()->moptExtendConfigTransactionTimeoutTrials();
 
+        // config option for order change on transaction status
+        $this->getInstallHelper()->moptExtendConfigChangeOrderOnTXS();
+
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModel($this->getPayoneLogger());
 
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModelExtension();
@@ -694,6 +791,15 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Add new reminder level config table columns if needed.
         $this->getInstallHelper()->checkAndAddReminderLevelColumns();
+
+        // Add config field for global Ratepay SnippetId setting.
+        $this->getInstallHelper()->checkAndAddRatepaySnippetIdColumn();
+
+        // Add config field for trustly show iban bic setting.
+        $this->getInstallHelper()->checkAndAddTrustlyShowIbanBic();
+
+        // Applepay fileds
+        $this->getInstallHelper()->checkAndAddApplepayConfig();
     }
 
     /**
@@ -860,7 +966,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         if (!$this->moptPayoneLogger) {
             $this->moptPayoneLogger = new Monolog\Logger('moptPayone');
-            $streamHandler = new Monolog\Handler\StreamHandler(Shopware()->Application()->Kernel()->getLogDir()
+            $streamHandler = new Monolog\Handler\StreamHandler( Shopware()->Container()->get('kernel')->getLogDir()
                 . '/moptPayone.log', Monolog\Logger::ERROR);
             $this->moptPayoneLogger->pushHandler($streamHandler);
         }

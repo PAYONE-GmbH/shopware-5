@@ -12,8 +12,8 @@ Ext.define('Shopware.apps.MoptPayonePaypal.view.detail.Button', {
                 { type: 'string', name: 'name' }
             ],
             data: [
-                { value: 'allow', name: '{s name=packStation/allow}Erlauben{/s}' },
-                { value: 'deny', name: '{s name=packStation/deny}Verbieten{/s}' },
+                { value: 'allow', name: '{s name="packStation/allow"}Erlauben{/s}' },
+                { value: 'deny', name: '{s name="packStation/deny"}Verbieten{/s}' },
             ]
         });
 
@@ -21,11 +21,11 @@ Ext.define('Shopware.apps.MoptPayonePaypal.view.detail.Button', {
         return {
             controller: 'MoptPayonePaypal',
             fieldSets: [{
-                title: '{s name=details/title}Payone PayPal Button-Details{/s}',
+                title: '{s name="details/title"}Payone PayPal Button-Details{/s}',
                 layout: 'fit',
                 fields: {
                     localeId: {
-                        fieldLabel: '{s name=language}Sprache{/s}',
+                        fieldLabel: '{s name="language"}Sprache{/s}',
                         name: 'localeId',
                         allowBlank: false
                     },
@@ -42,11 +42,11 @@ Ext.define('Shopware.apps.MoptPayonePaypal.view.detail.Button', {
                         store: me.packStationModeStore
                     },
                     image: {
-                        fieldLabel: '{s name=button}PayPal Button{/s}',
+                        fieldLabel: '{s name="button"}PayPal Button{/s}',
                         xtype: 'mediaselectionfield',
                         allowBlank: false
                     },
-                    isDefault: '{s name=default}Default{/s}'
+                    isDefault: '{s name="default"}Default{/s}'
                 }
             }]
         };

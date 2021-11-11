@@ -104,6 +104,40 @@ function moptPaymentReady() {
         }
     });
 
+    $.plugin('moptPayoneCardholderValidator', {
+        defaults: {
+            cardholderReg: /^[A-Za-z \-äöüÄÖÜß]{1,50}$/,
+            errorMessageClass: 'register--error-msg',
+            moptCardholderErrorMessage: 'Karteninhaber darf nur a-z, A-Z und Leerzeichen enthalten'
+        },
+        init: function () {
+            var me = this;
+            me.applyDataAttributes();
+
+            me.$el.bind('keyup change', function (e) {
+                $('#moptcardholder--message').remove();
+                if (me.$el.val() && !me.opts.cardholderReg.test(me.$el.val())) {
+                    me.$el.addClass('has--error');
+                    $('<div>', {
+                        'html': '<p>' + me.opts.moptCardholderErrorMessage + '</p>',
+                        'id': 'moptcardholder--message',
+                        'class': me.opts.errorMessageClass
+                    }).insertAfter(me.$el);
+
+                } else {
+                    me.$el.removeClass('has--error');
+                    $('#moptcardholder--message').remove();
+                }
+                ;
+            });
+
+        },
+        destroy: function () {
+            var me = this;
+            me._destroy();
+        }
+    });
+
     $.plugin('moptPayoneSubmitPaymentForm', {
         init: function () {
             var me = this;
@@ -118,6 +152,10 @@ function moptPaymentReady() {
                 var creditcardCheckType = $('#mopt_payone_creditcard_form').attr('data-moptCreditcardIntegration');
                 if (typeof $('#mopt_payone_creditcard_form') !== "undefined") {
                     me.$el.bind('submit', function (e) {
+                        if ($('#mopt_payone__cc_cardholder').hasClass('has--error')) {
+                            e.preventDefault();
+                        }
+
                         if ($('#payment_meanmopt_payone_creditcard').is(":checked")
                             && $('#mopt_payone__cc_truncatedcardpan').val().indexOf("XXXX") <= 0
                             && creditcardCheckType === '1') {
@@ -480,6 +518,16 @@ function moptPaymentReady() {
                 },
 
                 /**
+                 * Changes the payment additional description based on the provided card type.
+                 *
+                 * @param {string} type The card type.
+                 */
+                changeAdditionalDescription: function (type) {
+                    $('.payone_additionalDescriptions').hide();
+                    $('#' + type.toLowerCase() + '_additionalDescription').show();
+                },
+
+                /**
                  * Changes the value of the card type select field and triggers a change event.
                  *
                  * @param {string} type The new select field value.
@@ -637,6 +685,7 @@ function moptPaymentReady() {
                     // Listen on card type field change for CC icon changes.
                     PayoneAutoCcDetection.$ccTypeSelect().on('change', function () {
                         PayoneAutoCcDetection.changeIcon(this.value);
+                        PayoneAutoCcDetection.changeAdditionalDescription(this.value);
                     });
                 },
 
@@ -844,6 +893,19 @@ function moptPaymentReady() {
         });
     }
 
+    function poBindCCSelectChange() {
+        // show already pre selected description
+        $('.payone_additionalDescriptions').hide();
+        if ($('#mopt_payone__cc_cardtype').val()) {
+            var selected = $('#mopt_payone__cc_cardtype').val().toLowerCase();
+            $('#' + selected + '_additionalDescription').show();
+        }
+        $('#mopt_payone__cc_cardtype').on('change', function () {
+            $('.payone_additionalDescriptions').hide();
+            $('#' + this.value.toLowerCase() + '_additionalDescription').show();
+        });
+    }
+
     function moptShowGeneralIFrameError() {
         var $msg = $('#payone-general-iframe-error');
 
@@ -862,10 +924,12 @@ function moptPaymentReady() {
             };
             setTimeout(errorCheck, 200);
         }
+        document.getElementById('payone-general-iframe-error').scrollIntoView({behavior: "smooth", block: "end", inline: "center"});;
     }
 
     $.subscribe("plugin/swShippingPayment/onInputChanged", function () {
         poBindDispatchChange();
+        poBindCCSelectChange();
     });
 
 
@@ -874,10 +938,12 @@ function moptPaymentReady() {
 
 //call the plugins
     poBindDispatchChange();
+    poBindCCSelectChange();
 
     $('.moptPayoneIbanBic').moptPayoneIbanBicValidator();
     $('.moptPayoneNumber').moptPayoneNumberValidator();
     $('.moptPayoneBankcode').moptPayoneBankcodeValidator();
+    $('.moptPayoneCardholder').moptPayoneCardholderValidator();
     $('#shippingPaymentForm').moptPayoneSubmitPaymentForm();
     $('form[name="frmRegister"]').moptPayoneSubmitPaymentForm();
 

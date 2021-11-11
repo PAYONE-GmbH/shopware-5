@@ -12,9 +12,9 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                 { type: 'string', name: 'name' }
             ],
             data: [
-                { value: 'PwA', name: '{s name=amazon_buttontype_amazonpay}Amazon Pay (Default){/s}' },
-                { value: 'Pay', name: '{s name=amazon_buttontype_pay}Pay{/s}' },
-                { value: 'A', name: '{s name=amazon_buttontype_a}A{/s}' }
+                { value: 'PwA', name: '{s name="amazon_buttontype_amazonpay"}Amazon Pay (Default){/s}' },
+                { value: 'Pay', name: '{s name="amazon_buttontype_pay"}Pay{/s}' },
+                { value: 'A', name: '{s name="amazon_buttontype_a"}A{/s}' }
             ]
         });
         me.buttonColorStore =  Ext.create('Ext.data.Store', {
@@ -23,9 +23,9 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                 { type: 'string', name: 'name' }
             ],
             data: [
-                { value: 'Gold', name: '{s name=amazon_buttoncolor_gold}Gold (default){/s}' },
-                { value: 'LightGray', name: '{s name=amazon_buttoncolor_lightgray}Light gray{/s}' },
-                { value: 'DarkGray', name: '{s name=amazon_buttoncolor_darkgray}Dark gray{/s}' }
+                { value: 'Gold', name: '{s name="amazon_buttoncolor_gold"}Gold (default){/s}' },
+                { value: 'LightGray', name: '{s name="amazon_buttoncolor_lightgray"}Light gray{/s}' },
+                { value: 'DarkGray', name: '{s name="amazon_buttoncolor_darkgray"}Dark gray{/s}' }
             ]
         });
         /*
@@ -35,12 +35,12 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                 { type: 'string', name: 'name' }
             ],
             data: [
-                { value: 'none', name: '{s name=amazon_buttonlanguage_autodetect}Autodetect (default){/s}' },
-                { value: 'en-GB', name: '{s name=amazon_buttonlanguage_en-GB}English (UK){/s}' },
-                { value: 'de-DE', name: '{s name=amazon_buttonlanguage_de-DE}German (Germany){/s}' },
-                { value: 'fr-FR', name: '{s name=amazon_buttonlanguage_fr-FR}French (France){/s}' },
-                { value: 'it-IT', name: '{s name=amazon_buttonlanguage_it-IT}Italian (Italy){/s}' },
-                { value: 'es-ES', name: '{s name=amazon_buttonlanguage_es-ES}Spanish (Spain){/s}' }
+                { value: 'none', name: '{s name="amazon_buttonlanguage_autodetect"}Autodetect (default){/s}' },
+                { value: 'en-GB', name: '{s name="amazon_buttonlanguage_en-GB"}English (UK){/s}' },
+                { value: 'de-DE', name: '{s name="amazon_buttonlanguage_de-DE"}German (Germany){/s}' },
+                { value: 'fr-FR', name: '{s name="amazon_buttonlanguage_fr-FR"}French (France){/s}' },
+                { value: 'it-IT', name: '{s name="amazon_buttonlanguage_it-IT"}Italian (Italy){/s}' },
+                { value: 'es-ES', name: '{s name="amazon_buttonlanguage_es-ES"}Spanish (Spain){/s}' }
             ]
         });
         */
@@ -50,8 +50,8 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                 { type: 'string', name: 'name' }
             ],
             data: [
-                { value: 'sync', name: '{s name=amazon_mode_always_sync}Always Synchronous{/s}' },
-                { value: 'firstsync', name: '{s name=amazon_mode_firstsync}Asynchronous On Failure (default):{/s}'}
+                { value: 'sync', name: '{s name="amazon_mode_always_sync"}Always Synchronous{/s}' },
+                { value: 'firstsync', name: '{s name="amazon_mode_firstsync"}Asynchronous On Failure (default):{/s}'}
             ]
         });
         me.packStationModeStore =  Ext.create('Ext.data.Store', {
@@ -76,7 +76,7 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                     sellerId: { disabled: true },
                     buttonType: {
                         xtype: 'combobox',
-                        fieldLabel: '{s name=amazon_buttontype}Button Type{/s}',
+                        fieldLabel: '{s name="amazon_buttontype"}Button Type{/s}',
                         name: 'buttonType',
                         queryMode: 'local',
                         displayField: 'name',
@@ -88,7 +88,7 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                     },
                     buttonColor: {
                         xtype: 'combobox',
-                        fieldLabel: '{s name=amazon_buttoncolor}Button Color{/s}',
+                        fieldLabel: '{s name="amazon_buttoncolor"}Button Color{/s}',
                         name: 'buttonColor',
                         queryMode: 'local',
                         displayField: 'name',
@@ -100,7 +100,7 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                     /*
                     buttonLanguage: {
                         xtype: 'combobox',
-                        fieldLabel: '{s name=amazon_buttonlanguage}Button Language{/s}',
+                        fieldLabel: '{s name="amazon_buttonlanguage"}Button Language{/s}',
                         name: 'buttonLanguage',
                         queryMode: 'local',
                         displayField: 'name',
@@ -112,7 +112,7 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.detail.Config', {
                    */
                     amazonMode: {
                         xtype: 'combobox',
-                        fieldLabel: '{s name=amazon_mode}Amazon Mode{/s}',
+                        fieldLabel: '{s name="amazon_mode"}Amazon Mode{/s}',
                         name: 'amazonMode',
                         queryMode: 'local',
                         displayField: 'name',

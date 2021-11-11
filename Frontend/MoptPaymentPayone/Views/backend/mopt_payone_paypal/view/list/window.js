@@ -4,7 +4,7 @@ Ext.define('Shopware.apps.MoptPayonePaypal.view.list.Window', {
     alias: 'widget.mopt-payone-paypal-list-window',
     height: 450,
     width: 600,
-    title : '{s name=window/title}Payone PayPal{/s}',
+    title : '{s name="window/title"}Payone PayPal{/s}',
  
     configure: function() {
         return {

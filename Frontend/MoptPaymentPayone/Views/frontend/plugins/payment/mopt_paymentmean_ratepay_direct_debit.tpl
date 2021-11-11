@@ -2,9 +2,23 @@
 
 {if $payment_mean.id == $form_data.payment}
 <div class="payment--form-group">
+    {if $moptBillingCountryChanged}
+        <div id="ratepay_overlay_direct_debit_redirect_notice" class="js--modal content" style="width:40%; height:40%; opacity: 0.9; margin: 75px auto;">
+            <a href="#" onclick="removeRatepayOverlayDirectDebitRedirectNotice();
+            return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
+            {$moptOverlayRedirectNotice}
+        </div>
+        <div id="ratepay_overlay_direct_debit_redirect_notice_bg" class="js--overlay is--open" style="opacity: 0.8;"></div>
+
+    <script type="text/javascript">
+        function removeRatepayOverlayDirectDebitRedirectNotice() {
+            document.getElementById('ratepay_overlay_direct_debit_redirect_notice').style.display = "none";
+            document.getElementById('ratepay_overlay_direct_debit_redirect_notice_bg').style.display = "none";
+        }
+    </script>
+    {/if}
     <div id="mopt_payone__ratepay_direct_debit_abg">
-        Es gelten die <a target="_blank" href="https://www.ratepay.com/zgb-dse">zusätzlichen Allgemeinen Geschäftsbedingungen und der Datenschutzhinweis</a> der RatePAY GmbH.</br>
-        <p></p>
+        <p>{s name='ratepayLegalText'}Mit Klicken auf "Zahlungspflichtig bestellen" erklären Sie sich mit den <a target="_blank" href="https://www.ratepay.com/legal-payment-terms">Zahlungsbedingungen unseres Zahlungspartners</a> sowie mit der Durchführung einer <a target="_blank" href="https://www.ratepay.com/legal-payment-dataprivacy">Risikoprüfung durch unseren Zahlungspartner</a> einverstanden.{/s}</p>
     </div>
 
     {if ! $sUserData.billingaddress.company}
@@ -119,7 +133,7 @@
         <center><strong>SEPA Mandatsinformation</strong></center><BR>
         <div style="font-size:.875rem; border-top: 1px solid; border-color:#101010; margin: inherit">
             <ul>
-                RatePAY GmbH, Franklinstraße 28-29, 10587 Berlin<BR>
+                Ratepay GmbH, Franklinstraße 28-29, 10587 Berlin<BR>
                 Gläubiger-ID: DE39RPY00000568463<BR>
                 Mandatsreferenz: (wird nach Kaufabschluss übermittelt)<BR>
                 <a id="ratepayMandateAgreement" href="#" onclick="displayRatepayOverlayDebit();return false;">Einwilligungserklärung zum SEPA-Mandat lesen</a>
@@ -130,13 +144,13 @@
     <div id="ratepay_overlay_debit" class="js--modal content" style="width:50%; height:auto; display: none; opacity: 0.9; margin: 0 auto;">
         <a href="#" onclick="removeRatepayOverlayDebit();return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
         <center><b>Einwilligungserklärung zum SEPA-Mandat</b></center><BR>
-        Ich willige hiermit in die Weiterleitung meiner Daten an RatePAY GmbH,
-        Franklinstraße 28-29, 10587 Berlin gemäß <a target="_blank" href="https://www.ratepay.com/zusaetzliche-geschaeftsbedingungen-und-datenschutzhinweis-dach/">RatePAY-Datenschutzerklärung</a> ein und ermächtige
+        Ich willige hiermit in die Weiterleitung meiner Daten an Ratepay GmbH,
+        Franklinstraße 28-29, 10587 Berlin gemäß <a target="_blank" href="https://www.ratepay.com/zusaetzliche-geschaeftsbedingungen-und-datenschutzhinweis-dach/">Ratepay-Datenschutzerklärung</a> ein und ermächtige
         diese, mit diesem Kaufvertrag in Zusammenhang stehende Zahlungen von meinem o.a.
         Konto mittels Lastschrift einzuziehen.<BR> Zugleich weise ich mein Kreditinstitut an, die von
-        RatePAY GmbH auf mein Konto gezogenen Lastschriften einzulösen.<BR>
+        Ratepay GmbH auf mein Konto gezogenen Lastschriften einzulösen.<BR>
         Hinweis:<BR>
-        Nach Zustandekommen des Vertrags wird mir die Mandatsreferenz von RatePAY
+        Nach Zustandekommen des Vertrags wird mir die Mandatsreferenz von Ratepay
         mitgeteilt.<BR> Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum,
         die Erstattung des belasteten Betrages verlangen.<BR>
         Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.
@@ -144,6 +158,7 @@
     <div id="ratepay_overlay_debit_bg" class="js--overlay is--open" style="opacity: 0.8; display: none"></div>
 
 </div>
+
 {if $moptRatepayConfig.deviceFingerPrint && $moptRatepayConfig.deviceFingerprintSnippetId}
     <!-- Only Include if moptRatepayConfig is configured in Backend to prevent 404 errors -->
     <script language="JavaScript">

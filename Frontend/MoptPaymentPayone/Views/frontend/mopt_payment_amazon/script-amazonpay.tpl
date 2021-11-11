@@ -5,7 +5,6 @@
      * listening on button click would bypass form validation
      */
     function prepareOrderReferenceConfirmation() {
-        console.log('prepare');
 
         $('#confirm--form').on('submit', function(e) {
             var sellerId = '{$payoneAmazonPayConfig->getSellerId()}';
@@ -90,6 +89,27 @@
             {/if}
             onAddressSelect: function (orderReference) {
 
+            },
+            design: {
+                designMode: 'responsive'
+            },
+            onReady: function (orderReference) {
+
+            },
+            onError: function (error) {
+                // Your error handling code.
+                // During development you can use the following
+                // code to view error messages:
+                // console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
+                // See "Handling Errors" for more information.
+                console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
+            }
+        }).bind("addressBookWidgetDiv");
+
+        walletWidget = new OffAmazonPayments.Widgets.Wallet({
+            sellerId: "{$payoneAmazonPayConfig->getSellerId()}",
+            scope: 'profile payments:widget payments:shipping_address payments:billing_address',
+            onPaymentSelect: function (orderReference) {
                 $('#moptAmazonPayButton').attr("disabled", "disabled");
                 var call = '{url controller="moptAjaxPayone" action="getOrderReferenceDetails" forceSecure}';
                 $.ajax({
@@ -115,32 +135,12 @@
                                 location.reload(true);
                             } else {
                                 $.loadingIndicator.close();
+                                {if ! $sMinimumSurcharge}
                                 $('#moptAmazonPayButton').removeAttr("disabled");
+                                {/if}
                             }
                         }
                     })
-            },
-            design: {
-                designMode: 'responsive'
-            },
-            onReady: function (orderReference) {
-
-            },
-            onError: function (error) {
-                // Your error handling code.
-                // During development you can use the following
-                // code to view error messages:
-                // console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
-                // See "Handling Errors" for more information.
-                console.log(error.getErrorCode() + ': ' + error.getErrorMessage());
-            }
-        }).bind("addressBookWidgetDiv");
-
-        walletWidget = new OffAmazonPayments.Widgets.Wallet({
-            sellerId: "{$payoneAmazonPayConfig->getSellerId()}",
-            scope: 'profile payments:widget payments:shipping_address payments:billing_address',
-            onPaymentSelect: function (orderReference) {
-
             },
             design: {
                 designMode: 'responsive'

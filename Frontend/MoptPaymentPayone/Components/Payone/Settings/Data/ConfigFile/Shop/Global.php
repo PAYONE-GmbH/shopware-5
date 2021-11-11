@@ -46,6 +46,15 @@ class Payone_Settings_Data_ConfigFile_Shop_Global extends Payone_Settings_Data_C
     /** @var string */
     protected $request_type = '';
 
+    /** @var string */
+    protected $sendOrdernumberAsReference;
+
+    /** @var integer */
+    protected $changeOrderOnTXS = 0;
+
+    /** @var string */
+    protected $ratepaySnippetId = '';
+
     /** @var array */
     protected $parameter_invoice = array();
 
@@ -109,6 +118,60 @@ class Payone_Settings_Data_ConfigFile_Shop_Global extends Payone_Settings_Data_C
     public function getKey()
     {
         return $this->key;
+    }
+
+    /**
+     * @param int $value
+     */
+    public function setSendOrdernumberAsReference($value)
+    {
+        if (empty($value)){
+            $value = 0;
+        }
+        $this->sendOrdernumberAsReference = $value;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSendOrdernumberAsReference()
+    {
+        return $this->sendOrdernumberAsReference;
+    }
+
+    /**
+     * @param int $value
+     */
+    public function setChangeOrderOnTXS($value)
+    {
+        if (empty($value)){
+            $value = 0;
+        }
+        $this->changeOrderOnTXS = $value;
+    }
+
+    /**
+     * @return int
+     */
+    public function getChangeOrderOnTXS()
+    {
+        return $this->changeOrderOnTXS;
+    }
+
+    /**
+     * @param string $aid
+     */
+    public function setRatepaySnippetId($id)
+    {
+        $this->ratepaySnippetId = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRatepaySnippetId()
+    {
+        return $this->ratepaySnippetId;
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
+use Mopt_PayoneMain;
+use Mopt_PayonePaymentHelper;
 
 class FrontendCheckout implements SubscriberInterface
 {
@@ -97,7 +99,16 @@ class FrontendCheckout implements SubscriberInterface
             return;
         }
         // Set redirect flag
-        Shopware()->Session()->moptBasketChanged = true;
+        if (isset(Shopware()->Session()->moptPaypalInstallmentWorkerId)) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
+        if (isset(Shopware()->Session()->moptPaydirektExpressWorkerId)) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
+
+        if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
         $arguments->setReturn($ret);
     }
 
@@ -113,6 +124,7 @@ class FrontendCheckout implements SubscriberInterface
         $ret = $arguments->getReturn();
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalInstallment($userData['additional']['payment']['name']) &&
+            !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name']) &&
             !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaydirektExpress($userData['additional']['payment']['name'])
         ) {
             return;
@@ -122,6 +134,10 @@ class FrontendCheckout implements SubscriberInterface
             Shopware()->Session()->moptBasketChanged = true;
         }
         if (isset(Shopware()->Session()->moptPaydirektExpressWorkerId)) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
+
+        if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])) {
             Shopware()->Session()->moptBasketChanged = true;
         }
         $arguments->setReturn($ret);
@@ -188,8 +204,9 @@ class FrontendCheckout implements SubscriberInterface
         $userPaymentId = $orderVars['sUserData']['additional']['payment']['id'];
 
         //check if payment method is PayPal ecs
+        /** @var Mopt_PayonePaymentHelper $helper */
         $helper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-        if ($helper->getPaymentNameFromId($userPaymentId) == 'mopt_payone__ewallet_paypal') {
+        if (strpos($helper->getPaymentNameFromId($userPaymentId), 'mopt_payone__ewallet_paypal') === 0) {
             if (!$this->isShippingAddressSupported($orderVars['sUserData']['shippingaddress'])) {
                 $view->assign('invalidShippingAddress', true);
                 $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
@@ -197,11 +214,13 @@ class FrontendCheckout implements SubscriberInterface
             }
         }
 
+        $router = $this->container->get('router');
+
         if ($request->getActionName() === 'shippingPayment') {
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment_core.tpl');
 
-            if($request->get('moptAmazonErrorCode')) {
+            if ($request->get('moptAmazonErrorCode')) {
                 $errorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $request->get('moptAmazonErrorCode'));
                 $view->assign('moptAmazonErrorMessage', $errorMessage);
                 $view->assign('moptAmazonErrorCode', $request->get('moptAmazonErrorCode'));
@@ -220,6 +239,95 @@ class FrontendCheckout implements SubscriberInterface
             if ($session->moptPaypalEcsWorkerId) {
                 unset($session->moptPaypalEcsWorkerId);
             }
+
+            // Klarna
+            // order lines
+            /** @var Mopt_PayoneMain $moptPayoneMain */
+            $moptPayoneMain = $this->container->get('MoptPayoneMain');
+
+            $selectedDispatchId = Shopware()->Session()['sDispatch'];
+            $basket = $moptPayoneMain->sGetBasket();
+
+            $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
+            $basket['sShippingcosts'] = $shippingCosts['brutto'];
+            $basket['sShippingcostsWithTax'] = $shippingCosts['brutto'];
+            $basket['sShippingcostsNet'] = $shippingCosts['netto'];
+            $basket['sShippingcostsTax'] = $shippingCosts['tax'];
+
+            $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            $invoicing = $moptPayoneMain->getParamBuilder()->getInvoicing($basket, $dispatch, $userData);
+
+            $orderLines = [];
+            foreach ($invoicing->getItems() as $item) {
+                $price = (int)($item->getPr() * 100);
+                $quantity = $item->getNo();
+                /** the current items index in $basket['content'] */
+                $basketItemIndex = array_search($item->getId(), array_column($basket['content'], 'ordernumber'));
+                $itemUrl = $router->assemble([
+                    'module' => 'frontend',
+                    'sViewport' => 'detail',
+                    'sArticle' => $basket['content'][$basketItemIndex]['articleID'],
+                ]);
+
+                $orderLines[] = [
+                    'reference' => $item->getId(),
+                    'name' => $item->getDe(),
+                    'tax_rate' => (int)($item->getVa()),
+                    'unit_price' => $price,
+                    'quantity' => $quantity,
+                    'total_amount' => $price * $quantity,
+                    'image_url' => $basket['content'][$basketItemIndex]['image']['source'],
+                    'product_url' => $itemUrl,
+                ];
+            }
+
+            $title = $helper->getKlarnaTitle($userData);
+
+            if (!$helper->isKlarnaTelephoneNeededByCountry() && is_null($userData['billingAddressPhone']['phone'])) {
+                $userData['billingaddress']['phone'] = 'notNeededByCountry';
+            }
+
+            if (!$helper->isKlarnaPersonalIdNeededByCountry() && !$userData['additional']['user']['mopt_payone_klarna_personalid']) {
+                $userData['additional']['user']['mopt_payone_klarna_personalid'] = 'notNeededByCountry';
+            }
+
+            $view->assign('klarnaOrderLines', json_encode($orderLines));
+            $view->assign('isKlarnaBirthdayNeeded', $helper->isKlarnaBirthdayNeeded());
+            $view->assign('isKlarnaTelephoneNeeded', $helper->isKlarnaTelephoneNeeded());
+            $view->assign('isKlarnaPersonalIdNeeded', $helper->isKlarnaPersonalIdNeeded());
+            //shipping
+            $view->assign('shippingAddressCity', $userData['shippingaddress']['city']);
+            $view->assign('shippingAddressCountry', $userData['additional']['country']['countryiso']);
+            $view->assign('shippingAddressEmail', $userData['additional']['user']['email']);
+            $view->assign('shippingAddressFamilyName', $userData['shippingaddress']['lastname']);
+            $view->assign('shippingAddressGivenName', $userData['shippingaddress']['firstname']);
+            $view->assign('shippingAddressPostalCode', $userData['shippingaddress']['zipcode']);
+            $view->assign('shippingAddressStreetAddress', $userData['shippingaddress']['street']);
+            $view->assign('shippingAddressTitle', $title);
+            $view->assign('shippingAddressPhone', $userData['shippingaddress']['phone']);
+            // billing
+            $view->assign('billingAddressCity', $userData['billingaddress']['city']);
+            $view->assign('billingAddressCountry', $userData['additional']['country']['countryiso']);
+            $view->assign('billingAddressEmail', $userData['additional']['user']['email']);
+            $view->assign('billingAddressFamilyName', $userData['billingaddress']['lastname']);
+            $view->assign('billingAddressGivenName', $userData['billingaddress']['firstname']);
+            $view->assign('billingAddressPostalCode', $userData['billingaddress']['zipcode']);
+            $view->assign('billingAddressStreetAddress', $userData['billingaddress']['street']);
+            $view->assign('billingAddressTitle', $title);
+            $view->assign('billingAddressPhone', $userData['billingaddress']['phone']);
+
+            // customer
+            if (is_null($userData['additional']['user']['birthday'])) {
+                $view->assign('customerDateOfBirth', '0000-00-00');
+            } else {
+                $view->assign('customerDateOfBirth', $userData['additional']['user']['birthday']);
+            }
+            $view->assign('customerGender', $helper->getKlarnaGender($userData));
+            $view->assign('customerNationalIdentificationNumber', $userData['additional']['user']['mopt_payone_klarna_personalid']);
+
+            $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
+            $view->assign('locale', str_replace('_', '-', Shopware()->Shop()->getLocale()->getLocale()));
         }
 
         if ($request->getActionName() === 'cart') {
@@ -251,7 +359,7 @@ class FrontendCheckout implements SubscriberInterface
                 $paymenthelper = $moptPayoneMain->getPaymentHelper();
                 $config = $moptPayoneMain->getPayoneConfig($paymenthelper->getPaymentAmazonPay()->getId());
 
-                if($request->get('AuthenticationStatus') == 'Failure' || $request->get('AuthenticationStatus') == 'Abandoned') {
+                if ($request->get('AuthenticationStatus') == 'Failure' || $request->get('AuthenticationStatus') == 'Abandoned') {
                     //logout because confirmOrderReference failed
                     unset($session->moptPayoneAmazonAccessToken);
                     unset($session->moptPayoneAmazonReferenceId);
@@ -263,7 +371,7 @@ class FrontendCheckout implements SubscriberInterface
                     $view->assign('moptAmazonErrorMessage', $errorMessage);
                 }
 
-                if($request->get('moptAmazonErrorCode')) {
+                if ($request->get('moptAmazonErrorCode')) {
                     $errorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $request->get('moptAmazonErrorCode'));
                     $view->assign('moptAmazonErrorMessage', $errorMessage);
                     $view->assign('moptAmazonErrorCode', $request->get('moptAmazonErrorCode'));
@@ -295,6 +403,13 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('moptPayDirektShortcutImgURL', $imageUrl);
             $view->extendsTemplate('frontend/checkout/mopt_cart_paydirekt' . $templateSuffix . '.tpl');
             $view->extendsTemplate('frontend/checkout/ajax_cart_paydirekt' . $templateSuffix . '.tpl');
+        }
+
+        if ($templateSuffix === '' && $this->isApplePayActive()) {
+            if (is_null($session->get('moptAllowApplePay'))) {
+                $view->assign('moptCheckApplePaySupport', 'true');
+                $view->extendsTemplate('frontend/checkout/ajax_cart_applepay_devicecheck' . $templateSuffix . '.tpl');
+            }
         }
 
         if (!empty($userPaymentId)) {
@@ -378,6 +493,14 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         return false;
+    }
+
+    protected function isApplePayActive()
+    {
+        $paymentApplePay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_applepay']
+        );
+        return $paymentApplePay->getActive();
     }
 
     /**

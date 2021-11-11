@@ -33,7 +33,10 @@
 class Payone_Api_Enum_FinancingType
 {
     const BSV = 'BSV'; // BILLSAFE
-    const KLV = 'KLV'; // KLARNA INVOICING
+    const KLV = 'KLV'; // KLARNA INVOICING old
+    const KIS = 'KIS'; // KLARNA INSTALLMENTS
+    const KIV = 'KIV'; // KLARNA INVOICE
+    const KDD = 'KDD'; // KLARNA DIRECT DEBIT
     const PYV = 'PYV'; // PAYOLUTION INVOICING
     const PYD = 'PYD'; // PAYOLUTION DEBIT
     const PYM = 'PYM'; // PAYOLUTION MONTHLY

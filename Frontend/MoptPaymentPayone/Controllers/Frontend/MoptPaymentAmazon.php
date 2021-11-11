@@ -49,7 +49,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->session->moptPayoneAmazonAccessToken = $this->Request()->getCookie("amazon_Login_accessToken");
         }
 
-
         if (!empty($this->Request()->getParam("moptAmazonError"))) {
             $this->View()->moptPayoneAmazonError = $this->Request()->getParam("moptAmazonError");
         }
@@ -66,12 +65,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             $this->session['sPaymentID'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $this->View()->sPayment = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
-            $userAdditionalArray = [];
-            $userAdditionalArray['additional']['charge_vat'] = 1;
-            $userAdditionalArray['additional']['payment']['id'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $userData = $this->getUserData();
-            $userAdditionalArray['additional']['countryShipping'] = $userData['additional']['countryShipping'];
-            $this->View()->assign('sUserData', $userAdditionalArray);
+            $this->View()->assign('sUserData', $userData);
 
             $this->get('modules')->Basket()->sRefreshBasket();
             $basket = $this->get('modules')->Basket()->sGetBasket();
@@ -83,32 +78,30 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->assign('payoneAmazonPayMode', $config['liveMode']);
             $this->View()->sDispatches = $this->getDispatches(Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
             $this->View()->sAmount = $basket['Amount'];
+            // get amount for minimum check before shipping costs are added
+            $this->View()->sMinimumSurcharge = $this->getMinimumSurchage();
+
             $this->View()->assign('payoneAmazonPayConfig', $payoneAmazonPayConfig);
             $this->View()->sDispatch = $this->getSelectedDispatch();
             $shippingCosts = $this->getShippingCosts();
 
             // basket content neccessary for minibasket
-
-            $basket['sShippingcosts'] = $shippingCosts['brutto'];
+            $basket['sShippingcosts'] = (!Shopware()->System()->sUSERGROUPDATA['tax'] && Shopware()->System()->sUSERGROUPDATA['id']) ? $shippingCosts['netto'] :  $shippingCosts['brutto'];
             $basket['sShippingcostsWithTax'] = $shippingCosts['brutto'];
             $basket['sShippingcostsNet'] = $shippingCosts['netto'];
             $basket['sShippingcostsTax'] = $shippingCosts['tax'];
-
-            $basket['AmountWithTaxNumeric'] = floatval(
-                    str_replace(',', '.', $basket['Amount'])
-                ) + floatval(
-                    str_replace(',', '.', $shippingCosts['brutto'])
-                );
-            $basket['AmountNetNumeric'] = floatval(str_replace(',', '.', $basket['AmountNet']));
             $basket['sAmountNet'] = floatval($basket['AmountNetNumeric']) + floatval($shippingCosts['netto']);
             $basket['sTaxRates'] = $this->getTaxRates($basket);
+            $basket['AmountWithTaxNumeric'] = (!Shopware()->System()->sUSERGROUPDATA['tax'] && Shopware()->System()->sUSERGROUPDATA['id']) ? $basket['AmountWithTaxNumeric'] += $shippingCosts['brutto'] : $basket['AmountWithTaxNumeric'] = $basket['AmountNumeric'] +  $shippingCosts['brutto'];
+            $basket['AmountWithTax'] = str_replace('.', ',', $basket['AmountWithTaxNumeric']);
             $basket['sCurrencyId'] = Shopware()->Shop()->getCurrency()->getId();
             $basket['sCurrencyName'] = Shopware()->Shop()->getCurrency()->getCurrency();
 
-            $this->View()->sShippingcosts = $shippingCosts['brutto'];
+            $this->View()->sShippingcosts = $basket['sShippingcosts'];
             $this->View()->sShippingcostsWithTax = $shippingCosts['brutto'];
             $this->View()->sShippingcostsNet = $shippingCosts['netto'];
             $this->View()->sShippingcostsTax = $shippingCosts['tax'];
+            $this->View()->sAmountWithTax = $basket['AmountWithTax'];
             $this->View()->sAmount = $basket['AmountWithTaxNumeric'];
             $this->View()->sAmountNet = $basket['sAmountNet'];
             $this->View()->sAmountTax = $basket['sAmountTax'];
@@ -116,9 +109,30 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $this->View()->sComment = isset($this->session['sComment']) ? $this->session['sComment'] : null;
             $this->View()->amazonCurrency = Shopware()->Shop()->getCurrency()->getCurrency();
 
-            $this->session->offsetSet('moptFormSubmitted', true);
             $this->session['sOrderVariables'] = new ArrayObject($this->View()->getAssign(), ArrayObject::ARRAY_AS_PROPS);
         }
+    }
+
+    /**
+     * Check if minimum charging is reached
+     * Used only in CheckoutController::getMinimumCharge()
+     *
+     * @return float|false Minimum order value in current currency, or false
+     */
+    private function getMinimumSurchage()
+    {
+        $system = Shopware()->System();
+        $minimumOrder = $system->sUSERGROUPDATA['minimumorder'];
+        $factor = $system->sCurrency['factor'];
+
+        if ($minimumOrder && !$system->sUSERGROUPDATA['minimumordersurcharge']) {
+            $amount = $this->View()->sAmount;
+            if ($amount < ($minimumOrder * $factor)) {
+                return $minimumOrder * $factor;
+            }
+        }
+
+        return false;
     }
 
     public function finishAction()

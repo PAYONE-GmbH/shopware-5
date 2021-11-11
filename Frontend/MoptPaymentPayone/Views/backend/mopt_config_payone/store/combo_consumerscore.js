@@ -5,11 +5,11 @@ Ext.define('Shopware.apps.MoptConfigPayone.store.ComboConsumerscore', {
   model: 'Shopware.apps.MoptConfigPayone.model.Comboint',
   data: [
     {
-      display: '{s name=fieldvalue/cancel}abbrechen{/s}',
+      display: '{s name="fieldvalue/cancel"}abbrechen{/s}',
       value: '0'
     },
     {
-      display: '{s name=fieldvalue/continue}fortfahren{/s}',
+      display: '{s name="fieldvalue/continue"}fortfahren{/s}',
       value: '1'
     }
   ]

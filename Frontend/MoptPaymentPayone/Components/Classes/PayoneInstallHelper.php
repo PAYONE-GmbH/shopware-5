@@ -287,6 +287,7 @@ class Mopt_PayoneInstallHelper
                 'consumerscore_color' => 'string',
                 'consumerscore_value' => 'integer',
                 'ratepay_ban' => 'date',
+                'klarna_personalid' => 'string',
             ],
             's_user_addresses_attributes' => [
                 'addresscheck_result' => 'string',
@@ -460,25 +461,30 @@ class Mopt_PayoneInstallHelper
                 'template' => null,
                 'position' => 20,),
             array(
-                'name' => 'mopt_payone__fin_billsafe',
-                'description' => 'PAYONE BillSAFE',
-                'template' => null,
-                'position' => 21,),
-            array(
-                'name' => 'mopt_payone__fin_klarna',
-                'description' => 'PAYONE Klarna',
+                'name' => 'mopt_payone__fin_kis_klarna_installments',
+                'description' => 'PAYONE Klarna Slice It',
                 'template' => 'mopt_paymentmean_klarna.tpl',
                 'position' => 22,),
+            array(
+                'name' => 'mopt_payone__fin_kiv_klarna_invoice',
+                'description' => 'PAYONE Klarna Pay Later',
+                'template' => 'mopt_paymentmean_klarna.tpl',
+                'position' => 23,),
+            array(
+                'name' => 'mopt_payone__fin_kdd_klarna_direct_debit',
+                'description' => 'PAYONE Klarna Pay Now',
+                'template' => 'mopt_paymentmean_klarna.tpl',
+                'position' => 24,),
             array(
                 'name' => 'mopt_payone__ibt_p24',
                 'description' => 'PAYONE P24',
                 'template' => null,
-                'position' => 23,),
+                'position' => 25,),
             array(
                 'name' => 'mopt_payone__csh_barzahlen',
                 'description' => 'PAYONE Barzahlen',
                 'template' => null,
-                'position' => 24,
+                'position' => 26,
                 'additionalDescription' => '<label for="payment_barzahlen">'
                     . '  <img style="height: 3em; vertical-align: -1em;" src="https://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen">'
                     . '</label>'
@@ -500,67 +506,82 @@ class Mopt_PayoneInstallHelper
                 'name' => 'mopt_payone__ewallet_paydirekt',
                 'description' => 'PAYONE Paydirekt',
                 'template' => null,
-                'position' => 25,),
-            array(
-                'name' => 'mopt_payone__fin_payolution_invoice',
-                'description' => 'PAYONE Paysafe Pay Later™ Rechnungskauf',
-                'template' => 'mopt_paymentmean_payolution_invoice.tpl',
-                'position' => 26,),
-            array(
-                'name' => 'mopt_payone__fin_payolution_debitnote',
-                'description' => 'PAYONE Paysafe Pay Later™ Lastschrift',
-                'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
                 'position' => 27,),
             array(
-                'name' => 'mopt_payone__fin_payolution_installment',
-                'description' => 'PAYONE Paysafe Pay Later™ Ratenkauf',
-                'template' => 'mopt_paymentmean_payolution_installment.tpl',
+                'name' => 'mopt_payone__fin_payolution_invoice',
+                'description' => 'PAYONE Unzer Rechnungskauf',
+                'template' => 'mopt_paymentmean_payolution_invoice.tpl',
                 'position' => 28,),
+            array(
+                'name' => 'mopt_payone__fin_payolution_debitnote',
+                'description' => 'PAYONE Unzer Lastschrift',
+                'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
+                'position' => 29,),
+            array(
+                'name' => 'mopt_payone__fin_payolution_installment',
+                'description' => 'PAYONE Unzer Ratenkauf',
+                'template' => 'mopt_paymentmean_payolution_installment.tpl',
+                'position' => 30,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_invoice',
                 'description' => 'PAYONE Ratepay Rechnungskauf',
                 'template' => 'mopt_paymentmean_ratepay_invoice.tpl',
-                'position' => 29,),
+                'position' => 31,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_installment',
                 'description' => 'PAYONE Ratepay Ratenkauf',
                 'template' => 'mopt_paymentmean_ratepay_installment.tpl',
-                'position' => 30,),
+                'position' => 32,),
             array(
                 'name' => 'mopt_payone__fin_ratepay_direct_debit',
                 'description' => 'PAYONE Ratepay Lastschrift',
                 'template' => 'mopt_paymentmean_ratepay_direct_debit.tpl',
-                'position' => 31,),
+                'position' => 33,),
             array(
                 'name' => 'mopt_payone__acc_payone_safe_invoice',
                 'description' => 'PAYONE Rechnung mit Zahlungsgarantie',
                 'template' => 'mopt_paymentmean_payone_safe_invoice.tpl',
-                'position' => 32,),
+                'position' => 34,),
             array(
                 'name' => 'mopt_payone__ibt_bancontact',
                 'description' => 'PAYONE Bancontact',
                 'template' => 'mopt_paymentmean_bancontact.tpl',
-                'position' => 33,),
+                'position' => 35,),
             array(
                 'name' => 'mopt_payone__ewallet_amazon_pay',
                 'description' => 'PAYONE Amazon Pay',
                 'template' => 'mopt_paymentmean_amazon_ewallet.tpl',
-                'position' => 34,),
+                'position' => 36,),
             array(
                 'name' => 'mopt_payone__ewallet_alipay',
                 'description' => 'PAYONE AliPay',
                 'template' => 'mopt_paymentmean_alipay_ewallet.tpl',
-                'position' => 35,),
+                'position' => 37,),
             array(
                 'name' => 'mopt_payone__fin_paypal_installment',
                 'description' => 'PAYONE Ratenkauf powered by Paypal',
                 'template' => 'mopt_paymentmean_paypal_installment.tpl',
-                'position' => 37,),
+                'position' => 38,),
             array(
                 'name' => 'mopt_payone__ewallet_paydirekt_express',
                 'description' => 'PAYONE Paydirekt Express',
                 'template' => null,
-                'position' => 38,),
+                'position' => 39,),
+            array(
+                'name' => 'mopt_payone__ewallet_wechatpay',
+                'description' => 'PAYONE WeChatPay',
+                'template' => null,
+                'position' => 40,),
+            array(
+                'name' => 'mopt_payone__ibt_trustly',
+                'description' => 'PAYONE Trustly',
+                'template' => 'mopt_paymentmean_trustly.tpl',
+                'position' => 41,),
+            array(
+                'name' => 'mopt_payone__ewallet_applepay',
+                'description' => 'PAYONE Apple Pay',
+                'template' => 'mopt_paymentmean_applepay.tpl',
+                'position' => 42,),
         );
     }
 
@@ -610,6 +631,40 @@ class Mopt_PayoneInstallHelper
                 }
             }
         }
+    }
+
+    /**
+     * Extends main config with change_order_on_txs if not exits
+     *
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function moptExtendConfigChangeOrderOnTXS()
+    {
+        if (!$this->moptConfigChangeOrderOnTXSExist()) {
+            $query = "ALTER TABLE `s_plugin_mopt_payone_config` ADD COLUMN change_order_on_txs TINYINT(1) NOT NULL DEFAULT 0;";
+
+            Shopware()->Db()->exec($query);
+        }
+    }
+
+    /**
+     * Checks the existence of change_order_on_txs
+     *
+     * @throws Zend_Db_Statement_Exception
+     * @throws Zend_Db_Adapter_Exception
+     */
+    public function moptConfigChangeOrderOnTXSExist()
+    {
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND TABLE_NAME='s_plugin_mopt_payone_config'
+                AND COLUMN_NAME ='change_order_on_txs'";
+
+        $result = Shopware()->Db()->query($sql);
+
+        return $result->rowCount() !== 0;
     }
 
     /**
@@ -1635,7 +1690,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         $result = $db->query($sql);
 
         if ($result->rowCount() === 0) {
-            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `send_ordernumber_as_reference` TINYINT(1) NOT NULL DEFAULT 0;";
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `send_ordernumber_as_reference` TINYINT(1) NULL DEFAULT 1;";
             $db->exec($sql);
         }
     }
@@ -1758,6 +1813,95 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `state_reminder$reminderLevel` INT(11) NULL;";
 
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if ratepay global snippetid column is present and creates
+     * column if not present.
+     * @return void
+     */
+    function checkAndAddRatepaySnippetIdColumn()
+    {
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='ratepay_snippet_id'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN ratepay_snippet_id VARCHAR(50) DEFAULT 'ratepay';";
+            $db->exec($sql);
+        }
+
+    }
+
+    /**
+     * Checks if ratepay global snippetid column is present and creates
+     * column if not present.
+     * @return void
+     */
+    function checkAndAddTrustlyShowIbanBic()
+    {
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='trustly_show_iban_bic'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN `trustly_show_iban_bic` BOOLEAN NULL DEFAULT false;";
+            $db->exec($sql);
+        }
+
+    }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    function checkAndAddApplepayConfig()
+    {
+        $textColumns = ['applepay_merchant_id', 'applepay_certificate', 'applepay_private_key', 'applepay_private_key_password'];
+        $tinyIntColumns = ['applepay_visa', 'applepay_mastercard', 'applepay_girocard', 'applepay_amex', 'applepay_discover', 'applepay_debug'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
+
+                $db->exec($sql);
+            }
+        }
+
+        foreach ($tinyIntColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` TINYINT(1) NULL DEFAULT '0';";
                 $db->exec($sql);
             }
         }

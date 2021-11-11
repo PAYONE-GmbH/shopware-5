@@ -2,7 +2,7 @@
 //{block name="backend/mopt_export_payone/view/main/window"}
 Ext.define('Shopware.apps.MoptExportPayone.view.main.Window', {
     extend: 'Enlight.app.Window',
-    title: '{s name=window/title}PAYONE Konfigurationsexport{/s}',
+    title: '{s name="window/title"}PAYONE Konfigurationsexport{/s}',
     alias: 'widget.mopt-export-config-main-window',
     border: false,
     layout: 'fit',
@@ -22,7 +22,7 @@ Ext.define('Shopware.apps.MoptExportPayone.view.main.Window', {
         
         me.items = [{
             xtype: 'container',
-            html: '<div style="padding:10px;">{s name=window/info}Es wird eine XML-Datei mit allen PAYONE-Konfigurationsoptionen erstellt.{/s}</div>'
+            html: '<div style="padding:10px;">{s name="window/info"}Es wird eine XML-Datei mit allen PAYONE-Konfigurationsoptionen erstellt.{/s}</div>'
         }];
         me.callParent(arguments);
     },
@@ -44,7 +44,7 @@ Ext.define('Shopware.apps.MoptExportPayone.view.main.Window', {
                 {
                     cls: 'primary',
                     name: 'mopt-payone-export-download',
-                    text: '{s name=button/download}Download Konfigurationsdatei{/s}',
+                    text: '{s name="button/download"}Download Konfigurationsdatei{/s}',
                     handler: function() {
                         me.fireEvent('moptDownloadConfigExport', me);
                     }

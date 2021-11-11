@@ -4,15 +4,15 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.list.Config', {
     alias: 'widget.mopt-payone-amazon-pay-listing-grid',
     region: 'center',
     snippets: {
-        clientId: '{s name=amazon_clientid}Client Id{/s}',
-        sellerId: '{s name=amazon_sellerid}Seller Id{/s}',
-        buttonType: '{s name=amazon_buttontype}Button Typ{/s}',
-        buttonColor: '{s name=amazon_buttoncolor}Button Farbe{/s}',
+        clientId: '{s name="amazon_clientid"}Client Id{/s}',
+        sellerId: '{s name="amazon_sellerid"}Seller Id{/s}',
+        buttonType: '{s name="amazon_buttontype"}Button Typ{/s}',
+        buttonColor: '{s name="amazon_buttoncolor"}Button Farbe{/s}',
         /*
         buttonLanguage: '{s name=amazon_buttonlanguage}Button Sprache{/s}',
         */
-        amazonMode: '{s name=amazon_mode}Amazon Modus{/s}',
-        amazonDownloadButton: '{s name=amazon_download_button}Konfigurations Download{/s}'
+        amazonMode: '{s name="amazon_mode"}Amazon Modus{/s}',
+        amazonDownloadButton: '{s name="amazon_download_button"}Konfigurations Download{/s}'
     },
 
     configure: function () {

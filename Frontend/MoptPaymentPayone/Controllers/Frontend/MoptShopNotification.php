@@ -4,6 +4,7 @@ use Shopware\Components\CSRFWhitelistAware;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RotatingFileHandler;
+use Shopware\Models\Order\Order;
 
 /**
  * updated and finish transactions
@@ -13,6 +14,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
     protected $moptPayone__serviceBuilder = null;
     protected $moptPayone__main = null;
+    /** @var $moptPayone__helper Mopt_PayoneHelper */
     protected $moptPayone__helper = null;
     protected $moptPayone__paymentHelper = null;
     /** @var Logger $logger */
@@ -48,7 +50,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     protected function initForwardRotatingLogger()
     {
-        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logPath = Shopware()->Container()->get('kernel')->getLogDir();
         $logFile = $logPath . '/MoptPaymentPayone_txredirect_production.log';
 
         $rfh = new RotatingFileHandler($logFile, 14);
@@ -98,7 +100,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         } else {
             $this->restoreSession($request->getParam('param'));
             $session = Shopware()->Session();
-            if (!property_exists($session, 'sOrderVariables')) {
+            if (is_null($session) || !$session->offsetExists('sOrderVariables')) {
                 $message = 'The session could not be restored. It might help to configure the server\'s gc_probability:'
                     . '\n\n   https://developers.shopware.com/sysadmins-guide/sessions/#blocking-transactions'
                     . '\n   https://www.php.net/manual/de/session.configuration.php#ini.session.gc-probability';
@@ -161,6 +163,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'));
                 }
                 $order = $this->loadOrderByOrderNumber($orderNumber);
+
             } else {
                 $this->logger->debug('finished, output TSOK');
                 echo $response->getStatus();
@@ -228,11 +231,32 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->logger->debug('save attribute data', $attributeData);
         $this->saveOrderAttributeData($order, $attributeData, $saveOrderHash, $saveClearingData);
 
+        if ($config['changeOrderOnTXS'] && (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') || Shopware()->Config()->get('version') == '___VERSION___')) {
+            $orderObj = Shopware()->Models()->getRepository(Order::class)->findOneBy(['number' => $order['ordernumber']]);
+            $orderObj->updateChangedTimestamp();
+            Shopware()->Models()->persist($orderObj);
+            Shopware()->Models()->flush();
+        }
 
         $this->logger->debug('finished, output TSOK');
         echo $response->getStatus();
         $this->logger->debug('starting tx forwards');
         $this->moptPayoneForwardTransactionStatus($rawPost, $paymentId);
+
+        // fire event to do some custom stuff, e.g. synchronising with merchandise management software
+        // please note that processing this event has to be fast because Payone will mark this request as
+        // failed if it is not processed within 10 seconds
+        $this->container->get('events')->notify(
+            'Payone_Controller_MoptShopNotification',
+            [
+                'txaction'        => $request->getParam('txaction'),
+                'reference'       => $request->getParam('reference'),
+                'ordernumber'     => $order['ordernumber'],
+                'sequencenumber'  => $payoneRequest->getSequencenumber(),
+                'paymentId'       => $order['paymentID'],
+            ]
+        );
+
         $this->logger->debug('finished all tasks, exit');
         exit;
     }
@@ -257,96 +281,31 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     /**
      * forward request to configured urls
      *
-     * @param array $rawPost
+     * @param array $post
      * @param $paymentID
      */
-    protected function moptPayoneForwardTransactionStatus($rawPost, $paymentID)
+    protected function moptPayoneForwardTransactionStatus($post, $paymentID)
     {
-        $url = Shopware()->Front()->Router()
-            ->assemble(
-                array(
-                    'controller' => 'MoptTransactionStatusForwarding',
-                    'action' => 'index'
-                )
-            );
+        $post = array_map('utf8_encode', $post); // utf8 encode all post params to avoid encoding issues
 
-        $rawPost['paymentID'] = $paymentID;
+        $post['paymentID'] = $paymentID;
 
-        $log_msg = [
-            'Trying to forward to own controller: '.$url,
-            'action='.$rawPost['txaction'],
-            'txid='.$rawPost['txid'],
-        ];
-        $this->forwardLog($log_msg);
+        $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
 
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $rawPost);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $configKey = 'trans' . ucfirst($post['txaction']);
+        $forwardingUrls = explode(';', $this->payoneConfig[$configKey]);
 
-        $curl_timeout = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'];
-        $curl_timeout_raise = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout_raise'];
-        $curl_trials_max = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_trials_max'];
-
-        if ($this->payoneConfig['transTimeout']) {
-            $curl_timeout = $this->payoneConfig['transTimeout'];
-        }
-
-        if ($this->payoneConfig['transTimeoutRaise']) {
-            $curl_timeout_raise = $this->payoneConfig['transTimeoutRaise'];
-        }
-
-        if ($this->payoneConfig['transMaxTrials']) {
-            $curl_trials_max = $this->payoneConfig['transMaxTrials'];
-        }
-
-        $curl_trials = 0;
-
-        do {
-            $curl_trials++;
-
-            curl_setopt($curl, CURLOPT_TIMEOUT_MS, $curl_timeout);
-
-            $result = curl_exec($curl);
-
-            $curl_info = curl_getinfo($curl);
-
-            $response_code = $curl_info['http_code'];
-            $curl_info_json = json_encode($curl_info);
-
-            $log_msg = [
-                'Responsecode of request was: ' . $response_code,
-                'Trials: ' . $curl_trials,
-                'curl_timeout: ' . $curl_timeout,
-                'curl_result: ' . $result,
-                'curl info: ' . $curl_info_json,
-                'raw_post: ' . json_encode($rawPost),
-            ];
-            $this->forwardLog($log_msg);
-
-            $curl_timeout += $curl_timeout_raise;
-        } while ($curl_trials < $curl_trials_max && $response_code !== 100);
-
-        curl_close($curl);
-    }
-
-    /**
-     * Logs an entry of transaction forward controller
-     *
-     * @param array $logentry
-     * @return void
-     */
-    protected function forwardLog($logentry)
-    {
-        $logAllowed = (
-            $this->payoneConfig['transLogging'] === true
-        );
-
-        if ($logAllowed) {
-            $log=implode(";",$logentry);
-            $this->rotatingLogger->debug($log);
+        foreach ($forwardingUrls as $url) {
+            if (trim($url !== '')) {
+                $queueWorker->queuePush(
+                    '',
+                    '',
+                    $post['txid'],
+                    $post,
+                    trim($url),
+                    $this->payoneConfig
+                );
+            }
         }
     }
 
@@ -404,9 +363,15 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     {
         $sessionParam = explode('|', $customParam);
 
-        \Enlight_Components_Session::writeClose();
-        \Enlight_Components_Session::setId($sessionParam[1]);
-        \Enlight_Components_Session::start();
+        if (version_compare(Shopware()->Config()->get('version'), '5.7.0', '>=')) {
+            Shopware()->Session()->save();
+            Shopware()->Session()->setId($sessionParam[1]);
+            Shopware()->Session()->start();
+        } else {
+            \Enlight_Components_Session::writeClose();
+            \Enlight_Components_Session::setId($sessionParam[1]);
+            \Enlight_Components_Session::start();
+        }
     }
 
     /**
@@ -559,7 +524,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     protected function buildPayoneTransactionLogPath()
     {
-        $logDir = Shopware()->Application()->Kernel()->getLogDir();
+        $logDir = Shopware()->Container()->get('kernel')->getLogDir();
         return  $logDir . '/moptPayoneTransactionStatus.log';
     }
 }

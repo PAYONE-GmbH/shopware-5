@@ -8,13 +8,13 @@
 
 <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/checkout.css"}">
 
-<div class="payment--form-group" 
+<div class="payment--form-group"
      id="mopt_payone_creditcard_form" 
      data-mopt_payone__cc_paymentid="{$form_data.mopt_payone__cc_paymentid}" 
      data-mopt_payone__cc_paymentshort="{$form_data.mopt_payone__cc_cardtype}" 
-     data-mopt_payone_credit_cards_id="{$payment_mean.mopt_payone_credit_cards[0]['id']}" 
-     data-mopt_payone_credit_cards_short="{$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards[0]['short']}"
-     data-mopt_payone_available_cardtypes="{foreach from=$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards item=cc name=cc_types}{$cc.short}{if not $smarty.foreach.cc_types.last},{/if}{/foreach}"
+     data-mopt_payone_credit_cards_id="{$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards[0]['id']}"
+     data-mopt_payone_credit_cards_short="{$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards[0]['short']}"
+     data-mopt_payone_available_cardtypes="{foreach from=$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards item=cc name=cc_types}{$cc.short}{if not $smarty.foreach.cc_types.last},{/if}{/foreach}"
      data-mopt_payone__cc_Year="{$form_data.mopt_payone__cc_Year}" 
      data-messageCreditCardCvcProcessed="{s name='creditCardCvcProcessed'}Kartenprüfziffer wurde verarbeitet{/s}" 
      data-moptPayoneParamsMode="{$moptCreditCardCheckEnvironment.moptPayoneParams.mode}" 
@@ -42,7 +42,7 @@
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
 
-    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1'}
+    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1' && ! $moptIsAjax}
         <div id="payone-cc-auto-detection-messages">
             <div class="payone-auto-cc-detection-message" data-msg-type="unknown">
                 <div class="alert is--warning is--rounded">
@@ -67,26 +67,45 @@
         </div>
 
         <div id="payone-cc-icons-wrap">
-            {foreach from=$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards item=cc}
+            {foreach from=$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards item=cc}
                 <img id="payone-cc-icon-{$cc.short|lower}" data-cc-type="{$cc.short}" class="payone-cc-icon{if $form_data.mopt_payone__cc_paymentname == $cc.name} payone-cc-icon--selected{elseif $form_data.mopt_payone__cc_pseudocardpan} payone-cc-icon--hidden{/if}" src="https://cdn.pay1.de/cc/{$cc.short|lower}/s/default.png" alt="{$cc.description}">
             {/foreach}
         </div>
     {/if}
 
-    <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1'}style="display: none;"{/if}>
-        <select name="moptPaymentData[mopt_payone__cc_cardtype]"
-                id="mopt_payone__cc_cardtype"
-                {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection !== '1'}required="required" aria-required="true"{/if}
-                class="select--country is--required{if $error_flags.mopt_payone__cc_cardtype} has--error{/if}">
-            <option disabled="disabled" value="" selected="selected">{s name='creditCardType'}Kartentyp{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
-            {foreach from=$moptCreditCardCheckEnvironment.payment_mean.mopt_payone_credit_cards item=credit_card}
-                <option value="{$credit_card.short}"
-                        {if $form_data.mopt_payone__cc_paymentname == $credit_card.name}selected="selected"{/if}
-                        mopt_payone__cc_paymentname="{$credit_card.name}" mopt_payone__cc_paymentid="{$credit_card.id}">
-                    {$credit_card.description}
-                </option>
-            {/foreach}
-        </select>
+    <div class="row">
+        <p class="none">
+            <label for="mopt_payone__cc_cardholder">
+                {s name="cardholderLabel" namespace="frontend/MoptPaymentPayone/payment"}Karteninhaber{/s}
+            </label>
+        </p>
+
+        <input name="moptPaymentData[mopt_payone__cc_cardholder]"
+               type="text"
+               id="mopt_payone__cc_cardholder"
+               {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
+               placeholder="{s name="cardholder"}Karteninhaber{/s}{s name="RequiredField" namespace="frontend/MoptPaymentPayone/payment"}{/s}"
+               value="{$form_data.mopt_payone__cc_cardholder}"
+               class="moptPayoneCardholder payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__cc_cardholder} has--error{/if}"
+        />
+    </div>
+
+    <div class="row" style="margin-top: 25px">
+        <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1' && !$moptIsAjax}style="display: none;"{/if}>
+            <select name="moptPaymentData[mopt_payone__cc_cardtype]"
+                    id="mopt_payone__cc_cardtype"
+                    {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection !== '1'}required="required" aria-required="true"{/if}
+                    class="select--country is--required{if $error_flags.mopt_payone__cc_cardtype} has--error{/if}">
+                <option disabled="disabled" value="" selected="selected">{s name='creditCardType'}Kartentyp{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
+                {foreach from=$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards item=credit_card}
+                    <option value="{$credit_card.short}"
+                            {if $form_data.mopt_payone__cc_paymentname == $credit_card.name}selected="selected"{/if}
+                            mopt_payone__cc_paymentname="{$credit_card.name}" mopt_payone__cc_paymentid="{$credit_card.id}">
+                        {$credit_card.description}
+                    </option>
+                {/foreach}
+            </select>
+        </div>
     </div>
 
     {if $moptIsAjax}
@@ -379,7 +398,7 @@
     function ccCheck(data) {
         jQuery.post('{url controller=moptAjaxPayone action=checkCreditCardExpiry forceSecure}', data, function (expiryResponse)
         {
-            if (expiryResponse == 'true' ){
+            if (expiryResponse.trim() == 'true' ){
                 $('#mopt_payone__cc_truncatedcardpan_hidden').val(data.mopt_payone__cc_truncatedcardpan);
                 savePseudoCard(data);
                 submitForm();
@@ -400,7 +419,7 @@
             data: data,
             success: function(expiryResponse)
             {
-                if (expiryResponse == 'true' ){
+                if (expiryResponse.trim() == 'true' ){
                     ret = true;
                 } else {
                     showExpiryErrorMessage();

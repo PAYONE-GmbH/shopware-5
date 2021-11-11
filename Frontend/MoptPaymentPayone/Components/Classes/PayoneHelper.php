@@ -1,10 +1,14 @@
 <?php
 
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
+
 /**
  * $Id: $
  */
 class Mopt_PayoneHelper
 {
+    protected $rotatingLogger = null;
 
     /**
      * check if Responsive Template is installed and activated for current subshop
@@ -1653,5 +1657,193 @@ class Mopt_PayoneHelper
         return Shopware()->Db()->fetchOne($sql);
     }
 
+    /**
+     * Logs an entry of transaction forward controller
+     *
+     * @param array $log_msg
+     * @return void
+     */
+    public function forwardLog($log_msg, $payoneConfig)
+    {
+        $logAllowed = (
+            $payoneConfig['transLogging'] === true
+        );
 
+        if ($logAllowed) {
+            $log=implode("; ",$log_msg);
+            $this->getOrInitForwardLogger()->debug($log);
+        }
+    }
+
+    protected function getOrInitForwardLogger() {
+        if ($this->rotatingLogger) {
+            return $this->rotatingLogger;
+        }
+
+        $logPath = Shopware()->Container()->get('kernel')->getLogDir();
+        $logFile = $logPath . '/MoptPaymentPayone_txredirect_production.log';
+
+        $rfh = new RotatingFileHandler($logFile, 14);
+        $this->rotatingLogger = new Logger('MoptPaymentPayone');
+        $this->rotatingLogger->pushHandler($rfh);
+
+        return $this->rotatingLogger;
+    }
+
+    /**
+     * Initializes request client
+     *
+     * @param $url
+     * @param $post
+     * @param $payoneConfig
+     * @param $timeout
+     * @return resource
+     */
+    protected function initRequestClient($url, $post, $payoneConfig, $numtry)
+    {
+        $timeout = ($numtry * $payoneConfig['transTimeoutRaise']) + $payoneConfig['transTimeout'];
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FAILONERROR, true);
+        curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT_MS, $timeout);
+        // uncomment to override dns resolution
+        // curl_setopt($curl, CURLOPT_RESOLVE, ["shop.testing.fatchip.local:443:127.0.0.1",]);
+
+        return $curl;
+    }
+
+    /**
+     * Returns an array with 'success' = true if no error occurred and the request was successful. The last request and
+     * last response should also be included. When not included, an 'error_msg' has more info and the url and post is
+     * added.
+     *
+     * @param $url
+     * @param $post
+     * @param $tx_action
+     * @param $tx_id
+     * @param $payoneConfig
+     * @param $numtry
+     * @return array
+     */
+    public function  forwardTransactionStatus($url, $post, $tx_action, $tx_id, $payoneConfig, $numtry) {
+        $curl = $this->initRequestClient($url, $post, $payoneConfig, $numtry);
+
+        $log_msg = [
+            "payone-status=".$tx_action,
+            "txid=".$tx_id,
+            "endpoint=". $url,
+        ];
+        $requestStart = microtime(true);
+        $response = curl_exec($curl);
+        $curl_info = curl_getinfo($curl);
+        $response_code = $curl_info['http_code'];
+        $curl_error_message = curl_error($curl);
+        curl_close($curl);
+        $requestStop = microtime(true);
+        $requestDuration = ($requestStop - $requestStart);
+
+        if ($curl_error_message !== "") {
+            return [
+                'request' => (string) $curl_info['request_header'],
+                'response' => (string) $curl_error_message,
+                'curlinfo' => (string) json_encode($curl_info),
+                'success' => false,
+            ];
+        } elseif ($response !== 'TSOK') {
+            return [
+                'request' => (string) $curl_info['request_header'],
+                'response' => (string) $response,
+                'curlinfo' => (string) json_encode($curl_info),
+                'success' => false,
+            ];
+        }
+
+        $log_msg [] = "duration=".$requestDuration;
+        $log_msg []= "response-status=".$response_code;
+        $log_msg []= "response-message=".$response;
+
+        $this->forwardLog($log_msg, $payoneConfig);
+
+        return [
+            'request' => (string) $curl_info['request_header'],
+            'response' => (string) $response,
+            'curlinfo' => (string) json_encode($curl_info),
+            'success' => true,
+        ];
+    }
+
+    /**
+     * @param $post
+     * @param $forwardingUrl
+     * @param $payoneConfig
+     */
+    public function callTransactionStatusForwardingController($post, $forwardingUrl, $payoneConfig)
+    {
+        $log_msg = [
+            'Trying to forward to own controller: ' . $forwardingUrl,
+            'action=' . $post['txaction'],
+            'txid=' . $post['txid'],
+        ];
+
+        $this->forwardLog($log_msg, $payoneConfig);
+
+        $curl = curl_init($forwardingUrl);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        $curl_timeout = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'];
+        $curl_timeout_raise = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout_raise'];
+        $curl_trials_max = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_trials_max'];
+
+        if ($payoneConfig['transTimeout']) {
+            $curl_timeout = $payoneConfig['transTimeout'];
+        }
+
+        if ($payoneConfig['transTimeoutRaise']) {
+            $curl_timeout_raise = $payoneConfig['transTimeoutRaise'];
+        }
+
+        if ($payoneConfig['transMaxTrials']) {
+            $curl_trials_max = $payoneConfig['transMaxTrials'];
+        }
+
+        $curl_trials = 0;
+
+        do {
+            $curl_trials++;
+
+            curl_setopt($curl, CURLOPT_TIMEOUT_MS, $curl_timeout);
+
+            $result = curl_exec($curl);
+
+            $curl_info = curl_getinfo($curl);
+            $response_code = $curl_info['http_code'];
+
+            $curl_info_json = json_encode($curl_info);
+            $log_msg = [
+                'Responsecode of request was: ' . $response_code,
+                'Trials: ' . $curl_trials,
+                'curl_timeout: ' . $curl_timeout,
+                'curl_result: ' . $result,
+                'curl info: ' . $curl_info_json,
+                'raw_post: ' . json_encode($post),
+            ];
+
+            $this->forwardLog($log_msg, $payoneConfig);
+
+            $curl_timeout += $curl_timeout_raise;
+        } while ($curl_trials < $curl_trials_max && $response_code !== 100);
+
+        curl_close($curl);
+    }
 }

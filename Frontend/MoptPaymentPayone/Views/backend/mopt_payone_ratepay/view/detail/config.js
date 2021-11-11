@@ -13,8 +13,8 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.detail.Config', {
                 { type: 'string', name: 'name' }
             ],
             data: [
-                { value: true, name: '{s name=lastschrift}Lastschrift{/s}' },
-                { value: false, name: '{s name=vorkasse}Vorkasse{/s}' }
+                { value: true, name: '{s name="lastschrift"}Lastschrift{/s}' },
+                { value: false, name: '{s name="vorkasse"}Vorkasse{/s}' }
             ]
         });
 
@@ -26,13 +26,13 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.detail.Config', {
                     fields: {
                        shopid: {},
                        currencyId: {
-                            fieldLabel: '{s name=currency}Währung{/s}',
+                            fieldLabel: '{s name="currency"}Währung{/s}',
                             name: 'currencyId',
                             allowBlank: false
                         },
                         ratepayInstallmentMode: {
                             xtype: 'combobox',
-                            fieldLabel: '{s name=ratepaymode}Ratenkauf Modus{/s}',
+                            fieldLabel: '{s name="ratepaymode"}Ratenkauf Modus{/s}',
                             name: 'ratepayInstallmentMode',
                             queryMode: 'local',
                             displayField: 'name',
@@ -43,7 +43,7 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.detail.Config', {
                         },
 
                        countryCodeBilling: {
-                            label: '{s name=country}Land{/s}',
+                            label: '{s name="country"}Land{/s}',
                             hidden: true
                         }                       
                     }                  
