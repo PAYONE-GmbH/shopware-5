@@ -99,7 +99,16 @@ class FrontendCheckout implements SubscriberInterface
             return;
         }
         // Set redirect flag
-        Shopware()->Session()->moptBasketChanged = true;
+        if (isset(Shopware()->Session()->moptPaypalInstallmentWorkerId)) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
+        if (isset(Shopware()->Session()->moptPaydirektExpressWorkerId)) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
+
+        if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])) {
+            Shopware()->Session()->moptBasketChanged = true;
+        }
         $arguments->setReturn($ret);
     }
 
@@ -197,7 +206,7 @@ class FrontendCheckout implements SubscriberInterface
         //check if payment method is PayPal ecs
         /** @var Mopt_PayonePaymentHelper $helper */
         $helper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-        if ($helper->getPaymentNameFromId($userPaymentId) == 'mopt_payone__ewallet_paypal') {
+        if (strpos($helper->getPaymentNameFromId($userPaymentId), 'mopt_payone__ewallet_paypal') === 0) {
             if (!$this->isShippingAddressSupported($orderVars['sUserData']['shippingaddress'])) {
                 $view->assign('invalidShippingAddress', true);
                 $view->assign('sBasketInfo', Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
@@ -211,7 +220,7 @@ class FrontendCheckout implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment.tpl');
             $view->extendsTemplate('frontend/checkout/mopt_shipping_payment_core.tpl');
 
-            if($request->get('moptAmazonErrorCode')) {
+            if ($request->get('moptAmazonErrorCode')) {
                 $errorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $request->get('moptAmazonErrorCode'));
                 $view->assign('moptAmazonErrorMessage', $errorMessage);
                 $view->assign('moptAmazonErrorCode', $request->get('moptAmazonErrorCode'));
@@ -262,14 +271,14 @@ class FrontendCheckout implements SubscriberInterface
                 ]);
 
                 $orderLines[] = [
-                    'reference'    => $item->getId(),
-                    'name'         => $item->getDe(),
-                    'tax_rate'     => (int)($item->getVa()),
-                    'unit_price'   => $price,
-                    'quantity'     => $quantity,
+                    'reference' => $item->getId(),
+                    'name' => $item->getDe(),
+                    'tax_rate' => (int)($item->getVa()),
+                    'unit_price' => $price,
+                    'quantity' => $quantity,
                     'total_amount' => $price * $quantity,
-                    'image_url'    => $basket['content'][$basketItemIndex]['image']['source'],
-                    'product_url'  => $itemUrl,
+                    'image_url' => $basket['content'][$basketItemIndex]['image']['source'],
+                    'product_url' => $itemUrl,
                 ];
             }
 
@@ -350,7 +359,7 @@ class FrontendCheckout implements SubscriberInterface
                 $paymenthelper = $moptPayoneMain->getPaymentHelper();
                 $config = $moptPayoneMain->getPayoneConfig($paymenthelper->getPaymentAmazonPay()->getId());
 
-                if($request->get('AuthenticationStatus') == 'Failure' || $request->get('AuthenticationStatus') == 'Abandoned') {
+                if ($request->get('AuthenticationStatus') == 'Failure' || $request->get('AuthenticationStatus') == 'Abandoned') {
                     //logout because confirmOrderReference failed
                     unset($session->moptPayoneAmazonAccessToken);
                     unset($session->moptPayoneAmazonReferenceId);
@@ -362,7 +371,7 @@ class FrontendCheckout implements SubscriberInterface
                     $view->assign('moptAmazonErrorMessage', $errorMessage);
                 }
 
-                if($request->get('moptAmazonErrorCode')) {
+                if ($request->get('moptAmazonErrorCode')) {
                     $errorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $request->get('moptAmazonErrorCode'));
                     $view->assign('moptAmazonErrorMessage', $errorMessage);
                     $view->assign('moptAmazonErrorCode', $request->get('moptAmazonErrorCode'));
@@ -394,6 +403,13 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('moptPayDirektShortcutImgURL', $imageUrl);
             $view->extendsTemplate('frontend/checkout/mopt_cart_paydirekt' . $templateSuffix . '.tpl');
             $view->extendsTemplate('frontend/checkout/ajax_cart_paydirekt' . $templateSuffix . '.tpl');
+        }
+
+        if ($templateSuffix === '' && $this->isApplePayActive()) {
+            if (is_null($session->get('moptAllowApplePay'))) {
+                $view->assign('moptCheckApplePaySupport', 'true');
+                $view->extendsTemplate('frontend/checkout/ajax_cart_applepay_devicecheck' . $templateSuffix . '.tpl');
+            }
         }
 
         if (!empty($userPaymentId)) {
@@ -477,6 +493,14 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         return false;
+    }
+
+    protected function isApplePayActive()
+    {
+        $paymentApplePay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__ewallet_applepay']
+        );
+        return $paymentApplePay->getActive();
     }
 
     /**

@@ -509,17 +509,17 @@ class Mopt_PayoneInstallHelper
                 'position' => 27,),
             array(
                 'name' => 'mopt_payone__fin_payolution_invoice',
-                'description' => 'PAYONE Paysafe Pay Later™ Rechnungskauf',
+                'description' => 'PAYONE Unzer Rechnungskauf',
                 'template' => 'mopt_paymentmean_payolution_invoice.tpl',
                 'position' => 28,),
             array(
                 'name' => 'mopt_payone__fin_payolution_debitnote',
-                'description' => 'PAYONE Paysafe Pay Later™ Lastschrift',
+                'description' => 'PAYONE Unzer Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
                 'position' => 29,),
             array(
                 'name' => 'mopt_payone__fin_payolution_installment',
-                'description' => 'PAYONE Paysafe Pay Later™ Ratenkauf',
+                'description' => 'PAYONE Unzer Ratenkauf',
                 'template' => 'mopt_paymentmean_payolution_installment.tpl',
                 'position' => 30,),
             array(
@@ -577,6 +577,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Trustly',
                 'template' => 'mopt_paymentmean_trustly.tpl',
                 'position' => 41,),
+            array(
+                'name' => 'mopt_payone__ewallet_applepay',
+                'description' => 'PAYONE Apple Pay',
+                'template' => 'mopt_paymentmean_applepay.tpl',
+                'position' => 42,),
         );
     }
 
@@ -1685,7 +1690,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         $result = $db->query($sql);
 
         if ($result->rowCount() === 0) {
-            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `send_ordernumber_as_reference` TINYINT(1) NOT NULL DEFAULT 0;";
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `send_ordernumber_as_reference` TINYINT(1) NULL DEFAULT 1;";
             $db->exec($sql);
         }
     }
@@ -1855,6 +1860,51 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             $db->exec($sql);
         }
 
+    }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    function checkAndAddApplepayConfig()
+    {
+        $textColumns = ['applepay_merchant_id', 'applepay_certificate', 'applepay_private_key', 'applepay_private_key_password'];
+        $tinyIntColumns = ['applepay_visa', 'applepay_mastercard', 'applepay_girocard', 'applepay_amex', 'applepay_discover', 'applepay_debug'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
+
+                $db->exec($sql);
+            }
+        }
+
+        foreach ($tinyIntColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` TINYINT(1) NULL DEFAULT '0';";
+                $db->exec($sql);
+            }
+        }
     }
 }
 

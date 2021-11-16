@@ -62,10 +62,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     public function afterInit()
     {
         $this->registerCustomModels();
-        $this->get('Loader')->registerNamespace('Shopware\\Plugins\\MoptPaymentPayone', $this->Path());
-        $this->get('Loader')->registerNamespace('Payone', $this->Path() . 'Components/Payone/');
-        $this->get('Snippets')->addConfigDir($this->Path() . 'Snippets/');
-        $this->get('Loader')->registerNamespace('Mopt', $this->Path() . 'Components/Classes/');
+        $this->get('loader')->registerNamespace('Shopware\\Plugins\\MoptPaymentPayone', $this->Path());
+        $this->get('loader')->registerNamespace('Payone', $this->Path() . 'Components/Payone/');
+        $this->get('snippets')->addConfigDir($this->Path() . 'Snippets/');
+        $this->get('loader')->registerNamespace('Mopt', $this->Path() . 'Components/Classes/');
 
         if (version_compare(self::getShopwareVersion(), '5.6.0', '<') || !$this->isPluginActive()) {
             return;
@@ -399,7 +399,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     public function onRunCronJob(Enlight_Components_Cron_EventArgs $job)
     {
-        $logPath = Shopware()->Application()->Kernel()->getLogDir();
+        $logPath = Shopware()->Container()->get('kernel')->getLogDir();
         $logFile = $logPath . '/MoptPaymentPayone_transaction_forward_cronjob.log';
 
         $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
@@ -560,7 +560,36 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->flush();
         }
 
+        // Update PAYONE Paysafe Payment Names
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_payolution_invoice')
+        );
+        if ($payment) {
+            $payment->setDescription('PAYONE Unzer Rechnungskauf');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
 
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_payolution_debitnote')
+        );
+        if ($payment) {
+            $payment->setDescription('PAYONE Unzer Lastschrift');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
+
+        /** @var Payment $payment */
+        $payment = $this->Payments()->findOneBy(
+            array('name' => 'mopt_payone__fin_payolution_installment')
+        );
+        if ($payment) {
+            $payment->setDescription('PAYONE Unzer Ratenkauf');
+            Shopware()->Models()->persist($payment);
+            Shopware()->Models()->flush();
+        }
     }
 
 
@@ -768,6 +797,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Add config field for trustly show iban bic setting.
         $this->getInstallHelper()->checkAndAddTrustlyShowIbanBic();
+
+        // Applepay fileds
+        $this->getInstallHelper()->checkAndAddApplepayConfig();
     }
 
     /**
@@ -934,7 +966,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         if (!$this->moptPayoneLogger) {
             $this->moptPayoneLogger = new Monolog\Logger('moptPayone');
-            $streamHandler = new Monolog\Handler\StreamHandler(Shopware()->Application()->Kernel()->getLogDir()
+            $streamHandler = new Monolog\Handler\StreamHandler( Shopware()->Container()->get('kernel')->getLogDir()
                 . '/moptPayone.log', Monolog\Logger::ERROR);
             $this->moptPayoneLogger->pushHandler($streamHandler);
         }

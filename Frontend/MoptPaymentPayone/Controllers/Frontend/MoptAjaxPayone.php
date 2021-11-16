@@ -161,10 +161,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 echo json_encode(true);
                 return;
             }
-        }                
-        
+        }
+
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
-            if ($response->getScore() === 'U'){
+            if ($response->getScore() === 'U') {
                 $response->setScore($this->moptPayoneMain->getHelper()->getScoreColor($config));
             }
             //save result
@@ -175,9 +175,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         } else { /* INVALID */
             $this->moptPayoneMain->getHelper()->saveConsumerScoreError($userId, $response);
             unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
-            unset($this->session->moptPaymentId);            
-            
-            echo json_encode(false);          
+            unset($this->session->moptPaymentId);
+
+            echo json_encode(false);
         }
     }
 
@@ -404,9 +404,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paymentData['mopt_payone__company_trade_registry_number'] = $this->Request()->getPost('hreg');
         $paymentData['dob'] = $this->Request()->getPost('dob');
         $paymentData['mopt_payone__payolution_installment_basketamount'] = $this->Request()->getPost('basketamount');
-        if (!empty($paymentData['mopt_payone__company_trade_registry_number'])){
+        if (!empty($paymentData['mopt_payone__company_trade_registry_number'])) {
             $paymentData['mopt_payone__payolution_b2bmode'] = 1;
-        } else{
+        } else {
             $paymentData['mopt_payone__payolution_b2bmode'] = 0;
         }
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
@@ -427,13 +427,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $encoded = json_encode($data);
                 echo $encoded;
             } else {
-                $data['errorMessage'] = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage'.$calculationResponse->getErrorcode(), $calculationResponse->getErrorMessage().' (Fehler '.$calculationResponse->getErrorcode().')', true);
+                $data['errorMessage'] = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $calculationResponse->getErrorcode(), $calculationResponse->getErrorMessage() . ' (Fehler ' . $calculationResponse->getErrorcode() . ')', true);
                 $data['status'] = 'error';
                 $encoded = json_encode($data);
                 echo $encoded;
             }
         } else {
-            $data['errorMessage'] = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage'.$precheckResponse->getErrorcode(), $precheckResponse->getErrorMessage().' (Fehler '.$precheckResponse->getErrorcode().')', true);
+            $data['errorMessage'] = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('errorMessage' . $precheckResponse->getErrorcode(), $precheckResponse->getErrorMessage() . ' (Fehler ' . $precheckResponse->getErrorcode() . ')', true);
             $data['status'] = 'error';
             $encoded = json_encode($data);
             echo $encoded;
@@ -521,7 +521,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__company_trade_registry_number'])
             ));
         }
-        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])){
+        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])) {
             $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
         } else {
             $amountWithShipping = $paymentData['mopt_payone__payolution_installment_basketamount'];
@@ -594,7 +594,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
             ));
         }
-        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])){
+        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])) {
             $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
         } else {
             $amountWithShipping = $paymentData['mopt_payone__payolution_installment_basketamount'];
@@ -661,9 +661,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
         ));
-        if ($rateValue){
+        if ($rateValue) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'rate', 'data' => floatval($rateValue *100  ))
+                array('key' => 'rate', 'data' => floatval($rateValue * 100))
             ));
         }
         if ($rateMonth) {
@@ -676,7 +676,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         ));
 
 
-        if ( !empty($paymentData) && $paymentData['mopt_payone__ratepayinstallment_b2bmode']) {
+        if (!empty($paymentData) && $paymentData['mopt_payone__ratepayinstallment_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
             ));
@@ -724,7 +724,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     public function getCurrencyShortName()
     {
-        return Shopware()->Currency()->getShortName();
+        return Shopware()->Container()->get('currency')->getShortName();
     }
 
     public function getWhitelistedCSRFActions()
@@ -783,7 +783,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                     $responseData = $result->getPayData()->toAssocArray();
                     $html = $this->renderRatepayInstallment($responseData);
                 } else {
-                    if($result instanceof Payone_Api_Response_Error) {
+                    if ($result instanceof Payone_Api_Response_Error) {
                         $html = "<div class='ratepay-result rateError'>" . $result->getCustomermessage() . "</div>";
                     }
                 }
@@ -803,7 +803,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $builder->andWhere('snippets.name = :name1')
                     ->setParameter('name1', 'wrongValue');
                 $snippet = $builder->getQuery()->getResult();
-                $snippetText =$snippet[0]->getValue();
+                $snippetText = $snippet[0]->getValue();
 
                 $html = "<div class='rateError'>" . "$snippetText" . "</div>";
             }
@@ -833,13 +833,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         try {
             if (preg_match('/^[0-9]{1,5}$/', $calcValue)) {
-                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-time', $paymentData, false, $ratePayShopId, $calcValue , $amount);;
+                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-time', $paymentData, false, $ratePayShopId, $calcValue, $amount);;
 
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
                     $responseData = $result->getPayData()->toAssocArray();
                     $html = $this->renderRatepayInstallment($responseData);
                 } else {
-                    if($result instanceof Payone_Api_Response_Error) {
+                    if ($result instanceof Payone_Api_Response_Error) {
                         $html = "<div class='rateError'>" . $result->getCustomermessage() . "</div>";
                     }
                 }
@@ -859,7 +859,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $builder->andWhere('snippets.name = :name1')
                     ->setParameter('name1', 'wrongValue');
                 $snippet = $builder->getQuery()->getResult();
-                $snippetText =$snippet[0]->getValue();
+                $snippetText = $snippet[0]->getValue();
 
                 $html = "<div class='rateError'>" . "$snippetText" . "</div>";
             }
@@ -876,7 +876,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     public function renderRatepayInstallment($result)
     {
-        $numberOfRates = $result['last-rate']?$result['number-of-rates']-1:$result['number-of-rates'];
+        $numberOfRates = $result['last-rate'] ? $result['number-of-rates'] - 1 : $result['number-of-rates'];
         $picturePath = $this->Request()->getBaseUrl() . "/engine/Shopware/Plugins/Community/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png";
         $this->View()->addTemplateDir(dirname(__FILE__) . "/../../Views/");
         $this->View()->loadTemplate("frontend/mopt_ajax_payone/render_ratepay_installment.tpl");
@@ -885,12 +885,14 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->View()->assign(array('result' => $result));
         return $this->View()->render();
     }
-    protected function amznConfirmOrderReferenceAction() {
+
+    protected function amznConfirmOrderReferenceAction()
+    {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         //get/setorderreference calls have to be applied before confirmorderreference
         $this->buildAndCallSetOrderReferenceDetails();
         $isConfirmed = $this->buildAndCallConfirmOrderReference();
-        if($isConfirmed === false) {
+        if ($isConfirmed === false) {
             unset($this->session->moptPayoneAmazonAccessToken);
             unset($this->session->moptPayoneAmazonReferenceId);
             unset($this->session->moptPayoneAmazonWorkOrderId);
@@ -903,18 +905,20 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         echo json_encode('OK');
     }
 
-    protected function payDirektOrderCallAction() {
+    protected function payDirektOrderCallAction()
+    {
 
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $result = $this->buildAndCallConfirmOrderPayDirektCall();
-        if($result->getStatus() != 'REDIRECT') {
+        if ($result->getStatus() != 'REDIRECT') {
             $this->Response()->setHttpResponseCode(418);
             return;
         }
         echo json_encode($result);
     }
 
-    protected function buildAndCallConfirmOrderReference() {
+    protected function buildAndCallConfirmOrderReference()
+    {
         $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
         $moptPayoneMain = $this->moptPayoneMain;
 
@@ -961,7 +965,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $response = $service->request($request);
 
-        if($response->getStatus() === 'OK') {
+        if ($response->getStatus() === 'OK') {
             return true;
         }
 
@@ -1043,14 +1047,14 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
 
         $data = [];
-        $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $this->session->moptPayoneAmazonReferenceId, $this->session->moptPayoneAmazonAccessToken );
+        $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $this->session->moptPayoneAmazonReferenceId, $this->session->moptPayoneAmazonAccessToken);
 
 
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
             // create User from Address Data
 
-                $responseData = $response->toArray();
-                $responseAddress = $response->getPaydata()->toAssocArray();
+            $responseData = $response->toArray();
+            $responseAddress = $response->getPaydata()->toAssocArray();
 
             // check if billing country is active for amazon
             if (!$this->isBillingAddressSupported($responseAddress['billing_country'])) {
@@ -1064,9 +1068,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             }
 
             //check telephonenumber
-            if (Shopware()->Config()->get('requirePhoneField')){
+            if (Shopware()->Config()->get('requirePhoneField')) {
                 $shipping_telephonenumber = $responseAddress['shipping_telephonenumber'];
-                if (strlen($shipping_telephonenumber) < 1){
+                if (strlen($shipping_telephonenumber) < 1) {
                     $data['errormessage'] = Shopware()->Snippets()
                         ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                         ->get('phoneNumberRequired');
@@ -1170,12 +1174,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $response;
     }
 
-    protected function isBillingAddressSupported($country){
+    protected function isBillingAddressSupported($country)
+    {
 
         $countries = $this->moptPayoneMain->getPaymentHelper()
             ->moptGetCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
 
-        if (count($countries) == 0){
+        if (count($countries) == 0) {
             return true;
         }
 
@@ -1186,13 +1191,14 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
     }
 
-     protected function isShippingAddressSupported($address){
+    protected function isShippingAddressSupported($address)
+    {
 
-        if(!array_key_exists("shipping_firstname", $address)) {
+        if (!array_key_exists("shipping_firstname", $address)) {
             return false;
         }
 
-        if (count($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries()) > 0 ){
+        if (count($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries()) > 0) {
             $amazonPaySupportedCountries = array();
             foreach ($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries() as $amazonCountry) {
                 /**
@@ -1212,7 +1218,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig();
 
         //Check if amazon payment is not allowed for Packstation's
-        if ($config->getPackStationMode() == 'deny'){
+        if ($config->getPackStationMode() == 'deny') {
             foreach ($address as $part) {
                 if (strpos($part, 'Packstation') !== false
                     || strpos($part, 'packstation') !== false) {
@@ -1221,10 +1227,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             }
         }
 
-         $countries = $this->moptPayoneMain->getPaymentHelper()
-             ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
+        $countries = $this->moptPayoneMain->getPaymentHelper()
+            ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
 
-        if (count($countries) == 0){
+        if (count($countries) == 0) {
             return true;
         }
 
@@ -1234,7 +1240,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             return false;
         }
     }
-    
+
     /**
      * AJAX action called for creditcard expiry checks
      *
@@ -1251,17 +1257,17 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             $sql = 'SELECT * FROM s_plugin_mopt_payone_creditcard_config WHERE is_default = ?';
             $configData = Shopware()->Db()->fetchRow($sql, true);
         }
-        $minExpiryDays = (int) $configData['creditcard_min_valid'];
+        $minExpiryDays = (int)$configData['creditcard_min_valid'];
         $expireDate = $this->Request()->getPost('mopt_payone__cc_cardexpiredate');
         $expireSplit = str_split($expireDate, 2);
         $expireMonth = $expireSplit[1];
         $expireYear = $expireSplit[0];
-        $expireTime = strtotime("+". ($minExpiryDays +1) . " day");
-        $expireNextMonth = ($expireMonth == '12') ? '01' : $expireMonth +1;
-        $expireYear =  ($expireMonth == '12') ? $expireYear +1 : $expireYear;
-        $cardExpireNextMonth = strtotime("01-" . ($expireNextMonth) . "-20" ."$expireYear". " " ."23:59:59");
+        $expireTime = strtotime("+" . ($minExpiryDays + 1) . " day");
+        $expireNextMonth = ($expireMonth == '12') ? '01' : $expireMonth + 1;
+        $expireYear = ($expireMonth == '12') ? $expireYear + 1 : $expireYear;
+        $cardExpireNextMonth = strtotime("01-" . ($expireNextMonth) . "-20" . "$expireYear" . " " . "23:59:59");
         $timediff = $cardExpireNextMonth - $expireTime;
-        if ($timediff >= 0 ) {
+        if ($timediff >= 0) {
             echo json_encode(true);
         } else {
             echo json_encode($minExpiryDays);
@@ -1318,15 +1324,15 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $financingtype = $this->Request()->getParam('financingtype');
         $birthdate = $this->Request()->getParam('birthdate');
         $phoneNumber = $this->Request()->getParam('phoneNumber');
-        $name = $this->moptPayonePaymentHelper->getKlarnaNameByFinancingtype($financingtype);
-        $paymentId = $this->moptPayonePaymentHelper->getPaymentIdFromName($name);
+        $paymentId = $this->Request()->getParam('paymentId');
         $personalId = $this->Request()->getParam('personalId');
 
         $result = $this->moptPayonePaymentHelper->buildAndCallKlarnaStartSession(
             $financingtype,
             $birthdate,
             $phoneNumber,
-            $personalId
+            $personalId,
+            $paymentId
         );
 
         if ($result->getStatus() === 'ERROR') {
@@ -1385,7 +1391,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
     }
 
-    public function ajaxGetPaySafeTokenAction() {
+    public function ajaxGetPaySafeTokenAction()
+    {
         $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
         $this->Response()->setHeader('content-type', 'application/json', true);
 
@@ -1399,7 +1406,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         echo json_encode($tokenArray);
     }
 
-    protected function generatePaySafeToken() {
+    protected function generatePaySafeToken()
+    {
         $config = $this->moptPayoneMain->getPayoneConfig();
         $sessionID = $this->session->sessionId;
         $merchantID = $config['merchantId'];
@@ -1410,5 +1418,60 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return [
             'token' => $token,
         ];
+    }
+
+    /**
+     *
+     */
+    public function createApplePaySessionAction()
+    {
+        $validationUrl = $this->Request()->getParam('validationUrl');
+        $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
+        $paymentId = $this->session->moptPaymentId;
+        $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
+
+        $params = [
+            'merchantIdentifier' => $config['applepayMerchantId'],
+            'displayName' => Shopware()->Config()->shopname,
+            'initiative' => 'web',
+            'initiativeContext' => Shopware()->Config()->host,
+        ];
+        $encodedParams = json_encode($params);
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $validationUrl);
+            curl_setopt($ch, CURLOPT_SSLCERT, $config['applepayCertificate']);
+            curl_setopt($ch, CURLOPT_SSLCERTPASSWD, $config['applepayPrivateKeyPassword']);
+            curl_setopt($ch, CURLOPT_SSLKEY, $config['applepayPrivateKey']);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedParams);
+            $response = curl_exec($ch);
+            if (curl_errno($ch) > 0) {
+                $data['success'] = false;
+                $data['error'] = curl_error($ch);
+                echo json_encode($data);
+                exit();
+            }
+            curl_close($ch);
+            $data['success'] = true;
+            $data['merchantSession'] = $response;
+            echo json_encode($data);
+            exit();
+
+        } catch (\Exception $e) {
+            die(var_dump($e->getMessage()));
+        }
+    }
+
+    /**
+     *
+     */
+    protected function setApplePayDeviceSupportAction()
+    {
+        $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
+        $applePaySupported = $this->Request()->getParam('applePaySupported') === "true" ? true : false;
+        $this->session->offsetSet('moptAllowApplePay', $applePaySupported);
+        exit();
     }
 }

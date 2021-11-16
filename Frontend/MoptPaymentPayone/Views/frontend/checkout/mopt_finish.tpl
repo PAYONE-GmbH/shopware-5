@@ -9,7 +9,7 @@
 
 {block name="frontend_checkout_finish_teaser_actions"}
     {$smarty.block.parent}
-    {if $moptPaymentConfigParams.moptMandateDownloadEnabled && $sUserData.additional.payment.name == 'mopt_payone__acc_debitnote'}
+    {if $moptPaymentConfigParams.moptMandateDownloadEnabled && $sUserData.additional.payment.name|strstr:"mopt_payone__acc_debitnote"}
         <p class="teaser--actions">
             {strip}
                 <a href="{url controller=moptAjaxPayone action=downloadMandate forceSecure}" 

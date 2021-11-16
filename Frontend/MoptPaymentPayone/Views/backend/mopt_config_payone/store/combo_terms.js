@@ -5,15 +5,15 @@ Ext.define('Shopware.apps.MoptConfigPayone.store.ComboTerms', {
   model: 'Shopware.apps.MoptConfigPayone.model.Comboint',
   data: [
     {
-      display: '{s name=fieldvalue/off}Aus{/s}',
+      display: '{s name="fieldvalue/off"}Aus{/s}',
       value: 0
     },
     {
-      display: '{s name=fieldvalue/onconfirm}Auf der Confirm Seite{/s}',
+      display: '{s name="fieldvalue/onconfirm"}Auf der Confirm Seite{/s}',
       value: 1
     },
     {
-      display: '{s name=fieldvalue/global}Global{/s}',
+      display: '{s name="fieldvalue/global"}Global{/s}',
       value: 2
     }
   ]

@@ -49,7 +49,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function init()
     {
         $this->logging = new Logging();
-        $this->logging->lfile(Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log');
+        $this->logging->lfile(Shopware()->Container()->get('kernel')->getLogDir() . '/moptPayoneConnectionTest.log');
     }
 
     public function getWhitelistedCSRFActions()
@@ -94,6 +94,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             'ajaxSavePaypalConfig',
             'ajaxgetRatepayConfig',
             'ajaxgetAmazonConfig',
+            'ajaxsaveApplepayCert',
+            'ajaxsaveApplepayKey',
         );
         return $returnArray;
     }
@@ -148,7 +150,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->pid = $_GET['pid'];
         $this->apikey = $_GET['apikey'];
 
-        unlink(Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log');
+        unlink(Shopware()->Container()->get('kernel')->getLogDir() . '/moptPayoneConnectionTest.log');
         $this->logging->lwrite('<span style="color: green;">Starte Verbindungstest</span>', $this->aLogcontext);
         if (!$this->testfailed) {
             $this->creditcardCheckVisa(true);
@@ -217,6 +219,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         $request->setPersonalData($pData);
         $request->setPayment($paymentData);
+        $request->setSuccessurl('https://payone.com');
         $request->setMode('test');
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Visa)</span>');
@@ -275,6 +278,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $request->setPayment($paymentData);
 
         $paymentData->setEcommercemode('internet');
+        $request->setSuccessurl('https://payone.com');
         $request->setMode('test');
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Mastercard)</span>');
@@ -451,7 +455,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data = array();
         sleep(2);
         $this->Front()->Plugins()->Json()->setRenderer(true);
-        $filename = Shopware()->Application()->Kernel()->getLogDir() . '/moptPayoneConnectionTest.log';
+        $filename = Shopware()->Container()->get('kernel')->getLogDir() . '/moptPayoneConnectionTest.log';
         $resultfile = fopen($filename, "r");
         $aLines = '';
         while (!feof($resultfile)) {
@@ -1134,6 +1138,79 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         exit(0);
     }
 
+    public function ajaxSaveApplepayCertAction()
+    {
+        $shoproot = Shopware()->Container()->getParameter('kernel.root_dir');
+        $folder = '/var/cert/';
+        if (!is_dir($shoproot.$folder)) {
+            mkdir($shoproot.$folder, 0700);
+        }
+        $response = 0;
+        $this->Front()->Plugins()->Json()->setRenderer(true);
+
+        if (isset($_FILES['file']) && !empty($_FILES['file']['name'] && $_FILES['file']['size'] > 0)) {
+            $fileData = $_FILES['file'];
+            $filename = $fileData['name'];
+            /* Location */
+            $location = $shoproot . $folder . $filename;
+            $fileType = pathinfo($location,PATHINFO_EXTENSION);
+            $fileType = strtolower($fileType);
+            /* Valid extensions */
+            $valid_extensions = array("pem");
+
+            $response = 0;
+            /* Check file extension */
+            if(in_array(strtolower($fileType), $valid_extensions)) {
+                /* Upload file */
+                // $test = move_uploaded_file($_FILES['file']['tmp_name'],$location);
+                if(move_uploaded_file($_FILES['file']['tmp_name'],$location)){
+                    chmod($location, 0644);
+                    $response = $location;
+                }
+            }
+
+        }
+        echo $response;
+        exit(0);
+    }
+
+    public function ajaxSaveApplepayKeyAction()
+    {
+        $shoproot = Shopware()->Container()->getParameter('kernel.root_dir');
+        $folder = '/var/cert/';
+        if (!is_dir($shoproot.$folder)) {
+            mkdir($shoproot.$folder, 0700);
+        }
+
+        $response = 0;
+        $this->Front()->Plugins()->Json()->setRenderer(true);
+
+        if (isset($_FILES['file']) && !empty($_FILES['file']['name'] && $_FILES['file']['size'] > 0)) {
+            $fileData = $_FILES['file'];
+            $filename = $fileData['name'];
+            /* Location */
+            $location = $shoproot . $folder . $filename;
+            $fileType = pathinfo($location,PATHINFO_EXTENSION);
+            $fileType = strtolower($fileType);
+            /* Valid extensions */
+            $valid_extensions = array("key");
+
+            $response = 0;
+            /* Check file extension */
+            if(in_array(strtolower($fileType), $valid_extensions)) {
+                /* Upload file */
+                // $test = move_uploaded_file($_FILES['file']['tmp_name'],$location);
+                if(move_uploaded_file($_FILES['file']['tmp_name'],$location)){
+                    chmod($location, 0644);
+                    $response = $location;
+                }
+            }
+
+        }
+        echo $response;
+        exit(0);
+    }
+
     public function updateSnippet($options)
     {
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Snippet\Snippet');
@@ -1256,6 +1333,43 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         if ($options['liveMode'] == "true") {
             $data->setLiveMode(1);
         }
+        if ($options['applepayVisa'] == "false") {
+            $data->setApplepayVisa(0);
+        }
+        if ($options['applepayVisa'] == "true") {
+            $data->setApplepayVisa(1);
+        }
+        if ($options['applepayMastercard'] == "false") {
+            $data->setApplepayMastercard(0);
+        }
+        if ($options['applepayMastercard'] == "true") {
+            $data->setApplepayMastercard(1);
+        }
+        if ($options['applepayGirocard'] == "false") {
+            $data->setApplepayGirocard(0);
+        }
+        if ($options['applepayGirocard'] == "true") {
+            $data->setApplepayGirocard(1);
+        }
+        if ($options['applepayAmex'] == "false") {
+            $data->setApplepayAmex(0);
+        }
+        if ($options['applepayAmex'] == "true") {
+            $data->setApplepayAmex(1);
+        }
+        if ($options['applepayDiscover'] == "false") {
+            $data->setApplepayDiscover(0);
+        }
+        if ($options['applepayDiscover'] == "true") {
+            $data->setApplepayDiscover(1);
+        }
+        if ($options['applepayDebug'] == "false") {
+            $data->setApplepayDebug(0);
+        }
+        if ($options['applepayDebug'] == "true") {
+            $data->setApplepayDebug(1);
+        }
+
 
         Shopware()->Models()->flush($data);
 

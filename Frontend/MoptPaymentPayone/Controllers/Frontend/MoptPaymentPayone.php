@@ -186,6 +186,18 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleRedirectFeedback($response);
     }
 
+    public function applepayAction()
+    {
+        $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
+
+        $token = $this->Request()->getParam('token');
+        $response = $this->mopt_payone__applepay($token);
+        $return = $this->mopt_payone__handleApplePayFeedback($response);
+        echo $return;
+        exit();
+
+    }
+
     public function barzahlenAction()
     {
         $response = $this->mopt_payone__barzahlen();
@@ -538,6 +550,24 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         /** @var Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Authorization_Redirect $response */
         $response = $this->buildAndCallPayment($config, 'fnc', $payment, $workorderid);
+
+        return $response;
+    }
+
+    /**
+     *
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__applepay($token)
+    {
+        $router = $this->Front()->Router();
+
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentApplepay($router, $token);
+
+        /** @var Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Authorization_Redirect $response */
+        $response = $this->buildAndCallPayment($config, 'wlt', $payment);
 
         return $response;
     }
@@ -937,6 +967,25 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
+     * handle direct feedback
+     * on success save order
+     *
+     * @param Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__handleApplePayFeedback($response)
+    {
+        $session = Shopware()->Session();
+
+        if ($response->getStatus() == 'ERROR') {
+            $errorUrl = $this->Front()->Router()->assemble(['controller' => 'MoptPaymentPayone', 'action' => 'error', 'forceSecure' => true, 'appendSession' => false]);
+            unset($session->moptPaymentReference);
+            return json_encode(['success' => false, 'url' => $errorUrl]);
+        }
+        $finishUrl = $this->Front()->Router()->assemble(['controller' => 'MoptPaymentPayone', 'action' => 'finishOrder', 'forceSecure' => true, 'appendSession' => false, 'txid' => $response->getTxid(),'hash' => $session->moptPaymentReference]);
+        return json_encode(['success' => true, 'url' => $finishUrl]);
+    }
+
+    /**
      * handles redirect feedback
      * on success redirect customer to submitted(from Pay1) redirect url
      *
@@ -1032,6 +1081,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         if ($this->moptPayonePaymentHelper->isPayoneRatepay($paymentName) ||
             $this->moptPayonePaymentHelper->isPayoneAmazonPay($paymentName) ||
+            $this->moptPayonePaymentHelper->isPayoneApplepay($paymentName) ||
             $config['sendOrdernumberAsReference'] === true
         ) {
             $paymentReference = $this->moptPayoneMain->reserveOrdernumber();
@@ -1316,7 +1366,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             } else {
                 $userData['additional']['charge_vat'] = true;
                 $userData['additional']['show_net'] = !empty($system->sUSERGROUPDATA['tax']);
-                Shopware()->Session()->sOutputNet = empty($system->sUSERGROUPDATA['tax']);
+                Shopware()->Session()->sOutputNet = (empty($system->sUSERGROUPDATA['tax']));
             }
         }
 
@@ -1560,7 +1610,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         // check 1: isRecurring value in session
         // $session = Shopware()->Session();
-        $session = $this->container->get('Session');
+        $session = $this->container->get('session');
         $isRecurringAboOrder = $session->offsetGet('isRecurringAboOrder');
         if (!$isRecurringAboOrder) {
             // this isn't a recurring abo order, so we can

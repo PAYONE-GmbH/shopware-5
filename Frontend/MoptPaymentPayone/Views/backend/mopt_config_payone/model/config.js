@@ -114,6 +114,16 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'changeOrderOnTXS', type: 'boolean'},
     { name: 'ratepaySnippetId', type: 'string'},
     { name: 'trustlyShowIbanBic', type: 'boolean'},
+    { name: 'applepayMerchantId', type: 'string'},
+    { name: 'applepayVisa', type: 'boolean'},
+    { name: 'applepayMastercard', type: 'boolean'},
+    { name: 'applepayGirocard', type: 'boolean'},
+    { name: 'applepayAmex', type: 'boolean'},
+    { name: 'applepayDiscover', type: 'boolean'},
+    { name: 'applepayCertificate', type: 'string'},
+    { name: 'applepayPrivateKey', type: 'string'},
+    { name: 'applepayPrivateKeyPassword', type: 'string'},
+    { name: 'applepayDebug', type: 'boolean'},
   ],
   /**
    * Validation

@@ -36,16 +36,16 @@ Ext.define('Shopware.apps.Payment.controller.MoptPayonePayment', {
         var jsonData = Ext.JSON.decode(response.responseText);
         if (jsonData.success)
         {
-          Ext.Msg.alert('{s name=duplicatePayment/title}Zahlart Duplizieren{/s}', 
-          '{s name=duplicatePayment/thePayment}Die Zahlart{/s} \"' 
-                  + paymentName + '\" {s name=duplicatePayment/successful}wurde erfolgreich dupliziert{/s}');
+          Ext.Msg.alert('{s name="duplicatePayment/title"}Zahlart Duplizieren{/s}',
+          '{s name="duplicatePayment/thePayment"}Die Zahlart{/s} \"'
+                  + paymentName + '\" {s name="duplicatePayment/successful"}wurde erfolgreich dupliziert{/s}');
 
           //reload form
           options.callback(record);
         }
         else
         {
-          Ext.Msg.alert('{s name=duplicatePayment/title}Zahlart Duplizieren{/s}', jsonData.error_message);
+          Ext.Msg.alert('{s name="duplicatePayment/title"}Zahlart Duplizieren{/s}', jsonData.error_message);
         }
       }
     });

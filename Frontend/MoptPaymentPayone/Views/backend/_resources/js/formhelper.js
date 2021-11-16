@@ -31,6 +31,7 @@ function populateForm($form, data)
         if ($ctrls.is('select'))
         {
             $('option', $ctrls).each(function () {
+                 if (value == null) { value = ' '};
                  if (this.value.toString() === value.toString()) {
                     this.selected = true;
                 }
@@ -44,6 +45,7 @@ function populateForm($form, data)
         {
             switch ($ctrls.attr("type"))   //input type
             {
+                case "password":
                 case "text":
                 case "hidden":
                     $ctrls.val(value);

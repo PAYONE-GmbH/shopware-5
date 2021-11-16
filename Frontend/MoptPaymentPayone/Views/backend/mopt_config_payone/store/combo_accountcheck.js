@@ -5,15 +5,15 @@ Ext.define('Shopware.apps.MoptConfigPayone.store.ComboAccountcheck', {
   model: 'Shopware.apps.MoptConfigPayone.model.Comboint',
   data: [
     {
-      display: '{s name=fieldvalue/donotcheck}nicht durchführen{/s}',
+      display: '{s name="fieldvalue/donotcheck"}nicht durchführen{/s}',
       value: '0'
     }, 
     {
-      display: '{s name=fieldvalue/basic}Basic{/s}',
+      display: '{s name="fieldvalue/basic"}Basic{/s}',
       value: '1'
     },
     {
-      display: '{s name=fieldvalue/pos}Prüfung gegen die POS-Sperrliste{/s}',
+      display: '{s name="fieldvalue/pos"}Prüfung gegen die POS-Sperrliste{/s}',
       value: '2'
     }
   ]

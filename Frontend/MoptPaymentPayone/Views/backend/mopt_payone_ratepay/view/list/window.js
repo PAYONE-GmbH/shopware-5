@@ -4,7 +4,7 @@ Ext.define('Shopware.apps.MoptPayoneRatepay.view.list.Window', {
     alias: 'widget.mopt-payone-ratepay-list-window',
     height: 450,
     width: 600,
-    title : '{s name=window/title}Payone Ratepay{/s}',
+    title : '{s name="window/title"}Payone Ratepay{/s}',
  
     configure: function() {
         return {

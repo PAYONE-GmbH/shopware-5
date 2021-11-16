@@ -133,6 +133,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $session = Shopware()->Session();
         $session->moptPaydirektExpressError = true;
         unset($session->moptPaydirektExpressWorkerId);
+        unset($session->moptBasketChanged);
 
         return $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
     }

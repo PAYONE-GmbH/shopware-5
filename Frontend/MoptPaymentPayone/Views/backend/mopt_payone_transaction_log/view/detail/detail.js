@@ -46,17 +46,17 @@ Ext.define('Shopware.apps.MoptPayoneTransactionLog.view.detail.Detail', {
     me.items = [
       {
         xtype: 'grid',
-        title: '{s name=details/title}Details{/s}',
+        title: '{s name="details/title"}Details{/s}',
         columns: [
           {
-            header: '{s name=details/property}Eigenschaft{/s}',
+            header: '{s name="details/property"}Eigenschaft{/s}',
             dataIndex: 'name',
             width: '30%',
             sortable: false,
             menuDisabled: true
           },
           {
-            header: '{s name=details/value}Wert{/s}',
+            header: '{s name="details/value"}Wert{/s}',
             dataIndex: 'value',
             width: '70%',
             sortable: false,

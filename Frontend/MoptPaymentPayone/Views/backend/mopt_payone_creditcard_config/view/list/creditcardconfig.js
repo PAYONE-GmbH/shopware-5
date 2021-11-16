@@ -4,9 +4,9 @@ Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.view.list.Creditcardconfig'
     alias: 'widget.mopt-payone-creditcard-config-listing-grid',
     region: 'center',
     snippets: {
-        shop: '{s name=shop}Shop{/s}',
-        integrationType: '{s name=integrationType}Anfragetyp{/s}',
-        isDefault: '{s name=isDefault}Default{/s}'
+        shop: '{s name="shop"}Shop{/s}',
+        integrationType: '{s name="integrationType"}Anfragetyp{/s}',
+        isDefault: '{s name="isDefault"}Default{/s}'
     },
     configure: function () {
         var me = this;
@@ -19,9 +19,9 @@ Ext.define('Shopware.apps.MoptPayoneCreditcardConfig.view.list.Creditcardconfig'
                     header: me.snippets.integrationType,
                     renderer: function (value) {
                     if(value === 0) {
-                        return '{s name=integrationTypeHostedIframe}hosted-iFrame{/s}';
+                        return '{s name="integrationTypeHostedIframe"}hosted-iFrame{/s}';
                     } else {
-                        return '{s name=integrationTypeAjaxCall}AJAX{/s}';
+                        return '{s name="integrationTypeAjaxCall"}AJAX{/s}';
                     } 
                 }
                 },

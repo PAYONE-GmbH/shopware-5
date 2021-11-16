@@ -50,6 +50,16 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet extends Pa
     protected $backurl = null;
 
     /**
+     * @var null
+     */
+    protected $cardtype = null;
+
+    /**
+     * @var null
+     */
+    protected $paydata = null;
+
+    /**
      * @param $successurl
      */
     public function setSuccessurl($successurl)
@@ -111,5 +121,36 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet extends Pa
     public function getErrorurl()
     {
         return $this->errorurl;
+    }
+
+    /**
+     * @param string $cardtype
+     */
+    public function setCardtype(string $cardtype)
+    {
+        $this->cardtype = $cardtype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCardtype()
+    {
+        return $this->cardtype;
+    }
+
+    /**
+     * @param Payone_Api_Request_Parameter_Paydata_Paydata $paydata
+     */
+    public function setPaydata($paydata) {
+        $this->paydata = $paydata;
+    }
+
+    /**
+     *
+     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     */
+    public function getPaydata() {
+        return $this->paydata;
     }
 }

@@ -30,40 +30,43 @@ class Mopt_PayonePaymentHelper
      */
     protected $_sFallback = "
         <header>
-            <strong>Zusätzliche Hinweise für die Datenschutzerklärung für Kauf auf Rechnung, Ratenzahlung und Zahlung mittels SEPA-Basis-Lastschrift von **company** (im Folgenden: \"wir\")</strong></br>
-            <span><i>(Stand: 17.03.2016)</i></span>
+            <strong>Ergänzende Hinweise zur Datenschutzerklärung für Kauf auf Rechnung, per Ratenzahlung und direkter SEPA-Lastschrift von **company** (im Folgenden: \"wir\")</strong></br>
+            <span><i>(Stand: 16.10.2020)</i></span>
         </header>
         <ol>
-          <li><p>Bei Kauf auf Rechnung oder Ratenzahlung oder SEPA-Basis-Lastschrift wird von Ihnen während des Bestellprozesses eine datenschutzrechtliche Einwilligung eingeholt. Folgend finden Sie eine Wiederholung dieser Bestimmungen, die lediglich informativen Charakter haben.</p></li>
-          <li><p>Bei Auswahl von Kauf auf Rechnung oder Ratenzahlung oder Bezahlung mittels SEPA-Basis-Lastschrift werden für die Abwicklung dieser Zahlarten personenbezogene Daten (Vorname, Nachname, Adresse, Email, Telefonnummer, Geburtsdatum, IP-Adresse, Geschlecht) gemeinsam mit für die Transaktionsabwicklung erforderlichen Daten (Artikel, Rechnungsbetrag, Zinsen, Raten, Fälligkeiten, Gesamtbetrag, Rechnungsnummer, Steuern, Währung, Bestelldatum und Bestellzeitpunkt) an payolution übermittelt werden. payolution hat ein berechtigtes Interesse an den Daten und benötigt bzw. verwendet diese um Risikoüberprüfungen durchzuführen.</p></li>
-          <li>
-            <p>Zur Überprüfung der Identität bzw. Bonität des Kunden werden Abfragen und Auskünfte bei öffentlich zugänglichen Datenbanken sowie Kreditauskunfteien durchgeführt. Bei nachstehenden Anbietern können Auskünfte und gegebenenfalls Bonitätsinformationen auf Basis mathematisch-statistischer Verfahren eingeholt werden:</p>
-            <ul>
-                <li>CRIF GmbH, Diefenbachgasse 35, A-1150 Wien</li>
-                <li>CRIF AG, Hagenholzstrasse 81, CH-8050 Zürich</li>
-                <li>Deltavista GmbH, Dessauerstraße 9, D-80992 München</li>
-                <li>SCHUFA Holding AG, Kormoranweg 5, D-65201 Wiesbaden</li>
-                <li>KSV1870 Information GmbH, Wagenseilgasse 7, A-1120 Wien</li>
-                <li>Bürgel Wirtschaftsinformationen GmbH & Co. KG, Gasstraße 18, D-22761 Hamburg</li>
-                <li>Creditreform Boniversum GmbH, Hellersbergstr. 11, D-41460 Neuss</li>
-                <li>infoscore Consumer Data GmbH, Rheinstraße 99, D-76532 Baden-Baden</li>
-                <li>ProfileAddress Direktmarketing GmbH, Altmannsdorfer Strasse 311, A-1230 Wien</li>
-                <li>Deutsche Post Direkt GmbH, Junkersring 57, D-53844 Troisdorf</li>
-                <li>payolution GmbH, Am Euro Platz 2, A-1120 Wien</li>
-            </ul>
-            <p>payolution wird Ihre Angaben zur Bankverbindung (insbesondere Bankleitzahl und Kontonummer) zum Zwecke der Kontonummernprüfung an die SCHUFA Holding AG übermitteln. Die SCHUFA prüft anhand dieser Daten zunächst, ob die von Ihnen gemachten Angaben zur Bankverbindung plausibel sind. Die SCHUFA überprüft, ob die zur Prüfung verwendeten Daten ggf. in Ihrem Datenbestand gespeichert sind und übermittelt sodann das Ergebnis der Überprüfung an payolution zurück. Ein weiterer Datenaustausch wie die Bekanntgabe von Bonitätsinformationen oder eine Übermittlung abweichender Bankverbindungsdaten sowie Speicherung Ihrer Daten im SCHUFA-Datenbestand finden im Rahmen der Kontonummernprüfung nicht statt. Es wird aus Nachweisgründen allein die Tatsache der Überprüfung der Bankverbindungsdaten bei der SCHUFA gespeichert.</p>
-            <p>payolution ist berechtigt, auch Daten zu etwaigem nicht-vertragsgemäßen Verhalten (z.B. unbestrittene offene Forderungen) zu speichern, zu verarbeiten, zu nutzen und an oben genannte Auskunfteien zu übermitteln.</p>
-          </li>
-          <li><p>Wir sind bereits nach den Bestimmungen des Bürgerlichen Gesetzbuches über Finanzierungshilfen zwischen Unternehmern und Verbrauchern, zu einer Prüfung Ihrer Kreditwürdigkeit gesetzlich verpflichtet.</p></li>
-          <li><p>Im Fall eines Kaufs auf Rechnung oder Ratenkauf oder einer Bezahlung mittels SEPA-Basis-Lastschrift werden der payolution GmbH Daten über die Aufnahme (zu Ihrer Person, Kaufpreis, Laufzeit des Teilzahlungsgeschäfts, Ratenbeginn) und vereinbarungsgemäße Abwicklung (z.B. vorzeitige Rückzahlung, Laufzeitverlängerung, erfolgte Rückzahlungen) dieses Teilzahlungsgeschäfts übermittelt. Nach Abtretung der Kaufpreisforderung wird die forderungsübernehmende Bank die genannten Datenübermittlungen vornehmen. Wir bzw. die Bank, der die Kaufpreisforderung abgetreten wird, werden payolution GmbH auch Daten aufgrund nichtvertragsgemäßer Abwicklung (z.B. Kündigung des Teilzahlungsgeschäfts, Zwangsvollstreckungs-maßnahmen) melden. Diese Meldungen dürfen nach den datenschutzrechtlichen Bestimmungen nur erfolgen, soweit dies zur Wahrung berechtigter Interessen von Vertragspartnern der payolution GmbH oder der Allgemeinheit erforderlich ist und dadurch Ihre schutzwürdigen Belange nicht beeinträchtigt werden. payolution GmbH speichert die Daten, um ihren Vertragspartnern, die gewerbsmäßig Teilzahlungs- und sonstige Kreditgeschäfte an Verbraucher geben, Informationen zur Beurteilung der Kreditwürdigkeit von Kunden geben zu können. An Unternehmen, die gewerbsmäßig Forderungen einziehen und payolution GmbH vertraglich angeschlossen sind, können zum Zwecke der Schuldnerermittlung Adressdaten übermittelt werden. payolution GmbH stellt die Daten ihren Vertragspartnern nur zur Verfügung, wenn diese ein berechtigtes Interesse an der Datenübermittlung glaubhaft darlegen. payolution GmbH übermittelt nur objektive Daten ohne Angabe der Bank; subjektive Werturteile sowie persönliche Einkommens- und Vermögensverhältnisse sind in Auskünften der payolution GmbH nicht enthalten.</p></li>
-          <li><p>Die im Bestellprozess durch Einwilligung erfolgte Zustimmung zur Datenweitergabe kann jederzeit, auch ohne Angabe von Gründen, uns gegenüber widerrufen können. Die oben genannten gesetzlichen Verpflichtungen zur Überprüfung Ihrer Kreditwürdigkeit bleiben von einem allfälligen Widerruf jedoch unberührt. Sie sind verpflichtet ausschließlich wahrheitsgetreue Angaben gegenüber uns zu machen.</p></li>
-          <li><p>Sollten Sie Auskunft über die Erhebung, Nutzung, Verarbeitung oder Übermittlung von Sie betreffenden personenbezogenen Daten erhalten wollen oder Auskünfte, Berichtigungen, Sperrungen oder Löschung dieser Daten wünschen, können Sie sich an den Sachbearbeiter für Datenschutz bei payolution wenden:</p></li>
+            <li><p>Durch die Auswahl eines Kaufs auf Rechnung, per Ratenzahlung oder direkter SEPA-Lastschrift, stimmen Sie den Datenschutzbestimmungen der payolution GmbH und der Weiterverarbeitung Ihrer persönlichen Daten zu. Diese Bestimmungen sind nachstehend ausschließlich zu Informationszwecken erneut aufgeführt.</p></li>
+            <li><p>Wenn Sie die Zahlung auf Rechnung, per Ratenzahlung oder direkter SEPA-Lastschrift auswählen, werden Ihre für die Bearbeitung dieser Zahlungsmethode erforderlichen persönlichen Informationen (Vorname, Nachname, Anschrift, E-Mail-Adresse, Telefonnummer, Geburtsdatum, IP-Adresse, Geschlecht) zusammen mit den für die Ausführung der Transaktion erforderlichen Daten (Artikel, Rechnungsbetrag, Zinsen, Ratenzahlungen, Fälligkeitsdatum, Gesamtbetrag, Rechnungsnummer, Steuerbetrag, Währung, Bestelldatum und -uhrzeit) an die payolution GmbH zum Zwecke der Risikoeinschätzung im Rahmen seiner regulatorischen Verpflichten weitergeleitet.</p></li>
+            <li>
+                <p>Zur Identitäts- und/oder Solvenzprüfung des Kunden werden Abfragen und Auskunftsersuchen an öffentlich zugängliche Datenbanken und Kreditauskunfteien weitergeleitet. Es können Informationen, und falls erforderlich, Kreditauskünfte auf Grundlage statistischer Methoden bei den folgenden Anbietern abgefragt werden:</p>
+                <ul>
+                    <li>CRIF GmbH, Diefenbachgasse 35, 11 50 Wien, Österreich</li>
+                    <li>CRIF AG, Hagenholzstrasse 81, 8050 Zürich, Schweiz</li>
+                    <li>CRIF Bürgel GmbH, Radlkoferstraße 2, 81373 München, Deutschland</li>
+                    <li>SCHUFA Holding AG, Kormoranweg 5, 65201 Wiesbaden, Deutschland</li>
+                    <li>KSV1870 Information GmbH, Wagenseilgasse 7, 1100 Wien, Österreich</li>
+                    <li>Creditreform Boniversum GmbH, Hellersbergstr. 11, 41460 Neuss, Deutschland</li>
+                    <li><a href='https://finance.arvato.com/icdinfoblatt' rel='nofollow noopener'>infoscore Consumer Data GmbH, Rheinstrasse 99, 76532 Baden-Baden, Deutschland</a></li>
+                    <li>ProfileAddress Direktmarketing GmbH, Altmannsdorfer Strasse 311, 1230 Wien, Österreich</li>
+                    <li>Emailage LTD, 1 Fore Street Ave, London, EC2Y 5EJ, Vereinigtes Königreich</li>
+                    <li>ThreatMetrix, The Base 3/F, Tower C, Evert van de Beekstraat 1, 1118 CL Schiphol, Niederlande</li>
+                    <li>payolution GmbH, Columbuscenter, Columbusplatz 7-8, 1100 Wien, Österreich</li>
+                    <li>Universum Business GmbH, Hanauer Landstr. 164, 60314 Frankfurt am Main, Deutschland</li>
+                </ul>
+                <p>Die payolution GmbH wird Ihre Angaben zur Bankverbindung (insbesondere Bankleitzahl und Kontonummer) zum Zwecke der Kontonummernprüfung an die SCHUFA Holding AG übermitteln. Die SCHUFA prüft anhand dieser Daten zunächst, ob die von Ihnen gemachten Angaben zur Bankverbindung plausibel sind. Die SCHUFA überprüft, ob die zur Prüfung verwendeten Daten ggf. in Ihrem Datenbestand gespeichert sind und übermittelt sodann das Ergebnis der Überprüfung an payolution zurück. Ein weiterer Datenaustausch wie die Bekanntgabe von Bonitätsinformationen oder eine Übermittlung abweichender Bankverbindungsdaten sowie Speicherung Ihrer Daten im SCHUFA-Datenbestand finden im Rahmen der Kontonummernprüfung nicht statt. Es wird aus Nachweisgründen allein die Tatsache der Überprüfung der Bankverbindungsdaten bei der SCHUFA gespeichert.</p>
+                <p>Im Fall von vertragswidrigem Verhalten (z. B. Bestehen unstrittiger Forderungen) ist die payolution GmbH ebenfalls zur Speicherung, Verarbeitung, Verwendung von Daten und deren Übermittlung an die o. g. Kreditauskunfteien berechtigt.</p>
+            </li>
+            <li><p>Gemäß den Bestimmungen des Bürgerlichen Gesetzbuches über Finanzierungshilfen zwischen Händlern und Konsumenten sind wir gesetzlich zur Prüfung Ihrer Kreditwürdigkeit verpflichtet.</p></li>
+            <li><p>Im Falle eines Kaufs auf Rechnung, per Ratenzahlung oder direkter SEPA-Lastschrift, werden wir Daten zu den Einzelheiten des entsprechenden Zahlungsvorgangs (Ihre Personendaten, Kaufpreis, Bedingungen des Zahlungsvorgangs, Beginn der Zahlung) und die Vertragsbedingungen (z. B. vorzeitige Zahlung, Verlängerung der Vertragslaufzeit, erfolgte Zahlungen) an die payolution GmbH übermitteln. Nach Abtretung der Kaufpreisforderung wird das Bankinstitut, dem die Forderung abgetreten wurde, die genannte Datenübermittlung vornehmen. Wir und/oder das Bankinstitut sind entsprechend der Abtretung der Kaufpreisforderung ebenfalls zur Meldung von Daten über vertragswidriges Verhalten (z. B. Beendigung der Zahlungsvereinbarung, Zwangsvollstreckungsmaßnahmen) an die payolution GmbH angewiesen. Gemäß den Datenschutzbestimmungen erfolgen diese Meldungen ausschließlich, wenn diese zur Sicherstellung des rechtmäßigen Interesses der Vertragspartner der payolution GmbH oder der Allgemeinheit erforderlich sind und Ihre rechtmäßigen Interessen dadurch nicht beeinträchtigt werden. Die payolution GmbH wird die Daten speichern, um seinen Vertragspartnern, die Konsumenten Ratenzahlungen oder sonstige Kreditvereinbarungen im gewerblichen Rahmen gewähren, Informationen zur Einschätzung der Kreditwürdigkeit von Kunden zur Verfügung stellen zu können. Mit der payolution GmbH in einem Vertragsverhältnis stehende gewerbliche Inkassounternehmen können Adressinformationen zur Ermittlung von Debitoren zur Verfügung gestellt werden. Die payolution GmbH ist dazu angehalten, seinen Vertragspartnern nur dann Daten zu übermitteln, wenn ein glaubwürdiges und rechtmäßiges Interesse an der Datenübermittlung besteht. Die payolution GmbH ist dazu angehalten, ausschließlich objektive Daten ohne Spezifikation an das entsprechende Bankinstitut zu übermitteln. Informationen über subjektive Werteinschätzungen und persönliches Einkommen sind in den von der payolution GmbH zur Verfügung gestellten Informationen nicht enthalten.</p></li>
+            <li><p>Sie können Ihre Zustimmung zur Datenverarbeitung zum Zwecke der Auftragsabwicklung jederzeit widerrufen. Die o. g. gesetzlichen Verpflichtungen zur Prüfung Ihrer Kreditwürdigkeit bleiben von solchen Widerrufen unberührt.</p></li>
+            <li><p>Sie sind uns gegenüber zur Angabe von ausschließlich wahrheitsgemäßen und korrekten Informationen verpflichtet.</p></li>
+            <li><p>Weitere Informationen über die Verarbeitung Ihrer persönlichen Daten finden Sie in der vollständigen Datenschutzrichtlinie hier: <a href='https://www.unzer.com/de/privacy-payolution-consumers/' rel='nofollow noopener'>https://www.unzer.com/de/privacy-payolution-consumers/</a></p></li>
+            <li><p>Sie können ebenfalls den Sachbearbeiter für Datenschutz der Unzer Group unter der folgenden Adresse kontaktieren:</p></li>
         </ol>
 
         <footer>Sachbearbeiter für Datenschutz<br />
             datenschutz@payolution.com<br />
             payolution GmbH<br />
-            Am Euro Platz 2<br />
+            Columbusplatz 7-8<br />
             1120 Wien<br />
             DVR: 4008655
         </footer>
@@ -798,6 +801,17 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone applepay payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneApplepay($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_applepay#', $paymentName) ? true : false;
+    }
+
+    /**
      * get online bank transfer type for api communication
      *
      * @param string $paymentName
@@ -963,19 +977,19 @@ class Mopt_PayonePaymentHelper
         switch ($country) {
             case 'DE':
                 {
-                    $information['consentDebit'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
-                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                    $information['consentDebit'] = 'Mit der Übermittlung der für die Abwicklung des Lastschriftkaufes '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an die payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
                         . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayDebit();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
-                    $information['consentInvoice'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
-                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                    $information['consentInvoice'] = 'Mit der Übermittlung der für die Abwicklung des Rechnungskaufes '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an die payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
                         . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInvoice();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
 
-                    $information['consentInstallment'] = 'Mit der Übermittlung der für die Abwicklung des Einkaufs '
-                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an payolution bin ich einverstanden. '
+                    $information['consentInstallment'] = 'Mit der Übermittlung der für die Abwicklung des Ratenkaufes '
+                        . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an die payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
                         . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInstallment();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
@@ -1309,6 +1323,9 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayoneTrustly($paymentShortName)) {
             return 'trustly';
         }
+        if ($this->isPayoneApplepay($paymentShortName)) {
+            return 'applepay';
+        }
         return false;
     }
 
@@ -1468,18 +1485,6 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * Returns the Klarna name by financingtype
-     *
-     * @param $financingtype
-     *
-     * @return string
-     */
-    public function getKlarnaNameByFinancingtype($financingtype)
-    {
-        return array_search($financingtype, $this->klarnaPaymentFinancingtypeNameMapping());
-    }
-
-    /**
      * Returns the Klarna financingtype by name
      *
      * @param $paymentName
@@ -1488,7 +1493,9 @@ class Mopt_PayonePaymentHelper
      */
     public function getKlarnaFinancingtypeByName($paymentName)
     {
-        return $this->klarnaPaymentFinancingtypeNameMapping()[$paymentName];
+        // remove _1 ,_2 ... from duplicated payments before matching
+        $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
+        return $this->klarnaPaymentFinancingtypeNameMapping()[$cleanedPaymentName];
     }
 
     /**
@@ -1617,7 +1624,7 @@ class Mopt_PayonePaymentHelper
             + array_slice($input, $offset + $length, NULL, TRUE);
     }
 
-    public function buildAndCallKlarnaStartSession($paymentFinancingtype, $birthdate, $phoneNumber, $personalId)
+    public function buildAndCallKlarnaStartSession($paymentFinancingtype, $birthdate, $phoneNumber, $personalId, $paymentId)
     {
         $bootstrap = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
 
@@ -1643,7 +1650,7 @@ class Mopt_PayonePaymentHelper
 
         $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
 
-        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts);
+        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts, $paymentId);
         $request = new Payone_Api_Request_Genericpayment($params);
 
         $basket['sShippingcosts'] = $shippingCosts['brutto'];

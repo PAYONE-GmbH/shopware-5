@@ -50,18 +50,18 @@ Ext.define('Shopware.apps.MoptApilogPayone.view.detail.Detail', {
     me.items = [
       {
         xtype: 'grid',
-        title: '{s name=details/request/title}Request{/s}',
+        title: '{s name="details/request/title"}Request{/s}',
         width: '50%',
         columns: [
           {
-            header: '{s name=details/property}Eigenschaft{/s}',
+            header: '{s name="details/property"}Eigenschaft{/s}',
             dataIndex: 'name',
             width: '30%',
             sortable: false,
             menuDisabled: true
           },
           {
-            header: '{s name=details/value}Wert{/s}',
+            header: '{s name="details/value"}Wert{/s}',
             dataIndex: 'value',
             width: '70%',
             sortable: false,
@@ -79,17 +79,17 @@ Ext.define('Shopware.apps.MoptApilogPayone.view.detail.Detail', {
       },
       {
         xtype: 'grid',
-        title: '{s name=details/response/title}Response{/s}',
+        title: '{s name="details/response/title"}Response{/s}',
         width: '50%',
         columns: [
           {
-            header: '{s name=details/property}Eigenschaft{/s}',
+            header: '{s name="details/property"}Eigenschaft{/s}',
             dataIndex: 'name',
             width: '30%',
             menuDisabled: true
           },
           {
-            header: '{s name=details/value}Wert{/s}',
+            header: '{s name="details/value"}Wert{/s}',
             dataIndex: 'value',
             width: '70%',
             menuDisabled: true

@@ -5,11 +5,11 @@ Ext.define('Shopware.apps.MoptConfigPayone.store.ComboInfoscoreb2b', {
     model: 'Shopware.apps.MoptConfigPayone.model.Combostring',
     data: [
         {
-            display: '{s name=fieldvalue/SFS}Schufa{/s}',
+            display: '{s name="fieldvalue/SFS"}Schufa{/s}',
             value: 'SFS'
         },
         {
-            display: '{s name=fieldvalue/NONE}Keine Prüfung{/s}',
+            display: '{s name="fieldvalue/NONE"}Keine Prüfung{/s}',
             value: 'NO'
         }
     ]

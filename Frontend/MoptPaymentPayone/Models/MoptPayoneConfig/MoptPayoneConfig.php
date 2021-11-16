@@ -532,7 +532,7 @@ class MoptPayoneConfig extends ModelEntity
     private $paydirektOvercapture;
 
     /**
-     * @ORM\Column(name="send_ordernumber_as_reference", type="boolean", precision=0, scale=0, nullable=false, unique=false)
+     * @ORM\Column(name="send_ordernumber_as_reference", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
      */
     private $sendOrdernumberAsReference;
 
@@ -590,6 +590,57 @@ class MoptPayoneConfig extends ModelEntity
      * @ORM\Column(name="trustly_show_iban_bic", type="boolean", precision=0, scale=0, nullable=false, unique=false)
      */
     private $trustlyShowIbanBic;
+
+    /**
+     * @ORM\Column(name="applepay_merchant_id", type="string", nullable=true, unique=false)
+     */
+    private $applepayMerchantId;
+
+    /**
+     * @ORM\Column(name="applepay_certificate", type="string", nullable=true, unique=false)
+     */
+    private $applepayCertificate;
+
+    /**
+     * @ORM\Column(name="applepay_private_key", type="string", nullable=true, unique=false)
+     */
+    private $applepayPrivateKey;
+
+    /**
+     * @ORM\Column(name="applepay_private_key_password", type="string", nullable=true, unique=false)
+     */
+    private $applepayPrivateKeyPassword;
+
+    /**
+     * @ORM\Column(name="applepay_visa", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
+     */
+    private $applepayVisa;
+
+    /**
+     * @ORM\Column(name="applepay_mastercard", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
+     */
+    private $applepayMastercard;
+
+    /**
+     * @ORM\Column(name="applepay_girocard", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
+     */
+    private $applepayGirocard;
+
+    /**
+     * @ORM\Column(name="applepay_amex", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
+     */
+    private $applepayAmex;
+
+    /**
+     * @ORM\Column(name="applepay_discover", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
+     */
+    private $applepayDiscover;
+
+    /**
+     * @ORM\Column(name="applepay_debug", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
+     */
+    private $applepayDebug;
+
 
     /**
      * @return mixed
@@ -2346,5 +2397,157 @@ class MoptPayoneConfig extends ModelEntity
     public function setTrustlyShowIbanBic($trustlyShowIbanBic)
     {
         $this->trustlyShowIbanBic = $trustlyShowIbanBic;
+    }
+
+    public function getApplepayMerchantId()
+    {
+        return $this->applepayMerchantId;
+    }
+
+    /**
+     * @param $applepayMerchantId
+     */
+    public function setApplepayMerchantId($applepayMerchantId)
+    {
+        $this->applepayMerchantId = $applepayMerchantId;
+    }
+
+    public function getApplepayCertificate()
+    {
+        return $this->applepayCertificate;
+    }
+
+    /**
+     * @param $applepayCertificate
+     */
+    public function setApplepayCertificate($applepayCertificate)
+    {
+        $this->applepayCertificate = $applepayCertificate;
+    }
+
+    public function getApplepayPrivateKey()
+    {
+        return $this->applepayPrivateKey;
+    }
+
+    /**
+     * @param $applepayPrivateKey
+     */
+    public function setApplepayPrivateKey($applepayPrivateKey)
+    {
+        $this->applepayPrivateKey = $applepayPrivateKey;
+    }
+
+    /**
+     * @param $applepayPrivateKeyPassword
+     */
+
+    public function getApplepayPrivateKeyPassword()
+    {
+        return $this->applepayPrivateKeyPassword;
+    }
+
+    /**
+     * @param $applepayPrivateKeyPassword
+     */
+    public function setApplepayPrivateKeyPassword($applepayPrivateKeyPassword)
+    {
+        $this->applepayPrivateKeyPassword = $applepayPrivateKeyPassword;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApplepayVisa()
+    {
+        return $this->applepayVisa;
+    }
+
+    /**
+     * @param $applepayVisa
+     */
+    public function setApplepayVisa($applepayVisa)
+    {
+        $this->applepayVisa = $applepayVisa;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApplepayMastercard()
+    {
+        return $this->applepayMastercard;
+    }
+
+    /**
+     * @param $applepayMastercard
+     */
+    public function setApplepayMastercard($applepayMastercard)
+    {
+        $this->applepayMastercard = $applepayMastercard;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApplepayGirocard()
+    {
+        return $this->applepayGirocard;
+    }
+
+    /**
+     * @param $applepayGirocard
+     */
+    public function setApplepayGirocard($applepayGirocard)
+    {
+        $this->applepayGirocard = $applepayGirocard;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApplepayAmex()
+    {
+        return $this->applepayAmex;
+    }
+
+    /**
+     * @param $applepayAmex
+     */
+    public function setApplepayAmex($applepayAmex)
+    {
+        $this->applepayAmex = $applepayAmex;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApplepayDiscover()
+    {
+        return $this->applepayDiscover;
+    }
+
+    /**
+     * @param $applepayDiscover
+     */
+    public function setApplepayDiscover($applepayDiscover)
+    {
+        $this->applepayDiscover = $applepayDiscover;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getApplepayDebug()
+    {
+        return $this->applepayDebug;
+    }
+
+    /**
+     * @param $applepayDebug
+     */
+    public function setApplepayDebug($applepayDebug)
+    {
+        $this->applepayDebug = $applepayDebug;
     }
 }

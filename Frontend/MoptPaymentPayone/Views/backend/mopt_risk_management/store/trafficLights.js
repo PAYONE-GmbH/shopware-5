@@ -10,9 +10,9 @@ Ext.define('Shopware.apps.RiskManagement.store.TrafficLights', {
 	],
 
 	data: [
-		{ description: '{s name=trafficLights_store/comboBox/green}grün{/s}', value: "1" },
-		{ description: '{s name=trafficLights_store/comboBox/yellow}gelb{/s}', value: "2" },
-		{ description: '{s name=trafficLights_store/comboBox/red}rot{/s}', value: "3" }
+		{ description: '{s name="trafficLights_store/comboBox/green"}grün{/s}', value: "1" },
+		{ description: '{s name="trafficLights_store/comboBox/yellow"}gelb{/s}', value: "2" },
+		{ description: '{s name="trafficLights_store/comboBox/red"}rot{/s}', value: "3" }
 	]
 });
 //{/block}
