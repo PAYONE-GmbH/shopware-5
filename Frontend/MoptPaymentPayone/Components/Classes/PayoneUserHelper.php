@@ -129,9 +129,6 @@ class Mopt_PayoneUserHelper
         $register = array();
         $register['billing']['city']           = $personalData['billing_city'];
         $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['billing_country']);
-        if ($personalData['shipping_state'] !== 'Empty') {
-            $register['billing']['stateID']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['billing_state']);
-        }
         $register['billing']['street']         = $personalData['billing_street'];
         $register['billing']['additionalAddressLine1'] = $personalData['billing_addressaddition'];
         $register['billing']['zipcode']        = $personalData['billing_zip'];
@@ -263,6 +260,27 @@ class Mopt_PayoneUserHelper
         $paymentHelper = new Mopt_PayonePaymentHelper();
         $paymentName = $paymentHelper->getPaymentNameFromId($paymentId);
         $oldUserData = $this->admin->sGetUserData();
+
+
+        if ($paymentName === 'mopt_payone__ewallet_amazon_pay' && array_key_exists('shipping_pobox', $personalData) && !empty($personalData['shipping_pobox'])) {
+            $personalData['shipping_company'] = $personalData['shipping_pobox'];
+        }
+
+        if  ($paymentName === 'mopt_payone__ewallet_amazon_pay' &&
+            array_key_exists('shipping_company', $personalData) &&
+            !empty($personalData['shipping_company']) &&
+            preg_match('~[0-9]+~', $personalData['shipping_company'])) {
+            $personalData['shipping_addressaddition'] = $personalData['shipping_company'];
+            unset($personalData['shipping_company']);
+        }
+
+        if  ($paymentName === 'mopt_payone__ewallet_amazon_pay' &&
+            array_key_exists('shipping_company', $personalData) &&
+            !empty($personalData['shipping_company']) &&
+            preg_match('~c/o~', $personalData['shipping_company'])) {
+            $personalData['shipping_addressaddition'] = $personalData['shipping_company'];
+            unset($personalData['shipping_company']);
+        }
 
         // in some cases the api does not provide billing address data when using amazonpay
         // since the user is already logged in use existing billing address instead
