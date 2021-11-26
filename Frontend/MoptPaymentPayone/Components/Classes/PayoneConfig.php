@@ -65,7 +65,6 @@ class Mopt_PayoneConfig
         'mopt_payone__fin_paypal_installment',
     ];
 
-    // only paypal express
     const PAYMENTS_ADDRESSCHECK_EXCLUDED = [
         'mopt_payone__ewallet_amazon_pay',
         'mopt_payone__ewallet_paypal',
@@ -108,6 +107,20 @@ class Mopt_PayoneConfig
         'mopt_payone__ibt_bancontact',
         'mopt_payone__ewallet_alipay',
         'mopt_payone__fin_paypal_installment',
+    ];
+
+    const PAYMENTS_EXCLUDED_FROM_ACCOUNTPAGE = [
+        'mopt_payone__ewallet_amazon_pay',
+        'mopt_payone__ewallet_paypal',
+        'mopt_payone__fin_payolution_installment',
+        'mopt_payone__fin_ratepay_installment',
+        'mopt_payone__ewallet_paydirekt_express',
+        'mopt_payone__ewallet_applepay',
+        'mopt_payone__fin_klarna_old',
+        'mopt_payone__fin_kis_klarna_installments',
+        'mopt_payone__fin_kiv_klarna_invoice',
+        'mopt_payone__fin_kdd_klarna_direct_debit',
+        'mopt_payone_klarna',
     ];
 
   /**
