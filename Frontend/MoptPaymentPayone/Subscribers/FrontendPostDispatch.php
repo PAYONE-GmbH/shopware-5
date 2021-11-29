@@ -453,18 +453,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
             // remove AmazonPay from Payment List
             $payments = $view->getAssign('sPaymentMeans');
-
-            foreach ($payments as $index => $payment) {
-                if (strpos($payment['name'], 'mopt_payone__ewallet_amazon_pay') !== false ) {
-                    $amazonPayIndex = $index;
-                }
-                if (strpos($payment['name'], 'mopt_payone__ewallet_applepay') !== false && $session->get('moptAllowApplePay', false) !== true ) {
-                    $applepayIndex = $index;
-                }
-            }
-            unset ($payments[$amazonPayIndex]);
-            unset ($payments[$applepayIndex]);
-            $view->assign('sPaymentMeans', $payments);
+            $view->assign('sPaymentMeans', $moptPaymentHelper->filterPaymentsInAccount($payments));
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
