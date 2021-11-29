@@ -374,7 +374,7 @@
                         $('#mopt_payone__klarna_agreement').prop('checked', false);
                         $('#payone-klarna-error').show();
                         $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
-                            element.disabled = true;
+                            element.disabled = false;
                         });
                     }
                 }
