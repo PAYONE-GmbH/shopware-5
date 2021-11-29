@@ -210,6 +210,16 @@
         {/block}
     </div>
     <div id="mopt_payone__klarna_payments_widget_container"></div>
+
+    <div id="payone-klarna-error" style="display: none;">
+        <div class="alert is--error is--rounded">
+            <div class="alert--icon">
+                <i class="icon--element icon--warning"></i>
+            </div>
+            <div id ="payone-klarna-error-message" class="alert--content">
+            </div>
+        </div>
+    </div>
     <script>
         window.klarnaAsyncCallback = function () {
             window.Klarna = Klarna;

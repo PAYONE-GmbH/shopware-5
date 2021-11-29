@@ -192,6 +192,8 @@
 
                 if (loadWidgetIsAllowed) {
 
+                    $('#payone-klarna-error').hide();
+
                     // startKlarnaSessionCall is a PO call and needs no minus delimiter
                     var birthdate = me.birthdate.replace(/-/g, '');
 
@@ -205,9 +207,25 @@
 
                     me.startKlarnaSessionCall(me.financingtype, birthdate, me.billingAddressPhone, me.personalId, me.paymentId).done(function (jsonResponse) {
                         var response = $.parseJSON(jsonResponse);
+
+                        if (response['status'] === 'ERROR') {
+                            $('#mopt_payone__klarna_agreement').prop('checked', false);
+                            $('#payone-klarna-error-message').text(response['customerMessage']);
+                            $('#payone-klarna-error').show();
+                            $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
+                                element.disabled = true;
+                            });
+                            return;
+                        }
+
+                        $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
+                            element.disabled = false;
+                        });
                         $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
                         me.loadKlarnaWidget(me.financingtype, response['client_token']).done(function () {
+                            // replace error translation text for displaying a general error on auth
+                            $('#payone-klarna-error-message').text(response['authErrorMessage']);
                             if (!me.submitPressed) {
                                 return;
                             }
@@ -332,7 +350,6 @@
                     national_identification_number: me.personalId
                 }
             };
-
             window.Klarna.Payments.authorize({
                     payment_method_category: payType,
                     auto_finalize: isAutoFinalize
@@ -354,8 +371,10 @@
                         me.$el.submit();
 
                     } else {
+                        $('#mopt_payone__klarna_agreement').prop('checked', false);
+                        $('#payone-klarna-error').show();
                         $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
-                            element.disabled = false;
+                            element.disabled = true;
                         });
                     }
                 }

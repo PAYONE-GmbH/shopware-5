@@ -1341,9 +1341,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         if ($result->getStatus() === 'ERROR') {
             echo json_encode([
                 'status' => $result->getStatus(),
-                'errorCode' => $result->getErrorcode(),
-                'errorMessage' => $result->getErrormessage(),
-                'customerMessage' => $result->getCustomermessage(),
+                'customerMessage' => Shopware()->Snippets()
+                    ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                    ->get('klarnaStartSessionError'),
             ]);
         } else {
             $clientToken = $result->getPaydata()->toAssocArray()['client_token'];
@@ -1355,6 +1355,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 'status' => $result->getStatus(),
                 'client_token' => $clientToken,
                 'paymentId' => $paymentId,
+                'authErrorMessage' => Shopware()->Snippets()
+                ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                ->get('klarnaAuthError'),
             ]);
         }
     }
