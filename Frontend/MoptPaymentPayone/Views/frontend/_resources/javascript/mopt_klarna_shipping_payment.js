@@ -203,15 +203,14 @@
                         me.personalId = '';
                     }
 
-                    me.startKlarnaSessionCall(me.financingtype, birthdate, me.billingAddressPhone, me.personalId, me.paymentId).done(function (response) {
-                        response = $.parseJSON(response);
+                    me.startKlarnaSessionCall(me.financingtype, birthdate, me.billingAddressPhone, me.personalId, me.paymentId).done(function (jsonResponse) {
+                        var response = $.parseJSON(jsonResponse);
                         $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
                         me.loadKlarnaWidget(me.financingtype, response['client_token']).done(function () {
                             if (!me.submitPressed) {
                                 return;
                             }
-
                             me.authorize();
                         });
                     });
@@ -259,7 +258,8 @@
                 'vars': [
                     'mopt_klarna_client_token',
                     'mopt_klarna_authorization_token',
-                    'mopt_klarna_workorderid'
+                    'mopt_klarna_workorderid',
+                    'mopt_klarna_finalize_required',
                 ]
             }
 
@@ -345,7 +345,7 @@
                         me.authorizeApproved = true;
 
                         if (res['authorization_token']) {
-                            var parameters = {'authorizationToken': res['authorization_token']};
+                            var parameters = {'authorizationToken': res['authorization_token'], 'finalize_required': res['finalize_required']};
 
                             // store authorization_token
                             $.ajax({method: "POST", url: url, data: parameters, async: false});

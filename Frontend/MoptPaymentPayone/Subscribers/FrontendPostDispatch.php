@@ -231,7 +231,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
 
             $moptPayoneFormData = array_merge($view->sFormData, $moptPayoneData['sFormData']);
-            if (strpos($moptPayoneFormData['mopt_payone__klarna_paymentname'],'mopt_payone__fin_kdd_klarna_direct_debit') === 0 || strpos($moptPaymentName, 'mopt_payone__fin_kdd_klarna_direct_debit') === 0) {
+            if ( $session->offsetGet('mopt_klarna_finalize_required') === "true" && (strpos($moptPayoneFormData['mopt_payone__klarna_paymentname'],'mopt_payone__fin_kdd_klarna_direct_debit') === 0 || strpos($moptPaymentName, 'mopt_payone__fin_kdd_klarna_direct_debit') === 0)) {
                 $view->assign('mopt_klarna_client_token', $session->offsetGet('mopt_klarna_client_token'));
                 $view->extendsTemplate('frontend/checkout/mopt_klarna_confirm' . $templateSuffix . '.tpl');
             }
