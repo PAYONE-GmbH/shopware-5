@@ -82,6 +82,8 @@ class Payone_Settings_Service_XmlGenerate
         $arrayData = $config->toArray();
         $xml = $this->simpleXmlFromNestedArray(self::TAG_CONFIG_ROOT, $arrayData);
 
+        // wrap values for dispatch statusLink and description in CDATA
+
         return $xml->asXML();
     }
 
@@ -113,7 +115,12 @@ class Payone_Settings_Service_XmlGenerate
                     $this->simpleXmlFromNestedArray($key, $value, $parent);
                 }
             } else {
-                $parent->addChild($key, $value);
+                // Fix all Values containing Invalid XML Data
+                if ($key === 'statusLink' || $key === 'description') {
+                    $parent->$key = '<![CDATA['. $value . ']]>';
+                } else {
+                    $parent->addChild($key, $value);
+                }
             }
 
         }
