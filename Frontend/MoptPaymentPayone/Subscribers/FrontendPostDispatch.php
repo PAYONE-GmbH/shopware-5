@@ -453,7 +453,12 @@ class FrontendPostDispatch implements SubscriberInterface
 
             // remove AmazonPay from Payment List
             $payments = $view->getAssign('sPaymentMeans');
-            $view->assign('sPaymentMeans', $moptPaymentHelper->filterPaymentsInAccount($payments));
+            $filteredPayments = $moptPaymentHelper->filterPaymentsInAccount($payments);
+            $view->assign('sPaymentMeans', $filteredPayments);
+            // fallback if current payment is now exluded from payment list to make sure a payment is selected
+            if (!array_key_exists($view->sUserData['additional']['user']['paymentID'], $filteredPayments)) {
+                $view->assign('sFormData', ['payment' => Shopware()->Config()->get('paymentdefault')]);
+            }
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
