@@ -45,7 +45,6 @@
          data-store-authorization-token--URL="{url controller="MoptAjaxPayone" action="storeAuthorizationToken" forceSecure}"
          data-start-klarna-session--URL="{url controller="MoptAjaxPayone" action="startKlarnaSession" forceSecure}"
          data-unset-session-vars--URL="{url controller="MoptAjaxPayone" action="unsetSessionVars" forceSecure}"
-         data-update-klarna-legal-links--URL="{url controller="MoptAjaxPayone" action="updateKlarnaLegalLinks" forceSecure}"
          data-klarna-grouped="{$moptPayoneKlarnaGrouped}"
     ></div>
 
