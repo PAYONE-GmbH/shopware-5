@@ -1356,25 +1356,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
     }
 
-    public function updateKlarnaLegalLinksAction()
-    {
-        try {
-            $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        } catch (Exception $e) {
-        }
-
-        $country = $this->Request()->getParam('country');
-        $paymentid = $this->Request()->getParam('paymentid');
-
-        $klarnaConfig = $this->moptPayoneMain->getPayoneConfig($paymentid);
-        $klarnaLegalInformation = $this->moptPayoneMain->getPaymentHelper()
-            ->moptGetKlarnaAdditionalInformation($country, $klarnaConfig['klarnaStoreId']);
-
-        echo json_encode(
-            $klarnaLegalInformation
-        );
-    }
-
     public function unsetSessionVarsAction()
     {
         try {
