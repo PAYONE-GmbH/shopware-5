@@ -587,7 +587,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $query = $this->getAllPaymentsQuery(array('name' => 'mopt_payone__%'), null, $repository);
         $payonepaymentmethods = $query->getArrayResult();
 
-        if (version_compare(Shopware()->Config()->version, '5.5', '>=')) {
+        if (version_compare(Shopware()->Config()->version, '5.5', '>=') || Shopware()->Config()->get('version') === '___VERSION___') {
             $orderRepository = Shopware()->Models()->getRepository(Order::class);
             $data = $orderRepository->getPaymentStatusQuery()->getArrayResult();
             $data = array_map(['Shopware_Controllers_Backend_MoptConfigPayone', 'getPaymentStatusTranslation'], $data);
