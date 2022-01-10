@@ -192,6 +192,8 @@
 
                 if (loadWidgetIsAllowed) {
 
+                    $('#payone-klarna-error').hide();
+
                     // startKlarnaSessionCall is a PO call and needs no minus delimiter
                     var birthdate = me.birthdate.replace(/-/g, '');
 
@@ -203,15 +205,30 @@
                         me.personalId = '';
                     }
 
-                    me.startKlarnaSessionCall(me.financingtype, birthdate, me.billingAddressPhone, me.personalId, me.paymentId).done(function (response) {
-                        response = $.parseJSON(response);
+                    me.startKlarnaSessionCall(me.financingtype, birthdate, me.billingAddressPhone, me.personalId, me.paymentId).done(function (jsonResponse) {
+                        var response = $.parseJSON(jsonResponse);
+
+                        if (response['status'] === 'ERROR') {
+                            $('#mopt_payone__klarna_agreement').prop('checked', false);
+                            $('#payone-klarna-error-message').text(response['customerMessage']);
+                            $('#payone-klarna-error').show();
+                            $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
+                                element.disabled = true;
+                            });
+                            return;
+                        }
+
+                        $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
+                            element.disabled = false;
+                        });
                         $('#payment_meanmopt_payone_klarna').val(response['paymentId']);
 
                         me.loadKlarnaWidget(me.financingtype, response['client_token']).done(function () {
+                            // replace error translation text for displaying a general error on auth
+                            $('#payone-klarna-error-message').text(response['authErrorMessage']);
                             if (!me.submitPressed) {
                                 return;
                             }
-
                             me.authorize();
                         });
                     });
@@ -259,7 +276,8 @@
                 'vars': [
                     'mopt_klarna_client_token',
                     'mopt_klarna_authorization_token',
-                    'mopt_klarna_workorderid'
+                    'mopt_klarna_workorderid',
+                    'mopt_klarna_finalize_required',
                 ]
             }
 
@@ -332,7 +350,6 @@
                     national_identification_number: me.personalId
                 }
             };
-
             window.Klarna.Payments.authorize({
                     payment_method_category: payType,
                     auto_finalize: isAutoFinalize
@@ -345,7 +362,7 @@
                         me.authorizeApproved = true;
 
                         if (res['authorization_token']) {
-                            var parameters = {'authorizationToken': res['authorization_token']};
+                            var parameters = {'authorizationToken': res['authorization_token'], 'finalize_required': res['finalize_required']};
 
                             // store authorization_token
                             $.ajax({method: "POST", url: url, data: parameters, async: false});
@@ -354,6 +371,8 @@
                         me.$el.submit();
 
                     } else {
+                        $('#mopt_payone__klarna_agreement').prop('checked', false);
+                        $('#payone-klarna-error').show();
                         $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
                             element.disabled = false;
                         });
