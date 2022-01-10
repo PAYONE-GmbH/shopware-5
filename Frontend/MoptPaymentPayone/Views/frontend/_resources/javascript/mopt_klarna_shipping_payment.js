@@ -53,8 +53,20 @@
 
         init: function () {
             var me = this;
-
             me.registerEventListeners();
+
+            // load the klarna widget when payment is preselected
+            var checkedRadioId = $('input[name=payment]:checked', '#shippingPaymentForm').attr('id')
+            var paymentId = 'notset';
+
+            if (me.data['klarnaGrouped'] == "1") {
+                paymentId = $('#mopt_payone__klarna_paymenttype option:selected').attr('mopt_payone__klarna_paymentid');
+            } else {
+                paymentId = $('#mopt_payone_klarna_paymentid').val();
+           }
+            if (((checkedRadioId === 'payment_meanmopt_payone_klarna' && paymentId !== 'notset'  )|| checkedRadioId === 'payment_mean'+paymentId)) {
+                me.inputChangeHandler();
+            }
         },
 
         update: function () {
@@ -181,14 +193,12 @@
                     me.paymentId = $('#mopt_payone_klarna_paymentid').val();
                 }
                 me.financingtype = $("#mopt_payone__klarna_paymenttype").val();
-                var $gdpr_agreement = $('#mopt_payone__klarna_agreement');
                 var loadWidgetIsAllowed =
                     me.financingtype
                     && me.birthdate
                     && me.personalId
                     && me.paymentId
                     && ((String)(me.billingAddressPhone)).length >= 5
-                    && $gdpr_agreement.is(':checked');
 
                 if (loadWidgetIsAllowed) {
 
@@ -234,26 +244,9 @@
                     });
                 }
             };
-            if (me.data['klarnaGrouped'] == "1") {
-                me.getKlarnaLegalLinks().done(function (response) {
-                    var result = $.parseJSON(response);
-                    $('#mopt_payone__klarna_consent').html(result.consent);
-                    $('#mopt_payone__klarna_legalterm').html(result.legalTerm);
-                });
-            }
             me.unloadKlarnaWidget().done(function () {
                 afterUnloadKlarnaWidget()
             });
-        },
-
-        getKlarnaLegalLinks: function () {
-            var me = this;
-            var url = me.data['updateKlarnaLegalLinks-Url'];
-            var parameters = {
-                'country' : me.data['billingAddress-Country'],
-                'paymentid' : $('#mopt_payone__klarna_paymenttype option:selected').attr('mopt_payone__klarna_paymentid')
-            };
-            return $.ajax({method: "POST", url: url, data: parameters});
         },
 
         startKlarnaSessionCall: function (financingtype, birthdate, phoneNumber, personalId, paymentId) {

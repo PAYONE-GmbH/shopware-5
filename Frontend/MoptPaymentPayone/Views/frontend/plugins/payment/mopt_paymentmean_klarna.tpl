@@ -45,7 +45,6 @@
          data-store-authorization-token--URL="{url controller="MoptAjaxPayone" action="storeAuthorizationToken" forceSecure}"
          data-start-klarna-session--URL="{url controller="MoptAjaxPayone" action="startKlarnaSession" forceSecure}"
          data-unset-session-vars--URL="{url controller="MoptAjaxPayone" action="unsetSessionVars" forceSecure}"
-         data-update-klarna-legal-links--URL="{url controller="MoptAjaxPayone" action="updateKlarnaLegalLinks" forceSecure}"
          data-klarna-grouped="{$moptPayoneKlarnaGrouped}"
     ></div>
 
@@ -187,28 +186,6 @@
         {/block}
     </div>
 
-    <p class="none clearfix">
-        <input name="moptPaymentData[mopt_payone__klarna_agreement]"
-               type="checkbox"
-               id="mopt_payone__klarna_agreement" value="true"
-               class="checkbox {if $error_flags.mopt_payone__klarna_agreement}has--error{/if}"
-                {if $payment_mean.id == $form_data.payment}
-                    required="required"
-                    aria-required="true"
-                {/if}
-               autocomplete="off"
-        />
-        <label for="mopt_payone__klarna_agreement" style="float: none; width: 100%; display: inline">
-            {block name="frontend_checkout_payment_payone_consent"}
-                <span id="mopt_payone__klarna_consent">{$moptCreditCardCheckEnvironment.moptKlarnaInformation.consent}</span>
-            {/block}
-        </label>
-    </p>
-    <div class="register--required-info">
-        {block name="frontend_checkout_payment_payone_legalterm"}
-            <span id="mopt_payone__klarna_legalterm">{$moptCreditCardCheckEnvironment.moptKlarnaInformation.legalTerm}</span>
-        {/block}
-    </div>
     <div id="mopt_payone__klarna_payments_widget_container"></div>
 
     <div id="payone-klarna-error" style="display: none;">
