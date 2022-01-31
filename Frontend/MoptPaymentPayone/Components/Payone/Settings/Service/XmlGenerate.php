@@ -113,7 +113,11 @@ class Payone_Settings_Service_XmlGenerate
                     $this->simpleXmlFromNestedArray($key, $value, $parent);
                 }
             } else {
-                $parent->addChild($key, $value);
+                if ($key === 'statusLink' || $key === 'description') {
+                    $parent->$key = '<![CDATA['. $value . ']]>';
+                } else {
+                    $parent->addChild($key, $value);
+                }
             }
 
         }
