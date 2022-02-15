@@ -106,10 +106,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         }
 
-        if ($action === 'paypalinstallment') {
-            return $this->redirect(array('controller' => 'FatchipBSPayonePaypalInstallment', 'action' => 'pay', 'forceSecure' => true));
-        }
-
         if ($action) {
             return $this->redirect(array('action' => $action, 'forceSecure' => true));
         } else {
@@ -864,12 +860,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             Shopware()->Db()->query($sql, array($payolutionClearingReference, $payolutionWorkOrderId, $orderId));
         }
 
-        if (Shopware()->Session()->moptPaypalInstallmentWorkerId) {
-            $sql = 'UPDATE `s_order_attributes`' .
-                'SET mopt_payone_payolution_workorder_id = ? WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array(Shopware()->Session()->moptPaypalInstallmentWorkerId, $orderId));
-        }
-
         if ($session->moptIsAuthorized === true) {
             $order = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['transactionId' => $txId]);
             if ($order) {
@@ -898,7 +888,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session->offsetUnset('moptAgbChecked');
         $session->offsetUnset('moptPaymentReference');
         $session->offsetUnset('isIdealredirect');
-        $session->offsetUnset('moptPaypalInstallmentWorkerId');
         $session->offsetUnset('moptPaydirektExpressWorkerId');
         $session->offsetUnset('paySafeToken');
         $session->offsetUnset('moptRatepayCountry');

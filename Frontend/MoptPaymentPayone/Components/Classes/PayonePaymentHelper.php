@@ -757,17 +757,6 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * check if given payment name is payone paypal installments
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayonePaypalInstallment($paymentName)
-    {
-        return preg_match('#mopt_payone__fin_paypal_installment#', $paymentName) ? true : false;
-    }
-
-    /**
      * check if given payment name is payone alipay payment
      *
      * @param string $paymentName
@@ -1238,10 +1227,6 @@ class Mopt_PayonePaymentHelper
 
         if ($this->isPayonePaypal($paymentShortName)) {
             return 'paypal';
-        }
-
-        if ($this->isPayonePaypalInstallment($paymentShortName)) {
-            return 'paypalinstallment';
         }
 
         if ($this->isPayoneDebitnote($paymentShortName)) {
