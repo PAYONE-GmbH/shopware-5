@@ -1314,7 +1314,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $this->session->offsetSet('mopt_klarna_authorization_token', $token);
         $this->session->offsetSet('mopt_klarna_finalize_required', $finalizeRequired);
-        $this->session->offsetSet('mopt_klarna_finalize_required', "true");
     }
 
     public function startKlarnaSessionAction()
