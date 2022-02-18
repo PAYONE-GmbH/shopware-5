@@ -9,7 +9,7 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.list.Config', {
         buttonType: '{s name="amazon_buttontype"}Button Typ{/s}',
         buttonColor: '{s name="amazon_buttoncolor"}Button Farbe{/s}',
         /*
-        buttonLanguage: '{s name=amazon_buttonlanguage}Button Sprache{/s}',
+        buttonLanguage: '{s name="amazon_buttonlanguage"}Button Sprache{/s}',
         */
         amazonMode: '{s name="amazon_mode"}Amazon Modus{/s}',
         amazonDownloadButton: '{s name="amazon_download_button"}Konfigurations Download{/s}'

@@ -14,7 +14,7 @@
 
 {block name="content/main"}
     <div class="col-md-12">
-        <h3>{s name=global-form/fieldset2}Addressüberprüfung{/s}</h3>
+        <h3>{s name="global-form/fieldset2"}Addressüberprüfung{/s}</h3>
         <div>
             Stellen Sie hier die Konfiguration für die Addressüberprüfung für alle Zahlarten ein.
         </div>
@@ -37,7 +37,7 @@
             <form role="form" id="ajaxaddresscheckform" class="form-horizontal">
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="adresscheckActive" class="text-left col-md-3 control-label">{s name=fieldlabel/active}Aktiv{/s}</label>
+                    <label for="adresscheckActive" class="text-left col-md-3 control-label">{s name="fieldlabel/active"}Aktiv{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="adresscheckActive" name="adresscheckActive" aria-describedby="adresscheckActive-status" >
                             <option value='true'>Ja</option>
@@ -50,7 +50,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="adresscheckLiveMode" class="text-left col-md-3 control-label">{s name=fieldlabel/mode}Betriebsmodus{/s}</label>
+                    <label for="adresscheckLiveMode" class="text-left col-md-3 control-label">{s name="fieldlabel/mode"}Betriebsmodus{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="adresscheckLiveMode" name="adresscheckLiveMode" aria-describedby="adresscheckLiveMode-status" >
                             <option value="true">Live</option>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="adresscheckBillingAdress" class="text-left col-md-3 control-label">{s name=fieldlabel/billingAddress}Rechnungsadresse{/s}</label>
+                    <label for="adresscheckBillingAdress" class="text-left col-md-3 control-label">{s name="fieldlabel/billingAddress"}Rechnungsadresse{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="adresscheckBillingAdress" name="adresscheckBillingAdress" aria-describedby="adresscheckBillingAdress-status" >
                             <option value="0">nicht prüfen</option>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                     <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Komma-getrennte ISO-Codes der Länder für die der Check ausgeführt werden soll. z.B. DE,CH,AT">
-                    <label for="adresscheckBillingCountries" class="text-left col-md-3 control-label">{s name=fieldlabel/adresscheckBillingCountries}Länder Rechnungsadresse{/s}</label>
+                    <label for="adresscheckBillingCountries" class="text-left col-md-3 control-label">{s name="fieldlabel/adresscheckBillingCountries"}Länder Rechnungsadresse{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="adresscheckBillingCountries" name="adresscheckBillingCountries" aria-describedby="adresscheckBillingCountries-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -89,7 +89,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="adresscheckShippingAdress" class="text-left col-md-3 control-label">{s name=fieldlabel/shippingAddress}Lieferadresse{/s}</label>
+                    <label for="adresscheckShippingAdress" class="text-left col-md-3 control-label">{s name="fieldlabel/shippingAddress"}Lieferadresse{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="adresscheckShippingAdress" name="adresscheckShippingAdress" aria-describedby="adresscheckShippingAdress-status" >
                             <option value="0">nicht prüfen</option>
@@ -105,7 +105,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                     <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Komma-getrennte ISO-Codes der Länder für die der Check ausgeführt werden soll. z.B. DE,CH,AT">                   
-                    <label for="adresscheckShippingCountries" class="text-left col-md-3 control-label">{s name=fieldlabel/adresscheckShippingCountries}Länder Lieferadresse{/s}</label>
+                    <label for="adresscheckShippingCountries" class="text-left col-md-3 control-label">{s name="fieldlabel/adresscheckShippingCountries"}Länder Lieferadresse{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="3" id="adresscheckShippingCountries" name="adresscheckShippingCountries" aria-describedby="adresscheckShippingCountries-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -115,7 +115,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="adresscheckAutomaticCorrection" class="text-left col-md-3 control-label">{s name=fieldlabel/automaticCorrection}Automatische Korrektur{/s}</label>
+                    <label for="adresscheckAutomaticCorrection" class="text-left col-md-3 control-label">{s name="fieldlabel/automaticCorrection"}Automatische Korrektur{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="adresscheckAutomaticCorrection" name="adresscheckAutomaticCorrection" aria-describedby="adresscheckAutomaticCorrection-status" >
                             <option value="0">Ja</option>
@@ -129,7 +129,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="adresscheckFailureHandling" class="text-left col-md-3 control-label">{s name=fieldlabel/failureHandling}Fehlverhalten{/s}</label>
+                    <label for="adresscheckFailureHandling" class="text-left col-md-3 control-label">{s name="fieldlabel/failureHandling"}Fehlverhalten{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="adresscheckFailureHandling" name="adresscheckFailureHandling" aria-describedby="adresscheckFailureHandling-status" >
                             <option value="0">Vorgang abbrechen</option>
@@ -144,7 +144,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="adresscheckMinBasket" class="text-left col-md-3 control-label">{s name=fieldlabel/maxBasket}Maximaler Warenwert{/s}</label>
+                    <label for="adresscheckMinBasket" class="text-left col-md-3 control-label">{s name="fieldlabel/maxBasket"}Maximaler Warenwert{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="255" id="adresscheckMinBasket" name="adresscheckMinBasket" aria-describedby="adresscheckMinBasket-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -154,7 +154,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="adresscheckMaxBasket" class="text-left col-md-3 control-label">{s name=fieldlabel/maxBasket}Maximaler Warenwert{/s}</label>
+                    <label for="adresscheckMaxBasket" class="text-left col-md-3 control-label">{s name="fieldlabel/maxBasket"}Maximaler Warenwert{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*'  minlength="1" maxlength="255" id="adresscheckMaxBasket" name="adresscheckMaxBasket" aria-describedby="adresscheckMaxBasket-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -164,7 +164,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="adresscheckLifetime" class="text-left col-md-3 control-label">{s name=fieldlabel/lifetime}Gültigkeit{/s}</label>
+                    <label for="adresscheckLifetime" class="text-left col-md-3 control-label">{s name="fieldlabel/lifetime"}Gültigkeit{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="255" id="adresscheckLifetime" name="adresscheckLifetime" aria-describedby="adresscheckLifetime-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -174,7 +174,7 @@
                 </div>                
                 <div class="form-group has-feedback has-error menu-level-experte">
                     <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Fehlermeldung bitte über Einstellungen -> Textbausteine editieren (nach adresscheckErrorMessage suchen)">                                      
-                    <label for="adresscheckFailureMessage" class="text-left col-md-3 control-label">{s name=fieldlabel/adresscheckFailureMessage}Fehlermeldung{/s}</label>
+                    <label for="adresscheckFailureMessage" class="text-left col-md-3 control-label">{s name="fieldlabel/adresscheckFailureMessage"}Fehlermeldung{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="adresscheckFailureMessage" name="adresscheckFailureMessage" aria-describedby="adresscheckFailureMessage-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -184,7 +184,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-experte">
                    
-                    <label for="mapPersonCheck" class="text-left col-md-3 control-label">{s name=fieldlabel/mapPersonCheck}Keine Personenüberprüfung durchgeführt{/s}</label>
+                    <label for="mapPersonCheck" class="text-left col-md-3 control-label">{s name="fieldlabel/mapPersonCheck"}Keine Personenüberprüfung durchgeführt{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapPersonCheck" name="mapPersonCheck" aria-describedby="mapPersonCheck-status" >
                             <option value="0">Rot</option>
@@ -198,7 +198,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="mapKnowPreLastname" class="text-left col-md-3 control-label">{s name=fieldlabel/mapKnowPreLastname}Vor- und Nachname bekannt{/s}</label>
+                    <label for="mapKnowPreLastname" class="text-left col-md-3 control-label">{s name="fieldlabel/mapKnowPreLastname"}Vor- und Nachname bekannt{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapKnowPreLastname" name="mapKnowPreLastname" aria-describedby="mapKnowPreLastname-status" >
                             <option value="0">Rot</option>
@@ -212,7 +212,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="mapKnowLastname" class="text-left col-md-3 control-label">{s name=fieldlabel/mapKnowLastname}Nachname bekannt{/s}</label>
+                    <label for="mapKnowLastname" class="text-left col-md-3 control-label">{s name="fieldlabel/mapKnowLastname"}Nachname bekannt{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapKnowLastname" name="mapKnowLastname" aria-describedby="mapKnowLastname-status" >
                             <option value="0">Rot</option>
@@ -226,7 +226,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="mapNotKnowPreLastname" class="text-left col-md-3 control-label">{s name=fieldlabel/mapNotKnowPreLastname}Vor- und Nachname nicht bekannt{/s}</label>
+                    <label for="mapNotKnowPreLastname" class="text-left col-md-3 control-label">{s name="fieldlabel/mapNotKnowPreLastname"}Vor- und Nachname nicht bekannt{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapNotKnowPreLastname" name="mapNotKnowPreLastname" aria-describedby="mapNotKnowPreLastname-status" >
                             <option value="0">Rot</option>
@@ -240,7 +240,7 @@
                 </div>   
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="mapMultiNameToAdress" class="text-left col-md-3 control-label">{s name=fieldlabel/mapMultiNameToAdress}Mehrdeutigkeit bei Name zu Anschrift{/s}</label>
+                    <label for="mapMultiNameToAdress" class="text-left col-md-3 control-label">{s name="fieldlabel/mapMultiNameToAdress"}Mehrdeutigkeit bei Name zu Anschrift{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapMultiNameToAdress" name="mapMultiNameToAdress" aria-describedby="mapMultiNameToAdress-status" >
                             <option value="0">Rot</option>
@@ -254,7 +254,7 @@
                 </div> 
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="mapUndeliverable" class="text-left col-md-3 control-label">{s name=fieldlabel/mapUndeliverable}nicht (mehr) zustellbar{/s}</label>
+                    <label for="mapUndeliverable" class="text-left col-md-3 control-label">{s name="fieldlabel/mapUndeliverable"}nicht (mehr) zustellbar{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapUndeliverable" name="mapUndeliverable" aria-describedby="mapUndeliverable-status" >
                             <option value="0">Rot</option>
@@ -268,7 +268,7 @@
                 </div> 
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="mapPersonDead" class="text-left col-md-3 control-label">{s name=fieldlabel/mapPersonDead}Person verstorben{/s}</label>
+                    <label for="mapPersonDead" class="text-left col-md-3 control-label">{s name="fieldlabel/mapPersonDead"}Person verstorben{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapPersonDead" name="mapPersonDead" aria-describedby="mapPersonDead-status" >
                             <option value="0">Rot</option>
@@ -282,7 +282,7 @@
                 </div> 
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="mapWrongAdress" class="text-left col-md-3 control-label">{s name=fieldlabel/mapWrongAdress}Adresse postalisch falsch{/s}</label>
+                    <label for="mapWrongAdress" class="text-left col-md-3 control-label">{s name="fieldlabel/mapWrongAdress"}Adresse postalisch falsch{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapWrongAdress" name="mapWrongAdress" aria-describedby="mapWrongAdress-status" >
                             <option value="0">Rot</option>
@@ -296,7 +296,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
 
-                    <label for="mapAddressCheckNotPossible" class="text-left col-md-3 control-label">{s name=fieldlabel/mapAddressCheckNotPossible}Überprüfung nicht möglich (z.B. Fakename){/s}</label>
+                    <label for="mapAddressCheckNotPossible" class="text-left col-md-3 control-label">{s name="fieldlabel/mapAddressCheckNotPossible"}Überprüfung nicht möglich (z.B. Fakename){/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapAddressCheckNotPossible" name="mapAddressCheckNotPossible" aria-describedby="mapAddressCheckNotPossible-status" >
                             <option value="0">Rot</option>
@@ -310,7 +310,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
 
-                    <label for="mapAddressOkayBuildingUnknown" class="text-left col-md-3 control-label">{s name=fieldlabel/mapAddressOkayBuildingUnknown}Adresse korrekt, aber Gebäude unbekannt{/s}</label>
+                    <label for="mapAddressOkayBuildingUnknown" class="text-left col-md-3 control-label">{s name="fieldlabel/mapAddressOkayBuildingUnknown"}Adresse korrekt, aber Gebäude unbekannt{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapAddressOkayBuildingUnknown" name="mapAddressOkayBuildingUnknown" aria-describedby="mapAddressOkayBuildingUnknown-status" >
                             <option value="0">Rot</option>
@@ -324,7 +324,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
 
-                    <label for="mapPersonMovedAddressUnknown" class="text-left col-md-3 control-label">{s name=fieldlabel/mapPersonMovedAddressUnknown}Person umgezogen, Adresse nicht korrigiert{/s}</label>
+                    <label for="mapPersonMovedAddressUnknown" class="text-left col-md-3 control-label">{s name="fieldlabel/mapPersonMovedAddressUnknown"}Person umgezogen, Adresse nicht korrigiert{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapPersonMovedAddressUnknown" name="mapPersonMovedAddressUnknown" aria-describedby="mapPersonMovedAddressUnknown-status" >
                             <option value="0">Rot</option>
@@ -338,7 +338,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
 
-                    <label for="mapUnknownReturnValue" class="text-left col-md-3 control-label">{s name=fieldlabel/mapUnknownReturnValue}Rückgabewert der Überprüfung unbekannt{/s}</label>
+                    <label for="mapUnknownReturnValue" class="text-left col-md-3 control-label">{s name="fieldlabel/mapUnknownReturnValue"}Rückgabewert der Überprüfung unbekannt{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="mapUnknownReturnValue" name="mapUnknownReturnValue" aria-describedby="mapUnknownReturnValue-status" >
                             <option value="0">Rot</option>
@@ -350,7 +350,7 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>
     </div>

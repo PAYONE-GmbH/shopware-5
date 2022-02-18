@@ -28,14 +28,14 @@
                >
             <thead>
                 <tr>
-                    <th data-field="id">{s name=mopt_payone_transaction_log/grid/column_id}ID{/s}</th>
-                    <th data-field="transactionId">{s name=mopt_payone_transaction_log/grid/column_transactionId}Transaktionsid{/s}</th>
-                    <th data-field="orderNr">{s name=mopt_payone_transaction_log/grid/column_orderNr}Bestellnummer{/s}</th>
-                    <th data-formatter="modeDetailsFormatter" data-field="liveMode">{s name=mopt_payone_transaction_log/grid/column_mode}Betriebsmodus{/s}</th>
-                    <th data-field="portalId">{s name=mopt_payone_transaction_log/grid/column_portal_id}Portal ID{/s}</th>
-                    <th data-field="status">{s name=mopt_payone_transaction_log/grid/column_status}Status{/s}</th>
-                    <th data-formatter="DateFormatter" data-field="transactionDate.date">{s name=mopt_payone_transaction_log/grid/column_transaction_date}Transaktionsdatum{/s}</th>
-                    <th data-formatter="idDetailsFormatter" data-field="details">{s name=mopt_apilog_payone/grid/column_request_details}Details{/s}</th>
+                    <th data-field="id">{s name="mopt_payone_transaction_log/grid/column_id"}ID{/s}</th>
+                    <th data-field="transactionId">{s name="mopt_payone_transaction_log/grid/column_transactionId"}Transaktionsid{/s}</th>
+                    <th data-field="orderNr">{s name="mopt_payone_transaction_log/grid/column_orderNr"}Bestellnummer{/s}</th>
+                    <th data-formatter="modeDetailsFormatter" data-field="liveMode">{s name="mopt_payone_transaction_log/grid/column_mode"}Betriebsmodus{/s}</th>
+                    <th data-field="portalId">{s name="mopt_payone_transaction_log/grid/column_portal_id"}Portal ID{/s}</th>
+                    <th data-field="status">{s name="mopt_payone_transaction_log/grid/column_status"}Status{/s}</th>
+                    <th data-formatter="DateFormatter" data-field="transactionDate.date">{s name="mopt_payone_transaction_log/grid/column_transaction_date"}Transaktionsdatum{/s}</th>
+                    <th data-formatter="idDetailsFormatter" data-field="details">{s name="mopt_apilog_payone/grid/column_request_details"}Details{/s}</th>
                 </tr>
             </thead>
         </table>

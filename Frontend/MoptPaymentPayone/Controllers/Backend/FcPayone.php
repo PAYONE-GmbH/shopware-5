@@ -115,7 +115,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $sql = $aConfig->SQL;
         $i = 0;
         foreach ($sql as $statement) {
-            $datas[$i] = Shopware()->Db()->fetchall($statement, array("1"));
+            $datas[$i] = Shopware()->Db()->fetchall($statement);
             $i++;
         }
         $i = 0;
@@ -590,7 +590,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         if (version_compare(Shopware()->Config()->version, '5.5', '>=') || Shopware()->Config()->get('version') === '___VERSION___') {
             $orderRepository = Shopware()->Models()->getRepository(Order::class);
             $data = $orderRepository->getPaymentStatusQuery()->getArrayResult();
-            $data = array_map(['Shopware_Controllers_Backend_MoptConfigPayone', 'getPaymentStatusTranslation'], $data);
+            $data = array_map([$this, 'getPaymentStatusTranslation'], $data);
         } else {
             $builder = Shopware()->Models()->createQueryBuilder();
             $data = $builder->select('a.id, a.description')
@@ -1401,7 +1401,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         Shopware()->Models()->flush($creditcardConfig);
     }
 
-    public function getAllIframeConfigQuery($filter = null, $order = null, $repository)
+    public function getAllIframeConfigQuery($filter , $order, $repository)
     {
         $builder = $repository->createQueryBuilder('p');
         $builder->select(
@@ -1497,6 +1497,24 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             }
         }
         return $result;
+    }
+
+    private function getPaymentStatusTranslation($dataArray)
+    {
+        switch ($dataArray['name']) {
+            case 'amazon_failed':
+                $dataArray['description'] = 'Amazon Failed';
+                break;
+            case 'amazon_delayed':
+                $dataArray['description'] = 'Amazon Delayed';
+                break;
+            default:
+                $dataArray['description'] = Shopware()->Snippets()
+                    ->getNamespace('backend/static/payment_status')
+                    ->get($dataArray['name'], false);
+
+        }
+        return $dataArray;
     }
 }
 

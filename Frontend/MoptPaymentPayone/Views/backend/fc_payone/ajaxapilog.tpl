@@ -29,15 +29,15 @@
                >
             <thead>
                 <tr>
-                    <th data-field="id">{s name=mopt_apilog_payone/grid/column_id}ID{/s}</th>
-                    <th data-field="request">{s name=mopt_apilog_payone/grid/column_request}Typ{/s}</th>
-                    <th data-field="response">{s name=mopt_apilog_payone/grid/column_response}Status{/s}</th>
-                    <th data-formatter="modeDetailsFormatter" data-field="liveMode">{s name=mopt_apilog_payone/grid/column_mode}Betriebsmodus{/s}</th>
-                    <th data-field="merchantId">{s name=mopt_apilog_payone/grid/column_merchant}Merchant ID{/s}</th>
-                    <th data-field="portalId">{s name=mopt_apilog_payone/grid/column_portal_id}Portal ID{/s}</th>
-                    <th data-field="creationDate.date">{s name=mopt_apilog_payone/grid/column_date}Datum{/s}</th>
-                    <th data-toggle="tooltip" data-formatter="requestDetailsFormatter" data-field="requestArray">{s name=mopt_apilog_payone/grid/column_request_details}Request{/s}</th>
-                    <th data-toggle="tooltip" data-formatter="responseDetailsFormatter" data-field="responseArray">{s name=mopt_apilog_payone/grid/column_response_details}Response{/s}</th>
+                    <th data-field="id">{s name="mopt_apilog_payone/grid/column_id"}ID{/s}</th>
+                    <th data-field="request">{s name="mopt_apilog_payone/grid/column_request"}Typ{/s}</th>
+                    <th data-field="response">{s name="mopt_apilog_payone/grid/column_response"}Status{/s}</th>
+                    <th data-formatter="modeDetailsFormatter" data-field="liveMode">{s name="mopt_apilog_payone/grid/column_mode"}Betriebsmodus{/s}</th>
+                    <th data-field="merchantId">{s name="mopt_apilog_payone/grid/column_merchant"}Merchant ID{/s}</th>
+                    <th data-field="portalId">{s name="mopt_apilog_payone/grid/column_portal_id"}Portal ID{/s}</th>
+                    <th data-field="creationDate.date">{s name="mopt_apilog_payone/grid/column_date"}Datum{/s}</th>
+                    <th data-toggle="tooltip" data-formatter="requestDetailsFormatter" data-field="requestArray">{s name="mopt_apilog_payone/grid/column_request_details"}Request{/s}</th>
+                    <th data-toggle="tooltip" data-formatter="responseDetailsFormatter" data-field="responseArray">{s name="mopt_apilog_payone/grid/column_response_details"}Response{/s}</th>
                 </tr>
             </thead>
         </table>
