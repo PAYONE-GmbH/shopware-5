@@ -64,10 +64,32 @@ class RiskRules
      */
     public function createRiskRules()
     {
-        $this->createPayoneRiskRule('mopt_payone__fin_paypal_installment',
-            'ORDERVALUELESS', '100', '', '', 2);
-        $this->createPayoneRiskRule('mopt_payone__fin_paypal_installment',
-            'ORDERVALUEMORE', '5000', '', '', 2);
+        // currently no risk rules are created
+    }
+
+    /**
+     * remove risk rules belonging to $paymentname
+     *
+     * @param $paymentName
+     * @throws \Exception
+     * @return void
+     */
+    public function removeRiskRules($paymentName)
+    {
+        /** @var \Shopware\Components\Model\ModelManager $manager */
+        $manager = $this->plugin->get('models');
+        /** @var $payment Payment */
+        $payment = Shopware()->Models()->getRepository(Payment::class)->findOneBy(['name' => $paymentName]);
+        if ($payment) {
+            $rules = $payment->getRuleSets();
+            foreach ($rules as $rule) {
+                $manager->remove($rule);
+                $manager->flush($rule);
+            }
+            $payment->setRuleSets(null);
+            $manager->persist($payment);
+            $manager->flush($payment);
+        }
     }
 
     /**

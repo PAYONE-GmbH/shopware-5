@@ -101,10 +101,6 @@ class Mopt_PayoneParamBuilder
         $params['sequencenumber'] = $this->getParamSequencenumber($order);
         $params['amount'] = $this->getParamCaptureAmount($order, $postionIds, $includeShipment);
         $params['currency'] = $order->getCurrency();
-        if ($paymentName === 'mopt_payone__fin_paypal_installment') {
-            $params['clearingtype'] = 'fnc';
-            $params['financingtype'] = Payone_Api_Enum_FinancingType::PPI;
-        }
 
         if ($this->payonePaymentHelper->isPayoneKlarna($paymentName)) {
             $params['capturemode'] = $finalize ? 'completed' : 'notcompleted';

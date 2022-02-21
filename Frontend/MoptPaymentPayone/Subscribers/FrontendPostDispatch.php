@@ -146,11 +146,6 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_finish' . $templateSuffix . '.tpl');
         }
 
-        if ($request->getActionName() == 'finish' && $moptPaymentName === 'mopt_payone__fin_paypal_installment') {
-            $installmentData = Shopware()->Session()->offsetGet('moptPaypalInstallmentData');
-            $view->assign('Installment', $installmentData);
-        }
-
         unset($session->moptMandateAgreement);
         if ($request->getParam('mandate_status')) {
             $session->moptMandateAgreement = $request->getParam('mandate_status');
@@ -277,14 +272,6 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('applepayNotConfiguredError', ! $this->isApplepayConfigured($moptPayoneData['moptApplepayConfig']));
         }
 
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__fin_paypal_installment')) {
-            if (isset($session->moptPaypalInstallmentWorkerId)) {
-                $action->redirect(['controller' => 'FatchipBSPayonePaypalInstallmentCheckout', 'action' => 'confirm', 'forceSecure' => true]);
-            } else {
-                $action->redirect(['controller' => 'FatchipBSPayonePaypalInstallmentCheckout', 'action' => 'gateway', 'forceSecure' => true]);
-            }
-        }
-
         if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
             if ($session->moptBarzahlenCode) {
                 $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
@@ -300,7 +287,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
         }
 
-        if ((($controllerName == 'checkout' || $controllerName == 'FatchipBSPayonePaypalInstallmentCheckout') && $request->getActionName() == 'confirm')) {
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
             if ($moptPaymentHelper->isPayonePaymentMethod($moptPaymentName)) {
                 if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
                     $action->redirect(
@@ -375,8 +362,6 @@ class FrontendPostDispatch implements SubscriberInterface
         if (($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment')) {
             if ($session->moptBasketChanged) {
                 unset($session->moptBasketChanged);
-                unset($session->moptPaypalInstallmentWorkerId);
-                unset($session->moptPaypalInstallmentData);
                 $redirectnotice =                     Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
                     ->get('installmentsBasketChanged',"<div style='text-align: center'><b>Ratenzahlung<br>Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>Bitte rufen Sie Ihre aktuellen Ratenzahlungskonditionen ab und wählen Sie den gewünschten Zahlplan aus.<br></b></div>");
 

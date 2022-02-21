@@ -558,30 +558,25 @@ class Mopt_PayoneInstallHelper
                 'template' => 'mopt_paymentmean_alipay_ewallet.tpl',
                 'position' => 37,),
             array(
-                'name' => 'mopt_payone__fin_paypal_installment',
-                'description' => 'PAYONE Ratenkauf powered by Paypal',
-                'template' => 'mopt_paymentmean_paypal_installment.tpl',
-                'position' => 38,),
-            array(
                 'name' => 'mopt_payone__ewallet_paydirekt_express',
                 'description' => 'PAYONE Paydirekt Express',
                 'template' => null,
-                'position' => 39,),
+                'position' => 38,),
             array(
                 'name' => 'mopt_payone__ewallet_wechatpay',
                 'description' => 'PAYONE WeChatPay',
                 'template' => null,
-                'position' => 40,),
+                'position' => 39,),
             array(
                 'name' => 'mopt_payone__ibt_trustly',
                 'description' => 'PAYONE Trustly',
                 'template' => 'mopt_paymentmean_trustly.tpl',
-                'position' => 41,),
+                'position' => 40,),
             array(
                 'name' => 'mopt_payone__ewallet_applepay',
                 'description' => 'PAYONE Apple Pay',
                 'template' => 'mopt_paymentmean_applepay.tpl',
-                'position' => 42,),
+                'position' => 41,),
         );
     }
 

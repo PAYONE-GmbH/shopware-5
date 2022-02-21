@@ -145,10 +145,12 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $riskRules = new RiskRules();
         $riskRules->createRiskRules();
+        $riskRules->removeRiskRules('mopt_payone__fin_paypal_installment');
 
         $this->removePayment('mopt_payone__fin_klarna_installment');
         $this->removePayment('mopt_payone__ewallet_masterpass');
         $this->removePayment('mopt_payone__fin_billsafe');
+        $this->removePayment('mopt_payone__fin_paypal_installment');
 
         // Only relevant for update, not for reinstall
         if (!$this->doesCronJobExist('PayoneTransactionForward') && !$this->doesCronJobExist('Shopware_CronJob_PayoneTransactionForward')) {
