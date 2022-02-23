@@ -69,12 +69,12 @@
                         'validationUrl': validationUrl
                     },
                     success: function (response) {
-                        if (response.success === true && response.merchantSession !== undefined) {
+                        if (response.success === true && response.merchantSession !== undefined && response.merchantSession.merchantSessionIdentifier !== undefined  ) {
                             writeDebug('validation completed successfully', response);
                             session.completeMerchantValidation(JSON.parse(response.merchantSession));
                         } else {
                             writeDebug('Apple Pay Merchant Validation failed');
-                            writeDebug(response.error);
+                            writeDebug(JSON.stringify(response.merchantSession));
                             session.abort();
                         }
                     },
