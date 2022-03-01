@@ -69,7 +69,8 @@
                         'validationUrl': validationUrl
                     },
                     success: function (response) {
-                        if (response.success === true && response.merchantSession !== undefined && response.merchantSession.merchantSessionIdentifier !== undefined  ) {
+                        parsed = JSON.parse(response.merchantSession);
+                        if (response.success === true && response.merchantSession !== undefined && parsed.merchantSessionIdentifier !== undefined  ) {
                             writeDebug('validation completed successfully', response);
                             session.completeMerchantValidation(JSON.parse(response.merchantSession));
                         } else {
