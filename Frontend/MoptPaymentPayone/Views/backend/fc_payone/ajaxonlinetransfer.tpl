@@ -22,7 +22,7 @@
             <div class="col-md-12">
                 <div class="btn-group">
                     <button id="paymentmethodsdropdown" type="button" class="btn-payone-fixed btn-payone btn dropdown-toggle" data-toggle="dropdown">
-                        <span class="selection">{s name=paymentMethod/label}Gilt für Zahlart:{/s}</span><span class="caret"></span>
+                        <span class="selection">{s name="paymentMethod/label"}Gilt für Zahlart:{/s}</span><span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
                             {foreach from=$payonepaymentmethods item=paymentmethod}
@@ -36,7 +36,7 @@
             <form role="form" id="ajaxonlinetransferform" class="form-horizontal">
                 <div class="form-group has-feedback has-error">
                    
-                    <label for="description" class="text-left col-md-3 control-label">{s name=formpanel_description_label}Bezeichnung{/s}</label>
+                    <label for="description" class="text-left col-md-3 control-label">{s name="formpanel_description_label"}Bezeichnung{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="description" name="description" aria-describedby="description-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="additionalDescription" class="text-left col-md-3 control-label">{s name=formpanel_additional-description_label}Zusätzliche Beschreibung{/s}</label>
+                    <label for="additionalDescription" class="text-left col-md-3 control-label">{s name="formpanel_additional-description_label"}Zusätzliche Beschreibung{/s}</label>
                     <div class="col-md-6">
                         <textarea rows="3" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="additionalDescription" name="additionalDescription" aria-describedby="additionalDescription-status" >
                         </textarea>
@@ -57,7 +57,7 @@
                 </div>  
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="debitPercent" class="text-left col-md-3 control-label">{s name=formpanel_surcharge_label}Aufschlag/Abschlag (in %){/s}</label>
+                    <label for="debitPercent" class="text-left col-md-3 control-label">{s name="formpanel_surcharge_label"}Aufschlag/Abschlag (in %){/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="200" minlength="1" maxlength="200" id="debitPercent" name="debitPercent" aria-describedby="debitPercent-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="surcharge" class="text-left col-md-3 control-label">{s name=formpanel_generalSurcharge_label}Pauschaler Aufschlag{/s}</label>
+                    <label for="surcharge" class="text-left col-md-3 control-label">{s name="formpanel_generalSurcharge_label"}Pauschaler Aufschlag{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="200" id="surcharge" name="surcharge" aria-describedby="surcharge-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="position" class="text-left col-md-3 control-label">{s name=formpanel_position_surcharge}Position{/s}</label>
+                    <label for="position" class="text-left col-md-3 control-label">{s name="formpanel_position_surcharge"}Position{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="200" id="position" name="position" aria-describedby="position-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="active" class="text-left col-md-3 control-label">{s name=formpanel_active_label}Aktiv{/s}</label>
+                    <label for="active" class="text-left col-md-3 control-label">{s name="formpanel_active_label"}Aktiv{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="active" name="active" aria-describedby="active-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -97,7 +97,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="esdActive" class="text-left col-md-3 control-label">{s name=formpanel_esdActive_label}Aktiv für ESD-Produkte{/s}</label>
+                    <label for="esdActive" class="text-left col-md-3 control-label">{s name="formpanel_esdActive_label"}Aktiv für ESD-Produkte{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="esdActive" name="esdActive" aria-describedby="esdActive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="mobileInactive" class="text-left col-md-3 control-label">{s name=formpanel_mobileInactive_label}Inaktiv für Smartphone{/s}</label>
+                    <label for="mobileInactive" class="text-left col-md-3 control-label">{s name="formpanel_mobileInactive_label"}Inaktiv für Smartphone{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mobileInactive" name="mobileInactive" aria-describedby="mobileInactive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -115,7 +115,7 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>                
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>
     </div>

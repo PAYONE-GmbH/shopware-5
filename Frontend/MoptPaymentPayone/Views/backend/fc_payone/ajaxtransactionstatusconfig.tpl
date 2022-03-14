@@ -14,9 +14,9 @@
 
 {block name="content/main"}
     <div class="col-md-12">
-        <h3>{s name=global-form/fieldset5}Transaktionsstatusweiterleitung{/s}</h3>
+        <h3>{s name="global-form/fieldset5"}Transaktionsstatusweiterleitung{/s}</h3>
         <div>
-            {s name=forwarding/label}Mehrere URLs können durch ; getrennt angegeben werden.{/s}
+            {s name="forwarding/label"}Mehrere URLs können durch ; getrennt angegeben werden.{/s}
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -37,7 +37,7 @@
             <form role="form" id="ajaxtransactionstatusform" class="form-horizontal">
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="transAppointed" class="text-left col-md-3 control-label">{s name=forwarding/status/appointed}Appointed{/s}</label>
+                    <label for="transAppointed" class="text-left col-md-3 control-label">{s name="forwarding/status/appointed"}Appointed{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transAppointed" name="transAppointed" aria-describedby="transAppointed-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="transCapture" class="text-left col-md-3 control-label">{s name=forwarding/status/capture}Capture{/s}</label>
+                    <label for="transCapture" class="text-left col-md-3 control-label">{s name="forwarding/status/capture"}Capture{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transCapture" name="transCapture" aria-describedby="transCapture-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -57,7 +57,7 @@
                 </div>  
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="transPaid" class="text-left col-md-3 control-label">{s name=forwarding/status/paid}Paid{/s}</label>
+                    <label for="transPaid" class="text-left col-md-3 control-label">{s name="forwarding/status/paid"}Paid{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transPaid" name="transPaid" aria-describedby="transPaid-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="transUnderpaid" class="text-left col-md-3 control-label">{s name=forwarding/status/underpaid}Underpaid{/s}</label>
+                    <label for="transUnderpaid" class="text-left col-md-3 control-label">{s name="forwarding/status/underpaid"}Underpaid{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transUnderpaid" name="transUnderpaid" aria-describedby="transUnderpaid-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="transCancelation" class="text-left col-md-3 control-label">{s name=forwarding/status/cancelation}Cancelation{/s}</label>
+                    <label for="transCancelation" class="text-left col-md-3 control-label">{s name="forwarding/status/cancelation"}Cancelation{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transCancelation" name="transCancelation" aria-describedby="transCancelation-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="transRefund" class="text-left col-md-3 control-label">{s name=forwarding/status/refund}Refund{/s}</label>
+                    <label for="transRefund" class="text-left col-md-3 control-label">{s name="forwarding/status/refund"}Refund{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transRefund" name="transRefund" aria-describedby="transRefund-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -97,7 +97,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="transDebit" class="text-left col-md-3 control-label">{s name=forwarding/status/debit}Debit{/s}</label>
+                    <label for="transDebit" class="text-left col-md-3 control-label">{s name="forwarding/status/debit"}Debit{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transDebit" name="transDebit" aria-describedby="transDebit-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="transReminder" class="text-left col-md-3 control-label">{s name=forwarding/status/reminder}Reminder{/s}</label>
+                    <label for="transReminder" class="text-left col-md-3 control-label">{s name="forwarding/status/reminder"}Reminder{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transReminder" name="transReminder" aria-describedby="transReminder-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -117,7 +117,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="transVauthorization" class="text-left col-md-3 control-label">{s name=forwarding/status/VAutorisierung}VAutorisierung{/s}</label>
+                    <label for="transVauthorization" class="text-left col-md-3 control-label">{s name="forwarding/status/VAutorisierung"}VAutorisierung{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transVauthorization" name="transVauthorization" aria-describedby="transVauthorization-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -127,7 +127,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="transVsettlement" class="text-left col-md-3 control-label">{s name=forwarding/status/VSettlement}VSettlement{/s}</label>
+                    <label for="transVsettlement" class="text-left col-md-3 control-label">{s name="forwarding/status/VSettlement"}VSettlement{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transVsettlement" name="transVsettlement" aria-describedby="transVsettlement-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -137,7 +137,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="transTransfer" class="text-left col-md-3 control-label">{s name=forwarding/status/transfer}Transfer{/s}</label>
+                    <label for="transTransfer" class="text-left col-md-3 control-label">{s name="forwarding/status/transfer"}Transfer{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transTransfer" name="transTransfer" aria-describedby="transTransfer-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -147,7 +147,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
                    
-                    <label for="transInvoice" class="text-left col-md-3 control-label">{s name=forwarding/status/invoice}Invoice{/s}</label>
+                    <label for="transInvoice" class="text-left col-md-3 control-label">{s name="forwarding/status/invoice"}Invoice{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transInvoice" name="transInvoice" aria-describedby="transInvoice-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -157,7 +157,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
 
-                    <label for="transFailed" class="text-left col-md-3 control-label">{s name=forwarding/status/failed}Failed{/s}</label>
+                    <label for="transFailed" class="text-left col-md-3 control-label">{s name="forwarding/status/failed"}Failed{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transFailed" name="transFailed" aria-describedby="transFailed-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -165,7 +165,7 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>
     </div>

@@ -22,8 +22,8 @@
         <div class='col-md-12'>
             <form role="form" id="ajaxconfigform" class="form-horizontal">
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden Accounts">                   
-                    <label for="merchantId" class="text-left col-md-3 control-label">{s name=fieldlabel/merchantId}Merchant-ID{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden Accounts">
+                    <label for="merchantId" class="text-left col-md-3 control-label">{s name="fieldlabel/merchantId"}Merchant-ID{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="5" id="merchantId" name="merchantId" aria-describedby="merchantId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -32,8 +32,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden Zahlungsportal">                   
-                    <label for="portalId" class="text-left col-md-3 control-label">{s name=fieldlabel/portalId}Portal-ID{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden Zahlungsportal">
+                    <label for="portalId" class="text-left col-md-3 control-label">{s name="fieldlabel/portalId"}Portal-ID{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="7" id="portalId" name="portalId" aria-describedby="portalId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -42,8 +42,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden SubAccounts">
-                    <label for="subaccountId" class="text-left col-md-3 control-label">{s name=fieldlabel/subaccountId}Subaccount-ID{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden SubAccounts">
+                    <label for="subaccountId" class="text-left col-md-3 control-label">{s name="fieldlabel/subaccountId"}Subaccount-ID{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="5" id="subaccountId" name="subaccountId" aria-describedby="subaccountId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -52,8 +52,8 @@
                     </div>
                 </div>                    
                 <div class="form-group has-feedback has-error ">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Schlüssel des zu verwendenden Zahlungsportal">
-                    <label for="apiKey" class="text-left col-md-3 control-label">{s name=fieldlabel/apiKey}Schlüssel{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Schlüssel des zu verwendenden Zahlungsportal">
+                    <label for="apiKey" class="text-left col-md-3 control-label">{s name="fieldlabel/apiKey"}Schlüssel{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="40" id="apiKey" name="apiKey" aria-describedby="apiKey-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -61,7 +61,7 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>
         <div class='col-md-8'>
@@ -80,7 +80,7 @@
 {/block}
 
 {block name="resources/javascript" append}  
-    <script type="text/javascript" src="{link file="backend/_resources/js/formhelper.js"}"></script>
+    <script type="text/javascript" src="{link file='backend/_resources/js/formhelper.js'}"></script>
 
     <script type="text/javascript">
 

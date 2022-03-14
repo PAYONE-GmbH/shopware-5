@@ -1166,8 +1166,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=fieldlabel/trustlyShowIbanBic}Trustly: IBAN / BIC abfragen?{/s}',
-                helpText: '{s name=fieldlabelhelp/trustlyShowIbanBic}Bei Trustly IBAN und BIC abfragen?{/s}',
+                fieldLabel: '{s name="fieldlabel/trustlyShowIbanBic"}Trustly: IBAN / BIC abfragen?{/s}',
+                helpText: '{s name="fieldlabelhelp/trustlyShowIbanBic"}Bei Trustly IBAN und BIC abfragen?{/s}',
                 name: 'trustlyShowIbanBic',
                 store: me.data.yesno,
                 queryMode: 'local',
@@ -1188,8 +1188,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=fieldlabel/applepayVisa}Apple Pay Visa erlauben{/s}',
-                helpText: '{s name=fieldlabelhelp/applepayVisa}Erlaubt Visa Karten über Apple Pay{/s}',
+                fieldLabel: '{s name="fieldlabel/applepayVisa"}Apple Pay Visa erlauben{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayVisa"}Erlaubt Visa Karten über Apple Pay{/s}',
                 name: 'applepayVisa',
                 store: me.data.yesno,
                 queryMode: 'local',
@@ -1201,8 +1201,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=fieldlabel/applepayMastercard}Apple Pay Mastercard erlauben{/s}',
-                helpText: '{s name=fieldlabelhelp/applepayMastercard}Erlaubt Mastercard Karten über Apple Pay{/s}',
+                fieldLabel: '{s name="fieldlabel/applepayMastercard"}Apple Pay Mastercard erlauben{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayMastercard"}Erlaubt Mastercard Karten über Apple Pay{/s}',
                 name: 'applepayMastercard',
                 store: me.data.yesno,
                 queryMode: 'local',
@@ -1214,8 +1214,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=fieldlabel/applepayGirocard}Apple Pay Girocard erlauben{/s}',
-                helpText: '{s name=fieldlabelhelp/applepayGirocard}Erlaubt Girocard Karten über Apple Pay{/s}',
+                fieldLabel: '{s name="fieldlabel/applepayGirocard"}Apple Pay Girocard erlauben{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayGirocard"}Erlaubt Girocard Karten über Apple Pay{/s}',
                 name: 'applepayGirocard',
                 store: me.data.yesno,
                 queryMode: 'local',
@@ -1228,8 +1228,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             /*
            {
                 xtype: 'combobox',
-                fieldLabel: '{s name=fieldlabel/applepayAmex}Apple Pay American Express erlauben{/s}',
-                helpText: '{s name=fieldlabelhelp/applepayAmex}Erlaubt American Express Karten über Apple Pay{/s}',
+                fieldLabel: '{s name="fieldlabel/applepayAmex"}Apple Pay American Express erlauben{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayAmex"}Erlaubt American Express Karten über Apple Pay{/s}',
                 name: 'applepayAmex',
                 store: me.data.yesno,
                 queryMode: 'local',
@@ -1241,8 +1241,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=fieldlabel/applepayDisover}Apple Pay Discover erlauben{/s}',
-                helpText: '{s name=fieldlabelhelp/applepayDiscover}Erlaubt Discover Karten über Apple Pay{/s}',
+                fieldLabel: '{s name="fieldlabel/applepayDisover"}Apple Pay Discover erlauben{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayDiscover"}Erlaubt Discover Karten über Apple Pay{/s}',
                 name: 'applepayDiscover',
                 store: me.data.yesno,
                 queryMode: 'local',
@@ -1283,8 +1283,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name=fieldlabel/applepayDebug}Apple Pay Debug{/s}',
-                helpText: '{s name=fieldlabelhelp/applepayDebug}Zeigt im Frontend die Debugging Informationen an{/s}',
+                fieldLabel: '{s name="fieldlabel/applepayDebug"}Apple Pay Debug{/s}',
+                helpText: '{s name="fieldlabelhelp/applepayDebug"}Zeigt im Frontend die Debugging Informationen an{/s}',
                 name: 'applepayDebug',
                 store: me.data.yesno,
                 queryMode: 'local',

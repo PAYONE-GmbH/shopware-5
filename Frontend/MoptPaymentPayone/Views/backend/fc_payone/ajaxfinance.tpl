@@ -14,7 +14,7 @@
 
 {block name="content/main"}
     <div class="col-md-12">
-        <h3>{s name=global-form/fieldset2}Einstellungen für Finanzierungs-basierte Zahlarten{/s}</h3>
+        <h3>{s name="global-form/fieldset2"}Einstellungen für Finanzierungs-basierte Zahlarten{/s}</h3>
         <div>
             Stellen Sie hier die Konfiguration zu den Zahlarten Klarna, Payolution und Ratepay ein.
         </div>
@@ -22,7 +22,7 @@
             <div class="col-md-12">
                 <div class="btn-group">
                     <button id="paymentmethodsdropdown" type="button" class="btn-payone-fixed btn-payone btn dropdown-toggle" data-toggle="dropdown">
-                        <span class="selection">{s name=paymentMethod/label}Gilt für Zahlart:{/s}</span><span class="caret"></span>
+                        <span class="selection">{s name="paymentMethod/label"}Gilt für Zahlart:{/s}</span><span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         {foreach from=$payonepaymentmethods item=paymentmethod}
@@ -36,7 +36,7 @@
             <form role="form" id="ajaxfinanceform" class="form-horizontal">
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="description" class="text-left col-md-3 control-label">{s name=formpanel_description_label}Bezeichnung{/s}</label>
+                    <label for="description" class="text-left col-md-3 control-label">{s name="formpanel_description_label"}Bezeichnung{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="description" name="description" aria-describedby="description-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="additionalDescription" class="text-left col-md-3 control-label">{s name=formpanel_additional-description_label}Zusätzliche Beschreibung{/s}</label>
+                    <label for="additionalDescription" class="text-left col-md-3 control-label">{s name="formpanel_additional-description_label"}Zusätzliche Beschreibung{/s}</label>
                     <div class="col-md-6">
                         <textarea type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="additionalDescription" name="additionalDescription" aria-describedby="additionalDescription-status" >
                         </textarea>
@@ -57,7 +57,7 @@
                 </div>  
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="debitPercent" class="text-left col-md-3 control-label">{s name=formpanel_surcharge_label}Aufschlag/Abschlag (in %){/s}</label>
+                    <label for="debitPercent" class="text-left col-md-3 control-label">{s name="formpanel_surcharge_label"}Aufschlag/Abschlag (in %){/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="0" maxlength="200" id="debitPercent" name="debitPercent" aria-describedby="debitPercent-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="surcharge" class="text-left col-md-3 control-label">{s name=formpanel_generalSurcharge_label}Pauschaler Aufschlag{/s}</label>
+                    <label for="surcharge" class="text-left col-md-3 control-label">{s name="formpanel_generalSurcharge_label"}Pauschaler Aufschlag{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="200" id="surcharge" name="surcharge" aria-describedby="surcharge-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="position" class="text-left col-md-3 control-label">{s name=formpanel_position_surcharge}Position{/s}</label>
+                    <label for="position" class="text-left col-md-3 control-label">{s name="formpanel_position_surcharge"}Position{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="200" id="position" name="position" aria-describedby="position-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="active" class="text-left col-md-3 control-label">{s name=formpanel_active_label}Aktiv{/s}</label>
+                    <label for="active" class="text-left col-md-3 control-label">{s name="formpanel_active_label"}Aktiv{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="active" name="active" aria-describedby="active-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -97,7 +97,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
 
-                    <label for="esdActive" class="text-left col-md-3 control-label">{s name=formpanel_esdActive_label}Aktiv für ESD-Produkte{/s}</label>
+                    <label for="esdActive" class="text-left col-md-3 control-label">{s name="formpanel_esdActive_label"}Aktiv für ESD-Produkte{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="esdActive" name="esdActive" aria-describedby="esdActive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -106,7 +106,7 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
-                    <label for="mobileInactive" class="text-left col-md-3 control-label">{s name=formpanel_mobileInactive_label}Inaktiv für Smartphone{/s}</label>
+                    <label for="mobileInactive" class="text-left col-md-3 control-label">{s name="formpanel_mobileInactive_label"}Inaktiv für Smartphone{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mobileInactive" name="mobileInactive" aria-describedby="mobileInactive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -115,7 +115,7 @@
                     </div>
                 </div>     
                 <div id="klarnastoreid" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <label for="klarnaStoreId" class="text-left col-md-3 control-label">{s name=fieldlabel/klarnaStoreId}Klarna Store-ID{/s}</label>
+                    <label for="klarnaStoreId" class="text-left col-md-3 control-label">{s name="fieldlabel/klarnaStoreId"}Klarna Store-ID{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="klarnaStoreId" name="klarnaStoreId" aria-describedby="klarnaStoreId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -124,7 +124,7 @@
                     </div>
                 </div>
                 <div id="payolutionCompanyName" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <label for="payolutionCompanyName" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionCompanyName}Payolution Firmenname{/s}</label>
+                    <label for="payolutionCompanyName" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionCompanyName"}Payolution Firmenname{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionCompanyName" name="payolutionCompanyName" aria-describedby="payolutionCompanyName-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -133,7 +133,7 @@
                     </div>
                 </div> 
                 <div id="payolutionB2bmode" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <label for="payolutionB2bmode" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionB2bmode}Payolution B2B Mode {/s}</label>
+                    <label for="payolutionB2bmode" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionB2bmode"}Payolution B2B Mode {/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionB2bmode" name="payolutionB2bmode" aria-describedby="payolutionB2bmode-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -142,7 +142,7 @@
                     </div>
                 </div>   
                 <div id="payolutionDraftUser" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <label for="payolutionDraftUser" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionDraftUser}Payolution HTTP-Benutzername{/s}</label>
+                    <label for="payolutionDraftUser" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionDraftUser"}Payolution HTTP-Benutzername{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftUser" name="payolutionDraftUser" aria-describedby="payolutionDraftUser-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -151,7 +151,7 @@
                     </div>
                 </div>    
                 <div id="payolutionDraftPassword" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <label for="payolutionDraftPassword" class="text-left col-md-3 control-label">{s name=fieldlabel/payolutionDraftPassword}Payolution HTTP-Passwort{/s}</label>
+                    <label for="payolutionDraftPassword" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionDraftPassword"}Payolution HTTP-Passwort{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftPassword" name="payolutionDraftPassword" aria-describedby="payolutionDraftPassword-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -159,7 +159,7 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>                      
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>
 
@@ -189,7 +189,7 @@
                     <tr><td><img id="newRow" onclick="addRow()" src="{link file='backend/_resources/images/add.png'}"></td></tr>
                 </table>
 
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
                 <button type="submit" name ="downloadbtn" class="btn-payone btn " >Ratepay Konfiguration abrufen</button>
             </form>                
         </div>                

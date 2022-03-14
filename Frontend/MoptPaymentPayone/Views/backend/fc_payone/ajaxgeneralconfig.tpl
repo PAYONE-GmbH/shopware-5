@@ -14,7 +14,7 @@
 
 {block name="content/main"}
     <div class="col-md-12">
-        <h3>{s name=global-form/fieldset1}Allgemein{/s}</h3>
+        <h3>{s name="global-form/fieldset1"}Allgemein{/s}</h3>
         <div>
             Stellen Sie hier die Konfiguration für Zahlarten ein.
         </div>
@@ -36,8 +36,8 @@
         <div class='col-md-12'>
             <form role="form" id="ajaxgeneralconfigform" class="form-horizontal">
                 <div class="form-group has-feedback has-error menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden Accounts">
-                    <label for="merchantId" class="text-left col-md-3 control-label">{s name=fieldlabel/merchantId}Merchant-ID{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden Accounts">
+                    <label for="merchantId" class="text-left col-md-3 control-label">{s name="fieldlabel/merchantId"}Merchant-ID{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="5" id="merchantId" name="merchantId" aria-describedby="merchantId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -46,8 +46,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden Zahlungsportal">
-                    <label for="portalId" class="text-left col-md-3 control-label">{s name=fieldlabel/portalId}Portal-ID{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden Zahlungsportal">
+                    <label for="portalId" class="text-left col-md-3 control-label">{s name="fieldlabel/portalId"}Portal-ID{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="7" id="portalId" name="portalId" aria-describedby="portalId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -56,8 +56,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden SubAccounts">
-                    <label for="subaccountId" class="text-left col-md-3 control-label">{s name=fieldlabel/subaccountId}Subaccount-ID{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden SubAccounts">
+                    <label for="subaccountId" class="text-left col-md-3 control-label">{s name="fieldlabel/subaccountId"}Subaccount-ID{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="5" id="subaccountId" name="subaccountId" aria-describedby="subaccountId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -66,8 +66,8 @@
                     </div>
                 </div>                    
                 <div class="form-group has-feedback has-error menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Schlüssel des zu verwendenden Zahlungsportal">
-                    <label for="apiKey" class="text-left col-md-3 control-label">{s name=fieldlabel/apiKey}Schlüssel{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Schlüssel des zu verwendenden Zahlungsportal">
+                    <label for="apiKey" class="text-left col-md-3 control-label">{s name="fieldlabel/apiKey"}Schlüssel{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="40" id="apiKey" name="apiKey" aria-describedby="apiKey-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -76,8 +76,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Hier wird definiert wie die Zahlart verwendet wird. Live = Zahlungen werden auf der PAYONE-Plattform ausgeführt Test = Zahlungen werden nur auf der PAYONE-Testumgebung simuliert">
-                    <label for="liveMode" class="text-left col-md-3 control-label">{s name=fieldlabel/liveMode}Betriebsmodus{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Hier wird definiert wie die Zahlart verwendet wird. Live = Zahlungen werden auf der PAYONE-Plattform ausgeführt Test = Zahlungen werden nur auf der PAYONE-Testumgebung simuliert">
+                    <label for="liveMode" class="text-left col-md-3 control-label">{s name="fieldlabel/liveMode"}Betriebsmodus{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="liveMode" name="liveMode" aria-describedby="liveMode-status" >
                             <option value="true">Live</option>
@@ -89,8 +89,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Die Vorautorisation ist die Eröffnung eines Zahlvorgangs auf der PAYONE-Plattform. Wenn die Zahlart es zulässt wird eine Reservierung des Betrages durchgeführt. Bei Zahlarten wie Sofortueberweisung.de wird der Betrag sofort eingezogen weil dort keine Reservierung durchgeführt werden kann. Bei Zahlarten wie z.B. Vorkasse oder Rechnung wird der Zahlvorgang nur auf der PAYONE – Plattform angelegt. Wenn die Autorisation durchgeführt wird, dann wird wenn möglich der Betrag sofort eingezogen">
-                    <label for="authorisationMethod" class="text-left col-md-3 control-label">{s name=fieldlabel/authorisationMethod}Autorisierung{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Die Vorautorisation ist die Eröffnung eines Zahlvorgangs auf der PAYONE-Plattform. Wenn die Zahlart es zulässt wird eine Reservierung des Betrages durchgeführt. Bei Zahlarten wie Sofortueberweisung.de wird der Betrag sofort eingezogen weil dort keine Reservierung durchgeführt werden kann. Bei Zahlarten wie z.B. Vorkasse oder Rechnung wird der Zahlvorgang nur auf der PAYONE – Plattform angelegt. Wenn die Autorisation durchgeführt wird, dann wird wenn möglich der Betrag sofort eingezogen">
+                    <label for="authorisationMethod" class="text-left col-md-3 control-label">{s name="fieldlabel/authorisationMethod"}Autorisierung{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="authorisationMethod" name="authorisationMethod" aria-describedby="authorisationMethod-status" >
                             <option value="Vorautorisierung">Vorautorisierung</option>
@@ -102,8 +102,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Soll der Warenkorbinhalt an PAYONE übermittelt werden?">
-                    <label for="submitBasket" class="text-left col-md-3 control-label">{s name=fieldlabel/submitBasket}Warenkorbübergabe{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Soll der Warenkorbinhalt an PAYONE übermittelt werden?">
+                    <label for="submitBasket" class="text-left col-md-3 control-label">{s name="fieldlabel/submitBasket"}Warenkorbübergabe{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="submitBasket" name="submitBasket" aria-describedby="submitBasket-status" >
                             <option value="false">Nein</option>
@@ -115,8 +115,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Sobald die AGB einmal bestätigt wurden, wird dies gespeichert und die Checkbox dementsprechend vorausgewählt">
-                    <label for="saveTerms" class="text-left col-md-3 control-label">{s name=fieldlabel/saveTerms}Speichern der AGB Bestätigung{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Sobald die AGB einmal bestätigt wurden, wird dies gespeichert und die Checkbox dementsprechend vorausgewählt">
+                    <label for="saveTerms" class="text-left col-md-3 control-label">{s name="fieldlabel/saveTerms"}Speichern der AGB Bestätigung{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="saveTerms" name="saveTerms" aria-describedby="saveTerms-status" >
                             <option value="0">Aus</option>
@@ -129,8 +129,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error menu-level-standard menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Sendet die Shopware Bestellnummer anstatt einen Zufallswert an Payone">
-                    <label for="sendOrdernumberAsReference" class="text-left col-md-3 control-label">{s name=fieldlabel/sendOrdernumberAsReference}Benutze Shopware-Bestellnummer{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Sendet die Shopware Bestellnummer anstatt einen Zufallswert an Payone">
+                    <label for="sendOrdernumberAsReference" class="text-left col-md-3 control-label">{s name="fieldlabel/sendOrdernumberAsReference"}Benutze Shopware-Bestellnummer{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="sendOrdernumberAsReference" name="sendOrdernumberAsReference" aria-describedby="sendOrdernumberAsReference-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -139,8 +139,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error menu-level-standard menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Setze das changed Datum einer Bestellung, wenn ein Transaktions-Status erfolgreich war. Greift erst ab Shopware Version 5.5.0">
-                    <label for="changeOrderOnTXS" class="text-left col-md-3 control-label">{s name=fieldlabel/changeOrderOnTXS}Bestellung geändert bei TX Status{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Setze das changed Datum einer Bestellung, wenn ein Transaktions-Status erfolgreich war. Greift erst ab Shopware Version 5.5.0">
+                    <label for="changeOrderOnTXS" class="text-left col-md-3 control-label">{s name="fieldlabel/changeOrderOnTXS"}Bestellung geändert bei TX Status{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="changeOrderOnTXS" name="changeOrderOnTXS" aria-describedby="changeOrderOnTXS-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -149,8 +149,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Ratepay Snippet Id">
-                    <label for="ratepaySnippetId" class="text-left col-md-3 control-label">{s name=fieldlabel/ratepaySnippetId}Ratepay Snippet Id{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Ratepay Snippet Id">
+                    <label for="ratepaySnippetId" class="text-left col-md-3 control-label">{s name="fieldlabel/ratepaySnippetId"}Ratepay Snippet Id{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="40" id="ratepaySnippetId" name="ratepaySnippetId" aria-describedby="ratepaySnippetId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -159,8 +159,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Bei Trustly IBAN / BIC abfragen?">
-                    <label for="trustlyShowIbanBic" class="text-left col-md-3 control-label">{s name=fieldlabel/trustlyShowIbanBic}Bei Trustly IBAN / BIC abfragen?{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Bei Trustly IBAN / BIC abfragen?">
+                    <label for="trustlyShowIbanBic" class="text-left col-md-3 control-label">{s name="fieldlabel/trustlyShowIbanBic"}Bei Trustly IBAN / BIC abfragen?{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="trustlyShowIbanBic" name="trustlyShowIbanBic" aria-describedby="trustlyShowIbanBic-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -169,8 +169,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayMerchantID}Ihre Apple Pay MerchantId{/s}">
-                    <label for="applepayMerchantId" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayMerchantID}Apple Pay MerchantId{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name='fieldlabelhelp/applepayMerchantID'}Ihre Apple Pay MerchantId{/s}">
+                    <label for="applepayMerchantId" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayMerchantID"}Apple Pay MerchantId{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayMerchantId" name="applepayMerchantId" aria-describedby="applepayMerchantId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -179,8 +179,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayVisa}Erlaubt Visa Karten über Apple Pay{/s}">
-                    <label for="applepayVisa" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayVisa}Apple Pay Visa erlauben{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayVisa"}Erlaubt Visa Karten über Apple Pay{/s}">
+                    <label for="applepayVisa" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayVisa"}Apple Pay Visa erlauben{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayVisa" name="applepayVisa" aria-describedby="applepayVisa-status" >
                             <option value="false">Nein</option>
@@ -192,8 +192,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayMastercard}Erlaubt Mastercard Karten über Apple Pay{/s}">
-                    <label for="applepayMastercard" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayMastercard}Apple Pay Mastercard erlauben{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayMastercard"}Erlaubt Mastercard Karten über Apple Pay{/s}">
+                    <label for="applepayMastercard" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayMastercard"}Apple Pay Mastercard erlauben{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayMastercard" name="applepayMastercard" aria-describedby="applepayMastercard-status" >
                             <option value="false">Nein</option>
@@ -205,8 +205,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayGirocard}Erlaubt Girocard Karten über Apple Pay{/s}">
-                    <label for="applepayGirocard" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayGirocard}Apple Pay Girocard erlauben{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayGirocard"}Erlaubt Girocard Karten über Apple Pay{/s}">
+                    <label for="applepayGirocard" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayGirocard"}Apple Pay Girocard erlauben{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayGirocard" name="applepayGirocard" aria-describedby="applepayGirocard-status" >
                             <option value="false">Nein</option>
@@ -220,8 +220,8 @@
 
                 <!--
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayAmex}Erlaubt American Express Karten über Apple Pay{/s}">
-                    <label for="applepayAmex" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayAmex}Apple Pay American Express erlauben{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayAmex"}Erlaubt American Express Karten über Apple Pay{/s}">
+                    <label for="applepayAmex" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayAmex"}Apple Pay American Express erlauben{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayAmex" name="applepayAmex" aria-describedby="applepayAmex-status" >
                             <option value="false">Nein</option>
@@ -233,8 +233,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayDiscover}Erlaubt Discover Karten über Apple Pay{/s}">
-                    <label for="applepayDiscover" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayDisover}Apple Pay Discover erlauben{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayDiscover"}Erlaubt Discover Karten über Apple Pay{/s}">
+                    <label for="applepayDiscover" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayDisover"}Apple Pay Discover erlauben{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayDiscover" name="applepayDiscover" aria-describedby="applepayDiscover-status" >
                             <option value="false">Nein</option>
@@ -247,8 +247,8 @@
                 </div>
                 -->
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayCertificate}Apple Pay Pfad zur Zertifikats Datei{/s}">
-                    <label for="applepayCertificate" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayCertificate}Apple Pay Zertifikat{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayCertificate"}Apple Pay Pfad zur Zertifikats Datei{/s}">
+                    <label for="applepayCertificate" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayCertificate"}Apple Pay Zertifikat{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayCertificate" name="applepayCertificate" aria-describedby="applepayCertificate-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -258,11 +258,11 @@
                 </div>
 
                 <input type="file" accept=".pem" id="applepayCertificateFile" name="applepayCertificateFile" />
-                <button type="button" class="btn-payone btn" id="applecertupload" >{s name=fieldlabel/uploadbutton}Hochladen{/s}</button>
+                <button type="button" class="btn-payone btn" id="applecertupload" >{s name="fieldlabel/uploadbutton"}Hochladen{/s}</button>
 
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayPrivateKey}Absoluter Pfad zum Private Key{/s}">
-                    <label for="applepayPrivateKey" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayPrivateKey}Apple Pay Private Key{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayPrivateKey"}Absoluter Pfad zum Private Key{/s}">
+                    <label for="applepayPrivateKey" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayPrivateKey"}Apple Pay Private Key{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayPrivateKey" name="applepayPrivateKey" aria-describedby="applepayPrivateKey-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -272,11 +272,11 @@
                 </div>
 
                 <input type="file" accept=".key" id="applepayKeyFile" name="applepayKeyFile" />
-                <button type="button" class="btn-payone btn" id="applekeyupload" >{s name=fieldlabel/uploadbutton}Hochladen{/s}</button>
+                <button type="button" class="btn-payone btn" id="applekeyupload" >{s name="fieldlabel/uploadbutton"}Hochladen{/s}</button>
 
                 <div id="applepayPrivateKeyPassword" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayPrivateKeyPassword}Kann auch dann gesetzt werden, wenn der Key unverschlüsselt ist{/s}">
-                    <label for="applepayPrivateKeyPassword" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayPrivateKeyPassword}Apple Pay Private Key Passwort{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayPrivateKeyPassword"}Kann auch dann gesetzt werden, wenn der Key unverschlüsselt ist{/s}">
+                    <label for="applepayPrivateKeyPassword" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayPrivateKeyPassword"}Apple Pay Private Key Passwort{/s}</label>
                     <div class="col-md-6">
                         <input type="password" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayPrivateKeyPassword" name="applepayPrivateKeyPassword" aria-describedby="applepayPrivateKeyPassword-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -285,8 +285,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name=fieldlabelhelp/applepayDebug}Zeigt im Frontend die Debugging Informationen an{/s}">
-                    <label for="applepayDebug" class="text-left col-md-3 control-label">{s name=fieldlabel/applepayDebug}Apple Pay Debug{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayDebug"}Zeigt im Frontend die Debugging Informationen an{/s}">
+                    <label for="applepayDebug" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayDebug"}Apple Pay Debug{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayDebug" name="applepayDebug" aria-describedby="applepayDebug-status" >
                             <option value="false">Nein</option>
@@ -298,14 +298,14 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>
     </div>
 {/block}
 
 {block name="resources/javascript" append}  
-    <script type="text/javascript" src="{link file="backend/_resources/js/formhelper.js"}"></script>
+    <script type="text/javascript" src="{link file='backend/_resources/js/formhelper.js'}"></script>
 
     <script type="text/javascript">
 

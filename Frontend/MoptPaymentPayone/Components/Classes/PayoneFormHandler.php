@@ -188,7 +188,7 @@ class Mopt_PayoneFormHandler
             unset($paymentData['sErrorFlag']['mopt_payone__sofort_bankcode']);
         }
 
-        if (count($paymentData['sErrorFlag'])) {
+        if (!empty($paymentData['sErrorFlag']) && count($paymentData['sErrorFlag'])) {
             return $paymentData;
         }
 
@@ -213,7 +213,7 @@ class Mopt_PayoneFormHandler
 
         $paymentData['formData']['mopt_payone__bancontact_bankcountry'] = $formData['mopt_payone__bancontact_bankcountry'];
 
-        if (count($paymentData['sErrorFlag'])) {
+        if (!empty($paymentData['sErrorFlag']) && count($paymentData['sErrorFlag'])) {
             return $paymentData;
         }
 
@@ -246,7 +246,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__giropay_bic'] = $formData['mopt_payone__giropay_bic'];
         }
 
-        if (count($paymentData['sErrorFlag'])) {
+        if (!empty($paymentData['sErrorFlag']) && count($paymentData['sErrorFlag'])) {
             return $paymentData;
         }
 
@@ -898,7 +898,7 @@ class Mopt_PayoneFormHandler
                 $paymentData['formData']['mopt_payone__trustly_bic'] = $formData['mopt_payone__trustly_bic'];
             }
 
-            if (count($paymentData['sErrorFlag'])) {
+            if (!empty($paymentData['sErrorFlag']) && count($paymentData['sErrorFlag'])) {
                 return $paymentData;
             }
 

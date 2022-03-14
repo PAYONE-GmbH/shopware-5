@@ -14,7 +14,7 @@
 
 {block name="content/main"}
     <div class="col-md-12">
-        <h3>{s name=global-form/fieldset2}Wallet Einstellungen{/s}</h3>
+        <h3>{s name="global-form/fieldset2"}Wallet Einstellungen{/s}</h3>
         <div>
             Stellen Sie hier die Konfiguration zu den Zahlarten Paypal, Paypal ECS und Paydirekt ein.
         </div>
@@ -22,7 +22,7 @@
             <div class="col-md-12">
                 <div class="btn-group">
                     <button id="paymentmethodsdropdown" type="button" class="btn-payone-fixed btn-payone btn dropdown-toggle" data-toggle="dropdown">
-                        <span class="selection">{s name=paymentMethod/label}Gilt für Zahlart:{/s}</span><span class="caret"></span>
+                        <span class="selection">{s name="paymentMethod/label"}Gilt für Zahlart:{/s}</span><span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         {foreach from=$payonepaymentmethods item=paymentmethod}
@@ -36,7 +36,7 @@
             <form role="form" id="ajaxwalletform" class="form-horizontal">
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="description" class="text-left col-md-3 control-label">{s name=formpanel_description_label}Bezeichnung{/s}</label>
+                    <label for="description" class="text-left col-md-3 control-label">{s name="formpanel_description_label"}Bezeichnung{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="description" name="description" aria-describedby="description-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="additionalDescription" class="text-left col-md-3 control-label">{s name=formpanel_additional-description_label}Zusätzliche Beschreibung{/s}</label>
+                    <label for="additionalDescription" class="text-left col-md-3 control-label">{s name="formpanel_additional-description_label"}Zusätzliche Beschreibung{/s}</label>
                     <div class="col-md-6">
                         <textarea rows="3" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="additionalDescription" name="additionalDescription" aria-describedby="additionalDescription-status" >
                         </textarea>
@@ -57,7 +57,7 @@
                 </div>  
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="debitPercent" class="text-left col-md-3 control-label">{s name=formpanel_surcharge_label}Aufschlag/Abschlag (in %){/s}</label>
+                    <label for="debitPercent" class="text-left col-md-3 control-label">{s name="formpanel_surcharge_label"}Aufschlag/Abschlag (in %){/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="200" id="debitPercent" name="debitPercent" aria-describedby="debitPercent-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="surcharge" class="text-left col-md-3 control-label">{s name=formpanel_generalSurcharge_label}Pauschaler Aufschlag{/s}</label>
+                    <label for="surcharge" class="text-left col-md-3 control-label">{s name="formpanel_generalSurcharge_label"}Pauschaler Aufschlag{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="200" id="surcharge" name="surcharge" aria-describedby="surcharge-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -77,7 +77,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="position" class="text-left col-md-3 control-label">{s name=formpanel_position_surcharge}Position{/s}</label>
+                    <label for="position" class="text-left col-md-3 control-label">{s name="formpanel_position_surcharge"}Position{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="200" id="position" name="position" aria-describedby="position-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
 
-                    <label for="active" class="text-left col-md-3 control-label">{s name=formpanel_active_label}Aktiv{/s}</label>
+                    <label for="active" class="text-left col-md-3 control-label">{s name="formpanel_active_label"}Aktiv{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="active" name="active" aria-describedby="active-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -97,7 +97,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
 
-                    <label for="esdActive" class="text-left col-md-3 control-label">{s name=formpanel_esdActive_label}Aktiv für ESD-Produkte{/s}</label>
+                    <label for="esdActive" class="text-left col-md-3 control-label">{s name="formpanel_esdActive_label"}Aktiv für ESD-Produkte{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="esdActive" name="esdActive" aria-describedby="esdActive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="form-group has-feedback has-error menu-level-experte">
 
-                    <label for="mobileInactive" class="text-left col-md-3 control-label">{s name=formpanel_mobileInactive_label}Inaktiv für Smartphone{/s}</label>
+                    <label for="mobileInactive" class="text-left col-md-3 control-label">{s name="formpanel_mobileInactive_label"}Inaktiv für Smartphone{/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mobileInactive" name="mobileInactive" aria-describedby="mobileInactive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -117,7 +117,7 @@
                 </div>                
                 <div id="paypalecs" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
 
-                    <label for="paypalEcsActive" class="text-left col-md-3 control-label">{s name=fieldlabel/paypalEcsActive}PayPal ECS Button auf Warenkorbseite anzeigen?{/s}</label>
+                    <label for="paypalEcsActive" class="text-left col-md-3 control-label">{s name="fieldlabel/paypalEcsActive"}PayPal ECS Button auf Warenkorbseite anzeigen?{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="paypalEcsActive" name="paypalEcsActive" aria-describedby="paypalEcsActive-status">
                             <option value="true">Ja</option>
@@ -128,7 +128,7 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>                    
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>
        
@@ -153,14 +153,14 @@
                     </tr>
                 </table>
                 <input name="image" id="image" type="hidden">
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>                
         </div>
         <a style="font-size: 28px" href="#" data-target="#amazonpayconfigs">Konfiguration AmazonPay</a>
         <div id="amazonpayconfigs" class="form-group" >
             <form role="form" id="ajaxamazonpay" enctype="multipart/form-data">
                 <table class="table-condensed" id="amazonpaytable">
-                    <tr><th>id</th><th>{s name=amazon_clientid}Client Id{/s}</th><th>{s name=amazon_sellerid}Seller Id{/s}</th><th>{s name=amazon_buttontype}Button Type{/s}</th><th>{s name=amazon_buttoncolor}Button Color{/s}</th><th>{s name=amazon_mode}Amazon Mode{/s}</th></tr>
+                    <tr><th>id</th><th>{s name="amazon_clientid"}Client Id{/s}</th><th>{s name="amazon_sellerid"}Seller Id{/s}</th><th>{s name="amazon_buttontype"}Button Type{/s}</th><th>{s name="amazon_buttoncolor"}Button Color{/s}</th><th>{s name="amazon_mode"}Amazon Mode{/s}</th></tr>
                     {foreach from=$amazonpayconfigs key=mykey item=amazonpayconfig}
                     <tr id="row{$amazonpayconfig->getId()}">
                         <td><input name="row[{$amazonpayconfig->getId()}][id]" id="id_{$amazonpayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$amazonpayconfig->getId()}" readonly="readonly" ></td>
@@ -168,41 +168,41 @@
                         <td><input name="row[{$amazonpayconfig->getId()}][sellerId]" id="amazonpaySellerId_{$amazonpayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$amazonpayconfig->getSellerId()}" readonly="readonly"></td>
                         <td>
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][buttonType]" id="amazonpayButtonType_{$amazonpayconfig->getId()}">
-                                <option value="PwA" {if $amazonpayconfig->getButtonType() == 'PwA'}selected="selected"{/if}>{s name=amazon_buttontype_amazonpay}Amazon Pay (Default): Typical "Amazon Pay" button{/s}</option>
-                                <option value="Pay" {if $amazonpayconfig->getButtonType() == 'Pay'}selected="selected"{/if}>{s name=amazon_buttontype_pay}Pay: A slightly smaller "Pay" button{/s}</option>
-                                <option value="A" {if $amazonpayconfig->getButtonType() == 'A'}selected="selected"{/if}>{s name=amazon_buttontype_a}A: A small button with only the Amazon Pay Logo{/s}</option>
+                                <option value="PwA" {if $amazonpayconfig->getButtonType() == 'PwA'}selected="selected"{/if}>{s name="amazon_buttontype_amazonpay"}Amazon Pay (Default): Typical "Amazon Pay" button{/s}</option>
+                                <option value="Pay" {if $amazonpayconfig->getButtonType() == 'Pay'}selected="selected"{/if}>{s name="amazon_buttontype_pay"}Pay: A slightly smaller "Pay" button{/s}</option>
+                                <option value="A" {if $amazonpayconfig->getButtonType() == 'A'}selected="selected"{/if}>{s name="amazon_buttontype_a"}A: A small button with only the Amazon Pay Logo{/s}</option>
                             </select>
                         </td>
                         <td>
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][buttonColor]" id="amazonpayButtonColor_{$amazonpayconfig->getId()}">
-                                <option value="Gold" {if $amazonpayconfig->getButtonColor() == 'Gold'}selected="selected"{/if}>{s name=amazon_buttoncolor_gold}Gold (default){/s}</option>
-                                <option value="LightGray" {if $amazonpayconfig->getButtonColor() == 'LightGray'}selected="selected"{/if}>{s name=amazon_buttoncolor_lightgray}Light gray{/s}</option>
-                                <option value="DarkGray" {if $amazonpayconfig->getButtonColor() == 'DarkGray'}selected="selected"{/if}>{s name=amazon_buttoncolor_darkgray}Dark gray{/s}</option>
+                                <option value="Gold" {if $amazonpayconfig->getButtonColor() == 'Gold'}selected="selected"{/if}>{s name="amazon_buttoncolor_gold"}Gold (default){/s}</option>
+                                <option value="LightGray" {if $amazonpayconfig->getButtonColor() == 'LightGray'}selected="selected"{/if}>{s name="amazon_buttoncolor_lightgray"}Light gray{/s}</option>
+                                <option value="DarkGray" {if $amazonpayconfig->getButtonColor() == 'DarkGray'}selected="selected"{/if}>{s name="amazon_buttoncolor_darkgray"}Dark gray{/s}</option>
                             </select>
                         </td>
                         <!--
                         <td>
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][buttonLanguage]" id="amazonpayButtonLanguage_{$amazonpayconfig->getId()}">
-                                <option value="none" {if $amazonpayconfig->getButtonLanguage() == 'none'}selected="selected"{/if}>{s name=amazon_buttonlanguage_autodetect}Autodetect (default){/s}</option>
-                                <option value="en-GB" {if $amazonpayconfig->getButtonLanguage() == 'en-GB'}selected="selected"{/if}>{s name=amazon_buttonlanguage_en-GB}English (UK){/s}</option>
-                                <option value="de-DE" {if $amazonpayconfig->getButtonLanguage() == 'de-DE'}selected="selected"{/if}>{s name=amazon_buttonlanguage_de-DE}German (Germany){/s}</option>
-                                <option value="fr-FR" {if $amazonpayconfig->getButtonLanguage() == 'fr-FR'}selected="selected"{/if}>{s name=amazon_buttonlanguage_fr-FR}French (France){/s}</option>
-                                <option value="it-IT" {if $amazonpayconfig->getButtonLanguage() == 'it-IT'}selected="selected"{/if}>{s name=amazon_buttonlanguage_it-IT}Italian (Italy){/s}</option>
-                                <option value="es-ES" {if $amazonpayconfig->getButtonLanguage() == 'es-ES'}selected="selected"{/if}>{s name=amazon_buttonlanguage_es-ES}Spanish (Spain){/s}</option>
+                                <option value="none" {if $amazonpayconfig->getButtonLanguage() == 'none'}selected="selected"{/if}>{s name="amazon_buttonlanguage_autodetect"}Autodetect (default){/s}</option>
+                                <option value="en-GB" {if $amazonpayconfig->getButtonLanguage() == 'en-GB'}selected="selected"{/if}>{s name="amazon_buttonlanguage_en-GB"}English (UK){/s}</option>
+                                <option value="de-DE" {if $amazonpayconfig->getButtonLanguage() == 'de-DE'}selected="selected"{/if}>{s name="amazon_buttonlanguage_de-DE"}German (Germany){/s}</option>
+                                <option value="fr-FR" {if $amazonpayconfig->getButtonLanguage() == 'fr-FR'}selected="selected"{/if}>{s name="amazon_buttonlanguage_fr-FR"}French (France){/s}</option>
+                                <option value="it-IT" {if $amazonpayconfig->getButtonLanguage() == 'it-IT'}selected="selected"{/if}>{s name="amazon_buttonlanguage_it-IT"}Italian (Italy){/s}</option>
+                                <option value="es-ES" {if $amazonpayconfig->getButtonLanguage() == 'es-ES'}selected="selected"{/if}>{s name="amazon_buttonlanguage_es-ES"}Spanish (Spain){/s}</option>
                             </select>
                         </td>
                         -->
                         <td>
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][amazonMode]" id="amazonpayAmazonMode_{$amazonpayconfig->getId()}">
-                                <option value="sync" {if $amazonpayconfig->getAmazonMode() == 'sync'}selected="selected"{/if}>{s name=amazon_mode_always_sync}Always Synchronous{/s}</option>
-                                <option value="firstsync" {if $amazonpayconfig->getAmazonMode() == 'firstsync'}selected="selected"{/if}>{s name=amazon_mode_always_firstsync}First synchronous, on failure try asynchronous (recommended, default):{/s}</option>
+                                <option value="sync" {if $amazonpayconfig->getAmazonMode() == 'sync'}selected="selected"{/if}>{s name="amazon_mode_always_sync"}Always Synchronous{/s}</option>
+                                <option value="firstsync" {if $amazonpayconfig->getAmazonMode() == 'firstsync'}selected="selected"{/if}>{s name="amazon_mode_always_firstsync"}First synchronous, on failure try asynchronous (recommended, default):{/s}</option>
                             </select>
                         </td>
                         <td role="button" name="delete" value="delete" onclick="clear_form_elements('#ajaxamazonpay');"><img id="delete_{$amazonpayconfig->getId()}" height="100%" src="{link file='backend/_resources/images/delete.png'}"></td>
                         {/foreach}
                 </table>
 
-                <button type="submit" class="btn-payone btn " >{s name=global-form/button}Speichern{/s}</button>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
                 <button type="submit" name ="amazondownloadbtn" class="btn-payone btn " >Amazonpay Konfiguration abrufen</button>
             </form>
         </div>
