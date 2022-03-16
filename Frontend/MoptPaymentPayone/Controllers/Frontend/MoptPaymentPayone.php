@@ -752,10 +752,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     {
         $session = Shopware()->Session();
         $errorMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')->get('generalErrorMessage', 'Es ist ein Fehler aufgetreten');
+        $errorInfoMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('PaymentErrorInfo', 'Bitte kontaktieren Sie den Shopbetreiber.');
+        $failInfoMessage = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('PaymentFailInfo', 'Bitte versuchen Sie es mit einer anderen Zahlungsart nochmal.');
         $session->payoneErrorMessage = $errorMessage;
         $session->otherErrorMessages = array(
-            'contactShopOwner' => 'Bitte kontaktieren Sie den Shopbetreiber.',
-            'otherPaymentMethod' => 'Bitte versuchen Sie es mit einer anderen Zahlungsart nochmal.'
+            'contactShopOwner' => $errorInfoMessage,
+            'otherPaymentMethod' => $failInfoMessage
         );
         $this->forward('error');
     }
