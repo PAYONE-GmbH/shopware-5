@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/github/license/PAYONE-GmbH/shopware-5)
 ![Latest release version (semver)](https://img.shields.io/github/v/release/PAYONE-GmbH/shopware-5)
 
-The official extension for Shopware 5 to enable payment for your
+The official extension for [Shopware 5](https://www.payone.com/DE-de/payment-loesungen/online-shops/shopware) to enable payment for your
 website via PAYONE service.
 
 ## Installation
@@ -35,6 +35,7 @@ PAYONE GmbH<br>
 Office Kiel<br>
 Fraunhoferstraße 2-4<br>
 24118 Kiel, Germany<br>
+[payone.com](https://www.payone.com/DE-de)<br>
 Phone +49 431 25968-400<br>
 sales@payone.com<br>
 tech.support@payone.com<br>
