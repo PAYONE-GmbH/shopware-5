@@ -170,6 +170,10 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'transLogging',
             'changeOrderOnTXS',
             'trustlyShowIbanBic',
+            'applepayVisa',
+            'applepayMastercard',
+            'applepayGirocard',
+            'applepayDebug',
         );
 
         foreach ($fields as $field) {
