@@ -68,8 +68,8 @@ class FrontendAccount implements SubscriberInterface
                 } else {
                     $subject->View()->sFormData += $paymentData;
                 }
+                $subject->View()->sUserData += $paymentData;
             }
-            $subject->View()->sUserData += $paymentData;
         }
 
         if ($controllerName == 'account') {
