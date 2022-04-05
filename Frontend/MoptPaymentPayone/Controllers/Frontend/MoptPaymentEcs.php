@@ -31,7 +31,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
 
         $userData = $this->getUserData();
-        $amount = $this->getBasketAmount($userData);
+        $amount = round($this->getBasketAmount($userData), 0);
         
         $expressCheckoutRequestData = $paramBuilder->buildPayPalExpressCheckout(
             $paymentId,
@@ -80,7 +80,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
         
         $userData = $this->getUserData();
-        $amount = $this->getBasketAmount($userData);
+        $amount = round($this->getBasketAmount($userData), 0);
         
         $expressCheckoutRequestData = $paramBuilder->buildPayPalExpressCheckoutDetails(
             $paymentId,
