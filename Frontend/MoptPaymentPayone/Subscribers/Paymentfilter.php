@@ -49,7 +49,7 @@ class Paymentfilter implements SubscriberInterface
         // only show "Payone Secure Invoice" when billing and shipping addresses are the same
         if (!empty($user['billingaddress']['id']) && $user['billingaddress']['id'] !== $user['shippingaddress']['id']) {
             foreach ($result as $index=>$payment) {
-                if (str_starts_with($payment['name'], 'mopt_payone__acc_payone_safe_invoice')) {
+                if (strpos($payment['name'], 'mopt_payone__acc_payone_safe_invoice') === 0) {
                     unset($result[$index]);
                 }
             }
