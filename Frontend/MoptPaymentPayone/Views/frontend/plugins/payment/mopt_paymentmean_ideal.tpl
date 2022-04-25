@@ -17,8 +17,9 @@
             <option value="ING_BANK" {if $form_data.mopt_payone__ideal_bankgrouptype == 'ING_BANK'}selected="selected"{/if}>ING Bank</option>
             <option value="KNAB_BANK" {if $form_data.mopt_payone__ideal_bankgrouptype == 'KNAB_BANK'}selected="selected"{/if}>Knab</option>
             <option value="VAN_LANSCHOT_BANKIERS" {if $form_data.mopt_payone__ideal_bankgrouptype == 'VAN_LANSCHOT_BANKIERS'}selected="selected"{/if}>van Lanschot Bank</option>
-            <option value="MONEYOU" {if $form_data.mopt_payone__ideal_bankgrouptype == 'MONEYOU'}selected="selected"{/if}>Moneyou</option>
             <option value="HANDELSBANKEN" {if $form_data.mopt_payone__ideal_bankgrouptype == 'HANDELSBANKEN'}selected="selected"{/if}>Handelsbanken</option>
+            <option value="FRIESLAND_BANK" {if $form_data.mopt_payone__ideal_bankgrouptype == 'FRIESLAND_BANK'}selected="selected"{/if}>Friesland Bank</option>
+            <option value="REVOLUT" {if $form_data.mopt_payone__ideal_bankgrouptype == 'REVOLUT'}selected="selected"{/if}>Revolut</option>
         </select>
     </div>
 </div>
