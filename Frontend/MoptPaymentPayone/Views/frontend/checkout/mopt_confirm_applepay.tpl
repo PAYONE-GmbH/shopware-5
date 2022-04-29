@@ -34,6 +34,7 @@
 
         function writeDebug(message, data) {
             if (mopt_applepay_debug != true) {
+                console.log('Applepay Debug not aktive');
                 return;
             }
             if (!message) message = '';
