@@ -59,8 +59,8 @@
             })
 
             session.onvalidatemerchant = function (event) {
-                // var validationUrl = event.validationURL;
-                var validationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
+                var validationUrl = event.validationURL;
+                // validationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
                 writeDebug('Vaidation URl:' + validationUrl);
                 $.ajax({
                     url: '{url controller="MoptAjaxPayone" action="createApplePaySession" forceSecure}',
