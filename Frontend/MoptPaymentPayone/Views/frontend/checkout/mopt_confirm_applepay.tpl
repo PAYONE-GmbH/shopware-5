@@ -13,7 +13,7 @@
         var mopt_applepay_debug = {$mopt_applepay_debug};
         // var mopt_applepay_outputElem = document.getElementById('mopt-applepay-device-support');
         var mopt_applepay_debugElem = document.getElementById('mopt-applepay-debug');
-        if (mopt_applepay_debug == true) {
+        if (mopt_applepay_debug == 1 ) {
             mopt_applepay_debugElem.removeAttribute('hidden');
         }
         writeDebug('Testing Suppport for Applepay Session');
@@ -33,8 +33,7 @@
         }
 
         function writeDebug(message, data) {
-            if (mopt_applepay_debug != true) {
-                console.log('Applepay Debug not aktive');
+            if (mopt_applepay_debug != 1) {
                 return;
             }
             if (!message) message = '';
@@ -60,7 +59,8 @@
             })
 
             session.onvalidatemerchant = function (event) {
-                var validationUrl = event.validationURL;
+                // var validationUrl = event.validationURL;
+                var validationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
                 writeDebug('Vaidation URl:' + validationUrl);
                 $.ajax({
                     url: '{url controller="MoptAjaxPayone" action="createApplePaySession" forceSecure}',
