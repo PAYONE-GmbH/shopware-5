@@ -1,4 +1,4 @@
-{if $moptCreditCardCheckEnvironment.moptCreditcardConfig.integration_type === '0'}
+{if $moptCreditCardCheckEnvironment.moptCreditcardConfig.integration_type == 0}
     {assign var="moptIsAjax" value=false}
 {else}
     {assign var="moptIsAjax" value=true}
@@ -42,7 +42,18 @@
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
 
-    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1' && ! $moptIsAjax}
+    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.integration_type === '0'}
+        integration type exact string match <br>
+    {else}
+        integration type no match<br>
+    {/if}
+    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.integration_type === 0}
+        integration type exact int match<br>
+    {else}
+        integration type no match<br>
+    {/if}
+
+    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection == '1' && ! $moptIsAjax}
         <div id="payone-cc-auto-detection-messages">
             <div class="payone-auto-cc-detection-message" data-msg-type="unknown">
                 <div class="alert is--warning is--rounded">
@@ -91,10 +102,10 @@
     </div>
 
     <div class="row" style="margin-top: 25px">
-        <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection === '1' && !$moptIsAjax}style="display: none;"{/if}>
+        <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection == '1' && !$moptIsAjax}style="display: none;"{/if}>
             <select name="moptPaymentData[mopt_payone__cc_cardtype]"
                     id="mopt_payone__cc_cardtype"
-                    {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection !== '1'}required="required" aria-required="true"{/if}
+                    {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection != '1'}required="required" aria-required="true"{/if}
                     class="select--country is--required{if $error_flags.mopt_payone__cc_cardtype} has--error{/if}">
                 <option disabled="disabled" value="" selected="selected">{s name='creditCardType'}Kartentyp{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
                 {foreach from=$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards item=credit_card}
