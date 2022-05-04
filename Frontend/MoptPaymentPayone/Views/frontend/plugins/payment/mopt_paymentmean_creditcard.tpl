@@ -42,17 +42,6 @@
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
 
-    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.integration_type === '0'}
-        integration type exact string match <br>
-    {else}
-        integration type no match<br>
-    {/if}
-    {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.integration_type === 0}
-        integration type exact int match<br>
-    {else}
-        integration type no match<br>
-    {/if}
-
     {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection == '1' && ! $moptIsAjax}
         <div id="payone-cc-auto-detection-messages">
             <div class="payone-auto-cc-detection-message" data-msg-type="unknown">
