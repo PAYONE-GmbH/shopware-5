@@ -46,6 +46,10 @@ class Payone_Api_Request_Parameter_Paydata_DataItem extends Payone_Api_Request_P
     {
         $data = parent::toArray();
         $data['add_paydata[' . $this->key . ']'] = $this->getData();
+        // unset key and data to prevent overwriting of payone API key in PHP 8.1
+        // this seems related to changes in array_merge()
+        unset($data['key']);
+        unset($data['data']);
         return $data;
     }
 
