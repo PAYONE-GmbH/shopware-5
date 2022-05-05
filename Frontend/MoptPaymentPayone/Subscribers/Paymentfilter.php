@@ -46,6 +46,15 @@ class Paymentfilter implements SubscriberInterface
         $ratepayconfig = $moptPayoneMain->getPaymentHelper()
             ->moptGetRatepayConfig($billingCountry);
 
+        // only show "Payone Secure Invoice" when billing and shipping addresses are the same
+        if (!empty($user['billingaddress']['id']) && $user['billingaddress']['id'] !== $user['shippingaddress']['id']) {
+            foreach ($result as $index=>$payment) {
+                if (strpos($payment['name'], 'mopt_payone__acc_payone_safe_invoice') === 0) {
+                    unset($result[$index]);
+                }
+            }
+        }
+
         if (!$ratepayconfig) {
             foreach ($result as $index=>$payment) {
                 if ($payment['name'] === 'mopt_payone__fin_ratepay_installment') {
