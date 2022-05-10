@@ -259,13 +259,14 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
                 $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                $debug = $moptPayoneData['moptApplepayConfig']['applepayDebug'] === true ? 1 : 0;
                 $view->assign('mopt_applepay_country',  $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']));
                 $view->assign('mopt_applepay_currency', Shopware()->Config()->get('currency'));
                 $view->assign('mopt_applepay_supportedNetworks', $this->getApplePayCreditcards($moptPayoneData['moptApplepayConfig']));
                 $view->assign('mopt_applepay_merchantCapabilities', "['supports3DS', 'supportsDebit', 'supportsCredit']");
                 $view->assign('mopt_applepay_label', Shopware()->Config()->get('shopname'));
                 $view->assign('mopt_applepay_merchantIdentifier', $moptPayoneData['moptApplepayConfig']['applepayMerchantId']);
-                $view->assign('mopt_applepay_debug', $moptPayoneData['moptApplepayConfig']['applepayDebug']);
+                $view->assign('mopt_applepay_debug', $debug);
                 $view->extendsTemplate('frontend/checkout/mopt_confirm_applepay.tpl');
         }
         if ($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
