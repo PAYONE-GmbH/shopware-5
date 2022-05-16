@@ -107,6 +107,9 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 
             $payment     = $order->getPayment();
             $paymentName = $payment->getName();
+            // remove _1 ,_2 ... from duplicated payments before matching
+            $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
+
             if ($request->getParam('includeShipment') === 'true') {
                 $includeShipment = true;
             } else {
@@ -138,9 +141,12 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 
             if ($this->moptPayone__main->getPaymentHelper()->isPayoneSafeInvoice($paymentName)){
                 $autoSettleAccount = true;
+            }
+
+            if (in_array( $cleanedPaymentName,\Mopt_PayoneConfig::PAYMENTS_DONOTSENDCAPTUREMODE)) {
                 $doNotSendCaptureMode = true;
             }
-            $response = $this->moptPayone_callCaptureService($params, $invoicing, $autoSettleAccount, $doNotSendCaptureMode);
+                $response = $this->moptPayone_callCaptureService($params, $invoicing, $autoSettleAccount, $doNotSendCaptureMode);
 
             if ($response->getStatus() == Payone_Api_Enum_ResponseType::APPROVED) {
             //increase sequence

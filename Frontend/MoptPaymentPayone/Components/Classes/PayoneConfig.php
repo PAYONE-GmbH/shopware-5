@@ -62,6 +62,8 @@ class Mopt_PayoneConfig
         'mopt_payone__ibt_bancontact',
         'mopt_payone__ewallet_amazon_pay',
         'mopt_payone__ewallet_alipay',
+        'mopt_payone__ibt_trustly',
+        'mopt_payone__ewallet_wechatpay',
     ];
 
     const PAYMENTS_ADDRESSCHECK_EXCLUDED = [
@@ -105,6 +107,8 @@ class Mopt_PayoneConfig
         'mopt_payone__acc_payone_safe_invoice',
         'mopt_payone__ibt_bancontact',
         'mopt_payone__ewallet_alipay',
+        'mopt_payone__ibt_trustly',
+        'mopt_payone__ewallet_wechatpay',
     ];
 
     const PAYMENTS_EXCLUDED_FROM_ACCOUNTPAGE = [
@@ -119,6 +123,13 @@ class Mopt_PayoneConfig
         'mopt_payone__fin_kiv_klarna_invoice',
         'mopt_payone__fin_kdd_klarna_direct_debit',
         'mopt_payone_klarna',
+    ];
+
+    const PAYMENTS_DONOTSENDCAPTUREMODE = [
+        'mopt_payone__acc_payone_safe_invoice',
+        'mopt_payone__ewallet_alipay',
+        'mopt_payone__ibt_trustly',
+        'mopt_payone__ewallet_wechatpay',
     ];
 
   /**
