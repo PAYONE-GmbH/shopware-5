@@ -146,7 +146,8 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
             if (in_array( $cleanedPaymentName,\Mopt_PayoneConfig::PAYMENTS_DONOTSENDCAPTUREMODE)) {
                 $doNotSendCaptureMode = true;
             }
-                $response = $this->moptPayone_callCaptureService($params, $invoicing, $autoSettleAccount, $doNotSendCaptureMode);
+
+            $response = $this->moptPayone_callCaptureService($params, $invoicing, $autoSettleAccount, $doNotSendCaptureMode);
 
             if ($response->getStatus() == Payone_Api_Enum_ResponseType::APPROVED) {
             //increase sequence
