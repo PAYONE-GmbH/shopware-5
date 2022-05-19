@@ -78,14 +78,18 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $request = $this->Request();
 
         $this->logger->debug('notification controller called');
-        
+
         if (!$request->isPost()) {
             $this->redirect(array('controller' => 'index', 'action' => 'error'));
             return;
         }
 
+        $this->logger->debug('received $_POST:' . PHP_EOL .  var_export($_POST, true) . PHP_EOL);
+
         $rawPost = $_POST;
-        $_POST = array_map('utf8_encode', $_POST); // utf8 encode all post params to avoid encoding issues
+
+        $_POST = $this->utf8_encode_array($_POST);
+        $this->logger->debug('successfully converted $_POST to utf-8:' . PHP_EOL .  var_export($_POST, true) . PHP_EOL);
         $request->setParamSources(array('_POST')); // only retrieve data from POST
 
         $this->CheckAndFixActiveShopIfNeeded($request->getParam('param'));
@@ -129,7 +133,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $validators = $service->getValidators();
         foreach ($validators as $validator) {
             if ($validator instanceof Payone_TransactionStatus_Validator_Ip) {
-                $validator->getConfig()->setValue('validator/proxy/enabled',1);
+                $validator->getConfig()->setValue('validator/proxy/enabled', 1);
             }
         }
 
@@ -168,7 +172,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 $this->logger->debug('finished, output TSOK');
                 echo $response->getStatus();
                 $this->logger->debug('starting tx forwards');
-                $this->moptPayoneForwardTransactionStatus($rawPost, $paymentId);
+                $this->moptPayoneForwardTransactionStatus($_POST, $paymentId);
                 $this->logger->debug('finished all tasks, exit');
                 exit;
             }
@@ -220,7 +224,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
                 }
 
-            } elseif ($request->getParam('txaction') === 'reminder' && $request->getParam('reminderlevel') === '0')  {
+            } elseif ($request->getParam('txaction') === 'reminder' && $request->getParam('reminderlevel') === '0') {
                 // ignore txaction reminder with reminderlevel 0 since this only marks the end of dunning process
             } else {
                 // ! Amazonpay
@@ -241,7 +245,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->logger->debug('finished, output TSOK');
         echo $response->getStatus();
         $this->logger->debug('starting tx forwards');
-        $this->moptPayoneForwardTransactionStatus($rawPost, $paymentId);
+        $this->moptPayoneForwardTransactionStatus($_POST, $paymentId);
 
         // fire event to do some custom stuff, e.g. synchronising with merchandise management software
         // please note that processing this event has to be fast because Payone will mark this request as
@@ -286,8 +290,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     protected function moptPayoneForwardTransactionStatus($post, $paymentID)
     {
-        $post = array_map('utf8_encode', $post); // utf8 encode all post params to avoid encoding issues
-
         $post['paymentID'] = $paymentID;
 
         $queueWorker = new Mopt_PayoneTransactionForwardingQueueWorker();
@@ -453,7 +455,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         );
 
         $sql = 'UPDATE s_order_attributes SET mopt_payone_status=?, mopt_payone_sequencenumber=?, '
-                . 'mopt_payone_payment_reference=? ';
+            . 'mopt_payone_payment_reference=? ';
 
         if ($saveOrderHash) {
             $sql = $sql . ' , mopt_payone_order_hash=? ';
@@ -488,7 +490,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             $shopRepository = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');
             $shop = $shopRepository->getActiveById($shopId);
             $shop->registerResources(Shopware()->Bootstrap());
-            
+
             $this->logger->info(
                 'different shop active, submitted id, new shopid',
                 array($activeShopId, $shopId, Shopware()->Shop()->getId())
@@ -525,6 +527,24 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     protected function buildPayoneTransactionLogPath()
     {
         $logDir = Shopware()->Container()->get('kernel')->getLogDir();
-        return  $logDir . '/moptPayoneTransactionStatus.log';
+        return $logDir . '/moptPayoneTransactionStatus.log';
     }
+
+    /**
+     * converts multi dimensional arrays to utf8
+     * @param $array
+     * @return mixed
+     */
+    private function utf8_encode_array($array)
+    {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $this->utf8_encode_array($value);
+            } else {
+                $array[$key] = utf8_encode($value);
+            }
+        }
+        return $array;
+    }
+
 }

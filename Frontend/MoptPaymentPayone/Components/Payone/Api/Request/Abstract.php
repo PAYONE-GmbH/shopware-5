@@ -137,6 +137,9 @@ abstract class Payone_Api_Request_Abstract implements Payone_Api_Request_Interfa
                  * @var Payone_Api_Request_Parameter_Interface $data
                  */
                 $result = array_merge($result, $data->toArray());
+                if (empty($result['capturemode'])) {
+                    unset($result['capturemode']);
+                }
             } elseif ($data instanceof Payone_Protocol_Service_ApplyFilters == false) {
                 $result[$key] = $data;
             }
