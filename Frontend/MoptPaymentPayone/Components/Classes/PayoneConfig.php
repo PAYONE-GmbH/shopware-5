@@ -130,6 +130,7 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_alipay',
         'mopt_payone__ibt_trustly',
         'mopt_payone__ewallet_wechatpay',
+        'mopt_payone__acc_cashondel',
     ];
 
   /**
