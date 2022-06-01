@@ -24,8 +24,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $this->session = Shopware()->Session();
         $this->plugin = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone();
         $this->basket = Shopware()->Modules()->Basket();
-        $this->admin->sSYSTEM->_POST['sPayment'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
-        $this->admin->sUpdatePayment(Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
+        $session = Shopware()->Session();
+        $paymentId = $session->moptAmazonpayPaymentId;
+
+        $this->admin->sSYSTEM->_POST['sPayment'] = $paymentId;
+        $this->admin->sUpdatePayment($paymentId);
     }
 
     /**
@@ -41,6 +44,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
     public function indexAction()
     {
+        $session = Shopware()->Session();
+        $paymentId = $session->moptAmazonpayPaymentId;
         if (!empty($this->Request()->getParam("access_token"))) {
             $this->session->moptPayoneAmazonAccessToken = $this->Request()->getParam("access_token");
         }
@@ -58,13 +63,12 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         }
 
         if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isAmazonPayEnabled()
-            && ($payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig())
+            && ($payoneAmazonPayConfig =  $this->container->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig(Shopware()->Shop()->getId()))
         ) {
-            $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-            $config = $this->container->get('MoptPayoneMain')->getPayoneConfig($paymenthelper->getPaymentAmazonPay()->getId());
+            $config = $this->container->get('MoptPayoneMain')->getPayoneConfig($paymentId);
 
-            $this->session['sPaymentID'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
-            $this->View()->sPayment = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
+            $this->session['sPaymentID'] = $paymentId;
+            $this->View()->sPayment = $paymentId;
             $userData = $this->getUserData();
             $this->View()->assign('sUserData', $userData);
 
@@ -72,11 +76,11 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $basket = $this->get('modules')->Basket()->sGetBasket();
 
             if ($this->Request()->getParam("sDispatch")) {
-                $this->setDispatch($this->Request()->getParam("sDispatch"), Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
+                $this->setDispatch($this->Request()->getParam("sDispatch"), $paymentId);
             }
 
             $this->View()->assign('payoneAmazonPayMode', $config['liveMode']);
-            $this->View()->sDispatches = $this->getDispatches(Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId());
+            $this->View()->sDispatches = $this->getDispatches($paymentId);
             $this->View()->sAmount = $basket['Amount'];
             // get amount for minimum check before shipping costs are added
             $this->View()->sMinimumSurcharge = $this->getMinimumSurchage();
@@ -137,7 +141,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
     public function finishAction()
     {
-        $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
+        $session = Shopware()->Session();
+        $paymentId = $session->moptAmazonpayPaymentId;
         $moptPayoneMain = $this->plugin->get('MoptPayoneMain');
         $payoneServiceBuilder = $this->plugin->get('MoptPayoneBuilder');
         $paramBuilder = $moptPayoneMain->getParamBuilder();
@@ -165,17 +170,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             array('key' => 'amazon_reference_id', 'data' => $this->session->moptPayoneAmazonReferenceId)
         ));
 
-        // Comment out for some special Payone API Testcases
-
-        /*
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'authorization_note_for_testing', 'data' =>
-            '{"SandboxSimulation": {"State":"Declined", "ReasonCode":"InvalidPaymentMethod", "SoftDecline":"false"}}')
-        ));
-        */
-
-        // sync / async mode according to backend configuration
-        $payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig();
+        $payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig(Shopware()->Shop()->getId());
 
         if ($payoneAmazonPayConfig->getAmazonMode() === 'sync') {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
@@ -758,7 +753,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             } else {
                 $userData['additional']['charge_vat'] = true;
                 $userData['additional']['show_net'] = !empty($system->sUSERGROUPDATA['tax']);
-                Shopware()->Session()->sOutputNet = empty($system->sUSERGROUPDATA['tax']);
+                Shopware()->Session()->sOutputNet = (empty($system->sUSERGROUPDATA['tax']));
             }
             $userData['additional']['user']['paymentID'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
             $userData['additional']['payment']['id'] = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();

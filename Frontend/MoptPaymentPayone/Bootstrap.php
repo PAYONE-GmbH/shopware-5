@@ -802,6 +802,26 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Applepay fileds
         $this->getInstallHelper()->checkAndAddApplepayConfig();
+
+        /** @var Payment $payment */
+        $paypalExpressPayment = $this->Payments()->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);
+        $doPaypalMigration = $this->getInstallHelper()->checkPaypalMigration();
+        if ($paypalExpressPayment && $doPaypalMigration) {
+            // migrate Shopware paypal settings, dispatch Settings and Payone Config settings to paypal express
+            $this->getInstallHelper()->migratePaypalSettings();
+        }
+
+        // Add shop to paypal express config
+        $this->getInstallHelper()->checkAndUpdatePayPalShopModelExtension();
+
+        // remove column is_default from paypal express config
+        $this->getInstallHelper()->checkAndUpdatePayPalDefaultModelExtension();
+
+        // remove column locale_id from paypal express config
+        $this->getInstallHelper()->checkAndRemovePayPalLocaleModelExtension();
+
+        // Add shop to paypal express config
+        $this->getInstallHelper()->checkAndUpdateAmazonPayShopModelExtension();
     }
 
     /**
@@ -870,7 +890,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'parent' => $item,
         ));
         $this->createMenuItem(array(
-            'label' => 'Payone PayPal',
+            'label' => 'Payone PayPal Express',
             'controller' => 'MoptPayonePaypal',
             'action' => 'Index',
             'class' => 'sprite-locale',
@@ -894,7 +914,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'parent' => $item,
         ));
         $this->createMenuItem(array(
-            'label' => 'Payone PayDirekt',
+            'label' => 'Payone Paydirekt Express',
             'controller' => 'MoptPayonePayDirekt',
             'action' => 'Index',
             'class' => 'sprite-locale',

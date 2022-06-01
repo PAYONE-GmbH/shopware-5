@@ -1052,22 +1052,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         if ($response->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
             // create User from Address Data
-
             $responseData = $response->toArray();
             $responseAddress = $response->getPaydata()->toAssocArray();
-
-            // check if billing country is active for amazon
-            if (!$this->isBillingAddressSupported($responseAddress['billing_country'])) {
-                $data['errormessage'] = Shopware()->Snippets()
-                    ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-                    ->get('amazonBillingAddressNotSupported');
-                $data['status'] = 'error';
-                $encoded = json_encode($data);
-                echo $encoded;
-                return;
-            }
-
-            //check telephonenumber
+            //check if telephonenumber is required in shop config
             if (Shopware()->Config()->get('requirePhoneField')) {
                 $shipping_telephonenumber = $responseAddress['shipping_telephonenumber'];
                 if (strlen($shipping_telephonenumber) < 1) {
@@ -1081,18 +1068,17 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 }
             }
 
-            if (!$this->isShippingAddressSupported($responseAddress)) {
-                $data['errormessage'] = Shopware()->Snippets()
-                    ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-                    ->get('amazonShippingAddressNotSupported');
+            $this->session->moptPayoneUserHelperError = false;
+            $success = $payoneUserHelper->createOrUpdateUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId(), $this->session);
+
+            if ($success === false) {
+                $data['errormessage'] = $this->session->moptPayoneUserHelperErrorMessage;
                 $data['status'] = 'error';
                 $encoded = json_encode($data);
                 echo $encoded;
                 return;
-
             }
 
-            $payoneUserHelper->createrOrUpdateUser($response, $payonePaymentHelper->getPaymentAmazonPay()->getId(), $this->session);
 
             if (!$this->session->moptCountry) {
                 $data['countryChanged'] = true;
@@ -1172,73 +1158,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $response = $this->service->request($request);
         return $response;
-    }
-
-    protected function isBillingAddressSupported($country)
-    {
-
-        $countries = $this->moptPayoneMain->getPaymentHelper()
-            ->moptGetCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
-
-        if (count($countries) == 0) {
-            return true;
-        }
-
-        if (in_array($country, array_column($countries, 'countryiso'))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    protected function isShippingAddressSupported($address)
-    {
-
-        if (!array_key_exists("shipping_firstname", $address)) {
-            return false;
-        }
-
-        if (count($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries()) > 0) {
-            $amazonPaySupportedCountries = array();
-            foreach ($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getCountries() as $amazonCountry) {
-                /**
-                 * @var \Shopware\Models\Country\Country $country
-                 */
-                $amazonPaySupportedCountries[] = $amazonCountry->getIso();
-            }
-
-            if (!in_array($address['shipping_country'], $amazonPaySupportedCountries)) {
-                return false;
-            }
-        }
-
-        /**
-         * @var $config \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay
-         */
-        $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig();
-
-        //Check if amazon payment is not allowed for Packstation's
-        if ($config->getPackStationMode() == 'deny') {
-            foreach ($address as $part) {
-                if (strpos($part, 'Packstation') !== false
-                    || strpos($part, 'packstation') !== false) {
-                    return false;
-                }
-            }
-        }
-
-        $countries = $this->moptPayoneMain->getPaymentHelper()
-            ->moptGetShippingCountriesAssignedToPayment($this->moptPayoneMain->getPaymentHelper()->getPaymentAmazonPay()->getId());
-
-        if (count($countries) == 0) {
-            return true;
-        }
-
-        if (in_array($address['shipping_country'], array_column($countries, 'countryiso'))) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

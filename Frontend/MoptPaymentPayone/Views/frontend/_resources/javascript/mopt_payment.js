@@ -469,7 +469,7 @@ function moptPaymentReady() {
                  * @returns {boolean} True if auto CC detection is enabled.
                  */
                 isEnabled: function () {
-                    return me.opts.moptCreditcardConfig.auto_cardtype_detection === '1';
+                    return me.opts.moptCreditcardConfig.auto_cardtype_detection == '1';
                 },
 
                 /**

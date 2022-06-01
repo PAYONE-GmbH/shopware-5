@@ -14,7 +14,20 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.model.Config', {
         { name: 'buttonColor', type: 'string' },
         { name: 'buttonLanguage', type: 'string' },
         { name: 'amazonMode', type: 'string' },
-        { name: 'packStationMode', type: 'string' }
+        { name: 'packStationMode', type: 'string' },
+        { name: 'shopId', type: 'int' }
+    ],
+
+    associations: [
+        {
+            relation: 'ManyToOne',
+            field: 'shopId',
+
+            type: 'hasMany',
+            model: 'Shopware.apps.Base.model.Shop',
+            name: 'getShop',
+            associationKey: 'shop'
+        }
     ]
 });
  

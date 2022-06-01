@@ -8,6 +8,7 @@ namespace Shopware\CustomModels\MoptPayonePayDirekt;
 
 use Shopware\Components\Model\ModelEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Shopware\Models\Shop\Shop;
 
 /**
  * @ORM\Entity(repositoryClass="Repository")
@@ -26,17 +27,17 @@ class MoptPayonePayDirekt extends ModelEntity
     private $id;
 
     /**
-     * @var
-     * @ORM\Column(name="locale_id", type="integer", unique=false)
+     * @var integer $shopId
+     * @ORM\Column(name="shop_id", type="integer", unique=true)
      */
-    protected $localeId;
+    protected $shopId;
 
     /**
-     * @var Locale $locale
-     * @ORM\ManyToOne(targetEntity="Shopware\Models\Shop\Locale")
-     * @ORM\JoinColumn(name="locale_id", referencedColumnName="id")
+     * @var Shop $shop
+     * @ORM\ManyToOne(targetEntity="Shopware\Models\Shop\Shop")
+     * @ORM\JoinColumn(name="shop_id", referencedColumnName="id")
      */
-    private $locale;
+    private $shop;
 
     /**
      * @var
@@ -56,6 +57,12 @@ class MoptPayonePayDirekt extends ModelEntity
      */
     private $image;
 
+    /**
+     * @var
+     * @ORM\Column(name="pack_station_mode", type="string", nullable=true)
+     */
+    protected $packStationMode;
+
     public function __construct()
     {
     }
@@ -74,39 +81,6 @@ class MoptPayonePayDirekt extends ModelEntity
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocaleId()
-    {
-        return $this->localeId;
-    }
-
-    /**
-     * @param mixed $localeId
-     * @return MoptPayonePayDirekt
-     */
-    public function setLocaleId($localeId)
-    {
-        $this->localeId = $localeId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
-    /**
-     * @param mixed $locale
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
     }
 
     /**
@@ -155,5 +129,31 @@ class MoptPayonePayDirekt extends ModelEntity
     public function setDispatchId($dispatchId)
     {
         $this->dispatchId = $dispatchId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPackStationMode()
+    {
+        return $this->packStationMode;
+    }
+
+    /**
+     * @param mixed $packStationMode
+     */
+    public function setPackStationMode($packStationMode)
+    {
+        $this->packStationMode = $packStationMode;
+    }
+
+    public function getShop()
+    {
+        return $this->shop;
+    }
+
+    public function setShop(\Shopware\Models\Shop\Shop $shop)
+    {
+        $this->shop = $shop;
     }
 }

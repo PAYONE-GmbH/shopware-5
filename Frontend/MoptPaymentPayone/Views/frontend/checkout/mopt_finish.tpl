@@ -35,7 +35,7 @@
 {/block}
 
 {block name="frontend_index_header_javascript_jquery" append}
-    {if $sUserData.additional.payment.name == 'mopt_payone__ewallet_amazon_pay'}
+    {if $sUserData.additional.payment.name|strstr:"mopt_payone__ewallet_amazon_pay"}
         <script async="async"
                 {if $payoneAmazonPayMode == 1} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/lpa/js/Widgets.js'> {/if}
             {if $payoneAmazonPayMode == 0} src='https://static-eu.payments-amazon.com/OffAmazonPayments/eur/sandbox/lpa/js/Widgets.js'>{/if}

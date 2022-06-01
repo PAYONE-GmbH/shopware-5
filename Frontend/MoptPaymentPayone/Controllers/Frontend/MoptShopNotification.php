@@ -208,7 +208,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             //$failedcause = '-981';
 
             $paymentName = $this->moptPayone__paymentHelper->getPaymentNameFromId($order['paymentID']);
-            if ($paymentName === 'mopt_payone__ewallet_amazon_pay') {
+            if (strpos($paymentName, 'mopt_payone__ewallet_amazon_pay') === 0) {
                 if ($request->getParam('txaction') == 'failed') {
                     // save failed status with mail notification
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState, true);

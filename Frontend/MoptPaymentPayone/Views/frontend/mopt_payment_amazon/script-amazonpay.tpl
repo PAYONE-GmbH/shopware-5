@@ -124,16 +124,17 @@
                             $.loadingIndicator.close();
                             $('#jsErrors').show();
                             $('#jsErrorContent').html(responseData.errormessage);
-
-
+                            console.log('status is error doing nothing');
                         } else {
                             var moptAmazonCountryChanged = responseData.countryChanged;
                             $('#jsErrors').hide();
                             // Reload the site, to update dispatches in case country changed
                             if (moptAmazonCountryChanged) {
+                                console.log('Country changed');
                                 $.loadingIndicator.open();
                                 location.reload(true);
                             } else {
+                                console.log('Country did not change');
                                 $.loadingIndicator.close();
                                 {if ! $sMinimumSurcharge}
                                 $('#moptAmazonPayButton').removeAttr("disabled");

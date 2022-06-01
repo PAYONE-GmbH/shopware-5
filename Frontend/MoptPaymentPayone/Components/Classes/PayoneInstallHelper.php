@@ -1,6 +1,5 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-
 /**
  * This class handles:
  * installment, uninstallment
@@ -27,6 +26,11 @@
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.fatchip.com
  */
+
+use Shopware\Models\Payment\Payment;
+use Shopware\Models\Dispatch\Dispatch;
+use Doctrine\DBAL\Connection;
+
 class Mopt_PayoneInstallHelper
 {
     /**
@@ -577,6 +581,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Apple Pay',
                 'template' => 'mopt_paymentmean_applepay.tpl',
                 'position' => 41,),
+            array(
+                'name' => 'mopt_payone__ewallet_paypal_express',
+                'description' => 'PAYONE PayPal Express',
+                'template' => null,
+                'position' => 42,),
         );
     }
 
@@ -1900,6 +1909,181 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
                 $db->exec($sql);
             }
         }
+    }
+
+    /**
+     * check if paypal configuration is already extended Pack station check
+     *
+     * @return void
+     */
+    function checkAndUpdatePayPalShopModelExtension()
+    {
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='shop_id'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_paypal` "
+                . "ADD COLUMN shop_id int(11) DEFAULT 1;";
+            $db->exec($sql);
+
+            $sql = "UPDATE s_plugin_mopt_payone_paypal SET shop_id = 1;";
+            $db->exec($sql);
+        }
+
+    }
+
+    /**
+     * check if paypal configuration is already extended Pack station check
+     *
+     * @return void
+     */
+    function checkAndUpdateAmazonPayShopModelExtension()
+    {
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_amazon_pay'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='shop_id'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_amazon_pay` "
+                . "ADD COLUMN shop_id int(11) DEFAULT 1;";
+            $db->exec($sql);
+
+            $sql = "UPDATE s_plugin_mopt_payone_amazon_pay SET shop_id = 1;";
+            $db->exec($sql);
+        }
+
+    }
+
+    /**
+     * check if paypal configuration is already extended Pack station check
+     *
+     * @return void
+     */
+    function checkAndUpdatePayPalDefaultModelExtension()
+    {
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='is_default'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() > 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_paypal` "
+                . "DROP COLUMN is_default;";
+            $db->exec($sql);
+        }
+
+    }
+
+    /**
+     * check if paypal configuration is already extended lcoale
+     *
+     * @return void
+     */
+    function checkAndRemovePayPalLocaleModelExtension()
+    {
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='locale_id'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() > 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_paypal` "
+                . "DROP COLUMN locale_id;";
+            $db->exec($sql);
+        }
+
+    }
+
+    /**
+     * @return void
+     */
+    function migratePaypalSettings()
+    {
+        $connection = Shopware()->Container()->get('dbal_connection');
+        $payoneMain = new Mopt_PayoneMain();
+        /** @var Shopware\Models\Payment\Payment $paypalPayment */
+        $paypalPayment = Shopware()->Models()->getRepository(Payment::class)->findOneBy(['name' => 'mopt_payone__ewallet_paypal']);
+        /** @var Shopware\Models\Payment\Payment $paypalExpressPayment */
+        $paypalExpressPayment = Shopware()->Models()->getRepository(Payment::class)->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);
+        if ($paypalPayment === null) {
+            return;
+        }
+
+        // only enable Paypal Express if Paypal was active and Paypal Express is active in Payone Config
+        $paymentActive = $paypalPayment->getActive();
+        $paypalConfig = $payoneMain->getPayoneConfig($paypalPayment->getId());
+        $paypalExpressActive = $paypalConfig['paypalEcsActive'];
+        if ($paymentActive && $paypalExpressActive) {
+            $paypalExpressPayment->setActive(true);
+        }
+        $paypalExpressPayment->setCountries($paypalPayment->getCountries());
+        $paypalExpressPayment->setShops($paypalPayment->getShops());
+        $paypalExpressPayment->setDebitPercent($paypalPayment->getDebitPercent());
+        $paypalExpressPayment->setSurcharge($paypalPayment->getSurcharge());
+        $paypalExpressPayment->setSurchargeString($paypalPayment->getSurchargeString());
+        $paypalExpressPayment->setEsdActive($paypalPayment->getEsdActive());
+        $paypalExpressPayment->setMobileInactive($paypalPayment->getMobileInactive());
+
+        Shopware()->Models()->persist($paypalExpressPayment);
+        Shopware()->Models()->flush();
+
+        $queryBuilder = $connection->createQueryBuilder();
+
+        $queryBuilder->select([
+            'd.id',
+        ])
+            ->from('s_premium_dispatch', 'd')
+            ->join('d', 's_premium_dispatch_paymentmeans', 'dp', 'd.id = dp.dispatchID AND dp.paymentID=:paymentID')
+            ->where('d.active = 1');
+
+        $queryBuilder->setParameter('paymentID', $paypalPayment->getId());
+        $dispatchIds = $queryBuilder->execute()->fetchAll();
+        foreach ($dispatchIds AS $dispatchID) {
+            /** @var Dispatch $dispatch */
+            $dispatch = Shopware()->Models()->getRepository(Dispatch::class)->findOneBy(['id' => $dispatchID]);
+            $payments = $dispatch->getPayments();
+            $payments->add($paypalExpressPayment);
+            $dispatch->setPayments($payments);
+            Shopware()->Models()->persist($dispatch);
+            Shopware()->Models()->flush();
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    function checkPaypalMigration()
+    {
+        $connection = Shopware()->Container()->get('dbal_connection');
+        /** @var Shopware\Models\Payment\Payment $paypalExpressPayment */
+        $paypalExpressPayment = Shopware()->Models()->getRepository(Payment::class)->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);
+        if ($paypalExpressPayment === null) {
+            return false;
+        }
+
+        $queryBuilder = $connection->createQueryBuilder();
+
+        $queryBuilder->select([
+            'd.id',
+        ])
+            ->from('s_premium_dispatch', 'd')
+            ->join('d', 's_premium_dispatch_paymentmeans', 'dp', 'd.id = dp.dispatchID AND dp.paymentID=:paymentID')
+            ->where('d.active = 1');
+
+        $queryBuilder->setParameter('paymentID', $paypalExpressPayment->getId());
+        $dispatchIds = $queryBuilder->execute()->fetchColumn(0);
+        return empty($dispatchIds) ? true : false;
     }
 }
 

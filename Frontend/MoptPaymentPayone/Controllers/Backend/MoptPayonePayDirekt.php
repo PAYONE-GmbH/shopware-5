@@ -14,8 +14,8 @@ class Shopware_Controllers_Backend_MoptPayonePayDirekt extends Shopware_Controll
     {
         $builder = parent::getListQuery();
 
-        $builder->leftJoin('moptPayonePayDirekt.locale', 'locale');
-        $builder->addSelect(array('locale'));
+        $builder->leftJoin('moptPayonePayDirekt.shop', 'shop');
+        $builder->addSelect(array('shop'));
 
         return $builder;
     }
@@ -24,9 +24,9 @@ class Shopware_Controllers_Backend_MoptPayonePayDirekt extends Shopware_Controll
     {
         $builder = parent::getDetailQuery($id);
 
-        $builder->leftJoin('moptPayonePayDirekt.locale', 'locale');
+        $builder->leftJoin('moptPayonePayDirekt.shop', 'shop');
 
-        $builder->addSelect(array('locale'));
+        $builder->addSelect(array('shop'));
 
         return $builder;
     }

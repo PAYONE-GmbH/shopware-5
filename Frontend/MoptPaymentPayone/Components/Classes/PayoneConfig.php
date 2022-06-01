@@ -69,7 +69,9 @@ class Mopt_PayoneConfig
     const PAYMENTS_ADDRESSCHECK_EXCLUDED = [
         'mopt_payone__ewallet_amazon_pay',
         'mopt_payone__ewallet_paypal',
-
+        'mopt_payone__ewallet_paypal_express',
+        'mopt_payone__ewallet_paydirekt_express',
+        'mopt_payone__ewallet_applepay'
     ];
 
     const PAYMENTS_ADDRESSCHECK_INCLUDED = [
@@ -123,6 +125,30 @@ class Mopt_PayoneConfig
         'mopt_payone__fin_kiv_klarna_invoice',
         'mopt_payone__fin_kdd_klarna_direct_debit',
         'mopt_payone_klarna',
+        'mopt_payone__ewallet_paypal_express',
+        'mopt_payone__ewallet_applepay',
+    ];
+
+    const PAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE = [
+        'mopt_payone__ewallet_amazon_pay',
+        'mopt_payone__ewallet_paypal_express',
+        'mopt_payone__ewallet_paydirekt_express',
+        // 'mopt_payone__ewallet_applepay', applepay is handled seperately
+    ];
+
+    // for these payments basket AND address changes are not allowed
+    const PAYMENTS_EXPRESS = [
+        'mopt_payone__ewallet_paypal_express',
+        'mopt_payone__ewallet_paydirekt_express',
+    ];
+
+    // for these payments basket changes are not allowed after accepting installment conditions
+    const PAYMENTS_INSTALLMENTS = [
+        'mopt_payone__ewallet_amazon_pay',
+        'mopt_payone__fin_kis_klarna_installments',
+        'mopt_payone__fin_paypal_installment',
+        'mopt_payone__fin_payolution_installment',
+        'mopt_payone__fin_ratepay_installment',
     ];
 
     const PAYMENTS_DONOTSENDCAPTUREMODE = [

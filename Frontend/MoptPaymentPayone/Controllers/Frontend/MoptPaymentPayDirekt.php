@@ -1,13 +1,19 @@
 <?php
 
+use Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog;
+
 class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Controllers_Frontend_Payment
 {
 
     protected $moptPayone__serviceBuilder = null;
     /** @var Mopt_PayoneMain $moptPayone__main */
     protected $moptPayone__main = null;
+    /** @var Mopt_PayoneHelper $moptPayone__helper */
     protected $moptPayone__helper = null;
+    /** @var Mopt_PayonePaymentHelper $moptPayone__paymentHelper */
     protected $moptPayone__paymentHelper = null;
+    /** @var Mopt_PayoneUserHelper $payoneUserHelper */
+    protected $payoneUserHelper = null;
     protected $admin;
 
     /**
@@ -19,6 +25,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $this->moptPayone__main = $this->Plugin()->Application()->MoptPayoneMain();
         $this->moptPayone__helper = $this->moptPayone__main->getHelper();
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
+        $this->payoneUserHelper = $this->moptPayone__main->getUserHelper();
         $this->admin = Shopware()->Modules()->Admin();
 
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -40,8 +47,8 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $basket['sShippingcostsNet'] = $shippingCosts['netto'];
         $basket['sShippingcostsTax'] = $shippingCosts['tax'];
 
-        $userData = $this->getUserData();
-        $amount = $this->getBasketAmount($userData);
+        $userData = $this->payoneUserHelper->getUserData();
+        $amount =  $this->payoneUserHelper->getBasketAmount($userData);
 
         $amountWithShipping = $amount + $shippingCosts['brutto'];
 
@@ -64,7 +71,6 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $basketParams = $paramBuilder->getInvoicing($basket, true, $userData);
         $request->setInvoicing($basketParams);
         // Response with new workorderid and redirect-url to paydirekt
-
         $response = $service->request($request);
 
         if ($response->getStatus() === Payone_Api_Enum_ResponseType::REDIRECT) {
@@ -95,8 +101,8 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentPaydirektExpress()->getId();
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
 
-        $userData = $this->getUserData();
-        $amount = $this->getBasketAmount($userData);
+        $userData = $this->payoneUserHelper->getUserData();
+        $amount = $this->payoneUserHelper->getBasketAmount($userData);
 
         $expressCheckoutRequestData = $paramBuilder->buildPaydirektExpressGetStatus(
             $paymentId,
@@ -112,7 +118,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $builder = $this->moptPayone__serviceBuilder;
         $service = $builder->buildServicePaymentGenericpayment();
         $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+            MoptPayoneApiLog::class
         ));
 
         $response = $service->request($request);
@@ -120,9 +126,13 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
         $session['sPaymentID'] = $paymentId;
 
         if ($response->getStatus() === Payone_Api_Enum_ResponseType::OK) {
-            $session = Shopware()->Session();
             $session->offsetSet('moptFormSubmitted', true);
-            $this->createrOrUpdateAndForwardUser($response, $paymentId, $session);
+            $success = $this->payoneUserHelper->createOrUpdateUser($response, $paymentId, $session);
+            if ($success === false) {
+                return $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
+            } else {
+                return $this->redirect(array('controller' => 'checkout', 'action' => 'confirm'));
+            }
         } else {
             return $this->forward('paydirektexpressAbort');
         }
@@ -131,485 +141,14 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
     public function paydirektexpressAbortAction()
     {
         $session = Shopware()->Session();
-        $session->moptPaydirektExpressError = true;
+        $session->moptPayoneUserHelperError = true;
+        $session->moptPayoneUserHelperErrorMessage = Shopware()->Snippets()
+            ->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+            ->get('errorMessageUserAbort');
         unset($session->moptPaydirektExpressWorkerId);
         unset($session->moptBasketChanged);
 
         return $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
-    }
-
-    /**
-     * get complete user-data as array to use in view
-     *
-     * @return array
-     */
-    protected function getUserData()
-    {
-        $system = Shopware()->System();
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $countryShipping = $userData['additional']['countryShipping'];
-
-        if (empty($countryShipping)) {
-            return $userData;
-        }
-
-        $sTaxFree = (
-            !empty($countryShipping['taxfree']) ||
-            !empty($countryShipping['taxfree_ustid']) &&
-            !empty($userData['billingaddress']['ustid'])
-        );
-
-        $system->sUSERGROUPDATA = Shopware()->Db()->fetchRow(
-            'SELECT * FROM s_core_customergroups
-              WHERE groupkey = ?',
-            array($system->sUSERGROUP)
-        );
-
-        $userData['additional']['show_net'] = false;
-        $userData['additional']['charge_vat'] = false;
-        Shopware()->Session()->offsetSet('sOutputNet', true);
-
-        if (!empty($sTaxFree)) {
-            $system->sUSERGROUPDATA['tax'] = 0;
-            $this->container->get('config')->offsetSet('sARTICLESOUTPUTNETTO', 1);
-            Shopware()->Session()->offsetSet('sUserGroupData', $system->sUSERGROUPDATA);
-        } else {
-            $userData['additional']['charge_vat'] = true;
-            $userData['additional']['show_net'] = !empty($system->sUSERGROUPDATA['tax']);
-            Shopware()->Session()->offsetSet('sOutputNet', empty($system->sUSERGROUPDATA['tax']));
-        }
-
-        return $userData;
-    }
-
-    /**
-     * Return the full amount to pay.
-     *
-     * @return float
-     */
-    protected function getBasketAmount($userData)
-    {
-        $basket = $this->moptPayone__main->sGetBasket();
-
-        if (empty($userData['additional']['charge_vat'])) {
-            return $basket['AmountNetNumeric'];
-        }
-
-        return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
-    }
-
-    protected function createrOrUpdateAndForwardUser($apiResponse, $paymentId, $session)
-    {
-        $payData = $apiResponse->getPaydata()->toAssocArray();
-
-        if ($this->isUserLoggedIn($session)) {
-            $user = $this->updateUserAddresses($payData, $session, $paymentId);
-            if ($user === null) {
-                return $this->paydirektexpressAbortAction();
-            }
-        } else {
-            if (!$this->validatePayData($payData)) {
-                return $this->paydirektexpressAbortAction();
-            }
-            $this->createUserWithoutAccount($payData, $session, $paymentId);
-        }
-
-        Shopware()->Session()->sPaymentID = $session->moptPaydirektExpressPaymentId;
-
-        $user = $this->getUserData();
-        //set user data
-        $user['additional']['charge_vat'] = true;
-        //set payment id
-        $user['additional']['user']['paymentID'] = $paymentId;
-
-        return $this->redirect(array('controller' => 'checkout', 'action' => 'confirm'));
-    }
-
-    /**
-     * Checks if user is logged in
-     * @param $session
-     * @return bool
-     */
-    protected function isUserLoggedIn($session)
-    {
-         return (isset($session->sUserId) && !empty($session->sUserId));
-    }
-
-    /**
-     * create / register user without login
-     */
-    protected function createUserWithoutAccount($personalData, $session, $paymentId)
-    {
-        $register = $this->extractData($personalData);
-        $register['payment']['object']['id'] = $paymentId;
-        $register['additional']['payment']['id'] = $paymentId;
-
-        $session['sRegister'] = $register;
-        $session['sRegisterFinished'] = false;
-
-
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $payoneUserHelper = $this->moptPayone__main->getUserHelper();
-            $newdata = $payoneUserHelper->saveUser($register,$paymentId);
-            $this->admin->sSYSTEM->_POST = $newdata['auth'];
-            $this->admin->sLogin(true);
-        } else {
-            $this->admin->sSaveRegister();
-        }
-    }
-
-    protected function updateUserAddresses($personalData, $session, $paymentId)
-    {
-        $personalData = $this->extractData($personalData);
-
-        $personalData['payment']['object']['id'] = $paymentId;
-        $personalData['additional']['payment']['id'] = $paymentId;
-
-        // use old phone number in case phone number is required
-        if (Shopware()->Config()->get('requirePhoneField')) {
-            $oldUserData = $this->admin->sGetUserData();
-            $personalData['billing']['phone'] = $oldUserData['billingaddress']['phone'];
-        }
-
-        $shopAdressesEqual = $this->areShopAddressesEqual();
-        $paydirektAdressesEqual = $this->arePaydirektAddressesEqual($personalData);
-
-        if ($shopAdressesEqual && ! $paydirektAdressesEqual) {
-            $this->seperateAddresses($personalData, $session);
-        }
-        $updated = $this->updateBillingAddress($personalData, $session);
-        if (!$updated) {
-            return null;
-        }
-        $updated = $this->updateShippingAddress($personalData, $session, $paydirektAdressesEqual);
-        if (!$updated) {
-            return null;
-        }
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $this->updateCustomer($personalData, $paymentId);
-        }
-        return $personalData;
-    }
-
-    /**
-     * Checks if customer`s billing and shippingaddress are the same
-     * @return bool
-     * @throws Exception
-     */
-    protected function areShopAddressesEqual() {
-        $session = Shopware()->Session();
-        $userId = $session->offsetGet('sUserId');
-        /** @var \Shopware\Components\Model\ModelManager $em */
-        $em = $this->get('models');
-
-        /** @var \Shopware\Models\Customer\Customer $customer */
-        $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
-        $queryBuilder = $this->container->get('dbal_connection')->createQueryBuilder();
-        $queryBuilder->select('*')
-            ->from('s_user_addresses')
-            ->where('user_id = :user_id')
-            ->setParameter('user_id', $userId);
-
-        /** @var \Shopware\Models\Customer\Address $address */
-        $billingAddress = $customer->getDefaultBillingAddress();
-        $shippingAddress = $customer->getDefaultShippingAddress();
-
-        if ($billingAddress->getId() === $shippingAddress->getId()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if paydirekt billing and shippingaddress are the same
-     * @return bool
-     * @throws Exception
-     */
-    protected function arePaydirektAddressesEqual($personalData) {
-        $addressFields = [
-            'firstname',
-            'lastname',
-            'street',
-            'zipcode',
-            'city'
-        ];
-
-        foreach ($personalData['billing'] AS $addressField => $address) {
-            if (in_array($addressField, $addressFields)) {
-                if ($personalData['billing'][$addressField] !== $personalData['shipping'][$addressField]) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    protected function seperateAddresses($personalData, $session)
-    {
-        $userId = $session->offsetGet('sUserId');
-        /** @var \Shopware\Components\Model\ModelManager $em */
-        $em = $this->get('models');
-
-        /** @var \Shopware\Models\Customer\Customer $customer */
-        $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
-        $queryBuilder = $this->container->get('dbal_connection')->createQueryBuilder();
-        $queryBuilder->select('*')
-            ->from('s_user_addresses')
-            ->where('user_id = :user_id')
-            ->setParameter('user_id', $userId);
-
-        $addresses = $queryBuilder->execute()->fetchAll(PDO::FETCH_CLASS, \Shopware\Models\Customer\Address::class);
-
-        $country = $em->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $personalData['shipping']['country'] ));
-        $countryState = $em->getRepository('\Shopware\Models\Country\State')->findOneBy(array('id' => $personalData['shipping']['state'] ));
-        $personalData['shipping']['country'] = $country;
-        $personalData['shipping']['state'] = $countryState;
-        $address = new \Shopware\Models\Customer\Address();
-        $address->fromArray($personalData['shipping']);
-        $this->get('shopware_account.address_service')->create($address, $customer);
-        // get newly created address and set as defaultshippingaddress
-        $queryBuilder = $this->container->get('dbal_connection')->createQueryBuilder();
-        $queryBuilder->select('*')
-            ->from('s_user_addresses')
-            ->where('user_id = :user_id')
-            ->setParameter('user_id', $userId);
-
-        $newAddresses = $queryBuilder->execute()->fetchAll(PDO::FETCH_CLASS, \Shopware\Models\Customer\Address::class);
-        foreach ($newAddresses AS $checkAddress) {
-            if (! in_array($checkAddress, $addresses)) {
-                $newAddress = $em->getRepository('Shopware\Models\Customer\Address')->findOneBy(array('id' => $checkAddress->getId()));
-                $customer->setDefaultShippingAddress($newAddress);
-                Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
-            }
-        }
-    }
-
-    protected function updateBillingAddress($personalData, $session)
-    {
-        $userId = $session->offsetGet('sUserId');
-        $countryData = $this->admin->sGetCountryList();
-        $countryIds = array();
-        foreach ($countryData as $key => $country) {
-            $countryIds[$key] = $country['id'];
-        }
-        $this->admin->sSYSTEM->_POST  = $personalData['billing'];
-        $rules = array(
-                'salutation'=>array('required'=>1),
-                'firstname'=>array('required'=>1),
-                'lastname'=>array('required'=>1),
-                'street'=>array('required'=>1),
-                'zipcode'=>array('required'=>1),
-                'city'=>array('required'=>1),
-                'phone'=>array('required'=> intval(Shopware()->Config()->get('requirePhoneField'))),
-                'country'=>array('required' => 1, 'in' => $countryIds)
-            );
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $this->updateBilling($userId, $personalData['billing']);
-            return true;
-        } else {
-            $checkData = $this->admin->sValidateStep2($rules, true);
-            if (!empty($checkData['sErrorMessages'])) {
-                $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-                $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-                return false;
-            } else {
-                $this->admin->sUpdateBilling();
-                return true;
-            }
-        }
-    }
-
-    /**
-     * @param $personalData
-     * @param $session
-     * @param $paydirektAdressesEqual
-     * @return bool
-     */
-    protected function updateShippingAddress($personalData, $session, $paydirektAdressesEqual)
-    {
-        $userId = $session->offsetGet('sUserId');
-        $rules = array(
-        'salutation'=>array('required'=>1),
-        'firstname'=>array('required'=>1),
-        'lastname'=>array('required'=>1),
-        'street'=>array('required'=>1),
-        'zipcode'=>array('required'=>1),
-        'city'=>array('required'=>1)
-        );
-        $this->admin->sSYSTEM->_POST = $personalData['shipping'];
-        if (Shopware()->Config()->get('version') === '___VERSION___' || version_compare(Shopware()->Config()->get('version'), '5.2.0', '>=')) {
-            $this->updateShipping($userId, $personalData['shipping'],  $paydirektAdressesEqual);
-            return true;
-        } else {
-            $checkData = $this->admin->sValidateStep2ShippingAddress($rules, true);
-            if (!empty($checkData['sErrorMessages'])) {
-                $this->View()->sErrorFlag = $checkData['sErrorFlag'];
-                $this->View()->sErrorMessages = $checkData['sErrorMessages'];
-                return false;
-            } else {
-                $this->admin->sUpdateShipping();
-                return true;
-            }
-        }
-    }
-
-  /**
-   * get user-data as array from response
-   *
-   * @param array $personalData
-   * @return array
-   */
-    protected function extractData($personalData)
-    {
-        $register = array();
-        $register['billing']['city']           = $personalData['billing_city'];
-        $register['billing']['country']        = $this->moptPayone__helper->getCountryIdFromIso($personalData['billing_country']);
-
-        if ($personalData['billing_state'] !== 'Empty') {
-            $register['billing']['state']      = $this->moptPayone__helper->getStateFromId($register['billing']['country'], $personalData['billing_state'], true);
-        }
-        $register['billing']['street']         = $personalData['billing_streetname'] . ' ' . $personalData['billing_streetnumber'];
-        if (isset($personalData['billing_addressaddition']) && !empty($personalData['billing_addressaddition'])) {
-            $register['billing']['additionalAddressLine1'] = $personalData['billing_addressaddition'];
-        }
-        $register['billing']['zipcode']        = $personalData['billing_zip'];
-        $register['billing']['firstname']      = $personalData['billing_firstname'];
-        $register['billing']['lastname']       = $personalData['billing_lastname'];
-        $register['billing']['salutation']     = 'mr';
-        if (isset($personalData['shipping_company']) && !empty($personalData['shipping_company'])) {
-            $register['billing']['company']        = $personalData['billing_company'];
-            $register['personal']['customer_type'] = 'company';
-        } else {
-            $register['billing']['company']        = '';
-            $register['personal']['customer_type'] = 'private';
-        }
-        $register['personal']['email']         = $personalData['buyer_email'];
-        $register['personal']['firstname']     = $personalData['billing_firstname'];
-        $register['personal']['lastname']      = $personalData['billing_lastname'];
-        $register['personal']['salutation']    = 'mr';
-        $register['personal']['skipLogin']     = 1;
-        $register['shipping']['salutation']    = 'mr';
-        $register['shipping']['firstname']    = $personalData['shipping_firstname'];
-        $register['shipping']['lastname']     = $personalData['shipping_lastname'];
-        $register['shipping']['street']       = $personalData['shipping_streetname'] . ' ' . $personalData['shipping_streetnumber'];
-        $register['shipping']['additionalAddressLine1'] = $personalData['shipping_addressaddition'];
-        $register['shipping']['zipcode']      = $personalData['shipping_zip'];
-        $register['shipping']['city']         = $personalData['shipping_city'];
-        $register['shipping']['country']      = $this->moptPayone__helper->getCountryIdFromIso($personalData['shipping_country']);
-
-        if ($personalData['shipping_state'] !== 'Empty') {
-            $register['shipping']['state']      = $this->moptPayone__helper->getStateFromId($register['shipping']['country'], $personalData['shipping_state'], true);
-        }
-        $register['shipping']['company']      = $register['billing']['company'];
-        $register['shipping']['department']   = '';
-        $register['auth']['email']            = $personalData['buyer_email'];
-        $register['auth']['password']         = md5(uniqid('', true));
-        $register['auth']['accountmode']      = 1;
-        $register['auth']['encoderName']      = '';
-        return $register;
-    }
-
-    /**
-     * Updates the billing address
-     *
-     * @param int $userId
-     * @param array $billingData
-     */
-    private function updateBilling($userId, $billingData)
-    {
-        /** @var \Shopware\Components\Model\ModelManager $em */
-        $em = $this->get('models');
-
-        /** @var \Shopware\Models\Customer\Customer $customer */
-        $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
-
-        /** @var \Shopware\Models\Customer\Address $address */
-        $address = $customer->getDefaultBillingAddress();
-
-         /** @var \Shopware\Models\Country\Country $country */
-        $country = $em->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $billingData['country'] ));
-        $countryState = $em->getRepository('\Shopware\Models\Country\State')->findOneBy(array('id' => $billingData['state'] ));
-        $billingData['country'] = $country;
-        $billingData['state'] = $countryState;
-        $address->fromArray($billingData);
-
-        $this->get('shopware_account.address_service')->update($address);
-    }
-
-    /**
-     * Updates the shipping address
-     *
-     * @param int $userId
-     * @param array $shippingData
-     * @param boolean $paydirektAdressesEqual
-     */
-    private function updateShipping($userId, $shippingData, $paydirektAdressesEqual)
-    {
-        /** @var \Shopware\Components\Model\ModelManager $em */
-        $em = $this->get('models');
-
-        /** @var \Shopware\Models\Customer\Customer $customer */
-        $customer = $em->getRepository('Shopware\Models\Customer\Customer')->findOneBy(array('id' => $userId));
-
-        /** @var \Shopware\Models\Customer\Address $address */
-        $address = $customer->getDefaultShippingAddress();
-        $billingAddress = $customer->getDefaultBillingAddress();
-
-         /** @var \Shopware\Models\Country\Country $country */
-        $country = $em->getRepository('\Shopware\Models\Country\Country')->findOneBy(array('id' => $shippingData['country'] ));
-        $countryState = $em->getRepository('\Shopware\Models\Country\State')->findOneBy(array('id' => $shippingData['state'] ));
-        $shippingData['country'] = $country;
-        $shippingData['state'] = $countryState;
-        $address->fromArray($shippingData);
-
-        if ( $paydirektAdressesEqual) {
-            $customer->setDefaultShippingAddress($billingAddress);
-            Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
-        } else {
-            $this->get('shopware_account.address_service')->update($address);
-        }
-    }
-
-    /**
-     * Endpoint for changing the main profile data
-     */
-    public function updateCustomer($data, $paymentId)
-    {
-        unset ($data['shipping']);
-        unset ($data['billing']);
-
-        $userId = $this->get('session')->get('sUserId');
-
-        $customer = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->findOneBy(
-		array('id' =>  $userId)
-		);
-        $customer->fromArray($data);
-        $customer->setPaymentId($paymentId);
-        Shopware()->Container()->get('shopware_account.customer_service')->update($customer);
-    }
-
-    /**
-     * @param $payData
-     * validate all important keys
-     * @return bool
-     */
-    private function validatePayData($payData)
-    {
-        $keysArray = array("billing_city",
-                            "billing_country",
-                            "billing_streetnumber",
-                            "billing_zip",
-                            "billing_firstname",
-                            "billing_lastname",
-                            "buyer_email");
-        foreach ($keysArray as $key) {
-            if (!array_key_exists($key, $payData)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -619,7 +158,7 @@ class Shopware_Controllers_Frontend_moptPaymentPayDirekt extends Shopware_Contro
      */
     private function getPaydirektExpressDispatchId()
     {
-        $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayDirektExpressConfig();
+        $config = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayDirektExpressConfig(Shopware()->Shop()->getId());
         return $config->getDispatchId();
     }
 

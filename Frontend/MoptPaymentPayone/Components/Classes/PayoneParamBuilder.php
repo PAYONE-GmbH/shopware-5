@@ -1789,11 +1789,11 @@ class Mopt_PayoneParamBuilder
 
         $walletParams = array(
             'wallettype' => Payone_Api_Enum_WalletType::PAYPAL_EXPRESS,
-            'successurl' => $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'ecs',
+            'successurl' => $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'paypalexpress',
                 'forceSecure' => true, 'appendSession' => false), null),
-            'errorurl' => $router->assemble(array('action' => 'ecsAbort',
+            'errorurl' => $router->assemble(array('action' => 'paypalexpressAbort',
                 'forceSecure' => true, 'appendSession' => false)),
-            'backurl' => $router->assemble(array('action' => 'ecsAbort',
+            'backurl' => $router->assemble(array('action' => 'paypalexpressAbort',
                 'forceSecure' => true, 'appendSession' => false)),
         );
 
@@ -1936,24 +1936,37 @@ class Mopt_PayoneParamBuilder
 
         $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
         $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action',
-                'data' => Payone_Api_Enum_GenericpaymentAction::PAYDIREKTEXPRESS_CHECKOUT)
+            [
+                'key'  => 'action',
+                'data' => Payone_Api_Enum_GenericpaymentAction::PAYDIREKTEXPRESS_CHECKOUT,
+            ]
         ));
 
         if ($this->payoneConfig['authorisationMethod'] == 'Vorautorisierung') {
             $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'type',
-                    'data' => 'order')
+                [
+                    'key'  => 'type',
+                    'data' => 'order',
+                ]
             ));
         } else {
             $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'type',
-                    'data' => 'directsale')
+                [
+                    'key'  => 'type',
+                    'data' => 'directsale',
+                ]
             ));
         }
         $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'web_url_shipping_terms',
-                'data' => 'https://www.google.de')
+            [
+                'key' => 'web_url_shipping_terms',
+                'data' => $router->assemble(
+                    [
+                        'controller' => 'versand-und-zahlungsbedingungen',
+                        'forceSecure' => true
+                    ]
+                ),
+            ]
         ));
 
         $walletParams = $this->buildPaydirektWalletParams($router);
