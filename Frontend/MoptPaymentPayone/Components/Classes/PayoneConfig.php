@@ -113,7 +113,6 @@ class Mopt_PayoneConfig
 
     const PAYMENTS_EXCLUDED_FROM_ACCOUNTPAGE = [
         'mopt_payone__ewallet_amazon_pay',
-        'mopt_payone__ewallet_paypal',
         'mopt_payone__fin_payolution_installment',
         'mopt_payone__fin_ratepay_installment',
         'mopt_payone__ewallet_paydirekt_express',
