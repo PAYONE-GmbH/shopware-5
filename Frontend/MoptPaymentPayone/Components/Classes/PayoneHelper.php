@@ -1659,22 +1659,6 @@ class Mopt_PayoneHelper
         return false;
     }
 
-    public function getPayDirektExpressConfig($subshopId){
-        $sql = "SELECT id FROM s_plugin_mopt_payone_pay_direkt WHERE shop_id =" .$subshopId;
-        $configId = Shopware()->Db()->fetchOne($sql);
-        if ($configId) {
-            /**
-             * @var $config \Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt
-             */
-            $config = Shopware()->Models()->find(
-                'Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt',
-                $configId
-            );
-            return $config;
-        }
-        return false;
-    }
-
     /**
      * Logs an entry of transaction forward controller
      *

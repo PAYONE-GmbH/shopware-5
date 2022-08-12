@@ -930,34 +930,6 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
-     * returns paydirekt payment data object
-     *
-     * @param type $router
-     * @param bool $intialRecurringRequest
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
-     */
-    public function getPaymentPaydirektExpress($router, $intialRecurringRequest = false)
-    {
-        $params = array();
-        $params['wallettype'] = 'PDT';
-
-        if ($intialRecurringRequest) {
-            // TODO implement and test AboCommerce
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'paydirektexpressRecurringSuccess',
-                'forceSecure' => true, 'appendSession' => false));
-        } else {
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-        }
-        $params['errorurl'] = $router->assemble(array('action' => 'failure',
-            'forceSecure' => true, 'appendSession' => false));
-        $params['backurl'] = $router->assemble(array('action' => 'cancel',
-            'forceSecure' => true, 'appendSession' => false));
-
-        return new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-    }
-
-    /**
      * returns payment data for dbitnote payment
      *
      * @param array $paymentData
@@ -1928,95 +1900,6 @@ class Mopt_PayoneParamBuilder
         $params['encoding'] = 'UTF-8'; // optional param default is: ISO-8859-1
 
         return $params;
-    }
-
-    public function buildPayDirektExpressCheckout($paymentId, $router, $amount, $currencyName, $userData)
-    {
-        $params = $this->getAuthParameters($paymentId);
-
-        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            [
-                'key'  => 'action',
-                'data' => Payone_Api_Enum_GenericpaymentAction::PAYDIREKTEXPRESS_CHECKOUT,
-            ]
-        ));
-
-        if ($this->payoneConfig['authorisationMethod'] == 'Vorautorisierung') {
-            $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                [
-                    'key'  => 'type',
-                    'data' => 'order',
-                ]
-            ));
-        } else {
-            $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                [
-                    'key'  => 'type',
-                    'data' => 'directsale',
-                ]
-            ));
-        }
-        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            [
-                'key' => 'web_url_shipping_terms',
-                'data' => $router->assemble(
-                    [
-                        'controller' => 'versand-und-zahlungsbedingungen',
-                        'forceSecure' => true
-                    ]
-                ),
-            ]
-        ));
-
-        $walletParams = $this->buildPaydirektWalletParams($router);
-
-        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
-        $params['amount'] = $amount;
-        $params['currency'] = $currencyName;
-        $params['paydata'] = $payData;
-        $params['api_Version'] = '3.10';
-
-
-        return array_merge($params, $walletParams);
-    }
-
-    public function buildPaydirektExpressGetStatus($paymentId, $router, $amount, $currencyName, $userData, $workerId)
-    {
-        $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
-        $params = $this->getAuthParameters($paymentId);
-
-        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action',
-                'data' => Payone_Api_Enum_GenericpaymentAction::PAYDIREKTEXPRESS_GETSTATUS)
-        ));
-
-        $walletParams = $this->buildPaydirektWalletParams($router);
-        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
-        $params['workorderid'] = $workerId;
-        $params['amount'] = $amount;
-        $params['currency'] = $currencyName;
-        $params['paydata'] = $payData;
-        $params['wallet'] = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($walletParams);
-        $params['api_Version'] = '3.10';
-
-        return $params;
-    }
-
-    protected function buildPaydirektWalletParams($router)
-    {
-        $walletParams = array(
-            'wallettype' => Payone_Api_Enum_WalletType::PAYDIREKT_EXPRESS,
-            'successurl' => $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'paydirektexpress',
-                'forceSecure' => true, 'appendSession' => true)),
-            'errorurl' => $router->assemble(array('action' => 'paydirektexpressAbort',
-                'forceSecure' => true, 'appendSession' => true)),
-            'backurl' => $router->assemble(array('action' => 'paydirektexpressAbort',
-                'forceSecure' => true, 'appendSession' => true)),
-        );
-
-        return $walletParams;
     }
 
     public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts, $paymentId)

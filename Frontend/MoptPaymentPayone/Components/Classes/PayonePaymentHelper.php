@@ -478,18 +478,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaydirekt($paymentName)
     {
-        return preg_match('/^mopt_payone__ewallet_paydirekt$/', $paymentName) ? true : false;
-    }
-
-    /**
-     * check if given payment name is payone paydirekt payment
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayonePaydirektExpress($paymentName)
-    {
-        return preg_match('#mopt_payone__ewallet_paydirekt_express#', $paymentName) ? true : false;
+        return preg_match('#mopt_payone__ewallet_paydirekt#', $paymentName) ? true : false;
     }
 
     /**
@@ -1352,9 +1341,6 @@ class Mopt_PayonePaymentHelper
             return 'barzahlen';
         }
 
-        if ($this->isPayonePaydirektExpress($paymentShortName)) {
-            return 'paydirektexpress';
-        }
         if ($this->isPayonePaydirekt($paymentShortName)) {
             return 'paydirekt';
         }
@@ -1388,19 +1374,6 @@ class Mopt_PayonePaymentHelper
 
         $config = $payoneMain->getPayoneConfig($paymentMethod['id']);
         return (bool)$config['paypalEcsActive'];
-    }
-
-    /**
-     * checks if PayDirektExpress is enabled
-     *
-     * @return bool
-     */
-    public function isPaydirektExpressActive()
-    {
-        $paymentPayDirektExpress = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
-            ['name' => 'mopt_payone__ewallet_paydirekt_express']
-        );
-        return $paymentPayDirektExpress->getActive();
     }
 
     /**
@@ -1554,30 +1527,6 @@ class Mopt_PayonePaymentHelper
             'mopt_payone__fin_kiv_klarna_invoice' => Payone_Api_Enum_FinancingType::KIV,
             'mopt_payone__fin_kdd_klarna_direct_debit' => Payone_Api_Enum_FinancingType::KDD,
         ];
-    }
-
-    /**
-     * Fetches and returns amazon payment instance.
-     *
-     * @return \Shopware\Models\Payment\Payment
-     */
-    public function getPaymentPaydirektExpress()
-    {
-        $shopID = Shopware()->Shop()->getId();
-        $em = Shopware()->Models();
-        $result = $em->getRepository(Payment::class)->createQueryBuilder('p')
-            ->where('p.active = :active')
-            ->andWhere('p.name LIKE :name')
-            ->setParameter('active', true)
-            ->setParameter('name', 'mopt_payone__ewallet_paydirekt_express%')
-            ->getQuery()
-            ->getResult();
-
-        foreach ($result AS $payment) {
-            if ($this->isPaymentAssignedToSubshop($payment->getId(), $shopID)) {
-                return $payment;
-            }
-        }
     }
 
     /**

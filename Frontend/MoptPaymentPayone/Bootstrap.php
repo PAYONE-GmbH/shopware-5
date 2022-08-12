@@ -151,6 +151,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->removePayment('mopt_payone__ewallet_masterpass');
         $this->removePayment('mopt_payone__fin_billsafe');
         $this->removePayment('mopt_payone__fin_paypal_installment');
+        $this->removePayment('mopt_payone__ewallet_paydirekt_express');
 
         // Only relevant for update, not for reinstall
         if (!$this->doesCronJobExist('PayoneTransactionForward') && !$this->doesCronJobExist('Shopware_CronJob_PayoneTransactionForward')) {
@@ -671,14 +672,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         try {
             $schemaTool->createSchema(array(
-                $em->getClassMetadata('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt'),
-            ));
-        } catch (ToolsException $e) {
-            // ignore
-        }
-
-        try {
-            $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionForwardQueue\MoptPayoneTransactionForwardQueue'),
             ));
         } catch (ToolsException $e) {
@@ -908,14 +901,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createMenuItem(array(
             'label' => 'Payone Amazon Pay',
             'controller' => 'MoptPayoneAmazonPay',
-            'action' => 'Index',
-            'class' => 'sprite-locale',
-            'active' => 1,
-            'parent' => $item,
-        ));
-        $this->createMenuItem(array(
-            'label' => 'Payone Paydirekt Express',
-            'controller' => 'MoptPayonePayDirekt',
             'action' => 'Index',
             'class' => 'sprite-locale',
             'active' => 1,

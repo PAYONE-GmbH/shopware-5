@@ -95,7 +95,6 @@ class FrontendCheckout implements SubscriberInterface
 
         if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePayolutionInstallment($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])
-            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaydirektExpress($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalExpress($userData['additional']['payment']['name'])
         ) {
             return;
@@ -339,12 +338,6 @@ class FrontendCheckout implements SubscriberInterface
 
         }
 
-        if ($templateSuffix === '' && $this->isPaydirektExpressActive($subject) && ($imageUrl = $this->moptPayonePaydirektShortcutImgURL())) {
-            $view->assign('moptPayDirektShortcutImgURL', $imageUrl);
-            $view->extendsTemplate('frontend/checkout/mopt_cart_paydirekt' . $templateSuffix . '.tpl');
-            $view->extendsTemplate('frontend/checkout/ajax_cart_paydirekt' . $templateSuffix . '.tpl');
-        }
-
         if ($templateSuffix === '' && $this->isApplePayActive()) {
             if (is_null($session->get('moptAllowApplePay'))) {
                 $view->assign('moptCheckApplePaySupport', 'true');
@@ -437,27 +430,6 @@ class FrontendCheckout implements SubscriberInterface
         return false;
     }
 
-    protected function isPaydirektExpressActive($checkoutController)
-    {
-        $payments = $checkoutController->getPayments();
-        $payoneMain = $this->container->get('MoptPayoneMain');
-        $payonePaymentHelper = $payoneMain->getPaymentHelper();
-
-        if ($payoneMain->getHelper()->isAboCommerceArticleInBasket()) {
-            return false;
-        }
-        if ($payonePaymentHelper->isPaydirektExpressActive()) {
-            foreach ($payments as $paymentMethod) {
-                if ($payonePaymentHelper->isPayonePaydirektExpress($paymentMethod['name'])) {
-                    Shopware()->Session()->moptPaydirektExpressPaymentId = $paymentMethod['id'];
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     protected function isApplePayActive()
     {
         $paymentApplePay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
@@ -482,40 +454,6 @@ class FrontendCheckout implements SubscriberInterface
             ->setParameter(1, $shopId);
 
         $result = $builder->getQuery()->getOneOrNullResult();
-
-        if (!$result) {
-            return false;
-        }
-
-        return $result['image'];
-    }
-
-    /**
-     * get url to configured and uploaded paydirekt express button
-     *
-     * @return boolean|string
-     */
-    protected function moptPayonePaydirektShortcutImgURL()
-    {
-        $shopId = $this->container->get('shop')->getId();
-
-        $builder = Shopware()->Models()->createQueryBuilder();
-
-        $builder->select('button.image')
-            ->from('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt', 'button')
-            ->where('button.shopId = ?1')
-            ->setParameter(1, $shopId);
-
-        $result = $builder->getQuery()->getOneOrNullResult();
-
-        if (!$result) {
-            $builder = Shopware()->Models()->createQueryBuilder();
-            $builder->select('button.image')
-                ->from('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt', 'button')
-                ->where('button.id = ?1')
-                ->setParameter(1, 1);
-            $result = $builder->getQuery()->getOneOrNullResult();
-        }
 
         if (!$result) {
             return false;

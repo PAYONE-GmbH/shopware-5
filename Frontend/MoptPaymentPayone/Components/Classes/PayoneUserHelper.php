@@ -159,23 +159,6 @@ class Mopt_PayoneUserHelper
             }
             $personalData['shipping_telephonenumber'] = $personalData['billing_telephonenumber'];
         }
-        // paydirekt express uses streetname and streetnumber as keys so we merge them to street
-        // also user email is read from buyer_email instead of email
-        if (isset($personalData['billing_streetname'])) {
-            $keys = [ 'streetname'];
-            foreach ($keys AS $origKey) {
-                if ($origKey === 'streetname') {
-                    $personalData['billing_street'] = $personalData['billing_streetname'] . ' ' . $personalData['billing_streetnumber'] ;
-                    $personalData['shipping_street'] = $personalData['shipping_streetname'] . ' ' . $personalData['shipping_streetnumber'] ;
-                    unset($personalData['billing_streetname']);
-                    unset($personalData['billing_streetnumber']);
-                    unset($personalData['shipping_streetname']);
-                    unset($personalData['shipping_streetnumber']);
-                }
-            }
-            $personalData['email'] = $personalData['buyer_email'];
-            unset($personalData['buyer_email']);
-        }
         // enable special state handling for paypal express
         $paymentHelper = Mopt_PayoneMain::getInstance()->getPaymentHelper();
         $paymentName = $paymentHelper->getPaymentNameFromId($paymentId);
@@ -195,10 +178,6 @@ class Mopt_PayoneUserHelper
         }
         $register['billing']['street']         = $personalData['billing_street'];
         $register['billing']['additionalAddressLine1'] = $personalData['billing_addressaddition'];
-        // Paydirekt Express
-        if (! empty( $personalData['billing_additionaladdressinformation'])) {
-            $register['billing']['additionalAddressLine1'] = $personalData['billing_additionaladdressinformation'];
-        }
         $register['billing']['zipcode']        = $personalData['billing_zip'];
         $register['billing']['firstname']      = $personalData['billing_firstname'];
         $register['billing']['lastname']       = $personalData['billing_lastname'];
@@ -227,10 +206,6 @@ class Mopt_PayoneUserHelper
         $register['shipping']['lastname']     = $personalData['shipping_lastname'];
         $register['shipping']['street']       = $personalData['shipping_street'];
         $register['shipping']['additionalAddressLine1'] = $personalData['shipping_addressaddition'];
-        // Paydirekt Express
-        if (! empty( $personalData['shipping_additionaladdressinformation'])) {
-            $register['shipping']['additionalAddressLine1'] = $personalData['shipping_additionaladdressinformation'];
-        }
         $register['shipping']['zipcode']      = $personalData['shipping_zip'];
         $register['shipping']['city']         = $personalData['shipping_city'];
         $register['shipping']['country']      = $this->moptPayone__helper->getCountryIdFromIso($personalData['shipping_country']);
@@ -409,7 +384,7 @@ class Mopt_PayoneUserHelper
         }
         // amazonpay: check if original billingaddress is the same as shipping address
         // in this case add a new shipping address
-        if ((strpos($paymentName, 'mopt_payone__ewallet_amazon_pay') === 0 || strpos($paymentName, 'mopt_payone__ewallet_paypal_express') === 0 || strpos($paymentName, 'mopt_payone__ewallet_paydirekt_express') === 0) &&
+        if ((strpos($paymentName, 'mopt_payone__ewallet_amazon_pay') === 0 || strpos($paymentName, 'mopt_payone__ewallet_paypal_express') === 0) &&
             $oldUserData['billingaddress']['id'] == $oldUserData['shippingaddress']['id']) {
             $this->saveSeperateShippingAddress($personalData, $session);
         } else {
@@ -706,21 +681,14 @@ class Mopt_PayoneUserHelper
         $paymentName = $paymentHelper->getPaymentNameFromId($paymentId);
         $isPaypalexpress = $paymentHelper->isPayonePaypalExpress($paymentName);
         $isAmazonPay = $paymentHelper->isPayoneAmazonPay($paymentName);
-        $isPaydirektexpress = $paymentHelper->isPayonePaydirektExpress($paymentName);
         $paypalexpressConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayonePayPalConfig(Shopware()->Shop()->getId());
         $amazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig(Shopware()->Shop()->getId());
-        $paydirektexpressConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayDirektExpressConfig(Shopware()->Shop()->getId());
         if ($isPaypalexpress && $paypalexpressConfig->getPackStationMode() === 'deny' ) {
             if (strpos(strtolower($street), 'packstation') !== false) {
                 return false;
             }
         }
         if ($isAmazonPay && $amazonPayConfig->getPackStationMode() === 'deny' ) {
-            if (strpos(strtolower($street), 'packstation') !== false) {
-                return false;
-            }
-        }
-        if ($isPaydirektexpress && $paydirektexpressConfig->getPackStationMode() === 'deny' ) {
             if (strpos(strtolower($street), 'packstation') !== false) {
                 return false;
             }

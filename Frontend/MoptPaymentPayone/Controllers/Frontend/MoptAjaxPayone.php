@@ -905,18 +905,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         echo json_encode('OK');
     }
 
-    protected function payDirektOrderCallAction()
-    {
-
-        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $result = $this->buildAndCallConfirmOrderPayDirektCall();
-        if ($result->getStatus() != 'REDIRECT') {
-            $this->Response()->setHttpResponseCode(418);
-            return;
-        }
-        echo json_encode($result);
-    }
-
     protected function buildAndCallConfirmOrderReference()
     {
         $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
@@ -1191,37 +1179,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         } else {
             echo json_encode($minExpiryDays);
         }
-    }
-
-    protected function buildAndCallConfirmOrderPayDirektCall()
-    {
-        $paymentId = Shopware()->Containler()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentIdFromName('mopt_payone__ewallet_pay_direkt');
-        $moptPayoneMain = $this->moptPayoneMain;
-        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
-        $params = $moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
-        $request = new \Payone_Api_Request_Genericpayment($params);
-        $router = $this->Front()->Router();
-        $request->setClearingType(\Payone_Enum_ClearingType::WALLET);
-        $request->setWallettype(\Payone_Api_Enum_WalletType::PAYDIREKT_EXPRESS);
-
-        $request->setApiVersion("3.10");
-        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
-        $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => 'checkout')
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'type', 'data' => 'directsale')
-        ));
-
-        $request->setPaydata($paydata);
-        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-        return $service->request($request);
     }
 
     protected function storeAuthorizationTokenAction()

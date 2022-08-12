@@ -925,7 +925,6 @@ class FrontendPostDispatch implements SubscriberInterface
         $session = Shopware()->Session();
         unset($session->moptBasketChanged);
         unset($session->moptFormSubmitted);
-        unset($session->moptPaydirektExpressWorkerId);
     }
 
     /**

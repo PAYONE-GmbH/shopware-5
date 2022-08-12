@@ -23,8 +23,6 @@ class Mopt_PayoneConfig
       '185.60.20.*',
       );
 
-    const PAYDIREKT_EXPRESS_DISPATCHNAME = 'PaydirektExpress Versand';
-
     const PAYMENTS_ALL = [
         'mopt_payone__cc_visa',
         'mopt_payone__cc_mastercard',
@@ -70,7 +68,6 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_amazon_pay',
         'mopt_payone__ewallet_paypal',
         'mopt_payone__ewallet_paypal_express',
-        'mopt_payone__ewallet_paydirekt_express',
         'mopt_payone__ewallet_applepay'
     ];
 
@@ -118,7 +115,6 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_paypal',
         'mopt_payone__fin_payolution_installment',
         'mopt_payone__fin_ratepay_installment',
-        'mopt_payone__ewallet_paydirekt_express',
         'mopt_payone__ewallet_applepay',
         'mopt_payone__fin_klarna_old',
         'mopt_payone__fin_kis_klarna_installments',
@@ -132,14 +128,12 @@ class Mopt_PayoneConfig
     const PAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE = [
         'mopt_payone__ewallet_amazon_pay',
         'mopt_payone__ewallet_paypal_express',
-        'mopt_payone__ewallet_paydirekt_express',
         // 'mopt_payone__ewallet_applepay', applepay is handled seperately
     ];
 
     // for these payments basket AND address changes are not allowed
     const PAYMENTS_EXPRESS = [
         'mopt_payone__ewallet_paypal_express',
-        'mopt_payone__ewallet_paydirekt_express',
     ];
 
     // for these payments basket changes are not allowed after accepting installment conditions
