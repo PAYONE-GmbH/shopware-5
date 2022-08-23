@@ -219,4 +219,25 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
         $response = $this->service->request($request);
         return $response;
     }
+
+    protected function getListQuery()
+    {
+        $builder = parent::getListQuery();
+
+        $builder->leftJoin('MoptPayoneAmazonPay.shop', 'shop');
+        $builder->addSelect(array('shop'));
+
+        return $builder;
+    }
+
+    protected function getDetailQuery($id)
+    {
+        $builder = parent::getDetailQuery($id);
+
+        $builder->leftJoin('MoptPayoneAmazonPay.shop', 'shop');
+
+        $builder->addSelect(array('shop'));
+
+        return $builder;
+    }
 }

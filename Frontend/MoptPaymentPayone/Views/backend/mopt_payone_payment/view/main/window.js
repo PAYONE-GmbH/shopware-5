@@ -12,7 +12,11 @@ Ext.define('Shopware.apps.Payment.view.main.MoptPayoneWindow', {
       cls: 'primary',
       action: 'moptPayoneDuplicatePayment',
       handler: function() {
-        me.fireEvent('moptPayoneDuplicatePayment', me.generalForm);
+        me.fireEvent('moptPayoneDuplicatePayment', me.generalForm , me.record, {
+          callback: function(payment) {
+            me.fireEvent('updateForms', payment, me.up('window'));
+          }
+        });
       }
     });
     

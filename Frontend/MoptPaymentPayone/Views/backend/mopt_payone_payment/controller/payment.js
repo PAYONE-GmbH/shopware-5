@@ -15,7 +15,7 @@ Ext.define('Shopware.apps.Payment.controller.MoptPayonePayment', {
     me.callParent(arguments);
   },
   
-  onMoptPayoneDuplicatePayment: function(generalForm) {
+  onMoptPayoneDuplicatePayment: function(generalForm, payment, callback) {
     var me = this,
     record = generalForm.getRecord(),
     paymentId = record.get('id'),
@@ -41,7 +41,7 @@ Ext.define('Shopware.apps.Payment.controller.MoptPayonePayment', {
                   + paymentName + '\" {s name="duplicatePayment/successful"}wurde erfolgreich dupliziert{/s}');
 
           //reload form
-          options.callback(record);
+          callback(record);
         }
         else
         {

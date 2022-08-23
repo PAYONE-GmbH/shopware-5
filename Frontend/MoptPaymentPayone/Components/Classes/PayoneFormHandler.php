@@ -641,6 +641,7 @@ class Mopt_PayoneFormHandler
             $paymentData['sErrorFlag']['mopt_payone__payolution_installment_workorderid'] = true;
         } else {
             $paymentData['formData']['mopt_payone__payolution_installment_workorderid'] = $formData['mopt_payone__payolution_installment_workorderid'];
+            $this->session->moptPayolutionInstallmentWorkerId = $formData['mopt_payone__payolution_installment_workorderid'];
         }
 
         if (! in_array($this->getUserCountyIso(), self::PAYOLUTION_NO_IBANBIC_COUNTRIES)) {

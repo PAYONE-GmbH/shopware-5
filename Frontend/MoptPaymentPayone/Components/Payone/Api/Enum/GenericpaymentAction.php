@@ -44,10 +44,6 @@ class Payone_Api_Enum_GenericpaymentAction
 
     const AMAZON_SETORDERREFERENCEDETAILS = "setorderreferencedetails";
 
-    const PAYDIREKTEXPRESS_CHECKOUT = "checkout";
-
-    const PAYDIREKTEXPRESS_GETSTATUS = "getstatus";
-
     const PAYPAL_INSTALLMENT_RESERVERVATION = "installment_reservation";
 
     const PAYPAL_INSTALLMENT_SALE = "installment_sale";

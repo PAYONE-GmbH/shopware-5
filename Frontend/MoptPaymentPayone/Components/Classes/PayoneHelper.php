@@ -1248,6 +1248,31 @@ class Mopt_PayoneHelper
     }
 
     /**
+     * get state id from iso
+     *
+     * @param string $id
+     * @param string $stateIso
+     * @return string
+     */
+    public function getStateFromStatename($countryId, $stateIso, $isPaypalEcs = false)
+    {
+        // Paypal ECS returns their own state codes
+        // see https://developer.paypal.com/docs/classic/api/state_codes/#usa
+        // so try again after mapping them to the real ISO Codes
+        // $stateIso = ($isPaypalEcs && !empty($this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso))) ? $this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso)  : $stateIso;
+
+        $sql = 'SELECT `id` FROM s_core_countries_states WHERE `name` = "' . $stateIso . '" '
+            . 'AND `countryID` LIKE ' . $countryId . ';';
+        $stateId = Shopware()->Db()->fetchOne($sql);
+
+        if ($stateId) {
+            return $stateId;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * get state shortcode from countryID and StateID
      *
      * @param string $countryId
@@ -1564,22 +1589,6 @@ class Mopt_PayoneHelper
         return true;
     }
 
-    public function getPayoneAmazonPayConfig()
-    {
-        // use latest config
-        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_amazon_pay";
-        $latest = Shopware()->Db()->fetchOne($sql);
-
-        /**
-         * @var $config \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay
-         */
-        $config = Shopware()->Models()->find(
-            'Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay',
-            $latest
-        );
-        return $config;
-    }
-
     public function isCompany($userId)
     {
         $customer = Shopware()->Models()
@@ -1601,60 +1610,53 @@ class Mopt_PayoneHelper
     {
         $sql = "SELECT 1 FROM s_core_plugins WHERE name='DHLPaWunschpaket' AND active=1";
         $result = Shopware()->Db()->fetchOne($sql);
-        return ($result == 1);
-    }
-
-
-    public function getPayDirektExpressConfig(){
-        // use latest config
-        $latest = $this->getPayDirektExpressLatestConfig();
-        if ($latest) {
-            /**
-             * @var $config \Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt
-             */
-            $config = Shopware()->Models()->find(
-                'Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt',
-                $latest
-            );
-            return $config;
+        $moptPlugin = ($result == 1);
+        if ($moptPlugin) {
+            return true;
+            // check for new version of the plugin
+        } else {
+            $sql = "SELECT 1 FROM s_core_plugins WHERE name='dhlxxWunschzustellung' AND active=1";
+            $result = Shopware()->Db()->fetchOne($sql);
         }
-        return false;
+        return ($result == 1);
     }
 
     /**
      * Return the latest PayPalConfig
      * @return bool|\Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
      */
-    public function getPayonePayPalConfig()
+    public function getPayonePayPalConfig($subshopId)
     {
-        // use latest config
-        $latest = $this->getPayPalLatestConfig();
-        if ($latest) {
+        $sql = "SELECT id FROM s_plugin_mopt_payone_paypal WHERE shop_id = " . $subshopId;
+        $configId = Shopware()->Db()->fetchOne($sql);
+        if ($configId) {
             /**
              * @var $config \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
              */
             $config = Shopware()->Models()->find(
                 'Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal',
-                $latest
+                $configId
             );
             return $config;
         }
         return false;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPayPalLatestConfig()
+    public function getPayoneAmazonPayConfig($subshopId)
     {
-        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_paypal";
-        return Shopware()->Db()->fetchOne($sql);
-    }
-
-    private function getPayDirektExpressLatestConfig()
-    {
-        $sql = "SELECT MAX(id) FROM s_plugin_mopt_payone_pay_direkt";
-        return Shopware()->Db()->fetchOne($sql);
+        $sql = "SELECT id FROM s_plugin_mopt_payone_amazon_pay WHERE shop_id =" .$subshopId;
+        $configId = Shopware()->Db()->fetchOne($sql);
+        if ($configId) {
+            /**
+             * @var $config \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay
+             */
+            $config = Shopware()->Models()->find(
+                'Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay',
+                $configId
+            );
+            return $config;
+        }
+        return false;
     }
 
     /**

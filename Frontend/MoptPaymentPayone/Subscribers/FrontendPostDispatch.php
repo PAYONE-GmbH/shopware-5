@@ -124,7 +124,7 @@ class FrontendPostDispatch implements SubscriberInterface
          $paymentId = $view->sPayment['id'];
         // fallback to session if above does not work
         if (empty($paymentId)){
-            $paymentId = $this->container->get('session')->offsetGet('sPaymentID');
+            $paymentId = (int)$this->container->get('session')->offsetGet('sPaymentID');
         }
         /** @var Mopt_PayonePaymentHelper $moptPaymentHelper */
         $moptPaymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
@@ -251,7 +251,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         // for amazon Pay redirect directly to finish instead of confirm
 
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_amazon_pay' && $session->offsetGet('moptFormSubmitted') === true)) {
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && strpos($moptPaymentName, 'mopt_payone__ewallet_amazon_pay') === 0 && $session->offsetGet('moptFormSubmitted') === true)) {
             $action->forward('finish', 'moptPaymentAmazon', null, array('sAGB' => 'on'));
         }
 
@@ -273,6 +273,12 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('applepayNotConfiguredError', ! $this->isApplepayConfigured($moptPayoneData['moptApplepayConfig']));
         }
 
+        // set flag to remove all address change buttons on confirm page
+        $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $moptPaymentName);
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && in_array($cleanedPaymentName, \Mopt_PayoneConfig::PAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE))) {
+            $view->assign('moptDenyAddressChanges', true);
+        }
+
         if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
             if ($session->moptBarzahlenCode) {
                 $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
@@ -285,32 +291,6 @@ class FrontendPostDispatch implements SubscriberInterface
             // Klarna PayNow
             if ($session->offsetGet('mopt_klarna_client_token')) {
                 unset($session['mopt_klarna_client_token']);
-            }
-        }
-
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
-            if ($moptPaymentHelper->isPayonePaymentMethod($moptPaymentName)) {
-                if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
-                    $action->redirect(
-                        array(
-                            'controller' => 'checkout',
-                            'action' => 'shippingPayment',
-                        )
-                    );
-                }
-            }
-        }
-
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
-            if (isset(Shopware()->Session()->moptPaydirektExpressWorkerId) && $moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
-                if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
-                    $action->redirect(
-                        array(
-                            'controller' => 'checkout',
-                            'action' => 'cart',
-                        )
-                    );
-                }
             }
         }
 
@@ -341,36 +321,24 @@ class FrontendPostDispatch implements SubscriberInterface
                     );
                 }
             }
-
         }
 
-        if (($controllerName == 'checkout' && $request->getActionName() == 'cart')) {
-            if ($moptPaymentHelper->isPayonePaydirektExpress($moptPaymentName)) {
-                if ($session->moptBasketChanged || $session->moptFormSubmitted !== true) {
-                    unset($session->moptBasketChanged);
-                    unset($session->moptFormSubmitted);
-                    unset($session->moptPaydirektExpressWorkerId);
-                    $redirectnotice =
-                        'Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>'
-                        . 'Bitte wiederholen Sie die Zahlung.<br>';
-
-                    $view->assign('moptBasketChanged', true);
-                    $view->assign('moptOverlayRedirectNotice', $redirectnotice);
-                }
-            }
+        if ($controllerName == 'checkout' && $request->getActionName() == 'cart' ) {
+            $this->redirectExpressPaymentsOnBasketChange($moptPaymentName, $view);
+            $this->redirectInstallmentPaymentsOnBasketChange($moptPaymentName, $view);
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment')) {
-            if ($session->moptBasketChanged) {
-                unset($session->moptBasketChanged);
-                $redirectnotice =                     Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
-                    ->get('installmentsBasketChanged',"<div style='text-align: center'><b>Ratenzahlung<br>Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>Bitte rufen Sie Ihre aktuellen Ratenzahlungskonditionen ab und wählen Sie den gewünschten Zahlplan aus.<br></b></div>");
+            $this->redirectExpressPaymentsOnBasketChange($moptPaymentName, $view);
+            $this->redirectInstallmentPaymentsOnBasketChange($moptPaymentName, $view);
+        }
 
-
-                $view->assign('moptBasketChanged', true);
-                $view->assign('moptOverlayRedirectNotice', $redirectnotice);
-            }
-
+        // used by ratepay installments
+        // used by paypal installments
+        // paypal express
+        // redirect express payments to checkout/cart
+        // installment payments to shipping/payment on Address or basket changes
+        if (($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment')) {
             if ($session->moptBillingCountryChanged) {
                 unset($session->moptBillingCountryChanged);
                 $redirectnotice =
@@ -380,7 +348,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->assign('moptBillingCountryChanged', true);
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
-
             if ($session->moptKlarnaAddressChanged) {
                 unset($session->moptKlarnaAddressChanged);
                 $redirectnotice =
@@ -392,13 +359,8 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
             }
 
-            // remove AmazonPay from Payment List
             $payments = $view->getAssign('sPayments');
-
             foreach ($payments as $index => $payment) {
-                if (strpos($payment['name'], 'mopt_payone__ewallet_amazon_pay') !== false ) {
-                    $amazonPayIndex = $index;
-                }
                 // remove paypal for countries which need a state
                 // in case no state for the country is supplied
                 if ($moptPaymentHelper->isPayonePaypal($payment['name'])) {
@@ -407,25 +369,16 @@ class FrontendPostDispatch implements SubscriberInterface
                         unset ($payments[$paypalIndex]);
                     }
                 }
-                if ($payment['name'] === 'mopt_payone__ewallet_paydirekt_express') {
-                    $paydirektexpressIndex = $index;
-                    unset ($payments[$paydirektexpressIndex]);
-                }
-                if ($payment['name'] === 'mopt_payone__ewallet_applepay' && $session->get('moptAllowApplePay', false) !== true  ) {
-                    $applepayIndex = $index;
-                    unset ($payments[$applepayIndex]);
-                }
-
                 // remove Klarna payments according to supported country and currency combination
                 if ($payment['name'] === 'mopt_payone_klarna' && !$this->isCountryCurrencySupportedFromKlarna()
                 ) {
                     $klarnaIndex = $index;
                     unset ($payments[$klarnaIndex]);
                 }
-
             }
-            unset ($payments[$amazonPayIndex]);
-            $view->assign('sPayments', $payments);
+            // remove other express payments
+            $view->assign('sPayments', $moptPaymentHelper->filterExpressPayments($payments, $session));
+
         }
 
         if ($controllerName === 'address' &&
@@ -437,7 +390,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         if (($controllerName == 'account' && $request->getActionName() == 'payment')) {
 
-            // remove AmazonPay from Payment List
+            // remove express and installment payments from payment List
             $payments = $view->getAssign('sPaymentMeans');
             $filteredPayments = $moptPaymentHelper->filterPaymentsInAccount($payments);
             $view->assign('sPaymentMeans', $filteredPayments);
@@ -965,4 +918,58 @@ class FrontendPostDispatch implements SubscriberInterface
         return $return;
     }
 
+    /**
+     * @return void
+     */
+    protected function unsetExpressPaymentSessionVars() {
+        $session = Shopware()->Session();
+        unset($session->moptBasketChanged);
+        unset($session->moptFormSubmitted);
+    }
+
+    /**
+     * @return void
+     */
+    protected function unsetInstallmentPaymentSessionVars() {
+        $session = Shopware()->Session();
+        unset($session->moptBasketChanged);
+        unset($session->moptPaypalInstallmentWorkerId);
+        unset($session->moptPaypalInstallmentData);
+    }
+
+    /**
+     * @param $paymentName
+     * @param $view
+     * @return void
+     */
+    protected function  redirectInstallmentPaymentsOnBasketChange($paymentName, $view) {
+        $session = Shopware()->Session();
+        $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
+        if (in_array( $cleanedPaymentName,\Mopt_PayoneConfig::PAYMENTS_INSTALLMENTS) && $session->moptBasketChanged === true) {
+            $this->unsetInstallmentPaymentSessionVars();
+            $redirectnotice =                     Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                ->get('installmentsBasketChanged',"<div style='text-align: center'><b>Ratenzahlung<br>Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>Bitte rufen Sie Ihre aktuellen Ratenzahlungskonditionen ab und wählen Sie den gewünschten Zahlplan aus.<br></b></div>");
+
+            $view->assign('moptBasketChanged', true);
+            $view->assign('moptOverlayRedirectNotice', $redirectnotice);
+        }
+    }
+
+    /**
+     * @param $paymentName
+     * @param $view
+     * @return void
+     */
+    protected function redirectExpressPaymentsOnBasketChange($paymentName, $view)
+    {
+        $session = Shopware()->Session();
+        $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
+        if (in_array( $cleanedPaymentName,\Mopt_PayoneConfig::PAYMENTS_EXPRESS) && $session->moptBasketChanged === true) {
+                $this->unsetExpressPaymentSessionVars();
+                $redirectnotice =                     Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/errorMessages')
+                    ->get('expressBasketChanged',"<div style='text-align: center'><b>Express Checkout<br>Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>Bitte wiederholen Sie den Express Checkout oder wählen Sie eine andere Zahlart<br></b></div>");
+                $view->assign('moptBasketChanged', true);
+                $view->assign('moptOverlayRedirectNotice', $redirectnotice);
+        }
+    }
 }

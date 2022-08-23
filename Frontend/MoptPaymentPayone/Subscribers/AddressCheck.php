@@ -114,7 +114,7 @@ class AddressCheck implements SubscriberInterface
             $currentPaymentId = Shopware()->Session()->sPaymentID;
             $currentPaymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId($currentPaymentId);
 
-            if($currentPaymentName == 'mopt_payone__ewallet_amazon_pay') {
+            if(strpos($currentPaymentName, 'mopt_payone__ewallet_amazon_pay') === 0) {
                 $arguments->setReturn(false);
                 return;
             }
@@ -139,21 +139,12 @@ class AddressCheck implements SubscriberInterface
             $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
 
             if (in_array($cleanedPaymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
-                // check for paypal ecs
-                if ($isPayonePaypal && Shopware()->Session()->moptPaypalEcsWorkerId) {
                     $arguments->setReturn(false);
                     return;
-                } elseif ($isPayonePaypal && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
-                    // do nothing
-                } else {
-                    $arguments->setReturn(false);
-                    return;
-                }
-
             }
 
             $userObject = $userId ? Shopware()->Models()
-                ->getRepository('Shopware\Models\Customer\Customer')
+                ->getRepository(Shopware\Models\Customer\Customer::class)
                 ->find($userId) : null;
 
             if (!$userObject) {
@@ -397,17 +388,8 @@ class AddressCheck implements SubscriberInterface
         $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
 
         if (in_array( $cleanedPaymentName,\Mopt_PayoneConfig::PAYMENTS_ADDRESSCHECK_EXCLUDED)) {
-            // check for paypal ecs
-            if ($isPayonePaypal && Shopware()->Session()->moptPaypalEcsWorkerId) {
                 $arguments->setReturn(false);
                 return;
-            } elseif ($isPayonePaypal && ! Shopware()->Session()->moptPaypalEcsWorkerId) {
-                // do nothing
-            } else {
-                $arguments->setReturn(false);
-                return;
-            }
-
         }
 
         // get billing address attributes
@@ -614,9 +596,10 @@ class AddressCheck implements SubscriberInterface
 
         // Handle Ratepay billing country changes
         $paymentName = $moptPayoneMain->getPaymentHelper()->getPaymentNameFromId(Shopware()->Session()->offsetGet('sPaymentID'));
-        if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($paymentName) ||
-            $moptPayoneMain->getPaymentHelper()->isPayoneRatepayDirectDebit($paymentName) ||
-            $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($paymentName)
+        $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
+        if ($moptPayoneMain->getPaymentHelper()->isPayoneRatepayInvoice($cleanedPaymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayoneRatepayDirectDebit($cleanedPaymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayoneRatepayInstallment($cleanedPaymentName)
         ) {
             // $params = $arguments->getSubject()->Request()->getParams();
             // $moptPayoneHelper = \Mopt_PayoneMain::getInstance()->getHelper();
@@ -633,9 +616,10 @@ class AddressCheck implements SubscriberInterface
         }
 
         // Handle address changes for Klarna payments
-        if ($moptPayoneMain->getPaymentHelper()->isPayoneKlarnaDirectDebit($paymentName) ||
-            $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaInstallments($paymentName) ||
-            $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaInvoice($paymentName)
+        if ($moptPayoneMain->getPaymentHelper()->isPayoneKlarnaDirectDebit($cleanedPaymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaInstallments($cleanedPaymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaInvoice($cleanedPaymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayonePaypalExpress($cleanedPaymentName)
         ) {
             Shopware()->Session()->offsetSet('moptKlarnaAddressChanged', true);
         }
@@ -791,7 +775,7 @@ class AddressCheck implements SubscriberInterface
         $shippingAddressData = $userData['shippingaddress'];
         $shippingAddressData['country'] = $shippingAddressData['countryID'];
         $session = Shopware()->Session();
-        unset(Shopware()->Session()->moptPaypalEcsWorkerId);
+        unset(Shopware()->Session()->moptPaypalExpressWorkorderId);
         $userId = $session->sUserId;
 
         if ($this->getCustomerCheckIsNeeded($config, $userId, $basketValue, false)) {

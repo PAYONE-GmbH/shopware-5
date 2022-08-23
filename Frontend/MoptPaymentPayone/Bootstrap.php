@@ -151,6 +151,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->removePayment('mopt_payone__ewallet_masterpass');
         $this->removePayment('mopt_payone__fin_billsafe');
         $this->removePayment('mopt_payone__fin_paypal_installment');
+        $this->removePayment('mopt_payone__ewallet_paydirekt_express');
 
         // Only relevant for update, not for reinstall
         if (!$this->doesCronJobExist('PayoneTransactionForward') && !$this->doesCronJobExist('Shopware_CronJob_PayoneTransactionForward')) {
@@ -671,14 +672,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         try {
             $schemaTool->createSchema(array(
-                $em->getClassMetadata('Shopware\CustomModels\MoptPayonePayDirekt\MoptPayonePayDirekt'),
-            ));
-        } catch (ToolsException $e) {
-            // ignore
-        }
-
-        try {
-            $schemaTool->createSchema(array(
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionForwardQueue\MoptPayoneTransactionForwardQueue'),
             ));
         } catch (ToolsException $e) {
@@ -802,6 +795,26 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Applepay fileds
         $this->getInstallHelper()->checkAndAddApplepayConfig();
+
+        /** @var Payment $payment */
+        $paypalExpressPayment = $this->Payments()->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);
+        $doPaypalMigration = $this->getInstallHelper()->checkPaypalMigration();
+        if ($paypalExpressPayment && $doPaypalMigration) {
+            // migrate Shopware paypal settings, dispatch Settings and Payone Config settings to paypal express
+            $this->getInstallHelper()->migratePaypalSettings();
+        }
+
+        // Add shop to paypal express config
+        $this->getInstallHelper()->checkAndUpdatePayPalShopModelExtension();
+
+        // remove column is_default from paypal express config
+        $this->getInstallHelper()->checkAndUpdatePayPalDefaultModelExtension();
+
+        // remove column locale_id from paypal express config
+        $this->getInstallHelper()->checkAndRemovePayPalLocaleModelExtension();
+
+        // Add shop to paypal express config
+        $this->getInstallHelper()->checkAndUpdateAmazonPayShopModelExtension();
     }
 
     /**
@@ -870,7 +883,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             'parent' => $item,
         ));
         $this->createMenuItem(array(
-            'label' => 'Payone PayPal',
+            'label' => 'Payone PayPal Express',
             'controller' => 'MoptPayonePaypal',
             'action' => 'Index',
             'class' => 'sprite-locale',
@@ -888,14 +901,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createMenuItem(array(
             'label' => 'Payone Amazon Pay',
             'controller' => 'MoptPayoneAmazonPay',
-            'action' => 'Index',
-            'class' => 'sprite-locale',
-            'active' => 1,
-            'parent' => $item,
-        ));
-        $this->createMenuItem(array(
-            'label' => 'Payone PayDirekt',
-            'controller' => 'MoptPayonePayDirekt',
             'action' => 'Index',
             'class' => 'sprite-locale',
             'active' => 1,

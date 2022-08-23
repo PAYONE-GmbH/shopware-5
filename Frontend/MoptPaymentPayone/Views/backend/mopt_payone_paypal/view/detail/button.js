@@ -21,12 +21,12 @@ Ext.define('Shopware.apps.MoptPayonePaypal.view.detail.Button', {
         return {
             controller: 'MoptPayonePaypal',
             fieldSets: [{
-                title: '{s name="details/title"}Payone PayPal Button-Details{/s}',
+                title: '{s name="details/title"}Payone PayPal Express Button-Details{/s}',
                 layout: 'fit',
                 fields: {
-                    localeId: {
-                        fieldLabel: '{s name="language"}Sprache{/s}',
-                        name: 'localeId',
+                    shopId: {
+                        fieldLabel: '{s name="shop"}Shop{/s}',
+                        name: 'shopId',
                         allowBlank: false
                     },
                     packStationMode: {
@@ -45,11 +45,10 @@ Ext.define('Shopware.apps.MoptPayonePaypal.view.detail.Button', {
                         fieldLabel: '{s name="button"}PayPal Button{/s}',
                         xtype: 'mediaselectionfield',
                         allowBlank: false
-                    },
-                    isDefault: '{s name="default"}Default{/s}'
+                    }
                 }
             }]
         };
     }
 });
-             
+

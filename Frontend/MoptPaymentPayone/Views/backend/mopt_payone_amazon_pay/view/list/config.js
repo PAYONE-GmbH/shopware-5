@@ -12,7 +12,9 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.list.Config', {
         buttonLanguage: '{s name="amazon_buttonlanguage"}Button Sprache{/s}',
         */
         amazonMode: '{s name="amazon_mode"}Amazon Modus{/s}',
-        amazonDownloadButton: '{s name="amazon_download_button"}Konfigurations Download{/s}'
+        amazonDownloadButton: '{s name="amazon_download_button"}Konfigurations Download{/s}',
+        shop: '{s name="shop"}Shop{/s}',
+        button: '{s name="button"}Amazonpay Button{/s}'
     },
 
     configure: function () {
@@ -27,7 +29,8 @@ Ext.define('Shopware.apps.MoptPayoneAmazonPay.view.list.Config', {
                 /*
                 buttonLanguage: { header: 'Button Sprache' },
                 */
-                amazonMode: { header: 'Amazon Modus' }
+                amazonMode: { header: 'Amazon Modus' },
+                shopId: { header: me.snippets.shop },
             }
         };
     },

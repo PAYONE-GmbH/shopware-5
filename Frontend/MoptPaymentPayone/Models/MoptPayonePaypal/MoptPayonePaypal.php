@@ -8,6 +8,7 @@ namespace Shopware\CustomModels\MoptPayonePaypal;
 
 use Shopware\Components\Model\ModelEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Shopware\Models\Shop\Shop;
 
 /**
  * @ORM\Entity(repositoryClass="Repository")
@@ -26,27 +27,22 @@ class MoptPayonePaypal extends ModelEntity
     private $id;
 
     /**
-     * @var
-     * @ORM\Column(name="locale_id", type="integer", unique=true)
+     * @var integer $shopId
+     * @ORM\Column(name="shop_id", type="integer", unique=true)
      */
-    protected $localeId;
+    protected $shopId;
 
     /**
-     * @var Locale $locale
-     * @ORM\ManyToOne(targetEntity="Shopware\Models\Shop\Locale")
-     * @ORM\JoinColumn(name="locale_id", referencedColumnName="id")
+     * @var Shop $shop
+     * @ORM\ManyToOne(targetEntity="Shopware\Models\Shop\Shop")
+     * @ORM\JoinColumn(name="shop_id", referencedColumnName="id")
      */
-    private $locale;
+    private $shop;
 
     /**
      * @ORM\Column(name="image", type="string", length=255, precision=0, scale=0, nullable=true, unique=false)
      */
     private $image;
-
-    /**
-     * @ORM\Column(name="is_default", type="boolean", precision=0, scale=0, nullable=true, unique=false)
-     */
-    private $isDefault;
 
     /**
      * @var
@@ -102,22 +98,6 @@ class MoptPayonePaypal extends ModelEntity
         $this->id = $id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
-    /**
-     * @param mixed $locale
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-    }
-
     public function getImage()
     {
         return $this->image;
@@ -126,16 +106,6 @@ class MoptPayonePaypal extends ModelEntity
     public function setImage($image)
     {
         $this->image = $image;
-    }
-
-    public function getIsDefault()
-    {
-        return $this->isDefault;
-    }
-
-    public function setIsDefault($isDefault)
-    {
-        $this->isDefault = $isDefault;
     }
 
     /**
@@ -152,5 +122,15 @@ class MoptPayonePaypal extends ModelEntity
     public function setPackStationMode($packStationMode)
     {
         $this->packStationMode = $packStationMode;
+    }
+
+    public function getShop()
+    {
+        return $this->shop;
+    }
+
+    public function setShop(\Shopware\Models\Shop\Shop $shop)
+    {
+        $this->shop = $shop;
     }
 }

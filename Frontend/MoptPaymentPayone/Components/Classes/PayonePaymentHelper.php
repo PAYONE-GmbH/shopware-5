@@ -3,6 +3,7 @@
 use Shopware\Components\Routing\Router;
 use Shopware\Models\Customer\Address;
 use Shopware\Models\Customer\Customer;
+use Shopware\Models\Payment\Payment;
 
 /**
  * $Id: $
@@ -452,7 +453,21 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaypal($paymentName)
     {
+        if ($this->isPayonePaypalExpress($paymentName)) {
+            return false;
+        }
         return preg_match('#mopt_payone__ewallet_paypal#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone paypal payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayonePaypalExpress($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_paypal_express#', $paymentName) ? true : false;
     }
 
     /**
@@ -463,18 +478,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaydirekt($paymentName)
     {
-        return preg_match('/^mopt_payone__ewallet_paydirekt$/', $paymentName) ? true : false;
-    }
-
-    /**
-     * check if given payment name is payone paydirekt payment
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayonePaydirektExpress($paymentName)
-    {
-        return preg_match('#mopt_payone__ewallet_paydirekt_express#', $paymentName) ? true : false;
+        return preg_match('#mopt_payone__ewallet_paydirekt#', $paymentName) ? true : false;
     }
 
     /**
@@ -868,6 +872,46 @@ class Mopt_PayonePaymentHelper
         return $paymentCountries;
     }
 
+    public function isPaymentAssignedToSubshop($paymentId, $subshopID)
+    {
+        $sql = 'SELECT subshopID '
+            . 'FROM s_core_paymentmeans_subshops '
+            . 'WHERE s_core_paymentmeans_subshops.paymentID = ?;'
+        ;
+        $assignedShops = Shopware()->Db()->fetchAll($sql, $paymentId);
+
+        // paymentID was not found = no restrictions
+        if (count($assignedShops) == 0) {
+            return true;
+        }
+
+        if (in_array((string)$subshopID, array_column($assignedShops, 'subshopID'))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getCountryIdFromIso($countryIso)
+    {
+        /** @var  $entityManager \Shopware\Components\Model\ModelManager*/
+        $entityManager = Shopware()->Container()->get('models');
+        $country = $entityManager->getRepository('Shopware\Models\Country\Country')->findOneBy(array('iso' => $countryIso));
+        return $country;
+    }
+
+    /**
+     * @param int $id
+     * @return object|\Shopware\Models\Country\Country|null
+     */
+    public function getCountryFromId($id)
+    {
+        /** @var  $entityManager \Shopware\Components\Model\ModelManager*/
+        $entityManager = Shopware()->Container()->get('models');
+        $country = $entityManager->getRepository('Shopware\Models\Country\Country')->findOneBy(array('id' => $id));
+        return $country;
+    }
+
     public function moptGetShippingCountriesAssignedToPayment($paymentId)
     {
         $sql = 'SELECT s_premium_dispatch_countries.countryID, s_core_countries.countryname, s_core_countries.countryiso '
@@ -1225,6 +1269,10 @@ class Mopt_PayonePaymentHelper
             return 'instanttransfer';
         }
 
+        if ($this->isPayonePaypalExpress($paymentShortName)) {
+            return 'paypalexpress';
+        }
+
         if ($this->isPayonePaypal($paymentShortName)) {
             return 'paypal';
         }
@@ -1293,9 +1341,6 @@ class Mopt_PayonePaymentHelper
             return 'barzahlen';
         }
 
-        if ($this->isPayonePaydirektExpress($paymentShortName)) {
-            return 'paydirektexpress';
-        }
         if ($this->isPayonePaydirekt($paymentShortName)) {
             return 'paydirekt';
         }
@@ -1323,25 +1368,12 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayPalEcsActive($payoneMain, $paymentMethod)
     {
-        if (!$this->isPayonePaypal($paymentMethod['name'])) {
+        if (!$this->isPayonePaypalExpress($paymentMethod['name'])) {
             return false;
         }
 
         $config = $payoneMain->getPayoneConfig($paymentMethod['id']);
         return (bool)$config['paypalEcsActive'];
-    }
-
-    /**
-     * checks if PayDirektExpress is enabled
-     *
-     * @return bool
-     */
-    public function isPaydirektExpressActive()
-    {
-        $paymentPayDirektExpress = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
-            ['name' => 'mopt_payone__ewallet_paydirekt_express']
-        );
-        return $paymentPayDirektExpress->getActive();
     }
 
     /**
@@ -1502,25 +1534,23 @@ class Mopt_PayonePaymentHelper
      *
      * @return \Shopware\Models\Payment\Payment
      */
-    public function getPaymentPaydirektExpress()
-    {
-        $paymentPaydirektexpress = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
-            ['name' => 'mopt_payone__ewallet_paydirekt_express']
-        );
-        return $paymentPaydirektexpress;
-    }
-
-    /**
-     * Fetches and returns amazon payment instance.
-     *
-     * @return \Shopware\Models\Payment\Payment
-     */
     public function getPaymentAmazonPay()
     {
-        $paymentAmazonPay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
-            ['name' => 'mopt_payone__ewallet_amazon_pay']
-        );
-        return $paymentAmazonPay;
+        $shopID = Shopware()->Shop()->getId();
+        $em = Shopware()->Models();
+        $result = $em->getRepository(Payment::class)->createQueryBuilder('p')
+            ->where('p.active = :active')
+            ->andWhere('p.name LIKE :name')
+            ->setParameter('active', true)
+            ->setParameter('name', 'mopt_payone__ewallet_amazon_pay%')
+            ->getQuery()
+            ->getResult();
+
+        foreach ($result AS $payment) {
+            if ($this->isPaymentAssignedToSubshop($payment->getId(), $shopID)) {
+                return $payment;
+            }
+        }
     }
 
     /**
@@ -1545,7 +1575,9 @@ class Mopt_PayonePaymentHelper
     public function isAmazonPayEnabled()
     {
         $paymentAmazonPay = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
-            ['name' => 'mopt_payone__ewallet_amazon_pay']
+            [
+                'name' => 'mopt_payone__ewallet_amazon_pay'
+            ]
         );
         return $paymentAmazonPay->getActive();
     }
@@ -1812,6 +1844,50 @@ class Mopt_PayonePaymentHelper
         $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
         $klarnaPersonalIdNeededCountries = array('NO', 'SE', 'DK'); // SE verified FI unsure
         return in_array($billingCountryIso, $klarnaPersonalIdNeededCountries);
+    }
+
+    /**
+     * remove express and installment payments from
+     * payment lists
+     *
+     * @param $payments array
+     * @return array
+     */
+    public function filterExpressAndInstallmentPayments($payments)
+    {
+        foreach ($payments as $index => $payment) {
+            foreach (Mopt_PayoneConfig::PAYMENTS_EXCLUDED_FROM_ACCOUNTPAGE as $exludedPayment) {
+                if (strpos($payment['name'], $exludedPayment) !== false) {
+                    unset($payments[$index]);
+                }
+            }
+        }
+
+        return $payments;
+    }
+
+    /**
+     * remove express payments from
+     * payment list
+     *
+     * @param $payments array
+     * @param $session
+     * @return array
+     */
+    public function filterExpressPayments($payments, $session)
+    {
+        foreach ($payments as $index => $payment) {
+            foreach (Mopt_PayoneConfig::PAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE as $exludedPayment) {
+                if (strpos($payment['name'], $exludedPayment) !== false) {
+                    unset($payments[$index]);
+                }
+                if (strpos($payment['name'], 'mopt_payone__ewallet_applepay') !== false && $session->get('moptAllowApplePay', false) !== true ) {
+                    unset($payments[$index]);
+                }
+            }
+        }
+
+        return $payments;
     }
 
     /**

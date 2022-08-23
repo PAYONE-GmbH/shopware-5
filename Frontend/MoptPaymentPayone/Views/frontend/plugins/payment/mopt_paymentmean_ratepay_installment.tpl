@@ -150,15 +150,6 @@
         <br class="ratepay-ClearFix" />
     </div>
 
-    {if $moptBasketChanged}
-        <div id="ratepay_overlay_installment_redirect_notice" class="js--modal content" style="width:40%; height:40%; opacity: 0.9; margin: 75px auto;">
-            <a href="#" onclick="removeOverlayInstallmentRedirectNotice();
-                    return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
-            {$moptOverlayRedirectNotice}
-        </div>
-        <div id="ratepay_overlay_installment_redirect_notice_bg" class="js--overlay is--open" style="opacity: 0.8;"></div>
-    {/if}
-
     <div id="ratepay-ContentSwitch">
         <div class="ratepay-ChooseRuntime">
             {s name='cashPaymentPricePartOne'}Bitte entscheiden Sie sich nun, wie der Bestellwert von{/s}
@@ -240,14 +231,6 @@
     </object>
 {/if}
 <script type="text/javascript">
-
-    function removeOverlayInstallmentRedirectNotice() {
-        document.getElementById('ratepay_overlay_installment_redirect_notice').style.display = "none";
-        document.getElementById('ratepay_overlay_installment_redirect_notice_bg').style.display = "none";
-        $('html, body').animate({
-            scrollTop: $("#mopt_payone__ratepay_installment_telephone").offset().top
-        }, 1000);
-    }
 
     function ratepayInstallmentDobInput()
     {
