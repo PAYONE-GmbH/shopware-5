@@ -261,7 +261,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 $userData = Shopware()->Modules()->Admin()->sGetUserData();
                 $debug = $moptPayoneData['moptApplepayConfig']['applepayDebug'] === true ? 1 : 0;
                 $view->assign('mopt_applepay_country',  $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']));
-                $view->assign('mopt_applepay_currency', Shopware()->Config()->get('currency'));
+                $view->assign('mopt_applepay_currency', Shopware()->Container()->get('currency')->getShortName());
                 $view->assign('mopt_applepay_supportedNetworks', $this->getApplePayCreditcards($moptPayoneData['moptApplepayConfig']));
                 $view->assign('mopt_applepay_merchantCapabilities', "['supports3DS', 'supportsDebit', 'supportsCredit']");
                 $view->assign('mopt_applepay_label', Shopware()->Config()->get('shopname'));

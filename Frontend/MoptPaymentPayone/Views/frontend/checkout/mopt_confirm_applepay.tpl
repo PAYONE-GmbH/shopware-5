@@ -127,12 +127,12 @@
 {block name='frontend_checkout_confirm_submit'}
     {* Submit order button *}
     {if $sPayment.embediframe || $sPayment.action}
-        <button class="btn is--primary is--large right is--icon-right" onclick="payWithApplePay()">
+        <button class="btn is--primary is--large right is--icon-right" onclick="payWithApplePay(); return false;">
             {s name='ConfirmDoPayment'  namespace="frontend/checkout/confirm"}{/s}<i class="icon--arrow-right"></i>
         </button>
     {else}
         <button class="btn is--primary is--large right is--icon-right" onclick="payWithApplePay()">
-            {s name='ConfirmActionSubmit'  namespace="frontend/checkout/confirm"}{/s}<i class="icon--arrow-right" onclick="payWithApplePay()"></i>
+            {s name='ConfirmActionSubmit'  namespace="frontend/checkout/confirm"}{/s}<i class="icon--arrow-right" onclick="payWithApplePay(); return false;"></i>
         </button>
     {/if}
 {/block}
