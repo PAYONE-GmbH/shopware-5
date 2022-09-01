@@ -75,6 +75,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     public function indexAction()
     {
+        // exit(); // uncomment for testing
         $request = $this->Request();
 
         $this->logger->debug('notification controller called');
@@ -87,6 +88,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->logger->debug('received $_POST:' . PHP_EOL .  var_export($_POST, true) . PHP_EOL);
 
         $rawPost = $_POST;
+        $orderIsCorrupted = false;
 
         $_POST = $this->utf8_encode_array($_POST);
         $this->logger->debug('successfully converted $_POST to utf-8:' . PHP_EOL .  var_export($_POST, true) . PHP_EOL);
@@ -101,6 +103,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         if ($isOrderFinished) {
             $order = $this->loadOrderByTransactionId($transactionId);
             $paymentId = $order['paymentID'];
+            if ($order['cleared'] === 21) {
+                $orderIsCorrupted = true;
+            }
         } else {
             $this->restoreSession($request->getParam('param'));
             $session = Shopware()->Session();
@@ -145,8 +150,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             exit;
         }
 
-        $orderIsCorrupted = false;
-
         $payoneRequest = $service->getMapper()->mapByArray($request->getPost());
         $clearingData = $this->moptPayone__paymentHelper->extractClearingDataFromResponse($payoneRequest);
         if ($clearingData && !$isOrderFinished) {
@@ -154,15 +157,28 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         }
 
         if (!$isOrderFinished) {
-            $orderHash = md5(serialize($session['sOrderVariables']));
-            $customParam = explode('|', $request->getParam('param'));
-
             if ($request->getParam('txaction') !== 'failed') {
-                if ($orderHash !== $customParam[2]) {
+                $orderIsCorrupted = $this->validateBasketSignature($session, $request);
+                if ($orderIsCorrupted) {
                     $this->logger->error('order corrupted - order hash mismatch');
                     $orderIsCorrupted = true;
                     $paymentStatus = 21;
                     $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'), $paymentStatus);
+                    $orderObj = Shopware()->Models()->getRepository(Order::class)->findOneBy(['number' => $orderNumber ]);
+                    $comment = Shopware()->Snippets()
+                        ->getNamespace('frontend/MoptPaymentPayone/messages')
+                        ->get('fraudCommentPart1', false)
+                        . ' (' . $orderNumber . ') '
+                        .  Shopware()->Snippets()
+                            ->getNamespace('frontend/MoptPaymentPayone/messages')
+                            ->get('fraudCommentPart2', false)
+                        . ' ' . $transactionId . ' '
+                        . Shopware()->Snippets()
+                            ->getNamespace('frontend/MoptPaymentPayone/messages')
+                            ->get('fraudCommentPart3', false);
+                    $orderObj->setComment($comment);
+                    Shopware()->Models()->persist($orderObj);
+                    Shopware()->Models()->flush();
                 } else {
                     $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'));
                 }
@@ -193,7 +209,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             $attributeData['mopt_payone_clearing_data'] = json_encode($clearingData);
             $saveClearingData = true;
         }
-
 
         if (!$orderIsCorrupted) {
             $mappedShopwareState = $this->moptPayone__helper->getMappedShopwarePaymentStatusId(
@@ -228,7 +243,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 // ignore txaction reminder with reminderlevel 0 since this only marks the end of dunning process
             } else {
                 // ! Amazonpay
-                $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
+                // do not update payment status for corrupted/problematic orders
+                if (!$orderIsCorrupted) {
+                    $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
+                }
             }
         }
 
@@ -241,7 +259,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             Shopware()->Models()->persist($orderObj);
             Shopware()->Models()->flush();
         }
-
         $this->logger->debug('finished, output TSOK');
         echo $response->getStatus();
         $this->logger->debug('starting tx forwards');
@@ -331,7 +348,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
     protected function loadOrderByTransactionId($transactionId)
     {
         $sql = '
-            SELECT id, ordernumber, paymentID, temporaryID, transactionID  FROM s_order
+            SELECT id, ordernumber, paymentID, temporaryID, transactionID, cleared  FROM s_order
             WHERE transactionID=?';
 
         $order = Shopware()->Db()->fetchRow($sql, array($transactionId));
@@ -545,6 +562,20 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             }
         }
         return $array;
+    }
+
+    /**
+     * checks the basket signature send to payone against
+     * the current basket signature for fraud detection
+     *
+     * @param $session
+     * @param $request
+     * @return bool
+     */
+    private function validateBasketSignature($session, $request) {
+        $orderHash = md5(serialize($session['sOrderVariables']));
+        $customParam = explode('|', $request->getParam('param'));
+        return ($orderHash !== $customParam[2]);
     }
 
 }

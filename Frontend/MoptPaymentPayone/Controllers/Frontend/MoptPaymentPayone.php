@@ -784,14 +784,32 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      */
     public function finishOrderAction()
     {
+        // exit(); // uncomment for testing
         $txId = $this->Request()->getParam('txid');
         $moptPaymentReference = $this->Request()->getParam('hash');
         $session = Shopware()->Session();
+        $orderIsCorrupted = false;
 
         if (!$this->isOrderFinished($txId)) {
             $orderHash = md5(serialize($session['sOrderVariables']));
             if ($session->moptOrderHash !== $orderHash) {
-                $this->saveOrder($txId, $moptPaymentReference, 21);
+                $orderIsCorrupted = true;
+                $orderNumber = $this->saveOrder($txId, $moptPaymentReference, 21);
+                $orderObj = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['transactionId' => $txId]);
+                $comment = Shopware()->Snippets()
+                        ->getNamespace('frontend/MoptPaymentPayone/messages')
+                        ->get('fraudCommentPart1', false)
+                        . ' ' . $orderNumber . ' '
+                    .  Shopware()->Snippets()
+                        ->getNamespace('frontend/MoptPaymentPayone/messages')
+                        ->get('fraudCommentPart2', false)
+                    . ' ' . $txId . ' '
+                    . Shopware()->Snippets()
+                        ->getNamespace('frontend/MoptPaymentPayone/messages')
+                        ->get('fraudCommentPart3', false);
+                $orderObj->setComment($comment);
+                Shopware()->Models()->persist($orderObj);
+                Shopware()->Models()->flush();
             } else {
                 $this->saveOrder($txId, $moptPaymentReference);
             }
@@ -837,7 +855,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             Shopware()->Db()->query($sql, array($payolutionClearingReference, $payolutionWorkOrderId, $orderId));
         }
 
-        if ($session->moptIsAuthorized === true) {
+        if ($session->moptIsAuthorized === true && !$orderIsCorrupted) {
             $order = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['transactionId' => $txId]);
             if ($order) {
                 $this->moptPayonePaymentHelper->markOrderDetailsAsFullyCaptured($order);
