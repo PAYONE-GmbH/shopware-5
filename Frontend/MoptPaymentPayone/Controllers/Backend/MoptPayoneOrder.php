@@ -369,7 +369,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
     protected function moptPayoneMarkPositionsAsDebited($order, $positionIds, $includeShipment = false)
     {
         foreach ($order->getDetails() as $position) {
-            if (!in_array($position->getId(), $positionIds)) {
+            if (!$positionIds || !in_array($position->getId(), $positionIds)) {
                 continue;
             }
 

@@ -280,7 +280,7 @@ class Mopt_PayoneParamBuilder
 
 
         foreach ($order->getDetails() as $position) {
-            if (!in_array($position->getId(), $positionIds)) {
+            if (!$positionIds || !in_array($position->getId(), $positionIds)) {
                 continue;
             }
 
@@ -1452,7 +1452,7 @@ class Mopt_PayoneParamBuilder
         $transaction = new Payone_Api_Request_Parameter_Capture_Invoicing_Transaction(array());
 
         foreach ($order->getDetails() as $position) {
-            if (!in_array($position->getId(), $positionIds)) {
+            if (!$positionIds || !in_array($position->getId(), $positionIds)) {
                 continue;
             }
 
