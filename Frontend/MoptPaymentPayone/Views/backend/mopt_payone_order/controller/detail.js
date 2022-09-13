@@ -61,7 +61,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     } else {
       var moptMessageBoxText = '<p>{s name="detail/debit1"}Sie haben{/s} 0 {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
           + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency + ' </span>{s name="detail/debit3"}markiert{/s}.</p><br>'
-          + '<p><label for="mopt_payone__capture_shipment">Es werden nur Versandkosten gutschreiben</label>'
+          + '<p><label for="mopt_payone__capture_shipment">Es werden nur Versandkosten gutgeschrieben</label>'
           // + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"'
           //+ 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/>
           + '</p>'
@@ -77,7 +77,6 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
       
       
       if (!positionIds || (showShippingCostsCheckbox && Ext.get('mopt_payone__debit_shipment').dom.checked)) {
-        console.log('including shipping');
         includeShipment = true;
       }
       
