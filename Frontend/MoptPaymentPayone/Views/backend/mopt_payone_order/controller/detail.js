@@ -10,8 +10,8 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     me.control({
         'order-detail-window order-position-panel': {
           moptPayoneCapturePositions: me.onMoptPayoneCapturePositions,
-          moptPayoneDebitPositions: me.onMoptPayoneDebitPositions
-        }
+          moptPayoneDebitPositions: me.onMoptPayoneDebitPositions,
+          moptPayoneDebitShipping: me.onMoptPayoneDebitShipping}
     });
   },
   
@@ -19,15 +19,15 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     var me = this;
     var positionIds = me.moptPayoneGetPositionIdsFromGrid(grid);
     
-    if(!positionIds){
-      return;
-    }
-    
     var selectionModel = grid.getSelectionModel();
     var positions = selectionModel.getSelection();
     var amount = 0;
     var currency = order.raw.currency;
-    
+
+    if(!positionIds){
+      positionIds = false;
+      positions = [];
+    }
     
     for (var i = 0; i < positions.length; i++)
     {
@@ -44,19 +44,28 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
         showShippingCostsCheckbox = false;
       }
     }
-    
-    var moptMessageBoxText =  '<p>{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
-            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency +' </span>{s name="detail/debit3"}markiert{/s}.</p><br>'
-            + '<p><label for="mopt_payone__capture_shipment">{s name="detail/debit4"}Versandkosten mit gutschreiben{/s}</label>'
-            + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"' 
-            + 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/></p>' 
-            + '<br><p>{s name="detail/debit5"}Sind Sie sicher{/s}?</p>';
-    
-    if(!showShippingCostsCheckbox)
-    {
-      moptMessageBoxText =  '{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
-            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency +' </span>{s name="detail/debit3"}markiert{/s}. '
+
+    if (positionIds) {
+      var moptMessageBoxText = '<p>{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
+          + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency + ' </span>{s name="detail/debit3"}markiert{/s}.</p><br>'
+          + '<p><label for="mopt_payone__capture_shipment">{s name="detail/debit4"}Versandkosten mit gutschreiben{/s}</label>'
+          + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"'
+          + 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/></p>'
+          + '<br><p>{s name="detail/debit5"}Sind Sie sicher{/s}?</p>';
+
+      if (!showShippingCostsCheckbox) {
+        moptMessageBoxText = '{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
+            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency + ' </span>{s name="detail/debit3"}markiert{/s}. '
             + '<br> {s name="detail/debit5"}Sind Sie sicher{/s}?';
+      }
+    } else {
+      var moptMessageBoxText = '<p>{s name="detail/debit1"}Sie haben{/s} 0 {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
+          + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency + ' </span>{s name="detail/debit3"}markiert{/s}.</p><br>'
+          + '<p><label for="mopt_payone__capture_shipment">Es werden nur Versandkosten gutgeschrieben</label>'
+          // + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"'
+          //+ 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/>
+          + '</p>'
+          + '<br><p>{s name="detail/debit5"}Sind Sie sicher{/s}?</p>';
     }
     
     Ext.MessageBox.confirm('{s name="detail/debit"}Gutschrift{/s}',
@@ -67,10 +76,9 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
       var includeShipment = false;
       
       
-      if (showShippingCostsCheckbox && Ext.get('mopt_payone__debit_shipment').dom.checked)
-      {
-				includeShipment = true;
-			} 
+      if (!positionIds || (showShippingCostsCheckbox && Ext.get('mopt_payone__debit_shipment').dom.checked)) {
+        includeShipment = true;
+      }
       
       Ext.Ajax.request({
         url: '{url controller="MoptPayoneOrder" action="moptPayoneDebit"}',
@@ -131,11 +139,11 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
             + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} <span style="color: red;">'
               + amount.toFixed(2) + ' ' + currency +' </span> {s name="detail/debit3"}markiert{/s}.</p><br>'
               + '<p><label for="mopt_payone__capture_shipment">{s name="detail/debit6"}Versandkosten auch Einziehen{/s}</label>'
-              + '<input type="checkbox" id="mopt_payone__capture_shipment" class="x-form-field x-form-checkbox"' 
+              + '<input type="checkbox" id="mopt_payone__capture_shipment" class="x-form-field x-form-checkbox"'
               + 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;" checked/>'
-              + '</p><br>' 
+              + '</p><br>'
               + '<p>{s name="detail/debit7"}Welche Art des Zahlungseinzugs möchten Sie vornehmen{/s}?</p>';
-    
+
     if(!showShippingCostsCheckbox)
     {
       moptMessageBoxText =  '{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length
@@ -170,6 +178,91 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
         }
       }
     });
+  },
+
+  onMoptPayoneDebitShipping: function(order, grid, options) {
+    var me = this;
+    var positionIds = false;
+
+    var selectionModel = grid.getSelectionModel();
+    var positions = positions = [];
+    var amount = 0;
+    var currency = order.raw.currency;
+
+    for (var i = 0; i < positions.length; i++)
+    {
+      amount+=positions[i].get('total');
+    }
+
+    var details = order.raw.details;
+    var showShippingCostsCheckbox = true;
+
+    for (var i = 0; i < details.length; i++)
+    {
+      if (details[i].articleNumber === "SHIPPING")
+      {
+        showShippingCostsCheckbox = false;
+      }
+    }
+
+    if (positionIds) {
+      var moptMessageBoxText = '<p>{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
+          + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency + ' </span>{s name="detail/debit3"}markiert{/s}.</p><br>'
+          + '<p><label for="mopt_payone__capture_shipment">{s name="detail/debit4"}Versandkosten mit gutschreiben{/s}</label>'
+          + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"'
+          + 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/></p>'
+          + '<br><p>{s name="detail/debit5"}Sind Sie sicher{/s}?</p>';
+
+      if (!showShippingCostsCheckbox) {
+        moptMessageBoxText = '{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
+            + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency + ' </span>{s name="detail/debit3"}markiert{/s}. '
+            + '<br> {s name="detail/debit5"}Sind Sie sicher{/s}?';
+      }
+    } else {
+      var moptMessageBoxText = '<p>{s name="detail/debit1"}Sie haben{/s} 0 {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
+          + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency + ' </span>{s name="detail/debit3"}markiert{/s}.</p><br>'
+          + '<p><label for="mopt_payone__capture_shipment">Es werden nur Versandkosten gutschreiben</label>'
+          // + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"'
+          //+ 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/>
+          + '</p>'
+          + '<br><p>{s name="detail/debit5"}Sind Sie sicher{/s}?</p>';
+    }
+
+    Ext.MessageBox.confirm('{s name="detail/debit"}Gutschrift{/s}',
+        moptMessageBoxText, function (response) {
+          if ( response !== 'yes' ) {
+            return;
+          }
+          var includeShipment = false;
+
+
+          if (!positionIds || (showShippingCostsCheckbox && Ext.get('mopt_payone__debit_shipment').dom.checked)) {
+            console.log('including shipping');
+            includeShipment = true;
+          }
+
+          Ext.Ajax.request({
+            url: '{url controller="MoptPayoneOrder" action="moptPayoneDebit"}',
+            method: 'POST',
+            params: { id: order.get('id'), positionIds: Ext.JSON.encode(positionIds), includeShipment: includeShipment},
+            headers: { 'Accept': 'application/json'},
+            success: function(response)
+            {
+              var jsonData = Ext.JSON.decode(response.responseText);
+              if (jsonData.success)
+              {
+                Ext.Msg.alert('{s name="detail/debit"}Gutschrift{/s}', '{s name="detail/debitSuccess"}Die Gutschrift wurde erfolgreich durchgeführt.{/s}');
+
+                //reload form
+                options.callback(order);
+              }
+              else
+              {
+                Ext.Msg.alert('{s name="detail/debit"}Gutschrift{/s}', jsonData.error_message);
+              }
+            }
+          });
+        });
   },
   
   moptPayoneCallCapture: function(order, positionIds, finalize, options, includeShipment) {

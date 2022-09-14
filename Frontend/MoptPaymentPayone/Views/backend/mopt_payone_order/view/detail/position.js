@@ -33,8 +33,23 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayonePosition', {
       }
     });
 
+    me.moptPayoneDebitShippingButton = Ext.create('Ext.button.Button', {
+      iconCls: 'sprite-money-coin',
+      text: '{s name="position/debitShipping"}Versandkosten gutschreiben{/s}',
+      action: 'moptPayoneDebitShipping',
+      handler: function() {
+        me.fireEvent('moptPayoneDebitShipping', me.record, me.orderPositionGrid, {
+          callback: function(order) {
+            me.fireEvent('updateForms', order, me.up('window'));
+          }
+        });
+      }
+    });
+
     toolbar.items.add(me.moptPayoneCapturePositionsButton);
     toolbar.items.add(me.moptPayoneDebitPositionsButton);
+    toolbar.items.add(me.moptPayoneDebitShippingButton);
+
 
     return toolbar;
   },
@@ -43,7 +58,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayonePosition', {
     var me = this;
     me.callParent(arguments);
     
-    this.addEvents('moptPayoneCapturePositions', 'moptPayoneDebitPositions');
+    this.addEvents('moptPayoneCapturePositions', 'moptPayoneDebitPositions', 'moptPayoneDebitShipping');
   },
           
   getColumns:function (grid) {
