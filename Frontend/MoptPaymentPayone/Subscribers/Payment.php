@@ -115,6 +115,12 @@ class Payment implements SubscriberInterface
             $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
         }
 
+        $savePaymentData = true;
+        if (isset($paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept']) && $paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept'] === 'false') {
+            $savePaymentData = false;
+            $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
+        }
+
         if ($error) {
             $sErrorMessages[] = Shopware()->Snippets()
                             ->getNamespace('frontend/account/internalMessages')->get('ErrorFillIn', 'Please fill in all red fields');
@@ -217,7 +223,8 @@ class Payment implements SubscriberInterface
 
             //save data to table and session
             $session->moptPayment = $post;
-            if (!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentId) && !is_null($userId)) {
+            $test = $moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName);
+            if (!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName) && !is_null($userId)) {
                 $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
             }
         }
@@ -280,8 +287,8 @@ class Payment implements SubscriberInterface
     {
         $returnValues = $arguments->getReturn();
         $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-
-        if (!$paymenthelper->isPayoneCreditcard($returnValues['paymentID'])) {
+        $paymentname = $paymenthelper->getPaymentNameFromId($returnValues['paymentID']);
+        if (!$paymenthelper->isPayoneCreditcard($paymentname)) {
             return;
         }
 

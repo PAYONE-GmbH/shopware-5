@@ -133,6 +133,11 @@ class FrontendCheckout implements SubscriberInterface
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
 
+        $formData = Shopware()->Session()->moptPayment;
+        if (isset($formData['mopt_payone__cc_save_pseudocardnum_accept']) && $formData['mopt_payone__cc_save_pseudocardnum_accept'] === "false") {
+            $paymentData = Shopware()->Session()->moptPayment;
+        }
+
         $ret['data'] = $paymentData;
 
         //save payment data to session for later use during actual payment process
