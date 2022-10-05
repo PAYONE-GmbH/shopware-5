@@ -42,10 +42,9 @@
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
     <BR><BR>
     <div id="payone-cc-save-pseudocardnum-accept">
-        <input name="moptPaymentData[mopt_payone__cc_save_pseudocardnum_accept]" type="checkbox" id="mopt_payone__cc_save_pseudocardnum_accept" value="true"
+        <input name="moptPaymentData[mopt_payone__cc_save_pseudocardnum_accept]" type="checkbox" id="mopt_payone__cc_save_pseudocardnum_accept" value=0
                class="checkbox"/>
-        <label for="payone-cc-save-pseudocardnum-accept"  style="float:none; width:100%; display:inline">{s name='creditCardSavePseudocardnumAgreement' namespace="frontend/MoptPaymentPayone/payment"}Ich bin damit einverstanden, dass die von mir angegebenen Kreditkartendaten für spätere Bestellungen sicher gespeichert werden. Die Daten werden ausschließlich zur Bezahlung weiterer Bestellungen im [Online-Shop XY] genutzt und nicht an unberechtigte Dritte weitergegeben. Ich kann meine Einwilligung zur Speicherung jederzeit mit Wirkung für die Zukunft widerrufen, durch {/s}<a href="{url controller=custom sCustom=8 forceSecure}" data-modal-height="500" data-modal-width="800">Widerrufsbelehrung</a></label>
-        <input type="hidden" name="moptPaymentData[mopt_payone__cc_save_pseudocardnum_accept]" id="mopt_payone__cc_save_pseudocardnum_accept" value="false" />
+        <label for="payone-cc-save-pseudocardnum-accept"  style="float:none; width:100%; display:inline">{$moptCreditCardAgreement}<a href="{url controller=custom sCustom=8 forceSecure}" data-modal-height="500" data-modal-width="800">{s name='widerruf' namespace="frontend/MoptPaymentPayone/payment" }Widerruf{/s}</a></label>
     </div>
     <BR><BR>
     {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection == '1' && ! $moptIsAjax}
@@ -270,21 +269,6 @@
 <script type="text/javascript">
     //<![CDATA[
     function processPayoneResponse(response) {
-        var checkboxStateChecked= $('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked");
-        if (checkboxStateChecked) {
-            $('#mopt_payone__cc_save_pseudocardnum_accept').val('1')
-        } else {
-            $('#mopt_payone__cc_save_pseudocardnum_accept').val('0')
-        }
-        console.log('CheckBOx Value:');
-        console.log($('#mopt_payone__cc_save_pseudocardnum_accept').val())
-        console.log('CheckboxState:' + checkboxStateChecked);
-        console.log('Response:');
-        console.dir(response);
-        console.log('Status:' + response.get('status'));
-        console.log('Status:' + response.get('errorcode'));
-        console.log('Status:' + response.get('errormessage'));
-        console.log('Status:' + response.get('customermessage'));
         if (response && response.get('status') === 'VALID') {
             $('#mopt_payone__cc_paymentdescription').val($('#mopt_payone__cc_cardtype option:selected').text());
             $('#mopt_payone__cc_truncatedcardpan').val(response.get('truncatedcardpan'));
@@ -303,13 +287,11 @@
                 mopt_payone__cc_pseudocardpan: response.get('pseudocardpan'),
                 mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
                 mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
-                mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text()
+                mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
+                mopt_payone__cc_cardholder: $('#mopt_payone__cc_cardholder').val()
             };
             if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked")) {
-                alert('savePseudoCard');
                 savePseudoCard(data);
-            } else {
-                alert('!savePseudoCard');
             }
             submitForm();
         } else {
@@ -344,7 +326,10 @@
                 mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
                 mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
                 mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
-                mopt_payone__cc_cardexpiredate: response.cardexpiredate
+                mopt_payone__cc_cardexpiredate: response.cardexpiredate,
+                mopt_payone__cc_cardholder: $('#mopt_payone__cc_cardholder').val(),
+                mopt_payone__cc_cardexpiremonth_hidden: $('#mopt_payone__cc_cardexpiremonth_hidden').val(),
+                mopt_payone__cc_cardexpireyear_hidden: $('#mopt_payone__cc_cardexpireyear_hidden').val(),
             };
             ccCheck(data);
         } else {
@@ -379,10 +364,7 @@
             };
             if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked"))
             {
-                alert('savePseudoCard');
                 savePseudoCard(data);
-            } else {
-                console.log('Unchecked Iframeresposne, not saving Pseudocardnum');
             }
         } else {
             showErrorMessage(response);
@@ -433,10 +415,7 @@
                 if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked"))
                 {
                 $('#mopt_payone__cc_truncatedcardpan_hidden').val(data.mopt_payone__cc_truncatedcardpan);
-                    alert('savePseudoCard');
                     savePseudoCard(data);
-                } else {
-                    alert('!savePseudoCard');
                 }
                 submitForm();
             } else {
@@ -449,6 +428,12 @@
 
     function expiryCheck(data) {
         var ret;
+        if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked"))
+        {
+            // do nothing
+        } else {
+            data.deleteUserData = true;
+        }
         $.ajax({
             type: 'POST',
             url: '{url controller=moptAjaxPayone action=checkCreditCardExpiry forceSecure}',

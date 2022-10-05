@@ -317,6 +317,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paymentData['mopt_payone__cc_paymentname'] = $this->Request()->getPost('mopt_payone__cc_paymentname');
         $paymentData['mopt_payone__cc_paymentid'] = $this->Request()->getPost('mopt_payone__cc_paymentid');
         $paymentData['mopt_payone__cc_paymentdescription'] = $this->Request()->getPost('mopt_payone__cc_paymentdescription');
+        $paymentData['mopt_payone__cc_cardholder'] = $this->Request()->getPost('mopt_payone__cc_cardholder');
+
 
         $actualPaymentId = $paymentData['mopt_payone__cc_paymentid'];
 
@@ -1163,6 +1165,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         if (!$configData) {
             $sql = 'SELECT * FROM s_plugin_mopt_payone_creditcard_config WHERE is_default = ?';
             $configData = Shopware()->Db()->fetchRow($sql, true);
+        }
+        if ($this->Request()->getPost('deleteUserData') === "true") {
+            $this->moptPayoneMain->getPaymentHelper()->deletePaymentData(Shopware()->Session()->offsetGet('sUserId'));
         }
         $minExpiryDays = (int)$configData['creditcard_min_valid'];
         $expireDate = $this->Request()->getPost('mopt_payone__cc_cardexpiredate');

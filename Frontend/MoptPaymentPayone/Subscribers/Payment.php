@@ -98,6 +98,14 @@ class Payment implements SubscriberInterface
         $paymentData = $moptPayoneMain->getFormHandler()
                 ->processPaymentForm($paymentName, $post, $moptPayoneMain->getPaymentHelper());
 
+        $session->moptSaveCreditcardData = true;
+        $savePaymentData = true;
+        if (!isset($paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept']) || $paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept'] !== '1') {
+            $savePaymentData = false;
+            $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
+            $session->moptSaveCreditcardData = false;
+        }
+
         if (isset($paymentData['formData']['mopt_save_birthday_and_phone']) && $paymentData['formData']['mopt_save_birthday_and_phone']) {
             $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
         }
@@ -112,12 +120,6 @@ class Payment implements SubscriberInterface
 
         if (isset($paymentData['sErrorFlag']) && count($paymentData['sErrorFlag'])) {
             $error = true;
-            $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
-        }
-
-        $savePaymentData = true;
-        if (isset($paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept']) && $paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept'] === 'false') {
-            $savePaymentData = false;
             $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
         }
 
@@ -223,8 +225,9 @@ class Payment implements SubscriberInterface
 
             //save data to table and session
             $session->moptPayment = $post;
-            $test = $moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName);
-            if (!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName) && !is_null($userId)) {
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName) && !is_null($userId) && $savePaymentData) {
+                $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
+            } else if (! $moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName) && !is_null($userId)) {
                 $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
             }
         }

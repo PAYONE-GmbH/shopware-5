@@ -133,8 +133,7 @@ class FrontendCheckout implements SubscriberInterface
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
 
-        $formData = Shopware()->Session()->moptPayment;
-        if (isset($formData['mopt_payone__cc_save_pseudocardnum_accept']) && $formData['mopt_payone__cc_save_pseudocardnum_accept'] === "false") {
+        if (isset(Shopware()->Session()->moptSaveCreditcardData) && Shopware()->Session()->moptSaveCreditcardData === false  ) {
             $paymentData = Shopware()->Session()->moptPayment;
         }
 
@@ -190,6 +189,9 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('moptAmazonLogout', $session->moptAmazonLogout);
                 unset($session->moptAmazonLogout);
             }
+
+            $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
+            $view->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
 
             // Klarna
             // order lines
