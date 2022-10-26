@@ -190,9 +190,6 @@ class FrontendCheckout implements SubscriberInterface
                 unset($session->moptAmazonLogout);
             }
 
-            $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
-            $view->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
-
             // Klarna
             // order lines
             /** @var Mopt_PayoneMain $moptPayoneMain */
@@ -281,6 +278,12 @@ class FrontendCheckout implements SubscriberInterface
 
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
             $view->assign('locale', str_replace('_', '-', Shopware()->Shop()->getLocale()->getLocale()));
+
+            if ($userData['additional']['user']['accountmode'] === "0") {
+                $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
+                $view->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
+            }
+            $view->assign('showMoptCreditCardAgreement', ($userData['additional']['user']['accountmode'] === "0"));
         }
 
         if ($request->getActionName() === 'cart' && $session->moptPayoneUserHelperError ) {

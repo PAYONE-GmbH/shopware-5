@@ -40,12 +40,14 @@
     </div>
 
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
+    {if $showMoptCreditCardAgreement}
     <BR><BR>
-    <div id="payone-cc-save-pseudocardnum-accept">
-        <input name="moptPaymentData[mopt_payone__cc_save_pseudocardnum_accept]" type="checkbox" id="mopt_payone__cc_save_pseudocardnum_accept" value=0
-               class="checkbox"/>
-        <label for="payone-cc-save-pseudocardnum-accept"  style="float:none; width:100%; display:inline">{$moptCreditCardAgreement}<a href="{url controller=custom sCustom=8 forceSecure}" data-modal-height="500" data-modal-width="800">{s name='widerruf' namespace="frontend/MoptPaymentPayone/payment" }Widerruf{/s}</a></label>
-    </div>
+        <div id="payone-cc-save-pseudocardnum-accept">
+            <input name="moptPaymentData[mopt_payone__cc_save_pseudocardnum_accept]" type="checkbox" id="mopt_payone__cc_save_pseudocardnum_accept" value=0
+                   class="checkbox"/>
+            <label for="payone-cc-save-pseudocardnum-accept"  style="float:none; width:100%; display:inline">{$moptCreditCardAgreement}<a href="{url controller=custom sCustom=8 forceSecure}" data-modal-height="500" data-modal-width="800">{s name='widerruf' namespace="frontend/MoptPaymentPayone/payment" }Widerruf{/s}</a></label>
+        </div>
+    {/if}
     <BR><BR>
     {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection == '1' && ! $moptIsAjax}
         <div id="payone-cc-auto-detection-messages">
