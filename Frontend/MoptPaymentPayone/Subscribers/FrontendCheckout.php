@@ -278,7 +278,7 @@ class FrontendCheckout implements SubscriberInterface
 
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
             $view->assign('locale', str_replace('_', '-', Shopware()->Shop()->getLocale()->getLocale()));
-            $showmoptCreditCardAgreement = $userData['additional']['user']['accountmode'] === "0" && (! isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment === false) ;
+            $showmoptCreditCardAgreement = $userData['additional']['user']['accountmode'] == "0" && (! isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment === false) ;
             if ($showmoptCreditCardAgreement) {
                 $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
                 $view->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
