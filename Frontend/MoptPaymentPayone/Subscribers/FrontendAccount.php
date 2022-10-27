@@ -107,6 +107,8 @@ class FrontendAccount implements SubscriberInterface
         // also remove creditcard as default payment
         $sql = "UPDATE s_user SET paymentID = ? WHERE id = ?";
         Shopware()->Db()->query($sql, array((int)Shopware()->Config()->Defaultpayment, (int)$userId));
+        // also remove creditcard data in Session
+        unset(Shopware()->Session()->moptPayment);
     }
 
 }

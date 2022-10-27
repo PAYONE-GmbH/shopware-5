@@ -98,6 +98,14 @@ class Payment implements SubscriberInterface
         $paymentData = $moptPayoneMain->getFormHandler()
                 ->processPaymentForm($paymentName, $post, $moptPayoneMain->getPaymentHelper());
 
+        $session->moptSaveCreditcardData = true;
+        $savePaymentData = true;
+        if (!isset($paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept']) || $paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept'] !== '1') {
+            $savePaymentData = false;
+            $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
+            $session->moptSaveCreditcardData = false;
+        }
+
         if (isset($paymentData['formData']['mopt_save_birthday_and_phone']) && $paymentData['formData']['mopt_save_birthday_and_phone']) {
             $moptPayoneMain->getPaymentHelper()->moptUpdateUserInformation($userId, $paymentData);
         }
@@ -217,7 +225,9 @@ class Payment implements SubscriberInterface
 
             //save data to table and session
             $session->moptPayment = $post;
-            if (!$moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentId) && !is_null($userId)) {
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName) && !is_null($userId) && $savePaymentData) {
+                $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
+            } else if (! $moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName) && !is_null($userId)) {
                 $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
             }
         }
@@ -280,8 +290,8 @@ class Payment implements SubscriberInterface
     {
         $returnValues = $arguments->getReturn();
         $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
-
-        if (!$paymenthelper->isPayoneCreditcard($returnValues['paymentID'])) {
+        $paymentname = $paymenthelper->getPaymentNameFromId($returnValues['paymentID']);
+        if (!$paymenthelper->isPayoneCreditcard($paymentname)) {
             return;
         }
 

@@ -40,8 +40,15 @@
     </div>
 
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
+    {if $showMoptCreditCardAgreement == '0'}
     <BR><BR>
-
+        <div id="payone-cc-save-pseudocardnum-accept">
+            <input name="moptPaymentData[mopt_payone__cc_save_pseudocardnum_accept]" type="checkbox" id="mopt_payone__cc_save_pseudocardnum_accept" value=0
+                   class="checkbox"/>
+            <label for="payone-cc-save-pseudocardnum-accept"  style="float:none; width:100%; display:inline">{$moptCreditCardAgreement}<a href="{url controller=custom sCustom=8 forceSecure}" data-modal-height="500" data-modal-width="800">{s name='widerruf' namespace="frontend/MoptPaymentPayone/payment" }Widerruf{/s}</a></label>
+        </div>
+    {/if}
+    <BR><BR>
     {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection == '1' && ! $moptIsAjax}
         <div id="payone-cc-auto-detection-messages">
             <div class="payone-auto-cc-detection-message" data-msg-type="unknown">
@@ -264,7 +271,6 @@
 <script type="text/javascript">
     //<![CDATA[
     function processPayoneResponse(response) {
-
         if (response && response.get('status') === 'VALID') {
             $('#mopt_payone__cc_paymentdescription').val($('#mopt_payone__cc_cardtype option:selected').text());
             $('#mopt_payone__cc_truncatedcardpan').val(response.get('truncatedcardpan'));
@@ -283,9 +289,12 @@
                 mopt_payone__cc_pseudocardpan: response.get('pseudocardpan'),
                 mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
                 mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
-                mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text()
+                mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
+                mopt_payone__cc_cardholder: $('#mopt_payone__cc_cardholder').val()
             };
-            savePseudoCard(data);
+            if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked")) {
+                savePseudoCard(data);
+            }
             submitForm();
         } else {
             var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
@@ -319,7 +328,10 @@
                 mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
                 mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
                 mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
-                mopt_payone__cc_cardexpiredate: response.cardexpiredate
+                mopt_payone__cc_cardexpiredate: response.cardexpiredate,
+                mopt_payone__cc_cardholder: $('#mopt_payone__cc_cardholder').val(),
+                mopt_payone__cc_cardexpiremonth_hidden: $('#mopt_payone__cc_cardexpiremonth_hidden').val(),
+                mopt_payone__cc_cardexpireyear_hidden: $('#mopt_payone__cc_cardexpireyear_hidden').val(),
             };
             ccCheck(data);
         } else {
@@ -352,16 +364,19 @@
                 mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
                 mopt_payone__cc_cardexpiredate: response.cardexpiredate
             };
-            savePseudoCard(data);
+            if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked"))
+            {
+                savePseudoCard(data);
+            }
         } else {
             showErrorMessage(response);
         }
-    };
+    }
 
     function moptShowGeneralError() {
         var errorMessages = [{$moptCreditCardCheckEnvironment.moptPayoneParams.errorMessages}];
         alert(errorMessages[0].general);
-    };
+    }
 
     function showhiddenCCFields() {
         var selectedYear = '20'+ $('#mopt_payone__cc_cardexpiredate').val().substring(0,2);
@@ -399,8 +414,11 @@
         jQuery.post('{url controller=moptAjaxPayone action=checkCreditCardExpiry forceSecure}', data, function (expiryResponse)
         {
             if (expiryResponse.trim() == 'true' ){
+                if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked"))
+                {
                 $('#mopt_payone__cc_truncatedcardpan_hidden').val(data.mopt_payone__cc_truncatedcardpan);
-                savePseudoCard(data);
+                    savePseudoCard(data);
+                }
                 submitForm();
             } else {
                 showExpiryErrorMessage();
@@ -412,6 +430,12 @@
 
     function expiryCheck(data) {
         var ret;
+        if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked"))
+        {
+            // do nothing
+        } else {
+            data.deleteUserData = true;
+        }
         $.ajax({
             type: 'POST',
             url: '{url controller=moptAjaxPayone action=checkCreditCardExpiry forceSecure}',

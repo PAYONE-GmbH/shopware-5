@@ -1408,7 +1408,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         } else {
             $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
             $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
-            Shopware()->Session()->moptPayment = $paymentData;
+            if (!$paymentData && Shopware()->Session()->moptSaveCreditcardData === false ) {
+                $paymentData = Shopware()->Session()->moptPayment;
+            } else {
+                Shopware()->Session()->moptPayment = $paymentData;
+            }
         }
 
         return $paymentData;

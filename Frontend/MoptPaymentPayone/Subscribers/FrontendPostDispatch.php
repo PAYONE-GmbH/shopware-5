@@ -321,6 +321,19 @@ class FrontendPostDispatch implements SubscriberInterface
                     );
                 }
             }
+
+            $paymentData = Shopware()->Session()->moptPayment;
+            $isAnon = strpos($paymentData['mopt_payone__cc_truncatedcardpan'], 'XXXX') !== false || strpos($paymentData['mopt_payone__cc_truncatedcardpan_hidden'], 'XXXX') !== false;
+            if ($moptPaymentHelper->isPayoneCreditcard($moptPaymentName) && is_null($session->moptFormSubmitted) && ! $isAnon )
+            {
+                    $action->redirect(
+                        array(
+                            'controller' => 'checkout',
+                            'action' => 'shippingPayment',
+                        )
+                    );
+            }
+
         }
 
         if ($controllerName == 'checkout' && $request->getActionName() == 'cart' ) {
@@ -443,6 +456,11 @@ class FrontendPostDispatch implements SubscriberInterface
 
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+        if (!$paymentData && (isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] !== "true"))
+        {
+            $paymentData = Shopware()->Session()->moptPayment;
+        }
+
 
         $paymentMeans = Shopware()->Modules()->Admin()->sGetPaymentMeans();
         $groupedPaymentMeans = false;

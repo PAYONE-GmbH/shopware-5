@@ -152,6 +152,14 @@ function moptPaymentReady() {
                 var creditcardCheckType = $('#mopt_payone_creditcard_form').attr('data-moptCreditcardIntegration');
                 if (typeof $('#mopt_payone_creditcard_form') !== "undefined") {
                     me.$el.bind('submit', function (e) {
+
+                        var checkboxStateChecked=$('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked");
+                        if (checkboxStateChecked) {
+                            $('#mopt_payone__cc_save_pseudocardnum_accept').val('1')
+                        } else {
+                            $('#mopt_payone__cc_save_pseudocardnum_accept').val('0')
+                        }
+
                         if ($('#mopt_payone__cc_cardholder').hasClass('has--error')) {
                             e.preventDefault();
                         }

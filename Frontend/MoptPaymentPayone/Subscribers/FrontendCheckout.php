@@ -133,6 +133,10 @@ class FrontendCheckout implements SubscriberInterface
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
 
+        if (isset(Shopware()->Session()->moptSaveCreditcardData) && Shopware()->Session()->moptSaveCreditcardData === false  ) {
+            $paymentData = Shopware()->Session()->moptPayment;
+        }
+
         $ret['data'] = $paymentData;
 
         //save payment data to session for later use during actual payment process
@@ -274,6 +278,12 @@ class FrontendCheckout implements SubscriberInterface
 
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
             $view->assign('locale', str_replace('_', '-', Shopware()->Shop()->getLocale()->getLocale()));
+            $showmoptCreditCardAgreement = $userData['additional']['user']['accountmode'] == "0" && (! isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment === false) ;
+            if ($showmoptCreditCardAgreement) {
+                $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
+                $view->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
+            }
+            $view->assign('showMoptCreditCardAgreement', ($showmoptCreditCardAgreement === true) ? "0" : "1");
         }
 
         if ($request->getActionName() === 'cart' && $session->moptPayoneUserHelperError ) {
