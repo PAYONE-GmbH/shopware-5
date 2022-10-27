@@ -40,7 +40,7 @@
     </div>
 
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
-    {if $showMoptCreditCardAgreement}
+    {if $showMoptCreditCardAgreement == '0'}
     <BR><BR>
         <div id="payone-cc-save-pseudocardnum-accept">
             <input name="moptPaymentData[mopt_payone__cc_save_pseudocardnum_accept]" type="checkbox" id="mopt_payone__cc_save_pseudocardnum_accept" value=0
