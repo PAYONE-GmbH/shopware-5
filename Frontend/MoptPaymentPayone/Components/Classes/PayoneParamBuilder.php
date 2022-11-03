@@ -258,6 +258,16 @@ class Mopt_PayoneParamBuilder
     {
         $attribute = $this->payoneHelper->getOrCreateAttribute($order);
         $paymentData = unserialize($attribute->getMoptPayonePaymentData());
+        if (!empty($paymentData['mopt_payone__ratepay_invoice_shopid'])) {
+            return $paymentData['mopt_payone__ratepay_invoice_shopid'];
+        }
+        if (!empty($paymentData['mopt_payone__ratepay_direct_debit_shopid'])) {
+            return $paymentData['mopt_payone__ratepay_direct_debit_shopid'];
+        }
+        if (!empty($paymentData['mopt_payone__ratepay_installment_shopid'])) {
+            return $paymentData['mopt_payone__ratepay_installment_shopid'];
+        }
+
         return $paymentData['mopt_payone__ratepay_shopid'];
     }
 
@@ -714,7 +724,7 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_invoice_shopid'])
         ));
 
 
@@ -767,7 +777,7 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_installment_shopid'])
         ));
 
         //toDo direct Debit
@@ -776,7 +786,7 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'installment_amount', 'data' => $paymentData['mopt_payone__ratepay_installment_installment_amount'] * 100)
+            array('key' => 'installment_amount', 'data' => $paymentData['mopt_payone__ratepay_installment_amount'] * 100)
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
@@ -840,7 +850,7 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_direct_debit_shopid'])
         ));
 
 
