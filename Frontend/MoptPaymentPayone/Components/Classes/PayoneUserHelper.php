@@ -139,22 +139,29 @@ class Mopt_PayoneUserHelper
      */
     protected function extractData(array $personalData, $paymentId)
     {
-        // uncomment to simulate missing paypal phone number
-        // unset($personalData['telephonenumber']);
+        // uncomment to simulate missing paypal adress data
+/*
+        unset($personalData['street']);
+        unset($personalData['city']);
+        unset($personalData['country']);
+        unset($personalData['countrycode']);
+        unset($personalData['zip']);
+        unset($personalData['addressaddition']);
+        unset($personalData['firstname']);
+        unset($personalData['lastname']);
+        unset($personalData['telephonenumber']);
+*/
         $isPhoneMandatory = Shopware()->Config()->get('requirePhoneField');
 
         // paypal express does not use the billing_ prefix so rename the keys
-        // also split lastname value into firstname and lastname
-        if (!isset($personalData['billing_street']) && isset($personalData['street'])) {
-            $keys = [ 'street', 'city', 'country', 'zip', 'addressaddition', 'lastname', 'telephonenumber'];
+        // also split lastname (billing firstname and billing lastname) value into firstname and lastname
+        if (!isset($personalData['billing_street']) && (isset($personalData['street']) || isset($personalData['shipping_street']))) {
+            $splitName = explode(' ', $personalData['lastname']);
+            $personalData['lastname'] = $splitName[1];
+            $personalData['firstname'] = $splitName[0];
+            $keys = [ 'street', 'city', 'country', 'zip', 'addressaddition', 'firstname', 'lastname', 'telephonenumber'];
             foreach ($keys AS $origKey) {
-                if ($origKey !== 'lastname') {
-                    $personalData['billing_' . $origKey] = (!empty($personalData[$origKey])) ? $personalData[$origKey] : $personalData['shipping_' . $origKey];
-                } else {
-                    $splitName = explode(' ', $personalData[$origKey]);
-                    $personalData['billing_' . $origKey] = $splitName[1];
-                    $personalData['billing_firstname'] = $splitName[0];
-                }
+                $personalData['billing_' . $origKey] = (!empty($personalData[$origKey])) ? $personalData[$origKey] : $personalData['shipping_' . $origKey];
                 unset($personalData[$origKey]);
             }
             $personalData['shipping_telephonenumber'] = $personalData['billing_telephonenumber'];
