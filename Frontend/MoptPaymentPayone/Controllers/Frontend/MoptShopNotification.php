@@ -176,7 +176,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                         . Shopware()->Snippets()
                             ->getNamespace('frontend/MoptPaymentPayone/messages')
                             ->get('fraudCommentPart3', false);
-                    $orderObj->setComment($comment);
+                    $orderObj->setInternalComment($comment);
                     Shopware()->Models()->persist($orderObj);
                     Shopware()->Models()->flush();
                 } else {

@@ -807,7 +807,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                     . Shopware()->Snippets()
                         ->getNamespace('frontend/MoptPaymentPayone/messages')
                         ->get('fraudCommentPart3', false);
-                $orderObj->setComment($comment);
+                $orderObj->setInternalComment($comment);
                 Shopware()->Models()->persist($orderObj);
                 Shopware()->Models()->flush();
             } else {
