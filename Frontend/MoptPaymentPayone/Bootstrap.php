@@ -793,8 +793,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // Add config field for trustly show iban bic setting.
         $this->getInstallHelper()->checkAndAddTrustlyShowIbanBic();
 
-        // Applepay fileds
+        // Applepay fields
         $this->getInstallHelper()->checkAndAddApplepayConfig();
+
+        // used by the bnpl payments
+        $this->getInstallHelper()->checkAndUpdateAllowDifferentAdressesOption();
 
         /** @var Payment $payment */
         $paypalExpressPayment = $this->Payments()->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);

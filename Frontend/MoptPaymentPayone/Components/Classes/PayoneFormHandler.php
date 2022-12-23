@@ -126,6 +126,14 @@ class Mopt_PayoneFormHandler
             return $this->proccessPayoneTrustly($formData);
         }
 
+        if ($paymentHelper->isPayoneSecuredInvoice($paymentId)) {
+            return $this->proccessPayoneSecuredInvoice($formData);
+        }
+
+        if ($paymentHelper->isPayoneSecuredInstallments($paymentId)) {
+            return $this->proccessPayoneSecuredInstallments($formData);
+        }
+
         if ($paymentHelper->isPayonePaymentMethod($paymentId)) {
             $this->setFormSubmittedFlag();
 
@@ -910,6 +918,74 @@ class Mopt_PayoneFormHandler
 
         $this->setFormSubmittedFlag();
 
+        return $paymentData;
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function proccessPayoneSecuredInvoice($formData)
+    {
+        $paymentData = [];
+
+        if (empty($formData['mopt_payone__payone_secured_invoice_token'])) {
+                $paymentData['sErrorFlag']['mopt_payone__payone_secured_invoice_token'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__payone_secured_invoice_token'] = $formData['mopt_payone__payone_secured_invoice_token'];
+        }
+
+        $this->setFormSubmittedFlag();
+
+        Shopware()->Session()->moptPayment = $paymentData;
+        return $paymentData;
+    }
+
+    /**
+     * process form data
+     *
+     * @param array $formData
+     * @return array
+     */
+    protected function proccessPayoneSecuredInstallments($formData)
+    {
+        $paymentData = [];
+
+        if (empty($formData['mopt_payone__payone_secured_installment_token'])) {
+            $paymentData['sErrorFlag']['mopt_payone__payone_secured_installment_token'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__payone_secured_installment_token'] = $formData['mopt_payone__payone_secured_installment_token'];
+        }
+
+        if (empty($formData['mopt_payone_payone_secured_installment_plan'])) {
+            $paymentData['sErrorFlag']['mopt_payone_payone_secured_installment_plan'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone_payone_secured_installment_plan'] = $formData['mopt_payone_payone_secured_installment_plan'];
+        }
+
+        if (!$formData['mopt_payone_payone_secured_installment_iban'] || !$this->isValidIbanBic($formData['mopt_payone_payone_secured_installment_iban']) ) {
+            $paymentData['sErrorFlag']['mopt_payone_payone_secured_installment_iban'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone_payone_secured_installment_iban'] = $formData['mopt_payone_payone_secured_installment_iban'];
+        }
+
+        if (empty($formData['mopt_payone_payone_secured_installment_birthdaydate'])) {
+            $paymentData['sErrorFlag']['mopt_payone_payone_secured_installment_birthdaydate'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone_payone_secured_installment_birthdaydate'] = $formData['mopt_payone_payone_secured_installment_birthdaydate'];
+        }
+
+        if (empty($formData['mopt_payone_payone_secured_installment_telephone'])) {
+            $paymentData['sErrorFlag']['mopt_payone_payone_secured_installment_telephone'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone_payone_secured_installment_telephone'] = $formData['mopt_payone_payone_secured_installment_telephone'];
+        }
+
+        $this->setFormSubmittedFlag();
+
+        Shopware()->Session()->moptPayment = $paymentData;
         return $paymentData;
     }
 

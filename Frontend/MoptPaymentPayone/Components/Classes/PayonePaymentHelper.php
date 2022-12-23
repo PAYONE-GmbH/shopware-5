@@ -783,6 +783,28 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone secured invoice
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneSecuredInvoice($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_payone_secured_invoice#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone secured invoice
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneSecuredInstallments($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_payone_secured_installmemt#', $paymentName) ? true : false;
+    }
+
+    /**
      * check if given payment name is payone alipay payment
      *
      * @param string $paymentName
@@ -1331,6 +1353,14 @@ class Mopt_PayonePaymentHelper
 
         if ($this->isPayoneRatepayDirectDebit($paymentShortName)) {
             return 'ratepaydirectdebit';
+        }
+
+        if ($this->isPayoneSecuredInvoice($paymentShortName)) {
+            return 'payonesecuredinvoice';
+        }
+
+        if ($this->isPayoneSecuredInstallments($paymentShortName)) {
+            return 'payonesecuredinstallments';
         }
 
         if ($this->isPayoneFinance($paymentShortName)) {

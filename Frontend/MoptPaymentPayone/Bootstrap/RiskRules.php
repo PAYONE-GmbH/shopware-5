@@ -64,7 +64,10 @@ class RiskRules
      */
     public function createRiskRules()
     {
-        // currently no risk rules are created
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
+            'ORDERVALUELESS', '9.99', '', '', 2);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
+            'ORDERVALUEMORE', '1500.01', '', '', 2);
     }
 
     /**

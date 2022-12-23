@@ -771,7 +771,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getParam('hreg');
         $paymentData['mopt_payone__ratepay_birthdaydate'] = str_replace("-", "", $this->Request()->getParam('dob'));
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
-        $financeType = \Payone_Api_Enum_RatepayType::RPS;
+        $financeType = \Payone_Api_Enum_PayoneSecuredType::PIN;
 
         try {
             if (preg_match('/^[0-9]+(\.[0-9][0-9][0-9])?(,[0-9]{1,2})?$/', $calcValue)) {
@@ -813,6 +813,22 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
         echo $html;
         return;
+    }
+
+    /**
+     * Extract number from given string
+     *
+     * @param  string $sString
+     * @return string|false
+     */
+    protected function getNumberFromString($sString)
+    {
+        preg_match('/^[^0-9]*_([0-9])$/m', $sString, $matches);
+
+        if (count($matches) == 2) {
+            return $matches[1];
+        }
+        return false;
     }
 
     /**
@@ -878,6 +894,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     public function renderRatepayInstallment($result)
     {
+
+
         $numberOfRates = $result['last-rate'] ? $result['number-of-rates'] - 1 : $result['number-of-rates'];
         $picturePath = $this->Request()->getBaseUrl() . "/engine/Shopware/Plugins/Community/Frontend/MoptPaymentPayone/Views/frontend/_resources/images/info-icon.png";
         $this->View()->addTemplateDir(dirname(__FILE__) . "/../../Views/");
@@ -886,6 +904,32 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->View()->assign(array('numberOfRates' => $numberOfRates));
         $this->View()->assign(array('result' => $result));
         return $this->View()->render();
+    }
+
+    protected function formatInstallmentOptions($aResponse)
+    {
+        unset($aResponse['status']);
+        unset($aResponse['workorderid']);
+
+        $aInstallmentOptions = ['runtimes' => []];
+
+        foreach ($aResponse as $sKey => $sValue) {
+            $sKey = str_replace("add_paydata", "", $sKey);
+            $sKey = str_replace(["[", "]"], "", $sKey);
+            $sKey = str_replace("-", "_", $sKey);
+
+            $iIndex = $this->getNumberFromString($sKey);
+            if ($iIndex !== false) {
+                $sKey = str_replace("_".$iIndex, "", $sKey);
+                if (!isset($aInstallmentOptions['runtimes'][$iIndex])) {
+                    $aInstallmentOptions['runtimes'][$iIndex] = [];
+                }
+                $aInstallmentOptions['runtimes'][$iIndex][$sKey] = $sValue;
+            } else {
+                $aInstallmentOptions[$sKey] = $sValue;
+            }
+        }
+        return $aInstallmentOptions;
     }
 
     protected function amznConfirmOrderReferenceAction()

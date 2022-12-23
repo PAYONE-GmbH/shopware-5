@@ -1419,6 +1419,12 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         if ($options['applepayDebug'] == "true") {
             $data->setApplepayDebug(1);
         }
+        if ($options['allowDifferentAddresses'] == "false") {
+            $data->setAllowDifferentAddresses(0);
+        }
+        if ($options['allowDifferentAddresses'] == "true") {
+            $data->setAllowDifferentAddresses(1);
+        }
 
 
         Shopware()->Models()->flush($data);
