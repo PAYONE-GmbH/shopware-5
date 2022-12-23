@@ -587,7 +587,7 @@ class Mopt_PayoneInstallHelper
                 'template' => 'mopt_paymentmean_payone_secured_invoice.tpl',
                 'position' => 42,],
             [
-                'name' => 'mopt_payone__fin_payone_secured_installmemt',
+                'name' => 'mopt_payone__fin_payone_secured_installment',
                 'description' => 'PAYONE gesicherter Ratenenkauf',
                 'template' => 'mopt_paymentmean_payone_secured_installment.tpl',
                 'position' => 43,],

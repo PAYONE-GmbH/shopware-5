@@ -801,7 +801,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayoneSecuredInstallments($paymentName)
     {
-        return preg_match('#mopt_payone__fin_payone_secured_installmemt#', $paymentName) ? true : false;
+        return preg_match('#mopt_payone__fin_payone_secured_installment#', $paymentName) ? true : false;
     }
 
     /**

@@ -65,9 +65,22 @@ class RiskRules
     public function createRiskRules()
     {
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
-            'ORDERVALUELESS', '9.99', '', '', 2);
+            'ORDERVALUELESS', '9.99', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
-            'ORDERVALUEMORE', '1500.01', '', '', 2);
+            'ORDERVALUEMORE', '1500.01', '', '', 4);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
+            'BILLINGLANDISNOT', 'AT', '', '', 4);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
+            'BILLINGLANDISNOT', 'DE', '', '', 4);
+
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
+            'ORDERVALUELESS', '199.99', '', '', 2);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
+            'ORDERVALUEMORE', '3500.01', '', '', 2);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
+            'BILLINGLANDISNOT', 'AT');
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
+            'BILLINGLANDISNOT', 'DE');
     }
 
     /**

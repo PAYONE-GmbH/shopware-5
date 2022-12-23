@@ -461,7 +461,7 @@ class FrontendCheckout implements SubscriberInterface
     protected function isPayoneSecuredInstallmentsActive()
     {
         $payment = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
-            ['name' => 'mopt_payone__fin_payone_secured_installmemt']
+            ['name' => 'mopt_payone__fin_payone_secured_installment']
         );
         return $payment->getActive();
     }
