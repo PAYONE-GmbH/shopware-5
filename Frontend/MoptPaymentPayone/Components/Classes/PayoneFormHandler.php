@@ -533,12 +533,6 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone__payolution_debitnote_iban'] = $formData['mopt_payone__payolution_debitnote_iban'];
         }
 
-        if (!$formData['mopt_payone__payolution_debitnote_bic'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_debitnote_bic'])) {
-            $paymentData['sErrorFlag']['mopt_payone__payolution_debitnote_bic'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__payolution_debitnote_bic'] = $formData['mopt_payone__payolution_debitnote_bic'];
-        }
-
         if ($paymentData['sErrorFlag']['mopt_payone__payolution_debitnote_iban'] && $paymentData['sErrorFlag']['mopt_payone__payolution_debitnote_bic']) {
             unset($paymentData['sErrorFlag']['mopt_payone__debit_iban']);
             unset($paymentData['sErrorFlag']['mopt_payone__debit_bic']);
@@ -649,11 +643,6 @@ class Mopt_PayoneFormHandler
                 $paymentData['sErrorFlag']['mopt_payone__payolution_installment_iban'] = true;
             } else {
                 $paymentData['formData']['mopt_payone__payolution_installment_iban'] = $formData['mopt_payone__payolution_installment_iban'];
-            }
-            if (!$formData['mopt_payone__payolution_installment_bic'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_installment_bic'])) {
-                $paymentData['sErrorFlag']['mopt_payone__payolution_installment_bic'] = true;
-            } else {
-                $paymentData['formData']['mopt_payone__payolution_installment_bic'] = $formData['mopt_payone__payolution_installment_bic'];
             }
         }
 
