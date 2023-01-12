@@ -124,6 +124,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'applepayPrivateKey', type: 'string'},
     { name: 'applepayPrivateKeyPassword', type: 'string'},
     { name: 'applepayDebug', type: 'boolean'},
+    { name: 'allowDifferentAddresses', type: 'boolean'},
     { name: 'creditcardDefaultDescription', type: 'string'},
   ],
   /**

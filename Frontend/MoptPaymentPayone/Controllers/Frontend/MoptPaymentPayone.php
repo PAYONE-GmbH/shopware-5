@@ -242,6 +242,18 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
+    public function payonesecuredinvoiceAction()
+    {
+        $response = $this->mopt_payone__payonesecuredinvoice();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
+    public function payonesecuredinstallmentsAction()
+    {
+        $response = $this->mopt_payone__payonesecuredinstallments();
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
     public function ratepayinstallmentAction()
     {
         $response = $this->mopt_payone__ratepayinstallment();
@@ -491,6 +503,34 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     protected function mopt_payone__klarna_direct_debit()
     {
         return $this->mopt_payone__klarna('direct_debit');
+    }
+
+    /**
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__payonesecuredinvoice()
+    {
+        $paymentData = Shopware()->Session()->moptPayment;
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = Payone_Api_Enum_PayoneSecuredType::PIV;
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayoneSecuredInvoice($financeType, $paymentData);
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment);
+        return $response;
+    }
+
+    /**
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__payonesecuredinstallments()
+    {
+        $paymentData = Shopware()->Session()->moptPayment;
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $financeType = Payone_Api_Enum_PayoneSecuredType::PIN;
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayoneSecuredInstallments($financeType, $paymentData);
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment, Shopware()->Session()->mopt_payone__payone_secured_installment_workorderid);
+        return $response;
     }
 
     /**
@@ -1110,7 +1150,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         if (!$isPaypalRecurringInitialRequest && ($config['submitBasket'] || $clearingType === 'fnc')) {
             // although payolution is clearingtype fnc respect submitBasket setting in Backend
-            if (!$config['submitBasket'] && ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName))) {
+            if (!$config['submitBasket'] && ($this->moptPayonePaymentHelper->isPayonePayolutionDebitNote($paymentName) || $this->moptPayonePaymentHelper->isPayonePayolutionInvoice($paymentName)
+                    || $this->moptPayonePaymentHelper->isPayoneSecuredInvoice($paymentName) || $this->moptPayonePaymentHelper->isPayoneSecuredInstallments($paymentName)
+                )) {
                 // do nothing
             } else {
                 $orderId = $this->Request()->getParam('orderId');
@@ -1150,9 +1192,15 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             ));
             $request->setPaydata($paydirektdata);
         }
-
+        if ($this->moptPayonePaymentHelper->isPayoneSecuredInstallments($paymentName)) {
+            $iban = preg_replace('/\s+/', '',  $payment->getIban());
+            $payment->setIban($iban);
+            $request->set('bankaccountholder', $payment->getBankaccountholder());
+            }
         if ($this->moptPayonePaymentHelper->isPayoneSafeInvoice($paymentName) ||
-            $this->moptPayonePaymentHelper->isPayoneInvoice($paymentName)
+            $this->moptPayonePaymentHelper->isPayoneInvoice($paymentName) ||
+            $this->moptPayonePaymentHelper->isPayoneSecuredInvoice($paymentName) ||
+            $this->moptPayonePaymentHelper->isPayoneSecuredInstallments($paymentName)
         ) {
             if (!$personalData->getCompany()) {
                 $request->setBusinessrelation(Payone_Api_Enum_BusinessrelationType::B2C);

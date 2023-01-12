@@ -174,7 +174,7 @@ class Payone_Api_Response_Genericpayment_Approved extends Payone_Api_Response_Ge
             return $aInstallmentData['paymentdetails'];
         }
         return false;
-    }    
+    }
 
 
 }

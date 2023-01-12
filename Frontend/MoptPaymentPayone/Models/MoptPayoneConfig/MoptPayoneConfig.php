@@ -642,6 +642,10 @@ class MoptPayoneConfig extends ModelEntity
     private $applepayDebug;
 
     /**
+     * @ORM\Column(name="allow_different_addresses", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 0})
+     */
+    private $allowDifferentAddresses;
+    /**
      * @ORM\Column(name="creditcard_default_description", type="string", length=255, nullable=true, unique=false)
      */
     private $creditcardDefaultDescription;
@@ -2554,6 +2558,22 @@ class MoptPayoneConfig extends ModelEntity
     public function setApplepayDebug($applepayDebug)
     {
         $this->applepayDebug = $applepayDebug;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAllowDifferentAddresses()
+    {
+        return $this->allowDifferentAddresses;
+    }
+
+    /**
+     * @param $allowDifferentAddresses
+     */
+    public function setAllowDifferentAddresses($allowDifferentAddresses)
+    {
+        $this->allowDifferentAddresses = $allowDifferentAddresses;
     }
 
     /**

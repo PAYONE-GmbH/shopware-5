@@ -23,6 +23,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
     var positions = selectionModel.getSelection();
     var amount = 0;
     var currency = order.raw.currency;
+    var paymentName = order.raw.payment.name;
 
     if(!positionIds){
       positionIds = false;
@@ -50,8 +51,24 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
           + '<span style="color: red;">' + amount.toFixed(2) + ' ' + currency + ' </span>{s name="detail/debit3"}markiert{/s}.</p><br>'
           + '<p><label for="mopt_payone__capture_shipment">{s name="detail/debit4"}Versandkosten mit gutschreiben{/s}</label>'
           + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"'
-          + 'style="margin: 0 0 0 4px; height: 15px !important; width: 15px !important;"/></p>'
-          + '<br><p>{s name="detail/debit5"}Sind Sie sicher{/s}?</p>';
+          + 'style="margin: 0 5px 0 4px; height: 15px !important; width: 15px !important;"/></p>'
+
+      if (/mopt_payone__fin_payone_secured_installment/.test(paymentName)){
+        moptMessageBoxText += '<p><br>{s name="detail/debitReason"}Bitte geben Sie einen Storno Grund an{/s}:</p><br>'
+            + '<p><input type="checkbox" id="mopt_payone__debit_refund_reason_undeliverable" class="x-form-field x-form-checkbox"'
+            + 'style="margin: 0 5px 0 4px; height: 15px !important; width: 15px !important;"/>'
+            + '<label for="mopt_payone__debit_refund_reason_undeliverable">{s name="detail/debitReasonUndeliverable"}Nicht lieferbar{/s}</label></p><br>'
+            + '<p><input type="checkbox" id="mopt_payone__debit_refund_reason_fraudulent" class="x-form-field x-form-checkbox"'
+            + 'style="margin: 0 5px 0 4px; height: 15px !important; width: 15px !important;"/>'
+            + '<label for="mopt_payone__debit_refund_reason_fraudulent">{s name="detail/debitReasonFraudulent"}Betrug{/s}</label></p><br>'
+            + '<p><input type="checkbox" id="mopt_payone__debit_refund_reason_duplicate" class="x-form-field x-form-checkbox"'
+            + 'style="margin: 0 5px 0 4px; height: 15px !important; width: 15px !important;"/>'
+            + '<label for="mopt_payone__debit_refund_reason_duplicate">{s name="detail/debitReasonDuplicate"}Doppelte Bestellung{/s}</label></p><br>'
+            + '<p><input type="checkbox" id="mopt_payone__debit_refund_reason_consumer_request" class="x-form-field x-form-checkbox"'
+            + 'style="margin: 0 5px 0 4px; height: 15px !important; width: 15px !important;"/>'
+            + '<label for="mopt_payone__debit_refund_reason_consumer_request">{s name="detail/debitReasonConsumerRequest"}Kundenanfrage{/s}</label></p><br>';
+      }
+      moptMessageBoxText += '<br><p>{s name="detail/debit5"}Sind Sie sicher{/s}?</p>';
 
       if (!showShippingCostsCheckbox) {
         moptMessageBoxText = '{s name="detail/debit1"}Sie haben{/s} ' + positionIds.length + ' {s name="detail/debit2"}Position(en) mit einem Gesamtbetrag von{/s} '
@@ -74,16 +91,32 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
         return;
       }
       var includeShipment = false;
+      var debitReason = false;
       
       
       if (!positionIds || (showShippingCostsCheckbox && Ext.get('mopt_payone__debit_shipment').dom.checked)) {
         includeShipment = true;
       }
-      
+
+      if (Ext.get('mopt_payone__debit_refund_reason_undeliverable').dom.checked) {
+        debitReason = 'undeliverable';
+      }
+
+      if (Ext.get('mopt_payone__debit_refund_reason_fraudulent').dom.checked) {
+        debitReason = 'fraudulent';
+      }
+
+      if (Ext.get('mopt_payone__debit_refund_reason_duplicate').dom.checked) {
+        debitReason = 'duplicate';
+      }
+      if (Ext.get('mopt_payone__debit_refund_reason_consumer_request').dom.checked) {
+        debitReason = 'consumer_request';
+      }
+
       Ext.Ajax.request({
         url: '{url controller="MoptPayoneOrder" action="moptPayoneDebit"}',
         method: 'POST',
-        params: { id: order.get('id'), positionIds: Ext.JSON.encode(positionIds), includeShipment: includeShipment},
+        params: { id: order.get('id'), positionIds: Ext.JSON.encode(positionIds), includeShipment: includeShipment, debitReason: debitReason},
         headers: { 'Accept': 'application/json'},
         success: function(response)
         {
