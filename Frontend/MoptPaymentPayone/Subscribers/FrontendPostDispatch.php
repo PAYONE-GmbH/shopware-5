@@ -275,7 +275,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         // set flag to remove all address change buttons on confirm page
         $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $moptPaymentName);
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && in_array($cleanedPaymentName, \Mopt_PayoneConfig::PAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE))) {
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && in_array($cleanedPaymentName, \Mopt_PayoneConfig::PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED))) {
             $view->assign('moptDenyAddressChanges', true);
         }
 
@@ -313,6 +313,18 @@ class FrontendPostDispatch implements SubscriberInterface
                 $moptPaymentHelper->isPayoneKlarnaInstallments($moptPaymentName)
             ) {
                 if ($session->moptKlarnaAddressChanged) {
+                    $action->redirect(
+                        array(
+                            'controller' => 'checkout',
+                            'action' => 'shippingPayment',
+                        )
+                    );
+                }
+            }
+
+            if ($moptPaymentHelper->isPayoneSecuredInstallments($moptPaymentName)
+            ) {
+                if ($session->moptBasketCahnged) {
                     $action->redirect(
                         array(
                             'controller' => 'checkout',
@@ -670,8 +682,41 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__payone_safe_invoice_birthday'] = $birthday[2];
-                $data['mopt_payone__payone_safe_invoice__birthmonth'] = $birthday[1];
-                $data['mopt_payone__payone_safe_invoice__birthyear'] = $birthday[0];
+                $data['mopt_payone__payone_safe_invoice_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payone_safe_invoice_birthyear'] = $birthday[0];
+            }
+
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneSecuredInvoice($paymentMean['name'])
+            ) {
+
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                }
+
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__payone_secured_invoice_birthday'] = $birthday[2];
+                $data['mopt_payone__payone_secured_invoice_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payone_secured_invoice_birthyear'] = $birthday[0];
+                $data['mopt_payone__payone_secured_invoice_telephone'] = $userData['billingaddress']['phone'];
+            }
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneSecuredInstallments($paymentMean['name'])
+            ) {
+
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                }
+
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__payone_secured_installment_birthday'] = $birthday[2];
+                $data['mopt_payone__payone_secured_installment_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payone_secured_installment_birthyear'] = $birthday[0];
+                $data['mopt_payone__payone_secured_installment_telephone'] = $userData['billingaddress']['phone'];
             }
         }
 
