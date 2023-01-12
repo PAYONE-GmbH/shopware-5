@@ -6,6 +6,7 @@
 
 {namespace name='frontend/MoptPaymentPayone/payment'}
 
+{if $payment_mean.id == $form_data.payment}
 <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/checkout.css"}">
 
 <div class="payment--form-group"
@@ -480,3 +481,4 @@
 
 //]]>
 </script>           
+{/if}
