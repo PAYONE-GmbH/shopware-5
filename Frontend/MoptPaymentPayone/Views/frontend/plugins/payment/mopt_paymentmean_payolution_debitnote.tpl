@@ -85,14 +85,6 @@
            data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
            class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_debitnote_iban} has--error{/if} moptPayoneIbanBic" />
 
-    <input name="moptPaymentData[mopt_payone__payolution_debitnote_bic]"
-           type="text"
-           id="mopt_payone__payolution_debitnote_bic"
-           {if $moptRequired}required="required" aria-required="true"{/if}
-           placeholder="{s name='bankBIC'}BIC{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-           value="{$form_data.mopt_payone__payolution_debitnote_bic|escape}" 
-           data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
-           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_debitnote_bic} has--error{/if} moptPayoneIbanBic" />        
     <p class="none clearfix">
         <input name="moptPaymentData[mopt_payone__payolution_debitnote_agreement]" type="checkbox" id="mopt_payone__payolution_debitnote_agreement" value="true"
                class="checkbox"/>
