@@ -96,6 +96,7 @@ class FrontendCheckout implements SubscriberInterface
         if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePayolutionInstallment($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalExpress($userData['additional']['payment']['name'])
+            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneSecuredInstallments($userData['additional']['payment']['name'])
         ) {
             return;
         }
@@ -207,6 +208,10 @@ class FrontendCheckout implements SubscriberInterface
             $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);
             $userData = Shopware()->Modules()->Admin()->sGetUserData();
             $invoicing = $moptPayoneMain->getParamBuilder()->getInvoicing($basket, $dispatch, $userData);
+
+            if (! is_array($basket['content'])) {
+                $basket['content'] = [];
+            }
 
             $orderLines = [];
             foreach ($invoicing->getItems() as $item) {
@@ -374,8 +379,16 @@ class FrontendCheckout implements SubscriberInterface
             $session->moptAgbChecked = false;
         }
 
-        $view->assign('moptAgbChecked', $session->moptAgbChecked);
-        $view->assign('BSPayoneMode', $config['liveMode']);
+        if ($this->isPayoneSecuredInstallmentsActive() && $request->getActionName() === 'shippingPayment') {
+            $test = $this->getPayoneSecuredInstallmentsPlan($paymentId);
+            $view->assign('BSPayoneInstallmentPlan', $test);
+            $view->assign('moptAgbChecked', $session->moptAgbChecked);
+            $view->assign('BSPayoneMode', $config['liveMode']);
+            $view->assign('BSPayoneMerchantId', $config['merchantId']);
+            $view->assign('BSPayoneSecuredMode', $config['liveMode'] === 'false' ? 't' : 'p');
+            $view->assign('BSPayonePaylaPartnerId', 'e7yeryF2of8X');
+            $view->assign('BSPayoneSecuredToken', $config['merchantId'] . 'e7yeryF2of8X' . ' ' . Shopware()->Session()->get('sessionId'));
+        }
     }
 
     protected function isAmazonPayActive($checkoutController)
@@ -448,6 +461,14 @@ class FrontendCheckout implements SubscriberInterface
         return $paymentApplePay->getActive();
     }
 
+    protected function isPayoneSecuredInstallmentsActive()
+    {
+        $payment = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__fin_payone_secured_installment']
+        );
+        return $payment->getActive();
+    }
+
     /**
      * get url to configured and uploaded paypal ecs button
      *
@@ -470,5 +491,113 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         return $result['image'];
+    }
+
+    /**
+     * Calculates the rates by from user defined rate
+     * called from an ajax request with ratePay parameters (ratepay.js)
+     * map RatePay API parameters and request the payone API
+     *
+     */
+    public function getPayoneSecuredInstallmentsPlan($paymentId)
+    {
+        $payoneMain = $this->container->get('MoptPayoneMain');
+        $basket = $payoneMain->sGetBasket();
+        $amount = empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
+        $config = $payoneMain->getPayoneConfig($paymentId);
+        $financeType = \Payone_Api_Enum_PayoneSecuredType::PIN;
+
+        try {
+            $result = $this->buildAndCallCalculatePayone($config, 'fnc', $financeType, $amount);
+            if ($result instanceof \Payone_Api_Response_Genericpayment_Ok) {
+                 $formattedResult = $this->formatInstallmentOptions($result->getRawResponse());
+            }
+        }
+        catch (Exception $e) {
+        }
+        return $formattedResult;
+    }
+
+    public function formatInstallmentOptions($result)
+    {
+        $aFormattedData = [];
+        $aFormattedData['status'] = $result['status'];
+        $aFormattedData['workorderid'] = $result['workorderid'];
+        Shopware()->Session()->mopt_payone__payone_secured_installment_workorderid = $aFormattedData['workorderid'];
+        $aFormattedData['amountValue'] = $this->fcpoPriceFromCentToDec($result['add_paydata[amount_value]']);
+        $aFormattedData['amountCurrency'] = $result['add_paydata[amount_currency]'];
+        $aFormattedData['plans'] = [];
+        $iCurrPlan = 0;
+        while (true) {
+            if (!isset ($result['add_paydata[total_amount_currency_' . $iCurrPlan . ']'])) {
+                break;
+            }
+
+            $aFormattedData['plans'][$iCurrPlan] = [
+                'effectiveInterestRate' => $this->fcpoPriceFromCentToDec($result['add_paydata[effective_interest_rate_' . $iCurrPlan . ']']),
+                'firstRateDate' => $result['add_paydata[first_rate_date_' . $iCurrPlan . ']'],
+                'installmentOptionId' => $result['add_paydata[installment_option_id_' . $iCurrPlan . ']'],
+                'lastRateAmountCurrency' => $result['add_paydata[last_rate_amount_currency_' . $iCurrPlan . ']'],
+                'lastRateAmountValue' => $this->fcpoPriceFromCentToDec($result['add_paydata[last_rate_amount_value_' . $iCurrPlan . ']']),
+                'linkCreditInformationHref' => $result['add_paydata[link_credit_information_href_' . $iCurrPlan . ']'],
+                'linkCreditInformationType' => $result['add_paydata[link_credit_information_type_' . $iCurrPlan . ']'],
+                'monthlyAmountCurrency' => $result['add_paydata[monthly_amount_currency_' . $iCurrPlan . ']'],
+                'monthlyAmountValue' => $this->fcpoPriceFromCentToDec($result['add_paydata[monthly_amount_value_' . $iCurrPlan . ']']),
+                'nominalInterestRate' => $this->fcpoPriceFromCentToDec($result['add_paydata[nominal_interest_rate_' . $iCurrPlan . ']']),
+                'numberOfPayments' => $result['add_paydata[number_of_payments_' . $iCurrPlan . ']'],
+                'totalAmountCurrency' => $result['add_paydata[total_amount_currency_' . $iCurrPlan . ']'],
+                'totalAmountValue' => $this->fcpoPriceFromCentToDec($result['add_paydata[total_amount_value_' . $iCurrPlan . ']']),
+            ];
+
+            $iCurrPlan++;
+        }
+
+        return $aFormattedData;
+    }
+
+    protected function fcpoPriceFromCentToDec($iAmount)
+    {
+        return number_format($iAmount / 100, 2, ',', '.');
+    }
+
+    /**
+     * prepare and do payment server api call
+     *
+     * @param array $config
+     * @param string $clearingType
+     * @param string $financetype
+     * @param string $amount
+     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Ok $response
+     */
+    protected function buildAndCallCalculatePayone($config, $clearingType, $financetype, $amount)
+    {
+        $payoneMain = $this->container->get('MoptPayoneMain');
+        $paramBuilder = $payoneMain->getParamBuilder();
+        $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
+        $params = $payoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $params['api_version'] = '3.10';
+        $params['financingtype'] = $financetype;
+        $basket = $payoneMain->sGetBasket();
+        //create hash
+        $orderHash = md5(serialize($basket));
+        Shopware()->Session()->moptOrderHash = $orderHash;
+
+        $request = new \Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new \Payone_Api_Request_Parameter_Paydata_Paydata();
+        $paydata->addItem(new \Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action', 'data' => \Payone_Api_Enum_GenericpaymentAction::PAYONE_SECURED_INSTALLMENT_CALCULATE)
+        ));
+        $amountWithShipping = $amount; // Docs state "smallest currency Unit???
+        $request->setPaydata($paydata);
+        $request->setAmount($amountWithShipping);
+        $request->setCurrency(Shopware()->Container()->get('currency')->getShortName());
+
+        $request->setClearingtype($clearingType);
+        $builder = Shopware()->Container()->get('MoptPayoneBuilder');
+
+        $service = $builder->buildServicePaymentGenericpayment();
+        $response = $service->request($request);
+        return $response;
     }
 }

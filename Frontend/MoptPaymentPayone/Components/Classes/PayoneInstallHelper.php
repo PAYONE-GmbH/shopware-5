@@ -368,123 +368,123 @@ class Mopt_PayoneInstallHelper
      */
     public function mopt_payone__getPaymentMethods()
     {
-        return array(
-            array(
+        return [
+            [
                 'name' => 'mopt_payone__cc_visa',
                 'description' => 'PAYONE Visa',
                 'template' => 'mopt_paymentmean_creditcard.tpl',
-                'position' => 1,),
-            array(
+                'position' => 1,],
+            [
                 'name' => 'mopt_payone__cc_mastercard',
                 'description' => 'PAYONE Mastercard',
                 'template' => 'mopt_paymentmean_creditcard.tpl',
-                'position' => 2,),
-            array(
+                'position' => 2,],
+            [
                 'name' => 'mopt_payone__cc_american_express',
                 'description' => 'PAYONE American Express',
                 'template' => 'mopt_paymentmean_creditcard.tpl',
-                'position' => 3,),
-            array(
+                'position' => 3,],
+            [
                 'name' => 'mopt_payone__cc_carte_blue',
                 'description' => 'PAYONE Carte Blue',
                 'template' => 'mopt_paymentmean_creditcard.tpl',
-                'position' => 4,),
-            array(
+                'position' => 4,],
+            [
                 'name' => 'mopt_payone__cc_diners_club',
                 'description' => 'PAYONE Diners Club',
                 'template' => 'mopt_paymentmean_creditcard.tpl',
-                'position' => 5,),
-            array(
+                'position' => 5,],
+            [
                 'name' => 'mopt_payone__cc_jcb',
                 'description' => 'PAYONE JCB',
                 'template' => 'mopt_paymentmean_creditcard.tpl',
-                'position' => 7,),
-            array(
+                'position' => 7,],
+            [
                 'name' => 'mopt_payone__cc_maestro_international',
                 'description' => 'PAYONE Maestro International',
                 'template' => 'mopt_paymentmean_creditcard.tpl',
-                'position' => 8,),
-            array(
+                'position' => 8,],
+            [
                 'name' => 'mopt_payone__cc_china_union',
                 'description' => 'PAYONE China Union Pay',
                 'template' => 'mopt_paymentmean_creditcard.tpl',
-                'position' => 9,),
-            array(
+                'position' => 9,],
+            [
                 'name' => 'mopt_payone__ibt_sofortueberweisung',
                 'description' => 'PAYONE SOFORT Überweisung',
                 'template' => 'mopt_paymentmean_sofort.tpl',
-                'position' => 10,),
-            array(
+                'position' => 10,],
+            [
                 'name' => 'mopt_payone__ibt_giropay',
                 'description' => 'PAYONE Giropay',
                 'template' => 'mopt_paymentmean_giropay.tpl',
-                'position' => 11,),
-            array(
+                'position' => 11,],
+            [
                 'name' => 'mopt_payone__ibt_eps',
                 'description' => 'PAYONE eps',
                 'template' => 'mopt_paymentmean_eps.tpl',
-                'position' => 12,),
-            array(
+                'position' => 12,],
+            [
                 'name' => 'mopt_payone__ibt_post_efinance',
                 'description' => 'PAYONE Post-Finance EFinance',
                 'template' => null,
-                'position' => 13,),
-            array(
+                'position' => 13,],
+            [
                 'name' => 'mopt_payone__ibt_post_finance_card',
                 'description' => 'PAYONE Post-Finance Card',
                 'template' => null,
-                'position' => 14,),
-            array(
+                'position' => 14,],
+            [
                 'name' => 'mopt_payone__ibt_ideal',
                 'description' => 'PAYONE iDeal',
                 'template' => 'mopt_paymentmean_ideal.tpl',
-                'position' => 15,),
-            array(
+                'position' => 15,],
+            [
                 'name' => 'mopt_payone__ewallet_paypal',
                 'description' => 'PAYONE PayPal',
                 'template' => null,
-                'position' => 16,),
-            array(
+                'position' => 16,],
+            [
                 'name' => 'mopt_payone__acc_debitnote',
                 'description' => 'PAYONE Lastschrift',
                 'template' => 'mopt_paymentmean_debit.tpl',
-                'position' => 17,),
-            array(
+                'position' => 17,],
+            [
                 'name' => 'mopt_payone__acc_invoice',
                 'description' => 'PAYONE Offene Rechnung',
                 'template' => null,
-                'position' => 18,),
-            array(
+                'position' => 18,],
+            [
                 'name' => 'mopt_payone__acc_payinadvance',
                 'description' => 'PAYONE Vorkasse',
                 'template' => null,
-                'position' => 19,),
-            array(
+                'position' => 19,],
+            [
                 'name' => 'mopt_payone__acc_cashondel',
                 'description' => 'PAYONE Nachnahme',
                 'template' => null,
-                'position' => 20,),
-            array(
+                'position' => 20,],
+            [
                 'name' => 'mopt_payone__fin_kis_klarna_installments',
                 'description' => 'PAYONE Klarna Slice It',
                 'template' => 'mopt_paymentmean_klarna.tpl',
-                'position' => 22,),
-            array(
+                'position' => 22,],
+            [
                 'name' => 'mopt_payone__fin_kiv_klarna_invoice',
                 'description' => 'PAYONE Klarna Pay Later',
                 'template' => 'mopt_paymentmean_klarna.tpl',
-                'position' => 23,),
-            array(
+                'position' => 23,],
+            [
                 'name' => 'mopt_payone__fin_kdd_klarna_direct_debit',
                 'description' => 'PAYONE Klarna Pay Now',
                 'template' => 'mopt_paymentmean_klarna.tpl',
-                'position' => 24,),
-            array(
+                'position' => 24,],
+            [
                 'name' => 'mopt_payone__ibt_p24',
                 'description' => 'PAYONE P24',
                 'template' => null,
-                'position' => 25,),
-            array(
+                'position' => 25,],
+            [
                 'name' => 'mopt_payone__csh_barzahlen',
                 'description' => 'PAYONE Barzahlen',
                 'template' => null,
@@ -505,83 +505,93 @@ class Mopt_PayoneInstallHelper
                     . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_07.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
                     . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_08.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
                     . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_09.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_10.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'),
-            array(
+                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_10.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'],
+            [
                 'name' => 'mopt_payone__ewallet_paydirekt',
                 'description' => 'PAYONE Paydirekt',
                 'template' => null,
-                'position' => 27,),
-            array(
+                'position' => 27,],
+            [
                 'name' => 'mopt_payone__fin_payolution_invoice',
                 'description' => 'PAYONE Unzer Rechnungskauf',
                 'template' => 'mopt_paymentmean_payolution_invoice.tpl',
-                'position' => 28,),
-            array(
+                'position' => 28,],
+            [
                 'name' => 'mopt_payone__fin_payolution_debitnote',
                 'description' => 'PAYONE Unzer Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
-                'position' => 29,),
-            array(
+                'position' => 29,],
+            [
                 'name' => 'mopt_payone__fin_payolution_installment',
                 'description' => 'PAYONE Unzer Ratenkauf',
                 'template' => 'mopt_paymentmean_payolution_installment.tpl',
-                'position' => 30,),
-            array(
+                'position' => 30,],
+            [
                 'name' => 'mopt_payone__fin_ratepay_invoice',
                 'description' => 'PAYONE Ratepay Rechnungskauf',
                 'template' => 'mopt_paymentmean_ratepay_invoice.tpl',
-                'position' => 31,),
-            array(
+                'position' => 31,],
+            [
                 'name' => 'mopt_payone__fin_ratepay_installment',
                 'description' => 'PAYONE Ratepay Ratenkauf',
                 'template' => 'mopt_paymentmean_ratepay_installment.tpl',
-                'position' => 32,),
-            array(
+                'position' => 32,],
+            [
                 'name' => 'mopt_payone__fin_ratepay_direct_debit',
                 'description' => 'PAYONE Ratepay Lastschrift',
                 'template' => 'mopt_paymentmean_ratepay_direct_debit.tpl',
-                'position' => 33,),
-            array(
+                'position' => 33,],
+            [
                 'name' => 'mopt_payone__acc_payone_safe_invoice',
                 'description' => 'PAYONE Rechnung mit Zahlungsgarantie',
                 'template' => 'mopt_paymentmean_payone_safe_invoice.tpl',
-                'position' => 34,),
-            array(
+                'position' => 34,],
+            [
                 'name' => 'mopt_payone__ibt_bancontact',
                 'description' => 'PAYONE Bancontact',
                 'template' => 'mopt_paymentmean_bancontact.tpl',
-                'position' => 35,),
-            array(
+                'position' => 35,],
+            [
                 'name' => 'mopt_payone__ewallet_amazon_pay',
                 'description' => 'PAYONE Amazon Pay',
                 'template' => 'mopt_paymentmean_amazon_ewallet.tpl',
-                'position' => 36,),
-            array(
+                'position' => 36,],
+            [
                 'name' => 'mopt_payone__ewallet_alipay',
                 'description' => 'PAYONE AliPay',
                 'template' => 'mopt_paymentmean_alipay_ewallet.tpl',
-                'position' => 37,),
-            array(
+                'position' => 37,],
+            [
                 'name' => 'mopt_payone__ewallet_wechatpay',
                 'description' => 'PAYONE WeChatPay',
                 'template' => null,
-                'position' => 38,),
-            array(
+                'position' => 38,],
+            [
                 'name' => 'mopt_payone__ibt_trustly',
                 'description' => 'PAYONE Trustly',
                 'template' => 'mopt_paymentmean_trustly.tpl',
-                'position' => 39,),
-            array(
+                'position' => 39,],
+            [
                 'name' => 'mopt_payone__ewallet_applepay',
                 'description' => 'PAYONE Apple Pay',
                 'template' => 'mopt_paymentmean_applepay.tpl',
-                'position' => 40,),
-            array(
+                'position' => 40,],
+            [
                 'name' => 'mopt_payone__ewallet_paypal_express',
                 'description' => 'PAYONE PayPal Express',
                 'template' => null,
-                'position' => 41,),
-        );
+                'position' => 41,],
+            [
+                'name' => 'mopt_payone__fin_payone_secured_invoice',
+                'description' => 'PAYONE gesicherter Rechnungskauf',
+                'template' => 'mopt_paymentmean_payone_secured_invoice.tpl',
+                'position' => 42,],
+            [
+                'name' => 'mopt_payone__fin_payone_secured_installment',
+                'description' => 'PAYONE gesicherter Ratenenkauf',
+                'template' => 'mopt_paymentmean_payone_secured_installment.tpl',
+                'position' => 43,],
+        ];
     }
 
     /**
@@ -848,14 +858,14 @@ class Mopt_PayoneInstallHelper
     public function moptInsertDocumentsExtensionIntoDatabaseIfNotExist()
     {
         $sql = 'SELECT * FROM s_core_documents_box WHERE name = ? OR name = ?';
-        $result = Shopware()->Db()->query($sql, array('PAYONE_Footer', 'PAYONE_Content_Info'));
+        $result = Shopware()->Db()->query($sql, ['PAYONE_Footer', 'PAYONE_Content_Info']);
 
         if ($result->rowCount() < 2) {
             // add PAYONE block for documents
             $sql = "INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
 	(1, 'PAYONE_Footer', 'width: 170mm;\r\nposition:fixed;\r\nbottom:-20mm;\r\nheight: 15mm;', ?),
 	(1, 'PAYONE_Content_Info', ?, ?);";
-            Shopware()->Db()->query($sql, array(
+            Shopware()->Db()->query($sql, [
                 '<table style="height: 90px;" border="0" width="100%">'
                 . '<tbody>'
                 . '<tr valign="top">'
@@ -927,7 +937,7 @@ class Mopt_PayoneInstallHelper
                 . '	<td>{$instruction.clearing_reference}{$instruction.clearing_reference}</td>'
                 . '</tr>'
                 . '</table>'
-            ));
+            ]);
         }
     }
 
@@ -1797,7 +1807,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     function checkAndAddReminderLevelColumns()
     {
-        $reminderLevels = array('2', '3', '4', '5', 'A', 'S', 'M', 'I');
+        $reminderLevels = ['2', '3', '4', '5', 'A', 'S', 'M', 'I'];
         $db = Shopware()->Db();
         $dbConfig = $db->getConfig();
 
@@ -2079,6 +2089,28 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         $queryBuilder->setParameter('paymentID', $paypalExpressPayment->getId());
         $dispatchIds = $queryBuilder->execute()->fetchColumn(0);
         return empty($dispatchIds) ? true : false;
+    }
+
+    /**
+     * check option allowDifferentAdresses for bnpl payments
+     *
+     * @return void
+     */
+    function checkAndUpdateAllowDifferentAdressesOption()
+    {
+        $db = Shopware()->Db();
+        $DBConfig = $db->getConfig();
+        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
+                AND COLUMN_NAME ='allow_different_addresses'";
+        $result = $db->query($sql);
+
+        if ($result->rowCount() === 0) {
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+                . "ADD COLUMN allow_different_addresses TINYINT(1) NULL DEFAULT '0';";
+            $db->exec($sql);
+        }
+
     }
 }
 

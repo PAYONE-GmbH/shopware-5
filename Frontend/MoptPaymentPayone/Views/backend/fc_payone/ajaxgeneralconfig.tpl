@@ -297,6 +297,19 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/allowDifferentAddresses"}Zeigt im Frontend die Debugging Informationen an{/s}">
+                    <label for="allowDifferentAddresses" class="text-left col-md-3 control-label">{s name="fieldlabel/allowDifferentAddresses"}Abweichende Lieferadressen zulassen{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="allowDifferentAddresses" name="allowDifferentAddresses" aria-describedby="allowDifferentAddresses-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="allowDifferentAddresses-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
 
                 <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>

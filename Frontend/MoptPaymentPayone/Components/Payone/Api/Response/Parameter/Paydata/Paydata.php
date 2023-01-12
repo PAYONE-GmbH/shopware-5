@@ -102,6 +102,32 @@ class Payone_Api_Response_Parameter_Paydata_Paydata extends Payone_Api_Response_
         return $tmp;
     }
 
+    public function formatInstallmentOptions($aResponse)
+    {
+        unset($aResponse['status']);
+        unset($aResponse['workorderid']);
+
+        $aInstallmentOptions = ['runtimes' => []];
+
+        foreach ($aResponse as $sKey => $sValue) {
+            $sKey = str_replace("add_paydata", "", $sKey);
+            $sKey = str_replace(["[", "]"], "", $sKey);
+            $sKey = str_replace("-", "_", $sKey);
+
+            $iIndex = $this->getNumberFromString($sKey);
+            if ($iIndex !== false) {
+                $sKey = str_replace("_".$iIndex, "", $sKey);
+                if (!isset($aInstallmentOptions['runtimes'][$iIndex])) {
+                    $aInstallmentOptions['runtimes'][$iIndex] = [];
+                }
+                $aInstallmentOptions['runtimes'][$iIndex][$sKey] = $sValue;
+            } else {
+                $aInstallmentOptions[$sKey] = $sValue;
+            }
+        }
+        return $aInstallmentOptions;
+    }
+
     /**
      * @return bool
      */

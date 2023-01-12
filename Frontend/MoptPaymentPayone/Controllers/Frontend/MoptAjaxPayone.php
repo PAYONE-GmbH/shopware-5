@@ -816,6 +816,22 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     }
 
     /**
+     * Extract number from given string
+     *
+     * @param  string $sString
+     * @return string|false
+     */
+    protected function getNumberFromString($sString)
+    {
+        preg_match('/^[^0-9]*_([0-9])$/m', $sString, $matches);
+
+        if (count($matches) == 2) {
+            return $matches[1];
+        }
+        return false;
+    }
+
+    /**
      * Calculates the rates by from user defined runtime
      * called from an ajax request with ratePay parameters (ratepay.js)
      * map RatePay API parameters and request the payone API
@@ -886,6 +902,32 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->View()->assign(array('numberOfRates' => $numberOfRates));
         $this->View()->assign(array('result' => $result));
         return $this->View()->render();
+    }
+
+    protected function formatInstallmentOptions($aResponse)
+    {
+        unset($aResponse['status']);
+        unset($aResponse['workorderid']);
+
+        $aInstallmentOptions = ['runtimes' => []];
+
+        foreach ($aResponse as $sKey => $sValue) {
+            $sKey = str_replace("add_paydata", "", $sKey);
+            $sKey = str_replace(["[", "]"], "", $sKey);
+            $sKey = str_replace("-", "_", $sKey);
+
+            $iIndex = $this->getNumberFromString($sKey);
+            if ($iIndex !== false) {
+                $sKey = str_replace("_".$iIndex, "", $sKey);
+                if (!isset($aInstallmentOptions['runtimes'][$iIndex])) {
+                    $aInstallmentOptions['runtimes'][$iIndex] = [];
+                }
+                $aInstallmentOptions['runtimes'][$iIndex][$sKey] = $sValue;
+            } else {
+                $aInstallmentOptions[$sKey] = $sValue;
+            }
+        }
+        return $aInstallmentOptions;
     }
 
     protected function amznConfirmOrderReferenceAction()

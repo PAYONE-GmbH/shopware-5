@@ -52,6 +52,9 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 
           //fetch params
             $params = $this->moptPayone__main->getParamBuilder()->buildOrderDebit($order, $positionIds, $includeShipment);
+            if ($request->getParam('debitReason') != false) {
+                $params['cancellation_reason'] = $request->getParam('debitReason');
+            }
 
             if ($config['submitBasket'] || $this->moptPayone__main->getPaymentHelper()->isPayoneBillsafe($paymentName)) {
                 $invoicing = $this->moptPayone__main->getParamBuilder()->getInvoicingFromOrder(
@@ -347,12 +350,21 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         if ($params['payolution_b2b'] == true) {
             $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'b2b', 'data' => 'yes')
+                ['key' => 'b2b', 'data' => 'yes']
             ));
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $params['vatid'])
+                ['key' => 'company_trade_registry_number', 'data' => $params['vatid']]
             ));
             $request->setPaydata($paydata);
+        }
+
+        if (isset($params['cancellation_reason'])) {
+            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'cancellation_reason', 'data' => $params['cancellation_reason'])
+            ));
+            $request->setPaydata($paydata);
+            unset($params['cancellation_reason']);
         }
         
         if (isset($params['shop_id'])) {
