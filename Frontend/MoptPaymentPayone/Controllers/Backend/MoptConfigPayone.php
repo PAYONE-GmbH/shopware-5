@@ -174,7 +174,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'applepayMastercard',
             'applepayGirocard',
             'applepayDebug',
-            'allowDifferentAddresses'
+            'allowDifferentAddresses',
         );
 
         foreach ($fields as $field) {

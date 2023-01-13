@@ -583,12 +583,12 @@ class Mopt_PayoneInstallHelper
                 'position' => 41,],
             [
                 'name' => 'mopt_payone__fin_payone_secured_invoice',
-                'description' => 'PAYONE gesicherter Rechnungskauf',
+                'description' => 'PAYONE Gesicherter Rechnungskauf',
                 'template' => 'mopt_paymentmean_payone_secured_invoice.tpl',
                 'position' => 42,],
             [
                 'name' => 'mopt_payone__fin_payone_secured_installment',
-                'description' => 'PAYONE gesicherter Ratenenkauf',
+                'description' => 'PAYONE Gesicherter Ratenkauf',
                 'template' => 'mopt_paymentmean_payone_secured_installment.tpl',
                 'position' => 43,],
         ];
