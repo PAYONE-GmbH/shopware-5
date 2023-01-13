@@ -1196,6 +1196,24 @@ class Mopt_PayonePaymentHelper
             Shopware()->Models()->persist($user);
         }
 
+        if (isset($paymentData['formData']['mopt_payone__payone_secured_invoice_birthdaydate'])) {
+            $user->setBirthday($paymentData['formData']['mopt_payone__payone_secured_invoice_birthdaydate']);
+            Shopware()->Models()->persist($user);
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__payone_secured_installment_birthdaydate'])) {
+            $user->setBirthday($paymentData['formData']['mopt_payone__payone_secured_installment_birthdaydate']);
+            Shopware()->Models()->persist($user);
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__payone_secured_invoice_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__payone_secured_invoice_telephone']);
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__payone_secured_installment_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__payone_secured_installment_telephone']);
+        }
+
         Shopware()->Models()->persist($billing);
         Shopware()->Models()->flush();
     }

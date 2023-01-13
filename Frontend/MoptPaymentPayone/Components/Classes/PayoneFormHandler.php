@@ -942,8 +942,16 @@ class Mopt_PayoneFormHandler
             }
         }
 
-        if ($formData['mopt_payone__payone_secured_installment_token'] !== "") {
+        if (empty($formData['mopt_payone__payone_secured_invoice_telephone'])) {
+            $paymentData['sErrorFlag']['mopt_payone__payone_secured_invoice_telephone'] = true;
+        } else {
+            $paymentData['formData']['mopt_payone__payone_secured_invoice_telephone'] = $formData['mopt_payone__payone_secured_invoice_telephone'];
+            $paymentData['formData']['mopt_save_birthday'] = true;
+        }
+
+        if ($formData['mopt_payone__payone_secured_invoice_token'] !== "") {
             Shopware()->Session()->moptPayoneSecuredToken =  $formData['mopt_payone__payone_secured_invoice_token'];
+            $paymentData['formData']['mopt_payone__payone_secured_invoice_token'] = $formData['mopt_payone__payone_secured_invoice_token'];
         }
 
         $this->setFormSubmittedFlag();
@@ -983,10 +991,12 @@ class Mopt_PayoneFormHandler
             $paymentData['sErrorFlag']['mopt_payone_payone_secured_installment_telephone'] = true;
         } else {
             $paymentData['formData']['mopt_payone_payone_secured_installment_telephone'] = $formData['mopt_payone_payone_secured_installment_telephone'];
+            $paymentData['formData']['mopt_save_birthday'] = true;
         }
 
         if ($formData['mopt_payone__payone_secured_installment_token'] !== "") {
             Shopware()->Session()->moptPayoneSecuredToken =  $formData['mopt_payone__payone_secured_installment_token'];
+            $paymentData['formData']['mopt_payone__payone_secured_installment_token'] = $formData['mopt_payone__payone_secured_installment_token'];
         }
 
         $this->setFormSubmittedFlag();
