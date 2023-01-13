@@ -1167,7 +1167,7 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
-     * create ratepay payment object
+     * create secured invoice object
      *
      * @param string $financeType
      * @param array $paymentData
@@ -1196,7 +1196,7 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
-     * create ratepay payment object
+     * create secured installments payment object
      *
      * @param string $financeType
      * @param array $paymentData

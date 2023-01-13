@@ -88,6 +88,9 @@
                value="{$moptCreditCardCheckEnvironment.mopt_payone__payone_secured_installment_telephone|escape}"
                class="payment--field is--required{if $error_flags.mopt_payone_payone_secured_installment_telephone} has--error{/if}"
         />
+    {if $sUserData.billingaddress.company}
+        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__secured_installment_b2bmode]" id="mopt_payone__secured_installment_b2bmode" value="1">
+    {/if}
     <br>
     <div class="form-group">
         <label class="req control-label col-lg-3">{s name='NumberOfInstallments'}Wählen Sie die Anzahl der Raten{/s}</label>

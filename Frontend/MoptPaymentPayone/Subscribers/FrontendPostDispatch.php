@@ -275,7 +275,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         // set flag to remove all address change buttons on confirm page
         $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $moptPaymentName);
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && in_array($cleanedPaymentName, \Mopt_PayoneConfig::PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED))) {
+        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && in_array($cleanedPaymentName, \Mopt_PayoneConfig::PAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE))) {
             $view->assign('moptDenyAddressChanges', true);
         }
 
@@ -322,15 +322,27 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
             }
 
-            if ($moptPaymentHelper->isPayoneSecuredInstallments($moptPaymentName)
-            ) {
-                if ($session->moptBasketCahnged) {
+            if (in_array($cleanedPaymentName, \Mopt_PayoneConfig::PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED))
+            {
+                // redirect back to shippingpayment in case form was not submitted
+                if (is_null($session->moptFormSubmitted) || is_null($session->moptPayoneSecuredToken)) {
                     $action->redirect(
                         array(
                             'controller' => 'checkout',
                             'action' => 'shippingPayment',
                         )
                     );
+                }
+                // check for shipping and  billing address
+                // handle according to backend config
+                $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                $moptPayoneMain = $this->container->get('MoptPayoneMain')->getInstance();
+                $config = $moptPayoneMain->getPayoneConfig($paymentId);
+                $tst = $config['allowDifferentAddresses'];
+                if ($config['allowDifferentAddresses'] === false && $userData['billingaddress']['id'] !== $userData['shippingaddress']['id']) {
+                    Shopware()->Session()->offsetSet('checkoutShippingAddressId',  $userData['billingaddress']['id']);
+                    $view->assign('activeShippingAddressId', $userData['billingaddress']['id']);
+                    $view->assign('moptOverlayShippingNotice', true);
                 }
             }
 

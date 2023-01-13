@@ -920,7 +920,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = [];
 
-        if ($formData['mopt_payone__payone_secured_invoice_birthdaydate'] !== "0000-00-00") {
+        if ($formData['mopt_payone__payone_secured_invoice_birthdaydate'] !== "0000-00-00" && $formData['mopt_payone__secured_invoice_b2bmode'] !== "1") {
             if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__payone_secured_invoice_birthdaydate']))) {
                 $paymentData['sErrorFlag']['mopt_payone__payone_secured_invoice_birthday'] = true;
                 $paymentData['sErrorFlag']['mopt_payone__payone_secured_invoice_birthmonth'] = true;
@@ -929,6 +929,10 @@ class Mopt_PayoneFormHandler
                 $paymentData['formData']['mopt_payone__payone_secured_invoice_birthdaydate'] = $formData['mopt_payone__payone_secured_invoice_birthdaydate'];
                 $paymentData['formData']['mopt_save_birthday'] = true;
             }
+        }
+
+        if ($formData['mopt_payone__payone_secured_installment_token'] !== "") {
+            Shopware()->Session()->moptPayoneSecuredToken =  $formData['mopt_payone__payone_secured_invoice_token'];
         }
 
         $this->setFormSubmittedFlag();
@@ -953,7 +957,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_payone_payone_secured_installment_iban'] = $formData['mopt_payone_payone_secured_installment_iban'];
         }
 
-        if ($formData['mopt_payone_payone_secured_installment_birthdaydate'] !== "0000-00-00") {
+        if ($formData['mopt_payone_payone_secured_installment_birthdaydate'] !== "0000-00-00" && $formData['mopt_payone__secured_istallments_b2bmode'] !== "1") {
             if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__payone_secured_invstallment_birthdaydate']))) {
                 $paymentData['sErrorFlag']['mopt_payone__payone_secured_installment_birthday'] = true;
                 $paymentData['sErrorFlag']['mopt_payone__payone_secured_installment_birthmonth'] = true;
@@ -968,6 +972,10 @@ class Mopt_PayoneFormHandler
             $paymentData['sErrorFlag']['mopt_payone_payone_secured_installment_telephone'] = true;
         } else {
             $paymentData['formData']['mopt_payone_payone_secured_installment_telephone'] = $formData['mopt_payone_payone_secured_installment_telephone'];
+        }
+
+        if ($formData['mopt_payone__payone_secured_installment_token'] !== "") {
+            Shopware()->Session()->moptPayoneSecuredToken =  $formData['mopt_payone__payone_secured_installment_token'];
         }
 
         $this->setFormSubmittedFlag();

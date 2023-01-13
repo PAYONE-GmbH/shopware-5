@@ -21,7 +21,6 @@ class Mopt_PayoneConfig
       '213.178.72.197',
       '217.70.200.*',
       '185.60.20.*',
-      '78.46.*.*',
       );
 
     const PAYMENTS_ALL = [
@@ -134,10 +133,8 @@ class Mopt_PayoneConfig
     ];
 
     const PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED = [
-        'mopt_payone__ewallet_amazon_pay',
-        'mopt_payone__ewallet_paypal_express',
+        'mopt_payone__fin_payone_secured_invoice',
         'mopt_payone__fin_payone_secured_installment',
-        // 'mopt_payone__ewallet_applepay', applepay is handled seperately
     ];
 
     // for these payments basket AND address changes are not allowed

@@ -85,6 +85,10 @@
            value="{$moptCreditCardCheckEnvironment.mopt_payone__payone_secured_invoice_telephone|escape}"
            class="payment--field is--required{if $error_flags.mopt_payone__payone_secured_invoice_telephone} has--error{/if}"
     />
+
+    {if $sUserData.billingaddress.company}
+        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__secured_invoice_b2bmode]" id="mopt_payone__secured_invoice_b2bmode" value="1">
+    {/if}
 </div>
 <script type="text/javascript">
 
