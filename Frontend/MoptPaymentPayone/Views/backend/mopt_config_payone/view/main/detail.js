@@ -1294,6 +1294,15 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 disabled: false,
                 labelWidth: 200
             },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name="fieldlabel/creditcardDefaultDescription"}Kreditkarte Zusätzliche Beschreibung{/s}',
+                helpText: '{s name="fieldlabelhelp/creditcardDefaultDescription"}Zusätzliche Beschreibung der Zahlart bei Gruppierung{/s}',
+                name: 'creditcardDefaultDescription',
+                allowBlank: true,
+                disabled: false,
+                labelWidth: 200
+            },
         ];
     },
     getPaymentStatus: function () {

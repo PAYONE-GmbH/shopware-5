@@ -641,6 +641,11 @@ class MoptPayoneConfig extends ModelEntity
      */
     private $applepayDebug;
 
+    /**
+     * @ORM\Column(name="creditcard_default_description", type="string", length=255, nullable=true, unique=false)
+     */
+    private $creditcardDefaultDescription;
+
 
     /**
      * @return mixed
@@ -2549,5 +2554,21 @@ class MoptPayoneConfig extends ModelEntity
     public function setApplepayDebug($applepayDebug)
     {
         $this->applepayDebug = $applepayDebug;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreditcardDefaultDescription()
+    {
+        return $this->creditcardDefaultDescription;
+    }
+
+    /**
+     * @param $creditcardDefaultDescription
+     */
+    public function setCreditcardDefaultDescription($creditcardDefaultDescription)
+    {
+        $this->creditcardDefaultDescription = $creditcardDefaultDescription;
     }
 }

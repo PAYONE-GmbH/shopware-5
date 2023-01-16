@@ -1406,8 +1406,12 @@ class Mopt_PayonePaymentHelper
                 $creditCard['id'] = $paymentmean['id'];
                 $creditCard['name'] = $paymentmean['name'];
                 $creditCard['description'] = $paymentmean['description'];
-
+                /** @var Mopt_PayoneMain $moptPayoneMain */
+                $moptPayoneMain = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->Application()->MoptPayoneMain();
+                $config = $moptPayoneMain->getPayoneConfig($paymentmean['id']);
+                $defaultDescription = '<div class="payone_additionalDescriptions" id="default_additionalDescription" style="display:block">' . $config['creditcardDefaultDescription'] . '</div>';
                 $creditCardData[] = $creditCard;
+                $creditCardDescriptions['default'] = $defaultDescription;
                 $creditCardDescriptions[$creditCard['name']] = '<div class="payone_additionalDescriptions" id="' . $shortCodes[$creditCard['name']]  . '_additionalDescription" style="display:none">' . $paymentmean['additionaldescription'] . '</div>';
 
                 if ($firstHit != $key) {
