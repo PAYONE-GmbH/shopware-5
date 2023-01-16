@@ -2080,5 +2080,35 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         $dispatchIds = $queryBuilder->execute()->fetchColumn(0);
         return empty($dispatchIds) ? true : false;
     }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    function checkAndAddCreditcardDefaultDescription()
+    {
+        $textColumns = ['creditcard_default_description'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
+
+                $db->exec($sql);
+            }
+        }
+    }
 }
 
