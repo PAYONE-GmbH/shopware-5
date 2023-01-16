@@ -907,6 +907,9 @@ function moptPaymentReady() {
         if ($('#mopt_payone__cc_cardtype').val()) {
             var selected = $('#mopt_payone__cc_cardtype').val().toLowerCase();
             $('#' + selected + '_additionalDescription').show();
+        } else {
+            // show in backend configured default description
+            $('#default_additionalDescription').show();
         }
         $('#mopt_payone__cc_cardtype').on('change', function () {
             $('.payone_additionalDescriptions').hide();
