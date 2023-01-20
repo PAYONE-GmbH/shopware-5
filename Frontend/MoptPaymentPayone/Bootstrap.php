@@ -815,6 +815,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Add shop to paypal express config
         $this->getInstallHelper()->checkAndUpdateAmazonPayShopModelExtension();
+
+        // add new config field creditcard_description_grouped
+        $this->getInstallHelper()->checkAndAddCreditcardDefaultDescription();
+
     }
 
     /**
