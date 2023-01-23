@@ -6,7 +6,7 @@
     reset();
 
     function reset() {
-        if (!window.Klarna) {
+        if (!window.PayoneKlarna) {
             destroyPlugin();
 
             return;
@@ -71,7 +71,7 @@
                 element.disabled = true;
             });
 
-            window.Klarna.Payments.init({
+            window.PayoneKlarna.Payments.init({
                 client_token: me.data['clientToken']
             });
 
@@ -81,7 +81,7 @@
         finalize: function () {
             var me = this;
 
-            window.Klarna.Payments.finalize({
+            window.PayoneKlarna.Payments.finalize({
                     payment_method_category: 'pay_now'
                 }, {},
                 function (res) {
