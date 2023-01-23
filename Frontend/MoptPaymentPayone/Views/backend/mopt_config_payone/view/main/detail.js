@@ -1312,7 +1312,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 allowBlank: false,
                 disabled: false,
                 labelWidth: 200
-            }
+            },
             {
                 xtype: 'textfield',
                 fieldLabel: '{s name="fieldlabel/creditcardDefaultDescription"}Kreditkarte Zusätzliche Beschreibung{/s}',
