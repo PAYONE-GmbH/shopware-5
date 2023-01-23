@@ -411,6 +411,17 @@ class FrontendPostDispatch implements SubscriberInterface
                     $klarnaIndex = $index;
                     unset ($payments[$klarnaIndex]);
                 }
+
+                // remove payone secured paymentmeans for b2b customers
+                if (($payment['name'] === 'mopt_payone__fin_payone_secured_invoice' || $payment['name'] === 'mopt_payone__fin_payone_secured_installment'  )
+                ) {
+                    $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                    if (!empty($userData['billingaddress']['company'])) {
+                        $securedPaymentIndex = $index;
+                        unset ($payments[$securedPaymentIndex]);
+                    }
+                }
+
             }
             // remove other express payments
             $view->assign('sPayments', $moptPaymentHelper->filterExpressPayments($payments, $session));
