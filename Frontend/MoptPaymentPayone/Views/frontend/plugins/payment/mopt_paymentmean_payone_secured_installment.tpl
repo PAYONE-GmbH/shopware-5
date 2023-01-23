@@ -100,7 +100,7 @@
             <div>
                 <input id="bnplPlan_{$index}" type="radio" name="moptPaymentData[mopt_payone_payone_secured_installment_plan]" value="{$plan.installmentOptionId}" onclick="fcpoSelectBNPLInstallmentPlan({$index})"/>
                 <a href="#" onclick="fcpoSelectBNPLInstallmentPlan({$index})">
-                    {$plan.monthlyAmountValue} {$plan.monthlyAmountCurrency} {s name='MonthlyInstallment'}MonthlyInstallment{/s} - {$plan.numberOfPayments} {s name='NoOfInstallments'}Anzahl der Raten{/s}
+                    {$plan.monthlyAmountValue} {$plan.monthlyAmountCurrency} {s name='MonthlyInstallment'}MonthlyInstallment{/s} - {s name='NoOfInstallments'}Anzahl der Raten{/s}: {$plan.numberOfPayments}
                 </a>
             </div>
             {/foreach}
