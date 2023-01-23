@@ -1807,7 +1807,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     function checkAndAddReminderLevelColumns()
     {
-        $reminderLevels = array('2', '3', '4', '5', 'A', 'S', 'M', 'I');
+        $reminderLevels = ['2', '3', '4', '5', 'A', 'S', 'M', 'I'];
         $db = Shopware()->Db();
         $dbConfig = $db->getConfig();
 
