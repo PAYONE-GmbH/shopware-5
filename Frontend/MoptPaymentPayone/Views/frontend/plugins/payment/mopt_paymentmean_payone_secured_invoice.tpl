@@ -118,12 +118,30 @@
     }
 
 </script>
-<script id="paylaDcs" type="text/javascript" src="https://d.payla.io/dcs/{$BSPayonePaylaPartnerId}/{$BSPayoneMerchantId}/dcs.js"></script>
-<script>
-    var paylaDcsT = paylaDcs.init("{$BSPayoneSecuredMode}", "{$BSPayoneSecuredToken}");
-    console.log(paylaDcsT);
-    tokenElem = document.getElementById('mopt_payone__payone_secured_invoice_token');
-    tokenElem.setAttribute('value',paylaDcsT)
-</script>
+    <script id="paylaDcs" type="text/javascript" src="https://d.payla.io/dcs/{$BSPayonePaylaPartnerId}/{$BSPayoneMerchantId}/dcs.js"></script>
+    <script>
+        function check_script_loaded(glob_var) {
+            if(typeof(glob_var) !== 'undefined') {
+                console.log('PaylaDCS is ready');
+                if (typeof paylaDcs.init !== 'function') {
+                    console.log('PaylaDCS.init not (yet) accessible in object, retrying in 50ms');
+                    setTimeout(function() {
+                        check_script_loaded(glob_var)
+                    }, 100)
+                } else {
+                    var paylaDcsT = paylaDcs.init("{$BSPayoneSecuredMode}", "{$BSPayoneSecuredToken}");
+                    console.log(paylaDcsT);
+                    tokenElem = document.getElementById('mopt_payone__payone_secured_invoice_token');
+                    tokenElem.setAttribute('value', paylaDcsT)
+                }
+            } else {
+                console.log('PaylaDCS is not ready retrying in 50ms');
+                setTimeout(function() {
+                    check_script_loaded(glob_var)
+                }, 50)
+            }
+        }
+        check_script_loaded('paylaDcs');
+    </script>
 <link id="paylaDcsCss" type="text/css" rel="stylesheet" href="https://d.payla.io/dcs/dcs.css?st={$BSPayoneSecuredToken}&pi={$BSPayonePaylaPartnerId}&psi={$BSPayoneMerchantId}&e={$BSPayoneSecuredMode}">
 {/if}
