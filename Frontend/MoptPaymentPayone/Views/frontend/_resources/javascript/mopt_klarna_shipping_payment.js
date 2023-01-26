@@ -12,7 +12,7 @@
     });
 
     function reset() {
-        if (!window.Klarna) {
+        if (!window.PayoneKlarna) {
             destroyPlugin();
 
             return;
@@ -53,6 +53,9 @@
 
         init: function () {
             var me = this;
+            if (typeof me.data === 'undefined') {
+                return;
+            }
             me.registerEventListeners();
 
             // load the klarna widget when payment is preselected
@@ -286,16 +289,16 @@
                 return;
             }
 
-            if (!window.Klarna) {
+            if (!window.PayoneKlarna) {
                 return;
             }
 
-            window.Klarna.Payments.init({
+            window.PayoneKlarna.Payments.init({
                 client_token: client_token
             });
 
             return $.Deferred(function (defer) {
-                window.Klarna.Payments.load({
+                window.PayoneKlarna.Payments.load({
                     container: '#mopt_payone__klarna_payments_widget_container',
                     payment_method_category: me.payTypeTranslations[paymentType]
                 }, function (res) {
@@ -343,7 +346,7 @@
                     national_identification_number: me.personalId
                 }
             };
-            window.Klarna.Payments.authorize({
+            window.PayoneKlarna.Payments.authorize({
                     payment_method_category: payType,
                     auto_finalize: isAutoFinalize
                 },
