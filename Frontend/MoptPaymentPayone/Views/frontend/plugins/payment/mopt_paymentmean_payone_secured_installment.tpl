@@ -93,15 +93,13 @@
     {/if}
     <br>
     <div class="form-group">
-        <label class="req control-label col-lg-3">{s name='NumberOfInstallments'}Wählen Sie die Anzahl der Raten{/s}</label>
-        <br>
+        <label class="req control-label col-lg-3"><b>{s name='NumberOfInstallments'}Wählen Sie die Anzahl der Raten{/s}</b></label>
+        <p></p>
         <div class="col-lg-9">
             {foreach from=$BSPayoneInstallmentPlan.plans key=index item=plan}
             <div>
                 <input id="bnplPlan_{$index}" type="radio" name="moptPaymentData[mopt_payone_payone_secured_installment_plan]" value="{$plan.installmentOptionId}" onclick="fcpoSelectBNPLInstallmentPlan({$index})"/>
-                <a href="#" onclick="fcpoSelectBNPLInstallmentPlan({$index})">
                     {$plan.monthlyAmountValue} {$plan.monthlyAmountCurrency} {s name='MonthlyInstallment'}MonthlyInstallment{/s} - {s name='NoOfInstallments'}Anzahl der Raten{/s}: {$plan.numberOfPayments}
-                </a>
             </div>
             {/foreach}
         </div>
@@ -180,8 +178,8 @@
                 return;
             }
             hiddenDobFull.value = yearSelect.value + "-" + monthSelect.value + "-" + daySelect.value;
-            console.log("HiddenDob:");
-            console.log(hiddenDobFull.value);
+            // console.log("HiddenDob:");
+            // console.log(hiddenDobFull.value);
             var oBirthDate = new Date(hiddenDobFull.value);
             var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
             if (oBirthDate > oMinDate) {
@@ -197,23 +195,23 @@
     <script>
         function check_script_loaded(glob_var) {
             if(typeof(glob_var) !== 'undefined') {
-                console.log('PaylaDCS is ready');
+                // console.log('PaylaDCS is ready');
                 if (typeof paylaDcs.init !== 'function') {
-                    console.log('PaylaDCS.init not (yet) accessible in object, retrying in 50ms');
+                    // console.log('PaylaDCS.init not (yet) accessible in object, retrying in 100ms');
                     setTimeout(function() {
                         check_script_loaded(glob_var)
                     }, 100)
                 } else {
                     var paylaDcsT = paylaDcs.init("{$BSPayoneSecuredMode}", "{$BSPayoneSecuredToken}");
-                    console.log(paylaDcsT);
+                    // console.log(paylaDcsT);
                     tokenElem = document.getElementById('mopt_payone__payone_secured_installment_token');
                     tokenElem.setAttribute('value', paylaDcsT)
                 }
             } else {
-                console.log('PaylaDCS is not ready retrying in 50ms');
+                // console.log('PaylaDCS is not ready retrying in 100ms');
                 setTimeout(function() {
                     check_script_loaded(glob_var)
-                }, 50)
+                }, 100)
             }
         }
         check_script_loaded('paylaDcs');
