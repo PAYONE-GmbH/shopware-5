@@ -380,8 +380,9 @@ class FrontendCheckout implements SubscriberInterface
         }
 
         if ($this->isPayoneSecuredInstallmentsActive() && $request->getActionName() === 'shippingPayment') {
-            $test = $this->getPayoneSecuredInstallmentsPlan($paymentId);
-            $view->assign('BSPayoneInstallmentPlan', $test);
+            $paymentId = $userData['additional']['payment']['id'];
+            $plan = $this->getPayoneSecuredInstallmentsPlan($paymentId);
+            $view->assign('BSPayoneInstallmentPlan', $plan);
             $view->assign('moptAgbChecked', $session->moptAgbChecked);
             $view->assign('BSPayoneMode', $config['liveMode']);
             $view->assign('BSPayoneMerchantId', $config['merchantId']);
