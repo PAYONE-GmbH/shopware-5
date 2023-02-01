@@ -184,6 +184,12 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(23).disable();
         }
         ;
+        if (field === 'payonesecured') {
+            fieldset.items.getAt(36).enable();
+        } else {
+            fieldset.items.getAt(36).disable();
+        }
+        ;
         if (typeof field === 'undefined' || field.trim().length === 0) {
             fieldset.items.getAt(24).enable();
         } else {
@@ -1286,6 +1292,19 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 fieldLabel: '{s name="fieldlabel/applepayDebug"}Apple Pay Debug{/s}',
                 helpText: '{s name="fieldlabelhelp/applepayDebug"}Zeigt im Frontend die Debugging Informationen an{/s}',
                 name: 'applepayDebug',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/allowDifferentAdresses"}Abweichende Lieferadressen zulassen{/s}',
+                helpText: '{s name="fieldlabelhelp/allowDifferentAdresses"}Unterschiedliche Rechnungs- und Lieferadresse im Checkout erlauben{/s}',
+                name: 'allowDifferentAddresses',
                 store: me.data.yesno,
                 queryMode: 'local',
                 displayField: 'display',

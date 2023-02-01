@@ -62,6 +62,8 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_alipay',
         'mopt_payone__ibt_trustly',
         'mopt_payone__ewallet_wechatpay',
+        'mopt_payone__fin_payone_secured_invoice',
+        'mopt_payone__fin_payone_secured_installment',
     ];
 
     const PAYMENTS_ADDRESSCHECK_EXCLUDED = [
@@ -130,6 +132,11 @@ class Mopt_PayoneConfig
         // 'mopt_payone__ewallet_applepay', applepay is handled seperately
     ];
 
+    const PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED = [
+        'mopt_payone__fin_payone_secured_invoice',
+        'mopt_payone__fin_payone_secured_installment',
+    ];
+
     // for these payments basket AND address changes are not allowed
     const PAYMENTS_EXPRESS = [
         'mopt_payone__ewallet_paypal_express',
@@ -142,6 +149,7 @@ class Mopt_PayoneConfig
         'mopt_payone__fin_paypal_installment',
         'mopt_payone__fin_payolution_installment',
         'mopt_payone__fin_ratepay_installment',
+        'mopt_payone__fin_payone_secured_installment',
     ];
 
     const PAYMENTS_DONOTSENDCAPTUREMODE = [

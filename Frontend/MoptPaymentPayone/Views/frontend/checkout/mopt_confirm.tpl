@@ -40,6 +40,9 @@
     {if $moptMandateAgreementError}
         {include file="frontend/_includes/messages.tpl" type="error" content="{s name='mandateAgreementError' namespace='frontend/MoptPaymentPayone/payment'}Bitte bestätigen Sie die Erteilung des Mandats.{/s}"}
     {/if}
+    {if $moptOverlayShippingNotice}
+        {include file="frontend/_includes/messages.tpl" type="error" content="{s name='shippingAdressError' namespace='frontend/MoptPaymentPayone/payment'}Diese Zahlart erlaubt keine seperate Lieferadresse, daher wird Ihre Rechnungsadresse verwendet{/s}"}
+    {/if}
     {$smarty.block.parent}
 {/block}
 

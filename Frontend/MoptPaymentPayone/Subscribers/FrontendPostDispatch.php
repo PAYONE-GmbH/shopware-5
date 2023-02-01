@@ -322,6 +322,29 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
             }
 
+            if (in_array($cleanedPaymentName, \Mopt_PayoneConfig::PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED))
+            {
+                // redirect back to shippingpayment in case form was not submitted
+                if (is_null($session->moptFormSubmitted) || is_null($session->moptPayoneSecuredToken)) {
+                    $action->redirect(
+                        array(
+                            'controller' => 'checkout',
+                            'action' => 'shippingPayment',
+                        )
+                    );
+                }
+                // check for shipping and  billing address
+                // handle according to backend config
+                $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                $moptPayoneMain = $this->container->get('MoptPayoneMain')->getInstance();
+                $config = $moptPayoneMain->getPayoneConfig($paymentId);
+                if ($config['allowDifferentAddresses'] === false && $userData['billingaddress']['id'] !== $userData['shippingaddress']['id']) {
+                    Shopware()->Session()->offsetSet('checkoutShippingAddressId',  $userData['billingaddress']['id']);
+                    $view->assign('activeShippingAddressId', $userData['billingaddress']['id']);
+                    $view->assign('moptOverlayShippingNotice', true);
+                }
+            }
+
             $paymentData = Shopware()->Session()->moptPayment;
             $isAnon = strpos($paymentData['mopt_payone__cc_truncatedcardpan'], 'XXXX') !== false || strpos($paymentData['mopt_payone__cc_truncatedcardpan_hidden'], 'XXXX') !== false;
             if ($moptPaymentHelper->isPayoneCreditcard($moptPaymentName) && is_null($session->moptFormSubmitted) && ! $isAnon )
@@ -388,6 +411,17 @@ class FrontendPostDispatch implements SubscriberInterface
                     $klarnaIndex = $index;
                     unset ($payments[$klarnaIndex]);
                 }
+
+                // remove payone secured paymentmeans for b2b customers
+                if (($payment['name'] === 'mopt_payone__fin_payone_secured_invoice' || $payment['name'] === 'mopt_payone__fin_payone_secured_installment'  )
+                ) {
+                    $userData = Shopware()->Modules()->Admin()->sGetUserData();
+                    if (!empty($userData['billingaddress']['company'])) {
+                        $securedPaymentIndex = $index;
+                        unset ($payments[$securedPaymentIndex]);
+                    }
+                }
+
             }
             // remove other express payments
             $view->assign('sPayments', $moptPaymentHelper->filterExpressPayments($payments, $session));
@@ -670,8 +704,41 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
                 $data['mopt_payone__payone_safe_invoice_birthday'] = $birthday[2];
-                $data['mopt_payone__payone_safe_invoice__birthmonth'] = $birthday[1];
-                $data['mopt_payone__payone_safe_invoice__birthyear'] = $birthday[0];
+                $data['mopt_payone__payone_safe_invoice_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payone_safe_invoice_birthyear'] = $birthday[0];
+            }
+
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneSecuredInvoice($paymentMean['name'])
+            ) {
+
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                }
+
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__payone_secured_invoice_birthday'] = $birthday[2];
+                $data['mopt_payone__payone_secured_invoice_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payone_secured_invoice_birthyear'] = $birthday[0];
+                $data['mopt_payone__payone_secured_invoice_telephone'] = $userData['billingaddress']['phone'];
+            }
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneSecuredInstallments($paymentMean['name'])
+            ) {
+
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                }
+
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__payone_secured_installment_birthday'] = $birthday[2];
+                $data['mopt_payone__payone_secured_installment_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payone_secured_installment_birthyear'] = $birthday[0];
+                $data['mopt_payone__payone_secured_installment_telephone'] = $userData['billingaddress']['phone'];
             }
         }
 
