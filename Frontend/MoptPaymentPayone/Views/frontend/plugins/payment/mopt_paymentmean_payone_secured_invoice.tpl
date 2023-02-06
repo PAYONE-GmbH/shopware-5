@@ -15,7 +15,7 @@
                value=""
         >
     <div id="mopt_payone__payone_secured_invoice_abg">
-        <p>{s name='payoneSecuredInvoiceLegalText'}Mit Abschluss dieser Bestellung erkläre ich mich mit den ergänzenden <a target="_blank" href="https://legal.paylater.payone.com/de/terms-of-use.html">Zahlungsbedingungen</a> und der Durchführung einer Risikoprüfung für die ausgewählte Zahlungsart einverstanden. Den ergänzenden <a target="_blank" href="https://legal.paylater.payone.com/en/data-protection.html">Datenschutzhinweis</a> habe ich zur Kenntnis genommen.{/s}</p>
+        <p>{s name='payoneSecuredInvoiceLegalText'}Mit Abschluss dieser Bestellung erkläre ich mich mit den ergänzenden <a target="_blank" href="https://legal.paylater.payone.com/de/terms-of-payment.html">Zahlungsbedingungen</a> und der Durchführung einer Risikoprüfung für die ausgewählte Zahlungsart einverstanden. Den ergänzenden <a target="_blank" href="https://legal.paylater.payone.com/de/data-protection-payments.html">Datenschutzhinweis</a> habe ich zur Kenntnis genommen.{/s}</p>
     </div>
 
     {if ! $sUserData.billingaddress.company}

@@ -156,7 +156,7 @@
     </div>
 
     <div class="alert alert-info col-lg-offset-3 desc">
-        {s name='bnplDataprotectionnotice'}Mit dieser Bestellung erkläre ich mich mit den zusätzlichen Zahlungsbedingungen und der <b><a href="https://legal.paylater.payone.com/de/terms-of-payment.html">Risikobewertung für die gewählte Zahlungsart</a></b> einverstanden. Ich habe den <b><a href="https://legal.paylater.payone.com/de/data-protection-payments.html">zusätzlichen Datenschutzhinweis</a></b> zur Kenntnis genommen.{/s}
+        <p>{s name='bnplDataprotectionnotice'}Mit Abschluss dieser Bestellung erkläre ich mich mit den ergänzenden <a target="_blank" href="https://legal.paylater.payone.com/de/terms-of-payment.html">Zahlungsbedingungen</a> und der Durchführung einer Risikoprüfung für die ausgewählte Zahlungsart einverstanden. Den ergänzenden <a target="_blank" href="https://legal.paylater.payone.com/de/data-protection-payments.html">Datenschutzhinweis</a> habe ich zur Kenntnis genommen.{/s}</p>
     </div>
 
     <script type="text/javascript"
