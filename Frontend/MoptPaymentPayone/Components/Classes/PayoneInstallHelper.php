@@ -2073,7 +2073,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         $connection = Shopware()->Container()->get('dbal_connection');
         /** @var Shopware\Models\Payment\Payment $paypalExpressPayment */
         $paypalExpressPayment = Shopware()->Models()->getRepository(Payment::class)->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);
-        if ($paypalExpressPayment === null) {
+        if ($paypalExpressPayment !== null) {
             return false;
         }
 
