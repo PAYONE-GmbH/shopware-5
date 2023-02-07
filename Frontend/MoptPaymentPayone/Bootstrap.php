@@ -799,6 +799,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // used by the bnpl payments
         $this->getInstallHelper()->checkAndUpdateAllowDifferentAdressesOption();
 
+        // add new config field creditcard_description_grouped
+        $this->getInstallHelper()->checkAndAddCreditcardDefaultDescription();
+
+        // Do not add/remove columns to s_plugin_mopt_payone_config, after PPE migration
+
         /** @var Payment $payment */
         $paypalExpressPayment = $this->Payments()->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);
         $doPaypalMigration = $this->getInstallHelper()->checkPaypalMigration();
@@ -818,9 +823,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Add shop to paypal express config
         $this->getInstallHelper()->checkAndUpdateAmazonPayShopModelExtension();
-
-        // add new config field creditcard_description_grouped
-        $this->getInstallHelper()->checkAndAddCreditcardDefaultDescription();
 
     }
 
