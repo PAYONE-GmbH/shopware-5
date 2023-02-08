@@ -64,6 +64,7 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_wechatpay',
         'mopt_payone__fin_payone_secured_invoice',
         'mopt_payone__fin_payone_secured_installment',
+        'mopt_payone__fin_payone_secured_directdebit'
     ];
 
     const PAYMENTS_ADDRESSCHECK_EXCLUDED = [
@@ -135,6 +136,7 @@ class Mopt_PayoneConfig
     const PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED = [
         'mopt_payone__fin_payone_secured_invoice',
         'mopt_payone__fin_payone_secured_installment',
+        'mopt_payone__fin_payone_secured_directdebit'
     ];
 
     // for these payments basket AND address changes are not allowed

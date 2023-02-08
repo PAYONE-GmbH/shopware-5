@@ -379,6 +379,16 @@ class FrontendCheckout implements SubscriberInterface
             $session->moptAgbChecked = false;
         }
 
+        if (($this->isPayoneSecuredInvoiceActive() || $this->isPayoneSecuredDirectdebitActive()) && $request->getActionName() === 'shippingPayment') {
+            $paymentId = $userData['additional']['payment']['id'];
+            $view->assign('moptAgbChecked', $session->moptAgbChecked);
+            $view->assign('BSPayoneMode', $config['liveMode']);
+            $view->assign('BSPayoneMerchantId', $config['merchantId']);
+            $view->assign('BSPayoneSecuredMode', $config['liveMode'] === 'false' ? 't' : 'p');
+            $view->assign('BSPayonePaylaPartnerId', 'e7yeryF2of8X');
+            $view->assign('BSPayoneSecuredToken', $config['merchantId'] . 'e7yeryF2of8X' . ' ' . Shopware()->Session()->get('sessionId'));
+        }
+
         if ($this->isPayoneSecuredInstallmentsActive() && $request->getActionName() === 'shippingPayment') {
             $paymentId = $userData['additional']['payment']['id'];
             $plan = $this->getPayoneSecuredInstallmentsPlan($paymentId);
@@ -462,10 +472,26 @@ class FrontendCheckout implements SubscriberInterface
         return $paymentApplePay->getActive();
     }
 
+    protected function isPayoneSecuredInvoiceActive()
+    {
+        $payment = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__fin_payone_secured_invoice']
+        );
+        return $payment->getActive();
+    }
+
     protected function isPayoneSecuredInstallmentsActive()
     {
         $payment = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
             ['name' => 'mopt_payone__fin_payone_secured_installment']
+        );
+        return $payment->getActive();
+    }
+
+    protected function isPayoneSecuredDirectdebitActive()
+    {
+        $payment = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__fin_payone_secured_directdebit']
         );
         return $payment->getActive();
     }

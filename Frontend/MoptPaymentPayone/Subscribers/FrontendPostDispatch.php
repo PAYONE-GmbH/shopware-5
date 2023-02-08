@@ -740,6 +740,22 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__payone_secured_installment_birthyear'] = $birthday[0];
                 $data['mopt_payone__payone_secured_installment_telephone'] = $userData['billingaddress']['phone'];
             }
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneSecuredDirectdebit($paymentMean['name'])
+            ) {
+
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                }
+
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__payone_secured_directdebit_birthday'] = $birthday[2];
+                $data['mopt_payone__payone_secured_directdebit_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payone_secured_directdebit_birthyear'] = $birthday[0];
+                $data['mopt_payone__payone_secured_directdebit_telephone'] = $userData['billingaddress']['phone'];
+            }
         }
 
         $payoneParams = $moptPayoneMain->getParamBuilder()->getBasicParameters();
