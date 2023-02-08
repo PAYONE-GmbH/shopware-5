@@ -52,6 +52,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 
           //fetch params
             $params = $this->moptPayone__main->getParamBuilder()->buildOrderDebit($order, $positionIds, $includeShipment);
+            // StefTODO check with secured Invoice cancellation_reason = false was send???
             if ($request->getParam('debitReason') != false) {
                 $params['cancellation_reason'] = $request->getParam('debitReason');
             }

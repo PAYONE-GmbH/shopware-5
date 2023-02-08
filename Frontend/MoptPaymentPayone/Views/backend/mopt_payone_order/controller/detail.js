@@ -53,7 +53,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
           + '<input type="checkbox" id="mopt_payone__debit_shipment" class="x-form-field x-form-checkbox"'
           + 'style="margin: 0 5px 0 4px; height: 15px !important; width: 15px !important;"/></p>';
 
-      if (/mopt_payone__fin_payone_secured_installment/.test(paymentName)){
+      if (/mopt_payone__fin_payone_secured_installment/.test(paymentName) || /mopt_payone__fin_payone_secured_invoice/.test(paymentName) || /mopt_payone__fin_payone_secured_directdebit/.test(paymentName)){
         moptMessageBoxText += '<p><br>{s name="detail/debitReason"}Bitte geben Sie einen Storno Grund an{/s}:</p><br>'
             + '<p><input type="checkbox" id="mopt_payone__debit_refund_reason_undeliverable" class="x-form-field x-form-checkbox"'
             + 'style="margin: 0 5px 0 4px; height: 15px !important; width: 15px !important;"/>'

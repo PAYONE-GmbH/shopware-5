@@ -69,9 +69,9 @@
             </div>
         {/if}
             <br>
-            <input name="moptPaymentData[mopt_payone_payone_secured_installment_iban]"
+            <input name="moptPaymentData[mopt_payone__payone_secured_installment_iban]"
                    type="text"
-                   id="mopt_payone_payone_secured_installment_iban"
+                   id="mopt_payone__payone_secured_installment_iban"
                    {if $moptRequired}required="required" aria-required="true"{/if}
                    placeholder="{s name='bankIBAN'}IBAN{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
                    value="{$form_data.mopt_payone_payone_secured_installment_iban|escape}"
