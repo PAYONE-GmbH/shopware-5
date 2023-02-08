@@ -25,4 +25,6 @@ class Payone_Api_Enum_PayoneSecuredType
 {
     const PIV = 'PIV';  // PAYONE secured Invoice
     const PIN = 'PIN'; // PAYONE secured installment
+
+    const PDD = 'PDD'; // PAYONE secured direct debit
 }

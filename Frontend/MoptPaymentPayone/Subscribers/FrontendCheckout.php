@@ -379,7 +379,7 @@ class FrontendCheckout implements SubscriberInterface
             $session->moptAgbChecked = false;
         }
 
-        if ($this->isPayoneSecuredInvoiceActive() && $request->getActionName() === 'shippingPayment') {
+        if (($this->isPayoneSecuredInvoiceActive() || $this->isPayoneSecuredDirectdebitActive()) && $request->getActionName() === 'shippingPayment') {
             $paymentId = $userData['additional']['payment']['id'];
             $view->assign('moptAgbChecked', $session->moptAgbChecked);
             $view->assign('BSPayoneMode', $config['liveMode']);
@@ -484,6 +484,14 @@ class FrontendCheckout implements SubscriberInterface
     {
         $payment = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
             ['name' => 'mopt_payone__fin_payone_secured_installment']
+        );
+        return $payment->getActive();
+    }
+
+    protected function isPayoneSecuredDirectdebitActive()
+    {
+        $payment = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment')->findOneBy(
+            ['name' => 'mopt_payone__fin_payone_secured_directdebit']
         );
         return $payment->getActive();
     }

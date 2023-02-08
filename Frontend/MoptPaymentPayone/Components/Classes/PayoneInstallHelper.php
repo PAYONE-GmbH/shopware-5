@@ -591,6 +591,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Gesicherter Ratenkauf',
                 'template' => 'mopt_paymentmean_payone_secured_installment.tpl',
                 'position' => 43,],
+            [
+                'name' => 'mopt_payone__fin_payone_secured_directdebit',
+                'description' => 'PAYONE Gesicherte Lastschrift',
+                'template' => 'mopt_paymentmean_payone_secured_directdebit.tpl',
+                'position' => 44,],
         ];
     }
 

@@ -341,7 +341,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             if ($paymentHelper->isPayoneRatePay($paymentData['name'])) {
                 $data['extra'] = 'ratepay';
             }
-            if ($paymentHelper->isPayoneSecuredInvoice($paymentData['name']) || $paymentHelper->isPayoneSecuredInstallments($paymentData['name']) ) {
+            if ($paymentHelper->isPayoneSecuredInvoice($paymentData['name']) || $paymentHelper->isPayoneSecuredInstallments($paymentData['name']) || $paymentHelper->isPayoneSecuredDirectdebit($paymentData['name']) ) {
                 $data['extra'] = 'payonesecured';
             }
         }

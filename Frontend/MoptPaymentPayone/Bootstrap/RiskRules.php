@@ -77,6 +77,13 @@ class RiskRules
             'ORDERVALUEMORE', '3500.01', '', '', 3);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
             'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 3);
+
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
+            'ORDERVALUELESS', '9.99', '', '', 3);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
+            'ORDERVALUEMORE', '1500.01', '', '', 3);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
+            'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 3);
     }
 
     /**
