@@ -1214,13 +1214,13 @@ class Mopt_PayoneParamBuilder
             array('key' => 'device_token', 'data' => $paymentData['mopt_payone__payone_secured_installment_token'])
         ));
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'installment_option_id', 'data' => $paymentData['mopt_payone_payone_secured_installment_plan'])
+            array('key' => 'installment_option_id', 'data' => $paymentData['mopt_payone__payone_secured_installment_plan'])
         ));
         $payment->setPaydata($paydata);
-        $payment->setTelephonenumber($paymentData['mopt_payone_payone_secured_installment_telephone']);
-        $payment->setIban($paymentData['mopt_payone_payone_secured_installment_iban']);
+        $payment->setTelephonenumber($paymentData['mopt_payone__payone_secured_installment_telephone']);
+        $payment->setIban($paymentData['mopt_payone__payone_secured_installment_iban']);
         $payment->setBankaccountholder($userData['billingaddress']['firstname'] . ' ' . $userData['billingaddress']['lastname']);
-        $payment->setBirthday(implode(explode('-', $paymentData['mopt_payone_payone_secured_installment_birthdaydate'])));
+        $payment->setBirthday(implode(explode('-', $paymentData['mopt_payone__payone_secured_installment_birthdaydate'])));
         return $payment;
     }
 
@@ -1249,7 +1249,7 @@ class Mopt_PayoneParamBuilder
             array('key' => 'device_token', 'data' => $paymentData['mopt_payone__payone_secured_invoice_token'])
         ));
         $payment->setPaydata($paydata);
-        $payment->setIban($paymentData['mopt_payone_payone_secured_directdebit_iban']);
+        $payment->setIban($paymentData['mopt_payone__payone_secured_directdebit_iban']);
         $payment->setTelephonenumber($userData['billingaddress']['phone']);
         return $payment;
     }
