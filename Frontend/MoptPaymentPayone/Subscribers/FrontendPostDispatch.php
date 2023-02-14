@@ -413,7 +413,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
 
                 // remove payone secured paymentmeans for b2b customers
-                if (($payment['name'] === 'mopt_payone__fin_payone_secured_invoice' || $payment['name'] === 'mopt_payone__fin_payone_secured_installment'  )
+                if (($payment['name'] === 'mopt_payone__fin_payone_secured_invoice' || $payment['name'] === 'mopt_payone__fin_payone_secured_installment' || $payment['name'] === 'mopt_payone__fin_payone_secured_directdebit')
                 ) {
                     $userData = Shopware()->Modules()->Admin()->sGetUserData();
                     if (!empty($userData['billingaddress']['company'])) {
