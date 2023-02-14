@@ -535,7 +535,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $financeType = Payone_Api_Enum_PayoneSecuredType::PIN;
 
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayoneSecuredInstallments($financeType, $paymentData);
-        $response = $this->buildAndCallPayment($config, 'fnc', $payment;
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment,Shopware()->Session()->mopt_payone__payone_secured_installment_workorderid);
         return $response;
     }
 
@@ -549,7 +549,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $financeType = Payone_Api_Enum_PayoneSecuredType::PDD;
 
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPayoneSecuredDirectdebit($financeType, $paymentData);
-        $response = $this->buildAndCallPayment($config, 'fnc', $payment, Shopware()->Session()->mopt_payone__payone_secured_directdebit_workorderid);
+        $response = $this->buildAndCallPayment($config, 'fnc', $payment);
         return $response;
     }
 
@@ -1168,13 +1168,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $request->setClearingsubtype($clearingSubType);
         }
 
-        if ($this->moptPayonePaymentHelper->isPayoneSecuredInstallments($paymentName)) {
-            $iban = preg_replace('/\s+/', '',  $payment->getIban());
-            $payment->setIban($iban);
-            $request->set('bankaccountholder', $payment->getBankaccountholder());
-        }
-
-        if ($this->moptPayonePaymentHelper->isPayoneSecuredDirectdebit($paymentName)) {
+        if ($this->moptPayonePaymentHelper->isPayoneSecuredDirectdebit($paymentName) ||
+            $this->moptPayonePaymentHelper->isPayoneSecuredInstallments($paymentName)
+        ) {
             $iban = preg_replace('/\s+/', '',  $payment->getIban());
             $payment->setIban($iban);
             $request->set('bankaccountholder', $payment->getBankaccountholder());

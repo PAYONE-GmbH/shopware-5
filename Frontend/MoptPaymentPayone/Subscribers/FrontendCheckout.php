@@ -381,16 +381,16 @@ class FrontendCheckout implements SubscriberInterface
 
         if (($this->isPayoneSecuredInvoiceActive() || $this->isPayoneSecuredDirectdebitActive()) && $request->getActionName() === 'shippingPayment') {
             $paymentId = $userData['additional']['payment']['id'];
+            $config = $moptPayoneMain->getPayoneConfig($paymentId);
             $view->assign('moptAgbChecked', $session->moptAgbChecked);
             $view->assign('BSPayoneMode', $config['liveMode']);
             $view->assign('BSPayoneMerchantId', $config['merchantId']);
             $view->assign('BSPayoneSecuredMode', $config['liveMode'] === 'false' ? 't' : 'p');
             $view->assign('BSPayonePaylaPartnerId', 'e7yeryF2of8X');
             $view->assign('BSPayoneSecuredToken', $config['merchantId'] . 'e7yeryF2of8X' . ' ' . Shopware()->Session()->get('sessionId'));
-        }
-
-        if ($this->isPayoneSecuredInstallmentsActive() && $request->getActionName() === 'shippingPayment') {
+        } else if ($this->isPayoneSecuredInstallmentsActive() && $request->getActionName() === 'shippingPayment') {
             $paymentId = $userData['additional']['payment']['id'];
+            $config = $moptPayoneMain->getPayoneConfig($paymentId);
             $plan = $this->getPayoneSecuredInstallmentsPlan($paymentId);
             $view->assign('BSPayoneInstallmentPlan', $plan);
             $view->assign('moptAgbChecked', $session->moptAgbChecked);
