@@ -1039,7 +1039,7 @@ class Mopt_PayoneFormHandler
         }
 
         if ($formData['mopt_payone__payone_secured_directdebit_token'] !== "") {
-            Shopware()->Session()->moptPayoneSecuredToken =  $formData['mopt_payone__payone_secured_invoice_token'];
+            Shopware()->Session()->moptPayoneSecuredToken =  $formData['mopt_payone__payone_secured_directdebit_token'];
             $paymentData['formData']['mopt_payone__payone_secured_directdebit_token'] = $formData['mopt_payone__payone_secured_directdebit_token'];
         }
 
