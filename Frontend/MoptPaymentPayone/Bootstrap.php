@@ -144,6 +144,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createMenu();
 
         $riskRules = new RiskRules();
+        // remove all old rules
+        $riskRules->removeRiskRules('mopt_payone__fin_payone_secured_invoice');
+        $riskRules->removeRiskRules('mopt_payone__fin_payone_secured_installment');
+        $riskRules->removeRiskRules('mopt_payone__fin_payone_secured_directdebit');
         $riskRules->createRiskRules();
         $riskRules->removeRiskRules('mopt_payone__fin_paypal_installment');
 
