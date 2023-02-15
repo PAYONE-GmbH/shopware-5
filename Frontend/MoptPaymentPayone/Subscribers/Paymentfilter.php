@@ -3,6 +3,8 @@
 namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
+use Shopware\Plugins\MoptPaymentPayone\Bootstrap\RiskRules;
+use Mopt_PayoneMain;
 
 class Paymentfilter implements SubscriberInterface
 {
@@ -39,6 +41,7 @@ class Paymentfilter implements SubscriberInterface
     {
         $result = $args->getReturn();
         $user = Shopware()->Modules()->Admin()->sGetUserData();
+        // $amount = $this->payoneUserHelper->getBasketAmount($user);
         $billingCountry = $user['additional']['country']['countryiso'];
 
         /** @var \Mopt_PayoneMain $moptPayoneMain */
@@ -55,6 +58,21 @@ class Paymentfilter implements SubscriberInterface
             }
         }
 
+        $session = Shopware()->Session();
+        $basketAmount = $session->get('sBasketAmount');
+        $paymentId = $session['sPaymentID'];
+        $dispatch = $session['sDispatch'];
+        $shippingCountryID = $user['additional']['countryShipping']['id'];
+        $test = Shopware()->Modules()->Admin()->sGetPremiumDispatches($shippingCountryID, $paymentId, false);
+
+        $removeRatepayInstallment = false;
+        $removeRatepayInvoice = false;
+        $removeRatepayDirectDebit = false;
+
+        $removePayoneSecuredInstallment = false;
+        $removePayoneSecuredInvoice = false;
+        $removePayoneSecuredDirectDebit = false;
+
         if (!$ratepayconfig) {
             foreach ($result as $index=>$payment) {
                 if ($payment['name'] === 'mopt_payone__fin_ratepay_installment') {
@@ -70,15 +88,7 @@ class Paymentfilter implements SubscriberInterface
             unset ($result[$installmentIndex]);
             unset ($result[$invoiceIndex]);
             unset ($result[$directdebitIndex]);
-            return $result;
         }
-
-        $session = Shopware()->Session();
-        $basketAmount = $session->get('sBasketAmount');
-
-        $removeInstallment = false;
-        $removeInvoice = false;
-        $removeDirectDebit = false;
 
         // check if ratepay ban date is set in customer attribute
         $moptHelper = $moptPayoneMain->getHelper();
@@ -93,9 +103,9 @@ class Paymentfilter implements SubscriberInterface
                     $now
                 );
                 if ($nowDate < $untilDate ){
-                    $removeInstallment = true;
-                    $removeInvoice = true;
-                    $removeDirectDebit = true;
+                    $removeRatepayInstallment = true;
+                    $removeRatepayInvoice = true;
+                    $removeRatepayDirectDebit = true;
                 }
             }
         }
@@ -110,37 +120,64 @@ class Paymentfilter implements SubscriberInterface
             if ($payment['name'] === 'mopt_payone__fin_ratepay_direct_debit') {
                 $directdebitIndex = $index;
             }
+            if ($payment['name'] === 'mopt_payone__fin_payone_secured_installment') {
+                $payoneSecuredInstallmentIndex = $index;
+            }
+            if ($payment['name'] === 'mopt_payone__fin_payone_secured_invoice') {
+                $payoneSecuredInvoiceIndex = $index;
+            }
+            if ($payment['name'] === 'mopt_payone__fin_payone_secured_directdebit') {
+                $payoneSecuredDirectdebitIndex = $index;
+            }
         }
 
         // check eligibility
         if ($ratepayconfig['eligibilityRatepayInvoice'] === false){
-            $removeInvoice = true;
+            $removeRatepayInvoice = true;
         }
         if ($ratepayconfig['eligibilityRatepayInstallment'] === false){
-            $removeInstallment = true;
+            $removeRatepayInstallment = true;
         }
         if ($ratepayconfig['eligibilityRatepayElv'] === false){
-            $removeDirectDebit = true;
+            $removeRatepayDirectDebit = true;
         }
 
         // check basket amounts
         if ($basketAmount < $ratepayconfig['txLimitInstallmentMin'] || $basketAmount > $ratepayconfig['txLimitInstallmentMax']) {
-            $removeInstallment = true;
+            $removeRatepayInstallment = true;
         }
         if ($basketAmount < $ratepayconfig['txLimitInvoiceMin'] || $basketAmount > $ratepayconfig['txLimitInvoiceMax']) {
-            $removeInvoice = true;
+            $removeRatepayInvoice = true;
         }
         if ($basketAmount < $ratepayconfig['txLimitElvMin'] || $basketAmount > $ratepayconfig['txLimitElvMax']) {
-            $removeDirectDebit = true;
+            $removeRatepayDirectDebit = true;
         }
-        if ($removeInstallment) {
+        if ($basketAmount <= RiskRules::payoneSecuredInstallmentMinBasketAmount || $basketAmount >= RiskRules::payoneSecuredInstallmentMaxBasketAmount) {
+            $removePayoneSecuredInstallment = true;
+        }
+        if ($basketAmount <= RiskRules::payoneSecuredInvoiceMinBasketAmount || $basketAmount >= RiskRules::payoneSecuredInvoiceMaxBasketAmount) {
+            $removePayoneSecuredInvoice = true;
+        }
+        if ($basketAmount <= RiskRules::payoneSecuredDirectdebitMinBasketAmount || $basketAmount >= RiskRules::payoneSecuredDirectdebitMaxBasketAmount) {
+            $removePayoneSecuredDirectDebit = true;
+        }
+        if ($removeRatepayInstallment) {
             unset ($result[$installmentIndex]);
         }
-        if ($removeInvoice) {
+        if ($removeRatepayInvoice) {
             unset ($result[$invoiceIndex]);
         }
-        if ($removeDirectDebit) {
+        if ($removeRatepayDirectDebit) {
             unset ($result[$directdebitIndex]);
+        }
+        if ($removePayoneSecuredInstallment) {
+            unset ($result[$payoneSecuredInstallmentIndex]);
+        }
+        if ($removePayoneSecuredInvoice) {
+            unset ($result[$payoneSecuredInvoiceIndex]);
+        }
+        if ($removePayoneSecuredDirectDebit) {
+            unset ($result[$payoneSecuredDirectdebitIndex]);
         }
 
         return $result;
