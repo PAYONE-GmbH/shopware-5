@@ -412,11 +412,13 @@ class FrontendPostDispatch implements SubscriberInterface
                     unset ($payments[$klarnaIndex]);
                 }
 
-                // remove payone secured paymentmeans for b2b customers
+                // remove payone secured paymentmeans for b2b customers, declined customers, and check max and min basket values
                 if (($payment['name'] === 'mopt_payone__fin_payone_secured_invoice' || $payment['name'] === 'mopt_payone__fin_payone_secured_installment' || $payment['name'] === 'mopt_payone__fin_payone_secured_directdebit')
                 ) {
                     $userData = Shopware()->Modules()->Admin()->sGetUserData();
-                    if (!empty($userData['billingaddress']['company'])) {
+                    if (!empty($userData['billingaddress']['company']) ||
+                        $session->offsetGet('payoneSecuredDeclined') == true
+                    ) {
                         $securedPaymentIndex = $index;
                         unset ($payments[$securedPaymentIndex]);
                     }
