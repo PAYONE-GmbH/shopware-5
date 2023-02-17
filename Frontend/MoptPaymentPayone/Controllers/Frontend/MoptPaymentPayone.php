@@ -986,6 +986,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                     $session->payoneSecuredError = $this->moptPayoneMain->getPaymentHelper()
                         ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
                     $this->forward('payoneSecuredError');
+                }  else {
+                    $session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()
+                        ->moptGetErrorMessageFromErrorCodeViaSnippet(false, $response->getErrorcode());
+                    $this->forward('error');
                 }
             } else {
                 $session->payoneErrorMessage = $this->moptPayoneMain->getPaymentHelper()
