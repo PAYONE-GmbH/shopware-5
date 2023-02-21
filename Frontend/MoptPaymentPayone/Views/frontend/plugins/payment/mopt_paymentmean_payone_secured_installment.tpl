@@ -98,8 +98,8 @@
         <div class="col-lg-9">
             {foreach from=$BSPayoneInstallmentPlan.plans key=index item=plan}
             <div>
-                <input id="bnplPlan_{$index}" type="radio" name="moptPaymentData[mopt_payone_payone_secured_installment_plan]" value="{$plan.installmentOptionId}" onclick="fcpoSelectBNPLInstallmentPlan({$index})"/>
-                    {$plan.monthlyAmountValue} {$plan.monthlyAmountCurrency} {s name='MonthlyInstallment'}MonthlyInstallment{/s} - {s name='NoOfInstallments'}Anzahl der Raten{/s}: {$plan.numberOfPayments}
+                <input id="bnplPlan_{$index}" type="radio" name="moptPaymentData[mopt_payone_payone_secured_installment_plan]" value="{$plan.installmentOptionId}" onclick="fcpoSelectBNPLInstallmentPlan({$index})" style="margin-bottom: 15px"/>
+                {s name='bnplSecinstallmentPaymentIn'}Bezahlung in{/s}&nbsp;{$plan.numberOfPayments} {s name='bnplSecinstallmentRatesPer'}Raten je{/s}&nbsp;{$plan.monthlyAmountValue} {$plan.monthlyAmountCurrency}
             </div>
             {/foreach}
         </div>
