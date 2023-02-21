@@ -40,15 +40,6 @@ use Shopware\Models\Payment\Payment;
  */
 class RiskRules
 {
-    public const payoneSecuredInvoiceMinBasketAmount = 9.99;
-    public const payoneSecuredInvoiceMaxBasketAmount = 1500.01;
-
-    public const payoneSecuredInstallmentMinBasketAmount = 199.99;
-    public const payoneSecuredInstallmentMaxBasketAmount = 3500.01;
-
-    public const payoneSecuredDirectdebitMinBasketAmount = 9.99;
-    public const payoneSecuredDirectdebitMaxBasketAmount = 1500.01;
-
     /**
      * MoptPaymentPayone Plugin Bootstrap Class
      * @var \Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap
@@ -74,27 +65,27 @@ class RiskRules
     public function createRiskRules()
     {
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
-            'ORDERVALUELESS', self::payoneSecuredInvoiceMinBasketAmount, '', '', 4);
+            'ORDERVALUELESS', '9.99', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
-            'ORDERVALUEMORE', self::payoneSecuredInvoiceMaxBasketAmount, '', '', 4);
+            'ORDERVALUEMORE', '1500.01', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
             'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
             'CURRENCIESISOISNOT', 'EUR', '', '', 4);
 
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
-            'ORDERVALUELESS', self::payoneSecuredInstallmentMinBasketAmount, '', '', 4);
+            'ORDERVALUELESS', '199.99', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
-            'ORDERVALUEMORE', self::payoneSecuredInstallmentMaxBasketAmount, '', '', 4);
+            'ORDERVALUEMORE', '3500.01', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
             'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
             'CURRENCIESISOISNOT', 'EUR', '', '', 4);
 
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
-            'ORDERVALUELESS', self::payoneSecuredDirectdebitMinBasketAmount, '', '', 4);
+            'ORDERVALUELESS', '9.99', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
-            'ORDERVALUEMORE', self::payoneSecuredDirectdebitMaxBasketAmount, '', '', 4);
+            'ORDERVALUEMORE', '1500.01', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
             'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
