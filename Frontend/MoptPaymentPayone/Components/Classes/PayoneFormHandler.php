@@ -171,7 +171,7 @@ class Mopt_PayoneFormHandler
         if (!$formData['mopt_payone__sofort_iban'] && !$formData['mopt_payone__debit_show_sofort_iban_bic']==="") {
             $paymentData['sErrorFlag']['mopt_payone__sofort_iban'] = true;
         } else {
-            if ($formData['mopt_payone__sofort_iban'] && !$this->isValidIbanBic($formData['mopt_payone__sofort_iban'])){
+            if ($formData['mopt_payone__sofort_iban'] && !$this->isValidIban($formData['mopt_payone__sofort_iban'])){
                 $paymentData['sErrorFlag']['mopt_payone__sofort_iban'] = true;
             } else {
                 $paymentData['formData']['mopt_payone__sofort_iban'] = $formData['mopt_payone__sofort_iban'];
@@ -181,7 +181,7 @@ class Mopt_PayoneFormHandler
         if (!$formData['mopt_payone__sofort_bic'] && !$formData['mopt_payone__debit_show_sofort_iban_bic']==="") {
             $paymentData['sErrorFlag']['mopt_payone__sofort_bic'] = true;
         } else {
-            if ($formData['mopt_payone__sofort_bic'] && !$this->isValidIbanBic($formData['mopt_payone__sofort_bic'])){
+            if ($formData['mopt_payone__sofort_bic'] && !$this->isValidBic($formData['mopt_payone__sofort_bic'])){
                 $paymentData['sErrorFlag']['mopt_payone__sofort_bic'] = true;
             } else {
                 $paymentData['formData']['mopt_payone__sofort_bic'] = $formData['mopt_payone__sofort_bic'];
@@ -246,13 +246,13 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
-        if (!$formData['mopt_payone__giropay_iban'] || !$this->isValidIbanBic($formData['mopt_payone__giropay_iban'])) {
+        if (!$formData['mopt_payone__giropay_iban'] || !$this->isValidIban($formData['mopt_payone__giropay_iban'])) {
             $paymentData['sErrorFlag']['mopt_payone__giropay_iban'] = true;
         } else {
             $paymentData['formData']['mopt_payone__giropay_iban'] = $formData['mopt_payone__giropay_iban'];
         }
 
-        if (!$formData['mopt_payone__giropay_bic'] || !$this->isValidIbanBic($formData['mopt_payone__giropay_bic']) ) {
+        if (!$formData['mopt_payone__giropay_bic'] || !$this->isValidBic($formData['mopt_payone__giropay_bic']) ) {
             $paymentData['sErrorFlag']['mopt_payone__giropay_bic'] = true;
         } else {
             $paymentData['formData']['mopt_payone__giropay_bic'] = $formData['mopt_payone__giropay_bic'];
@@ -326,7 +326,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
-        if (!$formData['mopt_payone__debit_iban'] || !$this->isValidIbanBic($formData['mopt_payone__debit_iban'])) {
+        if (!$formData['mopt_payone__debit_iban'] || !$this->isValidIban($formData['mopt_payone__debit_iban'])) {
             $paymentData['sErrorFlag']['mopt_payone__debit_iban'] = true;
         } else {
             $paymentData['formData']['mopt_payone__debit_iban'] = $formData['mopt_payone__debit_iban'];
@@ -335,7 +335,7 @@ class Mopt_PayoneFormHandler
         if (!$formData['mopt_payone__debit_bic'] && $formData['mopt_payone__debit_showbic']=="1") {
             $paymentData['sErrorFlag']['mopt_payone__debit_bic'] = true;
         } else {
-            if ($formData['mopt_payone__debit_bic'] && !$this->isValidIbanBic($formData['mopt_payone__debit_bic'])){
+            if ($formData['mopt_payone__debit_bic'] && !$this->isValidBic($formData['mopt_payone__debit_bic'])){
                 $paymentData['sErrorFlag']['mopt_payone__debit_bic'] = true;
             }else {
                 $paymentData['formData']['mopt_payone__debit_bic'] = $formData['mopt_payone__debit_bic'];
@@ -539,7 +539,7 @@ class Mopt_PayoneFormHandler
             }
         }
 
-        if (!$formData['mopt_payone__payolution_debitnote_iban'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_debitnote_iban'])) {
+        if (!$formData['mopt_payone__payolution_debitnote_iban'] || !$this->isValidIban($formData['mopt_payone__payolution_debitnote_iban'])) {
             $paymentData['sErrorFlag']['mopt_payone__payolution_debitnote_iban'] = true;
         } else {
             $paymentData['formData']['mopt_payone__payolution_debitnote_iban'] = $formData['mopt_payone__payolution_debitnote_iban'];
@@ -651,7 +651,7 @@ class Mopt_PayoneFormHandler
         }
 
         if (! in_array($this->getUserCountyIso(), self::PAYOLUTION_NO_IBANBIC_COUNTRIES)) {
-            if (!$formData['mopt_payone__payolution_installment_iban'] || !$this->isValidIbanBic($formData['mopt_payone__payolution_installment_iban'])) {
+            if (!$formData['mopt_payone__payolution_installment_iban'] || !$this->isValidIban($formData['mopt_payone__payolution_installment_iban'])) {
                 $paymentData['sErrorFlag']['mopt_payone__payolution_installment_iban'] = true;
             } else {
                 $paymentData['formData']['mopt_payone__payolution_installment_iban'] = $formData['mopt_payone__payolution_installment_iban'];
@@ -750,7 +750,7 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_save_phone'] = true;
         }
 
-        if ($formData['mopt_payone__ratepay_installment_iban'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_installment_iban'])) {
+        if ($formData['mopt_payone__ratepay_installment_iban'] && $this->isValidIban($formData['mopt_payone__ratepay_installment_iban'])) {
             $paymentData['formData']['mopt_payone__ratepay_installment_iban'] = str_replace(' ', '',$formData['mopt_payone__ratepay_installment_iban']);
         } elseif (!$formData['mopt_payone__ratepay_installment_iban']){
             $paymentData['formData']['mopt_payone__ratepay_installment_iban'] = str_replace(' ', '',$formData['mopt_payone__ratepay_installment_iban']);
@@ -758,7 +758,7 @@ class Mopt_PayoneFormHandler
             $paymentData['sErrorFlag']['mopt_payone__ratepay_installment_iban'] = true;
         }
 
-        if ($formData['mopt_payone__ratepay_installment_bic'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_installment_bic'])) {
+        if ($formData['mopt_payone__ratepay_installment_bic'] && $this->isValidBic($formData['mopt_payone__ratepay_installment_bic'])) {
             $paymentData['formData']['mopt_payone__ratepay_installment_bic'] = str_replace(' ', '',$formData['mopt_payone__ratepay_installment_bic']);
         } elseif (!$formData['mopt_payone__ratepay_installment_bic']) {
             $paymentData['formData']['mopt_payone__ratepay_installment_bic'] = str_replace(' ', '',$formData['mopt_payone__ratepay_installment_bic']);
@@ -829,14 +829,14 @@ class Mopt_PayoneFormHandler
             $paymentData['formData']['mopt_save_birthday_and_phone'] = true;
         }
 
-        if ($formData['mopt_payone__ratepay_direct_debit_iban'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_direct_debit_iban'])) {
+        if ($formData['mopt_payone__ratepay_direct_debit_iban'] && $this->isValidIban($formData['mopt_payone__ratepay_direct_debit_iban'])) {
             $paymentData['formData']['mopt_payone__ratepay_direct_debit_iban'] = str_replace(' ', '',$formData['mopt_payone__ratepay_direct_debit_iban']);
         } else {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_iban'] = true;
         }
 
 
-        if ($formData['mopt_payone__ratepay_direct_debit_bic'] && $this->isValidIbanBic($formData['mopt_payone__ratepay_direct_debit_bic'])) {
+        if ($formData['mopt_payone__ratepay_direct_debit_bic'] && $this->isValidBic($formData['mopt_payone__ratepay_direct_debit_bic'])) {
             $paymentData['formData']['mopt_payone__ratepay_direct_debit_bic'] = str_replace(' ', '',$formData['mopt_payone__ratepay_direct_debit_bic']);
         } else {
             $paymentData['sErrorFlag']['mopt_payone__ratepay_direct_debit_bic'] = true;
@@ -888,13 +888,13 @@ class Mopt_PayoneFormHandler
         $paymentData = array();
 
         if ($formData['mopt_payone__trustly_show_iban_bic'] == "1") {
-            if (!$formData['mopt_payone__trustly_iban'] || !$this->isValidIbanBic($formData['mopt_payone__trustly_iban'])) {
+            if (!$formData['mopt_payone__trustly_iban'] || !$this->isValidIban($formData['mopt_payone__trustly_iban'])) {
                 $paymentData['sErrorFlag']['mopt_payone__trustly_iban'] = true;
             } else {
                 $paymentData['formData']['mopt_payone__trustly_iban'] = $formData['mopt_payone__trustly_iban'];
             }
 
-            if (!$formData['mopt_payone__trustly_bic'] || !$this->isValidIbanBic($formData['mopt_payone__trustly_bic']) ) {
+            if (!$formData['mopt_payone__trustly_bic'] || !$this->isValidBic($formData['mopt_payone__trustly_bic']) ) {
                 $paymentData['sErrorFlag']['mopt_payone__trustly_bic'] = true;
             } else {
                 $paymentData['formData']['mopt_payone__trustly_bic'] = $formData['mopt_payone__trustly_bic'];
@@ -963,7 +963,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = [];
 
-        if (!$formData['mopt_payone__payone_secured_installment_iban'] || !$this->isValidIbanBic($formData['mopt_payone__payone_secured_installment_iban']) ) {
+        if (!$formData['mopt_payone__payone_secured_installment_iban'] || !$this->isValidIban($formData['mopt_payone__payone_secured_installment_iban']) ) {
             $paymentData['sErrorFlag']['mopt_payone__payone_secured_installment_iban'] = true;
         } else {
             $paymentData['formData']['mopt_payone__payone_secured_installment_iban'] = $formData['mopt_payone__payone_secured_installment_iban'];
@@ -1014,7 +1014,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = [];
 
-        if (!$formData['mopt_payone__payone_secured_directdebit_iban'] || !$this->isValidIbanBic($formData['mopt_payone__payone_secured_directdebit_iban']) ) {
+        if (!$formData['mopt_payone__payone_secured_directdebit_iban'] || !$this->isValidIban($formData['mopt_payone__payone_secured_directdebit_iban']) ) {
             $paymentData['sErrorFlag']['mopt_payone__payone_secured_directdebit_iban'] = true;
         } else {
             $paymentData['formData']['mopt_payone__payone_secured_directdebit_iban'] = $formData['mopt_payone__payone_secured_directdebit_iban'];
@@ -1050,35 +1050,68 @@ class Mopt_PayoneFormHandler
     }
 
     /**
-     * validates IBAN/BIC fields
+     * validates IBAN fields
      *
      * @param string $iban
      * @return boolean
      */
-    private function isValidIbanBic($iban) {
-        if(strlen($iban) < 5) return false;
+    private function isValidIban($iban) {
         $iban = strtolower(str_replace(' ','',$iban));
-        $Countries = array('al'=>28,'ad'=>24,'at'=>20,'az'=>28,'bh'=>22,'be'=>16,'ba'=>20,'br'=>29,'bg'=>22,'cr'=>21,'hr'=>21,'cy'=>28,'cz'=>24,'dk'=>18,'do'=>28,'ee'=>20,'fo'=>18,'fi'=>18,'fr'=>27,'ge'=>22,'de'=>22,'gi'=>23,'gr'=>27,'gl'=>18,'gt'=>28,'hu'=>28,'is'=>26,'ie'=>22,'il'=>23,'it'=>27,'jo'=>30,'kz'=>20,'kw'=>30,'lv'=>21,'lb'=>28,'li'=>21,'lt'=>20,'lu'=>20,'mk'=>19,'mt'=>31,'mr'=>27,'mu'=>30,'mc'=>27,'md'=>24,'me'=>22,'nl'=>18,'no'=>15,'pk'=>24,'ps'=>29,'pl'=>28,'pt'=>25,'qa'=>29,'ro'=>24,'sm'=>27,'sa'=>24,'rs'=>22,'sk'=>24,'si'=>19,'es'=>24,'se'=>24,'ch'=>21,'tn'=>24,'tr'=>26,'ae'=>23,'gb'=>22,'vg'=>24);
-        $Chars = array('a'=>10,'b'=>11,'c'=>12,'d'=>13,'e'=>14,'f'=>15,'g'=>16,'h'=>17,'i'=>18,'j'=>19,'k'=>20,'l'=>21,'m'=>22,'n'=>23,'o'=>24,'p'=>25,'q'=>26,'r'=>27,'s'=>28,'t'=>29,'u'=>30,'v'=>31,'w'=>32,'x'=>33,'y'=>34,'z'=>35);
+        $Countries = [
+            'al'=>28,'ad'=>24,'at'=>20,'az'=>28,'bh'=>22,'be'=>16,'ba'=>20,'br'=>29,'bg'=>22,'cr'=>21,'hr'=>21,'cy'=>28,'cz'=>24,
+            'dk'=>18,'do'=>28,'ee'=>20,'fo'=>18,'fi'=>18,'fr'=>27,'ge'=>22,'de'=>22,'gi'=>23,'gr'=>27,'gl'=>18,'gt'=>28,'hu'=>28,
+            'is'=>26,'ie'=>22,'il'=>23,'it'=>27,'jo'=>30,'kz'=>20,'kw'=>30,'lv'=>21,'lb'=>28,'li'=>21,'lt'=>20,'lu'=>20,'mk'=>19,
+            'mt'=>31,'mr'=>27,'mu'=>30,'mc'=>27,'md'=>24,'me'=>22,'nl'=>18,'no'=>15,'pk'=>24,'ps'=>29,'pl'=>28,'pt'=>25,'qa'=>29,
+            'ro'=>24,'sm'=>27,'sa'=>24,'rs'=>22,'sk'=>24,'si'=>19,'es'=>24,'se'=>24,'ch'=>21,'tn'=>24,'tr'=>26,'ae'=>23,'gb'=>22,'vg'=>24
+        ];
+        $Chars = [
+            'a'=>10,'b'=>11,'c'=>12,'d'=>13,'e'=>14,'f'=>15,'g'=>16,'h'=>17,'i'=>18,'j'=>19,'k'=>20,'l'=>21,'m'=>22,
+            'n'=>23,'o'=>24,'p'=>25,'q'=>26,'r'=>27,'s'=>28,'t'=>29,'u'=>30,'v'=>31,'w'=>32,'x'=>33,'y'=>34,'z'=>35
+        ];
 
-        if(array_key_exists(substr($iban,0,2), $Countries) && strlen($iban) == $Countries[substr($iban,0,2)]){
-            $MovedChar = substr($iban, 4).substr($iban,0,4);
+        if (strlen($iban) != $Countries[ substr($iban,0,2) ]) { return false; }
+
+            $MovedChar = substr($iban, 4) . substr($iban,0,4);
             $MovedCharArray = str_split($MovedChar);
             $NewString = "";
-            foreach($MovedCharArray AS $key => $value){
-                if(!is_numeric($MovedCharArray[$key])){
-                    if(!isset($Chars[$MovedCharArray[$key]])) return false;
-                    $MovedCharArray[$key] = $Chars[$MovedCharArray[$key]];
+
+            foreach ($MovedCharArray as $k => $v) {
+
+                if ( !is_numeric($MovedCharArray[$k]) ) {
+                    $MovedCharArray[$k] = $Chars[$MovedCharArray[$k]];
                 }
-                $NewString .= $MovedCharArray[$key];
+                $NewString .= $MovedCharArray[$k];
             }
-            if(bcmod($NewString, '97') == 1)
-            {
-                return true;
+
+            // http://au2.php.net/manual/en/function.bcmod.php#38474
+            $x = $NewString; $y = "97";
+            $take = 5; $mod = "";
+
+            do {
+                $a = (int)$mod . substr($x, 0, $take);
+                $x = substr($x, $take);
+                $mod = $a % $y;
             }
-        }
-        return false;
+            while (strlen($x));
+
+            return (int)$mod == 1;
     }
+
+    /**
+     * validates BIC fields
+     *
+     * @param string $bic
+     * @return boolean
+     */
+    private function isValidBic($bic) {
+
+        if (!preg_match('/^[A-Z0-9 ]+$/',$bic)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 
     /**
      * gets the country from the current user in iso format
