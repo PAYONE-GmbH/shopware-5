@@ -82,7 +82,7 @@
                data-moptIbanWrongCharacterMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="moptIbanWrongCharacterMessage"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
                data-moptIbanWrongLengthMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="moptIbanWrongLengthMessage"}Bitte prüfen Sie die Länge der IBAN{/s}"
                data-moptIbanWrongCecksumMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="moptIbanWrongCecksumMessage"}Die Prüfsumme der IBAN ist falsch{/s}"
-               class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_installment_iban} has--error{/if} moptPayoneIbanBic" />
+               class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_installment_iban} has--error{/if} moptPayoneIban" />
     {/if}
     
     <p class="none clearfix">

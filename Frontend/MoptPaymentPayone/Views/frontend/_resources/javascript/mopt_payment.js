@@ -4,7 +4,7 @@
 
 function moptPaymentReady() {
 
-    $.plugin('moptPayoneIbanBicValidator', {
+    $.plugin('moptPayoneIbanValidator', {
         defaults: {
             ibanbicReg: /^[A-Z0-9 ]+$/,
             errorMessageClass: 'register--error-msg',
@@ -85,6 +85,39 @@ function moptPaymentReady() {
                 checksum = parseInt(fragment, 10) % 97;
             }
             return checksum;
+        }
+    });
+
+    $.plugin('moptPayoneBicValidator', {
+        defaults: {
+            ibanbicReg: /^[A-Z0-9 ]+$/,
+            errorMessageClass: 'register--error-msg',
+            moptIbanErrorMessage: 'Dieses Feld darf nur Großbuchstaben und Ziffern enthalten'
+        },
+        init: function () {
+            var me = this;
+            me.applyDataAttributes();
+
+            me.$el.bind('keyup change', function (e) {
+                $('#moptiban--message').remove();
+                if (me.$el.val() && !me.opts.ibanbicReg.test(me.$el.val())) {
+                    me.$el.addClass('has--error');
+                    $('<div>', {
+                        'html': '<p>' + me.opts.moptIbanErrorMessage + '</p>',
+                        'id': 'moptiban--message',
+                        'class': me.opts.errorMessageClass
+                    }).insertAfter(me.$el);
+
+                } else {
+                    me.$el.removeClass('has--error');
+                    $('#moptiban--message').remove();
+                }
+                ;
+            });
+        },
+        destroy: function () {
+            var me = this;
+            me._destroy();
         }
     });
 
@@ -1002,7 +1035,8 @@ function moptPaymentReady() {
     poBindDispatchChange();
     poBindCCSelectChange();
 
-    $('.moptPayoneIbanBic').moptPayoneIbanBicValidator();
+    $('.moptPayoneIban').moptPayoneIbanValidator();
+    $('.moptPayoneBic').moptPayoneBicValidator();
     $('.moptPayoneNumber').moptPayoneNumberValidator();
     $('.moptPayoneBankcode').moptPayoneBankcodeValidator();
     $('.moptPayoneCardholder').moptPayoneCardholderValidator();
