@@ -400,7 +400,7 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('BSPayoneMerchantId', $config['merchantId']);
                 $view->assign('BSPayoneSecuredMode', $config['liveMode'] === 'false' ? 't' : 'p');
                 $view->assign('BSPayonePaylaPartnerId', 'e7yeryF2of8X');
-                $view->assign('BSPayoneSecuredToken', $config['merchantId'] . 'e7yeryF2of8X' . ' ' . Shopware()->Session()->get('sessionId'));
+                $view->assign('BSPayoneSecuredToken', 'e7yeryF2of8X' . '_' . $config['merchantId'] . '_' . Shopware()->Session()->get('sessionId'));
             }
         }
     }
