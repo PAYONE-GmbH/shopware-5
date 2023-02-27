@@ -225,14 +225,14 @@ class FrontendCheckout implements SubscriberInterface
                 ]);
 
                 $orderLines[] = [
-                    'reference' => $item->getId(),
-                    'name' => $item->getDe(),
-                    'tax_rate' => (int)($item->getVa()),
-                    'unit_price' => $price,
-                    'quantity' => $quantity,
+                    'reference'    => $item->getId(),
+                    'name'         => $item->getDe(),
+                    'tax_rate'     => (int)($item->getVa()),
+                    'unit_price'   => $price,
+                    'quantity'     => $quantity,
                     'total_amount' => $price * $quantity,
-                    'image_url' => $basket['content'][$basketItemIndex]['image']['source'],
-                    'product_url' => $itemUrl,
+                    'image_url'    => $basket['content'][$basketItemIndex]['image']['source'],
+                    'product_url'  => $itemUrl,
                 ];
             }
 
@@ -282,7 +282,7 @@ class FrontendCheckout implements SubscriberInterface
 
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
             $view->assign('locale', str_replace('_', '-', Shopware()->Shop()->getLocale()->getLocale()));
-            $showmoptCreditCardAgreement = $userData['additional']['user']['accountmode'] == "0" && (!isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment === false);
+            $showmoptCreditCardAgreement = $userData['additional']['user']['accountmode'] == "0" && (! isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment === false) ;
             if ($showmoptCreditCardAgreement) {
                 $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
                 $view->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
@@ -389,6 +389,7 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('BSPayoneSecuredToken', $config['merchantId'] . 'e7yeryF2of8X' . ' ' . Shopware()->Session()->get('sessionId'));
             }
         }
+
         if ($this->isPayoneSecuredInstallmentsActive() && $request->getActionName() === 'shippingPayment') {
             if ($userData['additional']['payment']['name'] === 'mopt_payone__fin_payone_secured_installment') {
                 $paymentId = $userData['additional']['payment']['id'];
@@ -542,7 +543,8 @@ class FrontendCheckout implements SubscriberInterface
             if ($result instanceof \Payone_Api_Response_Genericpayment_Ok) {
                 $formattedResult = $this->formatInstallmentOptions($result->getRawResponse());
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
         }
         return $formattedResult;
     }
