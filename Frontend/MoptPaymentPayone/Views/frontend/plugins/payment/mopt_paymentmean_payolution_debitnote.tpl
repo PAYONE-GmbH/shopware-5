@@ -81,9 +81,11 @@
            id="mopt_payone__payolution_debitnote_iban"
            {if $moptRequired}required="required" aria-required="true"{/if}
            placeholder="{s name='bankIBAN'}IBAN{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-           value="{$form_data.mopt_payone__payolution_debitnote_iban|escape}" 
-           data-moptIbanErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="ibanbicFormField"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
-           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_debitnote_iban} has--error{/if} moptPayoneIbanBic" />
+           value="{$form_data.mopt_payone__payolution_debitnote_iban|escape}"
+           data-moptIbanWrongCharacterMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="moptIbanWrongCharacterMessage"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
+           data-moptIbanWrongLengthMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="moptIbanWrongLengthMessage"}Bitte prüfen Sie die Länge der IBAN{/s}"
+           data-moptIbanWrongCecksumMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="moptIbanWrongCecksumMessage"}Die Prüfsumme der IBAN ist falsch{/s}"
+           class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_debitnote_iban} has--error{/if} moptPayoneIban" />
 
     <p class="none clearfix">
         <input name="moptPaymentData[mopt_payone__payolution_debitnote_agreement]" type="checkbox" id="mopt_payone__payolution_debitnote_agreement" value="true"

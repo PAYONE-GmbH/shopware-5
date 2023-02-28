@@ -124,7 +124,7 @@
             if(typeof(glob_var) !== 'undefined') {
                 console.log('PaylaDCS is ready');
                 if (typeof paylaDcs.init !== 'function') {
-                    console.log('PaylaDCS.init not (yet) accessible in object, retrying in 50ms');
+                    console.log('PaylaDCS.init not (yet) accessible in object, retrying in 100ms');
                     setTimeout(function() {
                         check_script_loaded(glob_var)
                     }, 100)
@@ -135,10 +135,10 @@
                     tokenElem.setAttribute('value', paylaDcsT)
                 }
             } else {
-                console.log('PaylaDCS is not ready retrying in 50ms');
+                console.log('PaylaDCS is not ready retrying in 100ms');
                 setTimeout(function() {
                     check_script_loaded(glob_var)
-                }, 50)
+                }, 100)
             }
         }
         check_script_loaded('paylaDcs');

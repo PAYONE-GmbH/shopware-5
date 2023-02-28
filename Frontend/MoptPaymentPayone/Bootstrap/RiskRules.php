@@ -65,18 +65,31 @@ class RiskRules
     public function createRiskRules()
     {
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
-            'ORDERVALUELESS', '9.99', '', '', 3);
+            'ORDERVALUELESS', '9.99', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
-            'ORDERVALUEMORE', '1500.01', '', '', 3);
+            'ORDERVALUEMORE', '1500.01', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
-            'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 3);
+            'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 4);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_invoice',
+            'CURRENCIESISOISNOT', 'EUR', '', '', 4);
 
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
-            'ORDERVALUELESS', '199.99', '', '', 3);
+            'ORDERVALUELESS', '199.99', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
-            'ORDERVALUEMORE', '3500.01', '', '', 3);
+            'ORDERVALUEMORE', '3500.01', '', '', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
-            'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 3);
+            'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 4);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_installment',
+            'CURRENCIESISOISNOT', 'EUR', '', '', 4);
+
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
+            'ORDERVALUELESS', '9.99', '', '', 4);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
+            'ORDERVALUEMORE', '1500.01', '', '', 4);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
+            'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 4);
+        $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
+            'CURRENCIESISOISNOT', 'EUR', '', '', 4);
     }
 
     /**

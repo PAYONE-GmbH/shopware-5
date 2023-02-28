@@ -412,11 +412,13 @@ class FrontendPostDispatch implements SubscriberInterface
                     unset ($payments[$klarnaIndex]);
                 }
 
-                // remove payone secured paymentmeans for b2b customers
-                if (($payment['name'] === 'mopt_payone__fin_payone_secured_invoice' || $payment['name'] === 'mopt_payone__fin_payone_secured_installment'  )
+                // remove payone secured paymentmeans for b2b customers, declined customers, and check max and min basket values
+                if (($payment['name'] === 'mopt_payone__fin_payone_secured_invoice' || $payment['name'] === 'mopt_payone__fin_payone_secured_installment' || $payment['name'] === 'mopt_payone__fin_payone_secured_directdebit')
                 ) {
                     $userData = Shopware()->Modules()->Admin()->sGetUserData();
-                    if (!empty($userData['billingaddress']['company'])) {
+                    if (!empty($userData['billingaddress']['company']) ||
+                        $session->offsetGet('payoneSecuredDeclined') == true
+                    ) {
                         $securedPaymentIndex = $index;
                         unset ($payments[$securedPaymentIndex]);
                     }
@@ -739,6 +741,22 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__payone_secured_installment_birthmonth'] = $birthday[1];
                 $data['mopt_payone__payone_secured_installment_birthyear'] = $birthday[0];
                 $data['mopt_payone__payone_secured_installment_telephone'] = $userData['billingaddress']['phone'];
+            }
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneSecuredDirectdebit($paymentMean['name'])
+            ) {
+
+                if (!isset($userData['additional']['user']['birthday'])) {
+                    $userData['billingaddress']['birthday'] = "0000-00-00";
+                } else {
+                    $userData['billingaddress']['birthday'] = $userData['additional']['user']['birthday'];
+                }
+
+                $data['birthday'] = $userData['billingaddress']['birthday'];
+                $birthday = explode('-', $userData['billingaddress']['birthday']);
+                $data['mopt_payone__payone_secured_directdebit_birthday'] = $birthday[2];
+                $data['mopt_payone__payone_secured_directdebit_birthmonth'] = $birthday[1];
+                $data['mopt_payone__payone_secured_directdebit_birthyear'] = $birthday[0];
+                $data['mopt_payone__payone_secured_directdebit_telephone'] = $userData['billingaddress']['phone'];
             }
         }
 

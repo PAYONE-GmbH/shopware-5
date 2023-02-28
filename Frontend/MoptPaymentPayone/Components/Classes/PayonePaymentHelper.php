@@ -805,6 +805,17 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone secured directdebit
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneSecuredDirectdebit($paymentName)
+    {
+        return preg_match('#mopt_payone__fin_payone_secured_directdebit#', $paymentName) ? true : false;
+    }
+
+    /**
      * check if given payment name is payone alipay payment
      *
      * @param string $paymentName
@@ -1206,12 +1217,21 @@ class Mopt_PayonePaymentHelper
             Shopware()->Models()->persist($user);
         }
 
+        if (isset($paymentData['formData']['mopt_payone__payone_secured_directdebit_birthdaydate'])) {
+            $user->setBirthday($paymentData['formData']['mopt_payone__payone_secured_directdebit_birthdaydate']);
+            Shopware()->Models()->persist($user);
+        }
+
         if (isset($paymentData['formData']['mopt_payone__payone_secured_invoice_telephone'])) {
             $billing->setPhone($paymentData['formData']['mopt_payone__payone_secured_invoice_telephone']);
         }
 
         if (isset($paymentData['formData']['mopt_payone__payone_secured_installment_telephone'])) {
             $billing->setPhone($paymentData['formData']['mopt_payone__payone_secured_installment_telephone']);
+        }
+
+        if (isset($paymentData['formData']['mopt_payone__payone_secured_directdebit_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__payone_secured_directdebit_telephone']);
         }
 
         Shopware()->Models()->persist($billing);
@@ -1379,6 +1399,10 @@ class Mopt_PayonePaymentHelper
 
         if ($this->isPayoneSecuredInstallments($paymentShortName)) {
             return 'payonesecuredinstallments';
+        }
+
+        if ($this->isPayoneSecuredDirectdebit($paymentShortName)) {
+            return 'payonesecureddirectdebit';
         }
 
         if ($this->isPayoneFinance($paymentShortName)) {
