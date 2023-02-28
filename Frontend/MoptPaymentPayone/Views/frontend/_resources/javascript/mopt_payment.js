@@ -99,20 +99,19 @@ function moptPaymentReady() {
             me.applyDataAttributes();
 
             me.$el.bind('keyup change', function (e) {
-                $('#moptiban--message').remove();
+                $('#moptbic--message').remove();
                 if (me.$el.val() && !me.opts.ibanbicReg.test(me.$el.val())) {
                     me.$el.addClass('has--error');
                     $('<div>', {
                         'html': '<p>' + me.opts.moptIbanErrorMessage + '</p>',
-                        'id': 'moptiban--message',
+                        'id': 'moptbic--message',
                         'class': me.opts.errorMessageClass
                     }).insertAfter(me.$el);
 
                 } else {
                     me.$el.removeClass('has--error');
-                    $('#moptiban--message').remove();
+                    $('#moptbic--message').remove();
                 }
-                ;
             });
         },
         destroy: function () {

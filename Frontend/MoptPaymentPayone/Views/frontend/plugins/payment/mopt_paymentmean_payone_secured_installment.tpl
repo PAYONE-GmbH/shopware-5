@@ -101,7 +101,7 @@
         {foreach from=$BSPayoneInstallmentPlan.plans key=index item=plan}
             <div>
                 <input id="bnplPlan_{$index}" type="radio"
-                       name="moptPaymentData[mopt_payone_payone_secured_installment_plan]"
+                       name="moptPaymentData[mopt_payone__payone_secured_installment_plan]"
                        value="{$plan.installmentOptionId}" onclick="fcpoSelectBNPLInstallmentPlan({$index})"
                        style="margin-bottom: 15px; margin-right:10px;"/>
                 {s name='bnplSecinstallmentPaymentIn'}Bezahlung in{/s}
