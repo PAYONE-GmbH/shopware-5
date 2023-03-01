@@ -15,7 +15,7 @@
             <option value="RABOBANK" {if $form_data.mopt_payone__ideal_bankgrouptype == 'RABOBANK'}selected="selected"{/if}>Rabobank</option>
             <option value="REVOLUT" {if $form_data.mopt_payone__ideal_bankgrouptype == 'REVOLUT'}selected="selected"{/if}>Revolut</option>
             <option value="SNS_BANK" {if $form_data.mopt_payone__ideal_bankgrouptype == 'SNS_BANK'}selected="selected"{/if}>SNS BANK</option>
-            <option value="SNS_REGIO_BANK" {if $form_data.mopt_payone__ideal_bankgrouptype == 'SNS_REGIO_BANK'}selected="selected"{/if}>SNS Regio Bank</option>
+            <option value="SNS_REGIO_BANK" {if $form_data.mopt_payone__ideal_bankgrouptype == 'SNS_REGIO_BANK'}selected="selected"{/if}>Regio Bank</option>
             <option value="TRIODOS_BANK" {if $form_data.mopt_payone__ideal_bankgrouptype == 'TRIODOS_BANK'}selected="selected"{/if}>Triodos Bank</option>
             <option value="VAN_LANSCHOT_BANKIERS" {if $form_data.mopt_payone__ideal_bankgrouptype == 'VAN_LANSCHOT_BANKIERS'}selected="selected"{/if}>van Lanschot Bank</option>
             <option value="YOURSAFE" {if $form_data.mopt_payone__ideal_bankgrouptype == 'YOURSAFE'}selected="selected"{/if}>Yoursafe B.V</option>
