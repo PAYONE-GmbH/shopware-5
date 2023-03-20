@@ -50,7 +50,7 @@ function moptPaymentReady() {
             var me = this;
             me._destroy();
         },
-        isValidIBANNumber: function(input) {
+        isValidIBANNumber: function (input) {
             var me = this;
             var CODE_LENGTHS = {
                 AD: 24, AE: 23, AT: 20, AZ: 28, BA: 20, BE: 16, BG: 22, BH: 22, BR: 29,
@@ -78,7 +78,7 @@ function moptPaymentReady() {
             // final check
             return me.mod97(digits);
         },
-        mod97: function(string) {
+        mod97: function (string) {
             var checksum = string.slice(0, 2), fragment;
             for (var offset = 2; offset < string.length; offset += 7) {
                 fragment = String(checksum) + string.substring(offset, offset + 7);
@@ -144,7 +144,6 @@ function moptPaymentReady() {
                     me.$el.removeClass('has--error');
                     $('#moptnumber--message').remove();
                 }
-                ;
             });
         },
         destroy: function () {
@@ -153,6 +152,53 @@ function moptPaymentReady() {
         }
     });
 
+    $.plugin('moptPayoneTelephoneValidator', {
+        defaults: {
+            numberReg: /^([+]|[0]{1,2})([0-9 ])+$/,
+            errorMessageClass: 'register--error-msg',
+            moptPhoneNumberErrorMessage: 'Die Telefonnummer darf nur Zahlen enthalten und muss mit + oder 0 beginnen',
+            moptPhoneNumberLengthErrorMessage: 'Die Telefonnummer muss zwischen 5 und 16 Zeichen lang sein',
+            moptPhoneNumberMinLength: 5,
+            moptPhoneNumberMaxLength: 16
+        },
+        init: function () {
+            var me = this;
+            me.applyDataAttributes();
+            console.log('KlarnaPhoneValidator init');
+
+            me.$el.bind('keyup change', function (e) {
+                me.applyDataAttributes();
+                console.log('geyup change');
+                console.log( me.$el.val());
+                console.log('Len:' + me.$el.val().length);
+                $('#moptphonenumber--message').remove();
+                if (me.$el.val() && !me.opts.numberReg.test(me.$el.val())) {
+                    me.$el.addClass('has--error');
+                    $('<div>', {
+                        'html': '<p>' + me.opts.moptPhoneNumberErrorMessage + '</p>',
+                        'id': 'moptphonenumber--message',
+                        'class': me.opts.errorMessageClass
+                    }).insertAfter(me.$el);
+                    console.log('Buchstaben');
+                } else if (me.$el.val().length < me.opts.moptPhoneNumberMinLength || me.$el.val().length > me.opts.moptPhoneNumberMaxLength) {
+                    me.$el.addClass('has--error');
+                    $('<div>', {
+                        'html': '<p>' + me.opts.moptPhoneNumberLengthErrorMessage + '</p>',
+                        'id': 'moptphonenumber--message',
+                        'class': me.opts.errorMessageClass
+                    }).insertAfter(me.$el);
+                    console.log('Länge');
+                } else {
+                    me.$el.removeClass('has--error');
+                    $('#moptphonenumber--message').remove();
+                }
+            });
+        },
+        destroy: function () {
+            var me = this;
+            me._destroy();
+        }
+    });
     $.plugin('moptPayoneBankcodeValidator', {
         defaults: {
             bankCodeReg: /^(?:\s*[0-9]\s*){8}$/,
@@ -177,7 +223,6 @@ function moptPaymentReady() {
                     me.$el.removeClass('has--error');
                     $('#moptbankcode--message').remove();
                 }
-                ;
             });
 
         },
@@ -211,7 +256,6 @@ function moptPaymentReady() {
                     me.$el.removeClass('has--error');
                     $('#moptcardholder--message').remove();
                 }
-                ;
             });
 
         },
@@ -236,7 +280,7 @@ function moptPaymentReady() {
                 if (typeof $('#mopt_payone_creditcard_form') !== "undefined") {
                     me.$el.bind('submit', function (e) {
 
-                        var checkboxStateChecked=$('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked");
+                        var checkboxStateChecked = $('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked");
                         if (checkboxStateChecked) {
                             $('#mopt_payone__cc_save_pseudocardnum_accept').val('1')
                         } else {
@@ -255,8 +299,7 @@ function moptPaymentReady() {
                                 $('#mopt_payone_creditcard_form').data('plugin_moptPayoneCreditcardCheck').destroy();
                             }
                             $('#mopt_payone_creditcard_form').moptPayoneCreditcardCheck();
-                        }
-                        else if ($('#payment_meanmopt_payone_creditcard').is(":checked")
+                        } else if ($('#payment_meanmopt_payone_creditcard').is(":checked")
                             && creditcardCheckType === '0'
                             && $('#mopt_payone__cc_hostediframesubmit').val() === '1'
                             && $('#mopt_payone__cc_truncatedcardpan_hidden').val().indexOf("XXXX") <= 0
@@ -269,10 +312,10 @@ function moptPaymentReady() {
                             return 'undefined';
                         } else if ($('#payment_meanmopt_payone_creditcard').is(":checked")) {
                             var data = {};
-                            if (creditcardCheckType === '0'){
-                                data.mopt_payone__cc_cardexpiredate = $('#mopt_payone__cc_cardexpireyear_hidden').val().substr(2,4) + $('#mopt_payone__cc_cardexpiremonth_hidden').val();
+                            if (creditcardCheckType === '0') {
+                                data.mopt_payone__cc_cardexpiredate = $('#mopt_payone__cc_cardexpireyear_hidden').val().substr(2, 4) + $('#mopt_payone__cc_cardexpiremonth_hidden').val();
                             } else {
-                                data.mopt_payone__cc_cardexpiredate = $('#mopt_payone__cc_Year').val().substr(2,4) + $('#mopt_payone__cc_month').val();
+                                data.mopt_payone__cc_cardexpiredate = $('#mopt_payone__cc_Year').val().substr(2, 4) + $('#mopt_payone__cc_month').val();
                             }
                             var success = expiryCheck(data);
                             if (success == true) {
@@ -281,7 +324,7 @@ function moptPaymentReady() {
                                 e.preventDefault();
                                 return false;
                             }
-                        };
+                        }
                     });
                 }
             }
@@ -368,7 +411,7 @@ function moptPaymentReady() {
             });
 
 
-            $('#mopt_payone__cc_truncatedcardpan').click(function() {
+            $('#mopt_payone__cc_truncatedcardpan').click(function () {
                 if ($('#mopt_payone__cc_truncatedcardpan').val().indexOf("XXXX") >= 0) {
                     $('#mopt_payone__cc_truncatedcardpan').val('');
                     $('#mopt_payone__cc_cvc').val('');
@@ -471,7 +514,7 @@ function moptPaymentReady() {
 
             var fcpolang = me.opts.moptPayoneParamsLanguage;
 
-            if (Payone.ClientApi.Language[fcpolang] === undefined){
+            if (Payone.ClientApi.Language[fcpolang] === undefined) {
                 console.log("language is not (yet) supported, falling back to english)");
                 fcpolang = 'en';
             }
@@ -760,11 +803,9 @@ function moptPaymentReady() {
 
                             if (type === '?') {
                                 PayoneAutoCcDetection.handleUnknownCardType();
-                            }
-                            else if (type === '-') {
+                            } else if (type === '-') {
                                 PayoneAutoCcDetection.handleUnsupportedCardType();
-                            }
-                            else {
+                            } else {
                                 PayoneAutoCcDetection.handleDetectedCardType(type);
                             }
 
@@ -850,7 +891,7 @@ function moptPaymentReady() {
             var cvc = $('#mopt_payone__cc_cvc').val();
 
             if (cvc !== 'undefined') {
-                switch($('#mopt_payone__cc_cardtype').val()) {
+                switch ($('#mopt_payone__cc_cardtype').val()) {
                     case 'A':
                         cvcLengthCheck = (cvc.length == 4);
                         break;
@@ -865,19 +906,18 @@ function moptPaymentReady() {
                 }
             }
 
-            if ( diff < 0 ) {
+            if (diff < 0) {
                 $('#mopt_payone__cc_cvc').val('');
                 processPayoneResponse(false);
-            } else if (! cvcLengthCheck) {
-                function Response(){
-                    this.get = function (egal){
+            } else if (!cvcLengthCheck) {
+                function Response() {
+                    this.get = function (egal) {
                         return 1079;
                     }
                 }
                 response = new Response();
                 processPayoneResponse(response);
-            }
-            else {
+            } else {
                 var data = {
                     request: 'creditcardcheck',
                     mode: me.opts.moptPayoneParamsMode,
@@ -979,7 +1019,6 @@ function moptPaymentReady() {
                 } else {
                     return true;
                 }
-                ;
             }
         });
     }
@@ -1011,14 +1050,18 @@ function moptPaymentReady() {
                     $msg.fadeOut(200, function () {
                         $msg.data('active', false);
                     });
-                }
-                else {
+                } else {
                     setTimeout(errorCheck, 200);
                 }
             };
             setTimeout(errorCheck, 200);
         }
-        document.getElementById('payone-general-iframe-error').scrollIntoView({behavior: "smooth", block: "end", inline: "center"});;
+        document.getElementById('payone-general-iframe-error').scrollIntoView({
+            behavior: "smooth",
+            block: "end",
+            inline: "center"
+        });
+        ;
     }
 
     $.subscribe("plugin/swShippingPayment/onInputChanged", function () {
@@ -1034,6 +1077,7 @@ function moptPaymentReady() {
     poBindDispatchChange();
     poBindCCSelectChange();
 
+    $('.moptPayoneTelephone').moptPayoneTelephoneValidator();
     $('.moptPayoneIban').moptPayoneIbanValidator();
     $('.moptPayoneBic').moptPayoneBicValidator();
     $('.moptPayoneNumber').moptPayoneNumberValidator();
@@ -1041,16 +1085,14 @@ function moptPaymentReady() {
     $('.moptPayoneCardholder').moptPayoneCardholderValidator();
     $('#shippingPaymentForm').moptPayoneSubmitPaymentForm();
     $('form[name="frmRegister"]').moptPayoneSubmitPaymentForm();
-
 }
 
 var jsloadMethod = document.querySelector('#jsLoadMethod').value;
 var isAsyncJsLoading = (jsloadMethod === 'async' || jsloadMethod === 'default');
 
 if (isAsyncJsLoading) {
-    $(document).ready(function(){
-        if (typeof document.asyncReady == "undefined")
-        {
+    $(document).ready(function () {
+        if (typeof document.asyncReady == "undefined") {
             moptPaymentReady();
         }
     });

@@ -1261,7 +1261,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         );
 
         if ($result->getStatus() === 'ERROR') {
-            echo json_encode([
+             echo json_encode([
                 'status' => $result->getStatus(),
                 'customerMessage' => Shopware()->Snippets()
                     ->getNamespace('frontend/MoptPaymentPayone/errorMessages')

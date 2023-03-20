@@ -41,6 +41,7 @@
             if($.isFunction($('select:not([data-no-fancy-select="true"])').selectboxReplacement)) {
                 $('select:not([data-no-fancy-select="true"])').selectboxReplacement();
             }
+            $('.moptPayoneTelephone').moptPayoneTelephoneValidator();
             $('.moptPayoneIban').moptPayoneIbanValidator();
             $('.moptPayoneNumber').moptPayoneNumberValidator();
             $('.moptPayoneBankcode').moptPayoneBankcodeValidator();

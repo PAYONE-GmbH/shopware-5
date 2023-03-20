@@ -291,7 +291,7 @@ class Payment implements SubscriberInterface
         $returnValues = $arguments->getReturn();
         $paymenthelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
         $paymentname = $paymenthelper->getPaymentNameFromId($returnValues['paymentID']);
-        if (!$paymenthelper->isPayoneCreditcard($paymentname)) {
+        if (!$paymenthelper->isPayoneCreditcard($paymentname) && !$paymenthelper->isPayoneKlarna($paymentname)) {
             return;
         }
 
