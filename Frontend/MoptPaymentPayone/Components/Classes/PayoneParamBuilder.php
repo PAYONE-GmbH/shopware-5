@@ -2002,11 +2002,9 @@ class Mopt_PayoneParamBuilder
         return $params;
     }
 
-    public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts, $paymentId)
+    public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts, $paymentId, $phoneNumber)
     {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $phoneNumber = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
-
         $paydata = $this->buildKlarnaPaydata($phoneNumber);
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
             array('key'  => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION)
@@ -2018,7 +2016,7 @@ class Mopt_PayoneParamBuilder
         $params['amount'] = $basket['AmountNumeric'] + $shippingCosts['brutto'];
         $params['paydata'] = $paydata;
         $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
-        $params['telephonenumber'] = Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber');
+        $params['telephonenumber'] = $phoneNumber;
         $params['title'] = $this->payonePaymentHelper->getKlarnaTitle($userData);
 
         return $params;

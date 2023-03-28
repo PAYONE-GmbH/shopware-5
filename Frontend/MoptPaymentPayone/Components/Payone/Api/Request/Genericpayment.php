@@ -99,6 +99,7 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
     protected $country = null;
     protected $api_version = null;
     protected $birthday = null;
+    protected $telephonenumber = null;
     protected $email = null;
     protected $ip = null;
     protected $language = null;
@@ -384,6 +385,16 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
     public function getBirthday()
     {
         return $this->birthday;
+    }
+
+    public function setTelephonenumber($telephonenumber)
+    {
+        $this->telephonenumber = $telephonenumber;
+    }
+
+    public function getTelephonenumber()
+    {
+        return $this->telephonenumber;
     }
     
     public function setEmail($email)

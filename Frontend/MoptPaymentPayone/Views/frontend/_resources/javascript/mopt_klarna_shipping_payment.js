@@ -14,7 +14,6 @@
     function reset() {
         if (!window.PayoneKlarna) {
             destroyPlugin();
-
             return;
         }
 
@@ -186,9 +185,29 @@
 
         inputChangeHandler: function () {
             var me = this;
+            me.applyDataAttributes();
+            console.log('InputChange Start');
+            if (me.data['shippingAddress-Phone']) {
+                me.shippingAddressPhone = me.generatePhoneNumber($('#mopt_payone__klarna_telephone').val());
+            } else {
+                me.billingAddressPhone = me.generatePhoneNumber($('#mopt_payone__klarna_telephone').val());
+            }
+            $('.moptPayoneTelephone').keyup();
+            if ($('#mopt_payone__klarna_telephone').hasClass('has--error')) {
+                var isPhonenumberValid = false;
+            } else {
+                var isPhonenumberValid = true;
+            }
+
+            if (! isPhonenumberValid) {
+                console.log('Phone is noit valid');
+                $('#mopt_payone__klarna_telephone_label').show();
+                $('#mopt_payone__klarna_telephone').show();
+                $('.moptPayoneTelephone').keyup();
+            }
             var afterUnloadKlarnaWidget = function () {
                 me.birthdate = me.generateBirthDate(me.data['customerDateOfBirth']);
-                me.billingAddressPhone = me.generatePhoneNumber(me.data['billingAddress-Phone'])
+                me.billingAddressPhone = me.generatePhoneNumber(me.data['billingAddress-Phone']);
                 me.personalId = me.generatePersonalId(me.data['customerNationalIdentificationNumber']);
                 if (me.data['klarnaGrouped'] == "1") {
                     me.paymentId = $('#mopt_payone__klarna_paymenttype option:selected').attr('mopt_payone__klarna_paymentid');
@@ -201,18 +220,13 @@
                     && me.birthdate
                     && me.personalId
                     && me.paymentId
-                    && ((String)(me.billingAddressPhone)).length >= 5
+                    && isPhonenumberValid
 
                 if (loadWidgetIsAllowed) {
-
                     $('#payone-klarna-error').hide();
 
                     // startKlarnaSessionCall is a PO call and needs no minus delimiter
                     var birthdate = me.birthdate.replace(/-/g, '');
-
-                    if (me.billingAddressPhone === 'notNeededByCountry') {
-                        me.billingAddressPhone = '';
-                    }
 
                     if (me.personalId === 'notNeededByCountry') {
                         me.personalId = '';
@@ -222,7 +236,6 @@
                         var response = $.parseJSON(jsonResponse);
 
                         if (response['status'] === 'ERROR') {
-                            $('#mopt_payone__klarna_agreement').prop('checked', false);
                             $('#payone-klarna-error-message').text(response['customerMessage']);
                             $('#payone-klarna-error').show();
                             $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
@@ -327,7 +340,7 @@
                     email: data['shippingAddress-Email'],
                     country: data['shippingAddress-Country'],
                     title: data['shippingAddress-Title'],
-                    phone: data['shippingAddress-Phone'] ? data['shippingAddress-Phone'] : me.billingAddressPhone
+                    phone: me.shippingAddressPhone ? me.shippingAddressPhone : me.billingAddressPhone
                 },
                 billing_address: {
                     street_address: data['billingAddress-StreetAddress'],
@@ -352,13 +365,16 @@
                 },
                 authorizeData,
                 function (res) {
-                    var url = data['storeAuthorizationToken-Url'];
+                    var url = data['storeAuthorizationToken-Url']
 
                     if (res['approved']) {
                         me.authorizeApproved = true;
 
                         if (res['authorization_token']) {
-                            var parameters = {'authorizationToken': res['authorization_token'], 'finalize_required': res['finalize_required']};
+                            var parameters = {
+                                'authorizationToken': res['authorization_token'],
+                                'finalize_required': res['finalize_required']
+                            };
 
                             // store authorization_token
                             $.ajax({method: "POST", url: url, data: parameters, async: false});
@@ -367,7 +383,6 @@
                         me.$el.submit();
 
                     } else {
-                        $('#mopt_payone__klarna_agreement').prop('checked', false);
                         $('#payone-klarna-error').show();
                         $(me.$el.get(0).elements).filter(':submit').each(function (_, element) {
                             element.disabled = false;

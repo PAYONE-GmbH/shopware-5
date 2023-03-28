@@ -1743,7 +1743,7 @@ class Mopt_PayonePaymentHelper
 
         $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
 
-        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts, $paymentId);
+        $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts, $paymentId, $phoneNumber);
         $request = new Payone_Api_Request_Genericpayment($params);
 
         $basket['sShippingcosts'] = $shippingCosts['brutto'];
@@ -1761,6 +1761,8 @@ class Mopt_PayonePaymentHelper
 
         $invoicing = $paramBuilder->getInvoicing($basket, $dispatch, $userData);
         $request->setInvoicing($invoicing);
+        $request->getPersonalData()->setTelephonenumber(Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber'));
+        $request->setTelephonenumber(Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber'));
 
         $result = null;
 

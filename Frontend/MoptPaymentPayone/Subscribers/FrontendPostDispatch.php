@@ -567,12 +567,22 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone__klarna_birthday'] = $birthday[2];
                 $data['mopt_payone__klarna_birthmonth'] = $birthday[1];
                 $data['mopt_payone__klarna_birthyear'] = $birthday[0];
-                $data['mopt_payone__klarna_telephone'] = $userData['billingaddress']['phone'];
+                $data['mopt_payone__klarna_telephone'] = $userData['shippingaddress']['phone'] ? $userData['shippingaddress']['phone'] :  $userData['billingaddress']['phone'];
                 $data['mopt_payone__klarna_personalId'] = $userData['additional']['user']['mopt_payone_klarna_personalid'];
             } elseif ($moptPayoneMain->getPaymentHelper()->isPayoneKlarna($paymentMean['name'])) {
                 $klarnaConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptKlarnaInformation'] = $moptPayoneMain->getPaymentHelper()
                     ->moptGetKlarnaAdditionalInformation($shopLanguage[1], $klarnaConfig['klarnaStoreId']);
+                if (is_null($userData['additional']['user']['birthday'])) {
+                    $birthday = '0000-00-00';
+
+                } else {
+                    $birthday = explode('-', $userData['additional']['user']['birthday']);
+                }
+                $data['mopt_payone__klarna_birthday'] = $birthday[2];
+                $data['mopt_payone__klarna_birthmonth'] = $birthday[1];
+                $data['mopt_payone__klarna_birthyear'] = $birthday[0];
+                $data['mopt_payone__klarna_telephone'] = $userData['shippingaddress']['phone'] ? $userData['shippingaddress']['phone'] :  $userData['billingaddress']['phone'];
                 $data['mopt_payone_klarna_financingtype'] = $paymentHelper->getKlarnaFinancingtypeByName($paymentMean['name']);
                 $data['mopt_payone__klarna_paymentname'] = $paymentMean['name'];
                 $data['mopt_payone_klarna_paymentid'] = $paymentMean['id'];
