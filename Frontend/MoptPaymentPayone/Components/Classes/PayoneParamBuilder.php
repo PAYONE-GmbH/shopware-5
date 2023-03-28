@@ -488,8 +488,24 @@ class Mopt_PayoneParamBuilder
             }
         }
 
-        $params['gender'] = ($billingAddress['salutation'] === 'mr') ? 'm' : 'f';
-        $params['salutation'] = ($billingAddress['salutation'] === 'mr') ? 'Herr' : 'Frau';
+        switch ($billingAddress['salutation']) {
+            case 'mr' :
+                $params['gender'] = 'm';
+                $params['salutation'] = 'Herr';
+                break;
+            case 'ms' :
+                $params['gender'] = 'f';
+                $params['salutation'] = 'Frau';
+                break;
+            default:
+                // @see https://docs.payone.com/display/public/PLATFORM/gender+-+definition
+                // diverse is currently not supported
+                // $params['gender'] = 'd';
+                // $params['salutation'] = 'Hallo';
+                $params['gender'] = 'm';
+                $params['salutation'] = 'Herr';
+        }
+
         if (!is_null($userData['additional']['user']['birthday']) && $userData['additional']['user']['birthday'] !== '0000-00-00') {
             $params['birthday'] = str_replace('-', '', $userData['additional']['user']['birthday']); //YYYYMMDD
         }

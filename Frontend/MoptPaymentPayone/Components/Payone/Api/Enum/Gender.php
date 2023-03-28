@@ -34,4 +34,5 @@ class Payone_Api_Enum_Gender
 {
     const FEMALE = 'f';
     const MALE = 'm';
+    const DIVERS = 'd';
 }
