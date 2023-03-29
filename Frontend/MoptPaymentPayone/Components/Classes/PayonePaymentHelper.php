@@ -709,7 +709,8 @@ class Mopt_PayonePaymentHelper
      * @param $paymentName
      * @return bool
      */
-    public function isPayoneRatePay($paymentName) {
+    public function isPayoneRatePay($paymentName)
+    {
         $matchPosition = strpos($paymentName, 'mopt_payone__fin_ratepay');
         $return = ($matchPosition !== false) ? true : false;
 
@@ -909,8 +910,7 @@ class Mopt_PayonePaymentHelper
     {
         $sql = 'SELECT subshopID '
             . 'FROM s_core_paymentmeans_subshops '
-            . 'WHERE s_core_paymentmeans_subshops.paymentID = ?;'
-        ;
+            . 'WHERE s_core_paymentmeans_subshops.paymentID = ?;';
         $assignedShops = Shopware()->Db()->fetchAll($sql, $paymentId);
 
         // paymentID was not found = no restrictions
@@ -927,7 +927,7 @@ class Mopt_PayonePaymentHelper
 
     public function getCountryIdFromIso($countryIso)
     {
-        /** @var  $entityManager \Shopware\Components\Model\ModelManager*/
+        /** @var  $entityManager \Shopware\Components\Model\ModelManager */
         $entityManager = Shopware()->Container()->get('models');
         $country = $entityManager->getRepository('Shopware\Models\Country\Country')->findOneBy(array('iso' => $countryIso));
         return $country;
@@ -939,7 +939,7 @@ class Mopt_PayonePaymentHelper
      */
     public function getCountryFromId($id)
     {
-        /** @var  $entityManager \Shopware\Components\Model\ModelManager*/
+        /** @var  $entityManager \Shopware\Components\Model\ModelManager */
         $entityManager = Shopware()->Container()->get('models');
         $country = $entityManager->getRepository('Shopware\Models\Country\Country')->findOneBy(array('id' => $id));
         return $country;
@@ -1458,7 +1458,7 @@ class Mopt_PayonePaymentHelper
     {
         $firstHit = 'not_set';
         $creditCardData = array();
-        $shortCodes = array (
+        $shortCodes = array(
             'mopt_payone__cc_visa' => 'v',
             'mopt_payone__cc_mastercard' => 'm',
             'mopt_payone__cc_american_express' => 'a',
@@ -1484,7 +1484,7 @@ class Mopt_PayonePaymentHelper
                 $defaultDescription = '<div class="payone_additionalDescriptions" id="default_additionalDescription" style="display:block">' . $config['creditcardDefaultDescription'] . '</div>';
                 $creditCardData[] = $creditCard;
                 $creditCardDescriptions['default'] = $defaultDescription;
-                $creditCardDescriptions[$creditCard['name']] = '<div class="payone_additionalDescriptions" id="' . $shortCodes[$creditCard['name']]  . '_additionalDescription" style="display:none">' . $paymentmean['additionaldescription'] . '</div>';
+                $creditCardDescriptions[$creditCard['name']] = '<div class="payone_additionalDescriptions" id="' . $shortCodes[$creditCard['name']] . '_additionalDescription" style="display:none">' . $paymentmean['additionaldescription'] . '</div>';
 
                 if ($firstHit != $key) {
                     unset($paymentMeans[$key]);
@@ -1502,7 +1502,7 @@ class Mopt_PayonePaymentHelper
         $paymentMeans[$firstHit]['name'] = 'mopt_payone_creditcard';
         $paymentMeans[$firstHit]['description'] = $snippetObject->get('PaymentMethodCreditCard', 'Kreditkarte', true);
         $paymentMeans[$firstHit]['mopt_payone_credit_cards'] = $creditCardData;
-        $paymentMeans[$firstHit]['additionaldescription'] = implode('',$creditCardDescriptions);
+        $paymentMeans[$firstHit]['additionaldescription'] = implode('', $creditCardDescriptions);
 
         return $paymentMeans;
     }
@@ -1530,8 +1530,8 @@ class Mopt_PayonePaymentHelper
      * group payment methods to single payment method
      *
      * @param callable $paymentCheckCallback callback, to check a payment, whether it belongs to a defined group of payments
-     * @param array    $paymentMeans
-     * @param array    $paymentGroupData an array with an id, a name, a description and a key
+     * @param array $paymentMeans
+     * @param array $paymentGroupData an array with an id, a name, a description and a key
      *
      * @return array
      */
@@ -1565,7 +1565,7 @@ class Mopt_PayonePaymentHelper
         if ($firstHit === 'not_set') {
             return $paymentMeans;
         }
-        if (! $moreThanOnePayments) {
+        if (!$moreThanOnePayments) {
             return $paymentMeans;
         }
 
@@ -1622,7 +1622,7 @@ class Mopt_PayonePaymentHelper
             ->getQuery()
             ->getResult();
 
-        foreach ($result AS $payment) {
+        foreach ($result as $payment) {
             if ($this->isPaymentAssignedToSubshop($payment->getId(), $shopID)) {
                 return $payment;
             }
@@ -1640,7 +1640,7 @@ class Mopt_PayonePaymentHelper
             return false;
         } else {
             return true;
-	    }
+        }
     }
 
     /**
@@ -1687,9 +1687,9 @@ class Mopt_PayonePaymentHelper
      * @param null $context
      * @return false|string
      */
-    public function assembleTokenizedUrl($router, $userParams, $context = null) {
-        if(version_compare(Shopware()->Config()->get('version'), '5.6.3', '>='))
-        {
+    public function assembleTokenizedUrl($router, $userParams, $context = null)
+    {
+        if (version_compare(Shopware()->Config()->get('version'), '5.6.3', '>=')) {
             /** @noinspection PhpFullyQualifiedNameUsageInspection */
             $token = Shopware()->Container()->get(\Shopware\Components\Cart\PaymentTokenService::class)->generate();
             /** @noinspection PhpFullyQualifiedNameUsageInspection */
@@ -1702,8 +1702,9 @@ class Mopt_PayonePaymentHelper
         return $router->assemble($userParams, $context);
     }
 
-    function array_splice_assoc(&$input, $offset, $length, $replacement = array()) {
-        $replacement = (array) $replacement;
+    function array_splice_assoc(&$input, $offset, $length, $replacement = array())
+    {
+        $replacement = (array)$replacement;
         $key_indices = array_flip(array_keys($input));
         if (isset($input[$offset]) && is_string($offset)) {
             $offset = $key_indices[$offset];
@@ -1774,31 +1775,43 @@ class Mopt_PayonePaymentHelper
         return $result;
     }
 
-    public function getKlarnaGender($userData) {
-        $salutation = $userData['additional']['user']['salutation'];
+    public function getKlarnaGender($userData)
+    {
+        switch ($userData['additional']['user']['salutation']) {
+            case 'mr' :
+                $gender = 'male';
+                break;
+            case 'ms' :
+                $gender = 'female';
+                break;
+            default:
+                // klarna does not support 'divers'
+                $gender = 'male';
+        }
 
-        return $salutation === 'mr' ? 'male' : 'female';
+        return $gender;
     }
 
-    public function getKlarnaTitle($userData) {
+    public function getKlarnaTitle($userData)
+    {
         $countryIso2 = $userData['additional']['country']['countryiso'];
         $salutation = $userData['additional']['user']['salutation'];
         switch ($countryIso2) {
             case 'AT':
             case 'DE':
             case 'CH':
-                $title = ($salutation === 'mr') ? 'Herr' : 'Frau';
+                $title = ($salutation !== 'ms') ? 'Herr' : 'Frau';
                 break;
             case 'GB':
             case 'US':
-                $title = ($salutation === 'mr') ? 'Mr' : 'Ms';
+                $title = ($salutation !== 'ms') ? 'Mr' : 'Ms';
                 break;
             case 'DK':
             case 'FI':
             case 'SE':
             case 'NL':
             case 'NO':
-                $title = ($salutation === 'mr') ? 'Dhr.' : 'Mevr.';
+                $title = ($salutation !== 'ms') ? 'Dhr.' : 'Mevr.';
                 break;
             default:
                 $title = '';
@@ -1959,7 +1972,7 @@ class Mopt_PayonePaymentHelper
                 if (strpos($payment['name'], $exludedPayment) !== false) {
                     unset($payments[$index]);
                 }
-                if (strpos($payment['name'], 'mopt_payone__ewallet_applepay') !== false && $session->get('moptAllowApplePay', false) !== true ) {
+                if (strpos($payment['name'], 'mopt_payone__ewallet_applepay') !== false && $session->get('moptAllowApplePay', false) !== true) {
                     unset($payments[$index]);
                 }
             }
