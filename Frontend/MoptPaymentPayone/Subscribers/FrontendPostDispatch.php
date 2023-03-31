@@ -340,6 +340,9 @@ class FrontendPostDispatch implements SubscriberInterface
                 $config = $moptPayoneMain->getPayoneConfig($paymentId);
                 if ($config['allowDifferentAddresses'] === false && $userData['billingaddress']['id'] !== $userData['shippingaddress']['id']) {
                     Shopware()->Session()->offsetSet('checkoutShippingAddressId',  $userData['billingaddress']['id']);
+                    Shopware()->Session()->sOrderVariables->sUserData['shippingaddress'] = Shopware()->Session()->sOrderVariables->sUserData['billingaddress'];
+                    $orderVariables = Shopware()->Session()->sOrderVariables;
+                    $userData = $orderVariables['sUserData'];
                     $view->assign('activeShippingAddressId', $userData['billingaddress']['id']);
                     $view->assign('moptOverlayShippingNotice', true);
                 }
