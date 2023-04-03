@@ -56,7 +56,7 @@ class Mopt_PayoneInstallHelper
     const DEFAULT_TRANSACTION_STATE_UNDERPAID = 11; // Teilweise bezahlt;
     const DEFAULT_TRANSACTION_STATE_CANCELATION = 35; // Vorgang wurde abgebrochen;
     const DEFAULT_TRANSACTION_STATE_REFUND = 20; // Wiedergutschrift;
-    const DEFAULT_TRANSACTION_STATE_DEBIT = 12; // Komplett bezahlt
+    const DEFAULT_TRANSACTION_STATE_DEBIT = 20; // Wiedergutschrift;
 
     /**
      * @var array
