@@ -50,6 +50,14 @@ class Mopt_PayoneInstallHelper
     const TYPE_SINGLE_SELECTION = 'single_selection';
     const TYPE_MULTI_SELECTION = 'multi_selection';
 
+    const DEFAULT_TRANSACTION_STATE_APPOINTED = 10; // Komplett in Rechnung gestellt
+    const DEFAULT_TRANSACTION_STATE_CAPTURE = 33; // Die Zahlung wurde angewiesen
+    const DEFAULT_TRANSACTION_STATE_PAID = 12; // Komplett bezahlt;
+    const DEFAULT_TRANSACTION_STATE_UNDERPAID = 11; // Teilweise bezahlt;
+    const DEFAULT_TRANSACTION_STATE_CANCELATION = 35; // Vorgang wurde abgebrochen;
+    const DEFAULT_TRANSACTION_STATE_REFUND = 20; // Wiedergutschrift;
+    const DEFAULT_TRANSACTION_STATE_DEBIT = 20; // Wiedergutschrift;
+
     /**
      * @var array
      */
@@ -957,7 +965,7 @@ class Mopt_PayoneInstallHelper
 
         if ($result->rowCount() === 0) {
             $sql = "INSERT INTO `s_plugin_mopt_payone_config` (`payment_id`, `merchant_id`, `portal_id`, `subaccount_id`, `api_key`, `live_mode`, `authorisation_method`, `submit_basket`, `adresscheck_active`, `adresscheck_live_mode`, `adresscheck_billing_adress`, `adresscheck_shipping_adress`, `adresscheck_automatic_correction`, `adresscheck_failure_handling`, `adresscheck_min_basket`, `adresscheck_max_basket`, `adresscheck_lifetime`, `adresscheck_failure_message`, `map_person_check`, `map_know_pre_lastname`, `map_know_lastname`, `map_not_known_pre_lastname`, `map_multi_name_to_adress`, `map_undeliverable`, `map_person_dead`, `map_wrong_adress`, `map_address_check_not_possible`, `map_address_okay_building_unknown`, `map_person_moved_address_unknown`, `map_unknown_return_value`, `consumerscore_active`, `consumerscore_live_mode`, `consumerscore_check_moment`, `consumerscore_check_mode_b2c`, `consumerscore_check_mode_b2b`,`consumerscore_default`, `consumerscore_lifetime`, `consumerscore_min_basket`, `consumerscore_max_basket`, `consumerscore_failure_handling`, `consumerscore_note_message`, `consumerscore_note_active`, `consumerscore_agreement_message`, `consumerscore_agreement_active`, `consumerscore_abtest_value`, `consumerscore_abtest_active`, `payment_specific_data`, `state_appointed`, `state_capture`, `state_paid`, `state_underpaid`, `state_cancelation`, `state_refund`, `state_debit`, `state_reminder`, `state_vauthorization`, `state_vsettlement`, `state_transfer`, `state_invoice`, `state_failed`,  `check_cc`, `check_account`, `trans_appointed`, `trans_capture`, `trans_paid`, `trans_underpaid`, `trans_cancelation`, `trans_refund`, `trans_debit`, `trans_reminder`, `trans_vauthorization`, `trans_vsettlement`, `trans_transfer`, `trans_invoice`, `trans_failed` , `trans_timeout` , `trans_timeout_raise` , `trans_max_trials` ) VALUES
-      (0, 0, 0, 0, '0', 0, 'Vorautorisierung', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'Es ist ein Fehler aufgetreten', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'IH','NONE', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 'N;', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121,  1, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '', :timeout, :timeout_raise, :max_trials);
+      (0, 0, 0, 0, '0', 0, 'Vorautorisierung', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'Es ist ein Fehler aufgetreten', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'IH','NONE', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 'N;'," . self::DEFAULT_TRANSACTION_STATE_APPOINTED . ", " . self::DEFAULT_TRANSACTION_STATE_CAPTURE . ", " . self::DEFAULT_TRANSACTION_STATE_PAID . ", " . self::DEFAULT_TRANSACTION_STATE_UNDERPAID . ", " . self::DEFAULT_TRANSACTION_STATE_CANCELATION . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", 0, 0, 0, 0, 0, 121,  1, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '', :timeout, :timeout_raise, :max_trials);
       ";
             Shopware()->Db()->query($sql, [
                 ':timeout' => Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'],
