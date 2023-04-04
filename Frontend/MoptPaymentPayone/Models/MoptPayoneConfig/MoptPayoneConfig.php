@@ -507,7 +507,7 @@ class MoptPayoneConfig extends ModelEntity
     private $payolutionCompanyName;
 
     /**
-     * @ORM\Column(name="payolution_b2bmode", type="boolean", nullable=true, unique=false)
+     * @ORM\Column(name="payolution_b2bmode", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 1})
      */
     private $payolutionB2bmode;
 
