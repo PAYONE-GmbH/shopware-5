@@ -1425,6 +1425,14 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         if ($options['allowDifferentAddresses'] == "true") {
             $data->setAllowDifferentAddresses(1);
         }
+        if ($options['paypalExpressUseDefaultShipping'] == "false") {
+            $data->setPaypalExpressUseDefaultShipping(0);
+        }
+        if ($options['paypalExpressUseDefaultShipping'] == "true") {
+            $data->setPaypalExpressUseDefaultShipping(1);
+        }
+
+
 
 
         Shopware()->Models()->flush($data);

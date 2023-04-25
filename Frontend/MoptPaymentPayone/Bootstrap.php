@@ -806,6 +806,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // add new config field creditcard_description_grouped
         $this->getInstallHelper()->checkAndAddCreditcardDefaultDescription();
 
+        $this->getInstallHelper()->checkAndAddPaypalExpressUseDefaultShipping();
+
         // Do not add/remove columns to s_plugin_mopt_payone_config, after PPE migration
 
         /** @var Payment $payment */
@@ -827,6 +829,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Add shop to paypal express config
         $this->getInstallHelper()->checkAndUpdateAmazonPayShopModelExtension();
+
+        $this->getInstallHelper()->checkAndAddPaypalExpressUseDefaultShipping();
 
     }
 

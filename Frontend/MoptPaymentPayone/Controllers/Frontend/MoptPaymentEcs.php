@@ -35,6 +35,14 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $session = Shopware()->Session();
         $paymentId = $session->moptPaypayEcsPaymentId;
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
+        $test = Shopware()->Modules()->Basket()->sGetBasketData();
+        $test2 = Shopware()->Modules()->Basket();
+        $persister = $this->get('basket_persister');
+        $data = $persister->load($this->Request()->getParam('signature'));
+        $view = Shopware()->Template();
+
+        $test = $this->View()->getAssign('sShippingcostsWithTax');
+        $test = $this->getBasket();
 
         $userData = $this->payoneUserHelper->getUserData();
         $amount = $this->payoneUserHelper->getBasketAmount($userData);
