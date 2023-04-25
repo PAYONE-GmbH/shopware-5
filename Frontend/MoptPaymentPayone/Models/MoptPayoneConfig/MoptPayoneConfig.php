@@ -6,7 +6,6 @@
 
 namespace Shopware\CustomModels\MoptPayoneConfig;
 
-use Shopware\Components\Form\Field\Boolean;
 use Shopware\Components\Model\ModelEntity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -655,21 +654,6 @@ class MoptPayoneConfig extends ModelEntity
      *  @ORM\Column(name="paypal_express_use_default_shipping", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
      */
     private $paypalExpressUseDefaultShipping;
-
-    /**
-     * @param $value
-     * @return void
-     */
-    public function setPaypalExpressUseDefaultShipping($value) {
-        $this->paypalExpressUseDefaultShipping = $value;
-    }
-
-    /**
-     * @return Boolean|Null
-     */
-    public function getPaypalExpressUseDefaultShipping() {
-        return $this->paypalExpressUseDefaultShipping;
-    }
 
     /**
      * @return mixed
@@ -2611,4 +2595,13 @@ class MoptPayoneConfig extends ModelEntity
     {
         $this->creditcardDefaultDescription = $creditcardDefaultDescription;
     }
+
+    public function setPaypalExpressUseDefaultShipping($value) {
+        $this->paypalExpressUseDefaultShipping = $value;
+    }
+
+    public function getPaypalExpressUseDefaultShipping() {
+        return $this->paypalExpressUseDefaultShipping;
+    }
+
 }
