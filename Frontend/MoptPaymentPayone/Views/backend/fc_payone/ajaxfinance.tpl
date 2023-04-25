@@ -16,7 +16,7 @@
     <div class="col-md-12">
         <h3>{s name="global-form/fieldset2"}Einstellungen für Finanzierungs-basierte Zahlarten{/s}</h3>
         <div>
-            Stellen Sie hier die Konfiguration zu den Zahlarten Klarna, Payolution und Ratepay ein.
+            Stellen Sie hier die Konfiguration zu den Zahlarten Klarna, Unzer und Ratepay ein.
         </div>
         <div class="row">
             <div class="col-md-12">
@@ -124,7 +124,7 @@
                     </div>
                 </div>
                 <div id="payolutionCompanyName" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <label for="payolutionCompanyName" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionCompanyName"}Payolution Firmenname{/s}</label>
+                    <label for="payolutionCompanyName" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionCompanyName"}Unzer Firmenname{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionCompanyName" name="payolutionCompanyName" aria-describedby="payolutionCompanyName-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -133,7 +133,7 @@
                     </div>
                 </div> 
                 <div id="payolutionB2bmode" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <label for="payolutionB2bmode" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionB2bmode"}Payolution B2B Mode {/s}</label>
+                    <label for="payolutionB2bmode" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionB2bmode"}Unzer B2B Mode {/s}</label>
                     <div class="col-md-6">
                         <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionB2bmode" name="payolutionB2bmode" aria-describedby="payolutionB2bmode-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -142,7 +142,7 @@
                     </div>
                 </div>   
                 <div id="payolutionDraftUser" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <label for="payolutionDraftUser" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionDraftUser"}Payolution HTTP-Benutzername{/s}</label>
+                    <label for="payolutionDraftUser" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionDraftUser"}Unzer HTTP-Benutzername{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftUser" name="payolutionDraftUser" aria-describedby="payolutionDraftUser-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -151,7 +151,7 @@
                     </div>
                 </div>    
                 <div id="payolutionDraftPassword" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
-                    <label for="payolutionDraftPassword" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionDraftPassword"}Payolution HTTP-Passwort{/s}</label>
+                    <label for="payolutionDraftPassword" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionDraftPassword"}Unzer HTTP-Passwort{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftPassword" name="payolutionDraftPassword" aria-describedby="payolutionDraftPassword-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>

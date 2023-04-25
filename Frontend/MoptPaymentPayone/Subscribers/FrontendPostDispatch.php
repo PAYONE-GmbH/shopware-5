@@ -592,7 +592,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
 
 
-            //prepare additional Payolution information and retrieve birthday from user data
+            //prepare additional Unzer information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name'])
             ) {
                 $data['payolutionConfigDebitnote'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
@@ -619,7 +619,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
             }
 
-            //prepare additional Payolution information and retrieve birthday from user data
+            //prepare additional Unzer information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name'])
             ) {
                 $data['payolutionConfigInvoice'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
@@ -646,7 +646,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
             }
 
-            //prepare additional Payolution information and retrieve birthday from user data
+            //prepare additional Unzer information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionInstallment($paymentMean['name'])
             ) {
                 $data['payolutionConfigInstallment'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
