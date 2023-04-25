@@ -133,6 +133,11 @@ class Mopt_PayoneConfig
         // 'mopt_payone__ewallet_applepay', applepay is handled seperately
     ];
 
+    const B2BPAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE = [
+        'mopt_payone__fin_payolution_debitnote',
+        'mopt_payone__fin_payolution_installment',
+    ];
+
     const PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED = [
         'mopt_payone__fin_payone_secured_invoice',
         'mopt_payone__fin_payone_secured_installment',

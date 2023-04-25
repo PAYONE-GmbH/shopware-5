@@ -2000,4 +2000,26 @@ class Mopt_PayonePaymentHelper
 
         return $payments;
     }
+
+    /**
+     * remove unzer b2b payments from
+     * payment list when user is a company
+     *
+     * @param $payments array
+     * @param $session
+     * @return array
+     */
+    public function filterUnzerPayments($payments)
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        foreach ($payments as $index => $payment) {
+            foreach (Mopt_PayoneConfig::B2BPAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE as $exludedPayment) {
+                if ((strpos($payment['name'], $exludedPayment) !== false) && !empty($userData['billingaddress']['company'])) {
+                    unset($payments[$index]);
+                }
+            }
+        }
+
+        return $payments;
+    }
 }

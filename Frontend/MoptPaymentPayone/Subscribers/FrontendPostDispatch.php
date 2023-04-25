@@ -429,7 +429,9 @@ class FrontendPostDispatch implements SubscriberInterface
 
             }
             // remove other express payments
-            $view->assign('sPayments', $moptPaymentHelper->filterExpressPayments($payments, $session));
+            $payments = $moptPaymentHelper->filterExpressPayments($payments, $session);
+            $payments = $moptPaymentHelper->filterUnzerPayments($payments);
+            $view->assign('sPayments', $payments);
 
         }
 
@@ -445,6 +447,7 @@ class FrontendPostDispatch implements SubscriberInterface
             // remove express and installment payments from payment List
             $payments = $view->getAssign('sPaymentMeans');
             $filteredPayments = $moptPaymentHelper->filterPaymentsInAccount($payments);
+            $filteredPayments = $moptPaymentHelper->filterUnzerPayments($filteredPayments);
             $view->assign('sPaymentMeans', $filteredPayments);
             // fallback if current payment is now exluded from payment list to make sure a payment is selected
             if (!array_key_exists($view->sUserData['additional']['user']['paymentID'], $filteredPayments)) {
