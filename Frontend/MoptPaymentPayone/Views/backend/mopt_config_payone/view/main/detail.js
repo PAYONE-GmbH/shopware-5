@@ -1324,8 +1324,8 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name="fieldlabel/paypalExpressUseDefaultShipping"}Standard Versandkostne verwenden{/s}',
-                helpText: '{s name="fieldlabelhelp/paypalExpressUseDefaultShipping"}Standard Versandkostne verwenden{/s}',
+                fieldLabel: '{s name="fieldlabel/paypalExpressUseDefaultShipping"}Vorläufigen Versandkosten beo Paypal Express übergeben{/s}',
+                helpText: '{s name="fieldlabelhelp/paypalExpressUseDefaultShipping"}Wenn aktiviert, werden die vorläufigen Versandkosten mit an Paypal Express übergeben{/s}',
                 name: 'paypalExpressUseDefaultShipping',
                 store: me.data.yesno,
                 queryMode: 'local',

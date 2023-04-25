@@ -523,7 +523,6 @@ class Mopt_PayoneUserHelper
      */
     public function getBasketAmount($userData)
     {
-        $test = $this->
         $basket = $this->moptPayone__main->sGetBasket();
 
         if (empty($userData['additional']['charge_vat'])) {

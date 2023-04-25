@@ -35,19 +35,27 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $session = Shopware()->Session();
         $paymentId = $session->moptPaypayEcsPaymentId;
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
-        $test = Shopware()->Modules()->Basket()->sGetBasketData();
-        $test2 = Shopware()->Modules()->Basket();
-        $persister = $this->get('basket_persister');
-        $data = $persister->load($this->Request()->getParam('signature'));
-        $view = Shopware()->Template();
-
-        $test = $this->View()->getAssign('sShippingcostsWithTax');
-        $test = $this->getBasket();
-
         $userData = $this->payoneUserHelper->getUserData();
-        $amount = $this->payoneUserHelper->getBasketAmount($userData);
+        // Determinate tax automatically
+        $taxAutoMode = Shopware()->Config()->get('sTAXAUTOMODE');
+        $paymentConfig = $this->moptPayone__main->getPayoneConfig($paymentId);
 
-        $expressCheckoutRequestData = $paramBuilder->buildPayPalExpressCheckout(
+        if (!empty($taxAutoMode)) {
+            $discount_tax = Shopware()->Modules()->Basket()->getMaxTax() / 100;
+        } else {
+            $discount_tax = Shopware()->Config()->get('sDISCOUNTTAX');
+            $discount_tax = empty($discount_tax) ? 0 : (float) str_replace(',', '.', $discount_tax) / 100;
+        }
+        $shippingCosts = $userData['additional']['show_net'] === true ? $this->request->getParam('shipping') : $this->request->getParam('shipping') * (1 + $discount_tax) ;
+        // save to session for later use in PaypalExpressAction
+        $session->moptPaypalExpressShipping = $shippingCosts;
+
+        if ($paymentConfig['paypalExpressUseDefaultShipping']) {
+            $amount = $this->payoneUserHelper->getBasketAmount($userData) + $shippingCosts;
+        } else {
+            $amount = $this->payoneUserHelper->getBasketAmount($userData);
+        }
+            $expressCheckoutRequestData = $paramBuilder->buildPayPalExpressCheckout(
             $paymentId,
             $this->Front()->Router(),
             $amount,
@@ -94,9 +102,15 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $session = Shopware()->Session();
         $paymentId = (int)$session->moptPaypayEcsPaymentId;
         $paramBuilder = $this->moptPayone__main->getParamBuilder();
-
+        $shippingCosts = $session->moptPaypalExpressShipping;
         $userData = $this->payoneUserHelper->getUserData();
-        $amount = $this->payoneUserHelper->getBasketAmount($userData);
+        $paymentConfig = $this->moptPayone__main->getPayoneConfig($paymentId);
+
+        if ($paymentConfig['paypalExpressUseDefaultShipping']) {
+            $amount = $this->payoneUserHelper->getBasketAmount($userData) + $shippingCosts;
+        } else {
+            $amount = $this->payoneUserHelper->getBasketAmount($userData);
+        }
 
         $expressCheckoutRequestData = $paramBuilder->buildPayPalExpressCheckoutDetails(
             $paymentId,
