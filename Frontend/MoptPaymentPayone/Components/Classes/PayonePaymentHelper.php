@@ -1541,6 +1541,7 @@ class Mopt_PayonePaymentHelper
         $moreThanOnePayments = false;
         $payments = array();
 
+        $paymentMeans = $this->filterB2bPayments($paymentMeans);
         foreach ($paymentMeans as $key => $paymentmean) {
             if ($paymentCheckCallback($paymentmean['name'])) {
                 if ($firstHit === 'not_set') {
@@ -2009,7 +2010,7 @@ class Mopt_PayonePaymentHelper
      * @param $session
      * @return array
      */
-    public function filterUnzerPayments($payments)
+    public function filterB2bPayments($payments)
     {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         foreach ($payments as $index => $payment) {
