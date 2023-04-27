@@ -67,7 +67,6 @@ function moptPaymentReady() {
                 code = iban.match(/^([A-Z]{2})(\d{2})([A-Z\d]+)$/), // match and capture (1) the country code, (2) the check digits, and (3) the rest
                 digits;
             // check syntax and length
-            console.log('code:' + code);
             if (!code || iban.length !== CODE_LENGTHS[code[1]]) {
                 return false;
             }
@@ -164,35 +163,32 @@ function moptPaymentReady() {
         init: function () {
             var me = this;
             me.applyDataAttributes();
-            console.log('KlarnaPhoneValidator init');
-
             me.$el.bind('keyup change', function (e) {
                 me.applyDataAttributes();
-                console.log('geyup change');
-                console.log( me.$el.val());
-                console.log('Len:' + me.$el.val().length);
                 $('#moptphonenumber--message').remove();
                 if (me.$el.val() && !me.opts.numberReg.test(me.$el.val())) {
+                    me.$el.show();
                     me.$el.addClass('has--error');
                     $('<div>', {
                         'html': '<p>' + me.opts.moptPhoneNumberErrorMessage + '</p>',
                         'id': 'moptphonenumber--message',
                         'class': me.opts.errorMessageClass
                     }).insertAfter(me.$el);
-                    console.log('Buchstaben');
                 } else if (me.$el.val().length < me.opts.moptPhoneNumberMinLength || me.$el.val().length > me.opts.moptPhoneNumberMaxLength) {
+                    me.$el.show();
                     me.$el.addClass('has--error');
+                    $('#mopt_payone__cc_show_saved_hint').show();
                     $('<div>', {
                         'html': '<p>' + me.opts.moptPhoneNumberLengthErrorMessage + '</p>',
                         'id': 'moptphonenumber--message',
                         'class': me.opts.errorMessageClass
                     }).insertAfter(me.$el);
-                    console.log('Länge');
                 } else {
                     me.$el.removeClass('has--error');
                     $('#moptphonenumber--message').remove();
                 }
             });
+            me.$el.keyup();
         },
         destroy: function () {
             var me = this;
