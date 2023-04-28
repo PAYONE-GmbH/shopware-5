@@ -66,16 +66,6 @@ class Payone_Api_Service_Verification_Consumerscore extends Payone_Api_Service_A
         try {
             $this->validateRequest($request);
             $requestParams = $request->toArray();
-            // for some SCHUFA Testcases because company is mandatory in Sw Regitration
-            if ($requestParams['company'] === 'keine') {
-                unset($requestParams['company']);
-            }
-            if ($requestParams['firstname'] === 'keiner') {
-                unset($requestParams['firstname']);
-            }
-            if ($requestParams['lastname'] === 'keiner') {
-                unset($requestParams['lastname']);
-            }
             $responseRaw = $this->getAdapter()->request($requestParams);
             $response = $this->getMapperResponse()->map($responseRaw);
             $this->protocol($request, $response);

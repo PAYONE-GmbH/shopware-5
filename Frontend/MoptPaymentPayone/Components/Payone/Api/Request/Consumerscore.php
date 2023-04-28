@@ -95,7 +95,6 @@ class Payone_Api_Request_Consumerscore extends Payone_Api_Request_Abstract
      */
     protected $language = null;
     /**
-     * used by SCHUFA
      * @var string
      */
     protected $businessrelation = null;
