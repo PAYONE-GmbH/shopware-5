@@ -185,7 +185,6 @@
         inputChangeHandler: function () {
             var me = this;
             me.applyDataAttributes();
-            console.log('InputChange Start');
             if (me.data['shippingAddress-Phone']) {
                 me.shippingAddressPhone = me.generatePhoneNumber($('#mopt_payone__klarna_telephone').val());
             } else {

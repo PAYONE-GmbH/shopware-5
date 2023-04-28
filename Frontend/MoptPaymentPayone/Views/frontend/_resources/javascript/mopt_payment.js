@@ -183,11 +183,16 @@ function moptPaymentReady() {
                         'id': 'moptphonenumber--message',
                         'class': me.opts.errorMessageClass
                     }).insertAfter(me.$el);
+                } else if (!me.$el.val()) {
+                    me.$el.show();
+                    me.$el.addClass('has--error');
+
                 } else {
                     me.$el.removeClass('has--error');
                     $('#moptphonenumber--message').remove();
                 }
             });
+            me.$el.keyup();
         },
         destroy: function () {
             var me = this;
