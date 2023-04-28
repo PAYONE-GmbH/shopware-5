@@ -188,7 +188,6 @@ function moptPaymentReady() {
                     $('#moptphonenumber--message').remove();
                 }
             });
-            me.$el.keyup();
         },
         destroy: function () {
             var me = this;

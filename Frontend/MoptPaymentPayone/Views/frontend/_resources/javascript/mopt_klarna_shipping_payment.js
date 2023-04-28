@@ -4,9 +4,8 @@
     var pluginRegistered = false;
     var widgetLoaded = false;
 
+    $('#mopt_payone__klarna_telephone').keyup();
     reset();
-
-    // update on ajax changes
     $.subscribe('plugin/swShippingPayment/onInputChanged', function () {
         reset();
     });
@@ -52,10 +51,10 @@
 
         init: function () {
             var me = this;
+            me.registerEventListeners();
             if (typeof me.data === 'undefined') {
                 return;
             }
-            me.registerEventListeners();
 
             // load the klarna widget when payment is preselected
             var checkedRadioId = $('input[name=payment]:checked', '#shippingPaymentForm').attr('id')
@@ -193,14 +192,13 @@
                 me.billingAddressPhone = me.generatePhoneNumber($('#mopt_payone__klarna_telephone').val());
             }
             $('.moptPayoneTelephone').keyup();
-            if ($('#mopt_payone__klarna_telephone').hasClass('has--error')) {
+            if ($('#mopt_payone__klarna_telephone').hasClass('has--error') || ! $('#mopt_payone__klarna_telephone').val()) {
                 var isPhonenumberValid = false;
             } else {
                 var isPhonenumberValid = true;
             }
 
             if (! isPhonenumberValid) {
-                console.log('Phone is noit valid');
                 $('#mopt_payone__klarna_telephone_label').show();
                 $('#mopt_payone__klarna_telephone').show();
                 $('.moptPayoneTelephone').keyup();
@@ -393,3 +391,4 @@
         }
     });
 })(jQuery, window);
+$('#shippingPaymentForm').payoneKlarnaShippingPayment();
