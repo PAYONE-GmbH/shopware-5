@@ -126,7 +126,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'applepayDebug', type: 'boolean'},
     { name: 'allowDifferentAddresses', type: 'boolean'},
     { name: 'creditcardDefaultDescription', type: 'string'},
-    { name: 'paypalExpressdUseDefaultShipping', type: 'boolean'},
+    { name: 'paypalExpressUseDefaultShipping', type: 'boolean'},
   ],
   /**
    * Validation
