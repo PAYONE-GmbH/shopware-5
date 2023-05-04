@@ -199,7 +199,7 @@ Ext.define('Shopware.apps.Order.view.detail.MoptPayoneOverview',
   },
   
   /**
-   * Creates the XTemplate for the PAYONE Payolution information panel
+   * Creates the XTemplate for the PAYONE Unzer information panel
    *
    * @return [Ext.XTemplate] generated Ext.XTemplate
    */

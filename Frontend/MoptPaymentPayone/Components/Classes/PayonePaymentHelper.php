@@ -1541,6 +1541,7 @@ class Mopt_PayonePaymentHelper
         $moreThanOnePayments = false;
         $payments = array();
 
+        $paymentMeans = $this->filterB2bPayments($paymentMeans);
         foreach ($paymentMeans as $key => $paymentmean) {
             if ($paymentCheckCallback($paymentmean['name'])) {
                 if ($firstHit === 'not_set') {
@@ -1993,6 +1994,28 @@ class Mopt_PayonePaymentHelper
         foreach ($payments as $index => $payment) {
             foreach (Mopt_PayoneConfig::PAYMENTS_EXCLUDED_FROM_ACCOUNTPAGE as $exludedPayment) {
                 if (strpos($payment['name'], $exludedPayment) !== false) {
+                    unset($payments[$index]);
+                }
+            }
+        }
+
+        return $payments;
+    }
+
+    /**
+     * remove unzer b2b payments from
+     * payment list when user is a company
+     *
+     * @param $payments array
+     * @param $session
+     * @return array
+     */
+    public function filterB2bPayments($payments)
+    {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        foreach ($payments as $index => $payment) {
+            foreach (Mopt_PayoneConfig::B2BPAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE as $exludedPayment) {
+                if ((strpos($payment['name'], $exludedPayment) !== false) && !empty($userData['billingaddress']['company'])) {
                     unset($payments[$index]);
                 }
             }

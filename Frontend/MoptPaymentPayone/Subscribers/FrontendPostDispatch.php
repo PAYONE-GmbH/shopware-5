@@ -414,22 +414,11 @@ class FrontendPostDispatch implements SubscriberInterface
                     $klarnaIndex = $index;
                     unset ($payments[$klarnaIndex]);
                 }
-
-                // remove payone secured paymentmeans for b2b customers, declined customers, and check max and min basket values
-                if (($payment['name'] === 'mopt_payone__fin_payone_secured_invoice' || $payment['name'] === 'mopt_payone__fin_payone_secured_installment' || $payment['name'] === 'mopt_payone__fin_payone_secured_directdebit')
-                ) {
-                    $userData = Shopware()->Modules()->Admin()->sGetUserData();
-                    if (!empty($userData['billingaddress']['company']) ||
-                        $session->offsetGet('payoneSecuredDeclined') == true
-                    ) {
-                        $securedPaymentIndex = $index;
-                        unset ($payments[$securedPaymentIndex]);
-                    }
-                }
-
             }
             // remove other express payments
-            $view->assign('sPayments', $moptPaymentHelper->filterExpressPayments($payments, $session));
+            $payments = $moptPaymentHelper->filterExpressPayments($payments, $session);
+            $payments = $moptPaymentHelper->filterB2bPayments($payments);
+            $view->assign('sPayments', $payments);
 
         }
 
@@ -445,6 +434,7 @@ class FrontendPostDispatch implements SubscriberInterface
             // remove express and installment payments from payment List
             $payments = $view->getAssign('sPaymentMeans');
             $filteredPayments = $moptPaymentHelper->filterPaymentsInAccount($payments);
+            $filteredPayments = $moptPaymentHelper->filterB2bPayments($filteredPayments);
             $view->assign('sPaymentMeans', $filteredPayments);
             // fallback if current payment is now exluded from payment list to make sure a payment is selected
             if (!array_key_exists($view->sUserData['additional']['user']['paymentID'], $filteredPayments)) {
@@ -592,7 +582,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
 
 
-            //prepare additional Payolution information and retrieve birthday from user data
+            //prepare additional Unzer information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionDebitNote($paymentMean['name'])
             ) {
                 $data['payolutionConfigDebitnote'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
@@ -619,7 +609,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
             }
 
-            //prepare additional Payolution information and retrieve birthday from user data
+            //prepare additional Unzer information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionInvoice($paymentMean['name'])
             ) {
                 $data['payolutionConfigInvoice'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
@@ -646,7 +636,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
             }
 
-            //prepare additional Payolution information and retrieve birthday from user data
+            //prepare additional Unzer information and retrieve birthday from user data
             if ($moptPayoneMain->getPaymentHelper()->isPayonePayolutionInstallment($paymentMean['name'])
             ) {
                 $data['payolutionConfigInstallment'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);

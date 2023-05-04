@@ -604,7 +604,7 @@ class Mopt_PayoneParamBuilder
 
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
-        if ($paymentData['mopt_payone__payolution_b2bmode']) {
+        if ($paymentData['mopt_payone__payolution_invoice_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
             ));
@@ -648,7 +648,7 @@ class Mopt_PayoneParamBuilder
 
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
-        if ($paymentData['mopt_payone__payolution_b2bmode']) {
+        if ($paymentData['mopt_payone__payolution_debitnote_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
             ));
@@ -689,7 +689,7 @@ class Mopt_PayoneParamBuilder
 
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
-        if ($paymentData['mopt_payone__payolution_b2bmode']) {
+        if ($paymentData['mopt_payone__payolution_installment_b2bmode']) {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'b2b', 'data' => 'yes')
             ));
