@@ -95,7 +95,6 @@
                     <label for="consumerscoreCheckModeB2B" class="text-left col-md-3 control-label">{s name="consumerscoreCheckModeB2B/active"}Prüfungsart B2B{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckModeB2B" name="consumerscoreCheckModeB2B" aria-describedby="consumerscoreCheckModeB2B-status" >
-                            <option value="SFS">Schufa</option>
                             <option value="NO">keine Prüfung</option>
                         </select>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>

@@ -911,16 +911,8 @@ class AddressCheck implements SubscriberInterface
         $userId = Shopware()->Session()->sUserId;
         $isCompany = $moptPayoneMain->getHelper()->isCompany($userId);
         if ($isCompany) {
-            $request->setAddresschecktype(
-                ($config['consumerscoreCheckModeB2B'] === \Payone_Api_Enum_ConsumerscoreType::SCHUFA_SFS) ?
-                    \Payone_Api_Enum_AddressCheckType::SCHUFA :
-                    \Payone_Api_Enum_AddressCheckType::NONE
-            );
-            $request->setBusinessRelation(
-                ($config['consumerscoreCheckModeB2B'] === \Payone_Api_Enum_ConsumerscoreType::SCHUFA_SFS) ?
-                    \Payone_Api_Enum_BusinessrelationType::B2B :
-                    null
-            );
+            $request->setAddresschecktype(\Payone_Api_Enum_AddressCheckType::NONE);
+            $request->setBusinessRelation(null);
             $request->setConsumerscoretype($config['consumerscoreCheckModeB2B']);
         } else {
             $request->setAddresschecktype(
@@ -928,14 +920,6 @@ class AddressCheck implements SubscriberInterface
                     \Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON :
                     \Payone_Api_Enum_AddressCheckType::NONE
             );
-
-            // for future use
-            /* $request->setBusinessRelation(
-                ($config['consumerscoreCheckModeB2B'] === \Payone_Api_Enum_ConsumerscoreType::SCHUFA_SFS) ?
-                    \Payone_Api_Enum_BusinessrelationType::B2C :
-                    null
-            );
-            */
             $request->setConsumerscoretype($config['consumerscoreCheckModeB2C']);
         }
 

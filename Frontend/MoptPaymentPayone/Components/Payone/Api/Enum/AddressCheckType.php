@@ -37,5 +37,4 @@ class Payone_Api_Enum_AddressCheckType
     const PERSON = 'PE';
     const BONIVERSUM_BASIC = 'BB';
     const BONIVERSUM_PERSON = 'PB';
-    const SCHUFA = 'BS';
 }
