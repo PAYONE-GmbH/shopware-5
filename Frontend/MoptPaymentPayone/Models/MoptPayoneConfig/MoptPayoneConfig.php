@@ -650,6 +650,10 @@ class MoptPayoneConfig extends ModelEntity
      */
     private $creditcardDefaultDescription;
 
+    /**
+     *  @ORM\Column(name="paypal_express_use_default_shipping", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
+     */
+    private $paypalExpressUseDefaultShipping;
 
     /**
      * @return mixed
@@ -2591,4 +2595,13 @@ class MoptPayoneConfig extends ModelEntity
     {
         $this->creditcardDefaultDescription = $creditcardDefaultDescription;
     }
+
+    public function setPaypalExpressUseDefaultShipping($value) {
+        $this->paypalExpressUseDefaultShipping = $value;
+    }
+
+    public function getPaypalExpressUseDefaultShipping() {
+        return $this->paypalExpressUseDefaultShipping;
+    }
+
 }

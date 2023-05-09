@@ -4,7 +4,7 @@
     {$smarty.block.parent}
     {if $sBasket.content && $moptPaypalShortcutImgURL}
         <div class="button--container">
-            <a href="{url controller='moptPaymentEcs' action='initPayment'}">
+            <a href="{url controller='moptPaymentEcs' action='initPayment' shipping=$sShippingcosts}">
                 <img src="{$moptPaypalShortcutImgURL}" />
             </a>
         </div>

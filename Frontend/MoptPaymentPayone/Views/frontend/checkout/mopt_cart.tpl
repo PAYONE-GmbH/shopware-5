@@ -4,7 +4,7 @@
     {$smarty.block.parent}
     {if !$sMinimumSurcharge && !$sDispatchNoOrder}
         <div class="button--container right">
-        <a href="{url controller='moptPaymentEcs' action='initPayment'}">
+        <a href="{url controller='moptPaymentEcs' action='initPayment' shipping=$sShippingcosts}}">
             <img src="{$moptPaypalShortcutImgURL}" />
         </a>
         </div>
@@ -17,7 +17,7 @@
     {$smarty.block.parent}
     {if !$sMinimumSurcharge && !$sDispatchNoOrder}
         <div class="button--container right">
-            <a href="{url controller='moptPaymentEcs' action='initPayment'}">
+            <a href="{url controller='moptPaymentEcs' action='initPayment' shipping=$sShippingcosts}">
                 <img src="{$moptPaypalShortcutImgURL}" />
             </a>
         </div>
