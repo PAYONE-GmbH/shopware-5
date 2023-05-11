@@ -134,7 +134,6 @@ class AddressCheck implements SubscriberInterface
             $shippingAddressData = $user['shippingaddress'];
             $shippingAddressData['country'] = $billingAddressData['countryId'];
             $basketAmount = $basket['AmountNumeric'];
-            $isPayonePaypal = $moptPayoneMain->getPaymentHelper()->isPayonePaypal($paymentName);
             // remove _1 ,_2 ... from duplicated payments before matching
             $cleanedPaymentName = preg_replace('/_[0-9]*$/', '', $paymentName);
 
@@ -144,7 +143,7 @@ class AddressCheck implements SubscriberInterface
             }
 
             $userObject = $userId ? Shopware()->Models()
-                ->getRepository(Shopware\Models\Customer\Customer::class)
+                ->getRepository(\Shopware\Models\Customer\Customer::class)
                 ->find($userId) : null;
 
             if (!$userObject) {
