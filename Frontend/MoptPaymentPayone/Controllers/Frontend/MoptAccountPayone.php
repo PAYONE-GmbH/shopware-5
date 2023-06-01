@@ -7,6 +7,9 @@ use Shopware\Components\CSRFWhitelistAware;
  */
 class Shopware_Controllers_Frontend_MoptAccountPayone extends Shopware_Controllers_Frontend_Account implements CSRFWhitelistAware
 {
+    public function __construct()
+    {
+    }
 
     /**
      * Pre dispatch method

@@ -143,7 +143,7 @@ class AddressCheck implements SubscriberInterface
             }
 
             $userObject = $userId ? Shopware()->Models()
-                ->getRepository(\Shopware\Models\Customer\Customer::class)
+                ->getRepository(Customer::class)
                 ->find($userId) : null;
 
             if (!$userObject) {
