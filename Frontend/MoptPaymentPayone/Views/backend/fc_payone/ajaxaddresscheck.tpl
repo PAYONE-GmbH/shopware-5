@@ -144,7 +144,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    
-                    <label for="adresscheckMinBasket" class="text-left col-md-3 control-label">{s name="fieldlabel/maxBasket"}Maximaler Warenwert{/s}</label>
+                    <label for="adresscheckMinBasket" class="text-left col-md-3 control-label">{s name="fieldlabel/minBasket"}Minimaler Warenwert{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="255" id="adresscheckMinBasket" name="adresscheckMinBasket" aria-describedby="adresscheckMinBasket-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
