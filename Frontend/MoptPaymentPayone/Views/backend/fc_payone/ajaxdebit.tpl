@@ -38,7 +38,7 @@
 
                     <label for="description" class="text-left col-md-3 control-label">{s name="formpanel_description_label"}Bezeichnung{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="description" name="description" aria-describedby="description-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="description" name="description" aria-describedby="description-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="description-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -48,7 +48,7 @@
 
                     <label for="additionalDescription" class="text-left col-md-3 control-label">{s name="formpanel_additional-description_label"}Zusätzliche Beschreibung{/s}</label>
                     <div class="col-md-6">
-                        <textarea rows="3" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="additionalDescription" name="additionalDescription" aria-describedby="additionalDescription-status" >
+                        <textarea rows="3" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="additionalDescription" name="additionalDescription" aria-describedby="additionalDescription-status" >
                         </textarea>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="additionalDescription-status" class="sr-only">(success)</span>
@@ -89,7 +89,7 @@
 
                     <label for="active" class="text-left col-md-3 control-label">{s name="formpanel_active_label"}Aktiv{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="active" name="active" aria-describedby="active-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="active" name="active" aria-describedby="active-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="active-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -99,7 +99,7 @@
 
                     <label for="esdActive" class="text-left col-md-3 control-label">{s name="formpanel_esdActive_label"}Aktiv für ESD-Produkte{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="esdActive" name="esdActive" aria-describedby="esdActive-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="esdActive" name="esdActive" aria-describedby="esdActive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="esdActive-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -109,7 +109,7 @@
 
                     <label for="mobileInactive" class="text-left col-md-3 control-label">{s name="formpanel_mobileInactive_label"}Inaktiv für Smartphone{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mobileInactive" name="mobileInactive" aria-describedby="mobileInactive-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mobileInactive" name="mobileInactive" aria-describedby="mobileInactive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="mobileInactive-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -119,7 +119,7 @@
 
                     <label for="showAccountnumber" class="text-left col-md-3 control-label">{s name="fieldlabel/showAccountnumber"}Zusätzlich Kontonummer/Bankleitzahl anzeigen?{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="showAccountnumber" name="showAccountnumber" aria-describedby="showAccountnumber-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="showAccountnumber" name="showAccountnumber" aria-describedby="showAccountnumber-status" >
                             <option value="true">Ja</option>
                             <option value="false">Nein</option>
                         </select>                        
@@ -132,7 +132,7 @@
 
                     <label for="showBic" class="text-left col-md-3 control-label">{s name="fieldlabel/showBic"}Zusätzlich zur IBAN auch BIC abfragen?{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="showBic" name="showBic" aria-describedby="showBic-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="showBic" name="showBic" aria-describedby="showBic-status" >
                             <option value="true">Ja</option>
                             <option value="false">Nein</option>
                         </select>                        
@@ -145,7 +145,7 @@
 
                     <label for="mandateActive" class="text-left col-md-3 control-label">{s name="fieldlabel/mandateActive"}Mandatserteilung aktivieren?{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mandateActive" name="mandateActive" aria-describedby="mandateActive-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mandateActive" name="mandateActive" aria-describedby="mandateActive-status" >
                             <option value="true">Ja</option>
                             <option value="false">Nein</option>
                         </select>                            
@@ -158,7 +158,7 @@
 
                     <label for="mandateDownloadEnabled" class="text-left col-md-3 control-label">{s name="fieldlabel/mandateDownloadEnabled"}Download Mandat als PDF?{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mandateDownloadEnabled" name="mandateDownloadEnabled" aria-describedby="mandateDownloadEnabled-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mandateDownloadEnabled" name="mandateDownloadEnabled" aria-describedby="mandateDownloadEnabled-status" >
                             <option value="true">Ja</option>
                             <option value="false">Nein</option>
                         </select>  

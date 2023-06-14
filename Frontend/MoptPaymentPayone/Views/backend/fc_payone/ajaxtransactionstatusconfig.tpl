@@ -39,7 +39,7 @@
                    
                     <label for="transAppointed" class="text-left col-md-3 control-label">{s name="forwarding/status/appointed"}Appointed{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transAppointed" name="transAppointed" aria-describedby="transAppointed-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transAppointed" name="transAppointed" aria-describedby="transAppointed-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transAppointed-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -49,7 +49,7 @@
                    
                     <label for="transCapture" class="text-left col-md-3 control-label">{s name="forwarding/status/capture"}Capture{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transCapture" name="transCapture" aria-describedby="transCapture-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transCapture" name="transCapture" aria-describedby="transCapture-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transCapture-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -59,7 +59,7 @@
                    
                     <label for="transPaid" class="text-left col-md-3 control-label">{s name="forwarding/status/paid"}Paid{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transPaid" name="transPaid" aria-describedby="transPaid-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transPaid" name="transPaid" aria-describedby="transPaid-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transPaid-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -69,7 +69,7 @@
                    
                     <label for="transUnderpaid" class="text-left col-md-3 control-label">{s name="forwarding/status/underpaid"}Underpaid{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transUnderpaid" name="transUnderpaid" aria-describedby="transUnderpaid-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transUnderpaid" name="transUnderpaid" aria-describedby="transUnderpaid-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transUnderpaid-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -79,7 +79,7 @@
                    
                     <label for="transCancelation" class="text-left col-md-3 control-label">{s name="forwarding/status/cancelation"}Cancelation{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transCancelation" name="transCancelation" aria-describedby="transCancelation-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transCancelation" name="transCancelation" aria-describedby="transCancelation-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transCancelation-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -89,7 +89,7 @@
                    
                     <label for="transRefund" class="text-left col-md-3 control-label">{s name="forwarding/status/refund"}Refund{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transRefund" name="transRefund" aria-describedby="transRefund-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transRefund" name="transRefund" aria-describedby="transRefund-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transRefund-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -99,7 +99,7 @@
                    
                     <label for="transDebit" class="text-left col-md-3 control-label">{s name="forwarding/status/debit"}Debit{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transDebit" name="transDebit" aria-describedby="transDebit-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transDebit" name="transDebit" aria-describedby="transDebit-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transDebit-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -109,7 +109,7 @@
                    
                     <label for="transReminder" class="text-left col-md-3 control-label">{s name="forwarding/status/reminder"}Reminder{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transReminder" name="transReminder" aria-describedby="transReminder-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transReminder" name="transReminder" aria-describedby="transReminder-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transReminder-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -119,7 +119,7 @@
                    
                     <label for="transVauthorization" class="text-left col-md-3 control-label">{s name="forwarding/status/VAutorisierung"}VAutorisierung{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transVauthorization" name="transVauthorization" aria-describedby="transVauthorization-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transVauthorization" name="transVauthorization" aria-describedby="transVauthorization-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transVauthorization-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -129,7 +129,7 @@
                    
                     <label for="transVsettlement" class="text-left col-md-3 control-label">{s name="forwarding/status/VSettlement"}VSettlement{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transVsettlement" name="transVsettlement" aria-describedby="transVsettlement-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transVsettlement" name="transVsettlement" aria-describedby="transVsettlement-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transVsettlement-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -139,7 +139,7 @@
                    
                     <label for="transTransfer" class="text-left col-md-3 control-label">{s name="forwarding/status/transfer"}Transfer{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transTransfer" name="transTransfer" aria-describedby="transTransfer-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transTransfer" name="transTransfer" aria-describedby="transTransfer-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transTransfer-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -149,7 +149,7 @@
                    
                     <label for="transInvoice" class="text-left col-md-3 control-label">{s name="forwarding/status/invoice"}Invoice{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transInvoice" name="transInvoice" aria-describedby="transInvoice-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transInvoice" name="transInvoice" aria-describedby="transInvoice-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transAppointed-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -159,7 +159,7 @@
 
                     <label for="transFailed" class="text-left col-md-3 control-label">{s name="forwarding/status/failed"}Failed{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transFailed" name="transFailed" aria-describedby="transFailed-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="transFailed" name="transFailed" aria-describedby="transFailed-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="transFailed-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>

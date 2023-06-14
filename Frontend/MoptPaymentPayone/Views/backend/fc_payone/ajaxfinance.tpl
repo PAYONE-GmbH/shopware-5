@@ -38,7 +38,7 @@
 
                     <label for="description" class="text-left col-md-3 control-label">{s name="formpanel_description_label"}Bezeichnung{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="description" name="description" aria-describedby="description-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="description" name="description" aria-describedby="description-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="description-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -48,7 +48,7 @@
 
                     <label for="additionalDescription" class="text-left col-md-3 control-label">{s name="formpanel_additional-description_label"}Zusätzliche Beschreibung{/s}</label>
                     <div class="col-md-6">
-                        <textarea type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="additionalDescription" name="additionalDescription" aria-describedby="additionalDescription-status" >
+                        <textarea type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="additionalDescription" name="additionalDescription" aria-describedby="additionalDescription-status" >
                         </textarea>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="additionalDescription-status" class="sr-only">(success)</span>
@@ -89,7 +89,7 @@
 
                     <label for="active" class="text-left col-md-3 control-label">{s name="formpanel_active_label"}Aktiv{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="active" name="active" aria-describedby="active-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="active" name="active" aria-describedby="active-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="active-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -99,7 +99,7 @@
 
                     <label for="esdActive" class="text-left col-md-3 control-label">{s name="formpanel_esdActive_label"}Aktiv für ESD-Produkte{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="esdActive" name="esdActive" aria-describedby="esdActive-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="esdActive" name="esdActive" aria-describedby="esdActive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="esdActive-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -108,7 +108,7 @@
                 <div class="form-group has-feedback has-error menu-level-experte">
                     <label for="mobileInactive" class="text-left col-md-3 control-label">{s name="formpanel_mobileInactive_label"}Inaktiv für Smartphone{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mobileInactive" name="mobileInactive" aria-describedby="mobileInactive-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mobileInactive" name="mobileInactive" aria-describedby="mobileInactive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="mobileInactive-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -117,7 +117,7 @@
                 <div id="klarnastoreid" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
                     <label for="klarnaStoreId" class="text-left col-md-3 control-label">{s name="fieldlabel/klarnaStoreId"}Klarna Store-ID{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="klarnaStoreId" name="klarnaStoreId" aria-describedby="klarnaStoreId-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="klarnaStoreId" name="klarnaStoreId" aria-describedby="klarnaStoreId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="klarnaStoreId-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -126,7 +126,7 @@
                 <div id="payolutionCompanyName" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
                     <label for="payolutionCompanyName" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionCompanyName"}Unzer Firmenname{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionCompanyName" name="payolutionCompanyName" aria-describedby="payolutionCompanyName-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionCompanyName" name="payolutionCompanyName" aria-describedby="payolutionCompanyName-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="payolutionCompanyName-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -135,7 +135,7 @@
                 <div id="payolutionB2bmode" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
                     <label for="payolutionB2bmode" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionB2bmode"}Unzer B2B Mode {/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionB2bmode" name="payolutionB2bmode" aria-describedby="payolutionB2bmode-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionB2bmode" name="payolutionB2bmode" aria-describedby="payolutionB2bmode-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="payolutionB2bmode-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -144,7 +144,7 @@
                 <div id="payolutionDraftUser" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
                     <label for="payolutionDraftUser" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionDraftUser"}Unzer HTTP-Benutzername{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftUser" name="payolutionDraftUser" aria-describedby="payolutionDraftUser-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftUser" name="payolutionDraftUser" aria-describedby="payolutionDraftUser-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="payolutionDraftUser-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -153,7 +153,7 @@
                 <div id="payolutionDraftPassword" class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
                     <label for="payolutionDraftPassword" class="text-left col-md-3 control-label">{s name="fieldlabel/payolutionDraftPassword"}Unzer HTTP-Passwort{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftPassword" name="payolutionDraftPassword" aria-describedby="payolutionDraftPassword-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*\/ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="payolutionDraftPassword" name="payolutionDraftPassword" aria-describedby="payolutionDraftPassword-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="payolutionDraftPassword-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
