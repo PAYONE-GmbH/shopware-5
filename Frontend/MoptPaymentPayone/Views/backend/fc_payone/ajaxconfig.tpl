@@ -55,7 +55,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Schlüssel des zu verwendenden Zahlungsportal">
                     <label for="apiKey" class="text-left col-md-3 control-label">{s name="fieldlabel/apiKey"}Schlüssel{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="40" id="apiKey" name="apiKey" aria-describedby="apiKey-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="40" id="apiKey" name="apiKey" aria-describedby="apiKey-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="apiKey-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>

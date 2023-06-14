@@ -39,7 +39,7 @@
                    
                     <label for="consumerscoreActive" class="text-left col-md-3 control-label">{s name="fieldlabel/active"}Aktiv{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreActive" name="consumerscoreActive" aria-describedby="consumerscoreActive-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreActive" name="consumerscoreActive" aria-describedby="consumerscoreActive-status" >
                             <option value="true">Ja</option>
                             <option value="false">Nein</option>
                         </select>
@@ -52,7 +52,7 @@
                    
                     <label for="consumerscoreLiveMode" class="text-left col-md-3 control-label">{s name="fieldlabel/mode"}Betriebsmodus{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreLiveMode" name="consumerscoreLiveMode" aria-describedby="consumerscoreLiveMode-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreLiveMode" name="consumerscoreLiveMode" aria-describedby="consumerscoreLiveMode-status" >
                             <option value="true">Live</option>
                             <option value="false">Test</option>
                         </select>
@@ -65,7 +65,7 @@
                    
                     <label for="consumerscoreCheckMoment" class="text-left col-md-3 control-label">{s name="fieldlabel/consumerscoreCheckMoment"}Zeitpunkt der Prüfung{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckMoment" name="consumerscoreCheckMoment" aria-describedby="consumerscoreCheckMoment-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckMoment" name="consumerscoreCheckMoment" aria-describedby="consumerscoreCheckMoment-status" >
                         <option value="0">Vor der Zahlartenauswahl</option>
                         <option value="1">Nach der Zahlartenauswahl</option>
                         </select>
@@ -78,7 +78,7 @@
                    
                     <label for="consumerscoreCheckModeB2C" class="text-left col-md-3 control-label">{s name="consumerscoreCheckModeB2C/active"}Prüfungsart B2C{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckModeB2C" name="consumerscoreCheckModeB2C" aria-describedby="consumerscoreCheckModeB2C-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckModeB2C" name="consumerscoreCheckModeB2C" aria-describedby="consumerscoreCheckModeB2C-status" >
                         <option value="IH">Infoscore (harte Kriterien)</option>
                         <option value="IA">Infoscore (alle Merkmale)</option>
                         <option value="IB">Infoscore (alle Merkmale + Boniscore)</option>
@@ -94,7 +94,7 @@
 
                     <label for="consumerscoreCheckModeB2B" class="text-left col-md-3 control-label">{s name="consumerscoreCheckModeB2B/active"}Prüfungsart B2B{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckModeB2B" name="consumerscoreCheckModeB2B" aria-describedby="consumerscoreCheckModeB2B-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreCheckModeB2B" name="consumerscoreCheckModeB2B" aria-describedby="consumerscoreCheckModeB2B-status" >
                             <option value="NO">keine Prüfung</option>
                         </select>
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
@@ -106,7 +106,7 @@
                    
                     <label for="consumerscoreDefault" class="text-left col-md-3 control-label">{s name="fieldlabel/consumerscoreDefault"}Standardwert für Neukunden{/s}</label>
                     <div class="col-md-6">
-                        <select type="" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreDefault" name="consumerscoreDefault" aria-describedby="consumerscoreDefault-status" >
+                        <select type="" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreDefault" name="consumerscoreDefault" aria-describedby="consumerscoreDefault-status" >
                         <option value="0">Rot</option>
                         <option value="1">Gelb</option>
                         <option value="2">Grün</option>
@@ -120,7 +120,7 @@
 
                     <label for="consumerscoreBoniversumUnknown" class="text-left col-md-3 control-label">{s name="fieldlabel/consumerscoreBoniversumUnknown"}Boniversum unbekannt{/s}</label>
                     <div class="col-md-6">
-                        <select type="" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreDefault" name="consumerscoreBoniversumUnknown" aria-describedby="consumerscoreBoniversumUnknown-status" >
+                        <select type="" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreDefault" name="consumerscoreBoniversumUnknown" aria-describedby="consumerscoreBoniversumUnknown-status" >
                             <option value="0">Rot</option>
                             <option value="1">Gelb</option>
                             <option value="2">Grün</option>
@@ -164,7 +164,7 @@
                    
                     <label for="consumerscoreFailureHandling" class="text-left col-md-3 control-label">{s name="fieldlabel/failureHandling"}Fehlverhalten{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreFailureHandling" name="consumerscoreFailureHandling" aria-describedby="consumerscoreFailureHandling-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreFailureHandling" name="consumerscoreFailureHandling" aria-describedby="consumerscoreFailureHandling-status" >
                         <option value="0">Vorgang abbrechen</option>
                         <option value="1">fortfahren</option>
                         </select>
@@ -177,7 +177,7 @@
                    
                     <label for="consumerscoreNoteActive" class="text-left col-md-3 control-label">{s name="fieldlabel/consumerscoreNote"}Hinweistext{/s} {s name="fieldlabel/active"}Aktiv{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreNoteActive" name="consumerscoreNoteActive" aria-describedby="consumerscoreNoteActive-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreNoteActive" name="consumerscoreNoteActive" aria-describedby="consumerscoreNoteActive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="consumerscoreNoteActive-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -187,7 +187,7 @@
                     <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Fehlermeldung bitte über Einstellungen -> Textbausteine editieren (nach consumerscoreNoteMessage suchen)">                                                         
                     <label for="consumerscoreNoteMessage" class="text-left col-md-3 control-label">{s name="fieldlabel/consumerscoreNote"}Hinweistext (nur bei Prüfung nach der Zahlartenauswahl){/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreNoteMessage" name="consumerscoreNoteMessage" aria-describedby="consumerscoreNoteMessage-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreNoteMessage" name="consumerscoreNoteMessage" aria-describedby="consumerscoreNoteMessage-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="consumerscoreNoteMessage-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -197,7 +197,7 @@
                    
                     <label for="consumerscoreAgreementActive" class="text-left col-md-3 control-label">{s name="fieldlabel/consumerscoreAgreement"}Zustimmungsfrage{/s} {s name="fieldlabel/active"}Aktiv{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreAgreementActive" name="consumerscoreAgreementActive" aria-describedby="consumerscoreAgreementActive-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreAgreementActive" name="consumerscoreAgreementActive" aria-describedby="consumerscoreAgreementActive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="consumerscoreAgreementActive-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -207,7 +207,7 @@
                     <img src="{link file="backend/_resources/images/information.png"}" data-toggle="popover" title="PAYONE Hilfe" data-content="Fehlermeldung bitte über Einstellungen -> Textbausteine editieren (nach consumerscoreAgreementMessage suchen)">                    
                     <label for="consumerscoreAgreementMessage" class="text-left col-md-3 control-label">{s name="fieldlabel/consumerscoreAgreement"}Zustimmungsfrage (nur bei Prüfung nach der Zahlartenauswahl){/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreAgreementMessage" name="consumerscoreAgreementMessage" aria-describedby="consumerscoreAgreementMessage-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreAgreementMessage" name="consumerscoreAgreementMessage" aria-describedby="consumerscoreAgreementMessage-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="consumerscoreAgreementMessage-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -217,7 +217,7 @@
                    
                     <label for="consumerscoreAbtestActive" class="text-left col-md-3 control-label">{s name="fieldlabel/abtest"}A/B Test{/s} {s name="fieldlabel/active"}Aktiv{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreAbtestActive" name="consumerscoreAbtestActive" aria-describedby="consumerscoreAbtestActive-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreAbtestActive" name="consumerscoreAbtestActive" aria-describedby="consumerscoreAbtestActive-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="consumerscoreAbtestActive-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -227,7 +227,7 @@
                    
                     <label for="consumerscoreAbtestValue" class="text-left col-md-3 control-label">{s name="fieldlabel/abtest"}A/B Test{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreAbtestValue" name="consumerscoreAbtestValue" aria-describedby="consumerscoreAbtestValue-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="consumerscoreAbtestValue" name="consumerscoreAbtestValue" aria-describedby="consumerscoreAbtestValue-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="consumerscoreAbtestValue-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>

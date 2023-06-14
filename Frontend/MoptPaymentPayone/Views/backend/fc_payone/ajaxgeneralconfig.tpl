@@ -69,7 +69,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Schlüssel des zu verwendenden Zahlungsportal">
                     <label for="apiKey" class="text-left col-md-3 control-label">{s name="fieldlabel/apiKey"}Schlüssel{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="40" id="apiKey" name="apiKey" aria-describedby="apiKey-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="40" id="apiKey" name="apiKey" aria-describedby="apiKey-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="apiKey-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -79,7 +79,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Hier wird definiert wie die Zahlart verwendet wird. Live = Zahlungen werden auf der PAYONE-Plattform ausgeführt Test = Zahlungen werden nur auf der PAYONE-Testumgebung simuliert">
                     <label for="liveMode" class="text-left col-md-3 control-label">{s name="fieldlabel/liveMode"}Betriebsmodus{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="liveMode" name="liveMode" aria-describedby="liveMode-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="liveMode" name="liveMode" aria-describedby="liveMode-status" >
                             <option value="true">Live</option>
                             <option value="false">Test</option>
                         </select>
@@ -92,7 +92,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Die Vorautorisation ist die Eröffnung eines Zahlvorgangs auf der PAYONE-Plattform. Wenn die Zahlart es zulässt wird eine Reservierung des Betrages durchgeführt. Bei Zahlarten wie Sofortueberweisung.de wird der Betrag sofort eingezogen weil dort keine Reservierung durchgeführt werden kann. Bei Zahlarten wie z.B. Vorkasse oder Rechnung wird der Zahlvorgang nur auf der PAYONE – Plattform angelegt. Wenn die Autorisation durchgeführt wird, dann wird wenn möglich der Betrag sofort eingezogen">
                     <label for="authorisationMethod" class="text-left col-md-3 control-label">{s name="fieldlabel/authorisationMethod"}Autorisierung{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="authorisationMethod" name="authorisationMethod" aria-describedby="authorisationMethod-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="authorisationMethod" name="authorisationMethod" aria-describedby="authorisationMethod-status" >
                             <option value="Vorautorisierung">Vorautorisierung</option>
                             <option value="Autorisierung">Autorisierung</option>
                         </select>
@@ -105,7 +105,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Soll der Warenkorbinhalt an PAYONE übermittelt werden?">
                     <label for="submitBasket" class="text-left col-md-3 control-label">{s name="fieldlabel/submitBasket"}Warenkorbübergabe{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="submitBasket" name="submitBasket" aria-describedby="submitBasket-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="submitBasket" name="submitBasket" aria-describedby="submitBasket-status" >
                             <option value="false">Nein</option>
                             <option value="true">Ja</option>
                         </select>
@@ -118,7 +118,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Sobald die AGB einmal bestätigt wurden, wird dies gespeichert und die Checkbox dementsprechend vorausgewählt">
                     <label for="saveTerms" class="text-left col-md-3 control-label">{s name="fieldlabel/saveTerms"}Speichern der AGB Bestätigung{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="saveTerms" name="saveTerms" aria-describedby="saveTerms-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="saveTerms" name="saveTerms" aria-describedby="saveTerms-status" >
                             <option value="0">Aus</option>
                             <option value="1">Auf der Confirm Seite</option>
                             <option value="2">Global</option>
@@ -132,7 +132,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Sendet die Shopware Bestellnummer anstatt einen Zufallswert an Payone">
                     <label for="sendOrdernumberAsReference" class="text-left col-md-3 control-label">{s name="fieldlabel/sendOrdernumberAsReference"}Benutze Shopware-Bestellnummer{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="sendOrdernumberAsReference" name="sendOrdernumberAsReference" aria-describedby="sendOrdernumberAsReference-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="sendOrdernumberAsReference" name="sendOrdernumberAsReference" aria-describedby="sendOrdernumberAsReference-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="sendOrdernumberAsReference-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -142,7 +142,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Setze das changed Datum einer Bestellung, wenn ein Transaktions-Status erfolgreich war. Greift erst ab Shopware Version 5.5.0">
                     <label for="changeOrderOnTXS" class="text-left col-md-3 control-label">{s name="fieldlabel/changeOrderOnTXS"}Bestellung geändert bei TX Status{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="changeOrderOnTXS" name="changeOrderOnTXS" aria-describedby="changeOrderOnTXS-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="changeOrderOnTXS" name="changeOrderOnTXS" aria-describedby="changeOrderOnTXS-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="changeOrderOnTXS-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -152,7 +152,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Ratepay Snippet Id">
                     <label for="ratepaySnippetId" class="text-left col-md-3 control-label">{s name="fieldlabel/ratepaySnippetId"}Ratepay Snippet Id{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="40" id="ratepaySnippetId" name="ratepaySnippetId" aria-describedby="ratepaySnippetId-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="40" id="ratepaySnippetId" name="ratepaySnippetId" aria-describedby="ratepaySnippetId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="ratepaySnippetId-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -162,7 +162,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="Bei Trustly IBAN / BIC abfragen?">
                     <label for="trustlyShowIbanBic" class="text-left col-md-3 control-label">{s name="fieldlabel/trustlyShowIbanBic"}Bei Trustly IBAN / BIC abfragen?{/s}</label>
                     <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="trustlyShowIbanBic" name="trustlyShowIbanBic" aria-describedby="trustlyShowIbanBic-status" >
+                        <input type="checkbox" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="trustlyShowIbanBic" name="trustlyShowIbanBic" aria-describedby="trustlyShowIbanBic-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="trustlyShowIbanBic-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -172,7 +172,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name='fieldlabelhelp/applepayMerchantID'}Ihre Apple Pay MerchantId{/s}">
                     <label for="applepayMerchantId" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayMerchantID"}Apple Pay MerchantId{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayMerchantId" name="applepayMerchantId" aria-describedby="applepayMerchantId-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayMerchantId" name="applepayMerchantId" aria-describedby="applepayMerchantId-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="applepayMerchantId-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -182,7 +182,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayVisa"}Erlaubt Visa Karten über Apple Pay{/s}">
                     <label for="applepayVisa" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayVisa"}Apple Pay Visa erlauben{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayVisa" name="applepayVisa" aria-describedby="applepayVisa-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayVisa" name="applepayVisa" aria-describedby="applepayVisa-status" >
                             <option value="false">Nein</option>
                             <option value="true">Ja</option>
                         </select>
@@ -195,7 +195,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayMastercard"}Erlaubt Mastercard Karten über Apple Pay{/s}">
                     <label for="applepayMastercard" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayMastercard"}Apple Pay Mastercard erlauben{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayMastercard" name="applepayMastercard" aria-describedby="applepayMastercard-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayMastercard" name="applepayMastercard" aria-describedby="applepayMastercard-status" >
                             <option value="false">Nein</option>
                             <option value="true">Ja</option>
                         </select>
@@ -208,7 +208,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayGirocard"}Erlaubt Girocard Karten über Apple Pay{/s}">
                     <label for="applepayGirocard" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayGirocard"}Apple Pay Girocard erlauben{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayGirocard" name="applepayGirocard" aria-describedby="applepayGirocard-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayGirocard" name="applepayGirocard" aria-describedby="applepayGirocard-status" >
                             <option value="false">Nein</option>
                             <option value="true">Ja</option>
                         </select>
@@ -223,7 +223,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayAmex"}Erlaubt American Express Karten über Apple Pay{/s}">
                     <label for="applepayAmex" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayAmex"}Apple Pay American Express erlauben{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayAmex" name="applepayAmex" aria-describedby="applepayAmex-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayAmex" name="applepayAmex" aria-describedby="applepayAmex-status" >
                             <option value="false">Nein</option>
                             <option value="true">Ja</option>
                         </select>
@@ -236,7 +236,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayDiscover"}Erlaubt Discover Karten über Apple Pay{/s}">
                     <label for="applepayDiscover" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayDisover"}Apple Pay Discover erlauben{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayDiscover" name="applepayDiscover" aria-describedby="applepayDiscover-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayDiscover" name="applepayDiscover" aria-describedby="applepayDiscover-status" >
                             <option value="false">Nein</option>
                             <option value="true">Ja</option>
                         </select>
@@ -250,7 +250,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayCertificate"}Apple Pay Pfad zur Zertifikats Datei{/s}">
                     <label for="applepayCertificate" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayCertificate"}Apple Pay Zertifikat{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayCertificate" name="applepayCertificate" aria-describedby="applepayCertificate-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayCertificate" name="applepayCertificate" aria-describedby="applepayCertificate-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="applepayCertificate-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -264,7 +264,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayPrivateKey"}Absoluter Pfad zum Private Key{/s}">
                     <label for="applepayPrivateKey" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayPrivateKey"}Apple Pay Private Key{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayPrivateKey" name="applepayPrivateKey" aria-describedby="applepayPrivateKey-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayPrivateKey" name="applepayPrivateKey" aria-describedby="applepayPrivateKey-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="applepayPrivateKey-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -278,7 +278,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayPrivateKeyPassword"}Kann auch dann gesetzt werden, wenn der Key unverschlüsselt ist{/s}">
                     <label for="applepayPrivateKeyPassword" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayPrivateKeyPassword"}Apple Pay Private Key Passwort{/s}</label>
                     <div class="col-md-6">
-                        <input type="password" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayPrivateKeyPassword" name="applepayPrivateKeyPassword" aria-describedby="applepayPrivateKeyPassword-status" >
+                        <input type="password" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayPrivateKeyPassword" name="applepayPrivateKeyPassword" aria-describedby="applepayPrivateKeyPassword-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="applepayPrivateKeyPassword-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -288,7 +288,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/applepayDebug"}Zeigt im Frontend die Debugging Informationen an{/s}">
                     <label for="applepayDebug" class="text-left col-md-3 control-label">{s name="fieldlabel/applepayDebug"}Apple Pay Debug{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayDebug" name="applepayDebug" aria-describedby="applepayDebug-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="applepayDebug" name="applepayDebug" aria-describedby="applepayDebug-status" >
                             <option value="false">Nein</option>
                             <option value="true">Ja</option>
                         </select>
@@ -301,7 +301,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/allowDifferentAddresses"}Zeigt im Frontend die Debugging Informationen an{/s}">
                     <label for="allowDifferentAddresses" class="text-left col-md-3 control-label">{s name="fieldlabel/allowDifferentAddresses"}Abweichende Lieferadressen zulassen{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="allowDifferentAddresses" name="allowDifferentAddresses" aria-describedby="allowDifferentAddresses-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="allowDifferentAddresses" name="allowDifferentAddresses" aria-describedby="allowDifferentAddresses-status" >
                             <option value="false">Nein</option>
                             <option value="true">Ja</option>
                         </select>
@@ -314,7 +314,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name='fieldlabelhelp/creditcardDefaultDescription'}Zusätzliche Beschreibung der Zahlart bei Gruppierung{/s}">
                     <label for="creditcardDefaultDescription" class="text-left col-md-3 control-label">{s name='fieldlabel/creditcardDefaultDescription'}Kreditkarte Zusätzliche Beschreibung{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="creditcardDefaultDescription" name="creditcardDefaultDescription" aria-describedby="creditcardDefaultDescription-status" >
+                        <input type="text" class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="creditcardDefaultDescription" name="creditcardDefaultDescription" aria-describedby="creditcardDefaultDescription-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="creditcardDefaultDescription-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
@@ -324,7 +324,7 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/paypalExpressUseDefaultShipping"}Wenn aktiviert, werden die vorläufigen Versandkosten mit an Paypal Express übergeben{/s}">
                     <label for="paypalExpressUseDefaultShipping" class="text-left col-md-3 control-label">{s name="fieldlabel/paypalExpressUseDefaultShipping"}Vorläufige Versandkosten bei Paypal Express übergeben{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="paypalExpressUseDefaultShipping" name="paypalExpressUseDefaultShipping" aria-describedby="paypalExpressUseDefaultShipping-status" >
+                        <select class="form-control " pattern='^[_ .\(\)\+\-?,:;"!@#$%!^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="paypalExpressUseDefaultShipping" name="paypalExpressUseDefaultShipping" aria-describedby="paypalExpressUseDefaultShipping-status" >
                             <option value="false">Nein</option>
                             <option value="true">Ja</option>
                         </select>

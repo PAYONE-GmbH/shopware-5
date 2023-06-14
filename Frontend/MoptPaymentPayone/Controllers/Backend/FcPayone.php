@@ -636,12 +636,20 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function ajaxgetAddressCheckConfigAction()
     {
+        $moptPayoneHelper = Shopware()->Container()->get('MoptPayoneMain')->getInstance()->getHelper();
         $data = array();
         $this->Front()->Plugins()->Json()->setRenderer(true);
 
         $paymentid = $this->Request()->getParam('paymentid');
         $data['data'] = $this->get('MoptPayoneMain')->getPayoneConfig($paymentid, true);
         $data['status'] = 'success';
+        // replace addresscheck countryIds with country codes
+        $billingCountryIds = empty($data['data']['adresscheckBillingCountries']) ? [] : explode(',', $data['data']['adresscheckBillingCountries']);
+        $shippingCountryIds = empty($data['data']['adresscheckShippingCountries']) ? [] : explode(',', $data['data']['adresscheckShippingCountries']);
+        $billingCountries = array_map([$moptPayoneHelper, 'getCountryIsoFromId'], $billingCountryIds);
+        $shippingCountries = array_map([$moptPayoneHelper, 'getCountryIsoFromId'], $shippingCountryIds);
+        $data['data']['adresscheckBillingCountries'] = implode(',', $billingCountries);
+        $data['data']['adresscheckShippingCountries'] = implode(',', $shippingCountries);
         $encoded = json_encode($data);
         echo $encoded;
         exit(0);
@@ -1345,6 +1353,17 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             $data->setId(null);
             Shopware()->Models()->persist($data);
         };
+
+        // replace addresscheck country codes with countryIds
+        $moptPayoneHelper = Shopware()->Container()->get('MoptPayoneMain')->getInstance()->getHelper();
+        $billingCountries = empty($options['adresscheckBillingCountries']) ? [] : explode(',', str_replace(' ', '', $options['adresscheckBillingCountries']));
+        $shippingCountries = empty($options['adresscheckShippingCountries']) ? [] : explode(',', str_replace(' ', '', $options['adresscheckShippingCountries']));
+        $billingCountryIds = array_map([$moptPayoneHelper, 'getCountryIdFromIso'], $billingCountries);
+        $shippingCountryIds = array_map([$moptPayoneHelper, 'getCountryIdFromIso'], $shippingCountries);
+        $billingCountryIds = array_filter($billingCountryIds);
+        $shippingCountryIds = array_filter($shippingCountryIds);
+        $options['adresscheckBillingCountries'] = implode(',', $billingCountryIds);
+        $options['adresscheckShippingCountries'] = implode(',', $shippingCountryIds);
 
         $data->fromArray($options);
         if ($options['adresscheckActive'] == "false") {
