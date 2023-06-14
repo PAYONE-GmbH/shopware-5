@@ -54,7 +54,7 @@
                 merchantCapabilities: {$mopt_applepay_merchantCapabilities},
                 total: {
                     label: '{$mopt_applepay_label}',
-                    amount: '{$sAmount}'
+                    amount: '{if $sAmountWithTax && $sUserData.additional.charge_vat}{$sAmountWithTax}{else}{$sAmount}{/if}'
                 }
             })
 
@@ -62,6 +62,7 @@
                 var validationUrl = event.validationURL;
                 // validationUrl = 'https://apple-pay-gateway-cert.apple.com/paymentservices/startSession';
                 writeDebug('Vaidation URl:' + validationUrl);
+                writeDebug('Basket amount:' + '{if $sAmountWithTax && $sUserData.additional.charge_vat}{$sAmountWithTax}{else}{$sAmount}{/if}');
                 $.ajax({
                     url: '{url controller="MoptAjaxPayone" action="createApplePaySession" forceSecure}',
                     dataType: 'json',
