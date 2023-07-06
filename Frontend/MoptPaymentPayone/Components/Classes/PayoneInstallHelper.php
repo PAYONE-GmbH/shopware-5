@@ -211,6 +211,7 @@ class Mopt_PayoneInstallHelper
                 'consumerscore_color' => 'string',
                 'consumerscore_value' => 'integer',
                 'ratepay_ban' => 'date',
+                'creditcard_initial_payment' => 'boolean',
             ],
             's_user_billingaddress_attributes' => [
                 'addresscheck_result' => 'string',
@@ -300,6 +301,7 @@ class Mopt_PayoneInstallHelper
                 'consumerscore_value' => 'integer',
                 'ratepay_ban' => 'date',
                 'klarna_personalid' => 'string',
+                'creditcard_initial_payment' => 'boolean',
             ],
             's_user_addresses_attributes' => [
                 'addresscheck_result' => 'string',

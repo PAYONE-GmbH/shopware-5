@@ -139,6 +139,8 @@ class Mopt_PayonePaymentHelper
                 $sql = 'DELETE FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
                 Shopware()->Db()->exec($sql);
             }
+            // also remove initial payment flag
+            $this->updateUserCreditcardInitialPaymentSuccess($userId, false);
         }
     }
 
@@ -2022,5 +2024,20 @@ class Mopt_PayonePaymentHelper
         }
 
         return $payments;
+    }
+
+    /**
+     * updates user attributes
+     * @param $userId
+     * @param $success
+     */
+    public function updateUserCreditcardInitialPaymentSuccess($userId, $success)
+    {
+        $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
+
+        $attributes = $user->getAttribute();
+        $attributes->setMoptPayoneCreditcardInitialPayment($success);
+        Shopware()->Models()->persist($attributes);
+        Shopware()->Models()->flush($attributes);
     }
 }
