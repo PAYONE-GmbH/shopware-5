@@ -485,7 +485,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
-        if (!$paymentData && (isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] !== "true"))
+        if (!$paymentData && (isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] !== "1"))
         {
             $paymentData = Shopware()->Session()->moptPayment;
         }

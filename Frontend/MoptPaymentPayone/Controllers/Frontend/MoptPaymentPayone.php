@@ -1320,19 +1320,18 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         //get shopware temporary order id - session id
         $shopwareTemporaryId = $this->admin->sSYSTEM->sSESSION_ID;
-
         if ($this->moptPayonePaymentHelper->isPayoneCreditcard($paymentName) &&
             Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] === "1" &&
             $user['additional']['user']['mopt_payone_creditcard_initial_payment'] === "0"
             ) {
             $request->setRecurrence('oneclick');
-            $request->setInitialPayment(true);
+            $request->setInitialPayment('true');
         } else if ($this->moptPayonePaymentHelper->isPayoneCreditcard($paymentName) &&
             Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] === "1" &&
             $user['additional']['user']['mopt_payone_creditcard_initial_payment'] === "1"
         ) {
             $request->setRecurrence('oneclick');
-            $request->setInitialPayment(false);
+            $request->setInitialPayment('false');
         }
 
         if ($this->moptPayonePaymentHelper->isPayoneRatepay($paymentName) ||

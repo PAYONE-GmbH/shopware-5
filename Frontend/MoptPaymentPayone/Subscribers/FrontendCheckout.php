@@ -287,7 +287,7 @@ class FrontendCheckout implements SubscriberInterface
                 $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
                 $view->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
             }
-            $view->assign('showMoptCreditCardAgreement', ($showmoptCreditCardAgreement === true) ? 1 : 0);
+            $view->assign('showMoptCreditCardAgreement', ($showmoptCreditCardAgreement === true) ? '1' : '0');
         }
 
         if ($request->getActionName() === 'cart' && $session->moptPayoneUserHelperError) {
