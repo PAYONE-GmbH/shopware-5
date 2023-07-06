@@ -433,9 +433,8 @@
 
     function expiryCheck(data) {
         var ret;
-        if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked") || $('#mopt_payone__cc_save_pseudocardnum_accept').val() === '2')
+        if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked") || $('#mopt_payone__cc_save_pseudocardnum_accept').val() === '1')
         {
-            console.log('do not delete USerdata');
             data.deleteUserData = false;
             // do nothing
         } else {
