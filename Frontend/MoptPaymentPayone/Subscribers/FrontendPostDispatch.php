@@ -437,7 +437,8 @@ class FrontendPostDispatch implements SubscriberInterface
             $filteredPayments = $moptPaymentHelper->filterB2bPayments($filteredPayments);
             $view->assign('sPaymentMeans', $filteredPayments);
             // fallback if current payment is now exluded from payment list to make sure a payment is selected
-            if (!array_key_exists($view->sUserData['additional']['user']['paymentID'], $filteredPayments)) {
+            $paymentName = $moptPaymentHelper->getPaymentNameFromId($view->sUserData['additional']['user']['paymentID']);
+            if (!array_key_exists($view->sUserData['additional']['user']['paymentID'], $filteredPayments) && ! $moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {
                 $view->assign('sFormData', ['payment' => Shopware()->Config()->get('paymentdefault')]);
             }
         }
