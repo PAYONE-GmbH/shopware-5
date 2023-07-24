@@ -321,6 +321,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $sqlPayment = "UPDATE s_user SET paymentID = ? WHERE id = ?";
         Shopware()->Db()->query($sqlPayment, array($actualPaymentId, $userId));
+
+        $sql = "UPDATE s_user_attributes SET `mopt_payone_creditcard_initial_payment` = ? WHERE id = ?";
+        Shopware()->Db()->query($sql, array(0, (int)$userId));
+
     }
 
     /**

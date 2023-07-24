@@ -73,6 +73,11 @@ class FrontendAccount implements SubscriberInterface
         }
 
         if ($controllerName == 'account') {
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            $showmoptCreditCardAgreement = $userData['additional']['user']['accountmode'] == "0" && (! isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment === false) ;
+            $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
+            $subject->View()->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
+            $subject->View()->assign('showMoptCreditCardAgreement', ($showmoptCreditCardAgreement === true) ? '1' : '0');
             $subject->View()->assign('showPOCCDeleteButton', true);
         }
     }
@@ -107,6 +112,8 @@ class FrontendAccount implements SubscriberInterface
         // also remove creditcard as default payment
         $sql = "UPDATE s_user SET paymentID = ? WHERE id = ?";
         Shopware()->Db()->query($sql, array((int)Shopware()->Config()->Defaultpayment, (int)$userId));
+        $sql = "UPDATE s_user_attributes SET `mopt_payone_creditcard_initial_payment` = ? WHERE id = ?";
+        Shopware()->Db()->query($sql, array(0, (int)$userId));
         // also remove creditcard data in Session
         unset(Shopware()->Session()->moptPayment);
     }

@@ -407,7 +407,8 @@
         // to update cvc length when creditcard is pre-selected
         $('#mopt_payone__cc_cardtype').trigger('change');
         {/if}
-
+        $('#payone-cc-save-pseudocardnum-accept').show();
+        $('#mopt_payone__cc_save_pseudocardnum_accept').show();
         // Show all hidden CC icons and remove any selection.
         $('.payone-cc-icon--selected').removeClass('payone-cc-icon--selected');
         $('.payone-cc-icon--hidden').removeClass('payone-cc-icon--hidden');
