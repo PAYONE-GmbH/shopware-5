@@ -74,8 +74,7 @@ class FrontendAccount implements SubscriberInterface
 
         if ($controllerName == 'account') {
             $userData = Shopware()->Modules()->Admin()->sGetUserData();
-            $showmoptCreditCardAgreement = false;
-            Shopware()->Session()->offsetUnset('moptPayment');
+            $showmoptCreditCardAgreement = $userData['additional']['user']['accountmode'] == "0" && (! isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment === false) ;
             $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
             $subject->View()->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
             $subject->View()->assign('showMoptCreditCardAgreement', ($showmoptCreditCardAgreement === true) ? '1' : '0');
