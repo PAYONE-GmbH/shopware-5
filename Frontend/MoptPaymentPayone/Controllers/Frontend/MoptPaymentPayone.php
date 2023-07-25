@@ -1082,6 +1082,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session->offsetUnset('moptBasketChanged');
         $session->offsetUnset('moptPaypalExpressWorkorderId');
         $session->offsetUnset('moptSaveCreditcardData');
+        $session->offsetUnset('moptPayment');
     }
 
     /**
