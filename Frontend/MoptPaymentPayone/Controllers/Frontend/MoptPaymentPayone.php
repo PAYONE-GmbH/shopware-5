@@ -1338,7 +1338,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $user['additional']['user']['mopt_payone_creditcard_initial_payment'] === "0"
         ) {
             $request->setRecurrence('oneclick');
-            $request->setInitialPayment('true');
+            $request->setInitialPayment(NULL);
         }
 
         if ($this->moptPayonePaymentHelper->isPayoneRatepay($paymentName) ||
