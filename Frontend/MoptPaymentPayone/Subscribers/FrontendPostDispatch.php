@@ -488,11 +488,11 @@ class FrontendPostDispatch implements SubscriberInterface
 
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
-        $paymentName = $paymentHelper->getPaymentNameFromId(Shopware()->Session()->sPaymentID);
-        if ($moptPayoneMain->getPaymentHelper()->isPayoneCreditcardForExport(Shopware()->Session()->sPaymentID) || $moptPayoneMain->getPaymentHelper()->isPayoneCreditcardForExport($paymentName)) {
-            $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
-            $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
-        }
+        $paymentData = (empty($paymentData)) ? [] : $paymentData;
+        $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
+        $creditcardPaymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+        $creditcardPaymentData = (empty($creditcardPaymentData)) ? [] : $creditcardPaymentData;
+        $paymentData = array_merge($creditcardPaymentData,$paymentData);
         if (!$paymentData && (isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] !== "1"))
         {
             $paymentData = Shopware()->Session()->moptPayment;

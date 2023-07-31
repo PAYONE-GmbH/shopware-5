@@ -51,24 +51,18 @@ class FrontendAccount implements SubscriberInterface
         $userId = Shopware()->Session()->sUserId;
 
         $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
+        $creditcardPaymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+        $creditcardPaymentData = (empty($creditcardPaymentData)) ? [] : $creditcardPaymentData;
+        $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+        $paymentData = (empty($paymentData)) ? [] : $paymentData;
+        $paymentData = array_merge($creditcardPaymentData, $paymentData);
 
         if (!empty($paymentData)) {
             //get array of creditcard payment ids
             $sql = "SELECT `id` FROM s_core_paymentmeans WHERE name LIKE '%mopt_payone__cc_%' ";
-            $creditcardIds = Shopware()->Db()->fetchAll($sql);
-
-            foreach ($creditcardIds as $creditcardId) {
-                // check if active id is in array
-                if ($creditcardId['id'] == $subject->View()->sFormData['payment']) {
-                    // set creditcard active
-                    $paymentData['payment'] = 'mopt_payone_creditcard';
-                    $subject->View()->sFormData = $paymentData;
-                    break;
-                } else {
-                    $subject->View()->sFormData += $paymentData;
-                }
-            }
+            $paymentData['payment'] = 'mopt_payone_creditcard';
+            $subject->View()->sFormData = $paymentData;
             $subject->View()->sUserData += $paymentData;
         }
 
