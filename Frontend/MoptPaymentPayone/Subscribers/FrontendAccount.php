@@ -50,7 +50,7 @@ class FrontendAccount implements SubscriberInterface
         $controllerName = $request->getControllerName();
         $userId = Shopware()->Session()->sUserId;
 
-        $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
+        $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
 
         if (!empty($paymentData)) {
@@ -107,7 +107,7 @@ class FrontendAccount implements SubscriberInterface
         $userId = Shopware()->Session()->sUserId;
         $paymentData = [];
         $serializedPaymentData = serialize($paymentData);
-        $sql = 'UPDATE s_plugin_mopt_payone_payment_data SET `moptPaymentData`= ? WHERE userId = ?';
+        $sql = 'UPDATE s_plugin_mopt_payone_creditcard_payment_data SET `moptCreditcardPaymentData`= ? WHERE userId = ?';
         Shopware()->Db()->executeUpdate($sql,array($serializedPaymentData, $userId));
         // also remove creditcard as default payment
         $sql = "UPDATE s_user SET paymentID = ? WHERE id = ?";

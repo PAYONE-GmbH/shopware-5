@@ -1338,7 +1338,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $user['additional']['user']['mopt_payone_creditcard_initial_payment'] === "0"
         ) {
             $request->setRecurrence('oneclick');
-            $request->setInitialPayment('true');
+            $request->setInitialPayment(NULL);
         }
 
         if ($this->moptPayonePaymentHelper->isPayoneRatepay($paymentName) ||
@@ -1748,7 +1748,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if ($this->isRecurringOrder()) {
             $paymentData = Shopware()->Session()->moptPayment;
         } else {
-            $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
+            $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
             $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
             if (!$paymentData && Shopware()->Session()->moptSaveCreditcardData === false) {
                 $paymentData = Shopware()->Session()->moptPayment;

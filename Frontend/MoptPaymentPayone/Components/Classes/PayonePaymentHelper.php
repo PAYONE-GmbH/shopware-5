@@ -130,13 +130,13 @@ class Mopt_PayonePaymentHelper
      * @param $userId
      * @throws Zend_Db_Adapter_Exception
      */
-    public function deletePaymentData($userId)
+    public function deleteCreditcardPaymentData($userId)
     {
         if ($userId != null) {
-            $sql = 'SELECT userId FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
+            $sql = 'SELECT userId FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ' . $userId;
             $result = Shopware()->Db()->fetchOne($sql);
             if ($result) {
-                $sql = 'DELETE FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
+                $sql = 'DELETE FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ' . $userId;
                 Shopware()->Db()->exec($sql);
             }
             // also remove initial payment flag
@@ -195,6 +195,21 @@ class Mopt_PayonePaymentHelper
             '(`userId`,`moptPaymentData`) VALUES (?,?)';
         $paymentData = serialize($paymentData['formData']);
         Shopware()->Db()->query($sql, array($userId, $paymentData));
+    }
+
+    /**
+     * save payment data
+     *
+     * @param $userId
+     * @param $creditcardPaymentData
+     * @throws Zend_Db_Adapter_Exception
+     */
+    public function saveCreditcardPaymentData($userId, $creditcardPaymentData)
+    {
+        $sql = 'REPLACE INTO `s_plugin_mopt_payone_creditcard_payment_data`' .
+            '(`userId`, `moptCreditcardPaymentData`) VALUES (?,?)';
+        $creditcardPaymentData = serialize($creditcardPaymentData['formData']);
+        Shopware()->Db()->query($sql, array($userId, $creditcardPaymentData));
     }
 
     /**

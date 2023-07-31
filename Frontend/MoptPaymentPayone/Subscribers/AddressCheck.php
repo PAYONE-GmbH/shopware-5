@@ -797,6 +797,7 @@ class AddressCheck implements SubscriberInterface
                     if ($config['consumerscoreFailureHandling'] == 0) {
                         // abort and delete payment data and set to payone prepayment
                         $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
+                        $moptPayoneMain->getPaymentHelper()->deleteCreditcardPaymentData($userId);
                         $moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
                         if (version_compare(Shopware()->Config()->get('version'), '5.3.0', '>=') ||
                             Shopware()->Config()->get('version') === '___VERSION___'

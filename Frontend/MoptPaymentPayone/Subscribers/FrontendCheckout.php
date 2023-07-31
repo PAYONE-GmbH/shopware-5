@@ -132,7 +132,11 @@ class FrontendCheckout implements SubscriberInterface
 
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
-
+        if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneCreditcardForExport($ret['name'])) {
+            $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
+            $creditcardPaymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+            $paymentData = $creditcardPaymentData;
+        }
         if (isset(Shopware()->Session()->moptSaveCreditcardData) && Shopware()->Session()->moptSaveCreditcardData === false) {
             $paymentData = Shopware()->Session()->moptPayment;
         }

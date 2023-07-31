@@ -136,6 +136,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 //abort
                 //delete payment data and set to payone prepayment
                 $this->moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
+                $this->moptPayoneMain->getPaymentHelper()->deleteCreditcardPaymentData($userId);
                 $this->moptPayoneMain->getPaymentHelper()->setConfiguredDefaultPaymentAsPayment($userId);
                 echo json_encode(false);
                 return;
@@ -305,11 +306,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
 
         $actualPaymentId = $paymentData['mopt_payone__cc_paymentid'];
-
-        $sql = 'replace into `s_plugin_mopt_payone_payment_data`' .
-            '(`userId`,`moptPaymentData`) values (?,?)';
-        $paymentData = serialize($paymentData);
-        Shopware()->Db()->query($sql, array($userId, $paymentData));
+        Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->saveCreditcardPaymentData($userId, $paymentData);
 
         $userData = $this->admin->sGetUserData();
         $previousPayment = $this->admin->sGetPaymentMeanById($userData['additional']['user']['paymentID']);
@@ -1197,7 +1194,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             $configData = Shopware()->Db()->fetchRow($sql, true);
         }
         if ($this->Request()->getPost('deleteUserData') === "true") {
-            $this->moptPayoneMain->getPaymentHelper()->deletePaymentData(Shopware()->Session()->offsetGet('sUserId'));
+            $this->moptPayoneMain->getPaymentHelper()->deleteCreditcardPaymentData(Shopware()->Session()->offsetGet('sUserId'));
         }
         $minExpiryDays = (int)$configData['creditcard_min_valid'];
         $expireDate = $this->Request()->getPost('mopt_payone__cc_cardexpiredate');
