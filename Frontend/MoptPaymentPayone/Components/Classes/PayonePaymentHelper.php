@@ -130,6 +130,24 @@ class Mopt_PayonePaymentHelper
      * @param $userId
      * @throws Zend_Db_Adapter_Exception
      */
+    public function deletePaymentData($userId)
+    {
+        if ($userId != null) {
+            $sql = 'SELECT userId FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
+            $result = Shopware()->Db()->fetchOne($sql);
+            if ($result) {
+                $sql = 'DELETE FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
+                Shopware()->Db()->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * delete saved payment data
+     *
+     * @param $userId
+     * @throws Zend_Db_Adapter_Exception
+     */
     public function deleteCreditcardPaymentData($userId)
     {
         if ($userId != null) {
