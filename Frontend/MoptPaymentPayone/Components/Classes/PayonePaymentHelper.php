@@ -1234,6 +1234,10 @@ class Mopt_PayonePaymentHelper
             $billing->setPhone($paymentData['formData']['mopt_payone__payone_secured_directdebit_telephone']);
         }
 
+        if (isset($paymentData['formData']['mopt_payone__secured_invoice_vatid'])) {
+            $billing->setVatId($paymentData['formData']['mopt_payone__secured_invoice_vatid']);
+        }
+
         Shopware()->Models()->persist($billing);
         Shopware()->Models()->flush();
     }
