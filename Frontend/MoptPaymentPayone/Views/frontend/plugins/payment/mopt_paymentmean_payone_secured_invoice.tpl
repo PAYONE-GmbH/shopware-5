@@ -20,7 +20,7 @@
 
     <p class ="none">
         <label for="mopt_payone__payone_secured_invoice_birthday">
-            {s name='birthdate'}Geburtsdatum{/s}
+            {s name='birthdateofthesubscriber'}Geburtsdatum des Bestellers{/s}
         </label>
     </p>
 
@@ -79,7 +79,7 @@
            type="text"
            id="mopt_payone__payone_secured_invoice_telephone"
            {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-           placeholder="{s name='telephoneNumber'}Telefonnummer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+           placeholder="{s name='telephoneofthesubscriber'}Telefonnummer des Bestellers{/s}{s name="RequiredField"}{/s}"
            value="{$moptCreditCardCheckEnvironment.mopt_payone__payone_secured_invoice_telephone|escape}"
            class="payment--field is--required{if $error_flags.mopt_payone__payone_secured_invoice_telephone} has--error{/if}"
     />
