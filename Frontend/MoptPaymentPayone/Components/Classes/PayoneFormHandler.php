@@ -924,7 +924,7 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = [];
 
-        if ($formData['mopt_payone__payone_secured_invoice_birthdaydate'] !== "0000-00-00") {
+        if ($formData['mopt_payone__payone_secured_invoice_birthdaydate'] !== "0000-00-00" && $formData['mopt_payone__secured_invoice_b2bmode'] !== "1") {
             if (time() < strtotime('+18 years', strtotime($formData['mopt_payone__payone_secured_invoice_birthdaydate']))) {
                 $paymentData['sErrorFlag']['mopt_payone__payone_secured_invoice_birthday'] = true;
                 $paymentData['sErrorFlag']['mopt_payone__payone_secured_invoice_birthmonth'] = true;
@@ -946,8 +946,6 @@ class Mopt_PayoneFormHandler
             Shopware()->Session()->moptPayoneSecuredToken =  $formData['mopt_payone__payone_secured_invoice_token'];
             $paymentData['formData']['mopt_payone__payone_secured_invoice_token'] = $formData['mopt_payone__payone_secured_invoice_token'];
         }
-
-        $paymentData['formData']['mopt_payone__secured_invoice_vatid'] = $formData['mopt_payone__secured_invoice_vatid'];
 
         $this->setFormSubmittedFlag();
 

@@ -1201,7 +1201,6 @@ class Mopt_PayoneParamBuilder
 
         $params['financingtype'] = $financeType;
         $params['company'] = $userData['billingaddress']['company'];
-        $params['vatid'] = empty($paymentData['mopt_payone__secured_invoice_vatid']) ? $userData['billingaddress']['vatId'] : $paymentData['mopt_payone__secured_invoice_vatid'];
         $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_PayoneSecured($params);
         $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(

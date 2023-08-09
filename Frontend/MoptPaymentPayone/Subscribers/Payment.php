@@ -100,12 +100,10 @@ class Payment implements SubscriberInterface
 
         $session->moptSaveCreditcardData = true;
         $savePaymentData = true;
-        if ($moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName)) {
-            if (!isset($paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept']) || $paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept'] !== '1') {
-                $savePaymentData = false;
-                $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
-                $session->moptSaveCreditcardData = false;
-            }
+        if (!isset($paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept']) || $paymentData['formData']['mopt_payone__cc_save_pseudocardnum_accept'] !== '1') {
+            $savePaymentData = false;
+            $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
+            $session->moptSaveCreditcardData = false;
         }
 
         if (isset($paymentData['formData']['mopt_save_birthday_and_phone']) && $paymentData['formData']['mopt_save_birthday_and_phone']) {
