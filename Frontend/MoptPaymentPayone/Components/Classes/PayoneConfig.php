@@ -143,7 +143,7 @@ class Mopt_PayoneConfig
     ];
 
     const PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED = [
-        'mopt_payone__fin_payone_secured_invoice',
+        // 'mopt_payone__fin_payone_secured_invoice', only allowed for b2b payments
         'mopt_payone__fin_payone_secured_installment',
         'mopt_payone__fin_payone_secured_directdebit',
     ];

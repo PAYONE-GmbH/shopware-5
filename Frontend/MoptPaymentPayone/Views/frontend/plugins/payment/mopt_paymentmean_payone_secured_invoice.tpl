@@ -88,7 +88,7 @@
         <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__secured_invoice_b2bmode]" id="mopt_payone__secured_invoice_b2bmode" value="1">
         <input type="text" name="moptPaymentData[mopt_payone__secured_invoice_vatid]"
                id="mopt_payone__secured_invoice_vatid" aria-required="false"
-               placeholder="{s name='RegisterLabelTaxId'}{/s}"
+               placeholder="{s name='RegisterLabelTaxId' namespace='frontend/register/billing_fieldset'}{/s}"
                value="{if $moptCreditCardCheckEnvironment.sFormData.mopt_payone__secured_invoice_vatid}{$moptCreditCardCheckEnvironment.sFormData.mopt_payone__secured_invoice_vatid}{else}{$sUserData.billingaddress.vatId}{/if}"
                class="payment--field{if $error_flags.mopt_payone__secured_invoice_vatid} has--error{/if}">
     {/if}
