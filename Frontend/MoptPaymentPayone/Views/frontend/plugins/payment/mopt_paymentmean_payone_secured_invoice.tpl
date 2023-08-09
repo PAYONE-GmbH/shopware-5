@@ -18,12 +18,11 @@
         <p>{s name='payoneSecuredInvoiceLegalText'}Mit Abschluss dieser Bestellung erkläre ich mich mit den ergänzenden <a target="_blank" href="https://legal.paylater.payone.com/de/terms-of-payment.html">Zahlungsbedingungen</a> und der Durchführung einer Risikoprüfung für die ausgewählte Zahlungsart einverstanden. Den ergänzenden <a target="_blank" href="https://legal.paylater.payone.com/de/data-protection-payments.html">Datenschutzhinweis</a> habe ich zur Kenntnis genommen.{/s}</p>
     </div>
 
-    {if ! $sUserData.billingaddress.company}
-        <p class ="none">
-            <label for="mopt_payone__payone_secured_invoice_birthday">
-                {s name='birthdate'}Geburtsdatum{/s}
-            </label>
-        </p>
+    <p class ="none">
+        <label for="mopt_payone__payone_secured_invoice_birthday">
+            {s name='birthdateofthesubscriber'}Geburtsdatum des Bestellers{/s}
+        </label>
+    </p>
 
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payone_secured_invoice_birthday]"
@@ -73,7 +72,6 @@
             {/section}
         </select>
     </div>
-    {/if}
     <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payone_secured_invoice_birthdaydate]" id="mopt_payone__payone_secured_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
     <div id="payone-secured-invoice-hint-18-years" class="is--hidden">{s name='eighteenYearsHint'}Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.{/s}</div>
 
@@ -81,13 +79,18 @@
            type="text"
            id="mopt_payone__payone_secured_invoice_telephone"
            {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-           placeholder="{s name='telephoneNumber'}Telefonnummer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
+           placeholder="{s name='telephoneofthesubscriber'}Telefonnummer des Bestellers{/s}{s name="RequiredField"}{/s}"
            value="{$moptCreditCardCheckEnvironment.mopt_payone__payone_secured_invoice_telephone|escape}"
            class="payment--field is--required{if $error_flags.mopt_payone__payone_secured_invoice_telephone} has--error{/if}"
     />
 
     {if $sUserData.billingaddress.company}
         <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__secured_invoice_b2bmode]" id="mopt_payone__secured_invoice_b2bmode" value="1">
+        <input type="text" name="moptPaymentData[mopt_payone__secured_invoice_vatid]"
+               id="mopt_payone__secured_invoice_vatid" aria-required="false"
+               placeholder="{s name='RegisterLabelTaxId' namespace='frontend/register/billing_fieldset'}{/s}"
+               value="{if $moptCreditCardCheckEnvironment.sFormData.mopt_payone__secured_invoice_vatid}{$moptCreditCardCheckEnvironment.sFormData.mopt_payone__secured_invoice_vatid}{else}{$sUserData.billingaddress.vatId}{/if}"
+               class="payment--field{if $error_flags.mopt_payone__secured_invoice_vatid} has--error{/if}">
     {/if}
 </div>
 <script type="text/javascript">

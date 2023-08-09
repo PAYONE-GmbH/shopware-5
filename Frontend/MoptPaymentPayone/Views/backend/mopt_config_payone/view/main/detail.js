@@ -1303,7 +1303,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             {
                 xtype: 'combobox',
                 fieldLabel: '{s name="fieldlabel/allowDifferentAdresses"}Abweichende Lieferadressen zulassen{/s}',
-                helpText: '{s name="fieldlabelhelp/allowDifferentAdresses"}Unterschiedliche Rechnungs- und Lieferadresse im Checkout erlauben{/s}',
+                helpText: '{s name="fieldlabelhelp/allowDifferentAdresses"}Hinweis: Muss im PAYONE-Konto freigeschaltet sein!{/s}',
                 name: 'allowDifferentAddresses',
                 store: me.data.yesno,
                 queryMode: 'local',
