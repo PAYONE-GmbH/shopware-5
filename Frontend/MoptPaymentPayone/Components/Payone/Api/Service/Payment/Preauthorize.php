@@ -79,6 +79,9 @@ class Payone_Api_Service_Payment_Preauthorize extends Payone_Api_Service_Payment
                 $requestParams['ecommercemode'] = Shopware()->Session()->moptOverwriteEcommerceMode;
                 unset(Shopware()->Session()->moptOverwriteEcommerceMode);
             }
+            if (is_null($requestParams['initial_payment'])) {
+                unset($requestParams['initial_payment']);
+            }
 
             $responseRaw = $this->getAdapter()->request($requestParams);
 

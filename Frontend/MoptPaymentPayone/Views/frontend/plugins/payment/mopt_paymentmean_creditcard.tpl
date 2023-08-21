@@ -41,14 +41,13 @@
     </div>
 
     <a href="#" onclick="showIframe();" id="showiframelink" style="display: none" >{s name='changeCard' namespace="frontend/MoptPaymentPayone/payment"}ändern{/s}</a>
-    {if $showMoptCreditCardAgreement == '0'}
     <BR><BR>
-        <div id="payone-cc-save-pseudocardnum-accept">
+        <div id="payone-cc-save-pseudocardnum-accept"  {if $showMoptCreditCardAgreement !== '1'} style="display: none;" {/if}>
+            <input type="hidden" value="hidden" name="moptPaymentData[mopt_payone__cc_save_pseudocardnum_accept]" />
             <input name="moptPaymentData[mopt_payone__cc_save_pseudocardnum_accept]" type="checkbox" id="mopt_payone__cc_save_pseudocardnum_accept" value=0
                    class="checkbox"/>
-            <label for="payone-cc-save-pseudocardnum-accept"  style="float:none; width:100%; display:inline">{$moptCreditCardAgreement}<a href="{url controller=custom sCustom=8 forceSecure}" data-modal-height="500" data-modal-width="800">{s name='widerruf' namespace="frontend/MoptPaymentPayone/payment" }Widerruf{/s}</a></label>
+            <label for="payone-cc-save-pseudocardnum-accept"  style="float:none; width:100%;display:inline;">{$moptCreditCardAgreement}<a href="{url controller=custom sCustom=8 forceSecure}" data-modal-height="500" data-modal-width="800">{s name='widerruf' namespace="frontend/MoptPaymentPayone/payment" }Widerruf{/s}</a></label>
         </div>
-    {/if}
     <BR><BR>
     {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection == '1' && ! $moptIsAjax}
         <div id="payone-cc-auto-detection-messages">
@@ -291,7 +290,8 @@
                 mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
                 mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
                 mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
-                mopt_payone__cc_cardholder: $('#mopt_payone__cc_cardholder').val()
+                mopt_payone__cc_cardholder: $('#mopt_payone__cc_cardholder').val(),
+                mopt_payone__cc_save_pseudocardnum_accept: $('#mopt_payone__cc_save_pseudocardnum_accept').val(),
             };
             if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked")) {
                 savePseudoCard(data);
@@ -333,6 +333,7 @@
                 mopt_payone__cc_cardholder: $('#mopt_payone__cc_cardholder').val(),
                 mopt_payone__cc_cardexpiremonth_hidden: $('#mopt_payone__cc_cardexpiremonth_hidden').val(),
                 mopt_payone__cc_cardexpireyear_hidden: $('#mopt_payone__cc_cardexpireyear_hidden').val(),
+                mopt_payone__cc_save_pseudocardnum_accept: $('#mopt_payone__cc_save_pseudocardnum_accept').val(),
             };
             ccCheck(data);
         } else {
@@ -363,7 +364,8 @@
                 mopt_payone__cc_paymentname: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentname'),
                 mopt_payone__cc_paymentid: $('#mopt_payone__cc_cardtype option:selected').attr('mopt_payone__cc_paymentid'),
                 mopt_payone__cc_paymentdescription: $('#mopt_payone__cc_cardtype option:selected').text(),
-                mopt_payone__cc_cardexpiredate: response.cardexpiredate
+                mopt_payone__cc_cardexpiredate: response.cardexpiredate,
+                mopt_payone__cc_save_pseudocardnum_accept: $('#mopt_payone__cc_save_pseudocardnum_accept').val(),
             };
             if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked"))
             {
@@ -405,7 +407,8 @@
         // to update cvc length when creditcard is pre-selected
         $('#mopt_payone__cc_cardtype').trigger('change');
         {/if}
-
+        $('#payone-cc-save-pseudocardnum-accept').show();
+        $('#mopt_payone__cc_save_pseudocardnum_accept').show();
         // Show all hidden CC icons and remove any selection.
         $('.payone-cc-icon--selected').removeClass('payone-cc-icon--selected');
         $('.payone-cc-icon--hidden').removeClass('payone-cc-icon--hidden');
@@ -431,8 +434,9 @@
 
     function expiryCheck(data) {
         var ret;
-        if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked"))
+        if ($('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked") || $('#mopt_payone__cc_save_pseudocardnum_accept').val() === '1')
         {
+            data.deleteUserData = false;
             // do nothing
         } else {
             data.deleteUserData = true;

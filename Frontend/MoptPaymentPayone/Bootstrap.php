@@ -831,6 +831,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndUpdateAmazonPayShopModelExtension();
 
         $this->getInstallHelper()->checkAndAddPaypalExpressUseDefaultShipping();
+        $this->getInstallHelper()->moptCreateCreditcardPaymentDataTable();
 
     }
 

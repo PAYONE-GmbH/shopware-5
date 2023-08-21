@@ -437,7 +437,8 @@ class FrontendPostDispatch implements SubscriberInterface
             $filteredPayments = $moptPaymentHelper->filterB2bPayments($filteredPayments);
             $view->assign('sPaymentMeans', $filteredPayments);
             // fallback if current payment is now exluded from payment list to make sure a payment is selected
-            if (!array_key_exists($view->sUserData['additional']['user']['paymentID'], $filteredPayments)) {
+            $paymentName = $moptPaymentHelper->getPaymentNameFromId($view->sUserData['additional']['user']['paymentID']);
+            if (!array_key_exists($view->sUserData['additional']['user']['paymentID'], $filteredPayments) && ! $moptPaymentHelper->isPayoneCreditcardNotGrouped($paymentName)) {
                 $view->assign('sFormData', ['payment' => Shopware()->Config()->get('paymentdefault')]);
             }
         }
@@ -482,10 +483,17 @@ class FrontendPostDispatch implements SubscriberInterface
         $userId = Shopware()->Session()->sUserId;
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $shopLanguage = explode('_', Shopware()->Shop()->getLocale()->getLocale());
+        /** @var Mopt_PayonePaymentHelper $paymentHelper */
+        $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
 
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
-        if (!$paymentData && (isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] !== "true"))
+        $paymentData = (empty($paymentData)) ? [] : $paymentData;
+        $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
+        $creditcardPaymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+        $creditcardPaymentData = (empty($creditcardPaymentData)) ? [] : $creditcardPaymentData;
+        $paymentData = array_merge($creditcardPaymentData,$paymentData);
+        if (!$paymentData && (isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] !== "1"))
         {
             $paymentData = Shopware()->Session()->moptPayment;
         }
@@ -495,9 +503,6 @@ class FrontendPostDispatch implements SubscriberInterface
         $groupedPaymentMeans = false;
         $data['moptPayolutionInformation'] = null;
         $data['moptRatepayConfig'] = null;
-
-        /** @var Mopt_PayonePaymentHelper $paymentHelper */
-        $paymentHelper = $this->container->get('MoptPayoneMain')->getPaymentHelper();
 
         if ($controllerName && $controllerName === 'checkout') {
             $paymentMeansWithGroupedCreditcard = $paymentHelper->groupCreditcards($paymentMeans);

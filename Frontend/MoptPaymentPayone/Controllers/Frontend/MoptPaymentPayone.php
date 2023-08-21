@@ -1050,6 +1050,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 $this->moptPayonePaymentHelper->markOrderDetailsAsFullyCaptured($order);
             }
         }
+
+        if (Shopware()->Session()->moptSaveCreditcardData === true) {
+            $customerId = Shopware()->Session()->offsetGet('sUserId');
+            $this->moptPayonePaymentHelper->updateUserCreditcardInitialPaymentSuccess($customerId, true);
+        }
         if (Shopware()->Session()->moptPayment) {
             $this->saveTransactionPaymentData($orderId, Shopware()->Session()->moptPayment);
         }
@@ -1076,6 +1081,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session->offsetUnset('moptRatepayCountry');
         $session->offsetUnset('moptBasketChanged');
         $session->offsetUnset('moptPaypalExpressWorkorderId');
+        $session->offsetUnset('moptSaveCreditcardData');
+        $session->offsetUnset('moptPayment');
     }
 
     /**
@@ -1314,6 +1321,25 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         //get shopware temporary order id - session id
         $shopwareTemporaryId = $this->admin->sSYSTEM->sSESSION_ID;
+        if ($this->moptPayonePaymentHelper->isPayoneCreditcard($paymentName) &&
+            Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] === "1" &&
+            $user['additional']['user']['mopt_payone_creditcard_initial_payment'] === "0"
+            ) {
+            $request->setRecurrence('oneclick');
+            $request->setInitialPayment('true');
+        } else if ($this->moptPayonePaymentHelper->isPayoneCreditcard($paymentName) &&
+            Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] === "1" &&
+            $user['additional']['user']['mopt_payone_creditcard_initial_payment'] === "1"
+        ) {
+            $request->setRecurrence('oneclick');
+            $request->setInitialPayment('false');
+        } else if ($this->moptPayonePaymentHelper->isPayoneCreditcard($paymentName) &&
+            Shopware()->Session()->moptPayment['mopt_payone__cc_save_pseudocardnum_accept'] === "0" &&
+            $user['additional']['user']['mopt_payone_creditcard_initial_payment'] === "0"
+        ) {
+            $request->setRecurrence('oneclick');
+            $request->setInitialPayment(NULL);
+        }
 
         if ($this->moptPayonePaymentHelper->isPayoneRatepay($paymentName) ||
             $this->moptPayonePaymentHelper->isPayoneAmazonPay($paymentName) ||
@@ -1722,7 +1748,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if ($this->isRecurringOrder()) {
             $paymentData = Shopware()->Session()->moptPayment;
         } else {
-            $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
+            $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
             $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
             if (!$paymentData && Shopware()->Session()->moptSaveCreditcardData === false) {
                 $paymentData = Shopware()->Session()->moptPayment;
