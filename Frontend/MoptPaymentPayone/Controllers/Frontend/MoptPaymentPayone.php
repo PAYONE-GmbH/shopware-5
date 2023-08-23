@@ -1349,8 +1349,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if (!is_null($this->getUserData())) {
             $personalData = $paramBuilder->getPersonalData($this->getUserData());
             $request->setPersonalData($personalData);
-            $deliveryData = $paramBuilder->getDeliveryData($this->getUserData());
-            $request->setDeliveryData($deliveryData);
+            if (! ($this->moptPayonePaymentHelper->isPayoneSecuredInvoice($paymentName) && $config['allowDifferentAddresses'] === false)){
+                $deliveryData = $paramBuilder->getDeliveryData($this->getUserData());
+                $request->setDeliveryData($deliveryData);
+            }
         }
 
         $request->setClearingtype($clearingType);
