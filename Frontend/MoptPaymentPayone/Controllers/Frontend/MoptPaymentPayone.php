@@ -1352,6 +1352,19 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             if (! ($this->moptPayonePaymentHelper->isPayoneSecuredInvoice($paymentName) && $config['allowDifferentAddresses'] === false)){
                 $deliveryData = $paramBuilder->getDeliveryData($this->getUserData());
                 $request->setDeliveryData($deliveryData);
+            } else {
+                $deliveryData = $paramBuilder->getDeliveryData($this->getUserData());
+                // replace shipping address with billing address
+                $deliveryData->setShippingFirstname($personalData->getFirstname());
+                $deliveryData->setShippingLastname($personalData->getLastname());
+                $deliveryData->setShippingCompany($personalData->getCompany());
+                $deliveryData->setShippingStreet($personalData->getStreet());
+                $deliveryData->setShippingCity($personalData->getCity());
+                $deliveryData->setShippingState($personalData->getState());
+                $deliveryData->setShippingAddressaddition($personalData->getAddressaddition());
+                $deliveryData->setShippingCountry($personalData->getCountry());
+                $deliveryData->setShippingZip($personalData->getZip());
+                $request->setDeliveryData($deliveryData);
             }
         }
 
