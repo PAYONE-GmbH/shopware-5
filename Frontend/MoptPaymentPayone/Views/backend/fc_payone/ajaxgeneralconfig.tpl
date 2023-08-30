@@ -384,7 +384,7 @@
                     if (response.status === 'success') {
                         $('#sendOrdernumberAsReference').prop( "disabled", filterid !== '0');
                         $('#allowDifferentAddresses').prop( "disabled", filterid === '0');
-                        if(/mopt_payone__fin_payone_secured_invoice/.test(filterid)){
+                        if(/mopt_payone__fin_payone_secured/.test(filterid)){
                             $('#allowDifferentAddresses').prop( "disabled", true);
                         } else {
                             $('#allowDifferentAddresses').prop( "disabled", false);
