@@ -375,6 +375,7 @@
             var call = url + '?' + params;
             paymentid = this.id;
             var filterid = this.getAttribute('id');
+            var paymentname = this.getAttribute('data-name');
 
             $.ajax({
                 url: call,
@@ -384,10 +385,10 @@
                     if (response.status === 'success') {
                         $('#sendOrdernumberAsReference').prop( "disabled", filterid !== '0');
                         $('#allowDifferentAddresses').prop( "disabled", filterid === '0');
-                        if(/mopt_payone__fin_payone_secured/.test(filterid)){
-                            $('#allowDifferentAddresses').prop( "disabled", true);
-                        } else {
+                        if(/mopt_payone__fin_payone_secured/.test(paymentname)){
                             $('#allowDifferentAddresses').prop( "disabled", false);
+                        } else {
+                            $('#allowDifferentAddresses').prop( "disabled", true);
                         }
                         populateForm(form, response.data);
                         form.validator('validate');
