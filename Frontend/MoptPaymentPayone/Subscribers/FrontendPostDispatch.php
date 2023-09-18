@@ -322,9 +322,9 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
             }
 
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
             if (in_array($cleanedPaymentName, \Mopt_PayoneConfig::PAYMENTS_NO_SHIPPINGADDRESS_ALLOWED))
             {
-                // redirect back to shippingpayment in case form was not submitted
                 if (is_null($session->moptFormSubmitted) || is_null($session->moptPayoneSecuredToken)) {
                     $action->redirect(
                         array(
@@ -335,10 +335,9 @@ class FrontendPostDispatch implements SubscriberInterface
                 }
                 // check for shipping and  billing address
                 // handle according to backend config
-                $userData = Shopware()->Modules()->Admin()->sGetUserData();
                 $moptPayoneMain = $this->container->get('MoptPayoneMain')->getInstance();
                 $config = $moptPayoneMain->getPayoneConfig($paymentId);
-                if ($config['allowDifferentAddresses'] === false && $userData['billingaddress']['id'] !== $userData['shippingaddress']['id']) {
+                if ((($config['allowDifferentAddresses'] === false) && $userData['billingaddress']['id'] !== $userData['shippingaddress']['id'])) {
                     Shopware()->Session()->offsetSet('checkoutShippingAddressId',  $userData['billingaddress']['id']);
                     Shopware()->Session()->sOrderVariables->sUserData['shippingaddress'] = Shopware()->Session()->sOrderVariables->sUserData['billingaddress'];
                     $orderVariables = Shopware()->Session()->sOrderVariables;

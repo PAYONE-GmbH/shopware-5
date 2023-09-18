@@ -136,7 +136,6 @@ class Mopt_PayoneConfig
     const B2BPAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE = [
         'mopt_payone__fin_payolution_debitnote',
         'mopt_payone__fin_payolution_installment',
-        'mopt_payone__fin_payone_secured_invoice',
         'mopt_payone__fin_payone_secured_installment',
         'mopt_payone__fin_payone_secured_directdebit',
         'mopt_payone__fin_kis_klarna_installments',
