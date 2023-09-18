@@ -85,6 +85,7 @@ class Payment implements SubscriberInterface
 
         //check if payone payment method, exit if not and delete pament data
         if (!$moptPayoneMain->getPaymentHelper()->isPayonePaymentMethod($paymentName)) {
+            $moptPayoneMain->getPaymentHelper()->deleteCreditcardPaymentData($userId);
             $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
             unset($session->moptMandateData);
             return;
@@ -122,7 +123,7 @@ class Payment implements SubscriberInterface
 
         if (isset($paymentData['sErrorFlag']) && count($paymentData['sErrorFlag'])) {
             $error = true;
-            $moptPayoneMain->getPaymentHelper()->deletePaymentData($userId);
+            $moptPayoneMain->getPaymentHelper()->deleteCreditcardPaymentData($userId);
         }
 
         if ($error) {
@@ -228,7 +229,7 @@ class Payment implements SubscriberInterface
             //save data to table and session
             $session->moptPayment = $post;
             if ($moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName) && !is_null($userId) && $savePaymentData) {
-                $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
+                $moptPayoneMain->getPaymentHelper()->saveCreditcardPaymentData($userId, $paymentData);
             } else if (! $moptPayoneMain->getPaymentHelper()->isPayoneCreditcard($paymentName) && !is_null($userId)) {
                 $moptPayoneMain->getPaymentHelper()->savePaymentData($userId, $paymentData);
             }
@@ -299,7 +300,7 @@ class Payment implements SubscriberInterface
 
         $postPaymentId = $this->container->get('front')->Request()->getPost('sPayment');
         $sessionPaymentId = $this->container->get('session')->offsetGet('sPaymentID');
-        $paymentID = $arguments->get('paymentID');
+        $paymentID = $returnValues['paymentID'];
         $user = $arguments->getSubject()->sGetUserData();
 
         if (!empty($paymentID)) {

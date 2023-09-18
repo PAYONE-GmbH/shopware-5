@@ -132,7 +132,11 @@ class FrontendCheckout implements SubscriberInterface
 
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
-
+        if ($this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneCreditcardForExport($ret['name'])) {
+            $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
+            $creditcardPaymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+            $paymentData = $creditcardPaymentData;
+        }
         if (isset(Shopware()->Session()->moptSaveCreditcardData) && Shopware()->Session()->moptSaveCreditcardData === false) {
             $paymentData = Shopware()->Session()->moptPayment;
         }
@@ -283,11 +287,9 @@ class FrontendCheckout implements SubscriberInterface
             $view->assign('purchaseCurrency', Shopware()->Container()->get('currency')->getShortName());
             $view->assign('locale', str_replace('_', '-', Shopware()->Shop()->getLocale()->getLocale()));
             $showmoptCreditCardAgreement = $userData['additional']['user']['accountmode'] == "0" && (! isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment === false) ;
-            if ($showmoptCreditCardAgreement) {
-                $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
-                $view->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
-            }
-            $view->assign('showMoptCreditCardAgreement', ($showmoptCreditCardAgreement === true) ? "0" : "1");
+            $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
+            $view->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
+            $view->assign('showMoptCreditCardAgreement', ($showmoptCreditCardAgreement === true) ? '1' : '0');
         }
 
         if ($request->getActionName() === 'cart' && $session->moptPayoneUserHelperError) {

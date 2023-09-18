@@ -137,6 +137,8 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
      */
     protected $paydata = null;
 
+    protected $initial_payment = null;
+
     /**
      * @param int $aid
      */
@@ -487,5 +489,10 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     function setRecurrence($recurrence)
     {
         $this->recurrence = $recurrence;
+    }
+
+    function setInitialPayment($value)
+    {
+        $this->initial_payment = $value;
     }
 }

@@ -143,6 +143,26 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * delete saved payment data
+     *
+     * @param $userId
+     * @throws Zend_Db_Adapter_Exception
+     */
+    public function deleteCreditcardPaymentData($userId)
+    {
+        if ($userId != null) {
+            $sql = 'SELECT userId FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ' . $userId;
+            $result = Shopware()->Db()->fetchOne($sql);
+            if ($result) {
+                $sql = 'DELETE FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ' . $userId;
+                Shopware()->Db()->exec($sql);
+            }
+            // also remove initial payment flag
+            $this->updateUserCreditcardInitialPaymentSuccess($userId, false);
+        }
+    }
+
+    /**
      * @param $sCompany
      * @return mixed
      */
@@ -193,6 +213,21 @@ class Mopt_PayonePaymentHelper
             '(`userId`,`moptPaymentData`) VALUES (?,?)';
         $paymentData = serialize($paymentData['formData']);
         Shopware()->Db()->query($sql, array($userId, $paymentData));
+    }
+
+    /**
+     * save payment data
+     *
+     * @param $userId
+     * @param $creditcardPaymentData
+     * @throws Zend_Db_Adapter_Exception
+     */
+    public function saveCreditcardPaymentData($userId, $creditcardPaymentData)
+    {
+        $sql = 'REPLACE INTO `s_plugin_mopt_payone_creditcard_payment_data`' .
+            '(`userId`, `moptCreditcardPaymentData`) VALUES (?,?)';
+        $creditcardPaymentData = serialize($creditcardPaymentData['formData']);
+        Shopware()->Db()->query($sql, array($userId, $creditcardPaymentData));
     }
 
     /**
@@ -2026,5 +2061,20 @@ class Mopt_PayonePaymentHelper
         }
 
         return $payments;
+    }
+
+    /**
+     * updates user attributes
+     * @param $userId
+     * @param $success
+     */
+    public function updateUserCreditcardInitialPaymentSuccess($userId, $success)
+    {
+        $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
+
+        $attributes = $user->getAttribute();
+        $attributes->setMoptPayoneCreditcardInitialPayment($success);
+        Shopware()->Models()->persist($attributes);
+        Shopware()->Models()->flush($attributes);
     }
 }

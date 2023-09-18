@@ -211,6 +211,7 @@ class Mopt_PayoneInstallHelper
                 'consumerscore_color' => 'string',
                 'consumerscore_value' => 'integer',
                 'ratepay_ban' => 'date',
+                'creditcard_initial_payment' => 'boolean',
             ],
             's_user_billingaddress_attributes' => [
                 'addresscheck_result' => 'string',
@@ -300,6 +301,7 @@ class Mopt_PayoneInstallHelper
                 'consumerscore_value' => 'integer',
                 'ratepay_ban' => 'date',
                 'klarna_personalid' => 'string',
+                'creditcard_initial_payment' => 'boolean',
             ],
             's_user_addresses_attributes' => [
                 'addresscheck_result' => 'string',
@@ -612,8 +614,18 @@ class Mopt_PayoneInstallHelper
      */
     public function moptCreatePaymentDataTable()
     {
-        $sql = "CREATE TABLE IF NOT EXISTS `s_plugin_mopt_payone_payment_data` (`userId` int(11) NOT NULL,`moptPaymentData`"
-            . " text NOT NULL, PRIMARY KEY (`userId`))";
+        $sql = "CREATE TABLE IF NOT EXISTS `s_plugin_mopt_payone_payment_data` 
+                (`userId` int(11) NOT NULL,`moptPaymentData` TEXT NOT NULL, PRIMARY KEY (`userId`))";
+        Shopware()->Db()->exec($sql);
+    }
+
+    /**
+     * add payment data table
+     */
+    public function moptCreateCreditcardPaymentDataTable()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `s_plugin_mopt_payone_creditcard_payment_data`
+                (`userId` int(11) NOT NULL, `moptCreditcardPaymentData` TEXT , PRIMARY KEY (`userId`))";
         Shopware()->Db()->exec($sql);
     }
 

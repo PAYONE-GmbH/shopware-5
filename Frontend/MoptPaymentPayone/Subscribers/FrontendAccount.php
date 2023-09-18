@@ -50,29 +50,28 @@ class FrontendAccount implements SubscriberInterface
         $controllerName = $request->getControllerName();
         $userId = Shopware()->Session()->sUserId;
 
+        $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
+        $creditcardPaymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+        $creditcardPaymentData = (empty($creditcardPaymentData)) ? [] : $creditcardPaymentData;
         $sql = 'SELECT `moptPaymentData` FROM s_plugin_mopt_payone_payment_data WHERE userId = ?';
         $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
+        $paymentData = (empty($paymentData)) ? [] : $paymentData;
+        $paymentData = array_merge($creditcardPaymentData, $paymentData);
 
         if (!empty($paymentData)) {
             //get array of creditcard payment ids
             $sql = "SELECT `id` FROM s_core_paymentmeans WHERE name LIKE '%mopt_payone__cc_%' ";
-            $creditcardIds = Shopware()->Db()->fetchAll($sql);
-
-            foreach ($creditcardIds as $creditcardId) {
-                // check if active id is in array
-                if ($creditcardId['id'] == $subject->View()->sFormData['payment']) {
-                    // set creditcard active
-                    $paymentData['payment'] = 'mopt_payone_creditcard';
-                    $subject->View()->sFormData = $paymentData;
-                    break;
-                } else {
-                    $subject->View()->sFormData += $paymentData;
-                }
-            }
+            $paymentData['payment'] = 'mopt_payone_creditcard';
+            $subject->View()->sFormData = $paymentData;
             $subject->View()->sUserData += $paymentData;
         }
 
         if ($controllerName == 'account') {
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            $showmoptCreditCardAgreement = $userData['additional']['user']['accountmode'] == "0" && (! isset(Shopware()->Session()->moptPayment) || Shopware()->Session()->moptPayment === false) ;
+            $creditCardAgreement = Shopware()->Snippets()->getNamespace('frontend/MoptPaymentPayone/payment')->get('creditCardSavePseudocardnumAgreement');
+            $subject->View()->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
+            $subject->View()->assign('showMoptCreditCardAgreement', ($showmoptCreditCardAgreement === true) ? '1' : '0');
             $subject->View()->assign('showPOCCDeleteButton', true);
         }
     }
@@ -102,11 +101,13 @@ class FrontendAccount implements SubscriberInterface
         $userId = Shopware()->Session()->sUserId;
         $paymentData = [];
         $serializedPaymentData = serialize($paymentData);
-        $sql = 'UPDATE s_plugin_mopt_payone_payment_data SET `moptPaymentData`= ? WHERE userId = ?';
+        $sql = 'UPDATE s_plugin_mopt_payone_creditcard_payment_data SET `moptCreditcardPaymentData`= ? WHERE userId = ?';
         Shopware()->Db()->executeUpdate($sql,array($serializedPaymentData, $userId));
         // also remove creditcard as default payment
         $sql = "UPDATE s_user SET paymentID = ? WHERE id = ?";
         Shopware()->Db()->query($sql, array((int)Shopware()->Config()->Defaultpayment, (int)$userId));
+        $sql = "UPDATE s_user_attributes SET `mopt_payone_creditcard_initial_payment` = ? WHERE id = ?";
+        Shopware()->Db()->query($sql, array(0, (int)$userId));
         // also remove creditcard data in Session
         unset(Shopware()->Session()->moptPayment);
     }

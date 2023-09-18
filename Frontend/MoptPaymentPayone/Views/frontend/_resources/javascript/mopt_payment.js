@@ -282,9 +282,14 @@ function moptPaymentReady() {
 
                         var checkboxStateChecked = $('#mopt_payone__cc_save_pseudocardnum_accept').is(":checked");
                         if (checkboxStateChecked) {
-                            $('#mopt_payone__cc_save_pseudocardnum_accept').val('1')
+                            $('#mopt_payone__cc_save_pseudocardnum_accept').val('1');
+                            $( "input[name*='mopt_payone__cc_save_pseudocardnum_accept']").val('1');
+                        } else if ($( "input[name*='mopt_payone__cc_save_pseudocardnum_accept']").val() === 'hidden') {
+                            $('#mopt_payone__cc_save_pseudocardnum_accept').val('1');
+                            $( "input[name*='mopt_payone__cc_save_pseudocardnum_accept']").val('1');
                         } else {
-                            $('#mopt_payone__cc_save_pseudocardnum_accept').val('0')
+                            $('#mopt_payone__cc_save_pseudocardnum_accept').val('0');
+                            $( "input[name*='mopt_payone__cc_save_pseudocardnum_accept']").val('0');
                         }
 
                         if ($('#mopt_payone__cc_cardholder').hasClass('has--error')) {
