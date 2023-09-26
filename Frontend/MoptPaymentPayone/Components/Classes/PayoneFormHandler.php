@@ -776,7 +776,7 @@ class Mopt_PayoneFormHandler
 
         $paymentData['formData']['mopt_payone__ratepay_shopid'] = $formData['mopt_payone__ratepay_installment_shopid'];
         $paymentData['formData']['mopt_payone__ratepay_installment_device_fingerprint'] = $formData['mopt_payone__ratepay_installment_device_fingerprint'];
-        $paymentData['formData']['mopt_payone__ratepay_installment_installment_amount'] = $formData['mopt_payone__ratepay_installment_amount'];
+        $paymentData['formData']['mopt_payone__ratepay_installment_amount'] = $formData['mopt_payone__ratepay_installment_amount'];
         $paymentData['formData']['mopt_payone__ratepay_installment_total'] = $formData['mopt_payone__ratepay_installment_total'];
         $paymentData['formData']['mopt_payone__ratepay_installment_last_installment_amount'] = $formData['mopt_payone__ratepay_installment_last_installment_amount'];
         $paymentData['formData']['mopt_payone__ratepay_installment_interest_rate'] = $formData['mopt_payone__ratepay_installment_interest_rate'];
