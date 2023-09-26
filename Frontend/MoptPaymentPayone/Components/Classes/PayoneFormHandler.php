@@ -178,7 +178,7 @@ class Mopt_PayoneFormHandler
             }
         }
 
-        if (!$formData['mopt_payone__sofort_bic'] && !$formData['mopt_payone__debit_show_sofort_iban_bic']==="") {
+        if (!$formData['mopt_payone__sofort_bic'] && !$formData['mopt_payone__sofort_show_sofort_iban_bic']==="") {
             $paymentData['sErrorFlag']['mopt_payone__sofort_bic'] = true;
         } else {
             if ($formData['mopt_payone__sofort_bic'] && !$this->isValidBic($formData['mopt_payone__sofort_bic'])){
