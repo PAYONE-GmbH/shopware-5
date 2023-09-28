@@ -1759,17 +1759,21 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     protected function getPaymentData()
     {
         $userId = $this->session->sUserId;
-
+        $paymentId = $this->session->sPaymentID;
+        $moptPayonePaymentHelper = new Mopt_PayonePaymentHelper();
+        $paymentName = $moptPayonePaymentHelper->getPaymentNameFromId($paymentId);
         if ($this->isRecurringOrder()) {
-            $paymentData = Shopware()->Session()->moptPayment;
-        } else {
+            $paymentData = $this->session->moptPayment;
+        } elseif ($moptPayonePaymentHelper->isPayoneCreditcard($paymentName)) {
             $sql = 'SELECT `moptCreditcardPaymentData` FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
             $paymentData = unserialize(Shopware()->Db()->fetchOne($sql, $userId));
             if (!$paymentData && Shopware()->Session()->moptSaveCreditcardData === false) {
-                $paymentData = Shopware()->Session()->moptPayment;
+                $paymentData = $this->session->moptPayment;
             } else {
                 Shopware()->Session()->moptPayment = $paymentData;
             }
+        } else {
+            $paymentData = $this->session->moptPayment;
         }
 
         return $paymentData;

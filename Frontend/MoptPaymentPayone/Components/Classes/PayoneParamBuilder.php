@@ -740,7 +740,7 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_invoice_shopid'])
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
         ));
 
 
@@ -793,7 +793,7 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_installment_shopid'])
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
         ));
 
         //toDo direct Debit
@@ -866,7 +866,7 @@ class Mopt_PayoneParamBuilder
         ));
 
         $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_direct_debit_shopid'])
+            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__ratepay_shopid'])
         ));
 
 
