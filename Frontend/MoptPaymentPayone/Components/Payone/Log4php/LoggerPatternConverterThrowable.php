@@ -33,7 +33,7 @@ class Payone_Log4php_LoggerPatternConverterThrowable extends Payone_Log4php_Logg
     
     public function activateOptions()
     {
-        if (isset($this->option) && is_numeric($op) && $op >= 0) {
+        if (isset($this->option) && is_numeric($this->option) && $this->option >= 0) {
             $this->depth = (integer) $this->option;
         }
     }

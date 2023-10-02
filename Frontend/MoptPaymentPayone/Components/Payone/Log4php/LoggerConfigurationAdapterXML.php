@@ -80,7 +80,7 @@ class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
         $oldValue = libxml_use_internal_errors(true);
         
         // Load XML
-        $xml = @simplexml_load_file($url);
+        $xml = simplexml_load_file($url);
         if ($xml === false) {
             
             $errorStr = "";

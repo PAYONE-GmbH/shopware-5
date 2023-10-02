@@ -21,12 +21,12 @@
 abstract class Payone_Api_Response_Genericpayment_Abstract extends Payone_Api_Response_Abstract
 {
     protected $workorderid = null;
-    function getWorkorderId()
+    public function getWorkorderId()
     {
         return $this->workorderid;
     }
 
-    function setWorkorderId($workorderid)
+    public function setWorkorderId($workorderid)
     {
         $this->workorderid = $workorderid;
     }

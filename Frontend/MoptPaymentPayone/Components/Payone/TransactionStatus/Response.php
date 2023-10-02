@@ -28,7 +28,7 @@ class Payone_TransactionStatus_Response extends Payone_TransactionStatus_Respons
      */
     protected $status = null;
 
-    function __construct($status = '')
+    public function __construct($status = '')
     {
         $this->setStatus($status);
     }

@@ -171,12 +171,12 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
         return $this->amount;
     }
 
-    function getApiVersion()
+    public function getApiVersion()
     {
         return $this->api_version;
     }
 
-    function setApiVersion($api_version)
+    public function setApiVersion($api_version)
     {
         $this->api_version = $api_version;
     }
@@ -410,7 +410,7 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     /**
      * @return string
      */
-    function getWorkorderId()
+    public function getWorkorderId()
     {
         return $this->workorderid;
     }
@@ -418,7 +418,7 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     /**
      * @param string $workorderid
      */
-    function setWorkorderId($workorderid)
+    public function setWorkorderId($workorderid)
     {
         $this->workorderid = $workorderid;
     }
@@ -426,7 +426,7 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     /**
      * @return string
      */
-    function getSuccessurl()
+    public function getSuccessurl()
     {
         return $this->successurl;
     }
@@ -434,7 +434,7 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     /**
      * @param string $successurl
      */
-    function setSuccessurl($successurl)
+    public function setSuccessurl($successurl)
     {
         $this->successurl = $successurl;
     }
@@ -442,7 +442,7 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     /**
      * @return string
      */
-    function getBackurl()
+    public function getBackurl()
     {
         return $this->backurl;
     }
@@ -450,7 +450,7 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     /**
      * @param string $backurl
      */
-    function setBackurl($backurl)
+    public function setBackurl($backurl)
     {
         $this->backurl = $backurl;
     }
@@ -458,7 +458,7 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     /**
      * @return string
      */
-    function getErrorurl()
+    public function getErrorurl()
     {
         return $this->errorurl;
     }
@@ -466,32 +466,32 @@ abstract class Payone_Api_Request_Authorization_Abstract extends Payone_Api_Requ
     /**
      * @param string $backurl
      */
-    function setErrorurl($errorurl)
+    public function setErrorurl($errorurl)
     {
         $this->errorurl = $errorurl;
     }
 
-    function getCustomerIsPresent()
+    public function getCustomerIsPresent()
     {
         return $this->customer_is_present;
     }
 
-    function getRecurrence()
+    public function getRecurrence()
     {
         return $this->recurrence;
     }
 
-    function setCustomerIsPresent($customer_is_present)
+    public function setCustomerIsPresent($customer_is_present)
     {
         $this->customer_is_present = $customer_is_present;
     }
 
-    function setRecurrence($recurrence)
+    public function setRecurrence($recurrence)
     {
         $this->recurrence = $recurrence;
     }
 
-    function setInitialPayment($value)
+    public function setInitialPayment($value)
     {
         $this->initial_payment = $value;
     }

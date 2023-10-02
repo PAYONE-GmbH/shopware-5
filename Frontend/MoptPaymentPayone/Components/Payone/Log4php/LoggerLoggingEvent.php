@@ -362,7 +362,7 @@ class Payone_Log4php_LoggerLoggingEvent
      */
     public function toString()
     {
-        serialize($this);
+        return serialize($this);
     }
     
     /**

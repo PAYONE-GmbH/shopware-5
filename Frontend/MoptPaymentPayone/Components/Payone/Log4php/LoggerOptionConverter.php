@@ -225,7 +225,7 @@ class Payone_Log4php_LoggerOptionConverter
         $clazz = basename($clazz);
 
         if (class_exists($clazz)) {
-            $result = @call_user_func(array($clazz, 'toLevel'), $levelName, $defaultValue);
+            $result = call_user_func(array($clazz, 'toLevel'), $levelName, $defaultValue);
             if (!$result instanceof Payone_Log4php_LoggerLevel) {
                 $result = $defaultValue;
             }
@@ -367,7 +367,7 @@ class Payone_Log4php_LoggerOptionConverter
      */
     public static function findAndSubst($key, $props)
     {
-        $value = @$props[$key];
+        $value = $props[$key];
 
         // If coming from the LoggerConfiguratorIni, some options were
         // already mangled by parse_ini_file:
@@ -450,7 +450,7 @@ class Payone_Log4php_LoggerOptionConverter
                     $replacement = Payone_Log4php_LoggerOptionConverter::getSystemProperty($key, null);
                     // then try props parameter
                     if ($replacement == null and $props !== null) {
-                        $replacement = @$props[$key];
+                        $replacement = $props[$key];
                     }
 
                     if (!empty($replacement)) {

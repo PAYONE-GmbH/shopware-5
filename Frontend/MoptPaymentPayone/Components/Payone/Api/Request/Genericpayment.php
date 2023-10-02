@@ -246,7 +246,7 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
      *
      * @return string
      */
-    function getWorkorderId()
+    public function getWorkorderId()
     {
         return $this->workorderid;
     }
@@ -255,7 +255,7 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
      *
      * @param string $workorderid
      */
-    function setWorkorderId($workorderid)
+    public function setWorkorderId($workorderid)
     {
         $this->workorderid = $workorderid;
     }
@@ -264,7 +264,7 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
      *
      * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
      */
-    function getWallet()
+    public function getWallet()
     {
         return $this->wallet;
     }
@@ -273,7 +273,7 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
      *
      * @param Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet $wallet
      */
-    function setWallet(Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet $wallet)
+    public function setWallet(Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet $wallet)
     {
         $this->wallet = $wallet;
     }

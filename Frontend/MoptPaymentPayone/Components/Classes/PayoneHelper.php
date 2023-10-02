@@ -328,15 +328,14 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
+        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
+            return false;
+        }
         if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
             return false;
         } else {
             return true;
         }
-        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -359,16 +358,14 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
+        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
+            return false;
+        }
         if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
             return false;
         } else {
             return true;
         }
-
-        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -1707,8 +1704,8 @@ class Mopt_PayoneHelper
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FAILONERROR, true);
         curl_setopt($curl, CURLINFO_HEADER_OUT, true);
@@ -1799,8 +1796,8 @@ class Mopt_PayoneHelper
 
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         $curl_timeout = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'];

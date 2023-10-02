@@ -120,9 +120,6 @@ div#ratepay-ContentSwitch {
     display: none;
 }
 
-#ratepay-main-cont #ratepay-DueDate{
-}
-
 #ratepay-main-cont #debitSelect{
     float: right;
     font-size: 100%;
@@ -480,7 +477,7 @@ table#ratepay-InstallmentTerms {
     border: 2px dashed #000000;
     background-color: #ffff00;
     font-weight: bold;
-    font-color: #000000;
+    color: #000000;
     text-align: center;
 }
 
