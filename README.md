@@ -32,7 +32,6 @@ You can check [the documentation on our website here](https://docs.payone.com/di
 
 ## Contact
 PAYONE GmbH<br>
-Office Kiel<br>
 Fraunhoferstraße 2-4<br>
 24118 Kiel, Germany<br>
 [payone.com](https://www.payone.com/DE-de)<br>
