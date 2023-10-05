@@ -44,7 +44,7 @@ abstract class Payone_Api_Response_Abstract implements Payone_Api_Response_Inter
     /**
      * @param array $params
      */
-    function __construct(array $params = array())
+    public function __construct(array $params = array())
     {
         if (count($params) > 0) {
             $this->init($params);

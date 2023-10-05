@@ -1693,7 +1693,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         }
     }
 
-    function checkAndUpdateConsumerscoreExtension()
+    public function checkAndUpdateConsumerscoreExtension()
     {
         $db = Shopware()->Db();
 
@@ -1712,7 +1712,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         }
     }
 
-    function checkAndUpdateSendOrderNumberAsReferenceExtension()
+    public function checkAndUpdateSendOrderNumberAsReferenceExtension()
     {
         $db = Shopware()->Db();
 
@@ -1729,7 +1729,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
         }
     }
 
-    function checkAndUpdateTransLoggingExtension()
+    public function checkAndUpdateTransLoggingExtension()
     {
         $db = Shopware()->Db();
 
@@ -1751,7 +1751,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdateAmazonPackStationModelExtension()
+    public function checkAndUpdateAmazonPackStationModelExtension()
     {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
@@ -1773,7 +1773,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdatePayPalPackStationModelExtension()
+    public function checkAndUpdatePayPalPackStationModelExtension()
     {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
@@ -1803,7 +1803,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      * @throws Zend_Db_Adapter_Exception
      * @throws Zend_Db_Statement_Exception
      */
-    function checkAndAddAutoCardtypeDetectionColumn()
+    public function checkAndAddAutoCardtypeDetectionColumn()
     {
         $db = Shopware()->Db();
         $dbConfig = $db->getConfig();
@@ -1830,7 +1830,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      * @throws Zend_Db_Adapter_Exception
      * @throws Zend_Db_Statement_Exception
      */
-    function checkAndAddReminderLevelColumns()
+    public function checkAndAddReminderLevelColumns()
     {
         $reminderLevels = ['2', '3', '4', '5', 'A', 'S', 'M', 'I'];
         $db = Shopware()->Db();
@@ -1857,7 +1857,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      * column if not present.
      * @return void
      */
-    function checkAndAddRatepaySnippetIdColumn()
+    public function checkAndAddRatepaySnippetIdColumn()
     {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
@@ -1879,7 +1879,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      * column if not present.
      * @return void
      */
-    function checkAndAddTrustlyShowIbanBic()
+    public function checkAndAddTrustlyShowIbanBic()
     {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
@@ -1904,7 +1904,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      * @throws Zend_Db_Adapter_Exception
      * @throws Zend_Db_Statement_Exception
      */
-    function checkAndAddApplepayConfig()
+    public function checkAndAddApplepayConfig()
     {
         $textColumns = ['applepay_merchant_id', 'applepay_certificate', 'applepay_private_key', 'applepay_private_key_password'];
         $tinyIntColumns = ['applepay_visa', 'applepay_mastercard', 'applepay_girocard', 'applepay_amex', 'applepay_discover', 'applepay_debug'];
@@ -1946,7 +1946,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdatePayPalShopModelExtension()
+    public function checkAndUpdatePayPalShopModelExtension()
     {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
@@ -1971,7 +1971,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdateAmazonPayShopModelExtension()
+    public function checkAndUpdateAmazonPayShopModelExtension()
     {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
@@ -1996,7 +1996,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdatePayPalDefaultModelExtension()
+    public function checkAndUpdatePayPalDefaultModelExtension()
     {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
@@ -2018,7 +2018,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndRemovePayPalLocaleModelExtension()
+    public function checkAndRemovePayPalLocaleModelExtension()
     {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
@@ -2038,7 +2038,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     /**
      * @return void
      */
-    function migratePaypalSettings()
+    public function migratePaypalSettings()
     {
         $connection = Shopware()->Container()->get('dbal_connection');
         $payoneMain = new Mopt_PayoneMain();
@@ -2093,7 +2093,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     /**
      * @return bool
      */
-    function checkPaypalMigration()
+    public function checkPaypalMigration()
     {
         $connection = Shopware()->Container()->get('dbal_connection');
         /** @var Shopware\Models\Payment\Payment $paypalExpressPayment */
@@ -2121,7 +2121,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      *
      * @return void
      */
-    function checkAndUpdateAllowDifferentAdressesOption()
+    public function checkAndUpdateAllowDifferentAdressesOption()
     {
         $db = Shopware()->Db();
         $DBConfig = $db->getConfig();
@@ -2146,7 +2146,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      * @throws Zend_Db_Adapter_Exception
      * @throws Zend_Db_Statement_Exception
      */
-    function checkAndAddCreditcardDefaultDescription()
+    public function checkAndAddCreditcardDefaultDescription()
     {
         $textColumns = ['creditcard_default_description'];
         $db = Shopware()->Db();
@@ -2176,7 +2176,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      * @throws Zend_Db_Adapter_Exception
      * @throws Zend_Db_Statement_Exception
      */
-    function checkAndAddPaypalExpressUseDefaultShipping()
+    public function checkAndAddPaypalExpressUseDefaultShipping()
     {
         $textColumns = ['paypal_express_use_default_shipping'];
         $db = Shopware()->Db();

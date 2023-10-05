@@ -41,7 +41,7 @@ abstract class Payone_SessionStatus_Request_Item_Abstract implements Payone_Sess
      */
     private $applyFilters = null;
 
-    function __construct(array $params = array())
+    public function __construct(array $params = array())
     {
         if (count($params) > 0) {
             $this->init($params);

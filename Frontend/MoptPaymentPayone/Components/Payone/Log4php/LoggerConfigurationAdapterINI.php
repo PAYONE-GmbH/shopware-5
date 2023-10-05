@@ -69,7 +69,7 @@ class Payone_Log4php_LoggerConfigurationAdapterINI implements Payone_Log4php_Log
             throw new Payone_Log4php_LoggerException("File [$url] does not exist.");
         }
         
-        $properties = @parse_ini_file($url, true);
+        $properties = parse_ini_file($url, true);
         if ($properties === false) {
             $error = error_get_last();
             throw new Payone_Log4php_LoggerException("Error parsing configuration file: {$error['message']}");

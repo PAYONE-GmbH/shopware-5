@@ -41,7 +41,7 @@ abstract class Payone_TransactionStatus_Request_Abstract implements Payone_Trans
      */
     private $applyFilters = null;
 
-    function __construct(array $params = array())
+    public function __construct(array $params = array())
     {
         if (count($params) > 0) {
             $this->init($params);

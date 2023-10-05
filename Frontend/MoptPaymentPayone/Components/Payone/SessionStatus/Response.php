@@ -28,7 +28,7 @@ class Payone_SessionStatus_Response extends Payone_SessionStatus_Response_Abstra
      */
     protected $status = null;
 
-    function __construct($status = '')
+    public function __construct($status = '')
     {
         $this->setStatus($status);
     }

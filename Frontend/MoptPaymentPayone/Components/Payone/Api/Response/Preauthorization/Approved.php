@@ -43,7 +43,7 @@ class Payone_Api_Response_Preauthorization_Approved extends Payone_Api_Response_
     /**
      * @param array $params
      */
-    function __construct(array $params = array())
+    public function __construct(array $params = array())
     {
         parent::__construct($params);
 

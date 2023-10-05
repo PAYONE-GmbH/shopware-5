@@ -94,7 +94,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 $proxy = new \ReflectionClass($proxy);
                 $proxyFile = $proxy->getFileName();
 
-                @unlink($proxyFile);
+                unlink($proxyFile);
             }
         }
     }

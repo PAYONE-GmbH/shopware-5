@@ -90,7 +90,7 @@ class Mopt_PayoneParamBuilder
      * @param array $postionIds
      * @param bool $finalize
      * @param bool $includeShipment
-     * @return \Payone_Api_Request_Parameter_Capture_Business
+     * @return array
      */
     public function buildOrderCapture($order, $postionIds, $finalize, $includeShipment = false)
     {
@@ -118,7 +118,7 @@ class Mopt_PayoneParamBuilder
         } elseif ($this->payonePaymentHelper->isPayoneInvoice($paymentName) || $this->payonePaymentHelper->isPayoneTrustly($paymentName) || $this->payonePaymentHelper->isPayoneWechatpay($paymentName) ) {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::NO);
         } else {
-            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::AUTO);
+            $business->setSettleaccount(Payone_Api_Enum_Settleaccount::AUTO);
         }
 
 
@@ -309,11 +309,7 @@ class Mopt_PayoneParamBuilder
         }
 
         if ($includeShipment) {
-            if (!$blDebitBrutto) {
-                $amount += $order->getInvoiceShipping();
-            } else {
-                $amount += $order->getInvoiceShipping();
-            }
+            $amount += $order->getInvoiceShipping();
         }
 
         return $amount * -1;
@@ -361,11 +357,7 @@ class Mopt_PayoneParamBuilder
         }
 
         if ($includeShipment) {
-            if (!$blDebitBrutto) {
-                $amount += $order->getInvoiceShipping();
-            } else {
-                $amount += $order->getInvoiceShipping();
-            }
+            $amount += $order->getInvoiceShipping();
         }
         $amount = round($amount, 2);
         return $amount;
@@ -410,11 +402,7 @@ class Mopt_PayoneParamBuilder
         }
 
         if ($includeShipment) {
-            if (!$blDebitBrutto) {
-                $amount += $order->getInvoiceShipping();
-            } else {
-                $amount += $order->getInvoiceShipping();
-            }
+            $amount += $order->getInvoiceShipping();
         }
         $amount = round($amount, 2);
         return $amount;

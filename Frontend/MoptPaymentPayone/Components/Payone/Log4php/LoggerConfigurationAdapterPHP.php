@@ -58,13 +58,13 @@ class Payone_Log4php_LoggerConfigurationAdapterPHP implements Payone_Log4php_Log
         }
         
         // Load the config file
-        $data = @file_get_contents($url);
+        $data = file_get_contents($url);
         if ($data === false) {
             $error = error_get_last();
             throw new Payone_Log4php_LoggerException("Error loading config file: {$error['message']}");
         }
         
-        $config = @eval('?>' . $data);
+        $config = eval('?>' . $data);
         
         if ($config === false) {
             $error = error_get_last();

@@ -77,7 +77,7 @@ class Payone_Api_Adapter_Http_Socket extends Payone_Api_Adapter_Http_Abstract
         // Socket - Connect
         $flags = STREAM_CLIENT_CONNECT;
         $context = stream_context_create();
-        $socket = @stream_socket_client(
+        $socket = stream_socket_client(
             $socketScheme . $urlHost . ':' . $socketPort,
             $errno,
             $errstr,
@@ -87,12 +87,12 @@ class Payone_Api_Adapter_Http_Socket extends Payone_Api_Adapter_Http_Abstract
         );
 
         // Socket - Write
-        if (!@fwrite($socket, $request)) {
+        if (!fwrite($socket, $request)) {
             throw new Payone_Api_Exception_WritingRequestToServer();
         }
 
         $gotStatus = false;
-        while (($line = @fgets($socket)) !== false) {
+        while (($line = fgets($socket)) !== false) {
             $gotStatus = $gotStatus || (strpos($line, 'HTTP') !== false);
             if ($gotStatus) {
                 $response[] = $line;

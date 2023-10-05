@@ -2,6 +2,12 @@
  * JS extension for Payone Payment Methods
  */
 
+function fakeResponse() {
+    this.get = function (egal) {
+        return 1079;
+    }
+}
+
 function moptPaymentReady() {
 
     $.plugin('moptPayoneIbanValidator', {
@@ -915,12 +921,7 @@ function moptPaymentReady() {
                 $('#mopt_payone__cc_cvc').val('');
                 processPayoneResponse(false);
             } else if (!cvcLengthCheck) {
-                function Response() {
-                    this.get = function (egal) {
-                        return 1079;
-                    }
-                }
-                response = new Response();
+                response = new fakeResponse();
                 processPayoneResponse(response);
             } else {
                 var data = {

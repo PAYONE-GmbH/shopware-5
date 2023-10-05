@@ -178,8 +178,8 @@ class Payone_Log4php_LoggerAppenderPDO extends Payone_Log4php_LoggerAppender
                 }
                 
                 // Write to database
-                @$this->preparedInsert->execute($this->format($event));
-                @$this->preparedInsert->closeCursor();
+                $this->preparedInsert->execute($this->format($event));
+                $this->preparedInsert->closeCursor();
                 break;
             } catch (PDOException $e) {
                 $this->warn("Failed writing to database: ". $e->getMessage());
@@ -305,8 +305,8 @@ class Payone_Log4php_LoggerAppenderPDO extends Payone_Log4php_LoggerAppender
     }
     
     /** Returns the DSN string. */
-    public function getDSN($dsn)
+    public function getDSN()
     {
-        return $this->setString('dsn', $dsn);
+        return $this->dsn;
     }
 }

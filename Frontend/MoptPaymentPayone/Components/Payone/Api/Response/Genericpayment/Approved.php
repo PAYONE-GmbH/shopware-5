@@ -31,7 +31,7 @@ class Payone_Api_Response_Genericpayment_Approved extends Payone_Api_Response_Ge
     /**
      * @param array $params
      */
-    function __construct(array $params = array()) {
+    public function __construct(array $params = array()) {
         parent::__construct($params);
 
         $this->setRawResponse($params);

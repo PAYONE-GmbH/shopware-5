@@ -1742,7 +1742,7 @@ class Mopt_PayonePaymentHelper
         return $router->assemble($userParams, $context);
     }
 
-    function array_splice_assoc(&$input, $offset, $length, $replacement = array())
+    public function array_splice_assoc(&$input, $offset, $length, $replacement = array())
     {
         $replacement = (array)$replacement;
         $key_indices = array_flip(array_keys($input));

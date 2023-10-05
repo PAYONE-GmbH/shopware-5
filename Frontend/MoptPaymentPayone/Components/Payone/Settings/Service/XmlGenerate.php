@@ -107,7 +107,7 @@ class Payone_Settings_Service_XmlGenerate
                     $node = $parent->addChild($value['node']);
                     //add all attributes
                     foreach ($value['attribute'] as $attributKey => $attributData) {
-                        $node->addAttribute($attributKey, $attributData);
+                        $node->setAttribute($attributKey, $attributData);
                     }
                 } else {
                     $this->simpleXmlFromNestedArray($key, $value, $parent);
@@ -360,17 +360,17 @@ class Payone_Settings_Service_XmlGenerate
      * @param DOMElement $cleatringTypeNode
      * @param Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract $valueClearingType
      */
-    public function addTypesOrGlobalInfo(DOMElement $cleatringTypeNode, Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract $valueClearingType)
+    public function addTypesOrGlobalInfo(DOMElement $clearingTypeNode, Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract $valueClearingType)
     {
         if ($valueClearingType->getTypes() !== null && $valueClearingType->getTypes() !== false) {
 
             if ($valueClearingType instanceof Payone_Settings_Data_ConfigFile_PaymentMethod_Creditcard) {
                 /** @var $valueClearingType Payone_Settings_Data_ConfigFile_PaymentMethod_Creditcard */
-                $this->addChild($cleatringTypeNode, $valueClearingType, 'cvc2');
+                $this->addChild($clearingTypeNode, $valueClearingType, 'cvc2');
             }
-            $this->addChild($cleatringTypeNode, $valueClearingType, 'types');
+            $this->addChild($clearingTypeNode, $valueClearingType, 'types');
         }
-        $this->addGlobal($cleatringTypeNode, $valueClearingType);
+        $this->addGlobal($clearingTypeNode, $valueClearingType);
     }
 
     public function addGlobal($parent, $type)
@@ -463,7 +463,7 @@ class Payone_Settings_Service_XmlGenerate
                 $mapNode->setAttribute($key, $data);
             }
         } else {
-            if (!empty($data)) {
+            if (!empty($name)) {
                 $mapNode->setAttribute($name, $value);
             }
         }

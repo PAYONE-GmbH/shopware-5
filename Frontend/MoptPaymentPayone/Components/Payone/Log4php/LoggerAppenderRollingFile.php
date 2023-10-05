@@ -184,7 +184,7 @@ class Payone_Log4php_LoggerAppenderRollingFile extends Payone_Log4php_LoggerAppe
      */
     public function setMaximumFileSize($maxFileSize)
     {
-        return $this->setMaxFileSize($maxFileSize);
+        $this->setMaxFileSize($maxFileSize);
     }
 
     /**
