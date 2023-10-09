@@ -354,56 +354,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
     private function handleAmazonError($response)
     {
         $errorCode = $response->getErrorCode();
-
-        switch ($errorCode) {
-            // TransactionTimedOut (TimeOut)
-            // log User out to prevent 902 Error on second try (check with PO)
-            case '980':
-                $this->redirectToCart(true, $errorCode);
-                break;
-
-            // InvalidPaymentMethod (ungültige Zahlungsart)
-            case '981':
-                $this->redirectToCart(true, $errorCode);
-                break;
-
-            // AmazonRejected (Zahlung durch Amazon zurückgewiesen)
-            case '982':
-                $this->redirectToCart(true, $errorCode);
-                break;
-
-            //  ProcessingFailure (Fehler bei Bearbeitung der Zahlung)
-            case '983':
-                $this->redirectToCart(true, $errorCode);
-                break;
-
-            //  BuyerEqualsSeller (Käufer- und Verkäuferkonto identisch)
-            case '984':
-                $this->redirectToCart(true, $errorCode);
-                break;
-
-            //  PaymentMethodNotAllowed (Zahlungsart nicht zulässig)
-            case '985':
-                $this->redirectToCart(true, $errorCode);
-                break;
-
-            //  PaymentPlanNotSet
-            case '986':
-                $this->redirectToCart(true, $errorCode);
-                break;
-
-            //  ShippingAddressNotSet
-            //  old: 900
-            case '987':
-                $this->redirectToCart(true, $errorCode);
-                break;
-
-            default:
-                $this->redirectToCart(true, $errorCode);
-                break;
-
-        }
-        return;
+        $this->redirectToCart(true, $errorCode);
     }
 
     /**

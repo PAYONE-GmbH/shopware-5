@@ -72,7 +72,8 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     {
         $data = $this->Request()->getParams();
         if (isset($data['type']) && $data['type'] == 'reset' && $data['paymentId'] != 0) {
-            return $this->deleteConfigAction($data);
+            $this->deleteConfigAction($data);
+            return;
         }
         $data = $this->validateFormData($data);
         $data = $this->validateCountries($data);

@@ -74,7 +74,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     /**
      * check if everything is ok and proceed with payment
      *
-     * @return redirect to payment action or checkout controller
+     * @return void redirect to payment action or checkout controller
      */
     public function indexAction()
     {
@@ -82,11 +82,13 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $basket = Shopware()->Modules()->Basket();
         $checkQuantities = $basket->sCheckBasketQuantities();
         if (!empty($checkQuantities['hideBasket'])) {
-            return $this->redirect(array('controller' => 'checkout'));
+            $this->redirect(array('controller' => 'checkout'));
+            return;
         }
 
         if ($this->session->moptConsumerScoreCheckNeedsUserAgreement) {
-            return $this->redirect(array('controller' => 'checkout'));
+            $this->redirect(array('controller' => 'checkout'));
+            return;
         }
 
         if ($this->session->moptFormSubmitted) {
@@ -103,14 +105,15 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             if ($this->session->moptMandateData['mopt_payone__showMandateText'] == true && (int)$this->session->moptMandateAgreement !== 1) {
                 $this->session->moptMandateAgreementError = true;
                 $this->session->moptFormSubmitted = true;
-                return $this->redirect(array('controller' => 'checkout', 'action' => 'confirm'));
+                $this->redirect(array('controller' => 'checkout', 'action' => 'confirm'));
+                return;
             }
         }
 
         if ($action) {
-            return $this->redirect(array('action' => $action, 'forceSecure' => true));
+            $this->redirect(array('action' => $action, 'forceSecure' => true));
         } else {
-            return $this->redirect(array('controller' => 'checkout'));
+            $this->redirect(array('controller' => 'checkout'));
         }
     }
 
@@ -197,7 +200,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $response = $this->mopt_payone__applepay($token);
         $return = $this->mopt_payone__handleApplePayFeedback($response);
         echo $return;
-        exit();
     }
 
     public function barzahlenAction()
@@ -420,9 +422,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         return $response;
     }
 
-    /**
-     * @return Payone_Api_Response_Authorization_Redirect|Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Invalid $redirect
-     */
     public function paypalRecurringSuccessAction()
     {
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
@@ -444,10 +443,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $this->mopt_payone__handleDirectFeedback($response);
     }
-
-    /**
-     * @return Payone_Api_Response_Authorization_Redirect|Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Invalid $redirect
-     */
     public function paydirektRecurringSuccessAction()
     {
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
@@ -954,7 +949,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      *
      * @param string $txId
      * @param string $moptPaymentReference
-     * @return redirect to finish page
+     * @return void redirect to finish page
      */
     public function finishOrderAction()
     {

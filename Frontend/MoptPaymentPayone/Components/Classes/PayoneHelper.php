@@ -279,9 +279,8 @@ class Mopt_PayoneHelper
             case 2:
                 return 'G';
                 break;
-
             default:
-                break;
+                return '';
         }
     }
 
@@ -868,12 +867,12 @@ class Mopt_PayoneHelper
         if ($object instanceof Shopware\Models\Order\Order) {
             if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\Order')
                 ->findOneBy(array('orderId' => $object->getId()))) {
-                $attribute = new Shopware\Models\Attribute\Order();
+                $attribute = new Shopware\Models\Attribute\Order(); /** @phpstan-ignore-line */
             }
         } elseif ($object instanceof Shopware\Models\Order\Detail) {
             if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\OrderDetail')
                 ->findOneBy(array('orderDetailId' => $object->getId()))) {
-                $attribute = new Shopware\Models\Attribute\OrderDetail();
+                $attribute = new Shopware\Models\Attribute\OrderDetail(); /** @phpstan-ignore-line */
             }
         } else {
             throw new Exception('Unknown attribute base class');
@@ -896,15 +895,15 @@ class Mopt_PayoneHelper
             return $attribute;
         }
 
-        if ($object instanceof Shopware\Models\Customer\Billing) {
+        if ($object instanceof Shopware\Models\Customer\Billing) { /** @phpstan-ignore-line */
             if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\CustomerBilling')
                 ->findOneBy(['customerBillingId' => $object->getId()])) {
-                $attribute = new Shopware\Models\Attribute\CustomerBilling();
+                $attribute = new Shopware\Models\Attribute\CustomerBilling(); /** @phpstan-ignore-line */
             }
         } elseif ($object instanceof Shopware\Models\Customer\Address) {
             if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\CustomerAddress')
                 ->findOneBy(['customerAddressId' => $object->getId()])) {
-                $attribute = new Shopware\Models\Attribute\CustomerAddress();
+                $attribute = new Shopware\Models\Attribute\CustomerAddress(); /** @phpstan-ignore-line */
             }
         } else {
             throw new Exception('Unknown attribute base class');
@@ -927,15 +926,15 @@ class Mopt_PayoneHelper
             return $attribute;
         }
 
-        if ($object instanceof Shopware\Models\Customer\Shipping) {
+        if ($object instanceof Shopware\Models\Customer\Shipping) { /** @phpstan-ignore-line */
             if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\CustomerShipping')
                 ->findOneBy(['customerShippingId' => $object->getId()])) {
-                $attribute = new Shopware\Models\Attribute\CustomerShipping();
+                $attribute = new Shopware\Models\Attribute\CustomerShipping(); /** @phpstan-ignore-line */
             }
         } elseif ($object instanceof Shopware\Models\Customer\Address) {
             if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\CustomerAddress')
                 ->findOneBy(['customerAddressId' => $object->getId()])) {
-                $attribute = new Shopware\Models\Attribute\CustomerAddress();
+                $attribute = new Shopware\Models\Attribute\CustomerAddress(); /** @phpstan-ignore-line */
             }
         } else {
             throw new Exception('Unknown attribute base class');
@@ -961,7 +960,7 @@ class Mopt_PayoneHelper
         if ($object instanceof Shopware\Models\Customer\Customer) {
             if (!$attribute = Shopware()->Models()->getRepository('Shopware\Models\Attribute\Customer')
                 ->findOneBy(array('customerId' => $object->getId()))) {
-                $attribute = new Shopware\Models\Attribute\Customer();
+                $attribute = new Shopware\Models\Attribute\Customer(); /** @phpstan-ignore-line */
             }
         } else {
             throw new Exception('Unknown attribute base class');

@@ -39,57 +39,6 @@ class Payone_Log4php_LoggerReflectionUtils
     }
     
     /**
-     * Set the properties of an object passed as a parameter in one
-     * go. The <code>properties</code> are parsed relative to a
-     * <code>prefix</code>.
-     *
-     * @param object $obj The object to configure.
-     * @param array $properties An array containing keys and values.
-     * @param string $prefix Only keys having the specified prefix will be set.
-     */
-     // TODO: check, if this is really useful
-    public static function setPropertiesByObject($obj, $properties, $prefix)
-    {
-        $pSetter = new Payone_Log4php_LoggerReflectionUtils($obj);
-        return $pSetter->setProperties($properties, $prefix);
-    }
-    
-    
-    /**
-     * Set the properites for the object that match the
-     * <code>prefix</code> passed as parameter.
-     *
-     * Example:
-     *
-     * $arr['xxxname'] = 'Joe';
-     * $arr['xxxmale'] = true;
-     * and prefix xxx causes setName and setMale.
-     *
-     * @param array $properties An array containing keys and values.
-     * @param string $prefix Only keys having the specified prefix will be set.
-     */
-     // TODO: check, if this is really useful
-    public function setProperties($properties, $prefix)
-    {
-        $len = strlen($prefix);
-        reset($properties);
-        while (list($key,) = each($properties)) {
-            if (strpos($key, $prefix) === 0) {
-                if (strpos($key, '.', ($len + 1)) > 0) {
-                    continue;
-                }
-                $value = Payone_Log4php_LoggerOptionConverter::findAndSubst($key, $properties);
-                $key = substr($key, $len);
-                if ($key == 'layout' and ($this->obj instanceof Payone_Log4php_LoggerAppender)) {
-                    continue;
-                }
-                $this->setProperty($key, $value);
-            }
-        }
-        $this->activate();
-    }
-    
-    /**
      * Set a property on this PropertySetter's Object. If successful, this
      * method will invoke a setter method on the underlying Object. The
      * setter is the one for the specified property name and the value is

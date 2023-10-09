@@ -62,6 +62,7 @@ class Repository extends ModelRepository implements \Payone_TransactionStatus_Pe
 
         Shopware()->Models()->persist($transactionLog);
         Shopware()->Models()->flush();
+        return true;
     }
 
   /**
@@ -78,13 +79,13 @@ class Repository extends ModelRepository implements \Payone_TransactionStatus_Pe
     }
 
   /**
-   * @param Payone_Api_Request_Interface $request
-   * @param Exception
+   * @param \Payone_Api_Request_Interface $request
+   * @param \Exception $ex
    * @return boolean
    */
-    public function saveException(\Payone_Api_Request_Interface $request, Exception $ex)
+    public function saveException(\Payone_Api_Request_Interface $request, \Exception $ex)
     {
-    
+        return true;
     }
 
   /**

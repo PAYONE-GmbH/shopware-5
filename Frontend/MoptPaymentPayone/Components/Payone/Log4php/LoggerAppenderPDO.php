@@ -65,6 +65,8 @@ class Payone_Log4php_LoggerAppenderPDO extends Payone_Log4php_LoggerAppender
     
     /** Database password. */
     protected $password;
+
+    protected $converters;
     
     /**
      * The insert query.

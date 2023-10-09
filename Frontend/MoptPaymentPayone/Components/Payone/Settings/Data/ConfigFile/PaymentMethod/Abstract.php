@@ -57,6 +57,8 @@ abstract class Payone_Settings_Data_ConfigFile_PaymentMethod_Abstract extends Pa
     /** @var string */
     protected $mode = '';
 
+    protected $key = null;
+
     /**
      * @param string $id
      */

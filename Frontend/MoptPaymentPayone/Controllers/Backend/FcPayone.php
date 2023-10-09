@@ -465,7 +465,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         fclose($resultfile);
         $data = $aLines;
         echo $data;
-        exit(0);
     }
 
     public function ajaxconfigAction()
@@ -534,7 +533,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $ret = array('total' => $total, 'rows' => $apilogentries);
         $encoded = json_encode($ret);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxtransactionstatusAction()
@@ -574,7 +572,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $ret = array('total' => $total, 'rows' => $result);
         $encoded = json_encode($ret);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxpaymentstatusconfigAction()
@@ -618,7 +615,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxgetRiskCheckConfigAction()
@@ -631,7 +627,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxgetAddressCheckConfigAction()
@@ -644,7 +639,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function transactionlogAction()
@@ -695,7 +689,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxgetIframeConfigAction()
@@ -711,7 +704,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxgetPaypalConfigAction()
@@ -726,7 +718,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
     
     public function ajaxgetRatepayConfigAction()
@@ -748,7 +739,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxgetAmazonConfigAction()
@@ -763,7 +753,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxdebitAction()
@@ -798,7 +787,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxfinanceAction()
@@ -840,7 +828,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxonlinetransferAction()
@@ -875,7 +862,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxwalletAction()
@@ -919,7 +905,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxtransactionstatusconfigAction()
@@ -951,7 +936,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxgeneralconfigAction()
@@ -983,7 +967,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxriskcheckAction()
@@ -1072,7 +1055,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $ret = array('total' => $total, 'rows' => $apilogentries);
         $encoded = json_encode($ret);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxsavetextblocksAction()
@@ -1091,7 +1073,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxSavePaymentConfigAction()
@@ -1103,7 +1084,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['message'] = 'Zahlungsart erfolgreich gespeichert!';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxSavePayoneConfigAction()
@@ -1116,7 +1096,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->createPayoneCreditcardConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxSaveIframeConfigAction()
@@ -1128,7 +1107,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->createIframeConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxSavePaypalConfigAction()
@@ -1160,7 +1138,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         }
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function ajaxSaveApplepayCertAction()
@@ -1196,7 +1173,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         }
         echo $response;
-        exit(0);
     }
 
     public function ajaxSaveApplepayKeyAction()
@@ -1233,7 +1209,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         }
         echo $response;
-        exit(0);
     }
 
     public function updateSnippet($options)
@@ -1431,10 +1406,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         if ($options['paypalExpressUseDefaultShipping'] == "true") {
             $data->setPaypalExpressUseDefaultShipping(1);
         }
-
-
-
-
         Shopware()->Models()->flush($data);
 
         return $data;
@@ -1454,13 +1425,13 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         }
         if (isset($options['portalId'])) {
             $creditcardConfig->setPortalId($options['portalId']);
-        };
+        }
         if (isset($options['subaccountId'])) {
             $creditcardConfig->setSubaccountId($options['subaccountId']);
-        };
+        }
         if (isset($options['apiKey'])) {
             $creditcardConfig->setApiKey($options['apiKey']);
-        };
+        }
 
         Shopware()->Models()->flush($creditcardConfig);
     }
@@ -1480,25 +1451,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         return $builder->getQuery();
     }
-
     
-    public function getAllRatepayConfigQuery($filter = null, $order = null, $repository)
-    {
-        $builder = $repository->createQueryBuilder('p');
-        $builder->select(
-            array('p')
-        );
-        if ($filter !== null) {
-            $builder->addFilter($filter);
-        }
-        if ($order !== null) {
-            $builder->addOrderBy($order);
-        }
-
-        return $builder->getListQuery();
-    }
-    
-    public function getAllPaymentsQuery($filter = null, $order = null, $repository)
+    public function getAllPaymentsQuery($filter = null, $order = null, $repository = null)
     {
         $builder = $repository->createQueryBuilder('p');
         $builder->select(
@@ -1601,7 +1555,7 @@ class Logging
         }
 
         $script_name = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
-        $time = @date('[d.m.Y H:i:s]');
+        $time = date('[d.m.Y H:i:s]');
         fwrite($this->fp, "$time  $message<BR>");
     }
 

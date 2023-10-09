@@ -103,6 +103,7 @@ class Payone_Api_Request_Genericpayment extends Payone_Api_Request_Abstract
     protected $email = null;
     protected $ip = null;
     protected $language = null;
+    protected $personalData = null;
     
     /**
      * @var string

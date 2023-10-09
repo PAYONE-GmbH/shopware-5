@@ -51,16 +51,17 @@ class Repository extends ModelRepository implements \Payone_Api_Persistence_Inte
 
         Shopware()->Models()->persist($apiLog);
         Shopware()->Models()->flush();
+        return true;
     }
 
   /**
-   * @param Payone_Api_Request_Interface $request
-   * @param Exception
+   * @param \Payone_Api_Request_Interface $request
+   * @param \Exception
    * @return boolean
    */
     public function saveException(\Payone_Api_Request_Interface $request, \Exception $ex)
     {
-    
+        return true;
     }
 
   /**

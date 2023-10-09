@@ -114,7 +114,7 @@ class Payone_Api_Response_Parameter_Paydata_Paydata extends Payone_Api_Response_
             $sKey = str_replace(["[", "]"], "", $sKey);
             $sKey = str_replace("-", "_", $sKey);
 
-            $iIndex = $this->getNumberFromString($sKey);
+            $iIndex = (int) $sKey;
             if ($iIndex !== false) {
                 $sKey = str_replace("_".$iIndex, "", $sKey);
                 if (!isset($aInstallmentOptions['runtimes'][$iIndex])) {

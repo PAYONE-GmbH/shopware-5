@@ -50,6 +50,8 @@ class MoptPayonePaypal extends ModelEntity
      */
     protected $packStationMode;
 
+    protected $buttons;
+
     public function __construct()
     {
         $this->buttons = new \Doctrine\Common\Collections\ArrayCollection();
@@ -69,13 +71,10 @@ class MoptPayonePaypal extends ModelEntity
      * Set button collection
      *
      * @param $buttons
-     *
-     * @return \Doctrine\Common\Collections\Collection
      */
     public function setButtons($buttons)
     {
         $this->buttons = $buttons;
-        return $this;
     }
 
     /**

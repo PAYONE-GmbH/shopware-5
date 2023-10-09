@@ -66,6 +66,11 @@ class Payone_Api_Request_Parameter_Authorization_PaymentMethod_PayoneSecured
      */
     protected $workorderid = null;
 
+    /**
+     * @var string
+     */
+    protected $shop_id = null;
+
     public function setApiVersion()
     {
         $this->api_version = '3.10';
