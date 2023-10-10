@@ -147,7 +147,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         } catch (Exception $exc) {
             $this->logger->error('error processing request', array($exc->getTraceAsString()));
             echo 'error processing request';
-            exit;
+            return;
         }
 
         $payoneRequest = $service->getMapper()->mapByArray($request->getPost());
@@ -190,7 +190,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 $this->logger->debug('starting tx forwards');
                 $this->moptPayoneForwardTransactionStatus($_POST, $paymentId);
                 $this->logger->debug('finished all tasks, exit');
-                exit;
+                return;
             }
         }
 
@@ -200,6 +200,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $attributeData['mopt_payone_status'] = $request->getParam('txaction');
         $attributeData['mopt_payone_sequencenumber'] = $payoneRequest->getSequencenumber();
         $attributeData['mopt_payone_payment_reference'] = $request->getParam('reference');
+        $customParam = explode('|', $request->getParam('param'));
         if (isset($customParam[2])) {
             $attributeData['mopt_payone_order_hash'] = $customParam[2];
             $saveOrderHash = true;
@@ -279,7 +280,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         );
 
         $this->logger->debug('finished all tasks, exit');
-        exit;
     }
 
     /**
@@ -387,9 +387,9 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             Shopware()->Session()->setId($sessionParam[1]);
             Shopware()->Session()->start();
         } else {
-            \Enlight_Components_Session::writeClose();
-            \Enlight_Components_Session::setId($sessionParam[1]);
-            \Enlight_Components_Session::start();
+            \Enlight_Components_Session::writeClose();  /** @phpstan-ignore-line */
+            \Enlight_Components_Session::setId($sessionParam[1]); /** @phpstan-ignore-line */
+            \Enlight_Components_Session::start(); /** @phpstan-ignore-line */
         }
     }
 
@@ -444,7 +444,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      *
      * @param string $orderNumber
      * @param string $transactionId
-     * @return boolean
+     * @return void
      */
     protected function setTransactionId($orderNumber, $transactionId)
     {

@@ -98,7 +98,6 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
     
     public function saveRatepayConfigsAction()
@@ -153,7 +152,6 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0);
     }
 
     public function downloadConfigAction()

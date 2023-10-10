@@ -388,7 +388,6 @@ class MoptPayoneRatepay extends ModelEntity
      */
     protected $ratepayInstallmentMode;
 
-
     public function getId() {
         return $this->id;
     }
@@ -471,18 +470,6 @@ class MoptPayoneRatepay extends ModelEntity
     
     public function getCurrency() {
         return $this->currency;
-    }
-
-    public function getShippingCountry() {
-        return $this->shippingCountry;
-    }
-
-    public function getMinBasket() {
-        return $this->minBasket;
-    }
-
-    public function getMaxBasket() {
-        return $this->maxBasket;
     }
 
     public function getDeliveryAddressPqFull() {
@@ -652,22 +639,6 @@ class MoptPayoneRatepay extends ModelEntity
     public function setCurrency($currency) {
         $this->currency = $currency;
     }
-
-    public function setShippingCountry($shippingCountry) {
-        $this->shippingCountry = $shippingCountry;
-    }
-
-    public function setMinBasket($minBasket) {
-        $this->minBasket = $minBasket;
-    }
-
-    public function setMaxBasket($maxBasket) {
-        $this->maxBasket = $maxBasket;
-    }
-
-    public function setInvoiceCountry($invoiceCountry) {
-        $this->invoiceCountry = $invoiceCountry;
-    }    
 
     public function setMerchantName($merchantName) {
         $this->merchantName = $merchantName;

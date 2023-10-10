@@ -955,6 +955,7 @@ class FrontendPostDispatch implements SubscriberInterface
                 return true;
             }
         }
+        return false;
     }
 
     /**

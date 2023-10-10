@@ -383,7 +383,7 @@ class Payone_Log4php_Logger
     /**
      * Starting from this Logger, search the Logger hierarchy for a non-null level and return it.
      * @see LoggerLevel
-     * @return Payone_Log4php_LoggerLevel or null
+     * @return Payone_Log4php_LoggerLevel | null
      */
     public function getEffectiveLevel()
     {
@@ -392,6 +392,7 @@ class Payone_Log4php_Logger
                 return $logger->getLevel();
             }
         }
+        return null;
     }
   
     /**

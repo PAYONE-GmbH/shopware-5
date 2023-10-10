@@ -87,6 +87,7 @@ class Payone_Log4php_LoggerLevel
         } else {
             return false;
         }
+        return false;
     }
     
     /**

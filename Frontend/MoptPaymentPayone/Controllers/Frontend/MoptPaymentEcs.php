@@ -134,12 +134,12 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
             $success = $this->payoneUserHelper->createOrUpdateUser($response, $paymentId, $session);
             $session->offsetSet('moptFormSubmitted', true);
             if ($success !== false) {
-                return $this->redirect(['controller' => 'checkout', 'action' => 'confirm']);
+                $this->redirect(['controller' => 'checkout', 'action' => 'confirm']);
             } else {
-                return $this->redirect(['controller' => 'checkout', 'action' => 'cart']);
+                $this->redirect(['controller' => 'checkout', 'action' => 'cart']);
             }
         } else {
-            return $this->forward('paypalexpressError', null,null, ['errorCode' => $response->getErrorcode()]);;
+            $this->forward('paypalexpressError', null,null, ['errorCode' => $response->getErrorcode()]);
         }
     }
 
@@ -153,7 +153,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         unset($session->moptPaypalExpressWorkorderId);
         unset($session->moptBasketChanged);
 
-        return $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
+        $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
     }
 
     public function paypalexpressErrorAction()
@@ -163,6 +163,6 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $session->moptPayoneUserHelperErrorMessage = $this->moptPayone__paymentHelper->moptGetErrorMessageFromErrorCodeViaSnippet(false, $this->request->getParam('errorCode'));
         unset($session->moptPaypalExpressWorkorderId);
         unset($session->moptBasketChanged);
-        return $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
+        $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
     }
 }

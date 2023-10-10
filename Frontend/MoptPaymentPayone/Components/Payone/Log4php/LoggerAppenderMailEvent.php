@@ -81,6 +81,8 @@ class Payone_Log4php_LoggerAppenderMailEvent extends Payone_Log4php_LoggerAppend
     
     /** @var indiciates if this appender should run in dry mode */
     protected $dry = false;
+
+    protected $close = null;
     
     public function activateOptions()
     {

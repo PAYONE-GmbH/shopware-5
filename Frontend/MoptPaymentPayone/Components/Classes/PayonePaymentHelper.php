@@ -1648,7 +1648,7 @@ class Mopt_PayonePaymentHelper
     /**
      * Fetches and returns amazon payment instance.
      *
-     * @return \Shopware\Models\Payment\Payment
+     * @return \Shopware\Models\Payment\Payment | null
      */
     public function getPaymentAmazonPay()
     {
@@ -1667,6 +1667,7 @@ class Mopt_PayonePaymentHelper
                 return $payment;
             }
         }
+        return null;
     }
 
     /**

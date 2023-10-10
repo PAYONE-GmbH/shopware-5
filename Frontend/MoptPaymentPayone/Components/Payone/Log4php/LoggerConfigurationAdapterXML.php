@@ -27,7 +27,7 @@
  * @version $Revision$
  * @since 2.2
  */
-class LoggerConfigurationAdapterXML implements LoggerConfigurationAdapter
+class LoggerConfigurationAdapterXML implements Payone_Log4php_LoggerConfigurationAdapter
 {
     /** Path to the XML schema used for validation. */
     const SCHEMA_PATH = '/../xml/log4php.xsd';

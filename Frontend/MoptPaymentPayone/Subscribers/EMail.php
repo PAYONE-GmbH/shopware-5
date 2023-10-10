@@ -43,7 +43,6 @@ class EMail implements SubscriberInterface
      * add clearing data to email variables
      *
      * @param \Enlight_Event_EventArgs $args
-     * @return array
      */
     public function onSendMailFilterVariablesFilter(\Enlight_Event_EventArgs $args)
     {

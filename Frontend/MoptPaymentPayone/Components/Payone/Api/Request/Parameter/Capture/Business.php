@@ -52,6 +52,11 @@ class Payone_Api_Request_Parameter_Capture_Business extends Payone_Api_Request_P
     protected $due_time = null;
 
     /**
+     * @var string
+     */
+    protected $settleaccount = null;
+
+    /**
      * @param string $settleaccount
      */
     public function setSettleaccount($settleaccount)

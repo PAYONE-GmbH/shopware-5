@@ -438,7 +438,9 @@ class MoptPayoneCreditcardConfig extends ModelEntity
     /**
      * @ORM\Column(name="default_translation_iframe_cvc", type="string", length=255, precision=0, scale=0, nullable=false)
      */
-    private $defaultTranslationIframeCvc;      
+    private $defaultTranslationIframeCvc;
+
+    private $creditcardConfigs;
 
     public function __construct()
     {
@@ -459,13 +461,10 @@ class MoptPayoneCreditcardConfig extends ModelEntity
      * Set creditcard config collection
      *
      * @param $creditcardConfigs
-     *
-     * @return \Doctrine\Common\Collections\Collection
      */
     public function setCreditcardConfigs($creditcardConfigs)
     {
         $this->creditcardConfigs = $creditcardConfigs;
-        return $this;
     }
 
     /**

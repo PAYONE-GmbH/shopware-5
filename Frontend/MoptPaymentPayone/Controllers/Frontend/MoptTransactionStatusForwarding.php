@@ -52,7 +52,7 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
                 'Request was: ' . print_r($request, true),
             ];
             $this->payoneHelper->forwardLog($log_msg, $this->payoneConfig);
-            exit;
+            return;
         } else {
             $log_msg = [
                 'Request: TransactionStatusForwarding'
@@ -62,8 +62,6 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
 
         $transactionForwardingQueue = new Mopt_PayoneTransactionForwardingQueueWorker();
         $transactionForwardingQueue->processQueue();
-
-        exit;
     }
 
     /**
