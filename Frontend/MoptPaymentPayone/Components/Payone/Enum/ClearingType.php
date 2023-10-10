@@ -30,4 +30,5 @@ class Payone_Enum_ClearingType
     const WALLET = 'wlt';
     const FINANCING = 'fnc';
     const CASH = 'csh';
+    const RATEPAY = 'fnc';
 }

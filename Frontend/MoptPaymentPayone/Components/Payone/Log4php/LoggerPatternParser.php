@@ -191,7 +191,7 @@ class Payone_Log4php_LoggerPatternParser
     }
     
     /** Adds a converter to the chain and updates $head and $tail pointers. */
-    private function addToChain(LoggerPatternConverter $converter)
+    private function addToChain($converter)
     {
         if (!isset($this->head)) {
             $this->head = $converter;

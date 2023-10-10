@@ -51,7 +51,6 @@ class Payone_Log4php_LoggerAutoloader
         'Payone_Log4php_LoggerMDC' => '/LoggerMDC.php',
         'Payone_Log4php_LoggerNDC' => '/LoggerNDC.php',
         'Payone_Log4php_LoggerLayout' => '/LoggerLayout.php',
-        'Payone_Log4php_LoggerReflectionUtils' => '/LoggerReflectionUtils.php',
         'Payone_Log4php_LoggerRoot' => '/LoggerRoot.php',
         'Payone_Log4php_LoggerThrowableInformation' => '/LoggerThrowableInformation.php',
         

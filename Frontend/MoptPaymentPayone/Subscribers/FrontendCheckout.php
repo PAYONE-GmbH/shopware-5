@@ -107,7 +107,6 @@ class FrontendCheckout implements SubscriberInterface
      * assign saved payment data to view
      *
      * @param \Enlight_Hook_HookArgs $arguments
-     * @return type
      */
     public function onGetSelectedPayment(\Enlight_Hook_HookArgs $arguments)
     {
@@ -380,7 +379,7 @@ class FrontendCheckout implements SubscriberInterface
             $session->moptAgbChecked = false;
         }
         if (($this->isPayoneSecuredInvoiceActive() || $this->isPayoneSecuredDirectdebitActive()) && $request->getActionName() === 'shippingPayment') {
-            if ($userData['additional']['payment']['name'] === 'mopt_payone__fin_payone_secured_invoice' || $userData['additional']['payment']['name'] || $payment['name'] === 'mopt_payone__fin_payone_secured_directdebit') {
+            if ($userData['additional']['payment']['name'] === 'mopt_payone__fin_payone_secured_invoice' || $userData['additional']['payment']['name'] === 'mopt_payone__fin_payone_secured_directdebit') {
                 $paymentId = $userData['additional']['payment']['id'];
                 $config = $moptPayoneMain->getPayoneConfig($paymentId);
                 $view->assign('moptAgbChecked', $session->moptAgbChecked);
@@ -546,7 +545,7 @@ class FrontendCheckout implements SubscriberInterface
                 $formattedResult = $this->formatInstallmentOptions($result->getRawResponse());
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
         }
         return $formattedResult;
     }

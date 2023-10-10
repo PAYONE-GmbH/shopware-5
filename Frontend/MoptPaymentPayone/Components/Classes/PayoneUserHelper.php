@@ -54,6 +54,7 @@ class Mopt_PayoneUserHelper
         $this->admin->sSYSTEM->_POST = $newdata['auth'];
         $this->admin->sLogin(true);
         $this->savePayment($paymentId);
+        return $success;
     }
 
     /**

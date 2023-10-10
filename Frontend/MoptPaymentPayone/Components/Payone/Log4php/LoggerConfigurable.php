@@ -89,7 +89,7 @@ abstract class Payone_Log4php_LoggerConfigurable
     protected function setNumeric($property, $value)
     {
         try {
-            $this->$property = Payone_Log4php_LoggerOptionConverter::toNumericEx($value);
+            $this->$property = (int) $value;
         } catch (Exception $ex) {
             $value = var_export($value, true);
             $this->warn("Invalid value given for '$property' property: [$value]. Expected a number. Property not changed.");

@@ -62,7 +62,6 @@ class AddressCheck implements SubscriberInterface
      * prepare payone risk checks
      *
      * @param \Enlight_Hook_HookArgs $arguments
-     * @return boolean
      */
     public function sAdmin__sManageRisks__before(\Enlight_Hook_HookArgs $arguments)
     {
@@ -73,7 +72,6 @@ class AddressCheck implements SubscriberInterface
      * clean up payone risk checks
      *
      * @param \Enlight_Hook_HookArgs $arguments
-     * @return boolean
      */
     public function sAdmin__sManageRisks__after(\Enlight_Hook_HookArgs $arguments)
     {
@@ -144,7 +142,7 @@ class AddressCheck implements SubscriberInterface
             }
 
             $userObject = $userId ? Shopware()->Models()
-                ->getRepository(Shopware\Models\Customer\Customer::class)
+                ->getRepository(\Shopware\Models\Customer\Customer::class)
                 ->find($userId) : null;
 
             if (!$userObject) {

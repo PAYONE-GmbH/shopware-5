@@ -379,11 +379,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $paymentId;
     }
 
-    /**
-     * get actual payment method id
-     *
-     * @return string
-     */
     protected function ajaxHandlePayolutionPreCheckAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -430,7 +425,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     /**
      * render the payolution installment deb container for frontend usage
      *
-     * @return string
+     * @return void
      */
     protected function renderPayolutionInstallmentAction()
     {
@@ -441,7 +436,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     /**
      * download the payolution installment info pdf for frontend usage
      *
-     * @return string
+     * @return void
      */
     protected function getPayolutionDraftUrlAction()
     {
@@ -473,7 +468,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param string $financetype
      * @param string $paymenttype
      * @param array $paymentdata
-     * @return type $response
+     * @return Payone_Api_Response_Error|Payone_Api_Response_Genericpayment_Approved|Payone_Api_Response_Genericpayment_Redirect $response
      */
     protected function buildAndCallPrecheck($config, $clearingType, $financetype, $paymenttype, $paymentData)
     {
@@ -624,7 +619,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param string $amount
      * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
      */
-    protected function buildAndCallCalculateRatepay($config, $clearingType, $financetype, $calculation_type, $paymentData, $rateValue = false, $shopId, $rateMonth = false, $amount)
+    protected function buildAndCallCalculateRatepay($config, $clearingType, $financetype, $calculation_type, $paymentData, $shopId, $amount, $rateValue = false, $rateMonth = false )
     {
         $paramBuilder = $this->moptPayoneMain->getParamBuilder();
         $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
@@ -763,7 +758,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $calcValue = str_replace(".", "", $calcValue);
                 $calcValue = str_replace(",", ".", $calcValue);
 
-                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-rate', $paymentData, $calcValue, $ratePayShopId, false, $amount);
+                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-rate', $paymentData, $ratePayShopId, $amount, $calcValue, false);
 
 
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
@@ -836,7 +831,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         try {
             if (preg_match('/^[0-9]{1,5}$/', $calcValue)) {
-                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-time', $paymentData, false, $ratePayShopId, $calcValue, $amount);;
+                $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-time', $paymentData, $ratePayShopId, $amount, false, $calcValue);;
 
                 if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
                     $responseData = $result->getPayData()->toAssocArray();
@@ -1043,11 +1038,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         return $response;
     }
 
-    /**
-     * get actual payment method id
-     *
-     * @return string
-     */
     protected function getOrderReferenceDetailsAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -1345,16 +1335,13 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $data['success'] = false;
                 $data['error'] = curl_error($ch);
                 echo json_encode($data);
-                exit();
+            } else {
+                $data['success'] = true;
+                $data['merchantSession'] = $response;
+                echo json_encode($data);
             }
             curl_close($ch);
-            $data['success'] = true;
-            $data['merchantSession'] = $response;
-            echo json_encode($data);
-            exit();
-
         } catch (\Exception $e) {
-            die(var_dump($e->getMessage()));
         }
     }
 
@@ -1366,6 +1353,5 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
         $applePaySupported = $this->Request()->getParam('applePaySupported') === "true" ? true : false;
         $this->session->offsetSet('moptAllowApplePay', $applePaySupported);
-        exit();
     }
 }
