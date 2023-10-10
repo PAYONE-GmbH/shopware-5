@@ -98,7 +98,7 @@ jobs:
       run: find . -type f -name '*.php' -print0 | xargs -0 -n1 -P4 php -l -n | (! grep -v "No syntax errors detected" )
     - name: Install Shopware and Plugin
       run: |
-        git clone --depth=1 -b ${{ matrix.shopware-versions }} https://github.com/shopware/shopware.git /tmp/shopware
+        git clone --depth=1 -b ${{ matrix.shopware-versions }} https://github.com/shopware5/shopware.git /tmp/shopware
         cd /tmp/shopware
         make init
         cp -R $GITHUB_WORKSPACE/Frontend/MoptPaymentPayone /tmp/shopware/engine/Shopware/Plugins/Default/Frontend
