@@ -9,7 +9,7 @@ website via PAYONE service.
 
 ## Installation
 ### Prerequisites
-You should have your PAYONE API credentials. If you still don't have
+You should have your PAYONE API credentials. If you don't have
 them, [contact PAYONE](https://payone.com).
 
 ### Install
