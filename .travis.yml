@@ -18,7 +18,7 @@ addons:
 services:
 - mysql
 before_script:
-- git clone --depth=1 -b $SWVER https://github.com/shopware/shopware.git /tmp/shopware
+- git clone --depth=1 -b $SWVER https://github.com/shopware5/shopware.git /tmp/shopware
 - cd ..
 - cd /tmp/shopware
 - ant -f build/build.xml -Ddb.user=root -Ddb.host=127.0.0.1 -Ddb.name=shopware build-unit
