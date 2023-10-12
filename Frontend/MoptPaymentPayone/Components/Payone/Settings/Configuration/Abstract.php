@@ -41,7 +41,7 @@ abstract class Payone_Settings_Configuration_Abstract
         try {
             $cardtype = new ReflectionClass($class);
             if (is_object($cardtype)) {
-                $constants = $cardtype->getConstants();
+                $constants = $cardtype->getConstants(); /** @phpstan-ignore-line */
             }
         } catch (ReflectionException $e) {
             $constants = [];
