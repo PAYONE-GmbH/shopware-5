@@ -9,8 +9,7 @@ website via PAYONE service.
 
 ## Installation
 ### Prerequisites
-You should have your PAYONE API credentials. If you don't have
-them, [contact PAYONE](https://payone.com).
+You should have your PAYONE API credentials. If you don't have credentials, [contact PAYONE](https://payone.com).
 
 ### Install
 From PAYONE's official docs site, you can install the plugin in two ways:
