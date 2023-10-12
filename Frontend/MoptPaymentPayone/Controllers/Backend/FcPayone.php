@@ -1568,6 +1568,6 @@ class Logging
     {
         $log_file_default = '/tmp/logfile.txt';
         $lfile = $this->log_file ? $this->log_file : $log_file_default;
-        $this->fp = fopen($lfile, 'a') or exit("Can't open $lfile!");
+        $this->fp = fopen($lfile, 'a');
     }
 }
