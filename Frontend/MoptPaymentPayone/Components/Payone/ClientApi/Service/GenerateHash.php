@@ -102,7 +102,7 @@ class Payone_ClientApi_Service_GenerateHash
             $hashString .= $requestData[$key];
         }
         $hashString .= $securityKey;
-        $hash = md5($hashString);
+        $hash = hash('sha384',$hashString);
         return $hash;
     }
 }
