@@ -1619,6 +1619,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     protected function mopt_payone__prepareRequest($paymentId = 0, $isAuthorized = false)
     {
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
+        $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
         $user = $this->getUser();
         $paymentName = $user['additional']['payment']['name'];
         if ($isAuthorized && !$this->moptPayonePaymentHelper->isPayoneBarzahlen($paymentName)) {
@@ -1637,6 +1638,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
             )
         );
+        $request->set('hash', $generateHashService->generate($request, $params['key']));
         return $request;
     }
 
