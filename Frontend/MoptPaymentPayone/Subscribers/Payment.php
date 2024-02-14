@@ -153,7 +153,10 @@ class Payment implements SubscriberInterface
                     $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
                         'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
                     ));
+                    $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
                     $request = new \Payone_Api_Request_ManageMandate($params);
+                    $request->set('hash', $generateHashService->generate($request, $params['key']));
+
                     $response = $service->managemandate($request);
 
                     if ($response->getStatus() == 'APPROVED') {

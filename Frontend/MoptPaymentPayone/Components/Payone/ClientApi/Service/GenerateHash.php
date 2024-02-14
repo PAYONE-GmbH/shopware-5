@@ -76,19 +76,20 @@ class Payone_ClientApi_Service_GenerateHash
         'vreference',
         'clearingtype',
         'encoding',
+        'api_version'
         // @todo Item parameters not supported
         // 'id[x]', 'pr[x]', 'no[x]', 'de[x]', 'ti[x]', 'va[x]',
         // 'id', 'pr', 'no', 'de', 'ti', 'va',
     );
 
     /**
-     * @param Payone_ClientApi_Request_Interface $request All parameters of the request
+     * @param $request All parameters of the request
      * @param string $securityKey  Payone security key
      *
      * @return string The hash
      * @throws Payone_ClientApi_Exception_InvalidParameters
      */
-    public function generate(Payone_ClientApi_Request_Interface $request, $securityKey)
+    public function generate($request, $securityKey)
     {
         $requestData = $request->toArray();
 
@@ -101,8 +102,7 @@ class Payone_ClientApi_Service_GenerateHash
             }
             $hashString .= $requestData[$key];
         }
-        $hashString .= $securityKey;
-        $hash = md5($hashString);
+        $hash = hash_hmac('sha384',$hashString, $securityKey);
         return $hash;
     }
 }

@@ -96,6 +96,8 @@ abstract class Payone_Api_Request_Abstract implements Payone_Api_Request_Interfa
      * @var Payone_Protocol_Service_ApplyFilters
      */
     private $applyFilters = null;
+
+    protected $hash = null;
     
     /**
      * @param array $data

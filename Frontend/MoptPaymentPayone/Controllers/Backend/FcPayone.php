@@ -221,6 +221,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $request->setPayment($paymentData);
         $request->setSuccessurl('https://payone.com');
         $request->setMode('test');
+        $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
+        $request->set('hash', $generateHashService->generate($request, $this->apikey));
 
         $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Visa)</span>');
         $response = $this->service->preauthorize($request);
