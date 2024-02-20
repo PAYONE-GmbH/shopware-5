@@ -961,7 +961,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function ajaxgetGeneralConfigAction()
     {
-        $data = array();
         $this->Front()->Plugins()->Json()->setRenderer(true);
 
         $paymentid = $this->Request()->getParam('paymentid');
@@ -969,6 +968,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
+        exit(0); /** @phpstan-ignore-line */
     }
 
     public function ajaxriskcheckAction()
