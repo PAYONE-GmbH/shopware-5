@@ -969,6 +969,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
+        exit(0); /** @phpstan-ignore-line */
     }
 
     public function ajaxriskcheckAction()
@@ -1407,6 +1408,12 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         }
         if ($options['paypalExpressUseDefaultShipping'] == "true") {
             $data->setPaypalExpressUseDefaultShipping(1);
+        }
+        if ($options['paydirektOrderSecured'] == "false") {
+            $data->setPaydirektOrderSecured(0);
+        }
+        if ($options['paydirektOrderSecured'] == "true") {
+            $data->setPaydirektOrderSecured(1);
         }
         Shopware()->Models()->flush($data);
 

@@ -1457,15 +1457,32 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $request->setPaydata($paydata);
         }
 
-        if ($config['paydirektOvercapture'] == 1 && $config['authorisationMethod'] == 'Vorautorisierung' && $this->moptPayonePaymentHelper->isPayonePaydirekt(
+        if ($config['authorisationMethod'] == 'Vorautorisierung' && $this->moptPayonePaymentHelper->isPayonePaydirekt(
                 $paymentName
             )) {
             $paydirektdata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-            $paydirektdata->addItem(
-                new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'over_capture', 'data' => 'yes')
-                )
-            );
+            if ($config['paydirektOrderSecured'] == 1) {
+                $paydirektdata->addItem(
+                    new Payone_Api_Request_Parameter_Paydata_DataItem(
+                        array('key' => 'order_secured', 'data' => 'yes')
+                    )
+                );
+                if ($config['paydirektPreauthorizationValidity'] > 0) {
+                    $paydirektdata->addItem(
+                        new Payone_Api_Request_Parameter_Paydata_DataItem(
+                            array('key' => 'preauthorization_validity', 'data' => $config['paydirektPreauthorizationValidity'] )
+                        )
+                    );
+
+                }
+            }
+            if ($config['paydirektOvercapture'] == 1) {
+                $paydirektdata->addItem(
+                    new Payone_Api_Request_Parameter_Paydata_DataItem(
+                        array('key' => 'over_capture', 'data' => 'yes')
+                    )
+                );
+            }
             $request->setPaydata($paydirektdata);
         }
         if ($this->moptPayonePaymentHelper->isPayoneSafeInvoice($paymentName) ||

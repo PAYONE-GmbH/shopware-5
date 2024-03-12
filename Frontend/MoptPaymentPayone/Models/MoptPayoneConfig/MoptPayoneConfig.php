@@ -656,6 +656,16 @@ class MoptPayoneConfig extends ModelEntity
     private $paypalExpressUseDefaultShipping;
 
     /**
+     *  @ORM\Column(name="paydirekt_order_secured", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
+     */
+    private $paydirektOrderSecured;
+
+    /**
+     *  @ORM\Column(name="paydirekt_preauthorization_validity", type="integer", nullable=true, unique=false)
+     */
+    private $paydirektPreauthorizationValidity;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -2602,6 +2612,22 @@ class MoptPayoneConfig extends ModelEntity
 
     public function getPaypalExpressUseDefaultShipping() {
         return $this->paypalExpressUseDefaultShipping;
+    }
+
+    public function setPaydirektOrderSecured($value) {
+        $this->paydirektOrderSecured = $value;
+    }
+
+    public function getPaydirektOrderSecured() {
+        return $this->paydirektOrderSecured;
+    }
+
+    public function setPaydirektPreauthorizationValidity($value) {
+        $this->paydirektPreauthorizationValidity = $value;
+    }
+
+    public function getPaydirektPreauthorizationValidity() {
+        return $this->paydirektPreauthorizationValidity;
     }
 
 }

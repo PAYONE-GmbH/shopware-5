@@ -426,17 +426,6 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * check if given payment name is payone giropay payment
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayoneGiropay($paymentName)
-    {
-        return preg_match('#mopt_payone__ibt_giropay#', $paymentName) ? true : false;
-    }
-
-    /**
      * check if given payment name is payone eps payment
      *
      * @param string $paymentName
@@ -887,10 +876,6 @@ class Mopt_PayonePaymentHelper
 
         if ($this->isPayoneBancontact($paymentName)) {
             return Payone_Api_Enum_OnlinebanktransferType::BANCONTACT;
-        }
-
-        if ($this->isPayoneGiropay($paymentName)) {
-            return Payone_Api_Enum_OnlinebanktransferType::GIROPAY;
         }
 
         if ($this->isPayoneEPS($paymentName)) {

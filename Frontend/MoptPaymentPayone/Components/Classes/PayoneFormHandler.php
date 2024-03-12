@@ -66,10 +66,6 @@ class Mopt_PayoneFormHandler
             return $this->proccessBancontact($formData);
         }
 
-        if ($paymentHelper->isPayoneGiropay($paymentId)) {
-            return $this->proccessGiropay($formData);
-        }
-
         if ($paymentHelper->isPayoneEPS($paymentId)) {
             return $this->proccessEps($formData);
         }
@@ -230,40 +226,6 @@ class Mopt_PayoneFormHandler
         }
 
         $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::BANCONTACT;
-
-        $this->setFormSubmittedFlag();
-
-        return $paymentData;
-    }
-
-    /**
-     * process form data
-     *
-     * @param array $formData
-     * @return array
-     */
-    protected function proccessGiropay($formData)
-    {
-        $paymentData = array();
-
-        if (!$formData['mopt_payone__giropay_iban'] || !$this->isValidIban($formData['mopt_payone__giropay_iban'])) {
-            $paymentData['sErrorFlag']['mopt_payone__giropay_iban'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__giropay_iban'] = $formData['mopt_payone__giropay_iban'];
-        }
-
-        if (!$formData['mopt_payone__giropay_bic'] || !$this->isValidBic($formData['mopt_payone__giropay_bic']) ) {
-            $paymentData['sErrorFlag']['mopt_payone__giropay_bic'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__giropay_bic'] = $formData['mopt_payone__giropay_bic'];
-        }
-
-        if (!empty($paymentData['sErrorFlag']) && count($paymentData['sErrorFlag'])) {
-            return $paymentData;
-        }
-
-        $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::GIROPAY;
-        $paymentData['formData']['mopt_payone__giropay_bankcountry'] = 'DE';
 
         $this->setFormSubmittedFlag();
 
