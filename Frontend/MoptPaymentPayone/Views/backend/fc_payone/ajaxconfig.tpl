@@ -168,13 +168,14 @@
         });
 
         $("#startTest").on('click', function () {
-                var mid = document.getElementById('merchantId').value;
-                var aid = document.getElementById('subaccountId').value;
-                var pid = document.getElementById('portalId').value;
-                var apikey = document.getElementById('apiKey').value;
+                var mid = encodeURIComponent(document.getElementById('merchantId').value);
+                var aid = encodeURIComponent(document.getElementById('subaccountId').value);
+                var pid = encodeURIComponent(document.getElementById('portalId').value);
+                var apikey = encodeURIComponent(document.getElementById('apiKey').value);
                 var myurl = testurl + '?mid=' + mid + '&aid=' + aid + '&pid=' + pid + '&apikey=' + apikey;
+                alert(myurl)
                 $.ajax({
-                    url: myurl, 
+                    url: myurl,
                     type: 'get', 
                     dataType: 'json', 
 

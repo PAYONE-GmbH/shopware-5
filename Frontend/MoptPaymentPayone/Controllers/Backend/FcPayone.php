@@ -1075,6 +1075,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         $encoded = json_encode($data);
         echo $encoded;
+        exit(0); /** @phpstan-ignore-line */
     }
 
     public function ajaxSavePaymentConfigAction()
@@ -1086,6 +1087,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['message'] = 'Zahlungsart erfolgreich gespeichert!';
         $encoded = json_encode($data);
         echo $encoded;
+        exit(0); /** @phpstan-ignore-line */
     }
 
     public function ajaxSavePayoneConfigAction()
@@ -1098,6 +1100,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->createPayoneCreditcardConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
+        exit(0); /** @phpstan-ignore-line */
     }
 
     public function ajaxSaveIframeConfigAction()
@@ -1109,6 +1112,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->createIframeConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
+        exit(0); /** @phpstan-ignore-line */
     }
 
     public function ajaxSavePaypalConfigAction()
@@ -1140,6 +1144,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         }
         $encoded = json_encode($data);
         echo $encoded;
+        exit(0); /** @phpstan-ignore-line */
     }
 
     public function ajaxSaveApplepayCertAction()
