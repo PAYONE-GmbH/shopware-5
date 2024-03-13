@@ -39,7 +39,7 @@
                    
                     <label for="stateAppointed" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/appointed"}Appointed{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateAppointed" name="stateAppointed" aria-describedby="stateAppointed-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateAppointed" name="stateAppointed" aria-describedby="stateAppointed-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -53,7 +53,7 @@
                    
                     <label for="stateCapture" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/capture"}Capture{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateCapture" name="stateCapture" aria-describedby="stateCapture-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateCapture" name="stateCapture" aria-describedby="stateCapture-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -67,7 +67,7 @@
                    
                     <label for="statePaid" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/paid"}Paid{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="statePaid" name="statePaid" aria-describedby="statePaid-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="statePaid" name="statePaid" aria-describedby="statePaid-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -81,7 +81,7 @@
                    
                     <label for="stateUnderpaid" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/underpaid"}Underpaid{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateUnderpaid" name="stateUnderpaid" aria-describedby="stateUnderpaid-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateUnderpaid" name="stateUnderpaid" aria-describedby="stateUnderpaid-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -95,7 +95,7 @@
                    
                     <label for="stateCancelation" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/cancelation"}Cancelation{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateCancelation" name="stateCancelation" aria-describedby="stateCancelation-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateCancelation" name="stateCancelation" aria-describedby="stateCancelation-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -109,7 +109,7 @@
                    
                     <label for="stateRefund" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/refund"}Refund{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateRefund" name="stateRefund" aria-describedby="stateRefund-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateRefund" name="stateRefund" aria-describedby="stateRefund-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -123,7 +123,7 @@
                    
                     <label for="stateDebit" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/debit"}Debit{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateDebit" name="stateDebit" aria-describedby="stateDebit-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateDebit" name="stateDebit" aria-describedby="stateDebit-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -137,7 +137,7 @@
 
                     <label for="stateReminder" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/reminder1"}Reminder (1){/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder" name="stateReminder" aria-describedby="stateReminder-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder" name="stateReminder" aria-describedby="stateReminder-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}
@@ -151,7 +151,7 @@
 
                     <label for="stateReminder2" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/reminder2"}Reminder (2){/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder2" name="stateReminder2" aria-describedby="stateReminder2-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder2" name="stateReminder2" aria-describedby="stateReminder2-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}
@@ -165,7 +165,7 @@
 
                     <label for="stateReminder3" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/reminder3"}Reminder (3){/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder3" name="stateReminder3" aria-describedby="stateReminder3-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder3" name="stateReminder3" aria-describedby="stateReminder3-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}
@@ -179,7 +179,7 @@
 
                     <label for="stateReminder4" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/reminder4"}Reminder (4){/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder4" name="stateReminder4" aria-describedby="stateReminder4-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder4" name="stateReminder4" aria-describedby="stateReminder4-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}
@@ -193,7 +193,7 @@
 
                     <label for="stateReminder5" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/reminder5"}Reminder (5){/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder5" name="stateReminder5" aria-describedby="stateReminder5-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminder5" name="stateReminder5" aria-describedby="stateReminder5-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}
@@ -207,7 +207,7 @@
 
                     <label for="stateReminderA" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/reminderA"}Reminder (A){/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminderA" name="stateReminderA" aria-describedby="stateReminderA-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminderA" name="stateReminderA" aria-describedby="stateReminderA-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}
@@ -221,7 +221,7 @@
 
                     <label for="stateReminderS" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/reminderS"}Reminder (S){/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminderS" name="stateReminderS" aria-describedby="stateReminderS-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminderS" name="stateReminderS" aria-describedby="stateReminderS-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}
@@ -235,7 +235,7 @@
 
                     <label for="stateReminderM" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/reminderM"}Reminder (M){/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminderM" name="stateReminderM" aria-describedby="stateReminderM-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminderM" name="stateReminderM" aria-describedby="stateReminderM-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}
@@ -249,7 +249,7 @@
 
                     <label for="stateReminderI" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/reminderI"}Reminder (I){/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminderI" name="stateReminderI" aria-describedby="stateReminderI-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateReminderI" name="stateReminderI" aria-describedby="stateReminderI-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}
@@ -263,7 +263,7 @@
                    
                     <label for="stateVauthorization" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/VAutorisierung"}VAutorisierung{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateVauthorization" name="stateVauthorization" aria-describedby="stateVauthorization-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateVauthorization" name="stateVauthorization" aria-describedby="stateVauthorization-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -277,7 +277,7 @@
                    
                     <label for="stateVsettlement" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/VSettlement"}VSettlement{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateVsettlement" name="stateVsettlement" aria-describedby="stateVsettlement-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateVsettlement" name="stateVsettlement" aria-describedby="stateVsettlement-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -291,7 +291,7 @@
                    
                     <label for="stateTransfer" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/transfer"}Transfer{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateTransfer" name="stateTransfer" aria-describedby="stateTransfer-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateTransfer" name="stateTransfer" aria-describedby="stateTransfer-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -305,7 +305,7 @@
                    
                     <label for="stateInvoice" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/invoice"}Invoice{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateInvoice" name="stateInvoice" aria-describedby="stateInvoice-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateInvoice" name="stateInvoice" aria-describedby="stateInvoice-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}   
@@ -319,7 +319,7 @@
 
                     <label for="stateFailed" class="text-left col-md-3 control-label">{s namespace="backend/mopt_config_payone/main" name="forwarding/status/failed"}Failed{/s}</label>
                     <div class="col-md-6">
-                        <select class="form-control " pattern='^[_ .()+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateFailed" name="stateFailed" aria-describedby="stateFailed-status" >
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="stateFailed" name="stateFailed" aria-describedby="stateFailed-status" >
                             {foreach from=$payonepaymentstates item=paymentstate}
                                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
                             {/foreach}

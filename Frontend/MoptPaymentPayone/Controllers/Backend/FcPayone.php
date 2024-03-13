@@ -1176,6 +1176,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         }
         echo $response;
+        exit(0); /** @phpstan-ignore-line */
     }
 
     public function ajaxSaveApplepayKeyAction()
@@ -1212,6 +1213,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         }
         echo $response;
+        exit(0); /** @phpstan-ignore-line */
     }
 
     public function updateSnippet($options)
