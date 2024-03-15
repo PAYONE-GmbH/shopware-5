@@ -9,7 +9,7 @@ website via PAYONE service.
 
 ## Installation
 ### Prerequisites
-You should have your PAYONE API credentials. If you don't have credentials, [contact PAYONE](https://payone.com).
+You should have your PAYONE API credentials. If you don't have credentials, contact us: sales@payone.com.
 
 ### Install
 From PAYONE's official docs site, you can install the plugin in two ways:
@@ -24,10 +24,9 @@ From PAYONE's official docs site, you can install the plugin in two ways:
 - Export function of the configuration in XML format to get easier support
 - Optional multi-partial capture for partial deliveries
 - Supports simplified PCI DSS conformity in accordance with SAQ A
-- Find all currently supported payment methods on [the dedicated docs' page on our site](https://docs.payone.com/display/public/INT/Shopware+5+Plugin)
 
 ## Documentation
-You can check [the documentation on our website here](https://docs.payone.com/display/public/INT/Shopware+5+Plugin).
+You find our documentation here: https://docs.payone.com/integration/plugins/integration-guide-shopware-5
 
 ## Contact
 PAYONE GmbH<br>
