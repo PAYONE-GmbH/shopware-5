@@ -335,7 +335,7 @@
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/paydirektOrderSecured"}Bei einer gesicherten Vorbestellung wird dem Händler eine Zahlungsgarantie für den gewählten Zeitraum (maximal 15 Kalendertage) gewährt. Captures (Teilzahlungen) müssen immer innerhalb des Garantiezeitraums ausgeführt werden.{/s}">
-                    <label for="paydirektOrderSecured" class="text-left col-md-3 control-label">{s name="fieldlabel/paydirektOrderSecured"}Gesicherte Vorbestellung{/s}</label>
+                    <label for="paydirektOrderSecured" class="text-left col-md-3 control-label">{s name="fieldlabel/paydirektOrderSecured"}Giropay Gesicherte Vorbestellung{/s}</label>
                     <div class="col-md-6">
                         <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="paydirektOrderSecured" name="paydirektOrderSecured" aria-describedby="paydirektOrderSecured-status" >
                             <option value="false">Nein</option>
@@ -347,8 +347,8 @@
                     </div>
                 </div>
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/paydirektPreauthorizationValidity"}Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung (ORDER_SECURED){/s}">
-                    <label for="paydirektPreauthorizationValidity" class="text-left col-md-3 control-label">{s name="fieldlabel/paydirektPreauthorizationValidity"}Garantiezeitraum{/s}</label>
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/paydirektPreauthorizationValidity"}Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung{/s}">
+                    <label for="paydirektPreauthorizationValidity" class="text-left col-md-3 control-label">{s name="fieldlabel/paydirektPreauthorizationValidity"}Giropay Garantiezeitraum{/s}</label>
                     <div class="col-md-6">
                         <input type="text" class="form-control " pattern='^([1-9]|1[0-5])$' minlength="1" maxlength="2" id="paydirektPreauthorizationValidity" name="paydirektPreauthorizationValidity" aria-describedby="paydirektPreauthorizationValidity-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
