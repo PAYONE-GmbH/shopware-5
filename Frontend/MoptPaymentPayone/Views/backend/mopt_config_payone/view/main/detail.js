@@ -1341,7 +1341,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name="fieldlabel/paydirektOrderSecured"}Gesicherte Vorbestellung{/s}',
+                fieldLabel: '{s name="fieldlabel/paydirektOrderSecured"}Giropay Gesicherte Vorbestellung{/s}',
                 helpText: '{s name="fieldlabelhelp/paydirektOrderSecured"}Bei einer gesicherten Vorbestellung wird dem Händler eine Zahlungsgarantie für den gewählten Zeitraum (maximal 15 Kalendertage) gewährt. Captures (Teilzahlungen) müssen immer innerhalb des Garantiezeitraums ausgeführt werden.{/s}',
                 name: 'paydirektOrderSecured',
                 store: me.data.yesno,
@@ -1355,10 +1355,10 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             {
                 //creates Ext.form.field.Text input field
                 xtype: 'numberfield',
-                fieldLabel: '{s name="fieldlabel/paydirektPreauthorizationValidity"}Garantiezeitraum{/s}',
+                fieldLabel: '{s name="fieldlabel/paydirektPreauthorizationValidity"}Giropay Garantiezeitraum{/s}',
                 minValue: 1,
                 maxValue: 15,
-                helpText: '{s name="fieldlabelhelp/paydirektPreauthorizationValidity"}Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung (ORDER_SECURED){/s}',
+                helpText: '{s name="fieldlabelhelp/paydirektPreauthorizationValidity"}Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung{/s}',
                 name: 'paydirektPreauthorizationValidity',
                 allowBlank: false,
                 labelWidth: 200
