@@ -177,6 +177,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'applepayDebug',
             'allowDifferentAddresses',
             'paypalExpressUseDefaultShipping',
+            'paydirektOrderSecured',
         );
 
         foreach ($fields as $field) {

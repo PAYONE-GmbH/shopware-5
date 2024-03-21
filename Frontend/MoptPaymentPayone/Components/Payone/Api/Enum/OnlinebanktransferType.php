@@ -33,7 +33,6 @@
 class Payone_Api_Enum_OnlinebanktransferType
 {
     const INSTANT_MONEY_TRANSFER = 'PNT';
-    const GIROPAY = 'GPY';
     const EPS_ONLINE_BANK_TRANSFER = 'EPS';
     const POSTFINANCE_EFINANCE = 'PFF';
     const POSTFINANCE_CARD  = 'PFC';

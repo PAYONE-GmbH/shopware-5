@@ -1415,6 +1415,12 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         if ($options['paypalExpressUseDefaultShipping'] == "true") {
             $data->setPaypalExpressUseDefaultShipping(1);
         }
+        if ($options['paydirektOrderSecured'] == "false") {
+            $data->setPaydirektOrderSecured(0);
+        }
+        if ($options['paydirektOrderSecured'] == "true") {
+            $data->setPaydirektOrderSecured(1);
+        }
         Shopware()->Models()->flush($data);
 
         return $data;

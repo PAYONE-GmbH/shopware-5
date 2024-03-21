@@ -124,7 +124,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 items: fieldsets,
                 renderTo: document.body,
                 width: 880,
-                height: 1400
+                height: 1500
             }];
     },
     activateField: function (me, field) {
@@ -180,8 +180,12 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
         ;
         if (field === 'paydirekt') {
             fieldset.items.getAt(23).enable();
+            fieldset.items.getAt(39).enable();
+            fieldset.items.getAt(40).enable();
         } else {
             fieldset.items.getAt(23).disable();
+            fieldset.items.getAt(39).disable();
+            fieldset.items.getAt(40).disable();
         }
         ;
         if (field === 'payonesecured') {
@@ -1324,7 +1328,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name="fieldlabel/paypalExpressUseDefaultShipping"}Vorläufigen Versandkosten beo Paypal Express übergeben{/s}',
+                fieldLabel: '{s name="fieldlabel/paypalExpressUseDefaultShipping"}Vorläufigen Versandkosten bei Paypal Express übergeben{/s}',
                 helpText: '{s name="fieldlabelhelp/paypalExpressUseDefaultShipping"}Wenn aktiviert, werden die vorläufigen Versandkosten mit an Paypal Express übergeben{/s}',
                 name: 'paypalExpressUseDefaultShipping',
                 store: me.data.yesno,
@@ -1333,6 +1337,30 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 valueField: 'value',
                 allowBlank: false,
                 disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/paydirektOrderSecured"}Giropay Gesicherte Vorbestellung{/s}',
+                helpText: '{s name="fieldlabelhelp/paydirektOrderSecured"}Bei einer gesicherten Vorbestellung wird dem Händler eine Zahlungsgarantie für den gewählten Zeitraum (maximal 15 Kalendertage) gewährt. Captures (Teilzahlungen) müssen immer innerhalb des Garantiezeitraums ausgeführt werden.{/s}',
+                name: 'paydirektOrderSecured',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                //creates Ext.form.field.Text input field
+                xtype: 'numberfield',
+                fieldLabel: '{s name="fieldlabel/paydirektPreauthorizationValidity"}Giropay Garantiezeitraum{/s}',
+                minValue: 1,
+                maxValue: 15,
+                helpText: '{s name="fieldlabelhelp/paydirektPreauthorizationValidity"}Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung{/s}',
+                name: 'paydirektPreauthorizationValidity',
+                allowBlank: false,
                 labelWidth: 200
             },
         ];

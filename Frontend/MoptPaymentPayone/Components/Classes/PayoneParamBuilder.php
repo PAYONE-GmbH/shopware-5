@@ -1003,19 +1003,6 @@ class Mopt_PayoneParamBuilder
                 'forceSecure' => true, 'appendSession' => false));
         }
 
-        if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'GPY') {
-            $params['onlinebanktransfertype'] = 'GPY';
-            $params['bankcountry'] = $paymentData['mopt_payone__giropay_bankcountry'];
-            $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__giropay_iban']);
-            $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__giropay_bic']);
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => false));
-        }
-
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'EPS') {
             $params['onlinebanktransfertype'] = 'EPS';
             $params['bankcountry'] = $paymentData['mopt_payone__eps_bankcountry'];
