@@ -13,7 +13,7 @@ You should have your PAYONE API credentials. If you don't have credentials, cont
 
 ### Install
 From PAYONE's official docs site, you can install the plugin in two ways:
-- [directly in Shopware](https://docs.payone.com/display/public/INT/Integration+Guide+Shopware+5#expand-InstallationdirectlyinShopwareAdmin)
+- directly in Shopware
 - directly downloading from GitHub
 
 ## Features
