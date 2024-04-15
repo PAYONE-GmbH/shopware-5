@@ -968,7 +968,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0); /** @phpstan-ignore-line */
+        // @codingStandardsIgnoreStart
+        exit(0);
+        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxriskcheckAction()
@@ -1075,7 +1077,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0); /** @phpstan-ignore-line */
+        // @codingStandardsIgnoreStart
+        exit(0);
+        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSavePaymentConfigAction()
@@ -1087,7 +1091,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['message'] = 'Zahlungsart erfolgreich gespeichert!';
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0); /** @phpstan-ignore-line */
+        // @codingStandardsIgnoreStart
+        exit(0);
+        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSavePayoneConfigAction()
@@ -1100,7 +1106,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->createPayoneCreditcardConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0); /** @phpstan-ignore-line */
+        // @codingStandardsIgnoreStart
+        exit(0);
+        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSaveIframeConfigAction()
@@ -1112,7 +1120,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->createIframeConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0); /** @phpstan-ignore-line */
+        // @codingStandardsIgnoreStart
+        exit(0);
+        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSavePaypalConfigAction()
@@ -1144,7 +1154,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         }
         $encoded = json_encode($data);
         echo $encoded;
-        exit(0); /** @phpstan-ignore-line */
+        // @codingStandardsIgnoreStart
+        exit(0);
+        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSaveApplepayCertAction()
@@ -1180,7 +1192,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         }
         echo $response;
-        exit(0); /** @phpstan-ignore-line */
+        // @codingStandardsIgnoreStart
+        exit(0);
+        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSaveApplepayKeyAction()
@@ -1217,7 +1231,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         }
         echo $response;
-        exit(0); /** @phpstan-ignore-line */
+        // @codingStandardsIgnoreStart
+        exit(0);
+        // @codingStandardsIgnoreEnd
     }
 
     public function updateSnippet($options)
