@@ -32,7 +32,7 @@ You find our documentation here: https://docs.payone.com/integration/plugins/int
 PAYONE GmbH<br>
 Fraunhoferstraße 2-4<br>
 24118 Kiel, Germany<br>
-[payone.com](https://www.payone.com/DE-de)<br>
+[payone.com](https://www.payone.com)<br>
 Phone +49 431 25968-400<br>
 <p>
 sales@payone.com<br>
