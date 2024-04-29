@@ -144,7 +144,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function connectiontestAction()
     {
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $this->mid = $_GET['mid'];
         $this->aid = $_GET['aid'];
         $this->pid = $_GET['pid'];
@@ -456,7 +456,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         $data = array();
         sleep(2);
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $filename = Shopware()->Container()->get('kernel')->getLogDir() . '/moptPayoneConnectionTest.log';
         $resultfile = fopen($filename, "r");
         $aLines = '';
@@ -518,7 +518,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxapilogAction()
     {
 
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $offset = $this->Request()->get('offset');
         $limit = $this->Request()->get('limit');
@@ -544,7 +544,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $breadcrump = array(
             "Konfiguration", "Features", "ajaxtransactionstatusconfig", "Statusweiterleitung"
         );
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $start = $this->Request()->get('start');
         $limit = $this->Request()->get('limit');
@@ -610,7 +610,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetPaymentStatusConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $data['data'] = $this->get('MoptPayoneMain')->getPayoneConfig($paymentid, true);
@@ -622,7 +622,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetRiskCheckConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $data['data'] = $this->get('MoptPayoneMain')->getPayoneConfig($paymentid, true);
@@ -634,7 +634,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetAddressCheckConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $data['data'] = $this->get('MoptPayoneMain')->getPayoneConfig($paymentid, true);
@@ -681,7 +681,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetCreditCardConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
@@ -696,7 +696,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetIframeConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig');
@@ -711,7 +711,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetPaypalConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal');
         $query = $this->getAllPaymentsQuery(null, null, $repository);
@@ -725,7 +725,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetRatepayConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay');
         $query = $this->getAllPaymentsQuery(null,null,$repository);
@@ -746,7 +746,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetAmazonConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay');
         $query = $this->getAllPaymentsQuery(null,null,$repository);
@@ -779,7 +779,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetDebitConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
@@ -820,7 +820,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetFinanceConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
@@ -854,7 +854,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetOnlineTransferConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
@@ -897,7 +897,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetWalletConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
@@ -931,7 +931,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function ajaxgetTransactionStatusConfigAction()
     {
         $data = array();
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $data['data'] = $this->get('MoptPayoneMain')->getPayoneConfig($paymentid, true);
@@ -961,16 +961,13 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function ajaxgetGeneralConfigAction()
     {
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $paymentid = $this->Request()->getParam('paymentid');
         $data['data'] = $this->get('MoptPayoneMain')->getPayoneConfig($paymentid, true);
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
-        // @codingStandardsIgnoreStart
-        exit(0);
-        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxriskcheckAction()
@@ -1034,7 +1031,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function ajaxgettextblocksAction()
     {
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $offset = $this->Request()->get('offset');
         $limit = $this->Request()->get('limit');
@@ -1063,7 +1060,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function ajaxsavetextblocksAction()
     {
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         $localeId = $this->Request()->get('localeId');
         $snippetId = $this->Request()->get('snippetId');
@@ -1077,28 +1074,22 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         $encoded = json_encode($data);
         echo $encoded;
-        // @codingStandardsIgnoreStart
-        exit(0);
-        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSavePaymentConfigAction()
     {
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentData = $this->Request()->getPost();
         $this->createPayment($paymentData);
         $data['status'] = 'success';
         $data['message'] = 'Zahlungsart erfolgreich gespeichert!';
         $encoded = json_encode($data);
         echo $encoded;
-        // @codingStandardsIgnoreStart
-        exit(0);
-        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSavePayoneConfigAction()
     {
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentData = $this->Request()->getPost();
         $data['status'] = 'success';
         $data['message'] = 'Zahlungsart erfolgreich gespeichert!';
@@ -1106,28 +1097,22 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->createPayoneCreditcardConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
-        // @codingStandardsIgnoreStart
-        exit(0);
-        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSaveIframeConfigAction()
     {
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentData = $this->Request()->getPost();
         $data['status'] = 'success';
         $data['message'] = 'Konfiguration erfolgreich gespeichert!';
         $this->createIframeConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
-        // @codingStandardsIgnoreStart
-        exit(0);
-        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSavePaypalConfigAction()
     {
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentData = $this->Request()->getPost();
         $data['status'] = 'success';
         $data['message'] = 'Konfiguration erfolgreich gespeichert!';
@@ -1154,9 +1139,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         }
         $encoded = json_encode($data);
         echo $encoded;
-        // @codingStandardsIgnoreStart
-        exit(0);
-        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSaveApplepayCertAction()
@@ -1167,7 +1149,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             mkdir($shoproot.$folder, 0700);
         }
         $response = 0;
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         if (isset($_FILES['file']) && !empty($_FILES['file']['name'] && $_FILES['file']['size'] > 0)) {
             $fileData = $_FILES['file'];
@@ -1192,9 +1174,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         }
         echo $response;
-        // @codingStandardsIgnoreStart
-        exit(0);
-        // @codingStandardsIgnoreEnd
     }
 
     public function ajaxSaveApplepayKeyAction()
@@ -1206,7 +1185,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         }
 
         $response = 0;
-        $this->Front()->Plugins()->Json()->setRenderer(true);
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
         if (isset($_FILES['file']) && !empty($_FILES['file']['name'] && $_FILES['file']['size'] > 0)) {
             $fileData = $_FILES['file'];
@@ -1231,9 +1210,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
         }
         echo $response;
-        // @codingStandardsIgnoreStart
-        exit(0);
-        // @codingStandardsIgnoreEnd
     }
 
     public function updateSnippet($options)
