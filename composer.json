@@ -3,7 +3,7 @@
     "type": "shopware-plugin",
     "description": "PAYONE Payment Plug-In for Shopware version 5",
     "keywords": ["payment","credit card"],
-    "homepage": "https://www.payone.de",
+    "homepage": "https://www.payone.com",
      "extra": {
         "installer-name": "MoptPaymentPayone"
     },
