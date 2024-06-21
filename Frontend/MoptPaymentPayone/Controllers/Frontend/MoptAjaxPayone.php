@@ -339,9 +339,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $params = $this->moptPayoneMain->getParamBuilder()->buildGetFile($this->getPaymentId(), Shopware()->Session()->moptMandateDataDownload);
         $service = $this->payoneServiceBuilder->buildServiceManagementGetFile();
         $request = new Payone_Api_Request_GetFile($params);
-        // TODO check why SHA-384 seems unsupported
-        // $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
-        // $request->set('hash', $generateHashService->generate($request, $params['key']));
 
         try {
             $response = $service->getFile($request);
