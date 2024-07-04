@@ -168,6 +168,10 @@ abstract class Payone_Api_Adapter_Http_Abstract implements Payone_Api_Adapter_In
      */
     public function getParams()
     {
+        if (empty($this->params['bankgrouptype'])) {
+            unset($this->params['bankgrouptype']);
+        }
+
         return $this->params;
     }
 
