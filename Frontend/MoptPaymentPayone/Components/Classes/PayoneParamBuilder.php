@@ -1020,7 +1020,6 @@ class Mopt_PayoneParamBuilder
             $session->offsetSet('isIdealredirect', true);
             $params['onlinebanktransfertype'] = 'IDL';
             $params['bankcountry'] = $paymentData['mopt_payone__ideal_bankcountry'];
-            $params['bankgrouptype'] = $paymentData['mopt_payone__ideal_bankgrouptype'];
             $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',
