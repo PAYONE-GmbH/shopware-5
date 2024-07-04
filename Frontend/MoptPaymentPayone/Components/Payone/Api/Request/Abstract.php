@@ -252,7 +252,7 @@ abstract class Payone_Api_Request_Abstract implements Payone_Api_Request_Interfa
      */
     public function setKey($key)
     {
-        $this->key = md5($key);
+        $this->key = hash('sha384', $key);
     }
 
     /**
