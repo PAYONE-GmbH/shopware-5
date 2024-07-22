@@ -265,13 +265,8 @@ class Mopt_PayoneFormHandler
     {
         $paymentData = array();
 
-        if ($formData['mopt_payone__ideal_bankgrouptype'] == 'not_choosen') {
-            $paymentData['sErrorFlag']['mopt_payone__ideal_bankgrouptype'] = true;
-        } else {
-            $paymentData['formData']['mopt_payone__ideal_bankgrouptype'] = $formData['mopt_payone__ideal_bankgrouptype'];
-            $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::IDEAL;
-            $paymentData['formData']['mopt_payone__ideal_bankcountry'] = 'NL';
-        }
+        $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::IDEAL;
+        $paymentData['formData']['mopt_payone__ideal_bankcountry'] = 'NL';
 
         $this->setFormSubmittedFlag();
 
