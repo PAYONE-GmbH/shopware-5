@@ -771,7 +771,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
         $payoneParams['mid'] = $creditCardConfig['merchant_id'];
         $payoneParams['portalid'] = $creditCardConfig['portal_id'];
-        $payoneParams['key'] = md5($creditCardConfig['api_key']);
+        $payoneParams['key'] = hash('sha384', $creditCardConfig['api_key']);
         $payoneParams['aid'] = $creditCardConfig['subaccount_id'];
 
         if ($creditCardConfig['live_mode']) {

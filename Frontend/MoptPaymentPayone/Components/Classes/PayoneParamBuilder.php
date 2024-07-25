@@ -1922,25 +1922,6 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
-     * hash iframe parameters
-     *
-     * @param array $request
-     * @return string
-     */
-    protected function getParamHash($request)
-    {
-        $payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig();
-        ksort($request);
-
-        $hashString = '';
-        foreach ($request as $value) {
-            $hashString .= $value;
-        }
-
-        return md5($hashString .= $payoneConfig['apiKey']);
-    }
-
-    /**
      * determine authorization method
      *
      * @param array $payoneConfig
