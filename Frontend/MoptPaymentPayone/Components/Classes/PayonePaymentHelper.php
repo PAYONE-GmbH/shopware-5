@@ -2056,9 +2056,10 @@ class Mopt_PayonePaymentHelper
      */
     public function updateUserCreditcardInitialPaymentSuccess($userId, $success)
     {
-        $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
+        $moptPayoneHelper = Shopware()->Container()->get('MoptPayoneMain')->getInstance()->getHelper();
 
-        $attributes = $user->getAttribute();
+        $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
+        $attributes = $moptPayoneHelper->getOrCreateUserAttribute($user);
         $attributes->setMoptPayoneCreditcardInitialPayment($success);
         Shopware()->Models()->persist($attributes);
         Shopware()->Models()->flush($attributes);
