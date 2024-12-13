@@ -601,6 +601,16 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Gesicherte Lastschrift',
                 'template' => 'mopt_paymentmean_payone_secured_directdebit.tpl',
                 'position' => 42,],
+            [
+                'name' => 'mopt_payone__ewallet_paypalv2',
+                'description' => 'PAYONE PayPal v2',
+                'template' => null,
+                'position' => 43,],
+            [
+                'name' => 'mopt_payone__ewallet_paypal_expressv2',
+                'description' => 'PAYONE PayPal Express v2',
+                'template' => null,
+                'position' => 44,],
         ];
     }
 
@@ -2243,7 +2253,126 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
-                        ADD COLUMN `$column` TINYINT(2) NOT NULL DEFAULT 0;";
+                        ADD COLUMN `$column` TINYINT(2) NULL DEFAULT 0;";
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if paypalExressUseDefaultShipping columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddPaypalV2ShowButton()
+    {
+        $textColumns = ['paypal_v2_show_button'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` TINYINT(1) NOT NULL DEFAULT 0;";
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddPaypalV2MerchantId()
+    {
+        $textColumns = ['paypal_v2_merchant_id'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
+
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddPaypalV2ButtonColor()
+    {
+        $textColumns = ['paypal_v2_button_color'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
+
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddPaypalV2ButtonShape()
+    {
+        $textColumns = ['paypal_v2_button_shape'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
+
                 $db->exec($sql);
             }
         }

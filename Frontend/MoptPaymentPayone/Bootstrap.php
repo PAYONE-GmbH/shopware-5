@@ -853,6 +853,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->moptCreateCreditcardPaymentDataTable();
 
+        $this->getInstallHelper()->checkAndAddPaypalV2ShowButton();
+
+        $this->getInstallHelper()->checkAndAddPaypalV2MerchantId();
+
+        $this->getInstallHelper()->checkAndAddPaypalV2ButtonColor();
+
+        $this->getInstallHelper()->checkAndAddPaypalV2ButtonShape();
+
     }
 
     /**

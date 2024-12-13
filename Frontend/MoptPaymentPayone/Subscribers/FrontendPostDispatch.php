@@ -406,6 +406,13 @@ class FrontendPostDispatch implements SubscriberInterface
                         unset ($payments[$paypalIndex]);
                     }
                 }
+
+                if ($moptPaymentHelper->isPayonePaypalV2($payment['name'])) {
+                    if ($this->isStateNeeded()) {
+                        $paypalIndex = $index;
+                        unset ($payments[$paypalIndex]);
+                    }
+                }
                 // remove Klarna payments according to supported country and currency combination
                 if ($payment['name'] === 'mopt_payone_klarna' && !$this->isCountryCurrencySupportedFromKlarna()
                 ) {

@@ -63,14 +63,18 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_wechatpay',
         'mopt_payone__fin_payone_secured_invoice',
         'mopt_payone__fin_payone_secured_installment',
-        'mopt_payone__fin_payone_secured_directdebit'
+        'mopt_payone__fin_payone_secured_directdebit',
+        'mopt_payone__ewallet_paypalv2',
+        'mopt_payone__ewallet_paypal_expressv2',
     ];
 
     const PAYMENTS_ADDRESSCHECK_EXCLUDED = [
         'mopt_payone__ewallet_amazon_pay',
         'mopt_payone__ewallet_paypal',
         'mopt_payone__ewallet_paypal_express',
-        'mopt_payone__ewallet_applepay'
+        'mopt_payone__ewallet_applepay',
+        'mopt_payone__ewallet_paypalv2',
+        'mopt_payone__ewallet_paypal_expressv2',
     ];
 
     const PAYMENTS_ADDRESSCHECK_INCLUDED = [
@@ -122,12 +126,14 @@ class Mopt_PayoneConfig
         'mopt_payone__fin_kdd_klarna_direct_debit',
         'mopt_payone_klarna',
         'mopt_payone__ewallet_paypal_express',
+        'mopt_payone__ewallet_paypal_expressv2',
         'mopt_payone__ewallet_applepay',
     ];
 
     const PAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE = [
         'mopt_payone__ewallet_amazon_pay',
         'mopt_payone__ewallet_paypal_express',
+        'mopt_payone__ewallet_paypal_expressv2',
         // 'mopt_payone__ewallet_applepay', applepay is handled seperately
     ];
 
@@ -149,6 +155,7 @@ class Mopt_PayoneConfig
     // for these payments basket AND address changes are not allowed
     const PAYMENTS_EXPRESS = [
         'mopt_payone__ewallet_paypal_express',
+        'mopt_payone__ewallet_paypal_expressv2',
     ];
 
     // for these payments basket changes are not allowed after accepting installment conditions

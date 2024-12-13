@@ -350,9 +350,62 @@
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/paydirektPreauthorizationValidity"}Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung{/s}">
                     <label for="paydirektPreauthorizationValidity" class="text-left col-md-3 control-label">{s name="fieldlabel/paydirektPreauthorizationValidity"}Giropay Garantiezeitraum{/s}</label>
                     <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^([1-9]|1[0-5])$' minlength="1" maxlength="2" id="paydirektPreauthorizationValidity" name="paydirektPreauthorizationValidity" aria-describedby="paydirektPreauthorizationValidity-status" >
+                        <input type="text" class="form-control " pattern='^(0|[1-9]|1[0-5])$' minlength="1" maxlength="2" id="paydirektPreauthorizationValidity" name="paydirektPreauthorizationValidity" aria-describedby="paydirektPreauthorizationValidity-status" >
                         <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
                         <span id="paydirektPreauthorizationValidity-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/paypalV2ShowButton"}{/s}">
+                    <label for="paypalV2ShowButton" class="text-left col-md-3 control-label">{s name="fieldlabel/paypalV2ShowButton"}Paypal V2 BNPL Button anzeigen{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="paypalV2ShowButton" name="paypalV2ShowButton" aria-describedby="paypalV2ShowButton-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="paypalV2ShowButton-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name='fieldlabelhelp/paypalV2MerchantId'}Im Testmodus NICHT erforderlich. Da wird eine feste ID von Payone verwendet.{/s}">
+                    <label for="paypalV2MerchantId" class="text-left col-md-3 control-label">{s name='fieldlabel/paypalV2MerchantId'}Paypal V2 Merchant ID{/s}</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="paypalV2MerchantId" name="paypalV2MerchantId" aria-describedby="paypalV2MerchantId-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="paypalV2MerchantId-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/paypalV2ShowButton"}Paypal V2 Express Button Farbe{/s}">
+                    <label for="paypalV2ButtonColor" class="text-left col-md-3 control-label">{s name="fieldlabel/paypalV2ButtonColor"}Paypal V2 Express Button Farbe{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="paypalV2ButtonColor" name="paypalV2ButtonColor" aria-describedby="paypalV2ButtonColor-status" >
+                            <option value="gold">Gold</option>
+                            <option value="blue">Blau</option>
+                            <option value="silver">Silber</option>
+                            <option value="white">Weiss</option>
+                            <option value="black">Schwarz</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="paypalV2ButtonColor-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/paypalV2ButtonShape"}{/s}">
+                    <label for="paypalV2ButtonShape" class="text-left col-md-3 control-label">{s name="fieldlabel/paypalV2ButtonShape"}Paypal V2 BNPL Button anzeigen{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="paypalV2ButtonShape" name="paypalV2ButtonShape" aria-describedby="paypalV2ButtonShape-status" >
+                            <option value="rect">Standard</option>
+                            <option value="pill">Runde Ecken</option>
+                            <option value="sharp">Spitze Ecken</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="paypalV2ButtonShape-status" class="sr-only">(success)</span>
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>

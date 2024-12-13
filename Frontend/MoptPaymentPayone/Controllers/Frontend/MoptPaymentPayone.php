@@ -139,11 +139,28 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleDirectFeedback($response);
     }
 
+    public function paypalexpressv2Action()
+    {
+        $response = $this->mopt_payone__paypalv2(true);
+        $this->mopt_payone__handleDirectFeedback($response);
+    }
+
     public function paypalAction()
     {
         $response = $this->mopt_payone__paypal(false);
 
         if (Shopware()->Session()->moptPaypalEcsWorkerId) {
+            $this->mopt_payone__handleDirectFeedback($response);
+        } else {
+            $this->mopt_payone__handleRedirectFeedback($response);
+        }
+    }
+
+    public function paypalv2Action()
+    {
+        $response = $this->mopt_payone__paypalv2(false);
+
+        if (Shopware()->Session()->moptPaypalv2EcsWorkerId) {
             $this->mopt_payone__handleDirectFeedback($response);
         } else {
             $this->mopt_payone__handleRedirectFeedback($response);
@@ -366,6 +383,53 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPaypalEcs($this->Front()->Router());
         } else {
             $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPaypal(
+                $this->Front()->Router(),
+                $isInitialRecurringRequest
+            );
+            $workOrderId = false;
+        }
+
+        $response = $this->buildAndCallPayment(
+            $config,
+            'wlt',
+            $payment,
+            $workOrderId,
+            $recurringOrder,
+            $isInitialRecurringRequest,
+            $forceAuthorize
+        );
+
+        return $response;
+    }
+
+    /**
+     *
+     * @param bool $isPaypalExpress
+     *
+     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
+     */
+    protected function mopt_payone__paypalv2($isPaypalExpress = false)
+    {
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+        $recurringOrder = false;
+        $isInitialRecurringRequest = false;
+        $forceAuthorize = false;
+
+        if ($this->isRecurringOrder() || $this->moptPayoneMain->getHelper()->isAboCommerceArticleInBasket()) {
+            $recurringOrder = true;
+            $forceAuthorize = true;
+        }
+
+        if ($recurringOrder && !isset(Shopware()->Session()->moptIsPaypalRecurringOrder)) {
+            $isInitialRecurringRequest = true;
+            $forceAuthorize = false;
+        }
+
+        if ($isPaypalExpress) {
+            $workOrderId = Shopware()->Session()->moptPaypalv2ExpressWorkorderId;
+            $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPaypalv2Ecs($this->Front()->Router());
+        } else {
+            $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentPaypalv2(
                 $this->Front()->Router(),
                 $isInitialRecurringRequest
             );
@@ -937,6 +1001,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session->offsetUnset('moptPaymentReference');
         $session->offsetUnset('moptBasketChanged');
         $session->offsetUnset('moptPaypalExpressWorkorderId');
+        $session->offsetUnset('moptPaypalv2ExpressWorkorderId');
         $this->View()->errormessage = $session->payoneErrorMessage;
         if ($session->otherErrorMessages !== false) {
             $this->View()->contactShopOwner = $session->otherErrorMessages['contactShopOwner'];
@@ -1076,6 +1141,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $session->offsetUnset('moptRatepayCountry');
         $session->offsetUnset('moptBasketChanged');
         $session->offsetUnset('moptPaypalExpressWorkorderId');
+        $session->offsetUnset('moptPaypalv2ExpressWorkorderId');
         $session->offsetUnset('moptSaveCreditcardData');
         $session->offsetUnset('moptPayment');
     }
@@ -1093,7 +1159,8 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         if (
             $response->getStatus() == 'REDIRECT' &&
-            $this->moptPayoneMain->getPaymentHelper()->isPayonePaypalExpress($paymentId)
+            ( $this->moptPayoneMain->getPaymentHelper()->isPayonePaypalExpress($paymentId) ||
+                $this->moptPayoneMain->getPaymentHelper()->isPayonePaypalExpressv2($paymentId)  )
         )
         {
             $session->txId = $response->getTxid();
@@ -1160,6 +1227,10 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
             if ($session->moptPaypalExpressWorkorderId) {
                 unset($session->moptPaypalExpressWorkorderId);
+            }
+
+            if ($session->moptPaypalv2ExpressWorkorderId) {
+                unset($session->moptPaypalv2ExpressWorkorderId);
             }
 
             if ($session->moptMandateData) {
@@ -1446,7 +1517,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         // Check if basket contains only digital articles and
         // this is currently used only for paydirekt
         // checking wether esd is enabled in payment config is not neccessary
-        if ($this->moptPayonePaymentHelper->isPayonePaydirekt($paymentName)
+        if (($this->moptPayonePaymentHelper->isPayonePaydirekt($paymentName) || $this->moptPayonePaymentHelper->isPayonePaypalv2($paymentName))
             && $this->isBasketDigital()) {
             $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
             $paydata->addItem(

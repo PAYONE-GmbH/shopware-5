@@ -178,6 +178,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'allowDifferentAddresses',
             'paypalExpressUseDefaultShipping',
             'paydirektOrderSecured',
+            'paypalV2ShowButton',
         );
 
         foreach ($fields as $field) {

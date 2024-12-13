@@ -124,7 +124,7 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 items: fieldsets,
                 renderTo: document.body,
                 width: 880,
-                height: 1500
+                height: 1700
             }];
     },
     activateField: function (me, field) {
@@ -1356,13 +1356,59 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 //creates Ext.form.field.Text input field
                 xtype: 'numberfield',
                 fieldLabel: '{s name="fieldlabel/paydirektPreauthorizationValidity"}Giropay Garantiezeitraum{/s}',
-                minValue: 1,
+                minValue: 0,
                 maxValue: 15,
                 helpText: '{s name="fieldlabelhelp/paydirektPreauthorizationValidity"}Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung{/s}',
                 name: 'paydirektPreauthorizationValidity',
                 allowBlank: false,
                 labelWidth: 200
             },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/paypalV2ShowButton"}Paypal V2 BNPL Button anzeigen{/s}',
+                helpText: '{s name="fieldlabelhelp/paypalV2ShowButton"}{/s}',
+                name: 'paypalV2ShowButton',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name="fieldlabel/paypalV2MerchantId"}Paypal V2 Merchant ID{/s}',
+                helpText: '{s name="fieldlabelhelp/paypalV2MerchantId"}Im Testmodus NICHT erforderlich. Da wird eine feste ID von Payone verwendet.{/s}',
+                name: 'paypalV2MerchantId',
+                allowBlank: true,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/paypalV2ButtonColor"}Paypal V2 Express Button Farbe{/s}',
+                helpText: '{s name="fieldlabelhelp/paypalV2ButtonColor"}Paypal V2 Express Button Farbe{/s}',
+                store: me.data.paypalv2expressbuttoncolor,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                name: 'paypalV2ButtonColor',
+                allowBlank: true,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/paypalV2ButtonShape"}Paypal V2 Express Button Form{/s}',
+                helpText: '{s name="fieldlabelhelp/paypalV2ButtonShape"}Paypal V2 Express Button Form{/s}',
+                store: me.data.paypalv2expressbuttonshape,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                name: 'paypalV2ButtonShape',
+                allowBlank: true,
+                labelWidth: 200
+            }
         ];
     },
     getPaymentStatus: function () {
