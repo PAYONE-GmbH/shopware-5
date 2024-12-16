@@ -11,16 +11,13 @@
            {if $payonePaypalv2Config['liveMode'] == false}
             elemScript.src ='https://www.paypal.com/sdk/js?client-id=AUn5n-4qxBUkdzQBv6f8yd8F4AWdEvV6nLzbAifDILhKGCjOS62qQLiKbUbpIKH_O2Z3OL8CvX7ucZfh&merchant-id=3QK84QGGJE5HW&locale={$Locale}&currency={$payonePaypalv2Currency}&intent=authorize&commit=false&vault=false&disable-funding=card,sepa,bancontact{if $payonePaypalv2Config['paypalV2ShowButton'] === true}&enable-funding=paylater{/if}'
            {/if}
-            console.log('PAY Later: {$payonePaypalv2Config['paypalV2ShowButton']}');
             document.body.appendChild(elemScript);
 
             window.paypalJsLoaded = true;
-            console.log('loaded');
         }
     }
 
-    function triggerPayPalButtonRender() {
-        console.log('triggerPayPalButtonRender');
+    function triggerPayPalButtonRender(button) {
         if (payonePayPalAttempts > 10) {
             return; // abort
         }
@@ -29,20 +26,28 @@
             loadPayPalScript();
             setTimeout(function() {
                 window.requestAnimationFrame(function() {
-                    triggerPayPalButtonRender()
+                    triggerPayPalButtonRender(button)
                 });
             }, 250);
         } else {
-            initPayPalButton();
+            initPayPalButton(button);
         }
         payonePayPalAttempts++;
     }
 
-    function initPayPalButton() {
+    function initPayPalButton(button) {
+        if (document.getElementById(button) && document.getElementById(button).childNodes.length > 0) { // button already created, no need to init another button
+            return;
+        }
+        let url = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
+        let layout = 'vertical'
+        if (url === 'cart' && button === 'paypal-container-top') {
+            layout = 'horizontal';
+        }
         paypal.Buttons({
 
             style: {
-                layout: 'vertical', // vertical or horizontal
+                layout: layout, // vertical or horizontal
                 color: '{$payonePaypalv2Config['paypalV2ButtonColor']}', // gold, blue, black, silver, white
                 shape: '{$payonePaypalv2Config['paypalV2ButtonShape']}', // rect, pill
                 label: 'paypal', // paypal, pay, subscribe, checkout, buynow
@@ -78,10 +83,10 @@
                 // add your actions if error occurs
             },
 
-        }).render('#paypal-button-container');
-        console.log('rendered');
+        }).render('#' + button);
     }
     function startPayPalExpress() {
+        console.log('PPE Start');
         return $.ajax({
             url: '{url controller="MoptAjaxPayone" action="startPaypalExpress" forceSecure}',
             method: 'POST',
@@ -91,6 +96,6 @@
             }
         });
     }
-    console.log('before Trigger');
-    triggerPayPalButtonRender()
+
+    triggerPayPalButtonRender('paypal-button-container')
 </script>

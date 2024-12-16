@@ -358,6 +358,7 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('payonePaypalv2Currency', Shopware()->Container()->get('currency')->getShortName());
                 $view->assign('payonePaypalv2Config', $payonePaypalv2Config);
                 $view->extendsTemplate('frontend/checkout/ajax_cart_paypalv2.tpl');
+                $view->extendsTemplate('frontend/checkout/mopt_cart_paypalv2.tpl');
             }
 
         }

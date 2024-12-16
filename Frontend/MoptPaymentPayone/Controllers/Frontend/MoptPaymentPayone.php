@@ -1473,11 +1473,11 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $payment->setIban($iban);
             $request->set('bankaccountholder', $payment->getBankaccountholder());
         }
-        if ($this->moptPayonePaymentHelper->isPayoneSecuredInstallments(
-                $paymentName
-            ) || $this->moptPayonePaymentHelper->isPayoneSecuredInvoice(
-                $paymentName
-            ) || $this->moptPayonePaymentHelper->isPayoneSecuredDirectdebit($paymentName)) {
+        if ($this->moptPayonePaymentHelper->isPayoneSecuredInstallments($paymentName)
+            || $this->moptPayonePaymentHelper->isPayoneSecuredInvoice($paymentName)
+            || $this->moptPayonePaymentHelper->isPayoneSecuredDirectdebit($paymentName)
+            || $this->moptPayonePaymentHelper->isPayonePaypalExpressv2($paymentName)
+        ) {
             $config['submitBasket'] = true;
         }
 
