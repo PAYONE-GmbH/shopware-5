@@ -1387,6 +1387,17 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
                 array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_SET_EXPRESSCHECKOUT)
             ));
+            $router = $this->Front()->Router();
+            $successurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2express',
+                'forceSecure' => true, 'appendSession' => false));
+            $errorurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2expresserror',
+                'forceSecure' => true, 'appendSession' => false));
+            $backurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2expressabort',
+                'forceSecure' => true, 'appendSession' => false));
+
+            $request->setSuccessurl($successurl);
+            $request->setBackurl($errorurl);
+            $request->setErrorurl($backurl);
         }
         if ($config['authorisationMethod'] === 'Vorautorisierung') {
             $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
