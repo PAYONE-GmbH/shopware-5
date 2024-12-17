@@ -154,7 +154,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcsv2 extends Shopware_Controller
 
         $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
     }
-    public function paypalexpressv2ErrorAction()
+    public function paypalv2expresserrorAction()
     {
         $session = Shopware()->Session();
         $session->moptPayoneUserHelperError = true;

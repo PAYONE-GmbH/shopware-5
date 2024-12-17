@@ -74,12 +74,12 @@
             },
 
             onCancel: function (data, actions) {
-                console.log("Customer cancelled the PayPal Checkout Flow");
+                window.location = '{url controller="MoptPaymentEcsv2" action="paypalv2expressabort" forceSecure}';
                 // add your actions on cancellation
             },
 
             onError: function () {
-                console.log("An Error occurred as part of the PayPal JS SDK");
+                window.location = '{url controller="MoptPaymentEcsv2" action="paypalv2expresserror" forceSecure}';
                 // add your actions if error occurs
             },
 
