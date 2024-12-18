@@ -876,6 +876,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
         $query = $this->getAllPaymentsQuery(array('name' => 'mopt_payone__ewallet%'), null, $repository);
         $payonepaymentmethods = $query->getArrayResult();
+        // remove paypal v2 and paypal express v2
+        $payonepaymentmethods = array_filter($payonepaymentmethods, function ($item) {
+            return $item['name'] !== 'mopt_payone__ewallet_paypalv2' && $item['name'] !== 'mopt_payone__ewallet_paypal_expressv2';
+        });
         $amazonpayRepo = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay');
         $amazonpayConfigs = $amazonpayRepo->findAll();
         $shopRepo = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');

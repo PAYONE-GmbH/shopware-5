@@ -665,6 +665,27 @@ class MoptPayoneConfig extends ModelEntity
      */
     private $paydirektPreauthorizationValidity;
 
+
+    /**
+     *  @ORM\Column(name="paypal_v2_show_button", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
+     */
+    private $paypalV2ShowButton;
+
+    /**
+     *  @ORM\Column(name="paypal_v2_merchant_id", type="string", length=255, nullable=true, unique=false)
+     */
+    private $paypalV2MerchantId;
+
+    /**
+     *  @ORM\Column(name="paypal_v2_button_color", type="string", length=255, nullable=true, unique=false)
+     */
+    private $paypalV2ButtonColor;
+
+    /**
+     *  @ORM\Column(name="paypal_v2_button_shape", type="string", length=255, nullable=true, unique=false)
+     */
+    private $paypalV2ButtonShape;
+
     /**
      * @return mixed
      */
@@ -2628,6 +2649,38 @@ class MoptPayoneConfig extends ModelEntity
 
     public function getPaydirektPreauthorizationValidity() {
         return $this->paydirektPreauthorizationValidity;
+    }
+
+    public function setPaypalV2ShowButton($value) {
+        $this->paypalV2ShowButton = $value;
+    }
+
+    public function getPaypalV2ShowButton() {
+        return $this->paypalV2ShowButton;
+    }
+
+    public function setPaypalV2MerchantId($value) {
+        $this->paypalV2MerchantId = $value;
+    }
+
+    public function getPaypalV2MerchantId() {
+        return $this->paypalV2MerchantId;
+    }
+
+    public function setPaypalV2ButtonColor($value) {
+        $this->paypalV2ButtonColor = $value;
+    }
+
+    public function getPaypalV2ButtonColor() {
+        return $this->paypalV2ButtonColor;
+    }
+
+    public function setPaypalV2ButtonShape($value) {
+        $this->paypalV2ButtonShape = $value;
+    }
+
+    public function getPaypalV2ButtonShape() {
+        return $this->paypalV2ButtonShape;
     }
 
 }

@@ -27,7 +27,9 @@ Ext.define('Shopware.apps.MoptConfigPayone.controller.Main', {
       payments: Ext.create('Shopware.apps.MoptConfigPayone.store.Payments'),
       states: Ext.create('Shopware.apps.MoptConfigPayone.store.StatePayment'),
       checkcc: Ext.create('Shopware.apps.MoptConfigPayone.store.ComboAccountcheck'),
-      terms: Ext.create('Shopware.apps.MoptConfigPayone.store.ComboTerms')
+      terms: Ext.create('Shopware.apps.MoptConfigPayone.store.ComboTerms'),
+      paypalv2expressbuttoncolor: Ext.create('Shopware.apps.MoptConfigPayone.store.ComboPaypalv2expressbuttoncolor'),
+      paypalv2expressbuttonshape: Ext.create('Shopware.apps.MoptConfigPayone.store.ComboPaypalv2expressbuttonshape')
     };
 
     me.mainWindow = me.createMainWindow();

@@ -617,7 +617,8 @@ class AddressCheck implements SubscriberInterface
         if ($moptPayoneMain->getPaymentHelper()->isPayoneKlarnaDirectDebit($cleanedPaymentName) ||
             $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaInstallments($cleanedPaymentName) ||
             $moptPayoneMain->getPaymentHelper()->isPayoneKlarnaInvoice($cleanedPaymentName) ||
-            $moptPayoneMain->getPaymentHelper()->isPayonePaypalExpress($cleanedPaymentName)
+            $moptPayoneMain->getPaymentHelper()->isPayonePaypalExpress($cleanedPaymentName) ||
+            $moptPayoneMain->getPaymentHelper()->isPayonePaypalExpressv2($cleanedPaymentName)
         ) {
             Shopware()->Session()->offsetSet('moptKlarnaAddressChanged', true);
         }
@@ -774,6 +775,7 @@ class AddressCheck implements SubscriberInterface
         $shippingAddressData['country'] = $shippingAddressData['countryID'];
         $session = Shopware()->Session();
         unset(Shopware()->Session()->moptPaypalExpressWorkorderId);
+        unset(Shopware()->Session()->moptPaypalv2ExpressWorkorderId);
         $userId = $session->sUserId;
 
         if ($this->getCustomerCheckIsNeeded($config, $userId, $basketValue, false)) {

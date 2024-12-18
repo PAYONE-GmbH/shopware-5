@@ -129,6 +129,10 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'paypalExpressUseDefaultShipping', type: 'boolean'},
     { name: 'paydirektOrderSecured', type: 'boolean'},
     { name: 'paydirektPreauthorizationValidity', type: 'int'},
+    { name: 'paypalV2ShowButton', type: 'boolean'},
+    { name: 'paypalV2MerchantId', type: 'string'},
+    { name: 'paypalV2ButtonColor', type: 'string'},
+    { name: 'paypalV2ButtonShape', type: 'string'},
   ],
   /**
    * Validation

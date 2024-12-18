@@ -36,6 +36,8 @@ class Payone_Api_Enum_WalletType
 
     const PAYPAL_EXPRESS = 'PPE';
 
+    const PAYPAL_EXPRESSV2 = 'PAL';
+
     /* Example
      * 
      * 

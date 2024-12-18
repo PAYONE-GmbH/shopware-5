@@ -1354,4 +1354,105 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $applePaySupported = $this->Request()->getParam('applePaySupported') === "true" ? true : false;
         $this->session->offsetSet('moptAllowApplePay', $applePaySupported);
     }
+
+    public function startPayPalExpressAction()
+    {
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+        $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentPaypalv2Express()->getId();
+        $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
+        $session = Shopware()->Session();
+        $clearingType = \Payone_Enum_ClearingType::WALLET;
+        $walletType = \Payone_Api_Enum_WalletType::PAYPAL_EXPRESSV2;
+        $params = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize($config['paymentId']);
+        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
+        $params['api_version'] = '3.10';
+        //create hash
+        $basket = Shopware()->Modules()->Basket()->sGetBasket();
+        $orderHash = md5(serialize($basket));
+        $session->moptOrderHash = $orderHash;
+        $workorderId = $session->offsetget('moptPaypalv2ExpressWorkorderId');
+
+        $request = new Payone_Api_Request_Genericpayment($params);
+
+        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        if (!empty($workorderId)) {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS)
+            ));
+            $request->setWorkorderId($workorderId);
+        } else {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_SET_EXPRESSCHECKOUT)
+            ));
+            $router = $this->Front()->Router();
+            $successurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2express',
+                'forceSecure' => true, 'appendSession' => false));
+            $errorurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2expresserror',
+                'forceSecure' => true, 'appendSession' => false));
+            $backurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2expressabort',
+                'forceSecure' => true, 'appendSession' => false));
+
+            $request->setSuccessurl($successurl);
+            $request->setBackurl($errorurl);
+            $request->setErrorurl($backurl);
+        }
+        if ($config['authorisationMethod'] === 'Vorautorisierung') {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'payment_action', 'data' => 'authorization')
+            ));
+        } else {
+            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+                array('key' => 'payment_action', 'data' => 'Capture')
+            ));
+        }
+
+        $request->setPaydata($paydata);
+        $request->setClearingtype($clearingType);
+        $request->setWallettype($walletType);
+        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
+
+        $basket = $this->moptPayoneMain->sGetBasket();
+
+        $shipping = [];
+        $shipping['id'] = '';
+        $shipping['name'] = 'Paypal Express Shipping';
+
+        $shippingAmount = $this->Request()->getParam('shipping') ?? 0;
+
+        $request->setAmount($basket['AmountNumeric'] + $shippingAmount );
+
+        $basket['sShippingcosts'] = $shippingAmount;
+        $basket['sShippingcostsWithTax'] = $shippingAmount;
+        $basket['sShippingcostsNet'] = $shippingAmount;
+        $basket['sShippingcostsTax'] = 0;
+
+
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        $invoicing = $this->moptPayoneMain->getParamBuilder()->getInvoicing($basket, $shipping, $userData);
+        $request->setInvoicing($invoicing);
+
+        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
+
+        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
+            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
+        ));
+        $response = $service->request($request);
+
+        $response = $response->toArray();
+        $jsonResponse = [];
+        if (isset($response['rawResponse']['status'], $response['rawResponse']['workorderid'], $response['rawResponse']['add_paydata[orderId]']) && $response['rawResponse']['status'] == 'REDIRECT') {
+            $jsonResponse['success'] = true;
+            $jsonResponse['order_id'] = $response['rawResponse']['add_paydata[orderId]'];
+
+            if (!empty($response['rawResponse']['workorderid'])) {
+                $session->offsetSet('moptPaypalv2ExpressWorkorderId', $response['rawResponse']['workorderid']);
+            }
+        }
+        if (isset($response['rawResponse']['status'], $response['rawResponse']['customermessage']) && $response['rawResponse']['status'] == 'ERROR') {
+            $jsonResponse['errormessage'] = $response['customermessage'];
+            $session->offsetUnset('moptPaypalv2ExpressWorkorderId');
+        }
+
+        echo json_encode($jsonResponse);
+    }
 }

@@ -475,12 +475,34 @@ class Mopt_PayonePaymentHelper
      * @param string $paymentName
      * @return boolean
      */
+    public function isPayonePaypalV2($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_paypalv2$#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone paypal payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayonePaypalExpressv2($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_paypal_expressv2#', $paymentName) ? true : false;
+    }
+
+    /**
+     * check if given payment name is payone paypal payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
     public function isPayonePaypal($paymentName)
     {
         if ($this->isPayonePaypalExpress($paymentName)) {
             return false;
         }
-        return preg_match('#mopt_payone__ewallet_paypal#', $paymentName) ? true : false;
+        return preg_match('#mopt_payone__ewallet_paypal$#', $paymentName) ? true : false;
     }
 
     /**
@@ -491,7 +513,7 @@ class Mopt_PayonePaymentHelper
      */
     public function isPayonePaypalExpress($paymentName)
     {
-        return preg_match('#mopt_payone__ewallet_paypal_express#', $paymentName) ? true : false;
+        return preg_match('#mopt_payone__ewallet_paypal_express$#', $paymentName) ? true : false;
     }
 
     /**
@@ -1353,8 +1375,16 @@ class Mopt_PayonePaymentHelper
             return 'instanttransfer';
         }
 
+        if ($this->isPayonePaypalExpressv2($paymentShortName)) {
+            return 'paypalexpressv2';
+        }
+
         if ($this->isPayonePaypalExpress($paymentShortName)) {
             return 'paypalexpress';
+        }
+
+        if ($this->isPayonePaypalv2($paymentShortName)) {
+            return 'paypalv2';
         }
 
         if ($this->isPayonePaypal($paymentShortName)) {
@@ -1465,6 +1495,23 @@ class Mopt_PayonePaymentHelper
     public function isPayPalEcsActive($payoneMain, $paymentMethod)
     {
         if (!$this->isPayonePaypalExpress($paymentMethod['name'])) {
+            return false;
+        }
+
+        $config = $payoneMain->getPayoneConfig($paymentMethod['id']);
+        return (bool)$config['paypalEcsActive'];
+    }
+
+    /**
+     * check if current payment method is paypal and paypal ecs is activated
+     *
+     * @param Mopt_PayoneMain $payoneMain
+     * @param array $paymentMethod
+     * @return boolean
+     */
+    public function isPayPalv2EcsActive($payoneMain, $paymentMethod)
+    {
+        if (!$this->isPayonePaypalExpressv2($paymentMethod['name'])) {
             return false;
         }
 
@@ -1644,6 +1691,31 @@ class Mopt_PayonePaymentHelper
             ->andWhere('p.name LIKE :name')
             ->setParameter('active', true)
             ->setParameter('name', 'mopt_payone__ewallet_amazon_pay%')
+            ->getQuery()
+            ->getResult();
+
+        foreach ($result as $payment) {
+            if ($this->isPaymentAssignedToSubshop($payment->getId(), $shopID)) {
+                return $payment;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Fetches and returns amazon payment instance.
+     *
+     * @return \Shopware\Models\Payment\Payment | null
+     */
+    public function getPaymentPaypalv2Express()
+    {
+        $shopID = Shopware()->Shop()->getId();
+        $em = Shopware()->Models();
+        $result = $em->getRepository(Payment::class)->createQueryBuilder('p')
+            ->where('p.active = :active')
+            ->andWhere('p.name LIKE :name')
+            ->setParameter('active', true)
+            ->setParameter('name', 'mopt_payone__ewallet_paypal_expressv2%')
             ->getQuery()
             ->getResult();
 

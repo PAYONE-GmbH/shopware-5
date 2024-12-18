@@ -96,6 +96,7 @@ class FrontendCheckout implements SubscriberInterface
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneRatepayInstallment($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalExpress($userData['additional']['payment']['name'])
             && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneSecuredInstallments($userData['additional']['payment']['name'])
+            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaypalExpressv2($userData['additional']['payment']['name'])
         ) {
             return;
         }
@@ -351,6 +352,15 @@ class FrontendCheckout implements SubscriberInterface
                 $view->extendsTemplate('frontend/checkout/mopt_cart' . $templateSuffix . '.tpl');
             }
 
+            if ($this->isPayPalv2EcsActive($subject)) {
+                $paymentId = $session->moptPaypalv2EcsPaymentId;
+                $payonePaypalv2Config = $moptPayoneMain->getPayoneConfig($paymentId);
+                $view->assign('payonePaypalv2Currency', Shopware()->Container()->get('currency')->getShortName());
+                $view->assign('payonePaypalv2Config', $payonePaypalv2Config);
+                $view->extendsTemplate('frontend/checkout/ajax_cart_paypalv2.tpl');
+                $view->extendsTemplate('frontend/checkout/mopt_cart_paypalv2.tpl');
+            }
+
         }
 
         if ($templateSuffix === '' && $this->isApplePayActive()) {
@@ -462,6 +472,37 @@ class FrontendCheckout implements SubscriberInterface
         foreach ($test as $payment) {
             if ($payoneMain->getPaymentHelper()->isPaymentAssignedToSubshop($payment->getId(), $shop->getId())) {
                 Shopware()->Session()->moptPaypayEcsPaymentId = $payment->getId();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function isPayPalv2EcsActive($checkoutController)
+    {
+        $shop = $this->container->get('shop');
+        $payoneMain = $this->container->get('MoptPayoneMain');
+
+        unset(Shopware()->Session()->moptPaypalv2EcsPaymentId);
+        /** @var Repository $paymentRepository */
+        $paymentRepository = Shopware()->Models()->getRepository(\Shopware\Models\Payment\Payment::class);
+
+        $builder = $paymentRepository->getListQueryBuilder();
+        $builder->addFilter(['payment.name' => '%mopt_payone__ewallet_paypal_expressv2%', 'payment.active' => 1]);
+        $query = $builder->getQuery();
+        $test = $query->execute();
+
+        if ($payoneMain->getHelper()->isAboCommerceArticleInBasket()) {
+            return false;
+        }
+        if (empty($test)) {
+            return false;
+        }
+
+        foreach ($test as $payment) {
+            if ($payoneMain->getPaymentHelper()->isPaymentAssignedToSubshop($payment->getId(), $shop->getId())) {
+                Shopware()->Session()->moptPaypalv2EcsPaymentId = $payment->getId();
                 return true;
             }
         }

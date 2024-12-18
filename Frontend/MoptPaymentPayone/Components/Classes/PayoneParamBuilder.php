@@ -571,6 +571,36 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
+     * returns paypal payment data object
+     *
+     * @param type $router
+     * @param bool $intialRecurringRequest
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     */
+    public function getPaymentPaypalv2($router, $intialRecurringRequest = false)
+    {
+        $params = array();
+
+        $params['wallettype'] = 'PAL';
+
+        if ($intialRecurringRequest) {
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'paypalRecurringSuccess',
+                'forceSecure' => true, 'appendSession' => false), null);
+        } else {
+            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'success',
+                'forceSecure' => true, 'appendSession' => false), null);
+        }
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+            'forceSecure' => true, 'appendSession' => false));
+
+        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
+        return $payment;
+    }
+
+
+    /**
      * create payolution payment object
      *
      * @param string $financeType
@@ -1824,6 +1854,28 @@ class Mopt_PayoneParamBuilder
         return array_merge($params, $this->buildPayPalEcsShippingAddress($userData));
     }
 
+    public function buildPayPalv2ExpressCheckout($paymentId, $router, $amount, $currencyName, $userData)
+    {
+        $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
+        $params = $this->getAuthParameters($paymentId);
+
+        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action',
+                'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_SET_EXPRESSCHECKOUT)
+        ));
+
+        $walletParams = $this->buildPayPalEcsWalletParams($router);
+
+        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
+        $params['amount'] = $amount;
+        $params['currency'] = $currencyName;
+        $params['paydata'] = $payData;
+        $params['wallet'] = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($walletParams);
+
+        return array_merge($params, $this->buildPayPalEcsShippingAddress($userData));
+    }
+
     public function buildPayPalExpressCheckoutDetails($paymentId, $router, $amount, $currencyName, $userData, $workerId)
     {
         $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
@@ -1847,9 +1899,31 @@ class Mopt_PayoneParamBuilder
         return array_merge($params, $this->buildPayPalEcsShippingAddress($userData));
     }
 
+    public function buildPayPalExpressv2CheckoutDetails($paymentId, $router, $amount, $currencyName, $userData, $workerId)
+    {
+        $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
+        $params = $this->getAuthParameters($paymentId);
+
+        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
+            array('key' => 'action',
+                'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS)
+        ));
+
+        $walletParams = $this->buildPayPalv2EcsWalletParams($router);
+
+        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
+        $params['workorderid'] = $workerId;
+        $params['amount'] = $amount;
+        $params['currency'] = $currencyName;
+        $params['paydata'] = $payData;
+        $params['wallet'] = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($walletParams);
+
+        return array_merge($params, $this->buildPayPalv2EcsShippingAddress($userData));
+    }
+
     protected function buildPayPalEcsWalletParams($router)
     {
-
         $walletParams = array(
             'wallettype' => Payone_Api_Enum_WalletType::PAYPAL_EXPRESS,
             'successurl' => $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'paypalexpress',
@@ -1857,6 +1931,21 @@ class Mopt_PayoneParamBuilder
             'errorurl' => $router->assemble(array('action' => 'paypalexpressAbort',
                 'forceSecure' => true, 'appendSession' => false)),
             'backurl' => $router->assemble(array('action' => 'paypalexpressAbort',
+                'forceSecure' => true, 'appendSession' => false)),
+        );
+
+        return $walletParams;
+    }
+
+    protected function buildPayPalv2EcsWalletParams($router)
+    {
+        $walletParams = array(
+            'wallettype' => Payone_Api_Enum_WalletType::PAYPAL_EXPRESSV2,
+            'successurl' => $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'paypalexpressv2',
+                'forceSecure' => true, 'appendSession' => false), null),
+            'errorurl' => $router->assemble(array('action' => 'paypalexpressv2Abort',
+                'forceSecure' => true, 'appendSession' => false)),
+            'backurl' => $router->assemble(array('action' => 'paypalexpressv2Abort',
                 'forceSecure' => true, 'appendSession' => false)),
         );
 
@@ -1881,11 +1970,43 @@ class Mopt_PayoneParamBuilder
         return $params;
     }
 
+    protected function buildPayPalv2EcsShippingAddress($userData)
+    {
+        $params = array();
+
+        if (array_key_exists('billingaddress', $userData)) {
+            $params['shipping_firstname'] = $userData[''];
+            $params['shipping_lastname'] = $userData[''];
+            $params['shipping_company'] = $userData[''];
+            $params['shipping_street'] = $userData[''];
+            $params['shipping_zip'] = $userData[''];
+            $params['shipping_city'] = $userData[''];
+            $params['shipping_state'] = $userData[''];
+            $params['shipping_country'] = $userData[''];
+        }
+
+        return $params;
+    }
+
     public function getPaymentPaypalEcs($router)
     {
         $params = array();
 
         $params['wallettype'] = Payone_Api_Enum_WalletType::PAYPAL_EXPRESS;
+        $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'success',
+            'forceSecure' => true, 'appendSession' => false), null);
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+            'forceSecure' => true, 'appendSession' => false));
+        return new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
+    }
+
+    public function getPaymentPaypalv2Ecs($router)
+    {
+        $params = array();
+
+        $params['wallettype'] = Payone_Api_Enum_WalletType::PAYPAL_EXPRESSV2;
         $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'success',
             'forceSecure' => true, 'appendSession' => false), null);
         $params['errorurl'] = $router->assemble(array('action' => 'failure',

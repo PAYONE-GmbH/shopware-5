@@ -153,13 +153,19 @@ class Mopt_PayoneUserHelper
         unset($personalData['telephonenumber']);
 */
         $isPhoneMandatory = Shopware()->Config()->get('requirePhoneField');
+        $paymentHelper = Mopt_PayoneMain::getInstance()->getPaymentHelper();
+        $paymentName = $paymentHelper->getPaymentNameFromId($paymentId);
+        $isPaypalECS = ($paymentHelper->isPayonePaypalExpress($paymentName)) ;
+        $isPaypalECSv2 = ($paymentHelper->isPayonePaypalExpressv2($paymentName));
 
         // paypal express does not use the billing_ prefix so rename the keys
         // also split lastname (billing firstname and billing lastname) value into firstname and lastname
         if (!isset($personalData['billing_street']) && (isset($personalData['street']) || isset($personalData['shipping_street']))) {
-            $splitName = explode(' ', $personalData['lastname']);
-            $personalData['lastname'] = $splitName[1];
-            $personalData['firstname'] = $splitName[0];
+            if (!$isPaypalECSv2) {
+                $splitName = explode(' ', $personalData['lastname']);
+                $personalData['lastname'] = $splitName[1];
+                $personalData['firstname'] = $splitName[0];
+            }
             $keys = [ 'street', 'city', 'country', 'zip', 'addressaddition', 'firstname', 'lastname', 'telephonenumber'];
             foreach ($keys AS $origKey) {
                 $personalData['billing_' . $origKey] = (!empty($personalData[$origKey])) ? $personalData[$origKey] : $personalData['shipping_' . $origKey];
@@ -168,9 +174,6 @@ class Mopt_PayoneUserHelper
             $personalData['shipping_telephonenumber'] = $personalData['billing_telephonenumber'];
         }
         // enable special state handling for paypal express
-        $paymentHelper = Mopt_PayoneMain::getInstance()->getPaymentHelper();
-        $paymentName = $paymentHelper->getPaymentNameFromId($paymentId);
-        $isPaypalECS = $paymentHelper->isPayonePaypalExpress($paymentName);
 
         $register = array();
         $register['billing']['city']           = $personalData['billing_city'];
