@@ -106,6 +106,17 @@ class Shopware_Controllers_Frontend_MoptPaymentEcsv2 extends Shopware_Controller
         $userData = $this->payoneUserHelper->getUserData();
         $paymentConfig = $this->moptPayone__main->getPayoneConfig($paymentId);
 
+        $moptPaymentReference = $session['moptPaymentReference'];
+        if (!empty($moptPaymentReference)) {
+            $this->forward(
+                'finishOrder',
+                'MoptPaymentPayone',
+                null,
+                array('txid' => $session->txId, 'hash' => $session->moptPaymentReference)
+            );
+            return;
+        }
+
         if ($paymentConfig['paypalExpressUseDefaultShipping']) {
             $amount = $this->payoneUserHelper->getBasketAmount($userData) + $shippingCosts;
         } else {
@@ -151,6 +162,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcsv2 extends Shopware_Controller
             ->get('errorMessageUserAbort');
         unset($session->moptPaypalv2ExpressWorkorderId);
         unset($session->moptBasketChanged);
+        unset($session->moptPaymentReference);
 
         $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
     }
@@ -161,6 +173,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcsv2 extends Shopware_Controller
         $session->moptPayoneUserHelperErrorMessage = $this->moptPayone__paymentHelper->moptGetErrorMessageFromErrorCodeViaSnippet(false, $this->request->getParam('errorCode'));
         unset($session->moptPaypalv2ExpressWorkorderId);
         unset($session->moptBasketChanged);
+        unset($session->moptPaymentReference);
         $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
     }
 }
