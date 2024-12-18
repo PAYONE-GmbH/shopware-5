@@ -6,10 +6,10 @@
             var elemScript = document.createElement('script');
             elemScript.type = "text/javascript";
             {if $payonePaypalv2Config['liveMode'] === true}
-            elemScript.src ='https://www.paypal.com/sdk/js?client-id=AVNBj3ypjSFZ8jE7shhaY2mVydsWsSrjmHk0qJxmgJoWgHESqyoG35jLOhH3GzgEPHmw7dMFnspH6vim&merchant-id={$payonePaypalv2Config['paypalV2MerchantId']}&locale={$Locale}&currency={$payonePaypalv2Currency}&intent=authorize&commit=false&vault=false&disable-funding=card,sepa,bancontact{if $payonePaypalv2Config['paypalV2ShowButton'] === true}&enable-funding=paylater{/if}'
-           {/if}
+                elemScript.src ='https://www.paypal.com/sdk/js?client-id=AVNBj3ypjSFZ8jE7shhaY2mVydsWsSrjmHk0qJxmgJoWgHESqyoG35jLOhH3GzgEPHmw7dMFnspH6vim&merchant-id={$payonePaypalv2Config['paypalV2MerchantId']}&locale={$Locale}&currency={$payonePaypalv2Currency}&intent=authorize&commit=false&vault=false&disable-funding=card,sepa,bancontact{if $payonePaypalv2Config['paypalV2ShowButton'] === true}&enable-funding=paylater{/if}'
+            {/if}
            {if $payonePaypalv2Config['liveMode'] == false}
-            elemScript.src ='https://www.paypal.com/sdk/js?client-id=AUn5n-4qxBUkdzQBv6f8yd8F4AWdEvV6nLzbAifDILhKGCjOS62qQLiKbUbpIKH_O2Z3OL8CvX7ucZfh&merchant-id=3QK84QGGJE5HW&locale={$Locale}&currency={$payonePaypalv2Currency}&intent=authorize&commit=false&vault=false&disable-funding=card,sepa,bancontact{if $payonePaypalv2Config['paypalV2ShowButton'] === true}&enable-funding=paylater{/if}'
+                elemScript.src ='https://www.paypal.com/sdk/js?client-id=AUn5n-4qxBUkdzQBv6f8yd8F4AWdEvV6nLzbAifDILhKGCjOS62qQLiKbUbpIKH_O2Z3OL8CvX7ucZfh&merchant-id=3QK84QGGJE5HW&locale={$Locale}&currency={$payonePaypalv2Currency}&intent=authorize&commit=false&vault=false&disable-funding=card,sepa,bancontact{if $payonePaypalv2Config['paypalV2ShowButton'] === true}&enable-funding=paylater{/if}'
            {/if}
             document.body.appendChild(elemScript);
 
@@ -41,9 +41,10 @@
         }
         let url = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
         let layout = 'vertical'
-        if (url === 'cart' && button === 'paypal-container-top') {
+        if (url === 'cart') {
             layout = 'horizontal';
         }
+        console.log('Layout:' + layout);
         paypal.Buttons({
 
             style: {
