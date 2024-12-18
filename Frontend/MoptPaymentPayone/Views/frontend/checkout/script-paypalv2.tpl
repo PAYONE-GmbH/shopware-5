@@ -37,8 +37,10 @@
 
     function initPayPalButton(button) {
         if (document.getElementById(button) && document.getElementById(button).childNodes.length > 0) { // button already created, no need to init another button
+            console.log('Button ' + button + 'already renderd');
             return;
         }
+        console.log('renering Button ' + button);
         let url = window.location.href.substring(window.location.href.lastIndexOf('/') + 1)
         let layout = 'vertical'
         if (url === 'cart') {
@@ -95,6 +97,4 @@
             }
         });
     }
-
-    triggerPayPalButtonRender('paypal-button-container')
 </script>
