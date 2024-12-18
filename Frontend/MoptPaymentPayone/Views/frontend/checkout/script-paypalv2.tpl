@@ -44,7 +44,6 @@
         if (url === 'cart') {
             layout = 'horizontal';
         }
-        console.log('Layout:' + layout);
         paypal.Buttons({
 
             style: {
@@ -87,7 +86,6 @@
         }).render('#' + button);
     }
     function startPayPalExpress() {
-        console.log('PPE Start');
         return $.ajax({
             url: '{url controller="MoptAjaxPayone" action="startPaypalExpress" forceSecure}',
             method: 'POST',
