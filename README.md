@@ -30,8 +30,8 @@ You find our documentation here: https://docs.payone.com/integration/plugins/int
 
 ## Contact
 PAYONE GmbH<br>
-Fraunhoferstraße 2-4<br>
-24118 Kiel, Germany<br>
+Lyoner Straße 9<br>
+60528 Frankfurt am Main, Germany<br>
 [payone.com](https://www.payone.com)<br>
 Phone +49 431 25968-400<br>
 <p>
