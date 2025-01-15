@@ -535,11 +535,6 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['moptShowSofortIbanBic'] = $sofortConfig['showSofortIbanBic'];
             }
 
-            if ($moptPayoneMain->getPaymentHelper()->isPayoneTrustly($paymentMean['name'])) {
-                $trustlyConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
-                $data['moptTrustlyShowIbanBic'] = (int) $trustlyConfig['trustlyShowIbanBic'];
-            }
-
             if ($moptPayoneMain->getPaymentHelper()->isPayoneApplepay($paymentMean['name'])) {
                 $data['moptApplepayConfig'] = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
             }

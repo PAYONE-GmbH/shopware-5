@@ -118,10 +118,6 @@ class Mopt_PayoneFormHandler
             return $this->proccessPayoneSafeInvoice($formData);
         }
 
-        if ($paymentHelper->isPayoneTrustly($paymentId)) {
-            return $this->proccessPayoneTrustly($formData);
-        }
-
         if ($paymentHelper->isPayoneSecuredInvoice($paymentId)) {
             return $this->proccessPayoneSecuredInvoice($formData);
         }
@@ -831,42 +827,6 @@ class Mopt_PayoneFormHandler
         }
 
         $this->setFormSubmittedFlag();
-        return $paymentData;
-    }
-
-    /**
-     * process form data
-     *
-     * @param array $formData
-     * @return array
-     */
-    protected function proccessPayoneTrustly($formData)
-    {
-        $paymentData = array();
-
-        if ($formData['mopt_payone__trustly_show_iban_bic'] == "1") {
-            if (!$formData['mopt_payone__trustly_iban'] || !$this->isValidIban($formData['mopt_payone__trustly_iban'])) {
-                $paymentData['sErrorFlag']['mopt_payone__trustly_iban'] = true;
-            } else {
-                $paymentData['formData']['mopt_payone__trustly_iban'] = $formData['mopt_payone__trustly_iban'];
-            }
-
-            if (!$formData['mopt_payone__trustly_bic'] || !$this->isValidBic($formData['mopt_payone__trustly_bic']) ) {
-                $paymentData['sErrorFlag']['mopt_payone__trustly_bic'] = true;
-            } else {
-                $paymentData['formData']['mopt_payone__trustly_bic'] = $formData['mopt_payone__trustly_bic'];
-            }
-
-            if (!empty($paymentData['sErrorFlag']) && count($paymentData['sErrorFlag'])) {
-                return $paymentData;
-            }
-
-        }
-
-        $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::TRUSTLY;
-
-        $this->setFormSubmittedFlag();
-
         return $paymentData;
     }
 

@@ -30,7 +30,6 @@ class Mopt_PayoneConfig
         'mopt_payone__cc_carte_blue',
         'mopt_payone__cc_diners_club',
         'mopt_payone__cc_jcb',
-        'mopt_payone__cc_maestro_international',
         'mopt_payone__cc_china_union',
         'mopt_payone__ibt_sofortueberweisung',
         'mopt_payone__ibt_eps',
@@ -57,7 +56,6 @@ class Mopt_PayoneConfig
         'mopt_payone__ibt_bancontact',
         'mopt_payone__ewallet_amazon_pay',
         'mopt_payone__ewallet_alipay',
-        'mopt_payone__ibt_trustly',
         'mopt_payone__ewallet_wechatpay',
         'mopt_payone__fin_payone_secured_invoice',
         'mopt_payone__fin_payone_secured_installment',
@@ -82,7 +80,6 @@ class Mopt_PayoneConfig
         'mopt_payone__cc_carte_blue',
         'mopt_payone__cc_diners_club',
         'mopt_payone__cc_jcb',
-        'mopt_payone__cc_maestro_international',
         'mopt_payone__cc_china_union',
         'mopt_payone__ibt_sofortueberweisung',
         'mopt_payone__ibt_eps',
@@ -107,7 +104,6 @@ class Mopt_PayoneConfig
         'mopt_payone__acc_payone_safe_invoice',
         'mopt_payone__ibt_bancontact',
         'mopt_payone__ewallet_alipay',
-        'mopt_payone__ibt_trustly',
         'mopt_payone__ewallet_wechatpay',
     ];
 

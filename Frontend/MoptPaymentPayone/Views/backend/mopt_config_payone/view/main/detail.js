@@ -1152,19 +1152,6 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 labelWidth: 200
             },
             {
-                xtype: 'combobox',
-                fieldLabel: '{s name="fieldlabel/trustlyShowIbanBic"}Trustly: IBAN / BIC abfragen?{/s}',
-                helpText: '{s name="fieldlabelhelp/trustlyShowIbanBic"}Bei Trustly IBAN und BIC abfragen?{/s}',
-                name: 'trustlyShowIbanBic',
-                store: me.data.yesno,
-                queryMode: 'local',
-                displayField: 'display',
-                valueField: 'value',
-                allowBlank: false,
-                disabled: true,
-                labelWidth: 200
-            },
-            {
                 xtype: 'textfield',
                 fieldLabel: '{s name="fieldlabel/applepayMerchantID"}Apple Pay MerchantId{/s}',
                 helpText: '{s name="fieldlabelhelp/applepayMerchantID"}Ihre Apple Pay MerchantId{/s}',

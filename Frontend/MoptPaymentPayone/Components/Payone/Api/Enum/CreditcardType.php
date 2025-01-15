@@ -42,10 +42,4 @@ class Payone_Api_Enum_CreditcardType
     const DINERS = 'D';
     //J: JCB
     const JCB = 'J';
-    //O: Maestro International
-    const MAESTRO_INTERNATIONAL = 'O';
-    //U: Maestro UK
-    const MAESTRO_UK = 'U';
-    //B: Carte Bleue
-    const CARTE_BLEUE = 'B';
 }
