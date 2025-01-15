@@ -946,34 +946,6 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
-     * returns paydirekt payment data object
-     *
-     * @param type $router
-     * @param bool $intialRecurringRequest
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
-     */
-    public function getPaymentPaydirekt($router, $intialRecurringRequest = false)
-    {
-        $params = array();
-        $params['wallettype'] = 'PDT';
-
-        if ($intialRecurringRequest) {
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'paydirektRecurringSuccess',
-                'forceSecure' => true, 'appendSession' => false));
-        } else {
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-        }
-        $params['errorurl'] = $router->assemble(array('action' => 'failure',
-            'forceSecure' => true, 'appendSession' => false));
-        $params['backurl'] = $router->assemble(array('action' => 'cancel',
-            'forceSecure' => true, 'appendSession' => false));
-
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-        return $payment;
-    }
-
-    /**
      * returns payment data for dbitnote payment
      *
      * @param array $paymentData

@@ -166,7 +166,6 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'paypalEcsActive',
             'payolutionB2bmode',
             'showSofortIbanBic',
-            'paydirektOvercapture',
             'sendOrdernumberAsReference',
             'transLogging',
             'changeOrderOnTXS',
@@ -177,7 +176,6 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             'applepayDebug',
             'allowDifferentAddresses',
             'paypalExpressUseDefaultShipping',
-            'paydirektOrderSecured',
             'paypalV2ShowButton',
         );
 
@@ -323,9 +321,6 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
             }
             if ($paymentHelper->isPayonePaypal($paymentData['name'])) {
                 $data['extra'] = 'paypal';
-            }
-            if ($paymentHelper->isPayonePaydirekt($paymentData['name'])) {
-                $data['extra'] = 'paydirekt';
             }
             if ($paymentHelper->isPayonePayolutionDebitNote($paymentData['name'])) {
                 $data['extra'] = 'payolution_debitnote';

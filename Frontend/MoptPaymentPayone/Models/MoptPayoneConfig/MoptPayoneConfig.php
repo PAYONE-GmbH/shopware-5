@@ -527,11 +527,6 @@ class MoptPayoneConfig extends ModelEntity
     private $showSofortIbanBic;
 
     /**
-     * @ORM\Column(name="paydirekt_overcapture", type="boolean", precision=0, scale=0, nullable=false, unique=false)
-     */
-    private $paydirektOvercapture;
-
-    /**
      * @ORM\Column(name="send_ordernumber_as_reference", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
      */
     private $sendOrdernumberAsReference;
@@ -654,17 +649,6 @@ class MoptPayoneConfig extends ModelEntity
      *  @ORM\Column(name="paypal_express_use_default_shipping", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
      */
     private $paypalExpressUseDefaultShipping;
-
-    /**
-     *  @ORM\Column(name="paydirekt_order_secured", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
-     */
-    private $paydirektOrderSecured;
-
-    /**
-     *  @ORM\Column(name="paydirekt_preauthorization_validity", type="integer", nullable=true, unique=false)
-     */
-    private $paydirektPreauthorizationValidity;
-
 
     /**
      *  @ORM\Column(name="paypal_v2_show_button", type="boolean", precision=0, scale=0, nullable=false, unique=false, options={"default" : 0})
@@ -2190,22 +2174,6 @@ class MoptPayoneConfig extends ModelEntity
     /**
      * @return mixed
      */
-    public function getPaydirektOvercapture()
-    {
-        return $this->paydirektOvercapture;
-    }
-
-    /**
-     * @param $paydirektOvercapture
-     */
-    public function setPaydirektOvercapture($paydirektOvercapture)
-    {
-        $this->paydirektOvercapture = $paydirektOvercapture;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getSendOrdernumberAsReference()
     {
         return $this->sendOrdernumberAsReference;
@@ -2633,22 +2601,6 @@ class MoptPayoneConfig extends ModelEntity
 
     public function getPaypalExpressUseDefaultShipping() {
         return $this->paypalExpressUseDefaultShipping;
-    }
-
-    public function setPaydirektOrderSecured($value) {
-        $this->paydirektOrderSecured = $value;
-    }
-
-    public function getPaydirektOrderSecured() {
-        return $this->paydirektOrderSecured;
-    }
-
-    public function setPaydirektPreauthorizationValidity($value) {
-        $this->paydirektPreauthorizationValidity = $value;
-    }
-
-    public function getPaydirektPreauthorizationValidity() {
-        return $this->paydirektPreauthorizationValidity;
     }
 
     public function setPaypalV2ShowButton($value) {

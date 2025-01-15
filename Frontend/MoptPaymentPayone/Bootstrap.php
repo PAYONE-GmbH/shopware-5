@@ -156,6 +156,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->removePayment('mopt_payone__fin_billsafe');
         $this->removePayment('mopt_payone__fin_paypal_installment');
         $this->removePayment('mopt_payone__ewallet_paydirekt_express');
+        $this->removePayment('mopt_payone__ewallet_paydirekt');
         $this->removePayment('mopt_payone__ibt_giropay');
 
         // Only relevant for update, not for reinstall
@@ -598,16 +599,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->persist($payment);
             Shopware()->Models()->flush();
         }
-
-        /** @var Payment $payment */
-        $payment = $this->Payments()->findOneBy(
-            array('name' => 'mopt_payone__ewallet_paydirekt')
-        );
-        if ($payment) {
-            $payment->setDescription('PAYONE Giropay');
-            Shopware()->Models()->persist($payment);
-            Shopware()->Models()->flush();
-        }
     }
 
 
@@ -782,8 +773,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->getInstallHelper()->extendPayoneApiLogTransactionId();
         }
 
-        $this->getInstallHelper()->checkAndUpdateConfigModelPaydirektOvercaptureExtension();
-
         $this->getInstallHelper()->checkAndUpdateConsumerscoreExtension();
 
         $this->getInstallHelper()->checkAndUpdateSendOrderNumberAsReferenceExtension();
@@ -819,10 +808,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndAddPaypalExpressUseDefaultShipping();
 
-        $this->getInstallHelper()->checkAndAddPaydirektOrderSecured();
-
-        $this->getInstallHelper()->checkAndAddPaydirektPreauthorizationValidity();
-
         // Do not add/remove columns to s_plugin_mopt_payone_config, after PPE migration
 
         /** @var Payment $payment */
@@ -846,10 +831,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndUpdateAmazonPayShopModelExtension();
 
         $this->getInstallHelper()->checkAndAddPaypalExpressUseDefaultShipping();
-
-        $this->getInstallHelper()->checkAndAddPaydirektOrderSecured();
-
-        $this->getInstallHelper()->checkAndAddPaydirektPreauthorizationValidity();
 
         $this->getInstallHelper()->moptCreateCreditcardPaymentDataTable();
 

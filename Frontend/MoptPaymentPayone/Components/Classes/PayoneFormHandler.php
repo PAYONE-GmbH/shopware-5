@@ -864,7 +864,6 @@ class Mopt_PayoneFormHandler
         }
 
         $paymentData['formData']['mopt_payone__onlinebanktransfertype'] = Payone_Api_Enum_OnlinebanktransferType::TRUSTLY;
-        $paymentData['formData']['mopt_payone__giropay_bankcountry'] = 'DE';
 
         $this->setFormSubmittedFlag();
 
