@@ -249,11 +249,6 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
         
         }
       
-        if ($paymentHelper->isPayoneBarzahlen($paymentName)) {
-            $paymentDto = new Payone_Settings_Data_ConfigFile_PaymentMethod_Wallet();
-        
-        }
-      
         if (!$paymentDto) {
             return false;
         }

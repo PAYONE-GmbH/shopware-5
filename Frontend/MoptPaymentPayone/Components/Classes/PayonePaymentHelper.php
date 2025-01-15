@@ -270,32 +270,6 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * extract barzahlen code to embed on checkout finish page from response object
-     *
-     * @param $response
-     * @return bool|string
-     */
-    public function extractBarzahlenCodeFromResponse($response)
-    {
-        if (!method_exists($response, 'getPaydata')) {
-            return false;
-        }
-        $payData = $response->getPaydata();
-        if (!$payData) {
-            return false;
-        }
-        $arr = $payData->toArray();
-        foreach ($arr as $k => $v) {
-            $arr[substr($k, strpos($k, '[') + 1, -1)] = $v;
-        }
-        if ($arr['content_format'] === 'HTML') {
-            return urldecode($arr['instruction_notes']);
-        } else {
-            return $arr['instruction_notes'];
-        }
-    }
-
-    /**
      * extract Payolution Clearingdata on checkout finish page from response object
      *
      * @param object $response
@@ -412,17 +386,6 @@ class Mopt_PayonePaymentHelper
     public function isPayoneBancontact($paymentName)
     {
         return preg_match('#mopt_payone__ibt_bancontact#', $paymentName) ? true : false;
-    }
-
-    /**
-     * check if given payment name is payone barzahlen payment
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayoneBarzahlen($paymentName)
-    {
-        return preg_match('#mopt_payone__csh_barzahlen#', $paymentName) ? true : false;
     }
 
     /**

@@ -490,28 +490,6 @@ class Mopt_PayoneInstallHelper
                 'template' => null,
                 'position' => 23,],
             [
-                'name' => 'mopt_payone__csh_barzahlen',
-                'description' => 'PAYONE Barzahlen',
-                'template' => null,
-                'position' => 24,
-                'additionalDescription' => '<label for="payment_barzahlen">'
-                    . '  <img style="height: 3em; vertical-align: -1em;" src="https://cdn.barzahlen.de/images/barzahlen_logo.png" alt="Barzahlen">'
-                    . '</label>'
-                    . '<img style="float: right; margin-left: 10px; max-width: 180px; max-height: 180px;" src="https://cdn.barzahlen.de/images/barzahlen_special.png">'
-                    . 'Mit Abschluss der Bestellung bekommen Sie einen Zahlschein angezeigt, den Sie sich ausdrucken oder auf Ihr Handy schicken lassen können. Bezahlen Sie den Online-Einkauf mit Hilfe des Zahlscheins an der Kasse einer Barzahlen-Partnerfiliale.<br/><br/>'
-                    . '<strong>Bezahlen Sie bei:</strong>'
-                    . ' '
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_01.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_02.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_03.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_04.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_05.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_06.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_07.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_08.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_09.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'
-                    . '<img src="https://cdn.barzahlen.de/images/barzahlen_partner_10.png" style="height: 1em; vertical-align: -0.1em; display: initial;">'],
-            [
                 'name' => 'mopt_payone__fin_payolution_invoice',
                 'description' => 'PAYONE Unzer Rechnungskauf',
                 'template' => 'mopt_paymentmean_payolution_invoice.tpl',

@@ -219,12 +219,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         echo $return;
     }
 
-    public function barzahlenAction()
-    {
-        $response = $this->mopt_payone__barzahlen();
-        $this->mopt_payone__handleDirectFeedback($response);
-    }
-
     public function financeAction()
     {
         $response = $this->mopt_payone__finance();
@@ -314,18 +308,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $payment = $this->moptPayoneMain->getParamBuilder()
             ->getPaymentCreditCard($this->Front()->Router(), $paymentData);
         $response = $this->buildAndCallPayment($config, 'cc', $payment);
-
-        return $response;
-    }
-
-    /**
-     * @return Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Error|Payone_Api_Response_Invalid $response
-     */
-    protected function mopt_payone__barzahlen()
-    {
-        $paymendId = $this->getPaymentId();
-        $config = $this->moptPayoneMain->getPayoneConfig($paymendId);
-        $response = $this->buildAndCallPayment($config, 'csh', null);
 
         return $response;
     }
@@ -1144,12 +1126,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             }
         } else {
             //extract possible clearing data
-            $barzahlenCode = $this->moptPayoneMain->getPaymentHelper()->extractBarzahlenCodeFromResponse($response);
-            if ($barzahlenCode) {
-                $session->moptBarzahlenCode = $barzahlenCode;
-            }
-
-            //extract possible clearing data
             $payolutionClearingData = $this->moptPayoneMain->getPaymentHelper(
             )->extractPayolutionClearingDataFromResponse($response);
             if ($payolutionClearingData) {
@@ -1309,9 +1285,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $user = $this->getUser();
         $paymentName = $user['additional']['payment']['name'];
 
-        if (!$forceAuthorize && ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung' || $this->moptPayonePaymentHelper->isPayoneBarzahlen(
-                    $paymentName
-                ) || $isPaypalRecurringInitialRequest)) {
+        if (!$forceAuthorize && ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung' || $isPaypalRecurringInitialRequest)) {
             $session->moptIsAuthorized = false;
         } else {
             $session->moptIsAuthorized = true;
@@ -1483,9 +1457,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $request->setPayment($payment);
         }
 
-        if (!$forceAuthorize && ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung' || $this->moptPayonePaymentHelper->isPayoneBarzahlen(
-                    $paymentName
-                ) || $isPaypalRecurringInitialRequest)) {
+        if (!$forceAuthorize && ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung' || $isPaypalRecurringInitialRequest)) {
             $response = $this->service->preauthorize($request);
         } else {
             $response = $this->service->authorize($request);
@@ -1620,16 +1592,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
         $user = $this->getUser();
         $paymentName = $user['additional']['payment']['name'];
-        if ($isAuthorized && !$this->moptPayonePaymentHelper->isPayoneBarzahlen($paymentName)) {
+        if ($isAuthorized) {
             $request = new Payone_Api_Request_Authorization($params);
             $this->service = $this->payoneServiceBuilder->buildServicePaymentAuthorize();
         } else {
             $request = new Payone_Api_Request_Preauthorization($params);
             $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
-        }
-        if ($this->moptPayonePaymentHelper->isPayoneBarzahlen($paymentName)) {
-            $request->setCashType(Payone_Api_Enum_CashType::BARZAHLEN);
-            $request->setApiVersion('3.10');
         }
         $this->service->getServiceProtocol()->addRepository(
             Shopware()->Models()->getRepository(

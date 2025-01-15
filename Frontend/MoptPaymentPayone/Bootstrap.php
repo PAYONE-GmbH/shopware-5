@@ -158,6 +158,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->removePayment('mopt_payone__ewallet_paydirekt_express');
         $this->removePayment('mopt_payone__ewallet_paydirekt');
         $this->removePayment('mopt_payone__ibt_giropay');
+        $this->removePayment('mopt_payone__csh_barzahlen');
 
         // Only relevant for update, not for reinstall
         if (!$this->doesCronJobExist('PayoneTransactionForward') && !$this->doesCronJobExist('Shopware_CronJob_PayoneTransactionForward')) {
