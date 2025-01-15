@@ -39,5 +39,4 @@ class Payone_Api_Enum_OnlinebanktransferType
     const IDEAL = 'IDL';
     const P24 = 'P24';
     const BANCONTACT = 'BCT';
-    const TRUSTLY = 'TRL';
 }

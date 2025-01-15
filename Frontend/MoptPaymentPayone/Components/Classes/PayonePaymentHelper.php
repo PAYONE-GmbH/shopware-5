@@ -270,32 +270,6 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * extract barzahlen code to embed on checkout finish page from response object
-     *
-     * @param $response
-     * @return bool|string
-     */
-    public function extractBarzahlenCodeFromResponse($response)
-    {
-        if (!method_exists($response, 'getPaydata')) {
-            return false;
-        }
-        $payData = $response->getPaydata();
-        if (!$payData) {
-            return false;
-        }
-        $arr = $payData->toArray();
-        foreach ($arr as $k => $v) {
-            $arr[substr($k, strpos($k, '[') + 1, -1)] = $v;
-        }
-        if ($arr['content_format'] === 'HTML') {
-            return urldecode($arr['instruction_notes']);
-        } else {
-            return $arr['instruction_notes'];
-        }
-    }
-
-    /**
      * extract Payolution Clearingdata on checkout finish page from response object
      *
      * @param object $response
@@ -415,17 +389,6 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * check if given payment name is payone barzahlen payment
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayoneBarzahlen($paymentName)
-    {
-        return preg_match('#mopt_payone__csh_barzahlen#', $paymentName) ? true : false;
-    }
-
-    /**
      * check if given payment name is payone eps payment
      *
      * @param string $paymentName
@@ -514,17 +477,6 @@ class Mopt_PayonePaymentHelper
     public function isPayonePaypalExpress($paymentName)
     {
         return preg_match('#mopt_payone__ewallet_paypal_express$#', $paymentName) ? true : false;
-    }
-
-    /**
-     * check if given payment name is payone paydirekt payment
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayonePaydirekt($paymentName)
-    {
-        return preg_match('#mopt_payone__ewallet_paydirekt#', $paymentName) ? true : false;
     }
 
     /**
@@ -819,17 +771,6 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
-     * check if given payment name is payone trustly payment
-     *
-     * @param string $paymentName
-     * @return boolean
-     */
-    public function isPayoneTrustly($paymentName)
-    {
-        return preg_match('#mopt_payone__ibt_trustly#', $paymentName) ? true : false;
-    }
-
-    /**
      * check if given payment name is payone secured invoice
      *
      * @param string $paymentName
@@ -918,10 +859,6 @@ class Mopt_PayonePaymentHelper
 
         if ($this->isPayoneP24($paymentName)) {
             return Payone_Api_Enum_OnlinebanktransferType::P24;
-        }
-
-        if ($this->isPayoneTrustly($paymentName)) {
-            return Payone_Api_Enum_OnlinebanktransferType::TRUSTLY;
         }
 
         return '';
@@ -1463,21 +1400,11 @@ class Mopt_PayonePaymentHelper
             return 'finance';
         }
 
-        if ($this->isPayoneBarzahlen($paymentShortName)) {
-            return 'barzahlen';
-        }
-
-        if ($this->isPayonePaydirekt($paymentShortName)) {
-            return 'paydirekt';
-        }
         if ($this->isPayoneAlipay($paymentShortName)) {
             return 'alipay';
         }
         if ($this->isPayoneWechatpay($paymentShortName)) {
             return 'wechatpay';
-        }
-        if ($this->isPayoneTrustly($paymentShortName)) {
-            return 'trustly';
         }
         if ($this->isPayoneApplepay($paymentShortName)) {
             return 'applepay';
@@ -1536,7 +1463,6 @@ class Mopt_PayonePaymentHelper
             'mopt_payone__cc_carte_blue' => 'b',
             'mopt_payone__cc_diners_club' => 'd',
             'mopt_payone__cc_jcb' => 'j',
-            'mopt_payone__cc_maestro_international' => 'o',
         );
 
         foreach ($paymentMeans as $key => $paymentmean) {

@@ -16,7 +16,7 @@
     <div class="col-md-12">
         <h3>{s name="global-form/fieldset2"}Wallet Einstellungen{/s}</h3>
         <div>
-            Stellen Sie hier die Konfiguration zu den Zahlarten Paypal, Paypal ECS und Paydirekt ein.
+            Stellen Sie hier die Konfiguration zu den Zahlarten Paypal und Paypal ECS.
         </div>
         <div class="row">
             <div class="col-md-12">

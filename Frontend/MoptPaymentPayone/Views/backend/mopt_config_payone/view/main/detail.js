@@ -178,16 +178,6 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             fieldset.items.getAt(12).disable();
         }
         ;
-        if (field === 'paydirekt') {
-            fieldset.items.getAt(23).enable();
-            fieldset.items.getAt(39).enable();
-            fieldset.items.getAt(40).enable();
-        } else {
-            fieldset.items.getAt(23).disable();
-            fieldset.items.getAt(39).disable();
-            fieldset.items.getAt(40).disable();
-        }
-        ;
         if (field === 'payonesecured') {
             fieldset.items.getAt(36).enable();
         } else {
@@ -1128,19 +1118,6 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
             },
             {
                 xtype: 'combobox',
-                fieldLabel: '{s name="fieldlabel/paydirektOvercapture"}Paydirekt Overcapture{/s}',
-                helpText: '{s name="fieldlabelhelp/paydirektOvercapture"}Paydirekt erlaubt einen Overcapture von 10% des vorauthorisierten Warenkorbs. Diese Option NUR nach Absprache mit Payone anschalten!{/s}',
-                name: 'paydirektOvercapture',
-                store: me.data.yesno,
-                queryMode: 'local',
-                displayField: 'display',
-                valueField: 'value',
-                allowBlank: false,
-                disabled: true,
-                labelWidth: 200
-            },
-            {
-                xtype: 'combobox',
                 fieldLabel: '{s name="fieldlabel/sendOrdernumberAsReference"}Benutze Shopware-Bestellnummer{/s}',
                 helpText: '{s name="fieldlabelhelp/sendOrdernumberAsReference"}Sendet die Shopware Bestellnummer anstatt einen Zufallswert an Payone{/s}',
                 name: 'sendOrdernumberAsReference',
@@ -1172,19 +1149,6 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'ratepaySnippetId',
                 allowBlank: true,
                 disabled: false,
-                labelWidth: 200
-            },
-            {
-                xtype: 'combobox',
-                fieldLabel: '{s name="fieldlabel/trustlyShowIbanBic"}Trustly: IBAN / BIC abfragen?{/s}',
-                helpText: '{s name="fieldlabelhelp/trustlyShowIbanBic"}Bei Trustly IBAN und BIC abfragen?{/s}',
-                name: 'trustlyShowIbanBic',
-                store: me.data.yesno,
-                queryMode: 'local',
-                displayField: 'display',
-                valueField: 'value',
-                allowBlank: false,
-                disabled: true,
                 labelWidth: 200
             },
             {
@@ -1337,30 +1301,6 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 valueField: 'value',
                 allowBlank: false,
                 disabled: false,
-                labelWidth: 200
-            },
-            {
-                xtype: 'combobox',
-                fieldLabel: '{s name="fieldlabel/paydirektOrderSecured"}Giropay Gesicherte Vorbestellung{/s}',
-                helpText: '{s name="fieldlabelhelp/paydirektOrderSecured"}Bei einer gesicherten Vorbestellung wird dem Händler eine Zahlungsgarantie für den gewählten Zeitraum (maximal 15 Kalendertage) gewährt. Captures (Teilzahlungen) müssen immer innerhalb des Garantiezeitraums ausgeführt werden.{/s}',
-                name: 'paydirektOrderSecured',
-                store: me.data.yesno,
-                queryMode: 'local',
-                displayField: 'display',
-                valueField: 'value',
-                allowBlank: false,
-                disabled: false,
-                labelWidth: 200
-            },
-            {
-                //creates Ext.form.field.Text input field
-                xtype: 'numberfield',
-                fieldLabel: '{s name="fieldlabel/paydirektPreauthorizationValidity"}Giropay Garantiezeitraum{/s}',
-                minValue: 0,
-                maxValue: 15,
-                helpText: '{s name="fieldlabelhelp/paydirektPreauthorizationValidity"}Gewünschter Garantiezeitraum (maximal 15 Kalendertage) für eine gesicherte Vorbestellung{/s}',
-                name: 'paydirektPreauthorizationValidity',
-                allowBlank: false,
                 labelWidth: 200
             },
             {

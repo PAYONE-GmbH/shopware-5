@@ -111,11 +111,10 @@ class Mopt_PayoneParamBuilder
         $business = new Payone_Api_Request_Parameter_Capture_Business();
 
         if (($this->payonePaymentHelper->isPayonePayInAdvance($paymentName) ||
-            $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName)) &&
-            ! $this->payonePaymentHelper->isPayoneTrustly($paymentName)
+            $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName))
         ) {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::NO);
-        } elseif ($this->payonePaymentHelper->isPayoneInvoice($paymentName) || $this->payonePaymentHelper->isPayoneTrustly($paymentName) || $this->payonePaymentHelper->isPayoneWechatpay($paymentName) ) {
+        } elseif ($this->payonePaymentHelper->isPayoneInvoice($paymentName) || $this->payonePaymentHelper->isPayoneWechatpay($paymentName) ) {
             $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::NO);
         } else {
             $business->setSettleaccount(Payone_Api_Enum_Settleaccount::AUTO);
@@ -946,34 +945,6 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
-     * returns paydirekt payment data object
-     *
-     * @param type $router
-     * @param bool $intialRecurringRequest
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
-     */
-    public function getPaymentPaydirekt($router, $intialRecurringRequest = false)
-    {
-        $params = array();
-        $params['wallettype'] = 'PDT';
-
-        if ($intialRecurringRequest) {
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'paydirektRecurringSuccess',
-                'forceSecure' => true, 'appendSession' => false));
-        } else {
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-        }
-        $params['errorurl'] = $router->assemble(array('action' => 'failure',
-            'forceSecure' => true, 'appendSession' => false));
-        $params['backurl'] = $router->assemble(array('action' => 'cancel',
-            'forceSecure' => true, 'appendSession' => false));
-
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-        return $payment;
-    }
-
-    /**
      * returns payment data for dbitnote payment
      *
      * @param array $paymentData
@@ -1083,19 +1054,6 @@ class Mopt_PayoneParamBuilder
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'P24') {
             $params['onlinebanktransfertype'] = 'P24';
             $params['bankcountry'] = 'PL';
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => false));
-        }
-
-        if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'TRL') {
-            $params['onlinebanktransfertype'] = 'TRL';
-            $params['bankcountry'] = 'DE';
-            $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__trustly_iban']);
-            $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__trustly_bic']);
             $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
                 'forceSecure' => true, 'appendSession' => false));
             $params['errorurl'] = $router->assemble(array('action' => 'failure',

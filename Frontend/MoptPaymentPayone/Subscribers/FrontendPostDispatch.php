@@ -244,12 +244,7 @@ class FrontendPostDispatch implements SubscriberInterface
             }
         }
 
-        if (($controllerName == 'checkout' && $request->getActionName() == 'confirm')) {
-            unset($session->moptBarzahlenCode);
-        }
-
         // for amazon Pay redirect directly to finish instead of confirm
-
         if (($controllerName == 'checkout' && $request->getActionName() == 'confirm' && strpos($moptPaymentName, 'mopt_payone__ewallet_amazon_pay') === 0 && $session->offsetGet('moptFormSubmitted') === true)) {
             $action->forward('finish', 'moptPaymentAmazon', null, array('sAGB' => 'on'));
         }
@@ -279,9 +274,6 @@ class FrontendPostDispatch implements SubscriberInterface
         }
 
         if (($controllerName == 'checkout' && $request->getActionName() == 'finish')) {
-            if ($session->moptBarzahlenCode) {
-                $view->assign('moptBarzahlenCode', $session->moptBarzahlenCode);
-            }
             // cleanup sComment see #SW-151
             if (isset($session['sComment'])) {
                 unset($session['sComment']);
@@ -541,11 +533,6 @@ class FrontendPostDispatch implements SubscriberInterface
             if ($moptPayoneMain->getPaymentHelper()->isPayoneSofortuerberweisung($paymentMean['name'])) {
                 $sofortConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
                 $data['moptShowSofortIbanBic'] = $sofortConfig['showSofortIbanBic'];
-            }
-
-            if ($moptPayoneMain->getPaymentHelper()->isPayoneTrustly($paymentMean['name'])) {
-                $trustlyConfig = $moptPayoneMain->getPayoneConfig($paymentMean['id']);
-                $data['moptTrustlyShowIbanBic'] = (int) $trustlyConfig['trustlyShowIbanBic'];
             }
 
             if ($moptPayoneMain->getPaymentHelper()->isPayoneApplepay($paymentMean['name'])) {

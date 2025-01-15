@@ -156,7 +156,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->removePayment('mopt_payone__fin_billsafe');
         $this->removePayment('mopt_payone__fin_paypal_installment');
         $this->removePayment('mopt_payone__ewallet_paydirekt_express');
+        $this->removePayment('mopt_payone__ewallet_paydirekt');
         $this->removePayment('mopt_payone__ibt_giropay');
+        $this->removePayment('mopt_payone__csh_barzahlen');
+        $this->removePayment('mopt_payone__ibt_trustly');
+        $this->removePayment('mopt_payone__cc_maestro_international');
 
         // Only relevant for update, not for reinstall
         if (!$this->doesCronJobExist('PayoneTransactionForward') && !$this->doesCronJobExist('Shopware_CronJob_PayoneTransactionForward')) {
@@ -598,16 +602,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             Shopware()->Models()->persist($payment);
             Shopware()->Models()->flush();
         }
-
-        /** @var Payment $payment */
-        $payment = $this->Payments()->findOneBy(
-            array('name' => 'mopt_payone__ewallet_paydirekt')
-        );
-        if ($payment) {
-            $payment->setDescription('PAYONE Giropay');
-            Shopware()->Models()->persist($payment);
-            Shopware()->Models()->flush();
-        }
     }
 
 
@@ -782,8 +776,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->getInstallHelper()->extendPayoneApiLogTransactionId();
         }
 
-        $this->getInstallHelper()->checkAndUpdateConfigModelPaydirektOvercaptureExtension();
-
         $this->getInstallHelper()->checkAndUpdateConsumerscoreExtension();
 
         $this->getInstallHelper()->checkAndUpdateSendOrderNumberAsReferenceExtension();
@@ -805,9 +797,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // Add config field for global Ratepay SnippetId setting.
         $this->getInstallHelper()->checkAndAddRatepaySnippetIdColumn();
 
-        // Add config field for trustly show iban bic setting.
-        $this->getInstallHelper()->checkAndAddTrustlyShowIbanBic();
-
         // Applepay fields
         $this->getInstallHelper()->checkAndAddApplepayConfig();
 
@@ -818,10 +807,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndAddCreditcardDefaultDescription();
 
         $this->getInstallHelper()->checkAndAddPaypalExpressUseDefaultShipping();
-
-        $this->getInstallHelper()->checkAndAddPaydirektOrderSecured();
-
-        $this->getInstallHelper()->checkAndAddPaydirektPreauthorizationValidity();
 
         // Do not add/remove columns to s_plugin_mopt_payone_config, after PPE migration
 
@@ -847,10 +832,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndAddPaypalExpressUseDefaultShipping();
 
-        $this->getInstallHelper()->checkAndAddPaydirektOrderSecured();
-
-        $this->getInstallHelper()->checkAndAddPaydirektPreauthorizationValidity();
-
         $this->getInstallHelper()->moptCreateCreditcardPaymentDataTable();
 
         $this->getInstallHelper()->checkAndAddPaypalV2ShowButton();
@@ -860,6 +841,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndAddPaypalV2ButtonColor();
 
         $this->getInstallHelper()->checkAndAddPaypalV2ButtonShape();
+
+        $this->getInstallHelper()->checkAndRemovePaydirektExtension();
+
+        $this->getInstallHelper()->checkAndRemoveTrustlyExtension();
 
     }
 

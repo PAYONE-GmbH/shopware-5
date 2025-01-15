@@ -1,12 +1,5 @@
 {extends file="parent:frontend/checkout/finish.tpl"}
 
-{block name="frontend_index_header_css_screen"}
-    {$smarty.block.parent}
-    {if $moptBarzahlenCode}
-        <link rel="stylesheet" type="text/css" href="{link file="frontend/_resources/styles/barzahlen.css"}" />
-    {/if}
-{/block}
-
 {block name="frontend_checkout_finish_teaser_actions"}
     {$smarty.block.parent}
     {if $moptPaymentConfigParams.moptMandateDownloadEnabled && $sUserData.additional.payment.name|strstr:"mopt_payone__acc_debitnote"}
@@ -20,11 +13,6 @@
                 </a>
             {/strip}
         </p>
-    {/if}
-    {if $moptBarzahlenCode}
-        <div class="barzahlencode">
-        {$moptBarzahlenCode}
-        </div>
     {/if}
     {if $moptAmazonAsyncAuthMessage}
         <div class="amazonAsyncAuth">
