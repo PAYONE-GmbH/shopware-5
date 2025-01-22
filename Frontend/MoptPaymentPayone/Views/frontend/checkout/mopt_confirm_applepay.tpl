@@ -47,6 +47,11 @@
         }
 
         function payWithApplePay() {
+            var agbCheckbox = document.getElementById('sAGB').checked;
+            if (!agbCheckbox) {
+                document.getElementById('sAGB').labels[0].classList.add('has--error')
+                return;
+            }
             const session = new ApplePaySession(3, {
                 countryCode: '{$mopt_applepay_country}',
                 currencyCode: '{$mopt_applepay_currency}',
