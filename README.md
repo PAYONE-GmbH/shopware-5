@@ -30,7 +30,7 @@ You find our documentation here: https://docs.payone.com/integration/plugins/int
 
 ## Contact
 PAYONE GmbH<br>
-Lyoner Straße 9<br>
+Lyoner Straße 15<br>
 60528 Frankfurt am Main, Germany<br>
 Phone +49 431 25968-400<br>
 tech.support@payone.com<br>
