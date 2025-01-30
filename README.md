@@ -32,8 +32,5 @@ You find our documentation here: https://docs.payone.com/integration/plugins/int
 PAYONE GmbH<br>
 Lyoner Straße 9<br>
 60528 Frankfurt am Main, Germany<br>
-[payone.com](https://www.payone.com)<br>
 Phone +49 431 25968-400<br>
-<p>
-sales@payone.com<br>
 tech.support@payone.com<br>
