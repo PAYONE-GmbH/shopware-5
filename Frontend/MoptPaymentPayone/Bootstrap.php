@@ -808,8 +808,15 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndAddPaypalExpressUseDefaultShipping();
 
-        // Do not add/remove columns to s_plugin_mopt_payone_config, after PPE migration
+        $this->getInstallHelper()->checkAndAddPaypalV2ShowButton();
 
+        $this->getInstallHelper()->checkAndAddPaypalV2MerchantId();
+
+        $this->getInstallHelper()->checkAndAddPaypalV2ButtonColor();
+
+        $this->getInstallHelper()->checkAndAddPaypalV2ButtonShape();
+
+        // Do not add/remove columns to s_plugin_mopt_payone_config, after PPE migration
         /** @var Payment $payment */
         $paypalExpressPayment = $this->Payments()->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);
         $doPaypalMigration = $this->getInstallHelper()->checkPaypalMigration();
@@ -833,14 +840,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndAddPaypalExpressUseDefaultShipping();
 
         $this->getInstallHelper()->moptCreateCreditcardPaymentDataTable();
-
-        $this->getInstallHelper()->checkAndAddPaypalV2ShowButton();
-
-        $this->getInstallHelper()->checkAndAddPaypalV2MerchantId();
-
-        $this->getInstallHelper()->checkAndAddPaypalV2ButtonColor();
-
-        $this->getInstallHelper()->checkAndAddPaypalV2ButtonShape();
 
         $this->getInstallHelper()->checkAndRemovePaydirektExtension();
 
