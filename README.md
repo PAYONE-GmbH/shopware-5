@@ -17,13 +17,12 @@ From PAYONE's official docs site, you can install the plugin in two ways:
 - directly downloading from GitHub
 
 ## Features
-- Certified by [shoplupe](https://shoplupe.com/) for its usability
-- Very wide range of functions, simple and comprehensible supported by detailed online help
-- Integrates via AJAX into the existing Shopware Shop; checkout without redirection to third-party websites
-- Credit assessments with dynamic payment option control in the checkout section depending on the consumer's credit rating
-- Export function of the configuration in XML format to get easier support
-- Optional multi-partial capture for partial deliveries
-- Supports simplified PCI DSS conformity in accordance with SAQ A
+- Extensive range of features, easy to understand and supported by comprehensive online help
+- Seamlessly integrates into existing Shopware shops via AJAX; enables checkout without redirecting to third-party websites
+- Credit assessments with dynamic payment option controls in the checkout process based on the consumer’s credit rating
+- Configuration export function available in XML format for streamlined support
+- Optional multi-partial capture feature for handling partial deliveries
+- Facilitates simplified PCI DSS compliance in accordance with SAQ A
 
 ## Documentation
 You find our documentation here: https://docs.payone.com/integration/plugins/integration-guide-shopware-5
