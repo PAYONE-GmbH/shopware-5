@@ -193,6 +193,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->removeAttributes();
         }
 
+        $this->getInstallHelper()->removeDocumentTemplates();
+
         return true;
     }
 
@@ -491,7 +493,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             // Backend
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendPayment($container),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendRiskManagement($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendOrder($container)
+            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendOrder($container),
+            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\Backend($container)
         );
         foreach ($subscribers as $subscriber) {
             $this->Application()->Events()->addSubscriber($subscriber);
@@ -688,7 +691,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         }
 
         $this->getInstallHelper()->moptCreatePaymentDataTable();
-        $this->getInstallHelper()->moptInsertDocumentsExtensionIntoDatabaseIfNotExist();
+        $this->getInstallHelper()->createDocumentTemplates();
 
         // payone config sepa extension
         if (!$this->getInstallHelper()->moptPayoneConfigExtensionExist()) {
