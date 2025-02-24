@@ -34,6 +34,7 @@ require_once __DIR__ . '/Components/CSRFWhitelistAware.php';
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Tools\ToolsException;
+use Shopware\Models\Attribute\Configuration;
 use Shopware\Models\Payment\Payment;
 use Shopware\Models\Payment\Repository as PaymentRepository;
 use Shopware\Models\Plugin\Plugin;
@@ -858,13 +859,67 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
         foreach ($tables as $table => $attributes) {
             foreach ($attributes as $attribute => $options) {
+                // if attribute columns are manually deleted, prevent still existing entries in s_attribute_configuration
+                // to throw a column already exists exception on insert
+                if (!$this->attributeColumnExists($table, $prefix . '_' . $attribute )) {
+                    $this->removeAttributeColumnFromConfig($table, $prefix . '_' . $attribute);
+                }
+
                 $type = is_array($options) ? $options[0] : $options;
                 $data = is_array($options) ? $options[1] : [];
                 $attributeService->update($table, $prefix . '_' . $attribute, $type, $data);
             }
         }
-
         Shopware()->Models()->generateAttributeModels(array_keys($tables));
+    }
+
+    /**
+     * Helper function to check if a column exists
+     *
+     * @param string $tableName
+     * @param string $columnName
+     *
+     * @return bool
+     */
+    public function attributeColumnExists($tableName, $columnName)
+    {
+        $sql = 'SELECT column_name
+                FROM information_schema.columns
+                WHERE table_name = :tableName
+                    AND column_name = :columnName
+                    AND table_schema = DATABASE();';
+
+        $columnNameInDb = Shopware()->DB()->executeQuery(
+            $sql,
+            ['tableName' => $tableName, 'columnName' => $columnName]
+        )->fetchColumn();
+
+        return $columnNameInDb === $columnName;
+    }
+
+    /**
+     * Helper function to remove entries in s_attribute_configuration
+     *
+     * @param string $tableName
+     * @param string $columnName
+     *
+     * @return void
+     */
+    private function removeAttributeColumnFromConfig($tableName, $columnName) {
+        /** @var \Shopware\Components\Model\ModelManager $em */
+        $em = Shopware()->Models();
+
+        $repository = $em->getRepository(Configuration::class);
+
+        $entity = $repository->findOneBy([
+            'tableName' => $tableName,
+            'columnName' => $columnName,
+        ]);
+
+        if ($entity) {
+            $em->remove($entity);
+            $em->flush($entity);
+        }
     }
 
     /**
