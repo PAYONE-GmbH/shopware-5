@@ -73,6 +73,7 @@ class FrontendAccount implements SubscriberInterface
             $subject->View()->assign('moptCreditCardAgreement', str_replace('##Shopname##', Shopware()->Shop()->getTitle(), $creditCardAgreement));
             $subject->View()->assign('showMoptCreditCardAgreement', ($showmoptCreditCardAgreement === true) ? '1' : '0');
             $subject->View()->assign('showPOCCDeleteButton', true);
+            $subject->View()->assign('moptIsAccountController', '1');
         }
     }
 
