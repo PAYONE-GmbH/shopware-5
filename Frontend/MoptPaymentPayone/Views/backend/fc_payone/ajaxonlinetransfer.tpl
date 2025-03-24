@@ -1,129 +1,29 @@
 {extends file="parent:backend/_base/layout.tpl"}
-
-{block name="content/breadcrump"}
-                        <li>
-                            {$breadcrump.0}
-                        </li>
-                        <li>
-                            {$breadcrump.1}
-                        </li>
-                        <li class="active">
-                            <a href="{url controller="FcPayone" action="{$breadcrump.2}"}">{$breadcrump.3}</a> <span class="divider">/</span>
-                        </li> 
-{/block}
-
+{namespace name=backend/mopt_config_payone/main}
 {block name="content/main"}
     <div class="col-md-12">
         <h3>Onlineüberweisung Einstellungen</h3>
         <div>
             Stellen Sie hier die Konfiguration für Onlineüberweisungsbasierte Zahlarten ein.
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="btn-group">
-                    <button id="paymentmethodsdropdown" type="button" class="btn-payone-fixed btn-payone btn dropdown-toggle" data-toggle="dropdown">
-                        <span class="selection">{s name="paymentMethod/label"}Gilt für Zahlart:{/s}</span><span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                            {foreach from=$payonepaymentmethods item=paymentmethod}
-                            <li><a href="#" id="{$paymentmethod.id}">{$paymentmethod.description}</a></li>
-                            {/foreach}   
-                    </ul>
-                </div>
-            </div>
-        </div>
+        {include file='backend/fc_payone/include/dropdown_payments.tpl'}
         <div class='col-md-12'>
             <form role="form" id="ajaxonlinetransferform" class="form-horizontal">
-                <div class="form-group has-feedback has-error">
-                   
-                    <label for="description" class="text-left col-md-3 control-label">{s name="formpanel_description_label"}Bezeichnung{/s}</label>
-                    <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="description" name="description" aria-describedby="description-status" >
-                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="description-status" class="sr-only">(success)</span>
-                        <div class="help-block with-errors"></div>
-                    </div>
-                </div>
-                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                   
-                    <label for="additionalDescription" class="text-left col-md-3 control-label">{s name="formpanel_additional-description_label"}Zusätzliche Beschreibung{/s}</label>
-                    <div class="col-md-6">
-                        <textarea rows="3" class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="additionalDescription" name="additionalDescription" aria-describedby="additionalDescription-status" >
-                        </textarea>
-                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="additionalDescription-status" class="sr-only">(success)</span>
-                        <div class="help-block with-errors"></div>
-                    </div>
-                </div>  
-                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                   
-                    <label for="debitPercent" class="text-left col-md-3 control-label">{s name="formpanel_surcharge_label"}Aufschlag/Abschlag (in %){/s}</label>
-                    <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="200" minlength="1" maxlength="200" id="debitPercent" name="debitPercent" aria-describedby="debitPercent-status" >
-                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="debitPercent-status" class="sr-only">(success)</span>
-                        <div class="help-block with-errors"></div>
-                    </div>
-                </div>
-                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                   
-                    <label for="surcharge" class="text-left col-md-3 control-label">{s name="formpanel_generalSurcharge_label"}Pauschaler Aufschlag{/s}</label>
-                    <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[,.0-9]*' minlength="1" maxlength="200" id="surcharge" name="surcharge" aria-describedby="surcharge-status" >
-                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="surcharge-status" class="sr-only">(success)</span>
-                        <div class="help-block with-errors"></div>
-                    </div>
-                </div>
-                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                   
-                    <label for="position" class="text-left col-md-3 control-label">{s name="formpanel_position_surcharge"}Position{/s}</label>
-                    <div class="col-md-6">
-                        <input type="text" class="form-control " pattern='^[0-9]*' minlength="1" maxlength="200" id="position" name="position" aria-describedby="position-status" >
-                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="position-status" class="sr-only">(success)</span>
-                        <div class="help-block with-errors"></div>
-                    </div>
-                </div>
-                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
-                   
-                    <label for="active" class="text-left col-md-3 control-label">{s name="formpanel_active_label"}Aktiv{/s}</label>
-                    <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="active" name="active" aria-describedby="active-status" >
-                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="active-status" class="sr-only">(success)</span>
-                        <div class="help-block with-errors"></div>
-                    </div>
-                </div>
-                <div class="form-group has-feedback has-error menu-level-experte">
-                   
-                    <label for="esdActive" class="text-left col-md-3 control-label">{s name="formpanel_esdActive_label"}Aktiv für ESD-Produkte{/s}</label>
-                    <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="esdActive" name="esdActive" aria-describedby="esdActive-status" >
-                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="esdActive-status" class="sr-only">(success)</span>
-                        <div class="help-block with-errors"></div>
-                    </div>
-                </div>
-                <div class="form-group has-feedback has-error menu-level-experte">
-                   
-                    <label for="mobileInactive" class="text-left col-md-3 control-label">{s name="formpanel_mobileInactive_label"}Inaktiv für Smartphone{/s}</label>
-                    <div class="col-md-6">
-                        <input type="checkbox" class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="mobileInactive" name="mobileInactive" aria-describedby="mobileInactive-status" >
-                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
-                        <span id="mobileInactive-status" class="sr-only">(success)</span>
-                        <div class="help-block with-errors"></div>
-                    </div>
-                </div>                
+                {include file='backend/fc_payone/include/input_text.tpl' id='description' label="{s namespace="backend/payment/payment" name="formpanel_description_label"}Bezeichnung{/s}" pattern="^[0-9]*"}
+                {include file='backend/fc_payone/include/input_text.tpl' id='additionalDescription' label="{s namespace="backend/payment/payment" name="formpanel_additional-description_label"}Zusätzliche Beschreibung{/s}" pattern="^[0-9]*"}
+                {include file='backend/fc_payone/include/input_text.tpl' id='debitPercent' label="{s namespace="backend/payment/payment" name="formpanel_surcharge_label"}Aufschlag/Abschlag (in %){/s}" pattern="^[0-9]*"}
+                {include file='backend/fc_payone/include/input_text.tpl' id='surcharge' label="{s namespace="backend/payment/payment" name="formpanel_generalSurcharge_label"}Pauschaler Aufschlag{/s}" pattern="^[0-9]*"}
+                {include file='backend/fc_payone/include/input_text.tpl' id='position' label="{s namespace="backend/payment/payment" name="formpanel_position_surcharge"}Position{/s}" pattern="^[0-9]*"}
+                {include file='backend/fc_payone/include/input_checkbox.tpl' id='active' label="{s namespace="backend/payment/payment" name="formpanel_active_label"}Aktiv{/s}" pattern="^[0-9]*"}
+                {include file='backend/fc_payone/include/input_checkbox.tpl' id='esdActive' label="{s namespace="backend/payment/payment" name="formpanel_esdActive_label"}Aktiv für ESD-Produkte{/s}" pattern="^[0-9]*"}
+                {include file='backend/fc_payone/include/input_checkbox.tpl' id='mobileInactive' label="{s namespace="backend/payment/payment" name="formpanel_mobileInactive_label"}Inaktiv für Smartphone{/s}" pattern="^[0-9]*"}
                 <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>
     </div>
 {/block}
 
-{block name="resources/javascript" append}  
-     <script type="text/javascript" src="{link file="backend/_resources/js/formhelper.js"}"></script>
-
+{block name="resources/javascript" append}
     <script type="text/javascript">
 
         var form = $('#ajaxonlinetransferform');
@@ -134,8 +34,6 @@
         {
             var params = "paymentid=0";
             var call = url + '?' + params;
-            
-            form.validator('validate');
            
             $.ajax({
                 url: call,
@@ -144,7 +42,6 @@
                     response = $.parseJSON(data);
                     if (response.status === 'success') {
                         populateForm(form,response.data);
-                        form.validator('validate');
                     }
                     if (response.status === 'error') {
                     }
@@ -153,6 +50,7 @@
         });
 
         $(".dropdown-menu li a").click(function () {
+            alert('clock');
             var params = "paymentid=" + this.id;
             var call = url + '?' + params;
             paymentid  = this.id;
@@ -164,7 +62,6 @@
                     response = $.parseJSON(data);
                     if (response.status === 'success') {
                         populateForm(form,response.data);
-                        form.validator('validate');
                     }
                     if (response.status === 'error') {
                     }

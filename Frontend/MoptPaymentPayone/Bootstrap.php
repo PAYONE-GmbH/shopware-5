@@ -143,6 +143,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createDatabase();
         $this->addAttributes();
         $this->createMenu();
+        $this->removeOldMenu();
 
         $riskRules = new RiskRules();
         // remove all old rules
@@ -927,10 +928,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     protected function createMenu()
     {
-        $configurationLabelName = $this->getInstallHelper()->moptGetConfigurationLabelName();
-
         $labelPayment = array('label' => 'Zahlungen');
-        $labelPayOne = array('label' => 'PAYONE');
         $labelKontollZentrum = array('label' => 'PAYONE Kontrollzentrum');
 
         // Lightweight Backend Controller
@@ -946,83 +944,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 )
             );
         }
-
-        if ($this->Menu()->findOneBy($labelPayOne)) {
-            return;
-        }
-
-        $parent = $this->Menu()->findOneBy($labelPayment);
-        $item = $this->createMenuItem(array(
-            'label' => 'PAYONE',
-            'class' => 'payoneicon',
-            'active' => 1,
-            'parent' => $parent,
-        ));
-
-        $this->createMenuItem(array(
-            'label' => $configurationLabelName,
-            'controller' => 'MoptConfigPayone',
-            'action' => 'Index',
-            'class' => 'sprite-wrench-screwdriver',
-            'active' => 1,
-            'parent' => $item,
-        ));
-        $this->createMenuItem(array(
-            'label' => 'Payone PayPal Express',
-            'controller' => 'MoptPayonePaypal',
-            'action' => 'Index',
-            'class' => 'sprite-locale',
-            'active' => 1,
-            'parent' => $item,
-        ));
-        $this->createMenuItem(array(
-            'label' => 'Payone Ratepay',
-            'controller' => 'MoptPayoneRatepay',
-            'action' => 'Index',
-            'class' => 'sprite-locale',
-            'active' => 1,
-            'parent' => $item,
-        ));
-        $this->createMenuItem(array(
-            'label' => 'Payone Amazon Pay',
-            'controller' => 'MoptPayoneAmazonPay',
-            'action' => 'Index',
-            'class' => 'sprite-locale',
-            'active' => 1,
-            'parent' => $item,
-        ));
-        $this->createMenuItem(array(
-            'label' => 'Payone Kreditkartenkonfiguration',
-            'controller' => 'MoptPayoneCreditcardConfig',
-            'action' => 'Index',
-            'class' => 'sprite-wrench-screwdriver',
-            'active' => 1,
-            'parent' => $item,
-        ));
-        $this->createMenuItem(array(
-            'label' => 'API-Log',
-            'controller' => 'MoptApilogPayone',
-            'action' => 'Index',
-            'class' => 'sprite-cards-stack',
-            'active' => 1,
-            'parent' => $item,
-        ));
-        $this->createMenuItem(array(
-            'label' => 'Transaktionsstatus-Log',
-            'controller' => 'MoptPayoneTransactionLog',
-            'action' => 'Index',
-            'class' => 'sprite-cards-stack',
-            'active' => 1,
-            'parent' => $item,
-        ));
-        $this->createMenuItem(array(
-            'label' => 'Konfigurationsexport',
-            'controller' => 'MoptExportPayone',
-            'action' => 'Index',
-            'class' => 'sprite-script-export',
-            'active' => 1,
-            'parent' => $item,
-        ));
     }
 
     /**
@@ -1138,4 +1059,17 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         return false;
     }
 
+    /**
+     * @return void
+     * @throws Zend_Db_Statement_Exception
+     */
+    private function removeOldMenu() {
+        $sql = "SELECT id FROM s_core_plugins
+                WHERE name = 'MoptPaymentPayone'";
+        $result = Shopware()->Db()->query($sql);
+        $pluginID = $result->fetchColumn();
+        $sql = "DELETE FROM s_core_menu
+                WHERE name != 'Payone Kontrollzentrum' AND pluginId = " . $pluginID;
+        $result = Shopware()->Db()->query($sql);
+    }
 }
