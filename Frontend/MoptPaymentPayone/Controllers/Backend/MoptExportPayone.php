@@ -1,15 +1,24 @@
 <?php
 
+use Shopware\Components\CSRFWhitelistAware;
 /**
  * $Id: $
  */
-class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers_Backend_ExtJs
+class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_Action implements CSRFWhitelistAware
 {
     protected $moptPayone__sdk__Builder   = null;
     protected $moptPayone__main           = null;
     protected $moptPayone__helper         = null;
     protected $moptPayone__paymentHelper  = null;
     protected $transactionForwardingUrls  = array();
+
+    public function getWhitelistedCSRFActions()
+    {
+        $returnArray = array(
+            'generateConfigExport',
+        );
+        return $returnArray;
+    }
 
  /**
    * export global config and payment method configurations
@@ -19,8 +28,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
    */
     public function generateConfigExportAction()
     {
-      //$this->Front()->Plugins()->ViewRenderer()->setNoRender();
-      
+        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $this->moptPayone__sdk__Builder = Shopware()->Plugins()->Frontend()
               ->MoptPaymentPayone()->Application()->MoptPayoneBuilder();
         $this->moptPayone__main = Shopware()->Plugins()->Frontend()->MoptPaymentPayone()->Application()->MoptPayoneMain();
@@ -127,13 +135,14 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers
             $dom->preserveWhiteSpace = false;
             $dom->formatOutput = true;
             $dom->loadXML($export);
-      
-            $response = array('success' => true, 'moptConfigExport' => $dom->saveXML());
+            header('Content-Type: application/xml');
+            header('Content-Disposition: attachment; filename='.basename('PayoneConfigExport.xml'));
+            echo $dom->saveXML();
+            exit(0);
         } catch (Exception $e) {
             $response = array('success' => false, 'error_message' => $e->getMessage());
         }
 
-        $this->View()->assign($response);
     }
 
     protected function getModules()
