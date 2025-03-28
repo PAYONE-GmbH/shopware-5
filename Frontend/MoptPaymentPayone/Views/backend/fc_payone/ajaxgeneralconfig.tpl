@@ -376,6 +376,98 @@
                         <div class="help-block with-errors"></div>
                     </div>
                 </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/googlepayAllowVisa"}GooglePay Visa zulassen{/s}">
+                    <label for="googlepayAllowVisa" class="text-left col-md-3 control-label">{s name="fieldlabel/googlepayAllowVisa"}GooglePay Visa zulassen{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="googlepayAllowVisa" name="googlepayAllowVisa" aria-describedby="googlepayAllowVisa-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="googlepayAllowVisa-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/googlepayAllowMasterCard"}GooglePay Mastercard zulassen{/s}">
+                    <label for="googlepayAllowMasterCard" class="text-left col-md-3 control-label">{s name="fieldlabel/googlepayAllowMasterCard"}GooglePay Mastercard zulassen{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="googlepayAllowMasterCard" name="googlepayAllowMasterCard" aria-describedby="googlepayAllowMasterCard-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="googlepayAllowMasterCard-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/googlepayAllowPrepaidCards"}GooglePay Prepaid Karten zulassen{/s}">
+                    <label for="googlepayAllowPrepaidCards" class="text-left col-md-3 control-label">{s name="fieldlabel/googlepayAllowPrepaidCards"}GooglePay Prepaid Karten zulassen{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="googlepayAllowPrepaidCards" name="googlepayAllowPrepaidCards" aria-describedby="googlepayAllowPrepaidCards-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="googlepayAllowPrepaidCards-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/googlepayAllowCreditCards"}GooglePay Kreditkarten zulassen{/s}">
+                    <label for="googlepayAllowCreditCards" class="text-left col-md-3 control-label">{s name="fieldlabel/googlepayAllowCreditCards"}GooglePay Kreditkarten zulassen{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="googlepayAllowCreditCards" name="googlepayAllowCreditCards" aria-describedby="googlepayAllowCreditCards-status" >
+                            <option value="false">Nein</option>
+                            <option value="true">Ja</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="googlepayAllowCreditCards-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte" >
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name='fieldlabelhelp/googlepayCountryCode'}GooglePay Acquirer Ländercode{/s}">
+                    <label for="googlepayCountryCode" class="text-left col-md-3 control-label">{s name='fieldlabel/googlepayCountryCode'}GooglePay Acquirer Ländercode{/s}</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" id="googlepayCountryCode" name="googlepayCountryCode" aria-describedby="googlepayCountryCode-status" >
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="googlepayCountryCode-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/googlepayButtonColor"}Googlepay Button Farb{/s}">
+                    <label for="googlepayButtonColor" class="text-left col-md-3 control-label">{s name="fieldlabel/googlepayButtonColor"}Googlepay Button Farb{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="googlepayButtonColor" name="googlepayButtonColor" aria-describedby="googlepayButtonColor-status" >
+                            <option value="default">{s name="fieldvalue/default"}Default{/s}</option>
+                            <option value="white">{s name="fieldvalue/white"}Weiss{/s}</option>
+                            <option value="black">{s name="fieldvalue/black"}Schwarz{/s}</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="googlepayButtonColor-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
+                    <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="{s name="fieldlabelhelp/googlepayButtonType"}GooglePay Button Typ{/s}">
+                    <label for="googlepayButtonType" class="text-left col-md-3 control-label">{s name="fieldlabel/googlepayButtonType"}GooglePay Button Typ{/s}</label>
+                    <div class="col-md-6">
+                        <select class="form-control " pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="200" id="googlepayButtonType" name="googlepayButtonType" aria-describedby="googlepayButtonType-status" >
+                            <option value="buy">{s name="fieldvalue/buy"}Buy{/s}</option>
+                            <option value="checkout">{s name="fieldvalue/checkout"}Checkout{/s}</option>
+                            <option value="order">{s name="fieldvalue/order"}Order{/s}</option>
+                            <option value="pay">{s name="fieldvalue/pay"}Pay{/s}</option>
+                            <option value="plain">{s name="fieldvalue/plain"}Plain{/s}</option>
+                        </select>
+                        <span class="glyphicon form-control-feedback glyphicon-remove" aria-hidden="true"></span>
+                        <span id="googlepayButtonType-status" class="sr-only">(success)</span>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
                 <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>

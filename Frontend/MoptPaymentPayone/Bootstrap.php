@@ -846,6 +846,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndRemoveTrustlyExtension();
 
+        $this->addGooglePayConfigOptions();
+
+
     }
 
     /**
@@ -1136,6 +1139,13 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         $args->setReturn(false);
         return false;
+    }
+
+    private function addGooglePayConfigOptions()
+    {
+        $this->getInstallHelper()->checkAndAddGooglePayAllowCardOptions();
+        $this->getInstallHelper()->checkAndAddGooglePayCountryCode();
+        $this->getInstallHelper()->checkAndAddGooglePayButtonOptions();
     }
 
 }
