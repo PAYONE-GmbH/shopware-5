@@ -269,6 +269,9 @@ class FrontendPostDispatch implements SubscriberInterface
             $userData = Shopware()->Modules()->Admin()->sGetUserData();
             $displayItems = $this->getGooglePayDisplayItems($userData);
             $supportedNetworks = $this->getSupportedNetworks($config);
+            $shop = Shopware()->Shop();
+            $locale =  explode('_', $shop->getLocale()->getLocale());
+            $shopLocale = $locale[0];
             $view->assign('mopt_googlepay_supportedNetworks', $supportedNetworks);
             $view->assign('mopt_googlepay_allowedAuthMethods', '["PAN_ONLY", "CRYPTOGRAM_3DS"]');
             $view->assign('mopt_googlepay_allowPrepaidCards', $config['googlepayAllowPrepaidCards']);
@@ -282,7 +285,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('mopt_googlepay_displayItems', $displayItems);
             $view->assign('mopt_googlepay_buttonColor', $config['googlepayButtonColor']);
             $view->assign('mopt_googlepay_buttonType', $config['googlepayButtonType']);
-            $view->assign('mopt_googlepay_buttonLocale',$moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']));
+            $view->assign('mopt_googlepay_buttonLocale',$shopLocale);
 
             $view->extendsTemplate('frontend/checkout/mopt_confirm_googlepay.tpl');
         }
