@@ -5,9 +5,9 @@
 {block name='frontend_checkout_confirm_submit'}
     {* Submit order button *}
     {if $sPayment.embediframe || $sPayment.action}
-        <div id="payonegooglepaycontainer"></div>
+        <div id="payonegooglepaycontainer" class="right is--icon-right"></div>
     {else}
-        <div id="payonegooglepaycontainer"></div>
+        <div id="payonegooglepaycontainer" class="right is--icon-right"></div>
     {/if}
 {/block}
 
