@@ -54,7 +54,9 @@ class Document implements SubscriberInterface
     {
         $document = $args->getSubject();
 
-        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneBillsafe($document->_order->payment['name'])) {
+        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneBillsafe($document->_order->payment['name'])
+            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneSecuredInvoice($document->_order->payment['name'])
+        ) {
             return;
         }
 
@@ -72,11 +74,16 @@ class Document implements SubscriberInterface
         //@TODO check if additional treatment for responsive theme is needed here
         $document->_template->addTemplateDir($this->path . '/Views/');
         $document->_template->assign('instruction', (array) $payoneData);
+        $view->assign('instruction', (array) $payoneData);
         $containerData = $view->getTemplateVars('Containers');
+        $document->_template->assign('payoneinstruction', 'ModuleInstruction1');
+        $view->assign('payoneinstruction', 'ModuleInstruction2');
+
         $containerData['Footer'] = $containerData['PAYONE_Footer'];
         $containerData['Content_Info'] = $containerData['PAYONE_Content_Info'];
         $containerData['Content_Info']['value'] = $document->_template->fetch('string:'
-                . $containerData['Content_Info']['value']);
+                . $containerData['PAYONE_Content_Info']['value']);
+        // $containerData['Content_Info']['value'] = 'Insctruction: {$payoneinstruction}';
         $containerData['Content_Info']['style'] = '}' . $containerData['Content_Info']['style'] . ' #info {';
         $view->assign('Containers', $containerData);
     }
