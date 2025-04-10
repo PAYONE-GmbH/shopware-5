@@ -250,7 +250,6 @@ class FrontendPostDispatch implements SubscriberInterface
         }
 
         if ($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
-
                 $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
                 $userData = Shopware()->Modules()->Admin()->sGetUserData();
                 $debug = $moptPayoneData['moptApplepayConfig']['applepayDebug'] === true ? 1 : 0;
@@ -262,6 +261,33 @@ class FrontendPostDispatch implements SubscriberInterface
                 $view->assign('mopt_applepay_merchantIdentifier', $moptPayoneData['moptApplepayConfig']['applepayMerchantId']);
                 $view->assign('mopt_applepay_debug', $debug);
                 $view->extendsTemplate('frontend/checkout/mopt_confirm_applepay.tpl');
+        }
+        if ($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_googlepay') {
+            $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+            $moptPayoneMain = $this->container->get('MoptPayoneMain')->getInstance();
+            $config = $moptPayoneMain->getPayoneConfig($paymentId);
+            $userData = Shopware()->Modules()->Admin()->sGetUserData();
+            $displayItems = $this->getGooglePayDisplayItems($userData);
+            $supportedNetworks = $this->getSupportedNetworks($config);
+            $shop = Shopware()->Shop();
+            $locale =  explode('_', $shop->getLocale()->getLocale());
+            $shopLocale = $locale[0];
+            $view->assign('mopt_googlepay_supportedNetworks', $supportedNetworks);
+            $view->assign('mopt_googlepay_allowedAuthMethods', '["PAN_ONLY", "CRYPTOGRAM_3DS"]');
+            $view->assign('mopt_googlepay_allowPrepaidCards', $config['googlepayAllowPrepaidCards']);
+            $view->assign('mopt_googlepay_allowCreditCards', $config['googlepayAllowCreditCards']);
+            $view->assign('mopt_googlepay_merchantId',$config['merchantId']);
+            $view->assign('mopt_googlepay_mode',$config['liveMode'] === true? 'PRODUCTION' : 'TEST');
+            $view->assign('mopt_googlepay_country',  $config['googlepayCountryCode']);
+            $view->assign('mopt_googlepay_currency', Shopware()->Container()->get('currency')->getShortName());
+            $view->assign('mopt_googlepay_merchantName', Shopware()->Config()->get('company'));
+            $view->assign('mopt_googlepay_showDisplayItems', $config['submitBasket']);
+            $view->assign('mopt_googlepay_displayItems', $displayItems);
+            $view->assign('mopt_googlepay_buttonColor', $config['googlepayButtonColor']);
+            $view->assign('mopt_googlepay_buttonType', $config['googlepayButtonType']);
+            $view->assign('mopt_googlepay_buttonLocale',$shopLocale);
+
+            $view->extendsTemplate('frontend/checkout/mopt_confirm_googlepay.tpl');
         }
         if ($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
             $view->assign('applepayNotConfiguredError', ! $this->isApplepayConfigured($moptPayoneData['moptApplepayConfig']));
@@ -1075,6 +1101,61 @@ class FrontendPostDispatch implements SubscriberInterface
                     ->get('expressBasketChanged',"<div style='text-align: center'><b>Express Checkout<br>Sie haben die Zusammenstellung Ihres Warenkobs geändert.<br>Bitte wiederholen Sie den Express Checkout oder wählen Sie eine andere Zahlart<br></b></div>");
                 $view->assign('moptBasketChanged', true);
                 $view->assign('moptOverlayRedirectNotice', $redirectnotice);
+        }
+    }
+
+    private function getGooglePayDisplayItems($userData)
+    {
+        /** @var Mopt_PayoneMain $moptPayoneMain */
+        $moptPayoneMain = $this->container->get('MoptPayoneMain');
+
+        $selectedDispatchId = Shopware()->Session()['sDispatch'];
+        $basket = $moptPayoneMain->sGetBasket();
+
+        $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
+        $basket['sShippingcosts'] = $shippingCosts['brutto'];
+        $basket['sShippingcostsWithTax'] = $shippingCosts['brutto'];
+        $basket['sShippingcostsNet'] = $shippingCosts['netto'];
+        $basket['sShippingcostsTax'] = $shippingCosts['tax'];
+
+        $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);
+        $invoicing = $moptPayoneMain->getParamBuilder()->getInvoicing($basket, $dispatch, $userData);
+
+        $displayItems = [];
+        foreach ($invoicing->getItems() as $item) {
+            $price = $item->getPr();
+            $quantity = $item->getNo();
+
+            $displayItems[] = [
+                'reference'    => $item->getId(),
+                'name'         => $item->getDe(),
+                'tax_rate'     => (int)($item->getVa()),
+                'unit_price'   => $price,
+                'quantity'     => $quantity,
+                'total_amount' => $price * $quantity,
+            ];
+        }
+        $googlePayDisplayItems = [];
+        foreach ($displayItems as $index => $displayItem) {
+            $googlePayDisplayItems[] = [
+                'label' => $displayItem['quantity'] . ' x ' . $displayItem['reference'] . ' : ' . $displayItem['name'],
+                'type' => 'LINE_ITEM',
+                'price' => (string) $displayItem['total_amount'],
+            ];
+        }
+        $jsonDisplayItems = json_encode($googlePayDisplayItems);
+        return $jsonDisplayItems;
+    }
+
+    private function getSupportedNetworks($config) {
+        if ($config['googlepayAllowVisa'] == 1 && $config['googlepayAllowMasterCard'] == 1) {
+            return '["VISA", "MASTERCARD"]';
+        } else if ($config['googlepayAllowVisa'] == 0 && $config['googlepayAllowMasterCard'] == 0) {
+            return '[]';
+        } else if ($config['googlepayAllowVisa'] == 1 && $config['googlepayAllowMasterCard'] == 0) {
+            return '["VISA"]';
+        } else if ($config['googlepayAllowVisa'] == 0 && $config['googlepayAllowMasterCard'] == 1) {
+            return '["MASTERCARD"]';
         }
     }
 }

@@ -1348,7 +1348,93 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 name: 'paypalV2ButtonShape',
                 allowBlank: true,
                 labelWidth: 200
-            }
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/googlepayAllowVisa"}GooglePay Visa zulassen{/s}',
+                helpText: '{s name="fieldlabelhelp/googlepayAllowVisa"}GooglePay Visa zulassen{/s}',
+                name: 'googlepayAllowVisa',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/googlepayAllowMasterCard"}GooglePay Mastercard zulassen{/s}',
+                helpText: '{s name="fieldlabelhelp/googlepayAllowMasterCard"}GooglePay Mastercard zulassen{/s}',
+                name: 'googlepayAllowMasterCard',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/googlepayAllowPrepaidCards"}GooglePay Prepaid Karten zulassen{/s}',
+                helpText: '{s name="fieldlabelhelp/googlepayAllowPrepaidCards"}GooglePay Prepaid Karten zulassen{/s}',
+                name: 'googlepayAllowPrepaidCards',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/googlepayAllowCreditCards"}GooglePay Kreditkarten zulassen{/s}',
+                helpText: '{s name="fieldlabelhelp/googlepayAllowCreditCards"}GooglePay Kreditkarten zulassen{/s}',
+                name: 'googlepayAllowCreditCards',
+                store: me.data.yesno,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                allowBlank: false,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'textfield',
+                fieldLabel: '{s name="fieldlabel/googlepayCountryCode"}GooglePay Acquirer Ländercode{/s}',
+                helpText: '{s name="fieldlabelhelp/googlepayCountryCode"}GooglePay Acquirer Ländercode{/s}',
+                name: 'googlepayCountryCode',
+                allowBlank: true,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/googlepayButtonColor"}Googlepay Button Farbe{/s}',
+                helpText: '{s name="fieldlabelhelp/googlepayButtonColor"}Googlepay Button Farbe{/s}',
+                store: me.data.googlepaybuttoncolor,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                name: 'googlepayButtonColor',
+                allowBlank: true,
+                labelWidth: 200
+            },
+            {
+                xtype: 'combobox',
+                fieldLabel: '{s name="fieldlabel/googlepayButtonType"}GooglePay Button Typ{/s}',
+                helpText: '{s name="fieldlabelhelp/googlepayButtonType"}GooglePay Button Typ{/s}',
+                store: me.data.googlepaybuttontype,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                name: 'googlepayButtonType',
+                allowBlank: true,
+                labelWidth: 200,
+                default: 'buy'
+            },
         ];
     },
     getPaymentStatus: function () {

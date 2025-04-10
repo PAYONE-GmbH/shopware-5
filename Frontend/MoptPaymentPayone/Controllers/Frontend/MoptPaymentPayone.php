@@ -219,6 +219,13 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         echo $return;
     }
 
+    public function googlepayAction()
+    {
+        $token = $this->Request()->getParam('token');
+        $response = $this->mopt_payone__google_pay($token);
+        $this->mopt_payone__handleRedirectFeedback($response);
+    }
+
     public function financeAction()
     {
         $response = $this->mopt_payone__finance();
@@ -628,6 +635,21 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
 
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentApplepay($router, $token);
+
+        /** @var Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Authorization_Redirect $response */
+
+        $response = $this->buildAndCallPayment($config, 'wlt', $payment);
+
+        return $response;
+    }
+
+    protected function mopt_payone__google_pay($token)
+    {
+        $router = $this->Front()->Router();
+
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentGooglePay($router, $token);
 
         /** @var Payone_Api_Response_Error|Payone_Api_Response_Preauthorization_Approved|Payone_Api_Response_Preauthorization_Redirect|Payone_Api_Response_Authorization_Approved|Payone_Api_Response_Authorization_Redirect $response */
         $response = $this->buildAndCallPayment($config, 'wlt', $payment);
