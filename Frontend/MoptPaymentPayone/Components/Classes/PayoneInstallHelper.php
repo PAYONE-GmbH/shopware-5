@@ -851,92 +851,42 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
-     * insert document extensions (used to display additional PAYONE data) if not already stored in DB
+     * @return void
      */
-    public function moptInsertDocumentsExtensionIntoDatabaseIfNotExist()
+    public function createDocumentTemplates()
     {
         $sql = 'SELECT * FROM s_core_documents_box WHERE name = ? OR name = ?';
         $result = Shopware()->Db()->query($sql, ['PAYONE_Footer', 'PAYONE_Content_Info']);
 
         if ($result->rowCount() < 2) {
-            // add PAYONE block for documents
-            $sql = "INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
-	(1, 'PAYONE_Footer', 'width: 170mm;\r\nposition:fixed;\r\nbottom:-20mm;\r\nheight: 15mm;', ?),
-	(1, 'PAYONE_Content_Info', ?, ?);";
+
+            $sql = "
+            INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
+            (1, 'PAYONE_Footer', :footerStyle, :footerValue),
+            (1, 'PAYONE_Content_Info', :contentStyle, :contentValue);
+        ";
+
+            $footerStyle = \file_get_contents(__DIR__ . '/../../Documents/Payone_Footer_Style.html');
+            $footerContent = \file_get_contents(__DIR__ . '/../../Documents/Payone_Footer.html');
+            $contentInfoStyle = \file_get_contents(__DIR__ . '/../../Documents/Payone_Content_Info_Style.html');
+            $contentInfoContent = \file_get_contents(__DIR__ . '/../../Documents/Payone_Content_Info.html');
+
             Shopware()->Db()->query($sql, [
-                '<table style="height: 90px;" border="0" width="100%">'
-                . '<tbody>'
-                . '<tr valign="top">'
-                . '<td style="width: 33%;">'
-                . '<p><span style="font-size: xx-small;">Demo GmbH</span></p>'
-                . '<p><span style="font-size: xx-small;">Steuer-Nr <br />UST-ID: <br />Finanzamt '
-                . '</span><span style="font-size: xx-small;">Musterstadt</span></p>'
-                . '</td>'
-                . '<td style="width: 33%;">'
-                . '<p><span style="font-size: xx-small;">AGB<br /></span></p>'
-                . '<p><span style="font-size: xx-small;">Gerichtsstand ist Musterstadt<br />'
-                . 'Erf&uuml;llungsort Musterstadt</span></p>'
-                . '</td>'
-                . '<td style="width: 33%;">'
-                . '<p><span style="font-size: xx-small;">Gesch&auml;ftsf&uuml;hrer</span></p>'
-                . '<p><span style="font-size: xx-small;">Max Mustermann</span></p>'
-                . '</td>'
-                . '</tr>'
-                . '</tbody>'
-                . '</table>',
-                '.payment_instruction, .payment_instruction td, .payment_instruction tr {'
-                . '	margin: 0;'
-                . '	padding: 0;'
-                . '	border: 0;'
-                . '	font-size:8px;'
-                . '	font: inherit;'
-                . '	vertical-align: baseline;'
-                . '}'
-                . '.payment_note {'
-                . '	font-size: 10px;'
-                . '	color: #333;'
-                . '}',
-                '<div class="payment_note">'
-                . '<br/>'
-                . '{$instruction.clearing_instructionnote}<br/>'
-                . '{$instruction.clearing_legalnote}}<br/><br/>'
-                . '</div>'
-                . '<table class="payment_instruction">'
-                . '<tr>'
-                . '	<td>Empfänger:</td>'
-                . '	<td>{$instruction.clearing_bankaccountholder}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>Kontonr.:</td>'
-                . '	<td>{$instruction.clearing_bankaccount}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>BLZ:</td>'
-                . '	<td>{$instruction.clearing_bankcode}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>IBAN:</td>'
-                . '	<td>{$instruction.clearing_bankiban}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>BIC:</td>'
-                . '	<td>{$instruction.clearing_bankbic}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>Bank:</td>'
-                . '	<td>{$instruction.clearing_bankname}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>Betrag:</td>'
-                . '	<td>{$instruction.amount|currency}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>Verwendungszweck:</td>'
-                . '	<td>{$instruction.clearing_reference}{$instruction.clearing_reference}</td>'
-                . '</tr>'
-                . '</table>'
+                'footerStyle' => $footerStyle,
+                'footerValue' => $footerContent,
+                'contentStyle' => $contentInfoStyle,
+                'contentValue' => $contentInfoContent
             ]);
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function removeDocumentTemplates()
+    {
+        $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'PAYONE%'";
+        Shopware()->Db()->query($sql);
     }
 
     /**

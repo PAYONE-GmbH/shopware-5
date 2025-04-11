@@ -54,7 +54,9 @@ class Document implements SubscriberInterface
     {
         $document = $args->getSubject();
 
-        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneBillsafe($document->_order->payment['name'])) {
+        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneBillsafe($document->_order->payment['name'])
+            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneSecuredInvoice($document->_order->payment['name'])
+        ) {
             return;
         }
 
