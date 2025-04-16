@@ -54,8 +54,7 @@ class Document implements SubscriberInterface
     {
         $document = $args->getSubject();
 
-        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneBillsafe($document->_order->payment['name'])
-            && !$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayoneSecuredInvoice($document->_order->payment['name'])
+        if (!$this->container->get('MoptPayoneMain')->getPaymentHelper()->isPayonePaymentMethod($document->_order->payment['name'])
         ) {
             return;
         }
@@ -64,21 +63,21 @@ class Document implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $payoneData = $moptPayoneMain->getPaymentHelper()->getClearingDataFromOrderId($document->_order->order->id);
 
-        if (empty($payoneData)) {
+        if (empty($payoneData) || count($payoneData) <= 1) {
+            return;
+        }
+        if (empty($payoneData['clearing_bankiban'])) {
             return;
         }
 
         $payoneData['amount'] = $document->_order->order->invoice_amount;
 
         $view = $document->_view;
-        //@TODO check if additional treatment for responsive theme is needed here
-        $document->_template->addTemplateDir($this->path . '/Views/');
         $document->_template->assign('instruction', (array) $payoneData);
         $containerData = $view->getTemplateVars('Containers');
         $containerData['Footer'] = $containerData['PAYONE_Footer'];
-        $containerData['Content_Info'] = $containerData['PAYONE_Content_Info'];
-        $containerData['Content_Info']['value'] = $document->_template->fetch('string:'
-                . $containerData['Content_Info']['value']);
+        $containerData['Content_Info'] =  $containerData['PAYONE_Content_Info'] ;
+        $containerData['Content_Info']['value'] = $document->_template->fetch('string:' . $containerData['Content_Info']['value']);
         $containerData['Content_Info']['style'] = '}' . $containerData['Content_Info']['style'] . ' #info {';
         $view->assign('Containers', $containerData);
     }
