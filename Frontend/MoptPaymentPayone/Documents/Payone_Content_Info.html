@@ -1,23 +1,20 @@
-<div class="payment_note">
-    <br/>
-    {$instruction.clearing_instructionnote}
-    <br/>
-    {$instruction.clearing_legalnote}}
-    <br/>
-    <br/>
-</div>
+{literal}
 <table class="payment_instruction">
+    <tr>
+        <td>{if $instruction.clearing_legalnote} Hinweise: {$instruction.clearing_legalnote} {/if}</td>
+        <td>{if $instruction.clearing_legalnote}{$instruction.clearing_legalnote}{/if}</td>
+    </tr>
+    <tr>
+        <td>{if $instruction.clearing_instructionnote} Weitere Hinweise: {$instruction.clearing_instructionnote} {/if}</td>
+        <td>{if $instruction.clearing_instructionnote} {$instruction.clearing_instructionnote} {/if}</td>
+    </tr>
     <tr>
         <td>Empfänger:</td>
         <td>{$instruction.clearing_bankaccountholder}</td>
     </tr>
     <tr>
-        <td>Kontonr.:</td>
-        <td>{$instruction.clearing_bankaccount}</td>
-    </tr>
-    <tr>
-        <td>BLZ:</td>
-        <td>{$instruction.clearing_bankcode}</td>
+        <td>Bank:</td>
+        <td>{$instruction.clearing_bankname}</td>
     </tr>
     <tr>
         <td>IBAN:</td>
@@ -28,15 +25,16 @@
         <td>{$instruction.clearing_bankbic}</td>
     </tr>
     <tr>
-        <td>Bank:</td>
-        <td>{$instruction.clearing_bankname}</td>
-    </tr>
-    <tr>
         <td>Betrag:</td>
         <td>{$instruction.amount|currency}</td>
     </tr>
     <tr>
+        <td>{if $instruction.clearing_duedate} Fälligkeit: {$instruction.clearing_txid} {/if}</td>
+        <td>{if $instruction.clearing_duedate} {$instruction.clearing_duedate|substr:6:2}.{$instruction.clearing_duedate|substr:4:2}.{$instruction.clearing_duedate|substr:0:4}{/if}</td>
+    </tr>
+    <tr>
         <td>Verwendungszweck:</td>
-        <td>{$instruction.clearing_reference}</td>
+        <td>{if $instruction.clearing_reference} {$instruction.clearing_reference} {else} {$instruction.clearing_txid} {/if}</td>
     </tr>
 </table>
+{/literal}
