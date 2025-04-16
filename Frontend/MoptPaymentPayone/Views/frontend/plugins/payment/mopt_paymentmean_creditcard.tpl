@@ -90,7 +90,7 @@
         <input name="moptPaymentData[mopt_payone__cc_cardholder]"
                type="text"
                id="mopt_payone__cc_cardholder"
-               {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
+               {if ($payment_mean.id == $form_data.payment) && $moptIsAccountController != '1'}required="required" aria-required="true"{/if}
                placeholder="{s name="cardholder"}Karteninhaber{/s}{s name="RequiredField" namespace="frontend/MoptPaymentPayone/payment"}{/s}"
                value="{$form_data.mopt_payone__cc_cardholder}"
                class="moptPayoneCardholder payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__cc_cardholder} has--error{/if}"
@@ -101,7 +101,7 @@
         <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection == '1' && !$moptIsAjax}style="display: none;"{/if}>
             <select name="moptPaymentData[mopt_payone__cc_cardtype]"
                     id="mopt_payone__cc_cardtype"
-                    {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection != '1'}required="required" aria-required="true"{/if}
+                    {if ($payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection != '1') && $moptIsAccountController != '1'}required="required" aria-required="true"{/if}
                     class="select--country is--required{if $error_flags.mopt_payone__cc_cardtype} has--error{/if}">
                 <option disabled="disabled" value="" selected="selected">{s name='creditCardType'}Kartentyp{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>
                 {foreach from=$moptCreditCardCheckEnvironment.mopt_payone_creditcard.mopt_payone_credit_cards item=credit_card}
@@ -119,7 +119,7 @@
     <input name="moptPaymentData[mopt_payone__cc_truncatedcardpan]"
            type="text"
            id="mopt_payone__cc_truncatedcardpan"
-           {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
+           {if ($payment_mean.id == $form_data.payment) && $moptIsAccountController != '1'}required="required" aria-required="true"{/if}
            placeholder="{s name='creditCardNumber'}Kartennummer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
            value="{$form_data.mopt_payone__cc_truncatedcardpan|escape}"
            data-moptNumberErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="numberFormField"}Dieses Feld darf nur Zahlen enthalten{/s}"
@@ -157,7 +157,7 @@
         {if $moptIsAjax}
         <select name="moptPaymentData[mopt_payone__cc_month]"
                 id="mopt_payone__cc_month"
-                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
+                {if ($payment_mean.id == $form_data.payment) && $moptIsAccountController != '1'}required="required" aria-required="true"{/if}
                 class="select--country is--required{if $error_flags.mopt_payone__cc_month} has--error{/if}">
             <option {if $form_data.mopt_payone__cc_month == '01'}selected="selected"{/if} value="01">01</option>
             <option {if $form_data.mopt_payone__cc_month == '02'}selected="selected"{/if} value="02">02</option>
@@ -217,9 +217,9 @@
                type="text"
                id="mopt_payone__cc_cvc"
                data-moptNumberErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="numberFormField"}Dieses Feld darf nur Zahlen enthalten{/s}"
-               {if $payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptPayoneCheckCc }required="required" aria-required="true"{/if}
+               {if ($payment_mean.id == $form_data.payment && $moptCreditCardCheckEnvironment.moptPayoneCheckCc) && $moptIsAccountController != '1'}required="required" aria-required="true"{/if}
                placeholder="{s name='creditCardCvc'}Prüfziffer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-               {if $moptCreditCardCheckEnvironment.moptPayoneCheckCc} class="payment--field is--required {/if}{if $error_flags.mopt_payone__cc_cvc} has--error{/if} moptPayoneNumber" />
+               {if ($moptCreditCardCheckEnvironment.moptPayoneCheckCc) && $moptIsAccountController != '1'} class="payment--field is--required {/if}{if $error_flags.mopt_payone__cc_cvc} has--error{/if} moptPayoneNumber" />
     </p>
     {elseif $moptCreditCardCheckEnvironment.moptPayoneCheckCc}
         <p class="none" id="label_mopt_payone__cc_cvc">

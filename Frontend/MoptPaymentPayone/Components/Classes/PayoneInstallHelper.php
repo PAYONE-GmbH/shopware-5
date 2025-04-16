@@ -574,6 +574,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE PayPal Express v2',
                 'template' => null,
                 'position' => 40,],
+            [
+                'name' => 'mopt_payone__ewallet_googlepay',
+                'description' => 'PAYONE Google Pay',
+                'template' => 'mopt_paymentmean_googlepay.tpl',
+                'position' => 41,],
         ];
     }
 
@@ -846,92 +851,42 @@ class Mopt_PayoneInstallHelper
     }
 
     /**
-     * insert document extensions (used to display additional PAYONE data) if not already stored in DB
+     * @return void
      */
-    public function moptInsertDocumentsExtensionIntoDatabaseIfNotExist()
+    public function createDocumentTemplates()
     {
         $sql = 'SELECT * FROM s_core_documents_box WHERE name = ? OR name = ?';
         $result = Shopware()->Db()->query($sql, ['PAYONE_Footer', 'PAYONE_Content_Info']);
 
         if ($result->rowCount() < 2) {
-            // add PAYONE block for documents
-            $sql = "INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
-	(1, 'PAYONE_Footer', 'width: 170mm;\r\nposition:fixed;\r\nbottom:-20mm;\r\nheight: 15mm;', ?),
-	(1, 'PAYONE_Content_Info', ?, ?);";
+
+            $sql = "
+            INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
+            (1, 'PAYONE_Footer', :footerStyle, :footerValue),
+            (1, 'PAYONE_Content_Info', :contentStyle, :contentValue);
+        ";
+
+            $footerStyle = \file_get_contents(__DIR__ . '/../../Documents/Payone_Footer_Style.html');
+            $footerContent = \file_get_contents(__DIR__ . '/../../Documents/Payone_Footer.html');
+            $contentInfoStyle = \file_get_contents(__DIR__ . '/../../Documents/Payone_Content_Info_Style.html');
+            $contentInfoContent = \file_get_contents(__DIR__ . '/../../Documents/Payone_Content_Info.html');
+
             Shopware()->Db()->query($sql, [
-                '<table style="height: 90px;" border="0" width="100%">'
-                . '<tbody>'
-                . '<tr valign="top">'
-                . '<td style="width: 33%;">'
-                . '<p><span style="font-size: xx-small;">Demo GmbH</span></p>'
-                . '<p><span style="font-size: xx-small;">Steuer-Nr <br />UST-ID: <br />Finanzamt '
-                . '</span><span style="font-size: xx-small;">Musterstadt</span></p>'
-                . '</td>'
-                . '<td style="width: 33%;">'
-                . '<p><span style="font-size: xx-small;">AGB<br /></span></p>'
-                . '<p><span style="font-size: xx-small;">Gerichtsstand ist Musterstadt<br />'
-                . 'Erf&uuml;llungsort Musterstadt</span></p>'
-                . '</td>'
-                . '<td style="width: 33%;">'
-                . '<p><span style="font-size: xx-small;">Gesch&auml;ftsf&uuml;hrer</span></p>'
-                . '<p><span style="font-size: xx-small;">Max Mustermann</span></p>'
-                . '</td>'
-                . '</tr>'
-                . '</tbody>'
-                . '</table>',
-                '.payment_instruction, .payment_instruction td, .payment_instruction tr {'
-                . '	margin: 0;'
-                . '	padding: 0;'
-                . '	border: 0;'
-                . '	font-size:8px;'
-                . '	font: inherit;'
-                . '	vertical-align: baseline;'
-                . '}'
-                . '.payment_note {'
-                . '	font-size: 10px;'
-                . '	color: #333;'
-                . '}',
-                '<div class="payment_note">'
-                . '<br/>'
-                . '{$instruction.clearing_instructionnote}<br/>'
-                . '{$instruction.clearing_legalnote}}<br/><br/>'
-                . '</div>'
-                . '<table class="payment_instruction">'
-                . '<tr>'
-                . '	<td>Empfänger:</td>'
-                . '	<td>{$instruction.clearing_bankaccountholder}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>Kontonr.:</td>'
-                . '	<td>{$instruction.clearing_bankaccount}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>BLZ:</td>'
-                . '	<td>{$instruction.clearing_bankcode}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>IBAN:</td>'
-                . '	<td>{$instruction.clearing_bankiban}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>BIC:</td>'
-                . '	<td>{$instruction.clearing_bankbic}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>Bank:</td>'
-                . '	<td>{$instruction.clearing_bankname}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>Betrag:</td>'
-                . '	<td>{$instruction.amount|currency}</td>'
-                . '</tr>'
-                . '<tr>'
-                . '	<td>Verwendungszweck:</td>'
-                . '	<td>{$instruction.clearing_reference}{$instruction.clearing_reference}</td>'
-                . '</tr>'
-                . '</table>'
+                'footerStyle' => $footerStyle,
+                'footerValue' => $footerContent,
+                'contentStyle' => $contentInfoStyle,
+                'contentValue' => $contentInfoContent
             ]);
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function removeDocumentTemplates()
+    {
+        $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'PAYONE%'";
+        Shopware()->Db()->query($sql);
     }
 
     /**
@@ -944,8 +899,8 @@ class Mopt_PayoneInstallHelper
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
-            $sql = "INSERT INTO `s_plugin_mopt_payone_config` (`payment_id`, `merchant_id`, `portal_id`, `subaccount_id`, `api_key`, `live_mode`, `authorisation_method`, `submit_basket`, `adresscheck_active`, `adresscheck_live_mode`, `adresscheck_billing_adress`, `adresscheck_shipping_adress`, `adresscheck_automatic_correction`, `adresscheck_failure_handling`, `adresscheck_min_basket`, `adresscheck_max_basket`, `adresscheck_lifetime`, `adresscheck_failure_message`, `map_person_check`, `map_know_pre_lastname`, `map_know_lastname`, `map_not_known_pre_lastname`, `map_multi_name_to_adress`, `map_undeliverable`, `map_person_dead`, `map_wrong_adress`, `map_address_check_not_possible`, `map_address_okay_building_unknown`, `map_person_moved_address_unknown`, `map_unknown_return_value`, `consumerscore_active`, `consumerscore_live_mode`, `consumerscore_check_moment`, `consumerscore_check_mode_b2c`, `consumerscore_check_mode_b2b`,`consumerscore_default`, `consumerscore_lifetime`, `consumerscore_min_basket`, `consumerscore_max_basket`, `consumerscore_failure_handling`, `consumerscore_note_message`, `consumerscore_note_active`, `consumerscore_agreement_message`, `consumerscore_agreement_active`, `consumerscore_abtest_value`, `consumerscore_abtest_active`, `payment_specific_data`, `state_appointed`, `state_capture`, `state_paid`, `state_underpaid`, `state_cancelation`, `state_refund`, `state_debit`, `state_reminder`, `state_vauthorization`, `state_vsettlement`, `state_transfer`, `state_invoice`, `state_failed`,  `check_cc`, `check_account`, `trans_appointed`, `trans_capture`, `trans_paid`, `trans_underpaid`, `trans_cancelation`, `trans_refund`, `trans_debit`, `trans_reminder`, `trans_vauthorization`, `trans_vsettlement`, `trans_transfer`, `trans_invoice`, `trans_failed` , `trans_timeout` , `trans_timeout_raise` , `trans_max_trials` ) VALUES
-      (0, 0, 0, 0, '0', 0, 'Vorautorisierung', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'Es ist ein Fehler aufgetreten', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'IH','NONE', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 'N;'," . self::DEFAULT_TRANSACTION_STATE_APPOINTED . ", " . self::DEFAULT_TRANSACTION_STATE_CAPTURE . ", " . self::DEFAULT_TRANSACTION_STATE_PAID . ", " . self::DEFAULT_TRANSACTION_STATE_UNDERPAID . ", " . self::DEFAULT_TRANSACTION_STATE_CANCELATION . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", 0, 0, 0, 0, 0, 121,  1, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '', :timeout, :timeout_raise, :max_trials);
+            $sql = "INSERT INTO `s_plugin_mopt_payone_config` (`payment_id`, `merchant_id`, `portal_id`, `subaccount_id`, `api_key`, `live_mode`, `authorisation_method`, `submit_basket`, `adresscheck_active`, `adresscheck_live_mode`, `adresscheck_billing_adress`, `adresscheck_shipping_adress`, `adresscheck_automatic_correction`, `adresscheck_failure_handling`, `adresscheck_min_basket`, `adresscheck_max_basket`, `adresscheck_lifetime`, `adresscheck_failure_message`, `map_person_check`, `map_know_pre_lastname`, `map_know_lastname`, `map_not_known_pre_lastname`, `map_multi_name_to_adress`, `map_undeliverable`, `map_person_dead`, `map_wrong_adress`, `map_address_check_not_possible`, `map_address_okay_building_unknown`, `map_person_moved_address_unknown`, `map_unknown_return_value`, `consumerscore_active`, `consumerscore_live_mode`, `consumerscore_check_moment`, `consumerscore_check_mode_b2c`, `consumerscore_check_mode_b2b`,`consumerscore_default`, `consumerscore_lifetime`, `consumerscore_min_basket`, `consumerscore_max_basket`, `consumerscore_failure_handling`, `consumerscore_note_message`, `consumerscore_note_active`, `consumerscore_agreement_message`, `consumerscore_agreement_active`, `consumerscore_abtest_value`, `consumerscore_abtest_active`, `payment_specific_data`, `state_appointed`, `state_capture`, `state_paid`, `state_underpaid`, `state_cancelation`, `state_refund`, `state_debit`, `state_reminder`, `state_vauthorization`, `state_vsettlement`, `state_transfer`, `state_invoice`, `state_failed`,  `check_cc`, `check_account`, `trans_appointed`, `trans_capture`, `trans_paid`, `trans_underpaid`, `trans_cancelation`, `trans_refund`, `trans_debit`, `trans_reminder`, `trans_vauthorization`, `trans_vsettlement`, `trans_transfer`, `trans_invoice`, `trans_failed` , `trans_timeout` , `trans_timeout_raise` , `trans_max_trials`, `googlepay_allow_visa`, `googlepay_allow_master_card`, `googlepay_allow_prepaid_cards`, `googlepay_allow_credit_cards`, `googlepay_country_code`, `googlepay_button_color`, `googlepay_button_type`  ) VALUES
+      (0, 0, 0, 0, '0', 0, 'Vorautorisierung', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'Es ist ein Fehler aufgetreten', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'IH','NONE', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 'N;'," . self::DEFAULT_TRANSACTION_STATE_APPOINTED . ", " . self::DEFAULT_TRANSACTION_STATE_CAPTURE . ", " . self::DEFAULT_TRANSACTION_STATE_PAID . ", " . self::DEFAULT_TRANSACTION_STATE_UNDERPAID . ", " . self::DEFAULT_TRANSACTION_STATE_CANCELATION . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", 0, 0, 0, 0, 0, 121,  1, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '', :timeout, :timeout_raise, :max_trials, 1, 1, 1, 1, 'DE', 'default', 'pay');
       ";
             Shopware()->Db()->query($sql, [
                 ':timeout' => Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'],
@@ -2306,6 +2261,95 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
 
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddGooglePayButtonOptions()
+    {
+        $textColumns = ['googlepay_button_type', 'googlepay_button_color'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
+
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddGooglePayCountryCode()
+    {
+        $textColumns = ['googlepay_country_code'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT 'DE';";
+
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if paypalExressUseDefaultShipping columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddGooglePayAllowCardOptions()
+    {
+        $textColumns = ['googlepay_allow_visa', 'googlepay_allow_master_card', 'googlepay_allow_credit_cards', 'googlepay_allow_prepaid_cards'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` TINYINT(1) NOT NULL DEFAULT 1;";
                 $db->exec($sql);
             }
         }

@@ -194,6 +194,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->removeAttributes();
         }
 
+        $this->getInstallHelper()->removeDocumentTemplates();
+
         return true;
     }
 
@@ -492,7 +494,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             // Backend
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendPayment($container),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendRiskManagement($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendOrder($container)
+            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendOrder($container),
+            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\Backend($container)
         );
         foreach ($subscribers as $subscriber) {
             $this->Application()->Events()->addSubscriber($subscriber);
@@ -689,7 +692,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         }
 
         $this->getInstallHelper()->moptCreatePaymentDataTable();
-        $this->getInstallHelper()->moptInsertDocumentsExtensionIntoDatabaseIfNotExist();
+        $this->getInstallHelper()->createDocumentTemplates();
 
         // payone config sepa extension
         if (!$this->getInstallHelper()->moptPayoneConfigExtensionExist()) {
@@ -845,6 +848,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndRemovePaydirektExtension();
 
         $this->getInstallHelper()->checkAndRemoveTrustlyExtension();
+
+        $this->addGooglePayConfigOptions();
+
 
     }
 
@@ -1136,6 +1142,13 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         $args->setReturn(false);
         return false;
+    }
+
+    private function addGooglePayConfigOptions()
+    {
+        $this->getInstallHelper()->checkAndAddGooglePayAllowCardOptions();
+        $this->getInstallHelper()->checkAndAddGooglePayCountryCode();
+        $this->getInstallHelper()->checkAndAddGooglePayButtonOptions();
     }
 
 }

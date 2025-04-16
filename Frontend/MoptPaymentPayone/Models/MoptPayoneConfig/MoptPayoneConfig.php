@@ -666,6 +666,41 @@ class MoptPayoneConfig extends ModelEntity
     private $paypalV2ButtonShape;
 
     /**
+     * @ORM\Column(name="googlepay_allow_visa", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $googlepayAllowVisa;
+
+    /**
+     * @ORM\Column(name="googlepay_allow_master_card", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $googlepayAllowMasterCard;
+
+    /**
+     * @ORM\Column(name="googlepay_allow_prepaid_cards", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $googlepayAllowPrepaidCards;
+
+    /**
+     * @ORM\Column(name="googlepay_allow_credit_cards", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $googlepayAllowCreditCards;
+
+    /**
+     * @ORM\Column(name="googlepay_country_code", type="string", length=255, unique=false, nullable=true, options={"default" : "DE"})
+     */
+    private $googlepayCountryCode;
+
+    /**
+     *  @ORM\Column(name="googlepay_button_color", type="string", length=255, nullable=true, unique=false, options={"default" : "default"})
+     */
+    private $googlepayButtonColor;
+
+    /**
+     *  @ORM\Column(name="googlepay_button_type", type="string", length=255, nullable=true, unique=false, options={"default" : "pay"})
+     */
+    private $googlepayButtonType;
+
+    /**
      * @return mixed
      */
     public function getId()
@@ -2614,4 +2649,59 @@ class MoptPayoneConfig extends ModelEntity
         return $this->paypalV2ButtonShape;
     }
 
+    public function setGooglepayAllowVisa($value) {
+        $this->googlepayAllowVisa = $value;
+    }
+
+    public function getGooglepayAllowVisa() {
+        return $this->googlepayAllowVisa;
+    }
+
+    public function setGooglepayAllowMasterCard($value) {
+        $this->googlepayAllowMasterCard = $value;
+    }
+
+    public function getGooglepayAllowMasterCard() {
+        return $this->googlepayAllowMasterCard;
+    }
+
+    public function setGooglepayAllowPrepaidCards($value) {
+        $this->googlepayAllowPrepaidCards = $value;
+    }
+
+    public function getGooglepayAllowPrepaidCards() {
+        return $this->googlepayAllowPrepaidCards;
+    }
+
+    public function setGooglepayAllowCreditCards($value) {
+        $this->googlepayAllowCreditCards = $value;
+    }
+
+    public function getGooglepayAllowCreditCards() {
+        return $this->googlepayAllowCreditCards;
+    }
+
+    public function setGooglepayCountryCode($value) {
+        $this->googlepayCountryCode = $value;
+    }
+
+    public function getGooglepayCountryCode() {
+        return $this->googlepayCountryCode;
+    }
+
+    public function setGooglepayButtonColor($value) {
+        $this->googlepayButtonColor = $value;
+    }
+
+    public function getGooglepayButtonColor() {
+        return $this->googlepayButtonColor;
+    }
+
+    public function setGooglepayButtonType($value) {
+        $this->googlepayButtonType = $value;
+    }
+
+    public function getGooglepayButtonType() {
+        return $this->googlepayButtonType;
+    }
 }

@@ -129,6 +129,13 @@ Ext.define('Shopware.apps.MoptConfigPayone.model.Config', {
     { name: 'paypalV2MerchantId', type: 'string'},
     { name: 'paypalV2ButtonColor', type: 'string'},
     { name: 'paypalV2ButtonShape', type: 'string'},
+    { name: 'googlepayAllowVisa', type: 'boolean'},
+    { name: 'googlepayAllowMasterCard', type: 'boolean'},
+    { name: 'googlepayAllowPrepaidCards', type: 'boolean'},
+    { name: 'googlepayAllowCreditCards', type: 'boolean'},
+    { name: 'googlepayCountryCode', type: 'string'},
+    { name: 'googlepayButtonColor', type: 'string'},
+    { name: 'googlepayButtonType', type: 'string'},
   ],
   /**
    * Validation
