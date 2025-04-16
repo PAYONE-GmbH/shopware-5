@@ -1,11 +1,11 @@
 {literal}
 <table class="payment_instruction">
     <tr>
-        <td>{if $instruction.clearing_legalnote} Hinweise: {$instruction.clearing_legalnote} {/if}</td>
+        <td>{if $instruction.clearing_legalnote} Hinweise:{/if}</td>
         <td>{if $instruction.clearing_legalnote}{$instruction.clearing_legalnote}{/if}</td>
     </tr>
     <tr>
-        <td>{if $instruction.clearing_instructionnote} Weitere Hinweise: {$instruction.clearing_instructionnote} {/if}</td>
+        <td>{if $instruction.clearing_instructionnote} Weitere Hinweise:{/if}</td>
         <td>{if $instruction.clearing_instructionnote} {$instruction.clearing_instructionnote} {/if}</td>
     </tr>
     <tr>
@@ -29,7 +29,7 @@
         <td>{$instruction.amount|currency}</td>
     </tr>
     <tr>
-        <td>{if $instruction.clearing_duedate} Fälligkeit: {$instruction.clearing_txid} {/if}</td>
+        <td>{if $instruction.clearing_duedate} Fälligkeit: {/if}</td>
         <td>{if $instruction.clearing_duedate} {$instruction.clearing_duedate|substr:6:2}.{$instruction.clearing_duedate|substr:4:2}.{$instruction.clearing_duedate|substr:0:4}{/if}</td>
     </tr>
     <tr>
