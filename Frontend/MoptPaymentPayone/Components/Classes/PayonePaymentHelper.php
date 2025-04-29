@@ -323,8 +323,9 @@ class Mopt_PayonePaymentHelper
 
         $attribute = $order->getAttribute();
         $clearingData = $attribute->getMoptPayoneClearingData();
-        $data = json_decode($clearingData, true);
-
+        if (!empty($clearingData)) {
+            $data = json_decode($clearingData, true);
+        }
         return $data;
     }
 
