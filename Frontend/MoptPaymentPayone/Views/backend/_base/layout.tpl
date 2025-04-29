@@ -8,6 +8,8 @@
 
         <title>PAYONE Kontrollzentrum </title>
         <link rel="stylesheet" href="{link file="backend/_resources/css/bootstrap.min.css"}">
+        <link rel="stylesheet" href="{link file="backend/_resources/css/bootstrap-editable.css"}">
+        <link rel="stylesheet" href="{link file="backend/_resources/css/bootstrap-table.css"}">
         <link rel="stylesheet" href="{link file="backend/_resources/css/payone.css"}">
     </head>
     <body>
@@ -51,9 +53,11 @@
         <script type="text/javascript" src="{link file="backend/base/frame/postmessage-api.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/jquery.min.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap.min.js"}"></script>
+        <script type="text/javascript" src="{link file="backend/_resources/js/formhelper.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/validator.min.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-table.min.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-table-de-DE.min.js"}"></script>
+        <script type="text/javascript" src="{link file="backend/_resources/js/scripts.js"}"></script>
 
     {/block}
 
