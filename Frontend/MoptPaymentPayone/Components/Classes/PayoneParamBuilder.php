@@ -1144,24 +1144,6 @@ class Mopt_PayoneParamBuilder
         return $this->addApplepayPaymentParameters($payment, $token);
     }
 
-    public function getPaymentGooglePay($router, $token)
-    {
-        $params = array();
-        $params['clearingtype'] = 'wlt';
-        $params['wallettype'] = 'GGP';
-
-        $params['successurl'] = $router->assemble(array('action' => 'success',
-            'forceSecure' => true, 'appendSession' => false));
-        $params['errorurl'] = $router->assemble(array('action' => 'failure',
-            'forceSecure' => true, 'appendSession' => false));
-        $params['backurl'] = $router->assemble(array('action' => 'cancel',
-            'forceSecure' => true, 'appendSession' => false));
-
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-
-        return $this->addGooglePayPaymentParameters($payment, $token);
-    }
-
     /**
      * create secured invoice object
      *
@@ -1363,7 +1345,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param type $router
      * @param bool $intialRecurringRequest
-     * @return \Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Bootstrap\Components\Payone\Api\Request\Parameter\Authorization\PaymentMethod\Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
      */
     public function getPaymentAlipay($router, $intialRecurringRequest = false)
     {
@@ -1390,7 +1372,7 @@ class Mopt_PayoneParamBuilder
      * returns WeChatPay payment data object
      *
      * @param type $router
-     * @return \Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Bootstrap\Components\Payone\Api\Request\Parameter\Authorization\PaymentMethod\Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
      */
     public function getPaymentWechatpay($router)
     {

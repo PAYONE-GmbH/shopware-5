@@ -19,7 +19,7 @@
     </span>
     <hr>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-9">
             <div class="btn-group" style="padding-left: 15px">
                 <button type="button" class="btn-payone btn-language btn dropdown-toggle" data-toggle="dropdown">
                     <span class="selection">Deutsch </span><span class="caret"></span>
