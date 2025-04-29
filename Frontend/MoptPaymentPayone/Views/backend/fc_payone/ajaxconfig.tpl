@@ -12,14 +12,14 @@
 {/block}
                         
  {block name="content/main"}
-    <div class="col-md-12">    
+    <div class="col-md-9">
         <h3>Verbindungseinstellungen</h3>
         <div>
             Stellen Sie hier Ihre Verbindungsdaten zur PAYONE Plattform ein. <BR>
             Diese finden Sie im Backend von PAYONE unter <a href=http://pmi.pay1.de>pmi.pay1.de</a><BR>
             <BR>
         </div>
-        <div class='col-md-12'>
+        <div class='col-md-9'>
             <form role="form" id="ajaxconfigform" class="form-horizontal">
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                     <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" title="PAYONE Hilfe" data-content="ID des zu verwendenden Accounts">
@@ -66,7 +66,7 @@
         </div>
         <div class='col-md-8'>
         </div>
-        <div class='col-md-12'>
+        <div class='col-md-9'>
             <h3>Verbindungstest</h3>
             Hier können Sie einen Verbindungstest zur PAYONE Plattform mit den oben angegebenen Daten starten <BR>
             Bitte prüfen Sie das Ergebnis und eventuell vorhandene Hinweise im unten sichtbaren Protokollfenster <BR>

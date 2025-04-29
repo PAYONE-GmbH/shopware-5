@@ -13,13 +13,13 @@
 {/block}
 
 {block name="content/main"}
-    <div class="col-md-12">
+    <div class="col-md-9">
         <h3>{s name="global-form/fieldset4"}Paymentstatus{/s}</h3>
         <div>
             Stellen Sie hier die Konfiguration für das Paymentstatus-Mapping  für alle Zahlarten ein.
         </div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-9">
                 <div class="btn-group">
                     <button id="paymentmethodsdropdown" type="button" class="btn-payone-fixed btn-payone btn dropdown-toggle" data-toggle="dropdown">
                         <span class="selection">Alle Zahlarten - Global</span><span class="caret"></span>
@@ -33,7 +33,7 @@
                 </div>
             </div>
         </div>
-        <div class='col-md-12'>
+        <div class='col-md-9'>
             <form role="form" id="ajaxpaymentstatusconfigform" class="form-horizontal">
                 <div class="form-group has-feedback has-error  menu-level-standard  menu-level-experte">
                    

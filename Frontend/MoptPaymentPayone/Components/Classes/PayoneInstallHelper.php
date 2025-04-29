@@ -491,7 +491,7 @@ class Mopt_PayoneInstallHelper
                 'position' => 23,],
             [
                 'name' => 'mopt_payone__fin_payolution_debitnote',
-                'description' => 'PAYONE Unzer lsLastschrift',
+                'description' => 'PAYONE Unzer Lastschrift',
                 'template' => 'mopt_paymentmean_payolution_debitnote.tpl',
                 'position' => 24,],
             [
