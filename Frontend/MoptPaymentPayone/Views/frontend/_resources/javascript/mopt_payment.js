@@ -484,8 +484,7 @@ function moptPaymentReady() {
             if (me.opts.moptCreditcardConfig.show_errors === '1') {
                 config.error = "errorOutput";
             }
-            config.language = eval('Payone.ClientApi.Language.' + me.opts.moptPayoneParamsLanguage);
-
+            config.language = Payone.ClientApi.Language[me.opts.moptPayoneParamsLanguage] || Payone.ClientApi.Language.en;
 
             if (me.opts.moptCreditcardConfig.cardno_custom_style === '0') {
                 config.fields.cardpan.style = me.opts.moptCreditcardConfig.cardno_input_css;
