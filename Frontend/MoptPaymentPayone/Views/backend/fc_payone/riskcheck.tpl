@@ -1,14 +1,14 @@
 {extends file="parent:backend/_base/layout.tpl"}
 {namespace name=backend/mopt_config_payone/main}
 {block name="content/main"}
-    <div class="col-md-9">
+    <div class="col-md-12">
         <h3>{s name="global-form/fieldset3"}Bonitätsprüfung{/s}</h3>
         <div>
             {s name="fieldvalue/riskcheckTitle"}Stellen Sie hier die Konfiguration für die Bonitätsprüfung für alle Zahlarten ein.{/s}
         </div>
         {include file='backend/fc_payone/include/dropdown_payments.tpl'}
-        <div class='col-md-9'>
-            <form role="form" id="ajaxriskcheckform" class="form-horizontal">
+        <div class='col-md-12'>
+            <form role="form" id="riskcheckform" class="form-horizontal">
                 {include file='backend/fc_payone/include/dropdown_yesno.tpl' id='consumerscoreActive' label="{s name="fieldlabel/active"}Aktiv{/s}" pattern="^[0-9]*"}
                 {include file='backend/fc_payone/include/dropdown_livetest.tpl' id='consumerscoreLiveMode' label="{s name="fieldlabel/mode"}Betriebsmodus{/s}" pattern='^[_ .\(\)+-\?,:;"!@#$%\^&\*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" content="{s name="fieldlabelhelp/liveMode"}Hier wird definiert wie die Zahlart verwendet wird. Live = Zahlungen werden auf der PAYONE-Plattform ausgeführt Test = Zahlungen werden nur auf der PAYONE-Testumgebung simuliert{/s}"}
                 {include file='backend/fc_payone/include/dropdown_prepostpayment.tpl' id='consumerscoreCheckMoment' label="{s name="fieldlabel/consumerscoreCheckMoment"}Zeitpunkt der Prüfung{/s}" pattern="^[0-9]*"}
@@ -33,5 +33,7 @@
 {/block}
 
 {block name="resources/javascript" append}
-    {include file='backend/fc_payone/include/javascript.tpl' form="#ajaxaddresscheckform" action="ajaxgetAddressCheckConfig"}
+    <script type="text/javascript">
+        {include file='backend/fc_payone/include/javascript.tpl.js' form="#riskcheckform" loadAction="generalconfigdata" saveAction="ajaxSavePayoneConfig"}
+    </script>
 {/block}

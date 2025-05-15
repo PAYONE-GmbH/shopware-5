@@ -3,6 +3,6 @@
     {if !empty($content)} <img src="{link file='backend/_resources/images/information.png'}" data-toggle="popover" data-title="PAYONE Hilfe" data-content="{$content}">{/if}
     <label for="{$id}" class="text-left col-md-3 control-label">{$label}</label>
     <div class="col-md-6">
-        <input type="checkbox" class="form-control needs-validation" pattern='{$pattern}' minlength="{$minlength}" maxlength="{$maxlength}" id="{$id}" name="{$id}" aria-describedby="{$id}-status" spellcheck="false" >
+        <input type="checkbox" class="form-control" pattern='{$pattern}' minlength="{$minlength}" maxlength="{$maxlength}" id="{$id}" name="{$id}" spellcheck="false" >
     </div>
 </div>

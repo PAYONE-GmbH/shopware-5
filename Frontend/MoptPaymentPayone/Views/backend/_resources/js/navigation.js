@@ -44,6 +44,5 @@ $(document).ready(function () {
         if (this.id && localStorage.getItem(this.id) === 'ausgeklappt') {
             $(this).collapse('show');
         }
-
     });
 });

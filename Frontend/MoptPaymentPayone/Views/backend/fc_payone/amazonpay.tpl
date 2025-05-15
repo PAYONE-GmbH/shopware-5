@@ -2,7 +2,7 @@
 
 {block name="content/main"}
     {namespace name=backend/mopt_config_payone/main}
-    <div class="col-md-9">
+    <div class="col-md-12">
         <h3>{s name="global-form/amazonpay"}Konfiguration AmazonPay Logos{/s}</h3>
         <div>
             {s name="global-form/amazonpayDesc"}Stellen Sie hier die Konfiguration zur Zahlart Amazonpay ein.{/s}
@@ -73,18 +73,17 @@
                                         {if $amazonpayconfig->getPackStationMode() == 'deny'}selected="selected"{/if}>{s name="packStation/deny" namespace="backend/mopt_payone_paypal/main"}deny{/s}</option>
                             </select>
                         </td>
-                        <td><select class="form-control" name="row[{$amazonpayconfig->getId()}][shop]" id="shop_{$amazonpayconfig->getId()}">
+                        <td><select class="form-control" name="row[{$amazonpayconfig->getId()}][shopId]" id="shop_{$amazonpayconfig->getId()}">
                                 {foreach from=$shops item=shop}
                                     <option value="{$shop->getId()}" {if $shop->getId() == $amazonpayconfig->getShop()->getId()} selected="selected"{/if}>{$shop->getName()}</option>
                                 {/foreach}
                             </select>
                         </td>
-                        <td role="button" name="delete" value="delete" onclick="clear_form_elements('#ajaxamazonpay');">
+                        <td role="button" name="delete" value="delete" onclick="removeRow({$amazonpayconfig->getId()});">
                             <img id="delete_{$amazonpayconfig->getId()}" height="100%"
                                  src="{link file='backend/_resources/images/delete.png'}">
                         </td>
                         {/foreach}
-                        EndeForeach
                     </tr>
                 </table>
                 <div>
@@ -100,5 +99,7 @@
 {/block}
 
 {block name="resources/javascript" append}
-    {include file='backend/fc_payone/include/amazonpay.js'}
+<script type="text/javascript">
+    {include file='backend/fc_payone/include/amazonpay.tpl.js'}
+</script>
 {/block}

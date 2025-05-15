@@ -9,7 +9,7 @@
         </div>
         {include file='backend/fc_payone/include/dropdown_payments.tpl'}
         <div class='col-md-9'>
-            <form role="form" id="ajaxaddresscheckform" class="form-horizontal">
+            <form role="form" id="addresscheckform" class="form-horizontal">
                 {include file='backend/fc_payone/include/dropdown_adresscheckactive.tpl' id='adresscheckActive' label="{s name="fieldlabel/active"}Aktiv{/s}" pattern='^[_ .\(\)+-\?,:;"!@#$%\^&\*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255"}
                 {include file='backend/fc_payone/include/dropdown_livetest.tpl' id='adresscheckLiveMode' label="{s name="fieldlabel/mode"}Betriebsmodus{/s}" pattern='^[_ .\(\)+-\?,:;"!@#$%\^&\*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="255" content="{s name="fieldlabelhelp/liveMode"}Hier wird definiert wie die Zahlart verwendet wird. Live = Zahlungen werden auf der PAYONE-Plattform ausgeführt Test = Zahlungen werden nur auf der PAYONE-Testumgebung simuliert{/s}"}
                 {include file='backend/fc_payone/include/dropdown_riskcheck.tpl' id='adresscheckBillingAdress' label="{s name="fieldlabel/billingAddress"}Rechnungsadresse{/s}" pattern='^[_ .\(\)+-\?,:;"!@#$%\^&\*ÄÖÜäöüa-zA-Z0-9]*'}
@@ -41,5 +41,7 @@
 {/block}
 
 {block name="resources/javascript" append}
-    {include file='backend/fc_payone/include/javascript.tpl' form="#ajaxaddresscheckform" action="ajaxgetAddressCheckConfig"}
+    <script type="text/javascript">
+        {include file='backend/fc_payone/include/javascript.tpl.js' form="#addresscheckform" loadAction="generalconfigdata" saveAction="ajaxSavePayoneConfig"}
+    </script>
 {/block}
