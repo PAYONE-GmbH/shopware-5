@@ -57,8 +57,7 @@
         <script type="text/javascript" src="{link file="backend/_resources/js/validator.min.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-table.min.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-table-de-DE.min.js"}"></script>
-        <script type="text/javascript" src="{link file="backend/_resources/js/scripts.js"}"></script>
-
+        <script type="text/javascript" src="{link file="backend/_resources/js/navigation.js"}"></script>
     {/block}
 
 

@@ -2,14 +2,14 @@
 
 {block name="content/main"}
     {namespace name=backend/mopt_config_payone/main}
-    <div class="col-md-9">
+    <div class="col-md-12">
         <h3>{s name="global-form/applepay"}Konfiguration Applepay Logos{/s}</h3>
         <div>
             {s name="global-form/applepayDesc"}Stellen Sie hier die Konfiguration zur Zahlart Applepay ein.{/s}
         </div>
-        {include file='backend/fc_payone/include/dropdown_payments.tpl'}
-        <div class='col-md-9'>
+        <div class='col-md-12'>
             <form role="form" id="applepayform" class="form-horizontal">
+                {include file='backend/fc_payone/include/dropdown_payments.tpl'}
                 {include file='backend/fc_payone/include/input_text.tpl' id='applepayMerchantId' label="{s name="fieldlabel/applepayMerchantID"}Apple Pay MerchantId{/s}" pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="100" content="{s name='fieldlabelhelp/applepayMerchantID'}Ihre Apple Pay MerchantId{/s}"}
                 {include file='backend/fc_payone/include/dropdown_yesno.tpl' id='applepayVisa' label="{s name="fieldlabel/applepayVisa"}Apple Pay Visa erlauben{/s}" pattern="^[0-9]*" content="{s name="fieldlabelhelp/applepayVisa"}Erlaubt Visa Karten über Apple Pay{/s}"}
                 {include file='backend/fc_payone/include/dropdown_yesno.tpl' id='applepayMastercard' label="{s name="fieldlabel/applepayMastercard"}Apple Pay Visa erlauben{/s}" pattern="^[0-9]*" content="{s name="fieldlabelhelp/applepayMastercard"}Erlaubt Mastercard Karten über Apple Pay{/s}"}
@@ -32,5 +32,7 @@
 {/block}
 
 {block name="resources/javascript" append}
-    {include file='backend/fc_payone/include/javascript.tpl' form="#applepayform" action="ajaxgetGeneralConfig"}
+<script type="text/javascript">
+    {include file='backend/fc_payone/include/javascript.tpl.js' form="#applepayform" loadAction="generalconfigdata" saveAction="ajaxSavePayoneConfig"}
+</script>
 {/block}

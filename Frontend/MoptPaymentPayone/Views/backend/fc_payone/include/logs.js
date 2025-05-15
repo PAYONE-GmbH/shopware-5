@@ -1,4 +1,3 @@
-<script type="text/javascript">
 $(function () {
     $('[data-toggle="tooltip"]').tooltip();
     $('[data-toggle="popover"]').popover();
@@ -8,7 +7,7 @@ $(function () {
     });
 });
 
-function idDetailsFormatter(value) {
+function DetailsFormatter(value) {
     return '<a data-placement="left" data-toggle="popover" data-trigger="focus" href="#" data-content="' + value + '" title="Details" data-html="true" class="">{s name="details/title"}Details{/s}</a>';
 }
 
@@ -23,4 +22,3 @@ function modeDetailsFormatter(value) {
         return 'Live';
     }
 }
-</script>

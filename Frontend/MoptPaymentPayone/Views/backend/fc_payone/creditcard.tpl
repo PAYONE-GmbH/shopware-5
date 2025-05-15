@@ -2,14 +2,72 @@
 
 {block name="content/main"}
     {namespace name=backend/mopt_config_payone/main}
-    <div class="col-md-9">
+    <div class="col-md-12">
         <h3>{s name="global-form/fieldset2"}Kreditkarteneinstellungen{/s}</h3>
         <div>
             {s name="global-form/fieldset2Desc"}Stellen Sie hier die Konfiguration zur Zahlart Kreditkarte ein.{/s}
         </div>
-        <div id="payonetable">
-            <form role="form" id="ajaxiframeconfigform">
-                <table class="table caption-top">
+
+        <div class='col-md-12'>
+            <form role="form" id="creditcardconfigform">
+                <table class="table-condensed">
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/dropdown_shops.tpl'}
+                        </td>
+                    </tr>
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/input_checkbox.tpl' id='isDefault' label="Default"}
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/input_text.tpl' id='creditcardDefaultDescription' label="{s name='fieldlabel/creditcardDefaultDescription'}Kreditkarte Zusätzliche Beschreibung{/s}" pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' content="{s name='fieldlabelhelp/creditcardDefaultDescription'}Zusätzliche Beschreibung der Zahlart bei Gruppierung{/s}"}
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/input_checkbox.tpl' id='checkCc' label="{s name="fieldlabel/checkCc"}Abfrage Kreditkartenprüfziffer<br>(nur global konfigurierbar){/s}"}
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/input_text.tpl' id='creditcardMinValid' label="{s name="fieldlabel/creditcardMinValid"}Gültigkeit der Kreditkarte{/s}" pattern='^[0-9]*' content="{s name="fieldlabelhelp/creditcardMinValid"}Gültigkeit der Kreditkarte in Tagen zudem eine Kreditkarte im Checkout akzeptiert wird.{/s}"}
+                        </td>
+                    </tr>
+
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/dropdown_iframeajax.tpl' id='integrationType' label="Modus"}
+                        </td>
+                    </tr>
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/input_text.tpl' id='merchantId' label="{s name="fieldlabel/merchantId"}Merchant-Id{/s}" pattern="^[0-9]*" minlength="1" maxlength="5" content="{s name="fieldlabelhelp/merchantId"}ID des zu verwendenden Accounts{/s}"}
+                        </td>
+                    </tr>
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/input_text.tpl' id='portalId' label="{s name="fieldlabel/portalId"}Portal-Id{/s}" pattern="^[0-9]*" minlength="1" maxlength="5" content="{s name="fieldlabelhelp/portalId"}ID des zu verwendenden Zahlungsportal{/s}"}
+                        </td>
+                    </tr>
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/input_text.tpl' id='subaccountId' label="{s name="fieldlabel/subaccountId"}Subaccount-Id{/s}" pattern="^[0-9]*" minlength="1" maxlength="5" content="{s name="fieldlabelhelp/subaccountId"}ID des zu verwendenden SubAccounts{/s}"}
+                        </td>
+                    </tr>
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/input_text.tpl' id='apiKey' label="{s name="fieldlabel/apiKey"}Schlüssel{/s}" pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="100" content="{s name="fieldlabelhelp/apiKey"}Schlüssel des zu verwendenden Zahlungsportal{/s}"}
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="table-condensed">
                     <tr>
                         <th>{s name="global-form/field"}Feld{/s}</th>
                         <th>{s name="global-form/type"}Typ{/s}</th>
@@ -25,7 +83,7 @@
                     <tr class="form-group">
                         <th>{s name="global-form/fieldconfigcreditcardnumber"}Kreditkartennummer{/s}</th>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_fieldconfig.tpl' id='cardnoFieldType'}
+                            {include file='backend/fc_payone/include/dropdown_fieldconfig.tpl' id='cardnoFieldType' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardnoInputChars' value="30" size="3"}
@@ -34,7 +92,7 @@
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardnoInputCharsMax' value="16" size="3"}
                         </td>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardnoCustomIframe'}
+                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardnoCustomIframe' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardnoIframeWidth' value="200px" size="4"}
@@ -55,7 +113,7 @@
                     <tr class="form-group">
                         <th>{s name="global-form/fieldconfigcreditcardcvc"}Kreditkartenprüfziffer{/s}</th>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_fieldconfig.tpl' id='cardcvcFieldType'}
+                            {include file='backend/fc_payone/include/dropdown_fieldconfig.tpl' id='cardcvcFieldType' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardcvcInputChars'  value="30" size="3"}
@@ -64,7 +122,7 @@
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardcvcInputCharsMax' value="16" size="3"}
                         </td>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardcvcCustomIframe'}
+                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardcvcCustomIframe' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardcvcIframeWidth' value="200px" size="4"}
@@ -73,7 +131,7 @@
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardcvcIframeHeight' value="300px" size="4"}
                         </td>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardcvcCustomStyle'}
+                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardcvcCustomStyle' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardcvcInputCss'}
@@ -84,9 +142,8 @@
                     </tr>
                     <tr class="form-group">
                         <th>{s name="global-form/fieldconfigcreditcardmonth"}Gültigkeitsmonat{/s}</th>
-                        <th></th>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardmonthFieldType'}
+                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardmonthFieldType' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardmonthInputChars' value="30" size="3"}
@@ -95,7 +152,7 @@
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardmonthInputCharsMax' value="16" size="3"}
                         </td>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardmonthCustomIframe'}
+                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardmonthCustomIframe'  style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardmonthIframeWidth' value="200px" size="4"}
@@ -104,7 +161,7 @@
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardmonthIframeHeight' value="300px" size="4"}
                         </td>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardmonthCustomStyle'}
+                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardmonthCustomStyle' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardmonthInputCss'}
@@ -113,7 +170,7 @@
                     <tr class="form-group">
                         <th>{s name="global-form/fieldconfigcreditcardyear"}Gültigkeitsjahr{/s}</th>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_fieldconfig.tpl' id='cardyearFieldType'}
+                            {include file='backend/fc_payone/include/dropdown_fieldconfig.tpl' id='cardyearFieldType' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardyearInputChars' value="30" size="3"}
@@ -122,7 +179,7 @@
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardyearInputCharsMax' value="16" size="3"}
                         </td>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardyearCustomIframe'}
+                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardyearCustomIframe' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardyearIframeWidth' value="200px" size="4"}
@@ -131,11 +188,10 @@
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardyearIframeHeight' value="300px" size="4"}
                         </td>
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardyearCustomStyle'}
+                            {include file='backend/fc_payone/include/dropdown_cardnocustomiframe.tpl' id='cardyearCustomStyle' style="max-width:125px;"}
                         </td>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='cardyearInputCss'}
-                            <input name="cardyearInputCss" id="cardyearInputCss" type="text" class="form-control" /></td>
                     </tr>
                 </table>
 
@@ -164,136 +220,139 @@
                         </td>
                     </tr>
 
-                <table class="table-condensed">
-                    <th>{s name="global-form/fieldconfigstandardtranslation"}Standardübersetzung{/s}</th>
-                    <tr>
-                        <th>{s name="global-form/fieldconfigmonth"}Monat{/s}</th>
-                        <th>{s name="global-form/fieldconfigtranslation"}Übersetzung{/s}</th>
-                        <th>{s name="global-form/fieldconfigmonth"}Monat{/s}</th>
-                        <th>{s name="global-form/fieldconfigtranslation"}Übersetzung{/s}</th>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfigjanuary"}Januar{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth1'}
-                        </td>
-                        <th>{s name="global-form/fieldconfigjuly"}Juli{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth7'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfigfebruary"}Februar{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth2'}
-                        </td>
-                        <th>{s name="global-form/fieldconfigaugust"}August{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth8'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfigmarch"}März{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth3' }
-                        </td>
-                        <th>{s name="global-form/fieldconfigseptember"}September{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth9'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfigapril"}April{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth4'}
-                        </td>
-                        <th>{s name="global-form/fieldconfigoctober"}Oktober{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth10'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfigmay"}Mai{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth5'}
-                        </td>
-                        <th>{s name="global-form/fieldconfignovember"}November{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth11'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfigjune"}Juni{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth6'}
-                        </td>
-                        <th>{s name="global-form/fieldconfigdecember"}Dezember{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth12'}
-                        </td>
-                    </tr>
-                </table>
-                <table class="table-condensed">
-                    <h3>{s name="global-form/fieldconfigerrordesc"}Fehlerausgabe und eigene Fehlermeldungen{/s}<h3>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfigerroractivate"}Fehlerausgabe aktivieren{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_checkbox.tpl' id='showErrors'}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>{s name="global-form/fieldconfigerrormessage"}Fehlermeldung{/s}</th>
-                        <th>{s name="global-form/fieldconfigcustomerrormessage"}eigene Fehlermeldung{/s}</th>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfiginvalidccnumber"}Ungültige Kreditkartennummer{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidCardpan'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfiginvalidcvc"}Ungültige Kartenprüfziffer{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidCvc'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfiginvalidccnumberforcardtype"}Ungültige Kreditkartennummer für den Kartentyp{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidPanForCardtype'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfiginvalidcardtype"}Ungültiger Kartentyp{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidCardtype'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfiginvaliddate"}Ungültiges Verfallsdatum{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidExpireDate'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfiginvalidissuer"}Ungültige Ausstellungsnummer{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidIssueNumber'}
-                        </td>
-                    </tr>
-                    <tr class="form-group">
-                        <th>{s name="global-form/fieldconfigtransactiondenied"}Transaktion abgelehnt{/s}</th>
-                        <td>
-                            {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframetransactionRejected'}
-                        </td>
-                    </tr>                    
-                </table>                    
-                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
+                    <table class="table-condensed">
+                        <th>{s name="global-form/fieldconfigstandardtranslation"}Standardübersetzung{/s}</th>
+                        <tr>
+                            <th>{s name="global-form/fieldconfigmonth"}Monat{/s}</th>
+                            <th>{s name="global-form/fieldconfigtranslation"}Übersetzung{/s}</th>
+                            <th>{s name="global-form/fieldconfigmonth"}Monat{/s}</th>
+                            <th>{s name="global-form/fieldconfigtranslation"}Übersetzung{/s}</th>
+                        </tr>
+                        <tr class="form-group">
+                            <th>{s name="global-form/fieldconfigjanuary"}Januar{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth1'}
+                            </td>
+                            <th>{s name="global-form/fieldconfigjuly"}Juli{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth7'}
+                            </td>
+                        </tr>
+                        <tr class="form-group">
+                            <th>{s name="global-form/fieldconfigfebruary"}Februar{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth2'}
+                            </td>
+                            <th>{s name="global-form/fieldconfigaugust"}August{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth8'}
+                            </td>
+                        </tr>
+                        <tr class="form-group">
+                            <th>{s name="global-form/fieldconfigmarch"}März{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth3' }
+                            </td>
+                            <th>{s name="global-form/fieldconfigseptember"}September{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth9'}
+                            </td>
+                        </tr>
+                        <tr class="form-group">
+                            <th>{s name="global-form/fieldconfigapril"}April{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth4'}
+                            </td>
+                            <th>{s name="global-form/fieldconfigoctober"}Oktober{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth10'}
+                            </td>
+                        </tr>
+                        <tr class="form-group">
+                            <th>{s name="global-form/fieldconfigmay"}Mai{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth5'}
+                            </td>
+                            <th>{s name="global-form/fieldconfignovember"}November{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth11'}
+                            </td>
+                        </tr>
+                        <tr class="form-group">
+                            <th>{s name="global-form/fieldconfigjune"}Juni{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth6'}
+                            </td>
+                            <th>{s name="global-form/fieldconfigdecember"}Dezember{/s}</th>
+                            <td>
+                                {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeMonth12'}
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table-condensed">
+                        <h3>{s name="global-form/fieldconfigerrordesc"}Fehlerausgabe und eigene Fehlermeldungen{/s}
+                            <h3>
+                                <tr class="form-group">
+                                    <th>{s name="global-form/fieldconfigerroractivate"}Fehlerausgabe aktivieren{/s}</th>
+                                    <td>
+                                        {include file='backend/fc_payone/include/input_checkbox.tpl' id='showErrors'}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{s name="global-form/fieldconfigerrormessage"}Fehlermeldung{/s}</th>
+                                    <th>{s name="global-form/fieldconfigcustomerrormessage"}eigene Fehlermeldung{/s}</th>
+                                </tr>
+                                <tr class="form-group">
+                                    <th>{s name="global-form/fieldconfiginvalidccnumber"}Ungültige Kreditkartennummer{/s}</th>
+                                    <td>
+                                        {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidCardpan'}
+                                    </td>
+                                </tr>
+                                <tr class="form-group">
+                                    <th>{s name="global-form/fieldconfiginvalidcvc"}Ungültige Kartenprüfziffer{/s}</th>
+                                    <td>
+                                        {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidCvc'}
+                                    </td>
+                                </tr>
+                                <tr class="form-group">
+                                    <th>{s name="global-form/fieldconfiginvalidccnumberforcardtype"}Ungültige Kreditkartennummer für den Kartentyp{/s}</th>
+                                    <td>
+                                        {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidPanForCardtype'}
+                                    </td>
+                                </tr>
+                                <tr class="form-group">
+                                    <th>{s name="global-form/fieldconfiginvalidcardtype"}Ungültiger Kartentyp{/s}</th>
+                                    <td>
+                                        {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidCardtype'}
+                                    </td>
+                                </tr>
+                                <tr class="form-group">
+                                    <th>{s name="global-form/fieldconfiginvaliddate"}Ungültiges Verfallsdatum{/s}</th>
+                                    <td>
+                                        {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidExpireDate'}
+                                    </td>
+                                </tr>
+                                <tr class="form-group">
+                                    <th>{s name="global-form/fieldconfiginvalidissuer"}Ungültige Ausstellungsnummer{/s}</th>
+                                    <td>
+                                        {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframeinvalidIssueNumber'}
+                                    </td>
+                                </tr>
+                                <tr class="form-group">
+                                    <th>{s name="global-form/fieldconfigtransactiondenied"}Transaktion abgelehnt{/s}</th>
+                                    <td>
+                                        {include file='backend/fc_payone/include/input_text_iframe.tpl' id='defaultTranslationIframetransactionRejected'}
+                                    </td>
+                                </tr>
+                    </table>
+                    <button type="submit" class="btn-payone btn ">{s name="global-form/button"}Speichern{/s}</button>
             </form>
         </div>
     </div>
 {/block}
 
 {block name="resources/javascript" append}
-    {include file='backend/fc_payone/include/creditcard.js'}
+    <script type="text/javascript">
+        {include file='backend/fc_payone/include/javascript.tpl.js' form="#creditcardconfigform" loadAction="ajaxgetIframeConfig" saveAction="ajaxSaveIframeConfig"}
+    </script>
 {/block}

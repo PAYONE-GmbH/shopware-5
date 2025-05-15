@@ -1,7 +1,7 @@
 {extends file="parent:backend/_base/layout.tpl"}
 {namespace name=backend/mopt_payone_transaction_log/main}
 {block name="content/main"}
-    <div class="col-md-9">
+    <div class="col-md-12">
 
         <h3>{s name="window_title"}Transaktionsstatus Protokolle{/s}</h3>
         <table data-toggle="table" 
@@ -24,12 +24,14 @@
                     <th data-field="portalId">{s name="mopt_payone_transaction_log/grid/column_portal_id"}Portal ID{/s}</th>
                     <th data-field="status">{s name="mopt_payone_transaction_log/grid/column_status"}Status{/s}</th>
                     <th data-formatter="DateFormatter" data-field="transactionDate.date">{s name="mopt_payone_transaction_log/grid/column_transaction_date"}Transaktionsdatum{/s}</th>
-                    <th data-formatter="idDetailsFormatter" data-field="details">{s name="details/title"}Details{/s}</th>
+                    <th data-formatter="DetailsFormatter" data-field="details">{s name="details/title"}Details{/s}</th>
                 </tr>
             </thead>
         </table>
     </div>
 {/block}
 {block name="resources/javascript" append}
+    <script type="text/javascript">
         {include file='backend/fc_payone/include/logs.js'}
+    </script>
 {/block}

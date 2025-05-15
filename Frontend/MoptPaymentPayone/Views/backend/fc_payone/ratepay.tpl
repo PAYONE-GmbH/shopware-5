@@ -2,12 +2,19 @@
 
 {block name="content/main"}
     {namespace name=backend/mopt_config_payone/main}
-    <div class="col-md-9">
+    <div class="col-md-12">
         <h3>{s name="global-form/ratepay"}Konfiguration Ratepay{/s}</h3>
         <div>
             {s name="global-form/ratepayDesc"}Stellen Sie hier die Konfiguration zur Zahlart Ratepay ein.{/s}
         </div>
         <div id="ratepayconfigs" class="form-group" >
+            <form role="form" id="ratepaysettingsform" enctype="multipart/form-data">
+                {include file='backend/fc_payone/include/dropdown_payments.tpl'}
+                <div class="row">
+                    {include file='backend/fc_payone/include/input_text.tpl' id='ratepaySnippetId' label="{s name="fieldlabel/ratepaySnippetId"}Ratepay Snippet Id{/s}" pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' minlength="1" maxlength="100" content="{s name="fieldlabelhelp/ratepaySnippetId"}Ratepay Snippet Id{/s}"}
+                </div>
+                <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
+            </form>
             <form role="form" id="ajaxratepay" enctype="multipart/form-data">
                 <table class="table-condensed" id="ratepaytable">
                     <tr><th>{s name="fieldlabel/id"}ID{/s}</th><th>ShopID</th><th>{s name="fieldlabel/currency"}Währung{/s}</th><th>{s name="fieldlabel/installmentmode"}Ratenkauf Modus{/s}</th><th>{s name="fieldlabel/country"}Land{/s}</th></tr>
@@ -41,6 +48,10 @@
 
 {block name="resources/javascript" append}
     <script type="text/javascript">
+        {include file='backend/fc_payone/include/javascript.tpl.js' form="#ratepaysettingsform" loadAction="generalconfigdata" saveAction="ajaxSavePayoneConfig"}
+    </script>
+
+    <script type="text/javascript">
         var ratepayform = $('#ajaxratepay');
         var ratepaydownloadurl = "{url controller=MoptPayoneRatepay action=downloadRatepayConfigs forceSecure}";
         var ratepaysaveurl = "{url controller=MoptPayoneRatepay action=saveRatepayConfigs forceSecure}";
@@ -57,20 +68,11 @@
                 var url = ratepaysaveurl;
 
             }
-            console.log('Values:');
-            console.log(ratepayvalues);
-            alert('Before Post');
             $.post(url, ratepayvalues, function (response) {
-                console.log('Response:');
-                console.log(response);
-                console.log('Before Parsing');
                 {literal}
                 var data_array = $.parseJSON(response);
                 {/literal}
-                console.log('After Parsing');
                 $('#ratepaytable tr').css('background-color','');
-                console.log('Data Array:');
-                console.log(data_array);
                 if (data_array.errorElem && data_array.errorElem.length) {
                     if (data_array.errorElem.length > 0){
                         alert('data_array.errorElem.length >0');
@@ -83,7 +85,6 @@
                     location.reload();
                 }
             });
-            alert('After Post');
         });
 
         function removeRow(rowId) {
@@ -101,6 +102,7 @@
                 "<option value='0' {if $ratepayconfig && $ratepayconfig->getRatepayInstallmentMode() == 0}selected='selected'{/if}>Vorkasse</option>"+
                 "<option value='1' {if $ratepayconfig && $ratepayconfig->getRatepayInstallmentMode() == 1}selected='selected'{/if}>Lastschrift</option>"+
                 "</select></td>"+
+                "<td><input name='row[" + len + "][countryCodeBilling]' id='countrycode_" + len + "' type='text' style='max-width:125px;' class='form-control' readonly='readonly'></td>" +
                 "<td role='button' name='delete' value='delete' onclick='removeRow(" + len + ");'><img id='delete_" + len + "' height='100%' src='{link file="backend/_resources/images/delete.png"}'></td>" +
                 "</tr>";
             $('#ratepaytable > tbody:last-child').append(newRow);
@@ -110,7 +112,5 @@
             var d = document.getElementById('row' + item);
             d.style.backgroundColor = "red";
         }
-
-    </script>
 {/block}
 
