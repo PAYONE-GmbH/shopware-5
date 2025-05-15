@@ -626,7 +626,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $cacheManager = Shopware()->Container()->get('shopware.cache_manager');
 
         $cacheManager->clearProxyCache();
-        $this->addGooglePayConfigOptions();
 
         try {
             $schemaTool->createSchema(array(
@@ -850,7 +849,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndRemoveTrustlyExtension();
 
-
+        $this->addGooglePayConfigOptions();
 
     }
 
