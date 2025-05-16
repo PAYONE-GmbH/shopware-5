@@ -14,7 +14,6 @@ form.on("submit", function (event) {
     }
     $.post(url, amazonpayvalues, function (response) {
         var data_array = $.parseJSON(response);
-        console.log(data_array);
         $('#amazonpaytable tr').css('background-color', '');
         if (data_array.errorElem && data_array.errorElem.length) {
             if (data_array.errorElem.length > 0) {

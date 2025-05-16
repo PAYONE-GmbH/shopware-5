@@ -87,7 +87,9 @@
                     </tr>
                 </table>
                 <div>
-                    <img id="newRow" onclick="addRow()" src="{link file='backend/_resources/images/add.png'}">
+                    {if $showAddButton}
+                        <img id="newRow" onclick="addRow()" src="{link file='backend/_resources/images/add.png'}">
+                    {/if}
                 </div>
 
                 <button type="submit" class="btn-payone btn ">{s name="global-form/button"}Speichern{/s}</button>
