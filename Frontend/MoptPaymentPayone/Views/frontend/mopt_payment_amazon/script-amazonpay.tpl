@@ -26,12 +26,10 @@
         $.ajax({
                 url: url,
                 success: function (data) {
-                    console.log('success');
                     $.loadingIndicator.close();
                     confirmationFlow.success();
                 },
                 error: function (data) {
-                    console.log('error');
                     $.loadingIndicator.close();
                     confirmationFlow.error();
                     amazon.Login.logout();
@@ -124,7 +122,6 @@
                             $.loadingIndicator.close();
                             $('#jsErrors').show();
                             $('#jsErrorContent').html(responseData.errormessage);
-                            console.log('status is error doing nothing');
                         } else {
                             var moptAmazonCountryChanged = responseData.countryChanged;
                             $('#jsErrors').hide();

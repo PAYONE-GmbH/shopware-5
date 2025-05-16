@@ -526,7 +526,6 @@ function moptPaymentReady() {
             var fcpolang = me.opts.moptPayoneParamsLanguage;
 
             if (Payone.ClientApi.Language[fcpolang] === undefined) {
-                console.log("language is not (yet) supported, falling back to english)");
                 fcpolang = 'en';
             }
 
