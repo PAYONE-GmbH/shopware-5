@@ -637,6 +637,11 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $configCount = count($amazonpayConfigs);
         $showAddButton = $shopCount > $configCount;
 
+        // fix possible quotes in shopname breaking javascript
+        foreach ($shops as $shop) {
+            $shop->setName(htmlentities($shop->getName(), ENT_QUOTES, 'UTF-8', false));
+        }
+
         $this->View()->assign(array(
             "amazonpayconfigs" => $amazonpayConfigs,
             "shops" => $shops,
@@ -1247,6 +1252,11 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $paypalConfigs = $paypalExpressRepo->findAll();
         foreach ($paypalConfigs as $paypalConfig) {
             $paypalConfig->file = basename($paypalConfig->getImage());
+        }
+
+        // fix possible quotes in shopname breaking javascript
+        foreach ($shops as $shop) {
+            $shop->setName(htmlentities($shop->getName(), ENT_QUOTES, 'UTF-8', false));
         }
         $shopCount = count($shops);
         $configCount = count($paypalConfigs);
