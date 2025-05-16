@@ -22,6 +22,8 @@
                         <tr>
                             <th>{s name="fieldlabel/id"}ID{/s}</th>
                             <th>{s name="fieldlabel/shop"}Shop{/s}</th>
+                            <th>{s name="fieldlabel/packStationMode"}Packstation Mode{/s}</th>
+                            <th>{s name="fieldlabel/name"}Name{/s}</th>
                             <th>{s name="fieldlabel/logo"}Logo{/s}</th>
                             <th>{s name="fieldlabel/upload"}Hochladen{/s}</th>
                         </tr>
@@ -34,6 +36,12 @@
                                     {/foreach}
                                 </select>
                             </td>
+                            <td><select class="form-control" name="row[{$paypalconfig->getId()}][packStationMode]" id="packStationMode_{$paypalconfig->getId()}">
+                                        <option value="allow" {if $paypalconfig->getPackStationMode() == "allow"} selected="selected"{/if}>{s name="packStation/allow"}Erlauben{/s}</option>
+                                        <option value="deny" {if $paypalconfig->getPackStationMode() == "deny"} selected="selected"{/if}>{s name="packStation/deny"}Verbieten{/s}</option>
+                                </select>
+                            </td>
+                            <td style="max-width:125px;">{$paypalconfig->file}</td>
                             <td>
                                 <input name="row[{$paypalconfig->getId()}][image]" id="image_{$paypalconfig->getId()}" value="{$paypalconfig->getImage()}" hidden>
                                 <input name="row[{$paypalconfig->getId()}][filename]" id="filename_{$paypalconfig->getId()}" value="" hidden>
@@ -43,25 +51,11 @@
                             <td role="button" name="delete" value="delete" onclick="removeRow({$paypalconfig->getId()})"><img id="delete_{$paypalconfig->getId()}" height="100%" src="{link file='backend/_resources/images/delete.png'}"></td>
                             {/foreach}
 
-
-                            {* <!--     <tr id="row0">
-                                     <td><input name="row[0][id]" id="id_0" type="text" style="max-width:125px;" class="form-control" value="0" readonly="readonly" ></td>
-                                     <td><select class="form-control" name="row[0][shop]" id="shop_0">
-                                             {foreach from=$shops item=shop}
-                                                 <option value="{$shop->getId()}" {if $shop->getId() == $paypalconfig->getShop()->getId()} selected="selected"{/if}>{$shop->getName()}</option>
-                                             {/foreach}
-                                         </select>
-                                     </td>
-                                     <td>
-                                         <input name="row[0][image]" id="image_{$paypalconfig->getId()}" value="{$paypalconfig->getImage()}" hidden>
-                                         <input name="row[0][filename]" id="filename_{$paypalconfig->getId()}" value="" hidden>
-                                         <output id="list0"></output>
-                                     </td>
-                                     <td><input type="file" id="files0" name="files"></td>
-                                     <td role="button" name="delete" value="delete" onclick="removeRow(0)"><img id="delete_0" height="100%" src="{link file='backend/_resources/images/delete.png'}"></td>
-         --> *}
-
-                        <tr><td><img id="newRow" onclick="addRow()" src="{link file='backend/_resources/images/add.png'}"></td></tr>
+                        <tr>
+                            {if $showAddButton}
+                            <td><img id="newRow" onclick="addRow()" src="{link file='backend/_resources/images/add.png'}"></td>
+                            {/if}
+                        </tr>
                     </table>
                     <button type="submit" class="btn-payone btn " >{s name="global-form/button"}Speichern{/s}</button>
                 </form>
@@ -262,6 +256,12 @@
                 "<td>" +
                 "<select class='form-control' name='row[" + len + "][shop]' id='shop_" + len + "'>" +
                 "{foreach from=$shops item=shop} <option value='{$shop->getId()}'>{$shop->getName()}</option>{/foreach}" +
+                "</select>" +
+                "</td>" +
+                "<td>" +
+                "<select class='form-control' name='row[" + len + "][packStationMode]' id='packStationMode_" + len + "'>" +
+                "<option value='allow'>{s name='packStation/allow'}Erlauben{/s}</option>" +
+                "<option value='deny'>{s name="packStation/deny"}Verbieten{/s}</option>" +
                 "</select>" +
                 "</td>" +
                 "<td>" +

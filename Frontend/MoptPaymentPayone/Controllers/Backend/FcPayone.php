@@ -626,32 +626,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         ));
     }
 
-    public function ajaxwalletAction()
-    {
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
-        $query = $this->getAllPaymentsQuery(array('name' => 'mopt_payone__ewallet%'), null, $repository);
-        $payonepaymentmethods = $query->getArrayResult();
-        // remove paypal v2 and paypal express v2
-        $payonepaymentmethods = array_filter($payonepaymentmethods, function ($item) {
-            return $item['name'] !== 'mopt_payone__ewallet_paypalv2' && $item['name'] !== 'mopt_payone__ewallet_paypal_expressv2';
-        });
-        $amazonpayRepo = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay');
-        $amazonpayConfigs = $amazonpayRepo->findAll();
-        $shopRepo = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');
-        $shops = $shopRepo->findAll();
-        $paypalExpressRepo = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal');
-        $paypalConfigs = $paypalExpressRepo->findAll();
-
-        $this->View()->assign(array(
-            "payonepaymentmethods" => $payonepaymentmethods,
-            "data" => $data,
-            "amazonpayconfigs" => $amazonpayConfigs,
-            "shops" => $shops,
-            "paypalconfigs" => $paypalConfigs,
-        ));
-    }
-
     public function amazonpayAction()
     {
         // $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -659,25 +633,15 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $amazonpayConfigs = $amazonpayRepo->findAll();
         $shopRepo = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');
         $shops = $shopRepo->findAll();
+        $shopCount = count($shops);
+        $configCount = count($amazonpayConfigs);
+        $showAddButton = $shopCount > $configCount;
+
         $this->View()->assign(array(
             "amazonpayconfigs" => $amazonpayConfigs,
             "shops" => $shops,
+            "showAddButton" => $showAddButton
         ));
-    }
-
-    public function ajaxgetWalletConfigAction()
-    {
-        $data = array();
-        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-
-        $paymentid = $this->Request()->getParam('paymentid');
-        $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
-        $query = $this->getAllPaymentsQuery(array('id' => $paymentid), null, $repository);
-        $paymentdata = $query->getArrayResult();
-        $data['data'] = $paymentdata[0];
-        $data['status'] = 'success';
-        $encoded = json_encode($data);
-        echo $encoded;
     }
 
     public function transactionstatusconfigAction()
@@ -828,6 +792,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             }
             if ($configStillExists === false) {
                 Shopware()->Models()->remove($paypalConfig);
+                Shopware()->Models()->flush();
             }
         }
         foreach ($paymentData['row'] as $config) {
@@ -1280,11 +1245,18 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $shops = $shopRepo->findAll();
         $paypalExpressRepo = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal');
         $paypalConfigs = $paypalExpressRepo->findAll();
+        foreach ($paypalConfigs as $paypalConfig) {
+            $paypalConfig->file = basename($paypalConfig->getImage());
+        }
+        $shopCount = count($shops);
+        $configCount = count($paypalConfigs);
+        $showAddButton = $shopCount > $configCount;
 
         $this->View()->assign(array(
             "shops" => $shops,
             "paypalconfigs" => $paypalConfigs,
             "payonepaymentmethods" => $payonepaymentmethods,
+            "showAddButton" => $showAddButton
         ));
     }
 
