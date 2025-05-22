@@ -8,7 +8,7 @@ The official extension for [Shopware 5](https://www.payone.com/DE-de/payment-loe
 website via PAYONE service.
 
 ## Installation
-### Prerequisites
+### Requirements
 You should have your PAYONE API credentials. If you don't have credentials, contact us: sales@payone.com.
 
 ### Install
