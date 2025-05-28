@@ -666,6 +666,11 @@ class MoptPayoneConfig extends ModelEntity
     private $paypalV2ButtonShape;
 
     /**
+     *  @ORM\Column(name="googlepay_merchant_id", type="string", length=255, nullable=true, unique=false)
+     */
+    private $googlepayMerchantId;
+
+    /**
      * @ORM\Column(name="googlepay_allow_visa", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
      */
     private $googlepayAllowVisa;
@@ -2703,5 +2708,13 @@ class MoptPayoneConfig extends ModelEntity
 
     public function getGooglepayButtonType() {
         return $this->googlepayButtonType;
+    }
+
+    public function setGooglepayMerchantId($value) {
+        $this->googlepayMerchantId = $value;
+    }
+
+    public function getGooglepayMerchantId() {
+        return $this->googlepayMerchantId;
     }
 }

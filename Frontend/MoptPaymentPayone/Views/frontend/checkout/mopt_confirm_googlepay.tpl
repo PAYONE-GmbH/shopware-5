@@ -29,7 +29,7 @@
             type: 'PAYMENT_GATEWAY',
             parameters: {
                 'gateway': 'payonegmbh',
-                'gatewayMerchantId': '{$mopt_googlepay_merchantId}'
+                'gatewayMerchantId': '{$mopt_googlepay_gatewayMerchantId}'
             }
         };
 
@@ -68,6 +68,7 @@
             paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
             paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
             paymentDataRequest.merchantInfo = {
+                merchantId: '{$mopt_googlepay_merchantId}',
                 merchantName: '{$mopt_googlepay_merchantName}'
             };
             return paymentDataRequest;

@@ -276,10 +276,11 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('mopt_googlepay_allowedAuthMethods', '["PAN_ONLY", "CRYPTOGRAM_3DS"]');
             $view->assign('mopt_googlepay_allowPrepaidCards', $config['googlepayAllowPrepaidCards']);
             $view->assign('mopt_googlepay_allowCreditCards', $config['googlepayAllowCreditCards']);
-            $view->assign('mopt_googlepay_merchantId',$config['merchantId']);
+            $view->assign('mopt_googlepay_gatewayMerchantId',$config['merchantId']);
             $view->assign('mopt_googlepay_mode',$config['liveMode'] === true? 'PRODUCTION' : 'TEST');
             $view->assign('mopt_googlepay_country',  $config['googlepayCountryCode']);
             $view->assign('mopt_googlepay_currency', Shopware()->Container()->get('currency')->getShortName());
+            $view->assign('mopt_googlepay_merchantId', $config['googlepayMerchantId']);
             $view->assign('mopt_googlepay_merchantName', Shopware()->Config()->get('company'));
             $view->assign('mopt_googlepay_showDisplayItems', $config['submitBasket']);
             $view->assign('mopt_googlepay_displayItems', $displayItems);

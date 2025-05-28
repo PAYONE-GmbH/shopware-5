@@ -2304,6 +2304,36 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      * @throws Zend_Db_Adapter_Exception
      * @throws Zend_Db_Statement_Exception
      */
+    public function checkAndAddGooglePayMerchantId()
+    {
+        $textColumns = ['googlepay_merchant_id'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
+
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if applepay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
     public function checkAndAddGooglePayCountryCode()
     {
         $textColumns = ['googlepay_country_code'];
