@@ -1149,6 +1149,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndAddGooglePayAllowCardOptions();
         $this->getInstallHelper()->checkAndAddGooglePayCountryCode();
         $this->getInstallHelper()->checkAndAddGooglePayButtonOptions();
+        $this->getInstallHelper()->checkAndAddGooglePayMerchantId();
     }
 
 }

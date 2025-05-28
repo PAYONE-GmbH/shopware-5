@@ -1350,6 +1350,15 @@ Ext.define('Shopware.apps.MoptConfigPayone.view.main.Detail', {
                 labelWidth: 200
             },
             {
+                xtype: 'textfield',
+                fieldLabel: '{s name="fieldlabel/googlepayMerchantId"}GooglePay Merchant ID{/s}',
+                helpText: '{s name="fieldlabelhelp/googlepayMerchantId"}GooglePay Merchant ID{/s}',
+                name: 'googlepayMerchantId',
+                allowBlank: true,
+                disabled: false,
+                labelWidth: 200
+            },
+            {
                 xtype: 'combobox',
                 fieldLabel: '{s name="fieldlabel/googlepayAllowVisa"}GooglePay Visa zulassen{/s}',
                 helpText: '{s name="fieldlabelhelp/googlepayAllowVisa"}GooglePay Visa zulassen{/s}',
