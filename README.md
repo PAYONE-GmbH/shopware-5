@@ -17,7 +17,7 @@ From PAYONE's official docs site, you can install the plugin in two ways:
 - directly downloading from GitHub
 
 ## Features
-- Extensive range of features, easy to understand and supported by comprehensive online help
+- Extensive range of features, easy to understand, and supported by comprehensive documentation.
 - Seamlessly integrates into existing Shopware shops via AJAX; enables checkout without redirecting to third-party websites
 - Credit assessments with dynamic payment option controls in the checkout process based on the consumer’s credit rating
 - Configuration export function available in XML format for streamlined support
