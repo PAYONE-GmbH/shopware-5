@@ -6,28 +6,21 @@
                 <span class="glyphicon glyphicon-chevron-down"></span>
             </a>
             <ul id="drilldown-1" class="nav collapse">
-                <li><a id="link-drilldown-1-1" href="#" class="payone-menu"  data-toggle="collapse" data-target="#drilldown-1-1">
-                        <span class="glyphicon glyphicon-arrow-right"></span>{s name="global-form/fieldset1"}Allgemein{/s}<span class="glyphicon glyphicon-chevron-right"></span>
+                <li><a href="#" id="link-drilldown-1-4" class="box box-menu payone-menu"  data-toggle="collapse" data-target="#drilldown-1-4">
+                        <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/basicSettings"}Grundeinstellungen{/s}<span class="glyphicon glyphicon-chevron-right"></span>
                         <span class="glyphicon glyphicon-chevron-down"></span>
                     </a>
-                    <ul id="drilldown-1-1" class="nav collapse">
+                    <ul id="drilldown-1-4" class="nav collapse">
                         <li><a class="payone-submenu" href="{url controller="fcPayone" action="connectionconfig"}">
                                 <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/connectionTest"}Verbindungstest{/s}</a></li>
-                        <li><a href="#" id="link-drilldown-1-4" class="box box-menu payone-menu"  data-toggle="collapse" data-target="#drilldown-1-4">
-                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/basicSettings"}Grundeinstellungen{/s}<span class="glyphicon glyphicon-chevron-right"></span>
-                                <span class="glyphicon glyphicon-chevron-down"></span>
-                            </a>
-                            <ul id="drilldown-1-4" class="nav collapse">
-                                <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="generalconfig"}">
-                                        <span class="glyphicon glyphicon-arrow-right"></span>{s name="global-form/fieldset1"}Allgemein{/s}</a></li>
-                                <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="transactionstatusconfig"}">
-                                        <span class="glyphicon glyphicon-arrow-right"></span>{s name="global-form/fieldset5"}Statusweiterleitung{/s}</a></li>
-                                <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="paymentstatusconfig"}">
-                                        <span class="glyphicon glyphicon-arrow-right"></span>{s name="global-form/fieldset4"}Paymentstatus{/s}</a></li>
-                            </ul>
-                        </li>
+                        <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="generalconfig"}">
+                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="global-form/fieldset1"}Allgemein{/s}</a></li>
+                        <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="transactionstatusconfig"}">
+                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="global-form/fieldset5"}Statusweiterleitung{/s}</a></li>
+                        <li><a class="box box-submenu payone-submenu" href="{url controller="fcPayone" action="paymentstatusconfig"}">
+                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="global-form/fieldset4"}Paymentstatus{/s}</a></li>
                     </ul>
-                </li>  
+                </li>
                 <li><a id="link-drilldown-1-2" href="#" class="box box-menu payone-menu menu-level-expert"  data-toggle="collapse" data-target="#drilldown-1-2">
                         <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/paymentMethods"}Zahlungsarten{/s}<span class="glyphicon glyphicon-chevron-right"></span>
                         <span class="glyphicon glyphicon-chevron-down"></span>
