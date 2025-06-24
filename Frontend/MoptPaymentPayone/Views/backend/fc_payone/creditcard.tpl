@@ -65,6 +65,13 @@
                             {include file='backend/fc_payone/include/input_text.tpl' id='apiKey' label="{s name="fieldlabel/apiKey"}Schlüssel{/s}" pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9`´€]*' minlength="1" maxlength="100" content="{s name="fieldlabelhelp/apiKey"}Schlüssel des zu verwendenden Zahlungsportal{/s}"}
                         </td>
                     </tr>
+
+                    <tr class="form-group">
+                        <td>
+                            {include file='backend/fc_payone/include/input_checkbox.tpl' id='liveMode' label="{s name="fieldlabel/liveMode"}Livemodus{/s}" pattern="^[0-9]*" content="{s name="fieldlabelhelp/liveMode"}Hier wird definiert wie die Zahlart verwendet wird. Live = Zahlungen werden auf der PAYONE-Plattform ausgeführt Test = Zahlungen werden nur auf der PAYONE-Testumgebung simuliert{/s}"}
+                        </td>
+                    </tr>
+
                 </table>
 
                 <table class="table-condensed">

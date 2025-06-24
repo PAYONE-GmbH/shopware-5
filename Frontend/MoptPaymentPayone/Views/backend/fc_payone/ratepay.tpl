@@ -80,7 +80,6 @@
                         showalert("Das Abrufen von " + data_array.errorElem.length + " Konfigurationen ist fehlgeschlagen", "alert-danger");
                     }
                 } else {
-                    alert('Die Daten wurden gespeichert');
                     showalert("Die Daten wurden gespeichert", "alert-success");
                     location.reload();
                 }
