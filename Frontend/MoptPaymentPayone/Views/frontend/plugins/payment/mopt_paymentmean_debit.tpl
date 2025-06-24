@@ -15,7 +15,8 @@
 <div class="payment--form-group">
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__debit_bankcountry]" 
-                id="mopt_payone__debit_bankcountry" 
+                id="mopt_payone__debit_bankcountry"
+                aria-label="{s name='bankCountry'}Land{/s}"
                 {if $moptRequired}required="required" aria-required="true"{/if}
                 class="select--country is--required{if $error_flags.mopt_payone__debit_bankcountry} has--error{/if}">
             <option disabled="disabled" value="" selected="selected">{s name='bankCountry'}Land{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>

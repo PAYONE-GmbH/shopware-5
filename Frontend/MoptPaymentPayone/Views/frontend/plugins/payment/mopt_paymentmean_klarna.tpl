@@ -142,6 +142,7 @@
             {block name="frontend_checkout_payment_payone_birthday_day_input"}
                 <select name="moptPaymentData[mopt_payone__klarna_birthday]"
                         id="mopt_payone__klarna_birthday"
+                        aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                         class="select--country is--required{if $error_flags.mopt_payone__klarna_birthday} has--error{/if}"
                         {if $payment_mean.id == $form_data.payment && $isKlarnaBirthdayNeeded}required="required"
                         aria-required="true"{/if}
@@ -161,6 +162,7 @@
             {block name="frontend_checkout_payment_payone_birthday_month_input"}
                 <select name="moptPaymentData[mopt_payone__klarna_birthmonth]"
                         id="mopt_payone__klarna_birthmonth"
+                        aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                         class="select--country is--required{if $error_flags.mopt_payone__klarna_birthmonth} has--error{/if}"
                         {if $payment_mean.id == $form_data.payment && $isKlarnaBirthdayNeeded}required="required"
                         aria-required="true"{/if}
@@ -180,6 +182,7 @@
             {block name="frontend_checkout_payment_payone_birthday_year_input"}
                 <select name="moptPaymentData[mopt_payone__klarna_birthyear]"
                         id="mopt_payone__klarna_birthyear"
+                        aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                         class="select--country is--required{if $error_flags.mopt_payone__klarna_birthyear} has--error{/if}"
                         {if $payment_mean.id == $form_data.payment && $isKlarnaBirthdayNeeded}required="required"
                         aria-required="true"{/if}
