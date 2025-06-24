@@ -3,14 +3,6 @@
 {block name="content/main"}
     <div class="col-md-12">
         <h3>{s name="fieldlabel/connectionSettings"}Verbindungseinstellungen{/s}</h3>
-        <div>
-            {s name="fieldlabel/connectionText"}
-                Stellen Sie hier Ihre Verbindungsdaten zur PAYONE Plattform ein.
-                <BR>
-                Diese finden Sie im Backend von PAYONE unter
-                <a href=https://pmi.pay1.de>pmi.pay1.de</a>
-            {/s}
-        </div>
         <div class='col-md-12'>
             <form id="connectionconfigform" class="form-horizontal needs-validation" novalidate>
                 {include file='backend/fc_payone/include/input_text.tpl' id='merchantId' label="{s name="fieldlabel/merchantId"}Merchant-Id{/s}" pattern="^[0-9]*" minlength="1" maxlength="5" content="{s name="fieldlabelhelp/merchantId"}ID des zu verwendenden Accounts{/s}"}
