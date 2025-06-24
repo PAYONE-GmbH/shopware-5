@@ -106,6 +106,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             'ajaxsaveApplepayKey',
             'paypalexpress',
             'paypalexpressv2',
+            'connectiontestData'
         );
         return $returnArray;
     }
@@ -534,7 +535,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function ajaxgetIframeConfigAction()
     {
-        $shopId = $this->Request()->getParam('shopId');
+        $shopId = $this->Request()->getParam('paymentid');
         $data = array();
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig');
@@ -543,8 +544,11 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         } else {
             $query = $this->getAllPaymentsQuery(array('isDefault' => true), null, $repository);
         }
-        $query = $this->getAllPaymentsQuery(array('shopId' => true), null, $repository);
         $configData = $query->getArrayResult();
+        if (!$configData) {
+            $query = $this->getAllPaymentsQuery(array('isDefault' => true), null, $repository);
+            $configData = $query->getArrayResult();
+        }
         $data['data'] = $configData[0];
         $data['status'] = 'success';
         $encoded = json_encode($data);
@@ -757,19 +761,19 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data['status'] = 'success';
         $data['message'] = 'Zahlungsart erfolgreich gespeichert!';
         $this->createPayoneConfig($paymentData);
-        $this->createPayoneCreditcardConfig($paymentData);
+        if (isset($paymentData['apiKey'])) {
+            $this->createPayoneCreditcardConfig($paymentData);
+        }
         $encoded = json_encode($data);
         echo $encoded;
     }
 
     public function ajaxSaveIframeConfigAction()
     {
-        $shopId = $this->Request()->getParam('shopId');
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentData = $this->Request()->getPost();
         $data['status'] = 'success';
         $data['message'] = 'Konfiguration erfolgreich gespeichert!';
-        $paymentData['shopId'] = $shopId;
         $this->createIframeConfig($paymentData);
         $encoded = json_encode($data);
         echo $encoded;
@@ -883,10 +887,26 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig');
         $payment = $repository->findOneBy(
             array(
-                'id' => '1'
+                'shopId' => $options['paymentId']
             )
         );
+        if (!$payment) {
+            $shopRepo = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');
+            $shop = $shopRepo->findOneBy(
+                array(
+                    'id' => $options['paymentId']
+                )
+            );
+            $options['shop'] = $shop;
+            $options['liveMode'] = $options['liveMode'] == "true"? 1 : 0;
+            $payment = new \Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig();
+            $payment->setId('');
+            $payment->setErrorLocaleId(74);
+            unset($options['id']);
+            unset($options['paymentId']);
+        }
 
+        $options['liveMode'] = $options['liveMode'] == "true" ? 1 : 0;
         $payment->fromArray($options);
         Shopware()->Models()->persist($payment);
         Shopware()->Models()->flush($payment);
@@ -1134,7 +1154,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         /** @var $creditcardConfig \Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig */
         $creditcardConfig = $repository->findOneBy(
             array(
-                'shopId' => $options['paymentId']
+                'id' => 1
             )
         );
         $creditcardConfig->fromArray($options);

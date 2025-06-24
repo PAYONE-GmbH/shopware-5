@@ -156,7 +156,7 @@
             $.each(checkboxes, function (key, value) {
                 $(value).attr('type', 'checkbox');
             });
-            var url = 'ajaxSavePaymentConfig';
+            var url = 'ajaxSavePayoneConfig';
             values = values + '&paymentId=' + paymentid;
             $.post(url, values, function (response) {
                 var data_array = $.parseJSON(response);
