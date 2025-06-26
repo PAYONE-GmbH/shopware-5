@@ -1193,15 +1193,5 @@ class MoptPayoneCreditcardConfig extends ModelEntity
         $this->defaultTranslationIframeCvc = $defaultTranslationIframeCvc;
     }
 
-    public function getErrorLocaleId()
-    {
-        return $this->errorLocaleId;
-    }
-
-    public function setErrorLocaleId($errorLocaleId)
-    {
-        $this->errorLocaleId = $errorLocaleId;
-    }
-
     
 }

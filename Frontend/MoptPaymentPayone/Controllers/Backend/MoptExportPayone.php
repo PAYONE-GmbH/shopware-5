@@ -1,10 +1,9 @@
 <?php
 
-use Shopware\Components\CSRFWhitelistAware;
 /**
  * $Id: $
  */
-class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_Action implements CSRFWhitelistAware
+class Shopware_Controllers_Backend_MoptExportPayone extends Shopware_Controllers_Backend_ExtJs
 {
     protected $moptPayone__sdk__Builder   = null;
     protected $moptPayone__main           = null;
@@ -12,34 +11,27 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
     protected $moptPayone__paymentHelper  = null;
     protected $transactionForwardingUrls  = array();
 
-    public function getWhitelistedCSRFActions()
-    {
-        $returnArray = array(
-            'generateConfigExport',
-        );
-        return $returnArray;
-    }
-
-    /**
-     * export global config and payment method configurations
-     * it's just one shop which will be exported, but all payment methods from all shops are included
-     *
-     * @throws Exception
-     */
+ /**
+   * export global config and payment method configurations
+   * it's just one shop which will be exported, but all payment methods from all shops are included
+   *
+   * @throws Exception
+   */
     public function generateConfigExportAction()
     {
-        $this->Front()->Plugins()->ViewRenderer()->setNoRender();
+      //$this->Front()->Plugins()->ViewRenderer()->setNoRender();
+      
         $this->moptPayone__sdk__Builder = Shopware()->Plugins()->Frontend()
-            ->MoptPaymentPayone()->Application()->MoptPayoneBuilder();
+              ->MoptPaymentPayone()->Application()->MoptPayoneBuilder();
         $this->moptPayone__main = Shopware()->Plugins()->Frontend()->MoptPaymentPayone()->Application()->MoptPayoneMain();
         $this->moptPayone__helper = $this->moptPayone__main->getHelper();
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
-
+      
         $globalPayoneConfig = $this->moptPayone__main->getPayoneConfig();
 
-        /** @var $service Payone_Settings_Service_XmlGenerate */
+      /** @var $service Payone_Settings_Service_XmlGenerate */
         $service = $this->moptPayone__sdk__Builder->buildServiceSettingsXmlGenerate();
-
+     
         $global = new Payone_Settings_Data_ConfigFile_Shop_Global();
         $global->setMid($globalPayoneConfig['merchantId']);
         $global->setAid($globalPayoneConfig['subaccountId']);
@@ -50,7 +42,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         $global->setParameterInvoice(array()); // nothing to set
         $globalCreditCardConfig = $this->getGlobalCreditcardConfig();
         $global->setPaymentCreditcard($globalCreditCardConfig); // creditcard payment methods are handled separately
-
+      
         if ($globalPayoneConfig['authorisationMethod'] == 'preAuthorise' || $globalPayoneConfig['authorisationMethod'] == 'Vorautorisierung') {
             $global->setRequestType(Payone_Api_Enum_RequestType::PREAUTHORIZATION);
         } else {
@@ -59,7 +51,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         $statusMapping = new Payone_Settings_Data_ConfigFile_Global_StatusMapping();
         $personStatusMapping = array();
         $transactionStatusForwarding = new Payone_Settings_Data_ConfigFile_Misc_TransactionstatusForwarding();
-
+    
         $transactionForwardingUrlsGlobal = '';
 
         foreach ($globalPayoneConfig as $configKey => $configValue) {
@@ -69,11 +61,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
             if (strpos($configKey, 'map') === 0) {
                 $personStatusMapping[$configKey] = $configValue;
             }
-            if (strpos($configKey, 'trans') === 0 && !empty($configValue)
-                && !strpos($configKey, 'Timeout')
-                && !strpos($configKey, 'Logging')
-                && !strpos($configKey, 'Max')
-            ) {
+            if (strpos($configKey, 'trans') === 0 && !empty($configValue)) {
                 $transactionForwardingUrlsGlobal = $transactionForwardingUrlsGlobal . ';' . $configValue;
             }
         }
@@ -88,7 +76,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         $defaultShop = $shopRepository->getActiveDefault();
         $shop->setName($defaultShop->getName());
         $shop->setCode($this->generateFileHash()); //what is this param used for?, now using for filehash
-
+      
         $system = new Payone_Settings_Data_ConfigFile_Shop_System();
         $system->setName('shopware');
         $system->setEdition(Shopware()->Config()->Version);
@@ -139,14 +127,13 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
             $dom->preserveWhiteSpace = false;
             $dom->formatOutput = true;
             $dom->loadXML($export);
-            header('Content-Type: application/xml');
-            header('Content-Disposition: attachment; filename='.basename('PayoneConfigExport.xml'));
-            echo $dom->saveXML();
-            exit(0);
+      
+            $response = array('success' => true, 'moptConfigExport' => $dom->saveXML());
         } catch (Exception $e) {
             $response = array('success' => false, 'error_message' => $e->getMessage());
         }
 
+        $this->View()->assign($response);
     }
 
     protected function getModules()
@@ -167,14 +154,14 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         foreach ($plugins as $plugin) {
             $rows[$plugin->getName()] =$plugin->getVersion();
         }
-
+        
         return $rows;
     }
-
+ 
     protected function getShippingCosts()
     {
         $queryBuilder = Shopware()->Models()->getRepository('Shopware\Models\Dispatch\Dispatch')->getDispatchesQueryBuilder();
-
+        
         $dispatches = $queryBuilder->getQuery()->getArrayResult();
         $shippingMethods = array();
         foreach ($dispatches as $shippingMethod) {
@@ -183,14 +170,14 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
             $key = str_replace(array( '(', ')' ), '', $key);
             $shippingMethods[$key] = $shippingMethod;
         }
-
+        
         return $shippingMethods;
     }
-
+    
     protected function getPaymentMethods($checkCvC)
     {
         $paymentMethods = array();
-
+        
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
         $query = $repository->getListQuery();
         $results = $query->getArrayResult();
@@ -199,7 +186,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
             if (!$this->moptPayone__paymentHelper->isPayonePaymentMethod($paymentMethod['name'])) {
                 continue;
             }
-
+          
             $paymentMethodData = $this->createPaymentExportObject($paymentMethod, $checkCvC);
             if ($paymentMethodData) {
                 $paymentMethods[] = $paymentMethodData;
@@ -207,7 +194,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         }
         return $paymentMethods;
     }
-
+    
     /**
      *
      * @param array $paymentMethod
@@ -219,27 +206,27 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         $paymentHelper = $this->moptPayone__paymentHelper;
         $paymentName = $paymentMethod['name'];
         $config = $this->moptPayone__main->getPayoneConfig($paymentMethod['id']);
-
+         
         if ($paymentHelper->isPayoneCreditcardForExport($paymentName)) {
             $paymentDto = new Payone_Settings_Data_ConfigFile_PaymentMethod_Creditcard();
             $paymentDto->setCvc2($checkCvC);
         }
-
+      
         if ($paymentHelper->isPayonePayInAdvance($paymentName)) {
             $paymentDto = new Payone_Settings_Data_ConfigFile_PaymentMethod_AdvancePayment();
         }
-
+      
         if ($paymentHelper->isPayoneCashOnDelivery($paymentName)) {
             $paymentDto = new Payone_Settings_Data_ConfigFile_PaymentMethod_CashOnDelivery();
             $paymentDto->setNewOrderStatus(0); // 0 = open
         }
-
+      
         if ($paymentHelper->isPayoneDebitnote($paymentName)) {
             $paymentDto = new Payone_Settings_Data_ConfigFile_PaymentMethod_DebitPayment();
             $paymentDto->setNewOrderStatus(0); // 0 = open
             $paymentDto->setBankAccountCheck($config['checkAccount']);
         }
-
+      
         if ($paymentHelper->isPayoneFinance($paymentName)) {
             $paymentDto = new Payone_Settings_Data_ConfigFile_PaymentMethod_Financing();
             $paymentDto->setFinancingType($this->getFinancingType($paymentHelper, $paymentName));
@@ -247,21 +234,21 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
                 $paymentDto->setKlarnaConfig(array('klarnaStoreId' => $config['klarnaStoreId']));
             }
         }
-
+      
         if ($paymentHelper->isPayoneInvoice($paymentName)) {
             $paymentDto = new Payone_Settings_Data_ConfigFile_PaymentMethod_Invoice();
             $paymentDto->setNewOrderStatus(0); // 0 = open
         }
-
+      
         if ($paymentHelper->isPayoneInstantBankTransfer($paymentName)) {
             $paymentDto = new Payone_Settings_Data_ConfigFile_PaymentMethod_OnlineBankTransfer();
         }
-
+      
         if ($paymentHelper->isEWallet($paymentName)) {
             $paymentDto = new Payone_Settings_Data_ConfigFile_PaymentMethod_Wallet();
-
+        
         }
-
+      
         if (!$paymentDto) {
             return false;
         }
@@ -277,32 +264,28 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         $paymentDto->setActive($paymentMethod['active']);
         $paymentDto->setCountries($this->getCountriesFromPaymentMethod($paymentMethod['countries']));
         $paymentDto->setMode($config['liveMode']);
-
+      
         if ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung') {
             $paymentDto->setAuthorization(Payone_Api_Enum_RequestType::PREAUTHORIZATION);
         } else {
             $paymentDto->setAuthorization(Payone_Api_Enum_RequestType::AUTHORIZATION);
         }
 
-        //add forward urls
+    //add forward urls
         $transactionForwardingUrlsPaymentMethod = '';
 
         foreach ($config as $configKey => $configValue) {
-            if (strpos($configKey, 'trans') === 0 && !empty($configValue)
-                && !strpos($configKey, 'Timeout')
-                && !strpos($configKey, 'Logging')
-                && !strpos($configKey, 'Max')
-            ) {
+            if (strpos($configKey, 'trans') === 0 && !empty($configValue)) {
                 $transactionForwardingUrlsPaymentMethod = $transactionForwardingUrlsPaymentMethod . ';' . $configValue;
             }
         }
 
         $transactionForwardingUrlsPaymentMethod = urlencode(ltrim($transactionForwardingUrlsPaymentMethod, ';'));
         $this->transactionForwardingUrls[$paymentMethod['name']] = $transactionForwardingUrlsPaymentMethod;
-
+      
         return $paymentDto;
     }
-
+    
     protected function getCountriesFromPaymentMethod(array $countries)
     {
         if (empty($countries)) {
@@ -312,10 +295,10 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         foreach ($countries as $country) {
             $countryString = $countryString . $country['iso'] . ',';
         }
-
+      
         return rtrim($countryString, ",");
     }
-
+    
     protected function getFinancingType($paymentHelper, $paymentName)
     {
         if ($paymentHelper->isPayoneBillsafe($paymentName)) {
@@ -325,26 +308,26 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
             return Payone_Api_Enum_FinancingType::KLV;
         }
     }
-
+    
     protected function generateFileHash()
     {
         $path = __DIR__ . '/../..';
         return $this->getMd5FromDirectory($path);
     }
-
+    
     protected function getMd5FromDirectory($dir)
     {
         if (!is_dir($dir)) {
             return false;
         }
-
+    
         $filemd5s = array();
         $folder = dir($dir);
 
         while (false !== ($entry = $folder->read())) {
             if ($entry != '.' && $entry != '..') {
                 if (is_dir($dir.'/'.$entry)) {
-                    $filemd5s[] = $this->getMd5FromDirectory($dir.'/'.$entry);
+                     $filemd5s[] = $this->getMd5FromDirectory($dir.'/'.$entry);
                 } else {
                     $filemd5s[] = md5_file($dir.'/'.$entry);
                 }
@@ -353,7 +336,7 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         $folder->close();
         return md5(implode('', $filemd5s));
     }
-
+    
     /**
      * retrieve global creditcard config options
      *
@@ -362,10 +345,10 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
     protected function getGlobalCreditcardConfig()
     {
         $config = array();
-
+        
         $sql = 'SELECT * FROM s_plugin_mopt_payone_creditcard_config';
         $configData = Shopware()->Db()->fetchAll($sql);
-
+        
         if (!$configData) {
             $configData = array('integrationType' => 'not set');
         } elseif ($configData[0]['integration_type'] === '0') {
@@ -375,10 +358,10 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         }
 
         $configData['jsonConfig'] = json_encode($configData);
-
+        
         $config['integrationType'] = $configData['integrationType'];
         $config['jsonConfig'] = $configData['jsonConfig'];
-
+        
         return $config;
     }
 }

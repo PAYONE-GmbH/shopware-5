@@ -269,6 +269,7 @@ Ext.define('Shopware.apps.Order.controller.MoptPayoneDetail', {
 
 
           if (!positionIds || (showShippingCostsCheckbox && Ext.get('mopt_payone__debit_shipment').dom.checked)) {
+            console.log('including shipping');
             includeShipment = true;
           }
 
