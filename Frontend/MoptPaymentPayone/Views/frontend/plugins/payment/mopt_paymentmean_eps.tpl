@@ -3,7 +3,8 @@
 <div class="payment--form-group">
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__eps_bankgrouptype]" 
-                id="mopt_payone__eps_bankgrouptype" 
+                id="mopt_payone__eps_bankgrouptype"
+                aria-label="{s name='bankGroup'}Bankgruppe{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="select--country is--required{if $error_flags.mopt_payone__eps_bankgrouptype} has--error{/if}">
             <option disabled="disabled" value="" selected="selected">{s name='bankGroup'}Bankgruppe{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}</option>

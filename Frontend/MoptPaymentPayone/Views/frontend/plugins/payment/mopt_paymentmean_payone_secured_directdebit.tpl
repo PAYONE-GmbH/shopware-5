@@ -28,6 +28,7 @@
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payone_secured_directdebit_birthday]"
                 id="mopt_payone__payone_secured_directdebit_birthday" onchange="payoneSecuredDirectdebitDobInput()"
+                aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="is--required{if $error_flags.mopt_payone__payone_secured_directdebit_birthday} has--error{/if}">
             <option value="">--</option>
@@ -44,6 +45,7 @@
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payone_secured_directdebit_birthmonth]"
             id="mopt_payone__payone_secured_directdebit_birthmonth" onchange="payoneSecuredDirectdebitDobInput()"
+            aria-label="{s name='birthdate'}Geburtsdatum{/s}"
             {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
             class="is--required {if $error_flags.mopt_payone__payone_secured_directdebit_birthmonth} has--error{/if}">
             <option value="">--</option>
@@ -61,6 +63,7 @@
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payone_secured_directdebit_birthyear]"
                 id="mopt_payone__payone_secured_directdebit_birthyear" onchange="payoneSecuredDirectdebitDobInput()"
+                aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="is--required{if $error_flags.mopt_payone__payone_secured_directdebit_birthyear} has--error{/if}">
             <option value="">----</option>

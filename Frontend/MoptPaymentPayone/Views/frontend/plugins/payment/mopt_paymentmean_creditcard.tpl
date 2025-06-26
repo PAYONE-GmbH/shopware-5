@@ -98,6 +98,7 @@
     </div>
 
     <div class="row" style="margin-top: 25px">
+        <p><label for="mopt_payone__cc_cardtype">{s name='creditCardType'}Kartentyp{/s}</label></p>
         <div id="mopt_payone__cc_cardtype_wrap" class="select-field" {if $moptCreditCardCheckEnvironment.moptCreditcardConfig.auto_cardtype_detection == '1' && !$moptIsAjax}style="display: none;"{/if}>
             <select name="moptPaymentData[mopt_payone__cc_cardtype]"
                     id="mopt_payone__cc_cardtype"
@@ -125,8 +126,9 @@
            data-moptNumberErrorMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="numberFormField"}Dieses Feld darf nur Zahlen enthalten{/s}"
            class="payment--field is--required{if $error_flags.mopt_payone__cc_truncatedcardpan} has--error{/if} moptPayoneNumber" />
     {else}
-        <p class="none">
-            <label for="mopt_payone__cc_truncatedcardpan">
+        <div class="row" style="margin-top: 25px">
+        <p>
+            <label for="mopt_payone__cc_truncatedcardpan_hidden">
                 {s name='creditCardNumber'}Kartennummer{/s}
             </label>
         </p>
@@ -146,15 +148,16 @@
                      "
         />
        </span>
+        </div>
         <BR><BR>
     {/if}
-    <p class="none">
-        <label for="mopt_payone__cc_month">
-            {s name='creditCardValidUntil'}Gültig Bis{/s}
-        </label>
-    </p>
     <div class="select field">
         {if $moptIsAjax}
+        <p class="none">
+            <label for="mopt_payone__cc_month">
+                {s name='creditCardValidUntil'}Gültig Bis{/s}
+            </label>
+        </p>
         <select name="moptPaymentData[mopt_payone__cc_month]"
                 id="mopt_payone__cc_month"
                 {if ($payment_mean.id == $form_data.payment) && $moptIsAccountController != '1'}required="required" aria-required="true"{/if}
@@ -175,6 +178,11 @@
         {html_select_date prefix='mopt_payone__cc_' end_year='+10' display_days=false
   display_months=false year_extra='id="mopt_payone__cc_Year" class="select--country is--required"'}
         {else}
+            <p class="none">
+                <label for="mopt_payone__cc_cardexpiremonth_hidden">
+                    {s name='creditCardValidUntil'}Gültig Bis{/s}
+                </label>
+            </p>
              <span id="expireInput" class="inputIframe">
              <span id="mopt_payone__cc_month"></span>
              <span id="mopt_payone__cc_Year"></span>
@@ -183,6 +191,7 @@
              <span class="hiddenCCFields" style="display: none">
                 <input name="moptPaymentData[mopt_payone__cc_cardexpiremonth_hidden]" type="text"
                        id="mopt_payone__cc_cardexpiremonth_hidden"
+                       aria-label="{s namespace='frontend/register/personal_fieldset' name='RegisterBirthdaySelectMonth'}Monat{/s}"
                        value="{$form_data.mopt_payone__cc_cardexpiremonth_hidden|escape}"  readonly
                        style="height: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardmonth_iframe_height};
                                width: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardmonth_iframe_width} ! important;
@@ -197,6 +206,7 @@
              <span class="hiddenCCFields" style="display: none">
                 <input name="moptPaymentData[mopt_payone__cc_cardexpireyear_hidden]" type="text"
                        id="mopt_payone__cc_cardexpireyear_hidden"
+                       aria-label="{s namespace='frontend/register/personal_fieldset' name='RegisterBirthdaySelectYear'}Jahr{/s}"
                        value="{$form_data.mopt_payone__cc_cardexpireyear_hidden|escape}"  readonly
                        style="height: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardyear_iframe_height};
                                width: {$moptCreditCardCheckEnvironment.moptCreditcardConfig.cardyear_iframe_width} ! important;

@@ -18,6 +18,7 @@
         <div class="select-field">
             <select name="moptPaymentData[mopt_payone__payolution_debitnote_birthday]"
                     id="mopt_payone__payolution_debitnote_birthday" onchange="payolutionDebitNoteDobInput()"
+                    aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                     {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                     class="payment--field {if $error_flags.mopt_payone__payolution_debitnote_birthday} has--error{/if}">
                 <option value="">--</option>
@@ -34,6 +35,7 @@
     <div class="select-field">
             <select name="moptPaymentData[mopt_payone__payolution_debitnote_birthmonth]"
                     id="mopt_payone__payolution_debitnote_birthmonth" onchange="payolutionDebitNoteDobInput()"
+                    aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                     {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                     class="payment--field {if $error_flags.mopt_payone__payolution_debitnote_birthmonth} has--error{/if}">
                 <option value="">--</option>
@@ -50,6 +52,7 @@
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__payolution_debitnote_birthyear]" 
                 id="mopt_payone__payolution_debitnote_birthyear" onchange="payolutionDebitNoteDobInput()"
+                aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="payment--field {if $error_flags.mopt_payone__payolution_debitnote_birthyear} has--error{/if}">
             <option value="">----</option>

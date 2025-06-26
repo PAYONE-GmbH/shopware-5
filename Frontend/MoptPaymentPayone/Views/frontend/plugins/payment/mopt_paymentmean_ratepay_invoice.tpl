@@ -31,6 +31,7 @@
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_invoice_birthday]"
                 id="mopt_payone__ratepay_invoice_birthday" onchange="ratepayInvoiceDobInput()"
+                aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="is--required{if $error_flags.mopt_payone__ratepay_invoice_birthday} has--error{/if}">
             <option value="">--</option>
@@ -47,6 +48,7 @@
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_invoice_birthmonth]"
             id="mopt_payone__ratepay_invoice_birthmonth" onchange="ratepayInvoiceDobInput()"
+            aria-label="{s name='birthdate'}Geburtsdatum{/s}"
             {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
             class="is--required {if $error_flags.mopt_payone__ratepay_invoice_birthmonth} has--error{/if}">
             <option value="">--</option>
@@ -64,6 +66,7 @@
     <div class="select-field">
         <select name="moptPaymentData[mopt_payone__ratepay_invoice_birthyear]"
                 id="mopt_payone__ratepay_invoice_birthyear" onchange="ratepayInvoiceDobInput()"
+                aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="select--country is--required{if $error_flags.mopt_payone__ratepay_invoice_birthyear} register--error-msg {/if}">
             <option value="">----</option>
