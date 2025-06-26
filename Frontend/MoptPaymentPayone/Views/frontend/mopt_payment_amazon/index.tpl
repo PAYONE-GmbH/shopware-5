@@ -232,6 +232,7 @@
     <script>
         window.onAmazonLoginReady = function () {
             amazon.Login.logout();
+            console.log("Amazon Logout");
         };
     </script>
     {/if}
