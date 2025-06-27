@@ -1363,7 +1363,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param type $router
      * @param bool $intialRecurringRequest
-     * @return \Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Bootstrap\Components\Payone\Api\Request\Parameter\Authorization\PaymentMethod\Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
      */
     public function getPaymentAlipay($router, $intialRecurringRequest = false)
     {
@@ -1390,7 +1390,7 @@ class Mopt_PayoneParamBuilder
      * returns WeChatPay payment data object
      *
      * @param type $router
-     * @return \Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Bootstrap\Components\Payone\Api\Request\Parameter\Authorization\PaymentMethod\Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
      */
     public function getPaymentWechatpay($router)
     {

@@ -104,6 +104,7 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
+        exit();
     }
 
     public function saveAmazonPayConfigsAction()
@@ -118,6 +119,7 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
             'Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay'
         );
         $amazonPayConfigs = $amazonPayRepo->findAll();
+        $shopRepo = Shopware()->Models()->getRepository('Shopware\Models\Shop\Shop');
 
         // Remove all configs that don't exist in the form data
         foreach ($amazonPayConfigs as $amazonPayConfig) {
@@ -142,6 +144,11 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
             if (!$config) {
                 $config = new \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay;
             }
+            if (!$dataset['id']) {
+                $dataset['id'] = 0;
+            }
+            $dataset['buttonLanguage'] = 'none';
+            $dataset['shop'] = $shopRepo->findOneBy(array('id' => $dataset['shopId']));;
 
             $config->fromArray($dataset);
             $this->getManager()->persist($config);
@@ -151,6 +158,7 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
+        exit();
     }
 
     /**

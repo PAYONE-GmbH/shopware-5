@@ -60,18 +60,11 @@ class ControllerPath implements SubscriberInterface
             'Enlight_Controller_Dispatcher_ControllerPath_Frontend_MoptTransactionStatusForwarding'
             => 'onGetFrontendControllerPath',
             //Backend
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptConfigPayone' => 'onGetConfigControllerBackend',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptApilogPayone' => 'onGetApilogControllerBackend',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneTransactionLog'
-            => 'onGetTransactionLogControllerBackend',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneOrder'
             => 'moptRegisterController_Backend_MoptPayoneOrder',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayonePayment'
             => 'moptRegisterController_Backend_MoptPayonePayment',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptExportPayone' => 'onGetBackendExportController',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayonePaypal' => 'onGetBackendControllerPaypal',
-            'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneCreditcardConfig'
-            => 'onGetBackendControllerCreditcardConfig',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneRatepay' => 'onGetBackendControllerRatepay',
             'Enlight_Controller_Dispatcher_ControllerPath_Backend_MoptPayoneAmazonPay' => 'onGetBackendControllerAmazonPay',
         );
