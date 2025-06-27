@@ -10,6 +10,7 @@
         {include file='backend/fc_payone/include/dropdown_payments.tpl'}
         <div class='col-md-9'>
             <form role="form" id="googlepayform" class="form-horizontal">
+                {include file='backend/fc_payone/include/input_text.tpl' id='googlepayMerchantId' label="{s name="fieldlabel/googlepayMerchantId"}GooglePay MerchantId{/s}" pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' content="{s name="fieldlabelhelp/googlepayMerchantId"}GooglePay MerchantId{/s}"}
                 {include file='backend/fc_payone/include/dropdown_yesno.tpl' id='googlepayAllowVisa' label="{s name="fieldlabel/googlepayAllowVisa"}GooglePay Visa zulassen{/s}" pattern="^[0-9]*" content="{s name="fieldlabelhelp/googlepayAllowVisa"}GooglePay Visa zulassen{/s}"}
                 {include file='backend/fc_payone/include/dropdown_yesno.tpl' id='googlepayAllowMasterCard' label="{s name="fieldlabel/googlepayAllowMasterCard"}GooglePay Mastercard zulassen{/s}" pattern="^[0-9]*" content="{s name="fieldlabelhelp/googlepayAllowMasterCard"}GooglePay Mastercard zulassen{/s}"}
                 {include file='backend/fc_payone/include/dropdown_yesno.tpl' id='googlepayAllowPrepaidCards' label="{s name="fieldlabel/googlepayAllowPrepaidCards"}GooglePay Prepaid Karten zulassen{/s}" pattern="^[0-9]*" content="{s name="fieldlabelhelp/googlepayAllowPrepaidCards"}GooglePay Prepaid Karten zulassen{/s}"}
