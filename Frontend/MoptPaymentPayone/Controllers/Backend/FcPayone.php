@@ -90,6 +90,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             'ajaxgetOnlineTransferConfig',
             'ajaxwallet',
             'ajaxgetWalletConfig',
+            'ajaxtransactionstatus',
             'ajaxtransactionstatusconfig',
             'ajaxgetTransactionStatusConfig',
             'ajaxriskcheck',
@@ -429,9 +430,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $search = $this->Request()->get('search');
-
-        $start = $this->Request()->get('start');
         $limit = $this->Request()->get('limit');
+        $offset = $this->Request()->get('offset');
 
         $builder = Shopware()->Models()->createQueryBuilder();
         $builder->select('log')
@@ -466,7 +466,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             $builder->setParameter('1', '%' . $search . '%');
         }
 
-        $builder->setFirstResult($start)->setMaxResults($limit);
+        $builder->setFirstResult($offset)->setMaxResults($limit);
 
         $result = $builder->getQuery()->getArrayResult();
         $total = Shopware()->Models()->getQueryCount($builder->getQuery());
@@ -1218,8 +1218,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
                         $response .= $tmp[0] . "=" . $tmp[1] . '<BR>';
                     }
                 }
-                $result[$key]['requestArray'] = $request;
-                $result[$key]['responseArray'] = $response;
+                $result[$key]['requestArray'] = htmlspecialchars($request);
+                $result[$key]['responseArray'] =  htmlspecialchars($response);
             }
         }
         return $result;
@@ -1237,7 +1237,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
                         $request .= $subkey . "=" . $value . '<BR>';
                     }
                 }
-                $result[$key]['details'] = $request;
+                $result[$key]['details'] = htmlspecialchars($request);
             }
         }
         return $result;
