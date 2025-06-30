@@ -90,6 +90,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             'ajaxgetOnlineTransferConfig',
             'ajaxwallet',
             'ajaxgetWalletConfig',
+            'ajaxtransactionstatus',
             'ajaxtransactionstatusconfig',
             'ajaxgetTransactionStatusConfig',
             'ajaxriskcheck',
