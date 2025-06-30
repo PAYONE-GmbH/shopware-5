@@ -1218,8 +1218,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
                         $response .= $tmp[0] . "=" . $tmp[1] . '<BR>';
                     }
                 }
-                $result[$key]['requestArray'] = $request;
-                $result[$key]['responseArray'] = $response;
+                $result[$key]['requestArray'] = htmlspecialchars($request);
+                $result[$key]['responseArray'] =  htmlspecialchars($response);
             }
         }
         return $result;
@@ -1237,7 +1237,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
                         $request .= $subkey . "=" . $value . '<BR>';
                     }
                 }
-                $result[$key]['details'] = $request;
+                $result[$key]['details'] = htmlspecialchars($request);
             }
         }
         return $result;
