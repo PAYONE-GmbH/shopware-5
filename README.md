@@ -12,9 +12,9 @@ website via PAYONE service.
 You should have your PAYONE API credentials. If you don't have credentials, contact us: sales@payone.com.
 
 ### Install
-From PAYONE's official docs site, you can install the plugin in two ways:
-- directly in Shopware
-- directly downloading from GitHub
+You can install the PAYONE plugin using two methods:
+- Directly within Shopware
+- By downloading it directly from GitHub
 
 ## Features
 - Extensive range of features, easy to understand, and supported by comprehensive documentation.
