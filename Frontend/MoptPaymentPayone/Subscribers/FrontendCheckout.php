@@ -146,13 +146,6 @@ class FrontendCheckout implements SubscriberInterface
         //save payment data to session for later use during actual payment process
         Shopware()->Session()->moptPayment = $paymentData;
 
-        //special handling for creditCards
-        // mbe: Removed manuel set to 'mopt_payone_creditcard' for confirm page
-        /*if ($this->Application()->PayoneMain()->getPaymentHelper()->isPayoneCreditcardNotGrouped($ret['name']))
-        {
-          $ret['id'] = 'mopt_payone_creditcard';
-        }*/
-
         $arguments->setReturn($ret);
     }
 
@@ -311,7 +304,6 @@ class FrontendCheckout implements SubscriberInterface
             if ($this->isAmazonPayActive($subject)
                 && ($payoneAmazonPayConfig = $moptPayoneMain->getHelper()->getPayoneAmazonPayConfig(Shopware()->Shop()->getId()))
             ) {
-                $paymenthelper = $moptPayoneMain->getPaymentHelper();
                 $paymentId = Shopware()->Session()->moptAmazonpayPaymentId;
                 $config = $moptPayoneMain->getPayoneConfig($paymentId);
 

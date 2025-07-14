@@ -628,7 +628,6 @@ class AddressCheck implements SubscriberInterface
         }
 
         try {
-            /** @var \Mopt_PayoneMain $moptPayoneMain */
             $userId = Shopware()->Session()->sUserId;
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
             $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);

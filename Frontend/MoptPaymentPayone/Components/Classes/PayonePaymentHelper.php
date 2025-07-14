@@ -250,8 +250,6 @@ class Mopt_PayonePaymentHelper
      */
     public function extractClearingDataFromResponse($response)
     {
-        $responseData = $response->toArray();
-
         if ($responseData['txid']) {
             $responseData['clearing_txid'] = $responseData['txid'];
         }
@@ -1025,18 +1023,18 @@ class Mopt_PayonePaymentHelper
                 {
                     $information['consentDebit'] = 'Mit der Übermittlung der für die Abwicklung des Lastschriftkaufes '
                         . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an die payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
-                        . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayDebit();return false;">Einwilligung</a> '
+                        . 'Meine <a href="#" style="float:none; margin:0;" onclick="mopt_payone__fin_payolution_debitnoteDisplayOverlay();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
                     $information['consentInvoice'] = 'Mit der Übermittlung der für die Abwicklung des Rechnungskaufes '
                         . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an die payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
-                        . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInvoice();return false;">Einwilligung</a> '
+                        . 'Meine <a href="#" style="float:none; margin:0;" onclick="mopt_payone__fin_payolution_invoiceDisplayOverlay();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
 
                     $information['consentInstallment'] = 'Mit der Übermittlung der für die Abwicklung des Ratenkaufes '
                         . 'und einer Identitäts- und Bonitätsprüfung erforderlichen Daten an die payolution GmbH, Columbusplatz 7-8, 1120 Wien bin ich einverstanden. '
-                        . 'Meine <a href="#" style="float:none; margin:0;" onclick="displayOverlayInstallment();return false;">Einwilligung</a> '
+                        . 'Meine <a href="#" style="float:none; margin:0;" onclick="mopt_payone__fin_payolution_installmentDisplayOverlay();return false;">Einwilligung</a> '
                         . 'kann ich jederzeit mit Wirkung für die Zukunft widerrufen.';
 
 
@@ -1137,6 +1135,8 @@ class Mopt_PayonePaymentHelper
         /** @var Address $billing */
         $billing = $user->getDefaultBillingAddress();
 
+        // TODO: get active payment and update _telephone and birthdaydate from
+
         if (isset($paymentData['formData']['mopt_payone__klarna_birthyear'])) {
             $user->setBirthday($paymentData['formData']['mopt_payone__klarna_birthyear']
                 . '-' . $paymentData['formData']['mopt_payone__klarna_birthmonth']
@@ -1173,13 +1173,13 @@ class Mopt_PayonePaymentHelper
             $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_installment_telephone']);
         }
 
-        if (isset($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate'])) {
-            $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_direct_debit_birthdaydate']);
+        if (isset($paymentData['formData']['mopt_payone__fin_ratepay_direct_debit_birthdaydate'])) {
+            $user->setBirthday($paymentData['formData']['mopt_payone__fin_ratepay_direct_debit_birthdaydate']);
             Shopware()->Models()->persist($user);
         }
 
-        if (isset($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone'])) {
-            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_direct_debit_telephone']);
+        if (isset($paymentData['formData']['mopt_payone__fin_ratepay_direct_debit_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__fin_ratepay_direct_debit_telephone']);
         }
 
         if (isset($paymentData['formData']['mopt_payone__payone_safe_invoice_birthdaydate'])) {
@@ -1960,26 +1960,6 @@ class Mopt_PayonePaymentHelper
         $billingCountryIso = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
         $klarnaPersonalIdNeededCountries = array('NO', 'SE', 'DK'); // SE verified FI unsure
         return in_array($billingCountryIso, $klarnaPersonalIdNeededCountries);
-    }
-
-    /**
-     * remove express and installment payments from
-     * payment lists
-     *
-     * @param $payments array
-     * @return array
-     */
-    public function filterExpressAndInstallmentPayments($payments)
-    {
-        foreach ($payments as $index => $payment) {
-            foreach (Mopt_PayoneConfig::PAYMENTS_EXCLUDED_FROM_ACCOUNTPAGE as $exludedPayment) {
-                if (strpos($payment['name'], $exludedPayment) !== false) {
-                    unset($payments[$index]);
-                }
-            }
-        }
-
-        return $payments;
     }
 
     /**
