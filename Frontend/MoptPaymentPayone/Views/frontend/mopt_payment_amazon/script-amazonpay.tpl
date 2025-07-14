@@ -127,11 +127,9 @@
                             $('#jsErrors').hide();
                             // Reload the site, to update dispatches in case country changed
                             if (moptAmazonCountryChanged) {
-                                console.log('Country changed');
                                 $.loadingIndicator.open();
                                 location.reload(true);
                             } else {
-                                console.log('Country did not change');
                                 $.loadingIndicator.close();
                                 {if ! $sMinimumSurcharge}
                                 $('#moptAmazonPayButton').removeAttr("disabled");

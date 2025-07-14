@@ -56,7 +56,7 @@
         </th>
         <td colspan="2"><div class="ratepay-FloatLeft">
                 <div class="ratepay-PercentWith">{$result.{"interest-rate"}|number_format:2:",":"."}%</div>
-                <input id="ratePayInstallmentInterestRate" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_interest_rate]" value="{$result.{"interest-rate"}}"/>
+                <input id="ratePayInstallmentInterestRate" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_ratepay_installment_interest_rate]" value="{$result.{"interest-rate"}}"/>
             </div>
         </td>
     </tr>
@@ -84,7 +84,7 @@
             </div>
         </th>
         <td><b>{$result.{"total-amount"}|number_format:2:",":"."}</b></td>
-        <input id="ratePayInstallmentTotalAmount" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_total]" value="{$result.{"total-amount"}}"/>
+        <input id="ratePayInstallmentTotalAmount" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_ratepay_installment_total]" value="{$result.{"total-amount"}}"/>
         <td class="ratepay-TextAlignLeft"><b>&euro;</b></td>
     </tr>
     <tr>
@@ -104,7 +104,7 @@
             </div>
         </th>
         <td><b>{$result.{"number-of-rates"}}{s name='months'} Monate{/s}</b></td>
-        <input id="ratePayInstallmentNumber" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_number]" value="{$result.{"number-of-rates"}}"/>
+        <input id="ratePayInstallmentNumber" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_ratepay_installment_number]" value="{$result.{"number-of-rates"}}"/>
         <td>&nbsp;</td>
     </tr>
     <tr class="ratepay-result">
@@ -118,7 +118,7 @@
             </div>
         </th>
         <td><b>{$result.{"rate"}|number_format:2:",":"."}</b></td>
-        <input id="ratePayInstallmentAmount" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_amount]" value="{$result.{"rate"}}"/>
+        <input id="ratePayInstallmentAmount" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_ratepay_installment_amount]" value="{$result.{"rate"}}"/>
         <td class="ratepay-PaddingRight"><b>&euro;</b></td>
     </tr>
     <tr class="ratepay-result ratepay-PaddingBottom">
@@ -132,7 +132,7 @@
             </div>
         </th>
         <td class="ratepay-PaddingBottom"><b>{$result.{"last-rate"}|number_format:2:",":"."}</b></td>
-        <input id="ratePayInstallmentLastInstallmentAmount" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_installment_last_installment_amount]" value="{$result.{"last-rate"}}"/>
+        <input id="ratePayInstallmentLastInstallmentAmount" class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_ratepay_installment_last_installment_amount]" value="{$result.{"last-rate"}}"/>
         <td class="ratepay-PaddingRight ratepay-PaddingBottom"><b>&euro;</b></td>
     </tr>
     <tr>

@@ -362,6 +362,8 @@
                 },
                 authorizeData,
                 function (res) {
+                    console.log('Klarna Result:');
+                    console.log(res);
                     var url = data['storeAuthorizationToken-Url']
 
                     if (res['approved']) {

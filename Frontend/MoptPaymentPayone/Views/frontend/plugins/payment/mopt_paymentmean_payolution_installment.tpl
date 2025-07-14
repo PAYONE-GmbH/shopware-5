@@ -17,7 +17,7 @@
                 class="is--required{if $error_flags.mopt_payone__payolution_installment_birthday} has--error{/if}">
             <option value="">--</option>
             {section name="birthdate" start=1 loop=32 step=1}
-                <option value="{if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}" 
+                <option value="{if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}"
                         {if $smarty.section.birthdate.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_installment_birthday}
                             selected
                         {/if}>
@@ -27,14 +27,14 @@
     </div>
 
     <div class="select-field">
-        <select name="moptPaymentData[mopt_payone__payolution_installment_birthmonth]" 
+        <select name="moptPaymentData[mopt_payone__payolution_installment_birthmonth]"
                 id="mopt_payone__payolution_installment_birthmonth" onchange="payolutionInstallmentDobInput()"
                 aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                 class="is--required {if $error_flags.mopt_payone__payolution_installment_birthmonth} has--error{/if}">
             <option value="">--</option>
             {section name="birthmonth" start=1 loop=13 step=1}
-                <option value="{if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}" 
+                <option value="{if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}"
                         {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_installment_birthmonth}
                             selected
                         {/if}>
@@ -44,7 +44,7 @@
     </div>
 
     <div class="select-field">
-        <select name="moptPaymentData[mopt_payone__payolution_installment_birthyear]" 
+        <select name="moptPaymentData[mopt_payone__payolution_installment_birthyear]"
                 id="mopt_payone__payolution_installment_birthyear" onchange="payolutionInstallmentDobInput()"
                 aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
@@ -60,102 +60,68 @@
         </select>
     </div>
     {/if}  
+        {include file='frontend/include/dropdown_birthday_day.tpl' id='mopt_payone__fin_payolution_installment' label="{s name='birthdate'}Geburtsdatum{/s}"}
+        {include file='frontend/include/dropdown_birthday_month.tpl' id='mopt_payone__fin_payolution_installment'}
+        {include file='frontend/include/dropdown_birthday_year.tpl' id='mopt_payone__fin_payolution_installment'}
+    {/if}
+    {include file='frontend/include/input_birthday_validation.tpl' id='mopt_payone__fin_payolution_installment'}
 
-    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__payolution_installment_birthdaydate]" id="mopt_payone__payolution_installment_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">   
-    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_installment_shippingcosts]" id="mopt_payone__payolution_installment_shippingcosts" value="{$sShippingcosts}">
-    <div id="installment-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>        
+    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_payolution_installment_shippingcosts]"
+           id="mopt_payone__fin_payolution_installment_shippingcosts" value="{$sShippingcosts}">
+
 
     {if $fcPayolutionConfigInstallment.payolutionB2bmode && $sUserData.billingaddress.company}
-        <input type="text" name="moptPaymentData[mopt_payone__installment_company_trade_registry_number]"
-               id="mopt_payone__installment_company_trade_registry_number" aria-required="false"
-               placeholder="{s name='companyTradeRegistryNumber'}Handelsregisternummer{/s}"
-               class="payment--field{if $error_flags.mopt_payone__installment_company_trade_registry_number} has--error{/if}">
-        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__payolution_installment_b2bmode]" id="moptPaymentData[mopt_payone__payolution_installment_b2bmode]" value="1">
-    {/if}       
+        {include file='frontend/include/input_vatid.tpl' id='mopt_payone__fin_payolution_installment_vatid'}
+        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_payolution_installment_b2bmode]"
+               id="moptPaymentData[mopt_payone__fin_payolution_installment_b2bmode]" value="1">
+    {/if}
 
     {if $sUserData.additional.country.countryiso !== 'CH' && $sUserData.additional.country.countryiso !== 'GB'
-        && $sBasket.sCurrencyName !== 'GBP' && $sBasket.sCurrencyName !== 'CHF' }
-
-        <input name="moptPaymentData[mopt_payone__payolution_installment_iban]"
-               type="text"
-               id="mopt_payone__payolution_installment_iban"
-               {if $moptRequired}required="required" aria-required="true"{/if}
-               placeholder="{s name='bankIBAN'}IBAN{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-               value="{$form_data.mopt_payone__payolution_installment_iban|escape}"
-               data-moptIbanWrongCharacterMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="moptIbanWrongCharacterMessage"}Dieses Feld darf nur Großbuchstaben und Ziffern enthalten{/s}"
-               data-moptIbanWrongLengthMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="moptIbanWrongLengthMessage"}Bitte prüfen Sie die Länge der IBAN{/s}"
-               data-moptIbanWrongCecksumMessage="{s namespace='frontend/MoptPaymentPayone/errorMessages' name="moptIbanWrongCecksumMessage"}Die Prüfsumme der IBAN ist falsch{/s}"
-               class="payment--field {if $moptRequired}is--required{/if}{if $error_flags.mopt_payone__payolution_installment_iban} has--error{/if} moptPayoneIban" />
+    && $sBasket.sCurrencyName !== 'GBP' && $sBasket.sCurrencyName !== 'CHF' }
+        {include file='frontend/include/input_iban.tpl' id='mopt_payone__fin_payolution_installment'}
     {/if}
-    
+
     <p class="none clearfix">
-        <input name="moptPaymentData[mopt_payone__payolution_installment_agreement]" type="checkbox" id="mopt_payone__payolution_installment_agreement" value="true"
+        <input name="moptPaymentData[mopt_payone__fin_payolution_installment_agreement]" type="checkbox"
+               id="mopt_payone__fin_payolution_installment_agreement" value="true"
                class="checkbox"/>
-        <label class="{if $error_flags.mopt_payone__payolution_installment_agreement} has--error{/if}" for="mopt_payone__payolution_installment_agreement"  style="float:none; width:100%; display:inline">{$moptCreditCardCheckEnvironment.moptPayolutionInformation.consentInstallment}</label>
+        <label class="{if $error_flags.mopt_payone__fin_payolution_installment_agreement} has--error{/if}"
+               for="mopt_payone__fin_payolution_installment_agreement"
+               style="float:none; width:100%; display:inline">{$moptCreditCardCheckEnvironment.moptPayolutionInformation.consentInstallment}</label>
     </p>
-    <div id="payolution_overlay_installment" class="js--modal content" style="width:78%; height:90%; display: none; opacity: 0.9; margin: 75px auto;">
-        <a href="#" onclick="removeOverlayInstallment();
-                return false;" style="float:right;font-weight:bold;">Fenster schliessen</a><br><br>
-        {$moptCreditCardCheckEnvironment.moptPayolutionInformation.overlaycontent}                    
-    </div>
-    <div id="payolution_overlay_installment_bg" class="js--overlay is--open" style="opacity: 0.8; display: none"></div>        
-    <input type="hidden" name="moptPaymentData[mopt_payone__payolution_installment_duration]" value="" id="payone_payolution_selected_installmentplan" autocomplete="off">    
-    <input type="hidden" name="moptPaymentData[mopt_payone__payolution_installment_workorderid]" value="" id="payolution_installment_workorderid" autocomplete="off">    
+
+    {include file='frontend/include/payolution_overlay.tpl' id='mopt_payone__fin_payolution_installment'}
+
+    <input type="hidden" name="moptPaymentData[mopt_payone__fin_payolution_installment_duration]" value=""
+           id="mopt_payone__fin_payolution_installment_duration" autocomplete="off">
+    <input type="hidden" name="moptPaymentData[mopt_payone__fin_payolution_installment_workorderid]" value=""
+           id="mopt_payone__fin_payolution_installment_workorderid" autocomplete="off">
     <button onclick="handleInstallment();" class="button" type="button">
         <span>
             <span>{s name='CheckInstallmentAvailability'}Check installment availability{/s}</span>
         </span>
-    </button>  
+    </button>
     <br>
     <br>
 
     <div id="showresults">
-    </div>        
+    </div>
 </div>
 
+<script type="text/javascript">
+    {include file='frontend/_resources/javascript/mopt_birthday.js.tpl' id='mopt_payone__fin_payolution_installment'}
+    {include file='frontend/_resources/javascript/mopt_payolution_overlay.js.tpl' id='mopt_payone__fin_payolution_installment'}
+</script>
 <script type="text/javascript">
 
     var payolutionInstallmentDob = false;
     var payolutionInstallmentAgree = false;
 
-    function displayOverlayInstallment() {
-        document.getElementById('payolution_overlay_installment').style.display = "block";
-        document.getElementById('payolution_overlay_installment_bg').style.display = "block";
-    }
-
-    function removeOverlayInstallment() {
-        document.getElementById('payolution_overlay_installment').style.display = "none";
-        document.getElementById('payolution_overlay_installment_bg').style.display = "none";
-    }
-
-    function payolutionInstallmentDobInput()
-    {
-        var daySelect = document.getElementById("mopt_payone__payolution_installment_birthday");
-        var monthSelect = document.getElementById("mopt_payone__payolution_installment_birthmonth");
-        var yearSelect = document.getElementById('mopt_payone__payolution_installment_birthyear');
-        var hiddenDobFull = document.getElementById("mopt_payone__payolution_installment_birthdaydate");
-        var hiddenDobHint = document.getElementById("installment-hint-18-years");
-        if (daySelect.value == "" || monthSelect.value == "" || yearSelect.value == ""
-                || hiddenDobFull.value == "" || daySelect == undefined) {
-            return;
-        }
-        hiddenDobFull.value = yearSelect.value + "-" + monthSelect.value + "-" + daySelect.value;
-        var oBirthDate = new Date(hiddenDobFull.value);
-        var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
-        if (oBirthDate > oMinDate) {
-            hiddenDobHint.className = "register--error-msg";
-        } else {
-            hiddenDobHint.className = "is--hidden";
-            payolutionInstallmentDob = true;
-            return;
-        }
-    }
-
     function handleInstallment() {
         var call = '{url controller="moptAjaxPayone" action="ajaxHandlePayolutionPreCheck" forceSecure}';
         var call2 = '{url controller="moptAjaxPayone" action="renderPayolutionInstallment" forceSecure}';
-        var dob = document.getElementById("mopt_payone__payolution_installment_birthdaydate");
-        var hiddenDobHint = document.getElementById("installment-hint-18-years");
+        var dob = document.getElementById("mopt_payone__fin_payolution_installment_birthdaydate");
+        var hiddenDobHint = document.getElementById("mopt_payone__fin_payolution_installment-hint-18-years");
 
         var oBirthDate = new Date(dob.value);
         var oMinDate = new Date(new Date().setYear(new Date().getFullYear() - 18));
@@ -167,22 +133,22 @@
             payolutionInstallmentDob = true;
         }
 
-        var hreg = document.getElementById("mopt_payone__installment_company_trade_registry_number");
-        var myhreg; 
+        var hreg = document.getElementById("mopt_payone__fin_payolution_installment_vatid");
+        var myhreg;
         var mydob;
-        if ( hreg !== null){
+        if (hreg !== null) {
             myhreg = hreg.value;
         }
-        
-        if (dob.value !== null){
+
+        if (dob.value !== null) {
             mydob = dob.value;
-            mydob = mydob.replace(/-/g,"");
+            mydob = mydob.replace(/-/g, "");
         }
 
-        payolutionInstallmentAgree = $("#mopt_payone__payolution_installment_agreement").prop('checked');
+        payolutionInstallmentAgree = $("#mopt_payone__fin_payolution_installment_agreement").prop('checked');
 
         // only make the api call when dob is ok and user agreement is checked
-        if (payolutionInstallmentDob && payolutionInstallmentAgree){
+        if (payolutionInstallmentDob && payolutionInstallmentAgree) {
             $.ajax({
                 url: call,
                 type: 'POST',
@@ -202,7 +168,7 @@
                             success: function (data3) {
                                 $.loadingIndicator.close();
                                 $('#showresults').html(data3);
-                                $('#payolution_installment_workorderid').val(response.workorderid);
+                                $('#mopt_payone__fin_payolution_installment_workorderid').val(response.workorderid);
                             }
                         });
                     }
@@ -229,15 +195,15 @@
         }
     }
 
-    function switchInstallmentPlan(sKey,iInstallments) {
+    function switchInstallmentPlan(sKey, iInstallments) {
         jQuery(".payolution_installmentplans").hide();
         jQuery(".payolution_installment_overview").hide();
         var aShow = [
-            'payolution_installmentplan_' + sKey,
+            'mopt_payone__fin_payolution_installment_plan_' + sKey,
             'payolution_installment_overview_' + sKey
         ];
         switchVisibility(aShow, true);
-        jQuery('#payone_payolution_selected_installmentplan').val(iInstallments);
+        jQuery('#mopt_payone__fin_payolution_installment_duration').val(iInstallments);
     }
 
 

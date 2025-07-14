@@ -312,7 +312,7 @@ class Mopt_PayoneHelper
      *
      * @param int $adresscheckLifetime
      * @param string $moptPayoneAddresscheckResult
-     * @param DateTime $moptPayoneAddresscheckDate
+     * @param string $moptPayoneAddresscheckDate
      * @return boolean
      */
     public function isBillingAddressCheckValid(
@@ -330,6 +330,11 @@ class Mopt_PayoneHelper
         if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
             return false;
         }
+        if (is_string($moptPayoneAddresscheckDate)) {
+            $moptPayoneAddresscheckDate = DateTime::createFromFormat(
+                'Y-m-d',
+                $moptPayoneAddresscheckDate);
+        }
         if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
             return false;
         } else {
@@ -342,7 +347,7 @@ class Mopt_PayoneHelper
      *
      * @param string $adresscheckLifetime
      * @param string $moptPayoneAddresscheckResult
-     * @param DateTime $moptPayoneAddresscheckDate
+     * @param $moptPayoneAddresscheckDate
      * @return boolean
      */
     public function isShippingAddressCheckValid(
@@ -360,6 +365,11 @@ class Mopt_PayoneHelper
         if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
             return false;
         }
+        if (is_string($moptPayoneAddresscheckDate)) {
+            $moptPayoneAddresscheckDate = DateTime::createFromFormat(
+                'Y-m-d',
+                $moptPayoneAddresscheckDate);
+        }
         if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
             return false;
         } else {
@@ -371,7 +381,7 @@ class Mopt_PayoneHelper
      * check if check is still valid
      *
      * @param string $consumerScoreCheckLifetime
-     * @param date $moptPayoneConsumerScoreCheckDate
+     * @param $moptPayoneConsumerScoreCheckDate
      * @return boolean
      */
     public function isConsumerScoreCheckValid($consumerScoreCheckLifetime, $moptPayoneConsumerScoreCheckDate)
@@ -702,12 +712,6 @@ class Mopt_PayoneHelper
         $shippingAttribute = $this->getOrCreateShippingAttribute($shipping);
         $shippingAttributes['moptPayoneAddresscheckResult'] = $shippingAttribute->getMoptPayoneAddresscheckResult();
         $shippingAttributes['moptPayoneAddresscheckDate'] = $shippingAttribute->getMoptPayoneAddresscheckDate();
-        if (is_string($shippingAttributes['moptPayoneAddresscheckDate'])) {
-            $shippingAttributes['moptPayoneAddresscheckDate'] = DateTime::createFromFormat(
-                'Y-m-d',
-                $shippingAttribute->getMoptPayoneAddresscheckDate()
-            );
-        }
 
         return $shippingAttributes;
     }
@@ -1182,13 +1186,6 @@ class Mopt_PayoneHelper
         $billingAttribute = $this->getOrCreateBillingAttribute($billing);
         $userBillingAddressCheckData['moptPayoneAddresscheckResult'] = $billingAttribute->getMoptPayoneAddresscheckResult();
         $userBillingAddressCheckData['moptPayoneAddresscheckDate'] = $billingAttribute->getMoptPayoneAddresscheckDate();
-        // Make sure this is a DateTime Object, sometimes?? string gets returned ???
-        if (is_string($userBillingAddressCheckData['moptPayoneAddresscheckDate'])) {
-            $userBillingAddressCheckData['moptPayoneAddresscheckDate'] = DateTime::createFromFormat(
-                'Y-m-d',
-                $billingAttribute->getMoptPayoneAddresscheckDate()
-            );
-        }
 
         return $userBillingAddressCheckData;
     }
