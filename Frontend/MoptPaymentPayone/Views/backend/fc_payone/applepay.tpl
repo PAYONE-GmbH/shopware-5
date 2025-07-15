@@ -3,9 +3,9 @@
 {block name="content/main"}
     {namespace name=backend/mopt_config_payone/main}
     <div class="col-md-12">
-        <h3>{s name="global-form/applepay"}Konfiguration Applepay Logos{/s}</h3>
+        <h3>{s name="global-form/applepay"}Konfiguration Apple Pay Logos{/s}</h3>
         <div>
-            {s name="global-form/applepayDesc"}Stellen Sie hier die Konfiguration zur Zahlart Applepay ein.{/s}
+            {s name="global-form/applepayDesc"}Stellen Sie hier die Konfiguration zur Zahlart Apple Pay ein.{/s}
         </div>
         <div class='col-md-12'>
             <form role="form" id="applepayform" class="form-horizontal">
