@@ -3,9 +3,9 @@
 {block name="content/main"}
     {namespace name=backend/mopt_config_payone/main}
     <div class="col-md-12">
-        <h3>{s name="global-form/amazonpay"}Konfiguration AmazonPay Logos{/s}</h3>
+        <h3>{s name="global-form/amazonpay"}Konfiguration Amazon Pay Logos{/s}</h3>
         <div>
-            {s name="global-form/amazonpayDesc"}Stellen Sie hier die Konfiguration zur Zahlart Amazonpay ein.{/s}
+            {s name="global-form/amazonpayDesc"}Stellen Sie hier die Konfiguration zur Zahlart Amazon Pay ein.{/s}
         </div>
         <div id="amazonpayconfigs" class="form-group">
             <form role="form" id="amazonpayform" enctype="multipart/form-data">
@@ -94,7 +94,7 @@
 
                 <button type="submit" class="btn-payone btn ">{s name="global-form/button"}Speichern{/s}</button>
                 <button type="submit" name="amazondownloadbtn" class="btn-payone btn">
-                    AmazonPay {s name="global-form/retrieveconfig"}Konfiguration abrufen{/s}</button>
+                    Amazon Pay {s name="global-form/retrieveconfig"}Konfiguration abrufen{/s}</button>
             </form>
         </div>
     </div>

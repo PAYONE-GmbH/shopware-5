@@ -3,9 +3,9 @@
 {block name="content/main"}
     {namespace name=backend/mopt_config_payone/main}
     <div class="col-md-12">
-        <h3>{s name="global-form/paypalexpress"}Paypal Express{/s}</h3>
+        <h3>{s name="global-form/paypalexpress"}PayPal Express{/s}</h3>
         <div>
-            {s name="global-form/fieldset8Desc"}Stellen Sie hier die Konfiguration zur Zahlart Paypal Express ein.{/s}
+            {s name="global-form/fieldset8Desc"}Stellen Sie hier die Konfiguration zur Zahlart PayPal Express ein.{/s}
         </div>
         <div class='col-md-12'>
             <form role="form" id="paypalexpressform" class="form-horizontal">

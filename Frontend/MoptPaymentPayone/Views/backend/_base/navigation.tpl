@@ -29,15 +29,15 @@
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="debit"}">
                                 <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/debit"}Lastschrift{/s}</a></li>
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="amazonpay"}">
-                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/amazonpay"}Amazonpay{/s}</a></li>
+                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/amazonpay"}Amazon Pay{/s}</a></li>
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="applepay"}">
-                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/applepay"}Applepay{/s}</a></li>
+                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/applepay"}Apple Pay{/s}</a></li>
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="creditcard"}">
                                 <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/creditcard"}Kreditkarte{/s}</a></li>
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="paypalexpress"}">
-                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/paypalexpress"}Paypal Express{/s}</a></li>
+                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/paypalexpress"}PayPal Express{/s}</a></li>
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="paypalexpressv2"}">
-                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/paypalexpressv2"}Paypal Express V2{/s}</a></li>
+                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/paypalexpressv2"}PayPal Express V2{/s}</a></li>
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="unzer"}">
                                 <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/unzer"}Unzer{/s}</a></li>
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="klarna"}">
@@ -45,7 +45,7 @@
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="ratepay"}">
                                 <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/ratepay"}Ratepay{/s}</a></li>
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="googlepay"}">
-                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/googlepay"}GooglePay{/s}</a></li>
+                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/googlepay"}Google Pay{/s}</a></li>
                     </ul>
                 </li>  
                 <li><a href="#" id="link-drilldown-1-3" class="box box-menu payone-menu"  data-toggle="collapse" data-target="#drilldown-1-3">
