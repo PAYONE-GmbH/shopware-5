@@ -91,6 +91,7 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
                 }
             } catch (Exception $e) {
                 $errorElem[] = $dataItem['id'];
+                $data['errorMessage'] = $e->getMessage();
             }
         }
 

@@ -75,9 +75,8 @@
                 $('#ratepaytable tr').css('background-color','');
                 if (data_array.errorElem && data_array.errorElem.length) {
                     if (data_array.errorElem.length > 0){
-                        alert('data_array.errorElem.length >0');
                         data_array.errorElem.forEach(markDownloadErrors);
-                        showalert("Das Abrufen von " + data_array.errorElem.length + " Konfigurationen ist fehlgeschlagen", "alert-danger");
+                        showalert("Das Abrufen von " + data_array.errorElem.length + " Konfigurationen ist fehlgeschlagen:" + data_array.errorMessage, "alert-danger");
                     }
                 } else {
                     showalert("Die Daten wurden gespeichert", "alert-success");
@@ -111,5 +110,6 @@
             var d = document.getElementById('row' + item);
             d.style.backgroundColor = "red";
         }
+    </script>
 {/block}
 
