@@ -8,7 +8,7 @@
             <ul class="dropdown-menu" role="menu">
                 <li><a href="#" id="0" >{s name="fieldlabel/allpayments"}Alle Zahlarten - Global{/s}</a></li>
                 {foreach from=$payonepaymentmethods item=paymentmethod}
-                    <li><a href="#" id="{$paymentmethod.id}">{$paymentmethod.description} - {$paymentmethod.name}</a></li>
+                    <li><a href="#" id="{$paymentmethod.id}">{$paymentmethod.description}</a></li>
                 {/foreach}
             </ul>
         </div>
