@@ -30,6 +30,8 @@ function populateForm($form, data)
         {
             $('option', $ctrls).each(function () {
                  if (value == null) { value = ' '};
+                 if (value == 'false' || value == false) { value = '0'};
+                 if (value == 'true' || value == true) { value = '1'};
                  if (this.value.toString() === value.toString()) {
                     this.selected = true;
                 }
