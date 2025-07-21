@@ -26,8 +26,8 @@
                 <th id="col_merchantId" data-field="merchantId">{s name="mopt_apilog_payone/grid/column_merchant"}Merchant ID{/s}</th>
                 <th id="col_portalId" data-field="portalId">{s name="mopt_apilog_payone/grid/column_portal_id"}Portal ID{/s}</th>
                 <th id="col_date" data-formatter="DateFormatter" data-field="creationDate.date">{s name="mopt_apilog_payone/grid/column_date"}Datum{/s}</th>
-                <th id="DateFormatter" data-toggle="tooltip" data-formatter="DetailsFormatter" data-field="requestArray">{s name="mopt_apilog_payone/grid/column_request_details"}Request{/s}</th>
-                <th id="DetailsFormatter" data-toggle="tooltip" data-formatter="DetailsFormatter" data-field="responseArray">{s name="mopt_apilog_payone/grid/column_response_details"}Response{/s}</th>
+                <th id="DateFormatter" data-toggle="tooltip" data-formatter="DetailsFormatter" data-field="requestArray">{s name="mopt_apilog_payone/grid/column_request_details"}Anfrage{/s}</th>
+                <th id="DetailsFormatter" data-toggle="tooltip" data-formatter="DetailsFormatter" data-field="responseArray">{s name="mopt_apilog_payone/grid/column_response_details"}Antwort{/s}</th>
             </tr>
             </thead>
         </table>

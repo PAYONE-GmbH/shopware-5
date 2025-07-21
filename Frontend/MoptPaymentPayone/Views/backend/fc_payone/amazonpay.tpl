@@ -37,11 +37,11 @@
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][buttonType]"
                                     id="amazonpayButtonType_{$amazonpayconfig->getId()}">
                                 <option value="PwA"
-                                        {if $amazonpayconfig->getButtonType() == 'PwA'}selected="selected"{/if}>{s name="amazon_buttontype_amazonpay"}Amazon Pay (Default): Typical "Amazon Pay" button{/s}</option>
+                                        {if $amazonpayconfig->getButtonType() == 'PwA'}selected="selected"{/if}>{s name="amazon_buttontype_amazonpay"}Amazon Pay (Default): Typischer "Amazon Pay" Button{/s}</option>
                                 <option value="Pay"
-                                        {if $amazonpayconfig->getButtonType() == 'Pay'}selected="selected"{/if}>{s name="amazon_buttontype_pay"}Pay: A slightly smaller "Pay" button{/s}</option>
+                                        {if $amazonpayconfig->getButtonType() == 'Pay'}selected="selected"{/if}>{s name="amazon_buttontype_pay"}Bezahlen: Ein etwas kleinerer "Bezahlen" Button{/s}</option>
                                 <option value="A"
-                                        {if $amazonpayconfig->getButtonType() == 'A'}selected="selected"{/if}>{s name="amazon_buttontype_a"}A: A small button with only the Amazon Pay Logo{/s}</option>
+                                        {if $amazonpayconfig->getButtonType() == 'A'}selected="selected"{/if}>{s name="amazon_buttontype_a"}A: Ein kleiner Button nur mit dem Amazon Pay Logo{/s}</option>
                             </select>
                         </td>
                         <td>
@@ -50,16 +50,16 @@
                                 <option value="Gold"
                                         {if $amazonpayconfig->getButtonColor() == 'Gold'}selected="selected"{/if}>{s name="amazon_buttoncolor_gold"}Gold (default){/s}</option>
                                 <option value="LightGray"
-                                        {if $amazonpayconfig->getButtonColor() == 'LightGray'}selected="selected"{/if}>{s name="amazon_buttoncolor_lightgray"}Light gray{/s}</option>
+                                        {if $amazonpayconfig->getButtonColor() == 'LightGray'}selected="selected"{/if}>{s name="amazon_buttoncolor_lightgray"}Hellgrau{/s}</option>
                                 <option value="DarkGray"
-                                        {if $amazonpayconfig->getButtonColor() == 'DarkGray'}selected="selected"{/if}>{s name="amazon_buttoncolor_darkgray"}Dark gray{/s}</option>
+                                        {if $amazonpayconfig->getButtonColor() == 'DarkGray'}selected="selected"{/if}>{s name="amazon_buttoncolor_darkgray"}Dunkelgrau{/s}</option>
                             </select>
                         </td>
                         <td>
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][amazonMode]"
                                     id="amazonpayAmazonMode_{$amazonpayconfig->getId()}">
                                 <option value="sync"
-                                        {if $amazonpayconfig->getAmazonMode() == 'sync'}selected="selected"{/if}>{s name="amazon_mode_always_sync"}Always Synchronous{/s}</option>
+                                        {if $amazonpayconfig->getAmazonMode() == 'sync'}selected="selected"{/if}>{s name="amazon_mode_always_sync"}Immer Synchronisiert{/s}</option>
                                 <option value="firstsync"
                                         {if $amazonpayconfig->getAmazonMode() == 'firstsync'}selected="selected"{/if}>{s name="amazon_mode_always_firstsync"}First synchronous, on failure try asynchronous (recommended, default):{/s}</option>
                             </select>
@@ -68,9 +68,9 @@
                             <select class="form-control" name="row[{$amazonpayconfig->getId()}][packStationMode]"
                                     id="amazonpaypackStationMode_{$amazonpayconfig->getId()}">
                                 <option value="allow"
-                                        {if $amazonpayconfig->getPackStationMode() == 'allow'}selected="selected"{/if}>{s name="packStation/allow" namespace="backend/mopt_payone_paypal/main"}allow{/s}</option>
+                                        {if $amazonpayconfig->getPackStationMode() == 'allow'}selected="selected"{/if}>{s name="packStation/allow"}Erlauben{/s}</option>
                                 <option value="deny"
-                                        {if $amazonpayconfig->getPackStationMode() == 'deny'}selected="selected"{/if}>{s name="packStation/deny" namespace="backend/mopt_payone_paypal/main"}deny{/s}</option>
+                                        {if $amazonpayconfig->getPackStationMode() == 'deny'}selected="selected"{/if}>{s name="packStation/deny"}Verbieten{/s}</option>
                             </select>
                         </td>
                         <td><select class="form-control" name="row[{$amazonpayconfig->getId()}][shopId]" id="shop_{$amazonpayconfig->getId()}">

@@ -1,10 +1,10 @@
 {extends file="parent:backend/_base/layout.tpl"}
-
+{namespace name=backend/mopt_config_payone/main}
 {block name="content/main"}
     <div class="col-md-12">
         <h3>{s name="global-form/fieldset4"}Paymentstatus{/s}</h3>
         <div>
-            Stellen Sie hier die Konfiguration für das Paymentstatus-Mapping  für alle Zahlarten ein.
+            {s name="global-form/fieldset10"}Stellen Sie hier die Konfiguration für das Paymentstatus-Mapping  für alle Zahlarten ein.{/s}
         </div>
         {include file='backend/fc_payone/include/dropdown_payments.tpl'}
         <div class='col-md-12'>

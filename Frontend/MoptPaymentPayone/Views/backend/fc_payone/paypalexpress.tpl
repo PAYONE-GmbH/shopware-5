@@ -5,7 +5,7 @@
     <div class="col-md-12">
         <h3>{s name="global-form/paypalexpress"}PayPal Express{/s}</h3>
         <div>
-            {s name="global-form/fieldset8Desc"}Stellen Sie hier die Konfiguration zur Zahlart PayPal Express ein.{/s}
+            {s name="global-form/paypalexpressDesc"}Stellen Sie hier die Konfiguration zur Zahlart PayPal Express ein.{/s}
         </div>
         <div class='col-md-12'>
             <form role="form" id="paypalexpressform" class="form-horizontal">
@@ -22,7 +22,7 @@
                         <tr>
                             <th>{s name="fieldlabel/id"}ID{/s}</th>
                             <th>{s name="fieldlabel/shop"}Shop{/s}</th>
-                            <th>{s name="fieldlabel/packStationMode"}Packstation Mode{/s}</th>
+                            <th>{s name="fieldlabel/packStationMode"}Packstation Modus{/s}</th>
                             <th>{s name="fieldlabel/name"}Name{/s}</th>
                             <th>{s name="fieldlabel/logo"}Logo{/s}</th>
                             <th>{s name="fieldlabel/upload"}Hochladen{/s}</th>
@@ -160,7 +160,7 @@
             values = values + '&paymentId=' + paymentid;
             $.post(url, values, function (response) {
                 var data_array = $.parseJSON(response);
-                showalert("Die Daten wurden gespeichert", "alert-success");
+                showalert('{s name = "global/saveSuccess"}Die Daten wurden gespeichert{/s}', "alert-success");
             });
 
         });
@@ -184,7 +184,7 @@
             iframevalues = iframevalues + '&paymentId=' + paymentid;
             $.post(url, iframevalues, function (response) {
                 var data_array = $.parseJSON(response);
-                showalert("Die Daten wurden gespeichert", "alert-success");
+                showalert('{s name = "global/saveSuccess"}Die Daten wurden gespeichert{/s}', "alert-success");
                 location.reload();
             });
 

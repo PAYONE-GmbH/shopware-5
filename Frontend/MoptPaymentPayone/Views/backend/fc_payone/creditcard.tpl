@@ -42,7 +42,7 @@
 
                     <tr class="form-group">
                         <td>
-                            {include file='backend/fc_payone/include/dropdown_iframeajax.tpl' id='integrationType' label="Modus"}
+                            {include file='backend/fc_payone/include/dropdown_iframeajax.tpl' id='integrationType' label="{s name="mopt_apilog_payone/grid/column_mode"}Modus{/s}"}
                         </td>
                     </tr>
                     <tr class="form-group">
@@ -204,7 +204,7 @@
 
                 <table class="table-condensed">
                     <tr>
-                        <th>{s name="fieldlabel/stadardstyle"}Standardstil{/s}</th>
+                        <th>{s name="fieldlabel/standardstyle"}Standardstil{/s}</th>
                         <th>{s name="fieldlabel/input"}Eingabe{/s}</th>
                         <th>{s name="fieldvalue/choice"}Auswahl{/s}</th>
                     </tr>

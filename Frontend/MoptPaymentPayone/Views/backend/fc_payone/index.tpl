@@ -1,8 +1,8 @@
 {extends file="parent:backend/_base/layout.tpl"}
-
+{namespace name=backend/mopt_config_payone/main}
 {block name="content/main"}
     <div class="container">
-        <h3 class="p-4">Übersicht</h3>
+        <h3 class="p-4">{s name="global-form/fieldset9"}Übersicht{/s}</h3>
         <div class="col-md-6"">
             {foreach from=$data item=datum key=i}
                 {if $i%2==1}
