@@ -47,7 +47,10 @@
                                 <input name="row[{$paypalconfig->getId()}][filename]" id="filename_{$paypalconfig->getId()}" value="" hidden>
                                 <output id="list{$paypalconfig->getId()}"></output>
                             </td>
-                            <td><input type="file" id="files{$paypalconfig->getId()}" name="files"></td>
+                            <td><input type="file" id="files{$paypalconfig->getId()}" name="files"
+                                   class="filestyle"  data-placeholder="{s name="fieldlabel/nofile"}Keine Datei ausgewählt{/s}" data-buttonText="{s name="fieldlabel/choosefile"}Datei auswählen{/s}"
+                                   data-size="sm">
+                            </td>
                             <td role="button" name="delete" value="delete" onclick="removeRow({$paypalconfig->getId()})"><img id="delete_{$paypalconfig->getId()}" height="100%" src="{link file='backend/_resources/images/delete.png'}"></td>
                             {/foreach}
 
@@ -270,11 +273,14 @@
                 "<output id='list" + len + "'></output>" +
                 "</td>" +
                 "<td>" +
-                "<input type='file' id='files" + len + "' name='files'>" +
+                "<input type='file' id='files" + len + "' name='files'" +
+                "class='filestyle' data-placeholder='{s name='fieldlabel/nofile'}Keine Datei ausgewählt{/s}' data-buttonText='{s name='fieldlabel/choosefile'}Datei auswählen{/s}'" +
+                "data-size='sm'>" +
                 "</td>" +
                 "<td role='button' name='delete' value='delete' onclick='removeRow(" + len + ")'>" +
                 "<img id='delete_'" + len + "' height='100%' src='{link file='backend/_resources/images/delete.png'}'></td>";
             $('#paypalecstable > tbody:last-child').append(newRow);
+            $(":file").filestyle();
 
             // register event handler after adding
             var fileInputs = document.getElementsByName('files');
