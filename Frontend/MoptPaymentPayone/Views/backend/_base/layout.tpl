@@ -58,6 +58,7 @@
         <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-table.min.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-table-de-DE.min.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/navigation.js"}"></script>
+        <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-filestyle.min.js"}"></script>
     {/block}
 
 

@@ -15,13 +15,32 @@
                 {include file='backend/fc_payone/include/dropdown_yesno.tpl' id='applepayMastercard' label="{s name="fieldlabel/applepayMastercard"}Apple Pay Mastercard erlauben{/s}" pattern="^[0-9]*" content="{s name="fieldlabelhelp/applepayMastercard"}Erlaubt Mastercard Karten über Apple Pay{/s}"}
                 {include file='backend/fc_payone/include/dropdown_yesno.tpl' id='applepayGirocard' label="{s name="fieldlabel/applepayGirocard"}Apple Pay Girocard erlauben{/s}" pattern="^[0-9]*" content="{s name="fieldlabelhelp/applepayGirocard"}Erlaubt Giropay Karten über Apple Pay{/s}"}
                 {include file='backend/fc_payone/include/input_text.tpl' id='applepayCertificate' label="{s name="fieldlabel/applepayCertificate"}Apple Pay Zertifikat{/s}" pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' content="{s name="fieldlabelhelp/applepayCertificate"}Absoluter Pfad zur Apple Pay Zertifikats Datei{/s}"}
-                <input type="file" accept=".pem" id="applepayCertificateFile" name="applepayCertificateFile"/>
-                <button type="button" class="btn-payone btn"
-                        id="applecertupload">{s name="fieldlabel/uploadbutton"}Hochladen{/s}</button>
+                <div class="form-group">
+                    <div class="col-md-3 control-label">
+                    </div>
+                    <div class="col-md-6">
+                    <input type="file" accept=".pem" id="applepayCertificateFile" name="applepayCertificateFile"
+                           class="filestyle"  data-placeholder="{s name="fieldlabel/nofile"}Keine Datei ausgewählt{/s}" data-buttonText="{s name="fieldlabel/choosefile"}Datei auswählen{/s}"
+                           data-buttonBefore="true" data-size="sm">
+                    </div>
+                </div>
+                <button type="button" class="btn-payone btn" id="applecertupload">
+                    {s name="fieldlabel/uploadbutton"}Hochladen{/s}
+                </button>
+
                 {include file='backend/fc_payone/include/input_text.tpl' id='applepayPrivateKey' label="{s name="fieldlabel/applepayPrivateKey"}Apple Pay Private Key{/s}" pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' content="{s name="fieldlabelhelp/applepayPrivateKey"}Absoluter Pfad zur Apple Pay Private Key Datei{/s}"}
-                <input type="file" accept=".key" id="applepayKeyFile" name="applepayKeyFile"/>
-                <button type="button" class="btn-payone btn"
-                        id="applekeyupload">{s name="fieldlabel/uploadbutton"}Hochladen{/s}</button>
+                <div class="form-group">
+                    <div class="col-md-3 control-label">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="file" accept=".key" id="applepayKeyFile" name="applepayKeyFile"
+                               class="filestyle"  data-placeholder="{s name="fieldlabel/nofile"}Keine Datei ausgewählt{/s}" data-buttonText="{s name="fieldlabel/choosefile"}Datei auswählen{/s}"
+                               data-buttonBefore="true" data-size="sm">
+                    </div>
+                </div>
+                <button type="button" class="btn-payone btn" id="applekeyupload">
+                    {s name="fieldlabel/uploadbutton"}Hochladen{/s}
+                </button>
 
                 {include file='backend/fc_payone/include/input_text.tpl' id='applepayPrivateKeyPassword' label="{s name="fieldlabel/applepayPrivateKeyPassword"}Apple Pay Private Key Passwort{/s}" pattern='^[_ .+-?,:;"!@#$%^&*ÄÖÜäöüa-zA-Z0-9]*' content="{s name="fieldlabelhelp/applepayPrivateKeyPassword"}Kann auch dann gesetzt werden, wenn der Key unverschlüsselt ist{/s}"}
                 {include file='backend/fc_payone/include/input_checkbox.tpl' id='applepayDebug' label="{s name="fieldlabel/applepayDebug"}Apple Pay Debug{/s}" pattern="^[0-9]*" content="{s name="fieldlabelhelp/applepayDebug"}Zeigt im Frontend Debugging Informationen an{/s}"}
