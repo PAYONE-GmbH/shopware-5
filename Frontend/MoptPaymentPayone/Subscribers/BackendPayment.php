@@ -33,7 +33,8 @@ class BackendPayment implements SubscriberInterface
     {
         return array(
             // extend backend payment configuration
-            'Enlight_Controller_Action_PostDispatch_Backend_Payment' => 'moptExtendController_Backend_Payment'
+            'Enlight_Controller_Action_PostDispatch_Backend_Payment' => 'moptExtendController_Backend_Payment',
+            'Enlight_Controller_Action_PostDispatch_Backend_Index' => 'onPostDispatchBackendIndex',
         );
     }
 
@@ -42,5 +43,31 @@ class BackendPayment implements SubscriberInterface
         $view = $args->getSubject()->View();
         $view->extendsTemplate('backend/mopt_payone_payment/controller/payment.js');
         $view->extendsTemplate('backend/mopt_payone_payment/view/main/window.js');
+    }
+
+    /**
+     * Extends Backend header with CSS to display PAYONE-Icon in Menu
+     *
+     * @param Enlight_Event_EventArgs $args
+     */
+    public function onPostDispatchBackendIndex(\Enlight_Controller_ActionEventArgs $args)
+    {
+        /** @var \Shopware_Controllers_Backend_Index $subject */
+        $subject = $args->get('subject');
+        $request = $subject->Request();
+        $response = $subject->Response();
+        $view = $subject->View();
+
+        $view->addTemplateDir(__DIR__ . '/../Views');
+
+        if ( ! $request->isDispatched()
+            || $response->isException()
+            || $request->getModuleName() !== 'backend'
+            || ! $view->hasTemplate()
+        ) {
+            return;
+        }
+
+        $view->extendsTemplate('backend/payone.tpl');
     }
 }
