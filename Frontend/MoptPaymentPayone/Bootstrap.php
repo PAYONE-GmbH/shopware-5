@@ -143,6 +143,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createDatabase();
         $this->addAttributes();
         $this->createMenu();
+        $this->addMenuTranslations();
         $this->removeOldMenu();
 
         $riskRules = new RiskRules();
@@ -938,12 +939,15 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         // Lightweight Backend Controller
         $ret = $this->Menu()->findOneBy($labelKontollZentrum);
         if (!$ret) {
+            // controller and action are not used, but make it possible to translate the menu entry
             $this->createMenuItem(
                 array(
-                    'label' => 'PAYONE Kontrollzentrum',
+                    'label' => 'PAYONE',
                     'onclick' => 'Shopware.ModuleManager.createSimplifiedModule("FcPayone", { "title": "PAYONE Kontrollzentrum" })',
                     'class' => 'payoneicon',
                     'active' => 1,
+                    'controller' => 'FcPayone',
+                    'action' => 'index',
                     'parent' => $this->Menu()->findOneBy($labelPayment),
                 )
             );
@@ -1083,6 +1087,18 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndAddGooglePayCountryCode();
         $this->getInstallHelper()->checkAndAddGooglePayButtonOptions();
         $this->getInstallHelper()->checkAndAddGooglePayMerchantId();
+    }
+
+    private function addMenuTranslations(){
+        $sqlDE = "INSERT IGNORE INTO `s_core_snippets` (`namespace`, `shopID`, `localeID`, `name`, `value`, `created`, `updated`, `dirty`) VALUES
+                ('backend/index/view/main', 1, 1, 'FcPayone/index', 'PAYONE Kontrollzentrum', '2025-07-22 08:41:47', '2025-07-22 08:41:47', 0)";
+        $sqlEN = "INSERT IGNORE INTO `s_core_snippets` (`namespace`, `shopID`, `localeID`, `name`, `value`, `created`, `updated`, `dirty`) VALUES
+                ('backend/index/view/main', 1, 2, 'FcPayone/index', 'PAYONE Control Center', '2025-07-22 08:41:47', '2025-07-22 08:41:47', 0)";
+        $sqlNL = "INSERT IGNORE INTO `s_core_snippets` (`namespace`, `shopID`, `localeID`, `name`, `value`, `created`, `updated`, `dirty`) VALUES
+                ('backend/index/view/main', 1, 176, 'FcPayone/index', 'PAYONE Controlecentrum', '2025-07-22 08:41:47', '2025-07-22 08:41:47', 0)";
+        $result = Shopware()->Db()->query($sqlDE);
+        $result = Shopware()->Db()->query($sqlEN);
+        $result = Shopware()->Db()->query($sqlNL);
     }
 
 }
