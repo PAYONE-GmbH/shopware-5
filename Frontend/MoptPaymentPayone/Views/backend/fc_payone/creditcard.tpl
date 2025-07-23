@@ -209,7 +209,7 @@
                         <th>{s name="fieldvalue/choice"}Auswahl{/s}</th>
                     </tr>
                     <tr class="form-group">
-                        <th>{s name="fieldlabel/field"}Felder{/s}</th>
+                        <th>{s name="fieldlabel/fields"}Felder{/s}</th>
                         <td>
                             {include file='backend/fc_payone/include/input_text_iframe.tpl' id='standardInputCss'}
                         </td>
