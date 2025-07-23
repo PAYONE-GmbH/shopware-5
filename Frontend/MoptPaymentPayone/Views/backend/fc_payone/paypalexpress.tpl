@@ -5,7 +5,7 @@
     <div class="col-md-12">
         <h3>{s name="global-form/paypalexpress"}PayPal Express{/s}</h3>
         <div>
-            {s name="global-form/fieldset8Desc"}Stellen Sie hier die Konfiguration zur Zahlart PayPal Express ein.{/s}
+            {s name="global-form/paypalexpressDesc"}Stellen Sie hier die Konfiguration zur Zahlart PayPal Express ein.{/s}
         </div>
         <div class='col-md-12'>
             <form role="form" id="paypalexpressform" class="form-horizontal">
@@ -22,7 +22,7 @@
                         <tr>
                             <th>{s name="fieldlabel/id"}ID{/s}</th>
                             <th>{s name="fieldlabel/shop"}Shop{/s}</th>
-                            <th>{s name="fieldlabel/packStationMode"}Packstation Mode{/s}</th>
+                            <th>{s name="fieldlabel/packStationMode"}Packstation Modus{/s}</th>
                             <th>{s name="fieldlabel/name"}Name{/s}</th>
                             <th>{s name="fieldlabel/logo"}Logo{/s}</th>
                             <th>{s name="fieldlabel/upload"}Hochladen{/s}</th>
@@ -47,7 +47,10 @@
                                 <input name="row[{$paypalconfig->getId()}][filename]" id="filename_{$paypalconfig->getId()}" value="" hidden>
                                 <output id="list{$paypalconfig->getId()}"></output>
                             </td>
-                            <td><input type="file" id="files{$paypalconfig->getId()}" name="files"></td>
+                            <td><input type="file" id="files{$paypalconfig->getId()}" name="files"
+                                   class="filestyle"  data-placeholder="{s name="fieldlabel/nofile"}Keine Datei ausgewählt{/s}" data-buttonText="{s name="fieldlabel/choosefile"}Datei auswählen{/s}"
+                                   data-size="sm">
+                            </td>
                             <td role="button" name="delete" value="delete" onclick="removeRow({$paypalconfig->getId()})"><img id="delete_{$paypalconfig->getId()}" height="100%" src="{link file='backend/_resources/images/delete.png'}"></td>
                             {/foreach}
 
@@ -160,7 +163,7 @@
             values = values + '&paymentId=' + paymentid;
             $.post(url, values, function (response) {
                 var data_array = $.parseJSON(response);
-                showalert("Die Daten wurden gespeichert", "alert-success");
+                showalert('{s name = "global/saveSuccess"}Die Daten wurden gespeichert{/s}', "alert-success");
             });
 
         });
@@ -184,7 +187,7 @@
             iframevalues = iframevalues + '&paymentId=' + paymentid;
             $.post(url, iframevalues, function (response) {
                 var data_array = $.parseJSON(response);
-                showalert("Die Daten wurden gespeichert", "alert-success");
+                showalert('{s name = "global/saveSuccess"}Die Daten wurden gespeichert{/s}', "alert-success");
                 location.reload();
             });
 
@@ -270,11 +273,14 @@
                 "<output id='list" + len + "'></output>" +
                 "</td>" +
                 "<td>" +
-                "<input type='file' id='files" + len + "' name='files'>" +
+                "<input type='file' id='files" + len + "' name='files'" +
+                "class='filestyle' data-placeholder='{s name='fieldlabel/nofile'}Keine Datei ausgewählt{/s}' data-buttonText='{s name='fieldlabel/choosefile'}Datei auswählen{/s}'" +
+                "data-size='sm'>" +
                 "</td>" +
                 "<td role='button' name='delete' value='delete' onclick='removeRow(" + len + ")'>" +
                 "<img id='delete_'" + len + "' height='100%' src='{link file='backend/_resources/images/delete.png'}'></td>";
             $('#paypalecstable > tbody:last-child').append(newRow);
+            $(":file").filestyle();
 
             // register event handler after adding
             var fileInputs = document.getElementsByName('files');

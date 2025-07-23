@@ -18,11 +18,11 @@ form.on("submit", function (event) {
         if (data_array.errorElem && data_array.errorElem.length) {
             if (data_array.errorElem.length > 0) {
                 data_array.errorElem.forEach(markDownloadErrors);
-                showalert("Das Abrufen von " + data_array.errorElem.length + " Konfigurationen ist fehlgeschlagen", "alert-danger");
+                showalert('{s name = "global/download1"}Das Abrufen von {/s}' + data_array.errorElem.length + '{s name = "global/download2"} Konfigurationen ist fehlgeschlagen{/s}', "alert-danger");
             }
 
         } else {
-            showalert("Die Daten wurden gespeichert", "alert-success");
+            showalert('{s name = "global/saveSuccess"}Die Daten wurden gespeichert{/s}', "alert-success");
             location.reload();
         }
     });
@@ -31,6 +31,11 @@ form.on("submit", function (event) {
 function removeRow(rowId) {
     $('#row' + rowId).remove();
 };
+
+function markDownloadErrors(item, index) {
+    var d = document.getElementById('row' + item);
+    d.style.backgroundColor = "red";
+}
 
 function addRow() {
     var len = $('#amazonpaytable tbody tr').length;
@@ -41,8 +46,8 @@ function addRow() {
         '<td><input name="row[' + len + '][sellerId]" id="amazonpaySellerId_' + len + '" type="text" style="max-width:125px;" class="form-control" value="" readonly="readonly"></td>' +
         '<td>' +
         '<select name="row[' + len + '][buttonType]" id="amazonpayButtonType_' + len + '" class="form-control">' +
-        '<option value="PwA" selected="selected">Amazon Pay (Default): Typical "Amazon Pay" button</option>' +
-        '<option value="Pay">Pay: A slightly smaller "Pay" button</option>' +
+        '<option value="PwA" selected="selected">Amazon Pay (Default): Typical Amazon Pay button</option>' +
+        '<option value="Pay">Pay: A slightly smaller Pay button</option>' +
         '<option value="A">A: A small button with only the Amazon Pay Logo</option>' +
         '</select>' +
         '</td>' +

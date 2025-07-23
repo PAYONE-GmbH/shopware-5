@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>PAYONE Kontrollzentrum </title>
+        <title>{s name="titel/controlcenter"}PAYONE Kontrollzentrum{/s} </title>
         <link rel="stylesheet" href="{link file="backend/_resources/css/bootstrap.min.css"}">
         <link rel="stylesheet" href="{link file="backend/_resources/css/bootstrap-editable.css"}">
         <link rel="stylesheet" href="{link file="backend/_resources/css/bootstrap-table.css"}">
@@ -58,6 +58,7 @@
         <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-table.min.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-table-de-DE.min.js"}"></script>
         <script type="text/javascript" src="{link file="backend/_resources/js/navigation.js"}"></script>
+        <script type="text/javascript" src="{link file="backend/_resources/js/bootstrap-filestyle.min.js"}"></script>
     {/block}
 
 

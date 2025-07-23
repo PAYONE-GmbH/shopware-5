@@ -59,7 +59,7 @@ form.on("submit", function (event) {
     values = values + '&paymentId=' + paymentid;
     $.post(saveUrl, values, function (response) {
         var data_array = $.parseJSON(response);
-        showalert("Die Daten wurden gespeichert", "alert-success");
+        showalert('{s name = "global/saveSuccess"}Die Daten wurden gespeichert{/s}', "alert-success");
     });
 });
 
@@ -81,14 +81,14 @@ $("#applecertupload").click(function () {
                 if (response != 0) {
                     $('#applepayCertificate').val(response);
                     form.submit();
-                    showalert("Das Zertifikat wurde gespeichert", "alert-success");
+                    showalert('{s name = "global/saveSuccess"}Die Daten wurden gespeichert{/s}', "alert-success");
                 } else {
-                    showalert("Fehler beim Speichern des Zertifikats", "alert-error");
+                    showalert('{s name = "global/certsaveerror"}Fehler beim Speichern des Zertifikats{/s}', "alert-error");
                 }
             },
         });
     } else {
-        showalert("Bitte eine Zertifikats Datei .pem auswählen", "alert-error");
+        showalert('{s name = "global/certsaveerror"}Bitte eine Zertifikats Datei .pem auswählen{/s}', "alert-error");
     }
 });
 
@@ -110,13 +110,13 @@ $("#applekeyupload").click(function () {
                 if (response != 0) {
                     $('#applepayPrivateKey').val(response);
                     form.submit();
-                    showalert("Die Schlüsseldatei wurde gespeichert", "alert-success");
+                    showalert('{s name = "global/saveSuccess"}Die Daten wurden gespeichert{/s}', "alert-success");
                 } else {
-                    showalert("Fehler beim Speichern des Schlüssels", "alert-error");
+                    showalert('{s name = "global/keysaveerror"}Fehler beim Speichern des Schlüssels{/s}', "alert-error");
                 }
             },
         });
     } else {
-        showalert("Bitte eine Key Datei .key auswählen", "alert-error");
+        showalert('{s name = "global/keychoose"}Bitte eine Key Datei .key auswählen{/s}', "alert-error");
     }
 });
