@@ -44,7 +44,7 @@
     </div> 
     <div class="emotion--container col-xs-4 block">
         {foreach item=Installment key=Key from=$InstallmentPlan}
-            <div id="payolution_installmentplan_{$Key}" class="payolution_installmentplans" style="float:right;display:none;">                
+            <div id="mopt_payone__fin_payolution_installment_plan_{$Key}" class="payolution_installmentplans" style="float:right;display:none;">
                 <strong>{s name='PaymentPlan'}Payment Plan{/s}</strong><br><br> 
                 {foreach item=Payment key=singleKey from=$Installment['installment']}             
                     <span>{$singleKey}. {s name='Installments'}Installments{/s}: {$Payment.amount|number_format:2:",":"."} {$Installment.currency} ({s name='Due'}due{/s} {$Payment.due|date_format:"%d.%m.%Y"})</span><br><br>

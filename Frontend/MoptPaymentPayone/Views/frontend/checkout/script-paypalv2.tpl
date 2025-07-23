@@ -62,7 +62,6 @@
                     }
                     return false;
                 }).fail(function (res) {
-                    alert("An error occured.");
                     return false;
                 });
             },
