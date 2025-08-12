@@ -16,8 +16,6 @@ class PayoneResource implements SubscriberInterface
     {
         return [
             'Enlight_Bootstrap_InitResource_MoptPayoneMain' => 'onInitResourcePayoneMain',
-            'Enlight_Bootstrap_InitResource_MoptPayoneBuilder' => 'onInitResourcePayoneBuilder',
-            'Enlight_Bootstrap_InitResource_payone_service' => 'onInitResourcePayoneService',
         ];
     }
 
@@ -28,27 +26,6 @@ class PayoneResource implements SubscriberInterface
     public function onInitResourcePayoneService(\Enlight_Event_EventArgs $args)
     {
         return new \Mopt_PayoneService();
-    }
-    
-  /**
-   * Creates and returns the payone builder for an event.
-   *
-   * @param \Enlight_Event_EventArgs $args
-   * @return \Payone_Builder
-   */
-    public function onInitResourcePayoneBuilder(\Enlight_Event_EventArgs $args)
-    {
-        $payoneConfig = new \Payone_Config();
-        $logger = ['Payone_Protocol_Logger_Log4php' => null];
-    
-        $payoneConfig->setValue('api/default/protocol/loggers', $logger);
-        $payoneConfig->setValue('transaction_status/default/protocol/loggers', $logger);
-        $payoneConfig->setValue('session_status/default/protocol/loggers', $logger);
-       
-        //$payoneConfig->setValue('api/default/protocol/filter/mask_value/percent', 50);
-        
-        $builder = new \Payone_Builder($payoneConfig);
-        return $builder;
     }
 
   /**

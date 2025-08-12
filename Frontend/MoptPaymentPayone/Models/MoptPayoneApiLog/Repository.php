@@ -7,60 +7,39 @@
 namespace Shopware\CustomModels\MoptPayoneApiLog;
 
 use Shopware\Components\Model\ModelRepository;
-
-use \Payone_Api_Persistence_Interface;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneResponse;
 
 /**
  * Transaction Log Repository
  */
-class Repository extends ModelRepository implements \Payone_Api_Persistence_Interface
+class Repository extends ModelRepository
 {
 
-    const KEY = 'p1_shopware_api';
-
-  /**
-   * @return string
-   */
-    public function getKey()
+    public function save(PayoneRequest $request, PayoneResponse $response)
     {
-        return self::KEY;
-    }
+        $apiLog = new MoptPayoneApiLog();
 
-    public function save(\Payone_Api_Request_Interface $request, \Payone_Api_Response_Interface $response)
-    {
-        $apiLog = new \Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog();
-
-      //special transaction status handling
-        if ($response instanceof \Payone_TransactionStatus_Request_Interface) {
-            $apiLog->setRequest(get_class($response));
+        if ($response instanceof PayoneRequest) {
+            $apiLog->setRequest($request->params['request']);
         } else {
-            $apiLog->setRequest($request->getRequest());
+            $apiLog->setRequest($request->params['request']);
             $apiLog->setResponse($response->getStatus());
-            if ($request->getMode() == 'live') {
+            if ($request->params['mode'] == 'live') {
                 $apiLog->setLiveMode(true);
             } else {
                 $apiLog->setLiveMode(false);
             }
-            $apiLog->setMerchantId($request->getMid());
-            $apiLog->setPortalId($request->getPortalid());
+            $apiLog->setMerchantId($request->params['mid']);
+            $apiLog->setPortalId($request->params['portalid']);
             $apiLog->setCreationDate(date('Y-m-d\TH:i:sP'));
             $apiLog->setRequestDetails($request->__toString());
             $apiLog->setResponseDetails($response->__toString());
-            $apiLog->setTransactionId($response->getValue('txid'));
+            $apiLog->setTransactionId($response->get('txid'));
         }
 
         Shopware()->Models()->persist($apiLog);
         Shopware()->Models()->flush();
-        return true;
-    }
-
-  /**
-   * @param \Payone_Api_Request_Interface $request
-   * @param \Exception
-   * @return boolean
-   */
-    public function saveException(\Payone_Api_Request_Interface $request, \Exception $ex)
-    {
         return true;
     }
 

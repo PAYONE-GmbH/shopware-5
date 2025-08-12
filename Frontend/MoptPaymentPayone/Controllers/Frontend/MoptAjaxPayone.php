@@ -1,6 +1,8 @@
 <?php
 
 use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 /**
  * Integrate Payone protect and Ajax call handling
@@ -29,13 +31,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      */
     protected $moptPayonePaymentHelper = null;
 
-    /**
-     * PayOne Builder
-     *
-     * @var Payone_Builder
-     */
-    protected $payoneServiceBuilder;
-    protected $service = null;
     /** @var Enlight_Components_Session_Namespace $session */
     protected $session;
 
@@ -48,7 +43,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function init()
     {
         $this->admin = Shopware()->Modules()->Admin();
-        $this->payoneServiceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
         $this->moptPayoneMain = $this->Plugin()->Application()->MoptPayoneMain();
         $this->moptPayonePaymentHelper = $this->moptPayoneMain->getPaymentHelper();
         $this->session = Shopware()->Session();
@@ -104,28 +98,23 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         //perform consumerscorecheck
         $params = $this->moptPayoneMain->getParamBuilder()
             ->getConsumerscoreCheckParams($billingAddressData, $paymentId);
-        /** @var Payone_Api_Service_Verification_Consumerscore $service */
-        $service = $this->payoneServiceBuilder->buildServiceVerificationConsumerscore();
-        $service->getServiceProtocol()->addRepository(
-            Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog')
-        );
-        $request = new Payone_Api_Request_Consumerscore($params);
+        $request = new PayoneRequest('consumerscore', $params);
         $isCompany = $this->moptPayoneMain->getHelper()->isCompany($userId);
         if ($isCompany) {
-            $request->setAddresschecktype(\Payone_Api_Enum_AddressCheckType::NONE);
-            $request->setBusinessRelation(null);
-            $request->setConsumerscoretype($config['consumerscoreCheckModeB2B']);
+            $request->set('addresschecktype', PayoneEnums::NONE);
+            $request->set('businessrelation' , null);
+            $request->set('consumerscoretype', $config['consumerscoreCheckModeB2B']);
         } else {
             $request->setAddresschecktype(
-                ($config['consumerscoreCheckModeB2C'] === \Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) ?
-                    \Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON :
-                    \Payone_Api_Enum_AddressCheckType::NONE
+                ($config['consumerscoreCheckModeB2C'] === PayoneEnums::BONIVERSUM_VERITA) ?
+                    PayoneEnums::BONIVERSUM_PERSON :
+                    PayoneEnums::NONE
             );
-            $request->setConsumerscoretype($config['consumerscoreCheckModeB2C']);
+            $request->set('consumerscoretype', $config['consumerscoreCheckModeB2C']);
         }
 
         try {
-            $response = $service->score($request);
+            $response = $request->request('consumerscore', $request);
         } catch (\Exception $e) {
 
             unset($this->session->moptConsumerScoreCheckNeedsUserAgreement);
@@ -148,9 +137,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             }
         }
 
-        if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
-            if ($response->getScore() === 'U') {
-                $response->setScore($this->moptPayoneMain->getHelper()->getScoreColor($config));
+        if ($response->getStatus() == PayoneEnums::VALID) {
+            if ($response->get('score' === 'U')) {
+                $response->set('score', $this->moptPayoneMain->getHelper()->getScoreColor($config));
             }
             //save result
             $this->moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);
@@ -188,7 +177,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $config = $this->moptPayoneMain->getPayoneConfig();
 
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()
-            ->getUserScoringValue($response->getPersonstatus(), $config);
+            ->getUserScoringValue($response->get('personstatus', $config));
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()->getUserScoringColorFromValue($mappedPersonStatus);
         $this->moptPayoneMain->getHelper()->saveAddressCheckResult('billing', $userId, $response, $mappedPersonStatus);
 
@@ -206,7 +195,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $this->moptPayoneMain->getHelper()->saveCorrectedBillingAddress($userId, $response);
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()
-            ->getUserScoringValue($response->getPersonstatus(), $config);
+            ->getUserScoringValue($response->get('personstatus', $config));
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()->getUserScoringColorFromValue($mappedPersonStatus);
         $this->moptPayoneMain->getHelper()->saveAddressCheckResult('billing', $userId, $response, $mappedPersonStatus);
 
@@ -224,7 +213,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $config = $this->moptPayoneMain->getPayoneConfig();
 
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()
-            ->getUserScoringValue($response->getPersonstatus(), $config);
+            ->getUserScoringValue($response->get('personstatus', $config));
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()->getUserScoringColorFromValue($mappedPersonStatus);
         $this->moptPayoneMain->getHelper()->saveAddressCheckResult('shipping', $userId, $response, $mappedPersonStatus);
 
@@ -242,7 +231,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $this->moptPayoneMain->getHelper()->saveCorrectedShippingAddress($userId, $response);
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()
-            ->getUserScoringValue($response->getPersonstatus(), $config);
+            ->getUserScoringValue($response->get('personstatus', $config));
         $mappedPersonStatus = $this->moptPayoneMain->getHelper()->getUserScoringColorFromValue($mappedPersonStatus);
         $this->moptPayoneMain->getHelper()->saveAddressCheckResult('shipping', $userId, $response, $mappedPersonStatus);
 
@@ -337,11 +326,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         }
 
         $params = $this->moptPayoneMain->getParamBuilder()->buildGetFile($this->getPaymentId(), Shopware()->Session()->moptMandateDataDownload);
-        $service = $this->payoneServiceBuilder->buildServiceManagementGetFile();
-        $request = new Payone_Api_Request_GetFile($params);
+        $request = new PayoneRequest('getfile', $params);
 
         try {
-            $response = $service->getFile($request);
+            $response = $request->request('getfile', $params);
             $this->Front()->Plugins()->ViewRenderer()->setNoRender();
 
             $httpResponse = $this->Response();
@@ -385,23 +373,22 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paymentData = $this->session->moptPayment;
         $paymentData['mopt_payone__company_trade_registry_number'] = $this->Request()->getPost('hreg');
         $paymentData['dob'] = $this->Request()->getPost('dob');
-        $paymentData['mopt_payone__payolution_installment_basketamount'] = $this->Request()->getPost('basketamount');
+        $paymentData['mopt_payone__fin_payolution_installment_basketamount'] = $this->Request()->getPost('basketamount');
         if (!empty($paymentData['mopt_payone__company_trade_registry_number'])) {
-            $paymentData['mopt_payone__payolution_b2bmode'] = 1;
+            $paymentData['mopt_payone__fin_payolution_b2bmode'] = 1;
         } else {
-            $paymentData['mopt_payone__payolution_b2bmode'] = 0;
+            $paymentData['mopt_payone__fin_payolution_b2bmode'] = 0;
         }
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
-        $financeType = Payone_Api_Enum_PayolutionType::PYS;
-        $paymentType = Payone_Api_Enum_PayolutionType::PYS_FULL;
+        $financeType = PayoneEnums::PYS;
+        $paymentType = PayoneEnums::PYS_FULL;
         $data = [];
         $precheckResponse = $this->buildAndCallPrecheck($config, 'fnc', $financeType, $paymentType, $paymentData);
-        if ($precheckResponse->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
-            $responseData = $precheckResponse->toArray();
-            $workorderId = $responseData['rawResponse']['workorderid'];
+        if ($precheckResponse->getStatus() === PayoneEnums::OK) {
+            $workorderId = $precheckResponse->get('workorderid');
             $calculationResponse = $this
                 ->buildAndCallCalculate($config, 'fnc', $financeType, $paymentType, $paymentData, $workorderId);
-            if ($calculationResponse instanceof \Payone_Api_Response_Genericpayment_Approved) {
+            if ($calculationResponse->getStatus() === PayoneEnums::OK) {
                 $installmentData = $calculationResponse->getInstallmentData();
                 $data['data'] = $installmentData;
                 $data['status'] = 'success';
@@ -468,7 +455,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param string $financetype
      * @param string $paymenttype
      * @param array $paymentdata
-     * @return Payone_Api_Response_Error|Payone_Api_Response_Genericpayment_Approved|Payone_Api_Response_Genericpayment_Redirect $response
+     * @return  $response
      */
     protected function buildAndCallPrecheck($config, $clearingType, $financetype, $paymenttype, $paymentData)
     {
@@ -482,57 +469,43 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
 
-        $request = new Payone_Api_Request_Genericpayment($params);
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment, $params);
+        $request->add(['add_paydata[action]' => PayoneEnums::PAYOLUTION_PRE_CHECK]);
+        $request->add(['add_paydata[payment_type]' => $paymenttype]);
+        $request->add(['add_paydata[analysis_session_id]' => Shopware()->Session()->get('paySafeToken')]);
 
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_PRE_CHECK)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'payment_type', 'data' => $paymenttype)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
-        ));
-
-        if ($paymentData && $paymentData['mopt_payone__payolution_b2bmode']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'b2b', 'data' => 'yes')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__company_trade_registry_number'])
-            ));
+        if ($paymentData && $paymentData['mopt_payone__fin_payolution_b2bmode']) {
+            $request->add(['add_paydata[b2b]' => 'yes']);
+            $request->add(['add_paydata[company_trade_registry_number]' => $paymentData['mopt_payone__company_trade_registry_number']]);
         }
-        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])) {
-            $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        if (empty($paymentData['mopt_payone__fin_payolution_installment_basketamount'])) {
+            $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__fin_payolution_installment_shippingcosts'];
         } else {
-            $amountWithShipping = $paymentData['mopt_payone__payolution_installment_basketamount'];
+            $amountWithShipping = $paymentData['mopt_payone__fin_payolution_installment_basketamount'];
         }
-        $request->setPaydata($paydata);
-        $request->setAmount($amountWithShipping);
-        $request->setCurrency($this->getCurrencyShortName());
-        $request->setCompany($personalData->getCompany());
-        $request->setFirstname($personalData->getFirstname());
-        $request->setLastname($personalData->getLastname());
-        $request->setStreet($personalData->getStreet());
-        $request->setZip($personalData->getZip());
-        $request->setCity($personalData->getCity());
-        $request->setCountry($personalData->getCountry());
-        if ($personalData->getBirthday() !== "00000000" && $personalData->getBirthday() !== "" && !is_null($personalData->getBirthday())) {
-            $request->setBirthday($personalData->getBirthday());
+        $request->set('amount', $amountWithShipping);
+        $request->set('currency', $this->getCurrencyShortName());
+        $request->set('company', $personalData['company']);
+        $request->set('firstname', $personalData['firstname']);
+        $request->set('lastname',$personalData['lastname']);
+        $request->set('street', $personalData['street']);
+        $request->set('zip', $personalData['zip']);
+        $request->set('city', $personalData['city']);
+        $request->set('country', $personalData['country']);
+        if ($personalData['birthday'] !== "00000000" && $personalData['birthday'] !== "" && !is_null($personalData['birthday'])) {
+            $request->set('birthday', $personalData['birthday']);
         } else {
-            $request->setBirthday($paymentData['dob']);
+            $request->set('birthday',$paymentData['dob']);
         }
 
-        if ($paymentData && $paymentData['mopt_payone__payolution_b2bmode']) {
-            $request->setBirthday("");
+        if ($paymentData && $paymentData['mopt_payone__fin_payolution_b2bmode']) {
+            $request->set('birthday', "");
         }
-        $request->setEmail($personalData->getEmail());
-        $request->setIp($personalData->getIp());
-        $request->setLanguage($personalData->getLanguage());
-        $request->setClearingtype($clearingType);
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
-        $response = $this->service->request($request);
+        $request->set('email',$personalData['email']);
+        $request->set('ip', $personalData['ip']);
+        $request->set('language',$personalData['language']);
+        $request->set('clearingtype', $clearingType);
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $request);
         return $response;
     }
 
@@ -543,7 +516,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param string $clearingType
      * @param string $financetype
      * @param string $paymenttype
-     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     * @return $response
      */
     protected function buildAndCallCalculate($config, $clearingType, $financetype, $paymenttype, $paymentData, $workorderId)
     {
@@ -558,50 +531,34 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
 
-        $request = new Payone_Api_Request_Genericpayment($params);
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment, $params);
+        $request->add(['add_paydata[action]' => PayoneEnums::PAYOLUTION_CALCULATION]);
+        $request->add(['add_paydata[payment_type]' => $paymenttype]);
 
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_CALCULATION)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'payment_type', 'data' => $paymenttype)
-        ));
-
-        if ($paymentData && $paymentData['mopt_payone__payolution_b2bmode']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'b2b', 'data' => 'yes')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
-            ));
+        if ($paymentData && $paymentData['mopt_payone__fin_payolution_b2bmode']) {
+            $request->add(['add_paydata[b2b]' => 'yes']);
+            $request->add(['add_paydata[company_trade_registry_number]' => $paymentData['mopt_payone__invoice_company_trade_registry_number']]);
         }
-        if (empty($paymentData['mopt_payone__payolution_installment_basketamount'])) {
-            $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__payolution_installment_shippingcosts'];
+        if (empty($paymentData['mopt_payone__fin_payolution_installment_basketamount'])) {
+            $amountWithShipping = $this->getAmount() + $paymentData['mopt_payone__fin_payolution_installment_shippingcosts'];
         } else {
-            $amountWithShipping = $paymentData['mopt_payone__payolution_installment_basketamount'];
+            $amountWithShipping = $paymentData['mopt_payone__fin_payolution_installment_basketamount'];
         }
-        $request->setPaydata($paydata);
-        $request->setAmount($amountWithShipping);
-        $request->setCurrency($this->getCurrencyShortName());
-        $request->setCompany($personalData->getCompany());
-        $request->setFirstname($personalData->getFirstname());
-        $request->setLastname($personalData->getLastname());
-        $request->setStreet($personalData->getStreet());
-        $request->setZip($personalData->getZip());
-        $request->setCity($personalData->getCity());
-        $request->setCountry($personalData->getCountry());
-        $request->setBirthday($paymentData['dob']);
-        $request->setEmail($personalData->getEmail());
-        $request->setIp($personalData->getIp());
-        $request->setLanguage($personalData->getLanguage());
-
-        $request->setClearingtype($clearingType);
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
-        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-        $response = $this->service->request($request);
+        $request->set('amount', $amountWithShipping);
+        $request->set('currency', $this->getCurrencyShortName());
+        $request->set('company', $personalData['company']);
+        $request->set('firstname', $personalData['firstname']);
+        $request->set('lastname',$personalData['lastname']);
+        $request->set('street', $personalData['street']);
+        $request->set('zip', $personalData['zip']);
+        $request->set('city', $personalData['city']);
+        $request->set('country', $personalData['country']);
+        $request->set('birthday',$paymentData['dob']);
+        $request->set('email',$personalData['email']);
+        $request->set('ip', $personalData['ip']);
+        $request->set('language',$personalData['language']);
+        $request->set('clearingtype', $clearingType);
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
         return $response;
     }
 
@@ -617,7 +574,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param string $shopId
      * @param mixed $rateMonth
      * @param string $amount
-     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     * @return $response
      */
     protected function buildAndCallCalculateRatepay($config, $clearingType, $financetype, $calculation_type, $paymentData, $shopId, $amount, $rateValue = false, $rateMonth = false )
     {
@@ -631,60 +588,38 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
 
-        $request = new Payone_Api_Request_Genericpayment($params);
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::RATEPAY_REQUEST_TYPE_CALCULATION)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'calculation_type', 'data' => $calculation_type)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
-        ));
+        $request = new PayoneRequest(PayoneEnums::RATEPAY_REQUEST_TYPE_CALCULATION, $params);
+        $params['add_paydata[action]'] = PayoneEnums::RATEPAY_REQUEST_TYPE_CALCULATION;
+        $params['add_paydata[calculation_type]'] = $calculation_type;
+        $params['add_paydata[customer_allow_credit_inquiry]'] = 'yes';
         if ($rateValue) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'rate', 'data' => floatval($rateValue * 100))
-            ));
+            $params['add_paydata[rate]'] = floatval($rateValue * 100);
         }
         if ($rateMonth) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'month', 'data' => $rateMonth)
-            ));
+            $params['add_paydata[month]'] = $rateMonth;
         }
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $shopId)
-        ));
+        $params['add_paydata[shop_id]'] = $shopId;
 
-
-        if (!empty($paymentData) && $paymentData['mopt_payone__ratepayinstallment_b2bmode']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'b2b', 'data' => 'yes')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__invoice_company_trade_registry_number'])
-            ));
+        if (!empty($paymentData) && $paymentData['mopt_payone__fin_ratepayinstallment_b2bmode']) {
+            $params['add_paydata[b2b]'] = 'yes';
+            $params['add_paydata[company_trade_registry_number]'] = $paymentData['mopt_payone__invoice_company_trade_registry_number'];
         }
         $amountWithShipping = $amount; // Docs state "smallest currency Unit???
-        $request->setPaydata($paydata);
-        $request->setAmount($amountWithShipping);
-        $request->setCurrency($this->getCurrencyShortName());
-        $request->setCompany($personalData->getCompany());
-        $request->setFirstname($personalData->getFirstname());
-        $request->setLastname($personalData->getLastname());
-        $request->setStreet($personalData->getStreet());
-        $request->setZip($personalData->getZip());
-        $request->setCity($personalData->getCity());
-        $request->setCountry($personalData->getCountry());
-        $request->setBirthday($paymentData['mopt_payone__ratepay_birthdaydate']);
-        $request->setEmail($personalData->getEmail());
-        $request->setIp($personalData->getIp());
-        $request->setLanguage($personalData->getLanguage());
-
-        $request->setClearingtype($clearingType);
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
-        $response = $this->service->request($request);
+        $request->set('amount', $amountWithShipping);
+        $request->set('currency', $this->getCurrencyShortName());
+        $request->set('company', $personalData['company']);
+        $request->set('firstname', $personalData['firstname']);
+        $request->set('lastname',$personalData['lastname']);
+        $request->set('street', $personalData['street']);
+        $request->set('zip', $personalData['zip']);
+        $request->set('city', $personalData['city']);
+        $request->set('country', $personalData['country']);
+        $request->set('birthday',$paymentData['dob']);
+        $request->set('email',$personalData['email']);
+        $request->set('ip', $personalData['ip']);
+        $request->set('language',$personalData['language']);
+        $request->set('clearingtype', $clearingType);
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
         return $response;
     }
 
@@ -749,9 +684,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $amount = $this->Request()->getParam('amount');
         $paymentData = $this->session->moptPayment;
         $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getParam('hreg');
-        $paymentData['mopt_payone__ratepay_birthdaydate'] = str_replace("-", "", $this->Request()->getParam('dob'));
+        $paymentData['mopt_payone__fin_ratepay_birthdaydate'] = str_replace("-", "", $this->Request()->getParam('dob'));
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
-        $financeType = \Payone_Api_Enum_RatepayType::RPS;
+        $financeType = PayoneEnums::RPS;
 
         try {
             if (preg_match('/^[0-9]+(\.[0-9][0-9][0-9])?(,[0-9]{1,2})?$/', $calcValue)) {
@@ -761,12 +696,12 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                 $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-rate', $paymentData, $ratePayShopId, $amount, $calcValue, false);
 
 
-                if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
-                    $responseData = $result->getPayData()->toAssocArray();
+                if ($result->getStatus() === PayoneEnums::OK) {
+                    $responseData = $result->getPayData();
                     $html = $this->renderRatepayInstallment($responseData);
                 } else {
-                    if ($result instanceof Payone_Api_Response_Error) {
-                        $html = "<div class='ratepay-result rateError'>" . $result->getCustomermessage() . "</div>";
+                    if ($result->getStatus() ===  PayoneEnums::ERROR) {
+                        $html = "<div class='ratepay-result rateError'>" . $result->get('customermessage') . "</div>";
                     }
                 }
             } else {
@@ -825,20 +760,20 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $amount = $this->Request()->getParam('amount');
         $paymentData = $this->session->moptPayment;
         $paymentData['mopt_payone__installment_company_trade_registry_number'] = $this->Request()->getParam('hreg');
-        $paymentData['mopt_payone__ratepay_birthdaydate'] = str_replace("-", "", $this->Request()->getParam('dob'));
+        $paymentData['mopt_payone__fin_ratepay_birthdaydate'] = str_replace("-", "", $this->Request()->getParam('dob'));
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
-        $financeType = \Payone_Api_Enum_RatepayType::RPS;
+        $financeType = PayoneEnums::RPS;
 
         try {
             if (preg_match('/^[0-9]{1,5}$/', $calcValue)) {
                 $result = $this->buildAndCallCalculateRatepay($config, 'fnc', $financeType, 'calculation-by-time', $paymentData, $ratePayShopId, $amount, false, $calcValue);;
 
-                if ($result instanceof Payone_Api_Response_Genericpayment_Ok) {
-                    $responseData = $result->getPayData()->toAssocArray();
+                if ($result->getStatus() ===  PayoneEnums::OK) {
+                    $responseData = $result->getPayData();
                     $html = $this->renderRatepayInstallment($responseData);
                 } else {
-                    if ($result instanceof Payone_Api_Response_Error) {
-                        $html = "<div class='rateError'>" . $result->getCustomermessage() . "</div>";
+                    if ($result->getStatus === PayoneEnums::ERROR) {
+                        $html = "<div class='rateError'>" . $result->get('customermessage') . "</div>";
                     }
                 }
             } else {
@@ -933,11 +868,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     {
         $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentAmazonPay()->getId();
         $moptPayoneMain = $this->moptPayoneMain;
-
-        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
         $params = $moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
 
-        $request = new \Payone_Api_Request_Genericpayment($params);
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment, $params);
 
         $router = $this->Front()->Router();
 
@@ -947,35 +880,19 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $errorurl = $router->assemble(array('controller' => 'checkout', 'action' => 'cart',
             'forceSecure' => true, 'appendSession' => false));
 
-        $request->setClearingType(\Payone_Enum_ClearingType::WALLET);
-        $request->setWallettype(\Payone_Api_Enum_WalletType::AMAZONPAY);
-        $request->setWorkorderid($this->session->moptPayoneAmazonWorkOrderId);
-        $request->setApiVersion("3.10");
+        $request->set('clearingtype', PayoneEnums::WALLET);
+        $request->set('wallettype', PayoneEnums::AMAZONPAY);
+        $request->set('workorderid', $this->session->moptPayoneAmazonWorkOrderId);
+        $request->set('apiversion', "3.10");
+        $request->set('currency', Shopware()->Shop()->getCurrency()->getCurrency());
+        $request->set('amount', Shopware()->Session()->sOrderVariables['sAmount']);
+        $request->set('successurl',$successurl);
+        $request->set('errorurl', $errorurl);
 
-        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
-        $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
-        $request->setSuccessurl($successurl);
-        $request->setErrorurl($errorurl);
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amazon_reference_id', 'data' => $this->session->moptPayoneAmazonReferenceId)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => 'confirmorderreference')
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'reference', 'data' => $moptPayoneMain->reserveOrdernumber())
-        ));
-
-        $request->setPaydata($paydata);
-
-        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-
-        $response = $service->request($request);
+        $params['add_paydata[amazon_reference_id]'] = $this->session->moptPayoneAmazonReferenceId;
+        $params['add_paydata[action]'] = 'confirmorderreference';
+        $params['add_paydata[reference]'] = $moptPayoneMain->reserveOrdernumber();
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
 
         if ($response->getStatus() === 'OK') {
             return true;
@@ -987,7 +904,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     /**
      * prepare and do payment server api call
      *
-     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     * @return $response
      */
     protected function buildAndCallSetOrderReferenceDetails()
     {
@@ -995,46 +912,26 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
 
         $session = Shopware()->Session();
-        $clearingType = \Payone_Enum_ClearingType::WALLET;
-        $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
+        $clearingType = PayoneEnums::WALLET;
+        $walletType = PayoneEnums::AMAZONPAY;
         $params = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize($config['paymentId']);
-        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
         $params['api_version'] = '3.10';
         //create hash
         $basket = Shopware()->Modules()->Basket()->sGetBasket();
         $orderHash = md5(serialize($basket));
         $session->moptOrderHash = $orderHash;
 
-        $request = new Payone_Api_Request_Genericpayment($params);
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::AMAZON_SETORDERREFERENCEDETAILS)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amazon_reference_id', 'data' => $session->moptPayoneAmazonReferenceId)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amazon_address_token', 'data' => $session->moptPayoneAmazonAccessToken)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'storename', 'data' => Shopware()->Shop()->getName())
-        ));
-
-        $request->setPaydata($paydata);
-        $request->setClearingtype($clearingType);
-        $request->setWallettype($walletType);
-        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
-        $request->setAmount($basket['AmountNumeric']);
-        $request->setWorkorderId($session->moptPayoneAmazonWorkOrderId);
-
-        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
-
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-        $response = $service->request($request);
-
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment, $params);
+        $params['add_paydata[action]'] = PayoneEnums::AMAZON_SETORDERREFERENCEDETAILS;
+        $params['add_paydata[amazon_reference_id]'] = $this->session->moptPayoneAmazonReferenceId;
+        $params['add_paydata[amazon_address_token]'] = $session->moptPayoneAmazonAccessToken;
+        $params['add_paydata[storename]'] = Shopware()->Shop()->getName();
+        $request->set('clearingtype', $clearingType);
+        $request->set('wallettype', $walletType);
+        $request->set('currency', Shopware()->Shop()->getCurrency()->getCurrency());
+        $request->set('amount', $basket['AmountNumeric']);
+        $request->set('workorderId', $session->moptPayoneAmazonWorkOrderId);
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
         return $response;
     }
 
@@ -1047,8 +944,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $postData = $this->Request()->getParams();
         $paymentData = $this->session->moptPayment;
         $config = $this->moptPayoneMain->getPayoneConfig($payonePaymentHelper->getPaymentAmazonPay()->getId());
-        $clearingType = \Payone_Enum_ClearingType::WALLET;
-        $walletType = \Payone_Api_Enum_WalletType::AMAZONPAY;
+        $clearingType = PayoneEnums::WALLET;
+        $walletType = PayoneEnums::AMAZONPAY;
         if (empty($this->session->moptPayoneAmazonReferenceId)) {
             $this->session->moptPayoneAmazonReferenceId = $postData['referenceId'];
         }
@@ -1057,10 +954,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $response = $this->buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $this->session->moptPayoneAmazonReferenceId, $this->session->moptPayoneAmazonAccessToken);
 
 
-        if ($response->getStatus() == \Payone_Api_Enum_ResponseType::OK) {
+        if ($response->getStatus() == PayoneEnums::OK) {
             // create User from Address Data
             $responseData = $response->toArray();
-            $responseAddress = $response->getPaydata()->toAssocArray();
+            $responseAddress = $response->getPaydata();
             //check if telephonenumber is required in shop config
             if (Shopware()->Config()->get('requirePhoneField')) {
                 $shipping_telephonenumber = $responseAddress['shipping_telephonenumber'];
@@ -1129,7 +1026,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
      * @param array $paymentData
      * @param string $amazonReferenceId
      * @param array $amazonAddressToken
-     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Approved|\Payone_Api_Response_Genericpayment_Redirect $response
+     * @return $response
      */
     protected function buildAndCallGetOrderReferenceDetails($config, $clearingType, $walletType, $paymentData, $amazonReferenceId, $amazonAddressToken)
     {
@@ -1140,30 +1037,16 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $orderHash = md5(serialize($basket));
         $this->session->moptOrderHash = $orderHash;
 
-        $request = new Payone_Api_Request_Genericpayment($params);
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment, $params);
 
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::AMAZON_GETORDERREFERENCEDETAILS)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amazon_reference_id', 'data' => $amazonReferenceId)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amazon_address_token', 'data' => $amazonAddressToken)
-        ));
-
-        $request->setPaydata($paydata);
-        $request->setClearingtype($clearingType);
-        $request->setWallettype($walletType);
-        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
-        $request->setAmount($basket['AmountNumeric']);
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
-        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-
-        $response = $this->service->request($request);
+        $params['add_paydata[action]'] = PayoneEnums::AMAZON_GETORDERREFERENCEDETAILS;
+        $params['add_paydata[amazon_reference_id]'] = $amazonReferenceId;
+        $params['add_paydata[amazon_address_token]'] = $amazonAddressToken;
+        $request->set('clearingtype', $clearingType);
+        $request->set('wallettype', $walletType);
+        $request->set('currency', Shopware()->Shop()->getCurrency()->getCurrency());
+        $request->set('amount', $basket['AmountNumeric']);
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
         return $response;
     }
 
@@ -1243,9 +1126,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
                     ->get('klarnaStartSessionError'),
             ]);
         } else {
-            $clientToken = $result->getPaydata()->toAssocArray()['client_token'];
+            $paydata = $result->getPaydata();
+            $clientToken = $paydata['client_token'];
 
-            $this->session->offsetSet('mopt_klarna_workorderid', $result->getWorkorderId());
+            $this->session->offsetSet('mopt_klarna_workorderid', $result->get('workorderid'));
             $this->session->offsetSet('mopt_klarna_client_token', $clientToken);
 
             echo json_encode([
@@ -1361,65 +1245,46 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $paymentId = Shopware()->Container()->get('MoptPayoneMain')->getPaymentHelper()->getPaymentPaypalv2Express()->getId();
         $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
         $session = Shopware()->Session();
-        $clearingType = \Payone_Enum_ClearingType::WALLET;
-        $walletType = \Payone_Api_Enum_WalletType::PAYPAL_EXPRESSV2;
+        $clearingType = PayoneEnums::WALLET;
+        $walletType = PayoneEnums::PAYPAL_EXPRESSV2;
         $params = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneMain')->getParamBuilder()->buildAuthorize($config['paymentId']);
-        $payoneServiceBuilder = Shopware()->Container()->get('plugins')->Frontend()->MoptPaymentPayone()->get('MoptPayoneBuilder');
         $params['api_version'] = '3.10';
-        //create hash
         $basket = Shopware()->Modules()->Basket()->sGetBasket();
         $orderHash = md5(serialize($basket));
         $session->moptOrderHash = $orderHash;
         $workorderId = $session->offsetget('moptPaypalv2ExpressWorkorderId');
 
-        $request = new Payone_Api_Request_Genericpayment($params);
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment, $params);
         if (!empty($workorderId)) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS)
-            ));
-            $request->setWorkorderId($workorderId);
+            $params['add_paydata[action]'] = PayoneEnums::PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS;
+            $request->set('workorderid', $workorderId);
         } else {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_SET_EXPRESSCHECKOUT)
-            ));
+            $params['add_paydata[action]'] = PayoneEnums::PAYPAL_ECS_SET_EXPRESSCHECKOUT;
             $router = $this->Front()->Router();
-            $successurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2express',
+            $params['successurl'] = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2express',
                 'forceSecure' => true, 'appendSession' => false));
-            $errorurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2expresserror',
+            $params['errorurl'] = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2expresserror',
                 'forceSecure' => true, 'appendSession' => false));
-            $backurl = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2expressabort',
+            $params['backurl'] = $this->moptPayonePaymentHelper->assembleTokenizedUrl($router, array('controller' => 'MoptPaymentEcsv2', 'action' => 'paypalv2expressabort',
                 'forceSecure' => true, 'appendSession' => false));
-
-            $request->setSuccessurl($successurl);
-            $request->setBackurl($errorurl);
-            $request->setErrorurl($backurl);
         }
         if ($config['authorisationMethod'] === 'Vorautorisierung') {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'payment_action', 'data' => 'authorization')
-            ));
+            $params['add_paydata[payment_action]'] = 'authorization';
         } else {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'payment_action', 'data' => 'Capture')
-            ));
+            $params['add_paydata[payment_action]'] = 'Capture';
         }
 
-        $request->setPaydata($paydata);
-        $request->setClearingtype($clearingType);
-        $request->setWallettype($walletType);
-        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
-
+        $request->set('clearingtype', $clearingType);
+        $request->set('wallettype', $walletType);
+        $request->set('currency', Shopware()->Shop()->getCurrency()->getCurrency());
         $basket = $this->moptPayoneMain->sGetBasket();
-
         $shipping = [];
         $shipping['id'] = '';
         $shipping['name'] = 'Paypal Express Shipping';
 
         $shippingAmount = $this->Request()->getParam('shipping') ?? 0;
 
-        $request->setAmount($basket['AmountNumeric'] + $shippingAmount );
+        $request->set('amount', $basket['AmountNumeric'] + $shippingAmount);
 
         $basket['sShippingcosts'] = $shippingAmount;
         $basket['sShippingcostsWithTax'] = $shippingAmount;
@@ -1429,14 +1294,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $invoicing = $this->moptPayoneMain->getParamBuilder()->getInvoicing($basket, $shipping, $userData);
-        $request->setInvoicing($invoicing);
-
-        $service = $payoneServiceBuilder->buildServicePaymentGenericpayment();
-
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-        $response = $service->request($request);
+        $request->add($invoicing);
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
 
         $response = $response->toArray();
         $jsonResponse = [];

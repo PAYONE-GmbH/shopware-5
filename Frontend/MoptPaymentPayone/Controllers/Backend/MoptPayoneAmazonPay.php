@@ -1,6 +1,8 @@
 <?php
 
 use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {
@@ -13,8 +15,6 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
      * @var Mopt_PayoneMain
      */
     protected $moptPayoneMain = null;
-    protected $payoneServiceBuilder = null;
-    protected $service = null;
 
     public function getWhitelistedCSRFActions()
     {
@@ -174,10 +174,9 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
     protected function requestAmazonPayConfigFromApi($paymentAmazonPayId)
     {
         $this->moptPayoneMain = $this->Plugin()->Application()->MoptPayoneMain();
-        $this->payoneServiceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
         $config = $this->moptPayoneMain->getPayoneConfig($paymentAmazonPayId);
-        $clearingType = Payone_Enum_ClearingType::WALLET;
-        $walletType = Payone_Api_Enum_WalletType::AMAZONPAY;
+        $clearingType = PayoneEnums::WALLET;
+        $walletType = PayoneEnums::AMAZONPAY;
         try {
             $profileResponse = $this->buildAndCallAmazonPayProfile(
                 $config,
@@ -187,7 +186,7 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
         } catch (Exception $e) {
         }
 
-        if (isset($profileResponse) && $profileResponse instanceof Payone_Api_Response_Genericpayment_Ok) {
+        if (isset($profileResponse) && $profileResponse->getStatus() === PayoneEnums::OK ) {
             $payData = $profileResponse->getRatepayPayDataArray();
             return $payData;
         }  else {
@@ -209,20 +208,13 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
         $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
 
-        $request = new Payone_Api_Request_Genericpayment($params);
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::AMAZON_GETCONFIGURATION)
-        ));
-
-        $request->setPaydata($paydata);
-        $request->setClearingtype($clearingType);
-        $request->setWallettype($walletType);
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment, $params);
+        $params['add_paydata[action]'] = PayoneEnums::AMAZON_GETCONFIGURATION;
+        $params['clearingtype'] = $clearingType;
+        $params['wallettype'] = $walletType;
         // set currency here to prevent a mapping exception
-        $request->setCurrency('EUR');
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
-        $response = $this->service->request($request);
+        $params['currency'] = 'EUR';
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
         return $response;
     }
 

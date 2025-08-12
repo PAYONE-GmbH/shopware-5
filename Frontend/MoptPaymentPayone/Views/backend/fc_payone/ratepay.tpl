@@ -29,8 +29,8 @@
                             </select>
                         </td>
                         <td><select class="form-control" name="row[{$ratepayconfig->getId()}][ratepayInstallmentMode]" id="ratepayInstallmentMode_{$ratepayconfig->getId()}">
-                                <option value="0" {if $ratepayconfig->getRatepayInstallmentMode() == 0}selected="selected"{/if}>Vorkasse</option>
-                                <option value="1" {if $ratepayconfig->getRatepayInstallmentMode() == 1}selected="selected"{/if}>Lastschrift</option>
+                                <option value="0" {if $ratepayconfig->getRatepayInstallmentMode() == 0}selected="selected"{/if}>{s name="global-form/prepaid"}Vorkasse{/s}</option>
+                                <option value="1" {if $ratepayconfig->getRatepayInstallmentMode() == 1}selected="selected"{/if}>{s name="global-form/directdebit"}Lastschrift{/s}</option>
                             </select>
                         </td>
                         <td><input name="row[{$ratepayconfig->getId()}][countryCodeBilling]" id="countrycode_{$ratepayconfig->getId()}" type="text" style="max-width:125px;" class="form-control" value="{$ratepayconfig->getCountryCodeBilling()}" readonly="readonly" ></td>
@@ -77,10 +77,10 @@
                     if (data_array.errorElem.length > 0){
                         alert('data_array.errorElem.length >0');
                         data_array.errorElem.forEach(markDownloadErrors);
-                        showalert("Das Abrufen von " + data_array.errorElem.length + " Konfigurationen ist fehlgeschlagen", "alert-danger");
+                        showalert('{s name = "global/download1"}Das Abrufen von {/s}' + data_array.errorElem.length + '{s name = "global/download2"} Konfigurationen ist fehlgeschlagen{/s}' + data_array.errorMessage, "alert-danger");
                     }
                 } else {
-                    showalert("Die Daten wurden gespeichert", "alert-success");
+                    showalert('{s name = "global/saveSuccess"}Die Daten wurden gespeichert{/s}', "alert-success");
                     location.reload();
                 }
             });
@@ -111,5 +111,6 @@
             var d = document.getElementById('row' + item);
             d.style.backgroundColor = "red";
         }
+    </script>
 {/block}
 

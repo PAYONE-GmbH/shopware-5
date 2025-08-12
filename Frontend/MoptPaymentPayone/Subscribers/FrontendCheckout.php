@@ -6,6 +6,8 @@ use Enlight\Event\SubscriberInterface;
 use Mopt_PayoneMain;
 use Mopt_PayonePaymentHelper;
 use Shopware\Models\Payment\Repository;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 class FrontendCheckout implements SubscriberInterface
 {
@@ -210,11 +212,11 @@ class FrontendCheckout implements SubscriberInterface
             }
 
             $orderLines = [];
-            foreach ($invoicing->getItems() as $item) {
-                $price = (int)($item->getPr() * 100);
-                $quantity = $item->getNo();
+            foreach ($invoicing as $item) {
+                $price = (int)($item['pr'] * 100);
+                $quantity = $item['no'];
                 /** the current items index in $basket['content'] */
-                $basketItemIndex = array_search($item->getId(), array_column($basket['content'], 'ordernumber'));
+                $basketItemIndex = array_search($item['id'], array_column($basket['content'], 'ordernumber'));
                 $itemUrl = $router->assemble([
                     'module' => 'frontend',
                     'sViewport' => 'detail',
@@ -222,9 +224,9 @@ class FrontendCheckout implements SubscriberInterface
                 ]);
 
                 $orderLines[] = [
-                    'reference'    => $item->getId(),
-                    'name'         => $item->getDe(),
-                    'tax_rate'     => (int)($item->getVa()),
+                    'reference'    => $item['id'],
+                    'name'         => $item['de'],
+                    'tax_rate'     => (int)$item['va'],
                     'unit_price'   => $price,
                     'quantity'     => $quantity,
                     'total_amount' => $price * $quantity,
@@ -570,11 +572,11 @@ class FrontendCheckout implements SubscriberInterface
         $basket = $payoneMain->sGetBasket();
         $amount = empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
         $config = $payoneMain->getPayoneConfig($paymentId);
-        $financeType = \Payone_Api_Enum_PayoneSecuredType::PIN;
+        $financeType = PayoneEnums::PIN;
 
         try {
             $result = $this->buildAndCallCalculatePayone($config, 'fnc', $financeType, $amount);
-            if ($result instanceof \Payone_Api_Response_Genericpayment_Ok) {
+            if ($result->getStatus() === 'OK') {
                 $formattedResult = $this->formatInstallmentOptions($result->getRawResponse());
             }
         }
@@ -632,13 +634,11 @@ class FrontendCheckout implements SubscriberInterface
      * @param string $clearingType
      * @param string $financetype
      * @param string $amount
-     * @return \Payone_Api_Response_Error|\Payone_Api_Response_Genericpayment_Ok $response
+     * @return $response
      */
     protected function buildAndCallCalculatePayone($config, $clearingType, $financetype, $amount)
     {
         $payoneMain = $this->container->get('MoptPayoneMain');
-        $paramBuilder = $payoneMain->getParamBuilder();
-        $personalData = $paramBuilder->getPersonalData(Shopware()->Modules()->Admin()->sGetUserData());
         $params = $payoneMain->getParamBuilder()->buildAuthorize($config['paymentId']);
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
@@ -647,22 +647,13 @@ class FrontendCheckout implements SubscriberInterface
         $orderHash = md5(serialize($basket));
         Shopware()->Session()->moptOrderHash = $orderHash;
 
-        $request = new \Payone_Api_Request_Genericpayment($params);
-
-        $paydata = new \Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new \Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => \Payone_Api_Enum_GenericpaymentAction::PAYONE_SECURED_INSTALLMENT_CALCULATE)
-        ));
-        $amountWithShipping = $amount; // Docs state "smallest currency Unit???
-        $request->setPaydata($paydata);
-        $request->setAmount($amountWithShipping);
-        $request->setCurrency(Shopware()->Container()->get('currency')->getShortName());
-
-        $request->setClearingtype($clearingType);
-        $builder = Shopware()->Container()->get('MoptPayoneBuilder');
-
-        $service = $builder->buildServicePaymentGenericpayment();
-        $response = $service->request($request);
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment, $params);
+        $params['add_paydata[action]'] = PayoneEnums::PAYONE_SECURED_INSTALLMENT_CALCULATE;
+        $amountWithShipping = $amount;
+        $request->set('amount', $amountWithShipping);
+        $request->set('currency', Shopware()->Container()->get('currency')->getShortName());
+        $request->set('clearingtype', $clearingType);
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
         return $response;
     }
 }

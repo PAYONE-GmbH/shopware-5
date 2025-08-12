@@ -5,15 +5,15 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Shopware\Models\Order\Order;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 /**
  * updated and finish transactions
  */
 class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
-
-    protected $moptPayone__serviceBuilder = null;
     protected $moptPayone__main = null;
+
     /** @var $moptPayone__helper Mopt_PayoneHelper */
     protected $moptPayone__helper = null;
     protected $moptPayone__paymentHelper = null;
@@ -27,7 +27,6 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     public function init()
     {
-        $this->moptPayone__serviceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
         $this->moptPayone__main = $this->Plugin()->Application()->MoptPayoneMain();
         $this->moptPayone__helper = $this->moptPayone__main->getHelper();
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
@@ -94,7 +93,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->logger->debug('successfully converted $_POST to utf-8:' . PHP_EOL .  var_export($_POST, true) . PHP_EOL);
         $request->setParamSources(array('_POST')); // only retrieve data from POST
 
-        $this->CheckAndFixActiveShopIfNeeded($request->getParam('param'));
+        $this->CheckAndFixActiveShopIfNeeded($request->get('param'));
 
         $transactionId = $request->getParam('txid');
         $this->logger->debug('push received for tx ' . $transactionId);
@@ -107,7 +106,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                 $orderIsCorrupted = true;
             }
         } else {
-            $this->restoreSession($request->getParam('param'));
+            $this->restoreSession($request->get('param'));
             $session = Shopware()->Session();
             if (is_null($session) || !$session->offsetExists('sOrderVariables')) {
                 $message = 'The session could not be restored. It might help to configure the server\'s gc_probability:'
@@ -128,42 +127,39 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->payoneConfig = $config;
         Shopware()->Config()->mopt_payone__paymentId = $paymentId; //store in config for log
         $key = $config['apiKey'];
-
+        $hashedKey = md5($key);
         $moptConfig = new Mopt_PayoneConfig();
         $validIps = $moptConfig->getValidIPs();
-
-        $service = $this->moptPayoneInitTransactionService($key, $validIps);
-
-        // enable support for proxied requests and load balancers for IP Validation
-        $validators = $service->getValidators();
-        foreach ($validators as $validator) {
-            if ($validator instanceof Payone_TransactionStatus_Validator_Ip) {
-                $validator->getConfig()->setValue('validator/proxy/enabled', 1);
-            }
+        if (!$this->validateRequest($validIps)) {
+            return;
+        }
+        if ($hashedKey !== $_POST['key']) {
+            return;
         }
 
         try {
-            $response = $service->handleByPost();
+            $response = new PayoneRequest(null, $request->getPost());
+            $response->set('status', 'TSOK');
         } catch (Exception $exc) {
             $this->logger->error('error processing request', array($exc->getTraceAsString()));
             echo 'error processing request';
             return;
         }
 
-        $payoneRequest = $service->getMapper()->mapByArray($request->getPost());
-        $clearingData = $this->moptPayone__paymentHelper->extractClearingDataFromResponse($payoneRequest);
+        $payoneRequest = new PayoneRequest(null, $request->getPost());
+        $clearingData = $this->moptPayone__paymentHelper->extractClearingDataFromResponse($request);
         if ($clearingData && !$isOrderFinished) {
             $session->offsetSet('moptClearingData', $clearingData);
         }
 
         if (!$isOrderFinished) {
-            if ($request->getParam('txaction') !== 'failed') {
+            if ($request->get('txaction') !== 'failed') {
                 $orderIsCorrupted = $this->validateBasketSignature($session, $request);
                 if ($orderIsCorrupted) {
                     $this->logger->error('order corrupted - order hash mismatch');
                     $orderIsCorrupted = true;
                     $paymentStatus = 21;
-                    $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'), $paymentStatus);
+                    $orderNumber = $this->saveOrder($transactionId, $request->get('reference'), $paymentStatus);
                     $orderObj = Shopware()->Models()->getRepository(Order::class)->findOneBy(['number' => $orderNumber ]);
                     $comment = Shopware()->Snippets()
                         ->getNamespace('frontend/MoptPaymentPayone/messages')
@@ -180,13 +176,13 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     Shopware()->Models()->persist($orderObj);
                     Shopware()->Models()->flush();
                 } else {
-                    $orderNumber = $this->saveOrder($transactionId, $request->getParam('reference'));
+                    $orderNumber = $this->saveOrder($transactionId, $request->get('reference'));
                 }
                 $order = $this->loadOrderByOrderNumber($orderNumber);
 
             } else {
                 $this->logger->debug('finished, output TSOK');
-                echo $response->getStatus();
+                echo $response->get('status');
                 $this->logger->debug('starting tx forwards');
                 $this->moptPayoneForwardTransactionStatus($_POST, $paymentId);
                 $this->logger->debug('finished all tasks, exit');
@@ -197,10 +193,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $attributeData = array();
         $saveOrderHash = false;
         $saveClearingData = false;
-        $attributeData['mopt_payone_status'] = $request->getParam('txaction');
-        $attributeData['mopt_payone_sequencenumber'] = $payoneRequest->getSequencenumber();
-        $attributeData['mopt_payone_payment_reference'] = $request->getParam('reference');
-        $customParam = explode('|', $request->getParam('param'));
+        $attributeData['mopt_payone_status'] = $request->get('txaction');
+        $attributeData['mopt_payone_sequencenumber'] = $request->get('sequencenumber');
+        $attributeData['mopt_payone_payment_reference'] = $request->get('reference');
+        $customParam = explode('|', $request->get('param'));
         if (isset($customParam[2])) {
             $attributeData['mopt_payone_order_hash'] = $customParam[2];
             $saveOrderHash = true;
@@ -214,25 +210,25 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         if (!$orderIsCorrupted) {
             $mappedShopwareState = $this->moptPayone__helper->getMappedShopwarePaymentStatusId(
                 $config,
-                $request->getParam('txaction'),
-                $request->getParam('reminderlevel')
+                $request->get('txaction'),
+                $request->get('reminderlevel')
             );
 
-            $transaction_status = $request->getParam('transaction_status');
-            $failedcause = $request->getParam('reasoncode');
+            $transaction_status = $request->get('transaction_status');
+            $failedcause = $request->get('reasoncode');
             //$transaction_status = 'pending';
             //$failedcause = '-981';
 
             $paymentName = $this->moptPayone__paymentHelper->getPaymentNameFromId($order['paymentID']);
             if (strpos($paymentName, 'mopt_payone__ewallet_amazon_pay') === 0) {
-                if ($request->getParam('txaction') == 'failed') {
+                if ($request->get('txaction') == 'failed') {
                     // save failed status with mail notification
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState, true);
-                } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause == '981') {
+                } elseif ($request->get('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause == '981') {
                     // InvalidPayment Method: update Order Status to "amazon_delayed" (119) and send mail notification
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], 119, true);
                     $attributeData['mopt_payone_status'] = 'pending';
-                } elseif ($request->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause != '981') {
+                } elseif ($request->get('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause != '981') {
                     // InvalidPayment Method: update Order Status to "amazon_delayed" (119)
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], 119);
                     $attributeData['mopt_payone_status'] = 'pending';
@@ -240,7 +236,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
                 }
 
-            } elseif ($request->getParam('txaction') === 'reminder' && $request->getParam('reminderlevel') === '0') {
+            } elseif ($request->get('txaction') === 'reminder' && $request->get('reminderlevel') === '0') {
                 // ignore txaction reminder with reminderlevel 0 since this only marks the end of dunning process
             } else {
                 // ! Amazonpay
@@ -260,8 +256,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             Shopware()->Models()->persist($orderObj);
             Shopware()->Models()->flush();
         }
+        $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog');
+        $repository->save($payoneRequest, $response);
         $this->logger->debug('finished, output TSOK');
-        echo $response->getStatus();
+        echo $response->get('status');
         $this->logger->debug('starting tx forwards');
         $this->moptPayoneForwardTransactionStatus($_POST, $paymentId);
 
@@ -271,32 +269,15 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->container->get('events')->notify(
             'Payone_Controller_MoptShopNotification',
             [
-                'txaction'        => $request->getParam('txaction'),
-                'reference'       => $request->getParam('reference'),
+                'txaction'        => $request->get('txaction'),
+                'reference'       => $request->get('reference'),
                 'ordernumber'     => $order['ordernumber'],
-                'sequencenumber'  => $payoneRequest->getSequencenumber(),
+                'sequencenumber'  => $request->get('sequencenumber'),
                 'paymentId'       => $order['paymentID'],
             ]
         );
 
         $this->logger->debug('finished all tasks, exit');
-    }
-
-    /**
-     * get transaction service, validate key and ip addresses
-     *
-     * @param string $key
-     * @param array $validIps
-     * @return service
-     */
-    protected function moptPayoneInitTransactionService($key, $validIps)
-    {
-        $hashedKey = md5($key);
-        $service = $this->moptPayone__serviceBuilder->buildServiceTransactionStatusHandleRequest($hashedKey, $validIps);
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog'
-        ));
-        return $service;
     }
 
     /**
@@ -574,8 +555,66 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     private function validateBasketSignature($session, $request) {
         $orderHash = md5(serialize($session['sOrderVariables']));
-        $customParam = explode('|', $request->getParam('param'));
+        $customParam = explode('|', $request->get('param'));
         return ($orderHash !== $customParam[2]);
+    }
+
+    /**
+     * Returns the Remote IP supporting
+     * load balancer and proxy setups
+     *
+     * @return string
+     */
+    public static function getRemoteAddress()
+    {
+        $remoteAddr = $_SERVER['REMOTE_ADDR'];
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+            $proxy = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            if (!empty($proxy)) {
+                $proxyIps = explode(',', $proxy);
+                $relevantIp = array_shift($proxyIps);
+                $relevantIp = trim($relevantIp);
+                if (!empty($relevantIp)) {
+                    return $relevantIp;
+                }
+            }
+        }
+        // Cloudflare sends a special Proxy Header, see:
+        // https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-Cloudflare-handle-HTTP-Request-headers-
+        // In theory, CF should respect X-Forwarded-For, but in some instances this failed
+        if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            return $_SERVER['HTTP_CF_CONNECTING_IP'];
+        }
+        return $remoteAddr;
+    }
+
+    public function validateRequest($validIps)
+    {
+        $remoteAddress = $this->getRemoteAddress();
+
+        if (in_array($remoteAddress, $validIps)) {
+            // this is for exact matches
+            return true;
+        }
+
+        foreach ($validIps as $ip) {
+            $ip = $this->checkForDelimiter($ip);
+            if (preg_match($ip, $remoteAddress)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected function checkForDelimiter($ip)
+    {
+        if (substr($ip, 0, 1) !== '/') {
+            $ip = '/' . $ip;
+        }
+        if (substr($ip, -1, 1) !== '/') {
+            $ip = $ip . '/';
+        }
+        return $ip;
     }
 
 }

@@ -30,14 +30,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
      */
     protected $moptPayonePaymentHelper = null;
 
-    /**
-     * PayOne Builder
-     * @var PayoneBuilder
-     */
-    protected $payoneServiceBuilder = null;
-
-    protected $service = null;
-
     protected $mid = '';
     protected $aid = '';
     protected $pid = '';
@@ -196,13 +188,6 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function connectiontestAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $this->payoneServiceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
-        $this->moptPayoneMain = $this->Plugin()->Application()->MoptPayoneMain();
-        $this->moptPayonePaymentHelper = $this->moptPayoneMain->getPaymentHelper();
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
-        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
         $this->mid = $_GET['mid'];
         $this->aid = $_GET['aid'];
         $this->pid = $_GET['pid'];
@@ -238,59 +223,54 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     }
 
     /**
-     * @param $payment
-     * @return Payone_Api_Request_Preauthorization
+     * @param $params
+     * @return $params
      */
-    private function setTestRequestParams($payment)
+    private function setTestRequestParams($params)
     {
-        $this->aMinimumParams = array('clearingtype' => 'cc',
+        $minParams = [
+            'firstname' => 'Timo',
+            'lastname' => 'Tester',
+            'country' => 'DE',
             'amount' => '2099', 'currency' => 'EUR',
-            'firstname' => 'Timo', 'lastname' => 'Tester', 'country' => 'DE',
-            'cardpan' => '4111111111111111', 'cardtype' => 'V',
-            'pseudocardpan' => '5500000000099999', 'cardexpiredate' => $this->getFutureExpiredate()
-        );
-        
-        $this->payoneServiceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
+            'aid' => $this->aid,
+            'mid' => $this->mid,
+            'portalid' => $this->pid,
+            'key' => $this->apikey,
+            'reference' => rand(10000000, 99999999),
+            'ecommercemode' => 'internet',
+            'successurl' => 'https://payone.com',
+            'mode' => 'test',
+        ];
+        $params = array_merge($minParams, $params);
+        return $params;
+    }
+
+    /**
+     * @param $params
+     * @param $paymentFull
+     * @return void
+     */
+    private function doTestrequest($params, $paymentFull)
+    {
+        $testRequestString = Shopware()->Snippets()->getNamespace('backend/mopt_config_payone/main')
+            ->get('testRequest', 'teste Request Preauthorisierung im Modus Test mit Zahlart', false);
+        $testSuccessString = Shopware()->Snippets()->getNamespace('backend/mopt_config_payone/main')
+            ->get('testSuccess', 'Test erfolgreich', false);
+        $testFailedString = Shopware()->Snippets()->getNamespace('backend/mopt_config_payone/main')
+            ->get('testFailed', 'Test fehlgeschlagen', false);
+        $testErrorString = Shopware()->Snippets()->getNamespace('backend/mopt_config_payone/main')
+            ->get('testError', 'Fehlermeldung', false);
+        $this->logging->lwrite('<span style="color: yellow;">' . $testRequestString . ' ' . $paymentFull . '</span>');
         $this->moptPayoneMain = $this->Plugin()->Application()->MoptPayoneMain();
         $this->moptPayonePaymentHelper = $this->moptPayoneMain->getPaymentHelper();
 
-        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
-        $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize("mopt_payone_creditcard");
-        $request = new Payone_Api_Request_Preauthorization($params);
-        $request->setAid($this->aid);
-        $request->setMid($this->mid);
-        $request->setPortalid($this->pid);
-        $request->setKey($this->apikey);
-        $request->setAmount($this->aMinimumParams['amount']);
-        $request->setCurrency($this->aMinimumParams['currency']);
-        $request->setReference(rand(10000000, 99999999));
-        $request->setClearingtype($this->aMinimumParams['clearingtype']);
+        // $params = $this->moptPayoneMain->getParamBuilder()->buildAuthorize(0);
+        $request = new PayoneRequest(PayoneRequest::PREAUTH);
+        $response = $request->request(PayoneRequest::PREAUTH,$params);
 
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentPreauthorize();
-        $this->service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-        $pData = new Payone_Api_Request_Parameter_Authorization_PersonalData();
-        $pData->setFirstname($this->aMinimumParams['firstname']);
-        $pData->setLastname($this->aMinimumParams['lastname']);
-        $pData->setCountry($this->aMinimumParams['country']);
-        $paymentData = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_CreditCard;
-        $paymentData->setCardexpiredate($this->aMinimumParams['cardexpiredate']);
-        $paymentData->setCardpan($this->aMinimumParams['cardpan']);
-        $paymentData->setCardtype($this->aMinimumParams['cardtype']);
-        $paymentData->setEcommercemode('internet');
-
-        $request->setPersonalData($pData);
-        $request->setPayment($paymentData);
-        $request->setSuccessurl('https://payone.com');
-        $request->setMode('test');
-        $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
-        $request->set('hash', $generateHashService->generate($request, $this->apikey));
-
-        $this->logging->lwrite('<span style="color: yellow;">teste Request Authorisierung im Modus Test mit Zahlart Kreditkarte (Visa)</span>');
-        $response = $this->service->preauthorize($request);
         if ($response->getStatus() == "APPROVED") {
-            $this->logging->lwrite('<span style="color: green;">Test erfolgreich</span>');
+            $this->logging->lwrite('<span style="color: green;">' . $testSuccessString . '</span>');
         } else {
             $this->logging->lwrite('<span style="color: red;">' . $testFailedString . '</span>');
             $this->logging->lwrite('<span style="color: red;">' . $testErrorString . ':' . $response->getErrorMessage() . '</span>');
@@ -307,17 +287,16 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
      */
     public function creditcardCheck($cardType, $cardPan, $clearingType)
     {
-        $this->aMinimumParams = array('clearingtype' => $clearingType,
-            'amount' => '2099', 'currency' => 'EUR',
-            'firstname' => 'Timo', 'lastname' => 'Tester', 'country' => 'DE',
+        $params = [
+            'clearingtype' => $clearingType,
             'cardpan' => $cardPan, 'cardtype' => $cardType,
-            'pseudocardpan' => '5500000000099999', 'cardexpiredate' => $this->getFutureExpiredate()
-        );
+            'cardexpiredate' => $this->getFutureExpiredate()
+        ];
 
         $cardTypeFull = $cardType === 'V' ? 'Visa' : 'Mastercard';
         $paymentFull = 'mopt_payone_creditcard' . '(' . $cardTypeFull . ')';
-        $request = $this->setTestRequestParams('mopt_payone_creditcard');
-        $this->doTestrequest($request, $paymentFull);
+        $params = $this->setTestRequestParams($params);
+        $this->doTestrequest($params, $paymentFull);
     }
 
     /**
@@ -325,13 +304,12 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
      */
     public function vorkasseCheck()
     {
-        $this->aMinimumParams = array('clearingtype' => 'vor',
-            'amount' => '2099', 'currency' => 'EUR',
-            'firstname' => 'Timo', 'lastname' => 'Tester', 'country' => 'DE'
-        );
+        $params = [
+            'clearingtype' => 'vor',
+        ];
         $paymentFull = 'mopt_payone__acc_payinadvance';
-        $request = $this->setTestRequestParams('mopt_payone__acc_payinadvance');
-        $this->doTestrequest($request, $paymentFull);
+        $params = $this->setTestRequestParams($params);
+        $this->doTestrequest($params, $paymentFull);
     }
 
     /**
@@ -339,14 +317,13 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
      */
     public function rechnungCheck()
     {
-        $this->aMinimumParams = array('clearingtype' => 'rec',
-            'amount' => '2099', 'currency' => 'EUR',
-            'firstname' => 'Timo', 'lastname' => 'Tester', 'country' => 'DE',
-        );
+        $params = [
+            'clearingtype' => 'rec',
+        ];
 
         $paymentFull = 'mopt_payone__acc_invoice';
-        $request = $this->setTestRequestParams('mopt_payone__acc_invoice');
-        $this->doTestrequest($request, $paymentFull);
+        $params = $this->setTestRequestParams($params);
+        $this->doTestrequest($params, $paymentFull);
     }
 
     /**
@@ -355,14 +332,14 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     public function lastschriftCheck()
     {
 
-        $this->aMinimumParams = array('clearingtype' => 'elv',
-            'amount' => '2099', 'currency' => 'EUR',
-            'firstname' => 'Timo', 'lastname' => 'Tester', 'country' => 'DE',
+        $params = [
+            'clearingtype' => 'elv',
             'bankaccount' => '2599100003',
-        );
+            'bankcountry' => 'DE',
+        ];
         $paymentFull = 'mopt_payone__acc_debitnote';
-        $request = $this->setTestRequestParams('mopt_payone__acc_debitnote');
-        $this->doTestrequest($request, $paymentFull);
+        $params = $this->setTestRequestParams($params);
+        $this->doTestrequest($params, $paymentFull);
     }
 
     public function apilogAction()

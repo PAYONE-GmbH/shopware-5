@@ -33,6 +33,8 @@ use Enlight\Event\SubscriberInterface;
 use Mopt_PayonePaymentHelper;
 use Shopware\Models\Shop\Template;
 use Shopware\Models\Shop\TemplateConfig\Element;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 class FrontendPostDispatch implements SubscriberInterface
 {
@@ -634,9 +636,9 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
-                $data['mopt_payone__payolution_debitnote_birthdayday'] = $birthday[2];
-                $data['mopt_payone__payolution_debitnote_birthdaymonth'] = $birthday[1];
-                $data['mopt_payone__payolution_debitnote_birthdayyear'] = $birthday[0];
+                $data['mopt_payone__fin_payolution_debitnote_birthdayday'] = $birthday[2];
+                $data['mopt_payone__fin_payolution_debitnote_birthdaymonth'] = $birthday[1];
+                $data['mopt_payone__fin_payolution_debitnote_birthdayyear'] = $birthday[0];
                 // Check if customer is older than 18 Years
                 if (time() < strtotime('+18 years', strtotime($userData['billingaddress']['birthday']))) {
                     $data['birthdayunderage'] = "1";
@@ -661,9 +663,9 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
-                $data['mopt_payone__payolution_invoice_birthdayday'] = $birthday[2];
-                $data['mopt_payone__payolution_invoice_birthdaymonth'] = $birthday[1];
-                $data['mopt_payone__payolution_invoice_birthdayyear'] = $birthday[0];
+                $data['mopt_payone__fin_payolution_invoice_birthdayday'] = $birthday[2];
+                $data['mopt_payone__fin_payolution_invoice_birthdaymonth'] = $birthday[1];
+                $data['mopt_payone__fin_payolution_invoice_birthdayyear'] = $birthday[0];
                 // Check if customer is older than 18 Years
                 if (time() < strtotime('+18 years', strtotime($userData['billingaddress']['birthday']))) {
                     $data['birthdayunderage'] = "1";
@@ -688,9 +690,9 @@ class FrontendPostDispatch implements SubscriberInterface
 
                 $data['birthday'] = $userData['billingaddress']['birthday'];
                 $birthday = explode('-', $userData['billingaddress']['birthday']);
-                $data['mopt_payone__payolution_installment_birthdayday'] = $birthday[2];
-                $data['mopt_payone__payolution_installment_birthdaymonth'] = $birthday[1];
-                $data['mopt_payone__payolution_installment_birthdayyear'] = $birthday[0];
+                $data['mopt_payone__fin_payolution_installment_birthdayday'] = $birthday[2];
+                $data['mopt_payone__fin_payolution_installment_birthdaymonth'] = $birthday[1];
+                $data['mopt_payone__fin_payolution_installment_birthdayyear'] = $birthday[0];
                 // Check if customer is older than 18 Years
                 if (time() < strtotime('+18 years', strtotime($userData['billingaddress']['birthday']))) {
                     $data['birthdayunderage'] = "1";
@@ -816,9 +818,6 @@ class FrontendPostDispatch implements SubscriberInterface
         $payoneParams['errorMessages'] = json_encode($moptPayoneMain->getPaymentHelper()
             ->getCreditCardCheckErrorMessages());
 
-        $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
-
-        $request = new \Payone_ClientApi_Request_CreditCardCheck();
         $params = array(
             'aid' => $payoneParams['aid'],
             'mid' => $payoneParams['mid'],
@@ -832,11 +831,13 @@ class FrontendPostDispatch implements SubscriberInterface
             'integrator_version' => Shopware()->Config()->Version,
             'integrator_name' => 'Shopware',
             'storecarddata' => 'yes',
+            'request' => PayoneEnums::CreditcardcheckAction,
+            'responsetype' => 'JSON',
         );
-        $request->init($params);
-        $request->setResponsetype('JSON');
-
-        $payoneParams['hash'] = $generateHashService->generate($request, $creditCardConfig['api_key']);
+        $request = new PayoneRequest(PayoneEnums::CreditcardcheckAction,$params);
+        $payoneParams['hash'] = $request->generate($params, $creditCardConfig['api_key']);
+        $payoneParams['responsetype'] = 'JSON';
+        $payoneParams['request'] = PayoneEnums::CreditcardcheckAction;
 
         $data['moptPayoneCheckCc'] = $creditCardConfig['check_cc'];
         $data['moptCreditcardMinValid'] = (int)$creditCardConfig['creditcard_min_valid'];
@@ -844,7 +845,7 @@ class FrontendPostDispatch implements SubscriberInterface
         // remove the api key; only ['hash'] ist used
         $creditCardConfig['api_key'] = "";
         // to be safe also remove key in $payoneParams
-        $payoneParams['key'] = "";
+        unset($payoneParams['key']);
         // also remove key from array [jsonconfig]
         $json_tmp = json_decode($creditCardConfig['jsonConfig'], true);
         unset($json_tmp['api_key']);
@@ -1135,14 +1136,14 @@ class FrontendPostDispatch implements SubscriberInterface
         $invoicing = $moptPayoneMain->getParamBuilder()->getInvoicing($basket, $dispatch, $userData);
 
         $displayItems = [];
-        foreach ($invoicing->getItems() as $item) {
-            $price = $item->getPr();
-            $quantity = $item->getNo();
+        foreach ($invoicing as $item) {
+            $price = $item['pr'];
+            $quantity = $item['no'];
 
             $displayItems[] = [
-                'reference'    => $item->getId(),
-                'name'         => $item->getDe(),
-                'tax_rate'     => (int)($item->getVa()),
+                'reference'    => $item['id'],
+                'name'         => $item['de'],
+                'tax_rate'     => (int)($item['va']),
                 'unit_price'   => $price,
                 'quantity'     => $quantity,
                 'total_amount' => $price * $quantity,

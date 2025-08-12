@@ -4,21 +4,21 @@
     {if ($fcPayolutionConfigInstallment.payolutionB2bmode == "0" && $moptCreditCardCheckEnvironment.birthday == "0000-00-00") || ( $fcPayolutionConfigInstallment.payolutionB2bmode == 1 && $moptCreditCardCheckEnvironment.birthday == "0000-00-00" && !$sUserData.billingaddress.company  ) }
 
         <p class ="none">
-            <label for="mopt_payone__payolution_installment_birthday">
+            <label for="mopt_payone__fin_payolution_installment_birthday">
                 {s name='birthdate'}Geburtsdatum{/s}
             </label>
         </p>
 
     <div class="select-field">
-        <select name="moptPaymentData[mopt_payone__payolution_installment_birthday]" 
-                id="mopt_payone__payolution_installment_birthday" onchange="payolutionInstallmentDobInput()"
+        <select name="moptPaymentData[mopt_payone__fin_payolution_installment_birthday]"
+                id="mopt_payone__fin_payolution_installment_birthday" onchange="payolutionInstallmentDobInput()"
                 aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="is--required{if $error_flags.mopt_payone__payolution_installment_birthday} has--error{/if}">
+                class="is--required{if $error_flags.mopt_payone__fin_payolution_installment_birthday} has--error{/if}">
             <option value="">--</option>
             {section name="birthdate" start=1 loop=32 step=1}
                 <option value="{if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}"
-                        {if $smarty.section.birthdate.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_installment_birthday}
+                        {if $smarty.section.birthdate.index eq $moptCreditCardCheckEnvironment.mopt_payone__fin_payolution_installment_birthday}
                             selected
                         {/if}>
                     {if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}</option>
@@ -27,15 +27,15 @@
     </div>
 
     <div class="select-field">
-        <select name="moptPaymentData[mopt_payone__payolution_installment_birthmonth]"
-                id="mopt_payone__payolution_installment_birthmonth" onchange="payolutionInstallmentDobInput()"
+        <select name="moptPaymentData[mopt_payone__fin_payolution_installment_birthmonth]"
+                id="mopt_payone__fin_payolution_installment_birthmonth" onchange="payolutionInstallmentDobInput()"
                 aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="is--required {if $error_flags.mopt_payone__payolution_installment_birthmonth} has--error{/if}">
+                class="is--required {if $error_flags.mopt_payone__fin_payolution_installment_birthmonth} has--error{/if}">
             <option value="">--</option>
             {section name="birthmonth" start=1 loop=13 step=1}
                 <option value="{if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}"
-                        {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_installment_birthmonth}
+                        {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__fin_payolution_installment_birthmonth}
                             selected
                         {/if}>
                     {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
@@ -44,22 +44,21 @@
     </div>
 
     <div class="select-field">
-        <select name="moptPaymentData[mopt_payone__payolution_installment_birthyear]"
-                id="mopt_payone__payolution_installment_birthyear" onchange="payolutionInstallmentDobInput()"
+        <select name="moptPaymentData[mopt_payone__fin_payolution_installment_birthyear]"
+                id="mopt_payone__fin_payolution_installment_birthyear" onchange="payolutionInstallmentDobInput()"
                 aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="select--country is--required{if $error_flags.mopt_payone__payolution_installment_birthyear} register--error-msg {/if}">
+                class="select--country is--required{if $error_flags.mopt_payone__fin_payolution_installment_birthyear} register--error-msg {/if}">
             <option value="">----</option>
             {section name="birthyear" loop=2016 max=100 step=-1}
                 <option value="{$smarty.section.birthyear.index}" 
-                        {if $smarty.section.birthyear.index eq $moptCreditCardCheckEnvironment.mopt_payone__payolution_installment_birthyear}
+                        {if $smarty.section.birthyear.index eq $moptCreditCardCheckEnvironment.mopt_payone__fin_payolution_installment_birthyear}
                             selected
                         {/if}>
                     {$smarty.section.birthyear.index}</option>
                 {/section}
         </select>
     </div>
-    {/if}  
         {include file='frontend/include/dropdown_birthday_day.tpl' id='mopt_payone__fin_payolution_installment' label="{s name='birthdate'}Geburtsdatum{/s}"}
         {include file='frontend/include/dropdown_birthday_month.tpl' id='mopt_payone__fin_payolution_installment'}
         {include file='frontend/include/dropdown_birthday_year.tpl' id='mopt_payone__fin_payolution_installment'}

@@ -1,5 +1,8 @@
 <?php
 
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
+
 /**
  * $Id: $
  */
@@ -106,22 +109,15 @@ class Mopt_PayoneParamBuilder
             $params['capturemode'] = $finalize ? 'completed' : 'notcompleted';
         }
 
-
-        //create business object (used for settleaccount param)
-        $business = new Payone_Api_Request_Parameter_Capture_Business();
-
         if (($this->payonePaymentHelper->isPayonePayInAdvance($paymentName) ||
             $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName))
         ) {
-            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::NO);
+            $params['settleaccount'] = $finalize ? PayoneEnums::YES : PayoneEnums::NO;
         } elseif ($this->payonePaymentHelper->isPayoneInvoice($paymentName) || $this->payonePaymentHelper->isPayoneWechatpay($paymentName) ) {
-            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::AUTO : Payone_Api_Enum_Settleaccount::NO);
+            $params['settleaccount'] = $finalize ? PayoneEnums::AUTO : PayoneEnums::NO;
         } else {
-            $business->setSettleaccount(Payone_Api_Enum_Settleaccount::AUTO);
+            $params['settleaccount'] = PayoneEnums::AUTO;
         }
-
-
-        $params['business'] = $business;
 
         if ($this->payonePaymentHelper->isPayonePayolutionInvoice($paymentName)  || $this->payonePaymentHelper->isPayonePayolutionDebitNote($paymentName)) {
             if ($order->getBilling()->getCompany()) {
@@ -146,7 +142,7 @@ class Mopt_PayoneParamBuilder
      * @param array $orderDetailParams
      * @param bool $finalize
      * @param bool $includeShipment
-     * @return \Payone_Api_Request_Parameter_Capture_Business
+     * @return array
      */
     public function buildCustomOrderCapture($order, $orderDetailParams, $finalize, $includeShipment = false)
     {
@@ -158,16 +154,11 @@ class Mopt_PayoneParamBuilder
         $params['amount'] = $this->getParamCustomAmount($order, $orderDetailParams, $includeShipment);
         $params['currency'] = $order->getCurrency();
 
-        //create business object (used for settleaccount param)
-        $business = new Payone_Api_Request_Parameter_Capture_Business();
-
         if ($this->payonePaymentHelper->isPayonePayInAdvance($paymentName) || $this->payonePaymentHelper->isPayoneInstantBankTransfer($paymentName)) {
-            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::NO);
+            $params['settleaccount'] = $finalize ? PayoneEnums::YES : PayoneEnums::NO;
         } else {
-            $business->setSettleaccount($finalize ? Payone_Api_Enum_Settleaccount::YES : Payone_Api_Enum_Settleaccount::AUTO);
+            $params['settleaccount'] = $finalize ? PayoneEnums::YES : PayoneEnums::AUTO;
         }
-
-        $params['business'] = $business;
         $params['payolution_b2b'] = false;
 
         if ($this->payonePaymentHelper->isPayonePayolutionInvoice($paymentName)  || $this->payonePaymentHelper->isPayonePayolutionDebitNote($paymentName)) {
@@ -432,7 +423,7 @@ class Mopt_PayoneParamBuilder
      * build personal data parameters
      *
      * @param array $userData
-     * @return array $params
+     * @return $params
      */
     public function getPersonalData($userData)
     {
@@ -541,7 +532,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param type $router
      * @param bool $intialRecurringRequest
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return $params
      */
     public function getPaymentPaypal($router, $intialRecurringRequest = false)
     {
@@ -561,8 +552,7 @@ class Mopt_PayoneParamBuilder
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-        return $payment;
+        return $params;
     }
 
     /**
@@ -570,7 +560,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param type $router
      * @param bool $intialRecurringRequest
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return $params
      */
     public function getPaymentPaypalv2($router, $intialRecurringRequest = false)
     {
@@ -590,8 +580,7 @@ class Mopt_PayoneParamBuilder
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-        return $payment;
+        return $params;
     }
 
 
@@ -599,7 +588,7 @@ class Mopt_PayoneParamBuilder
      * create payolution payment object
      *
      * @param string $financeType
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     * @return array
      */
     public function getPaymentPayolutionInvoice($financeType, $paymentData, $workorderId)
     {
@@ -613,26 +602,14 @@ class Mopt_PayoneParamBuilder
         }
         $params['financingtype'] = $financeType;
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-
         if ($paymentData['mopt_payone__fin_payolution_invoice_b2bmode']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'b2b', 'data' => 'yes')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__fin_payolution_invoice_vatid'])
-            ));
+            $params['add_paydata[b2b]'] = 'yes';
+            $params['add_paydata[company_trade_registry_number]'] = $paymentData['mopt_payone__fin_payolution_invoice_vatid'];
         }
 
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
-        ));
+        $params['add_paydata[analysis_session_id]'] = Shopware()->Session()->get('paySafeToken');
 
-        $payment->setPaydata($paydata);
-
-        return $payment;
+        return $params;
     }
 
 
@@ -640,7 +617,7 @@ class Mopt_PayoneParamBuilder
      * create payolution payment object
      *
      * @param string $financeType
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     * @return array
      */
     public function getPaymentPayolutionDebitNote($financeType, $paymentData, $workorderId)
     {
@@ -657,26 +634,14 @@ class Mopt_PayoneParamBuilder
         $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_payolution_debitnote_iban']);
         $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_payolution_debitnote_bic']);
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-
         if ($paymentData['mopt_payone__fin_payolution_debitnote_b2bmode']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'b2b', 'data' => 'yes')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__fin_payolution_debitnote_vatid'])
-            ));
+            $params['add_paydata[b2b]'] = 'yes';
+            $params['add_paydata[company_trade_registry_number]'] = $paymentData['mopt_payone__fin_payolution_invoice_vatid'];
         }
 
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
-        ));
+        $params['add_paydata[analysis_session_id]'] = Shopware()->Session()->get('paySafeToken');
 
-        $payment->setPaydata($paydata);
-
-        return $payment;
+        return $params;
     }
 
     /**
@@ -684,7 +649,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param string $financeType
      * @param array $paymentData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution
+     * @return array
      */
     public function getPaymentPayolutionInstallment($financeType, $paymentData)
     {
@@ -698,30 +663,16 @@ class Mopt_PayoneParamBuilder
         $params['financingtype'] = $financeType;
         $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_payolution_installment_iban']);
         $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_payolution_installment_bic']);
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Payolution($params);
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
 
         if ($paymentData['mopt_payone__fin_payolution_installment_b2bmode']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'b2b', 'data' => 'yes')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__fin_payolution_debitnote_vatid'])
-            ));
+            $params['add_paydata[b2b]'] = 'yes';
+            $params['add_paydata[company_trade_registry_number]'] = $paymentData['mopt_payone__fin_payolution_invoice_vatid'];
         }
 
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'installment_duration', 'data' => $paymentData['mopt_payone__fin_payolution_installment_duration'])
-        ));
+        $params['add_paydata[installment_duration]'] = $paymentData['mopt_payone__fin_payolution_installment_duration'];
+        $params['add_paydata[analysis_session_id]'] = Shopware()->Session()->get('paySafeToken');
 
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'analysis_session_id', 'data' => Shopware()->Session()->get('paySafeToken'))
-        ));
-
-        $payment->setPaydata($paydata);
-
-        return $payment;
+        return $params;
     }
 
     /**
@@ -729,7 +680,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param string $financeType
      * @param array $paymentData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
+     * @return array
      */
     public function getPaymentRatepayInvoice($financeType, $paymentData)
     {
@@ -743,31 +694,16 @@ class Mopt_PayoneParamBuilder
 
         $params['financingtype'] = $financeType;
         $params['company'] = $userData['billingaddress']['company'];
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay($params);
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__fin_ratepay_invoice_device_fingerprint'])
-        ));
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__fin_ratepay_invoice_shopid'])
-        ));
-
+        $params['add_paydata[customer_allow_credit_inquiry]'] = 'yes';
+        $params['add_paydata[device_token]'] = $paymentData['mopt_payone__fin_ratepay_invoice_device_fingerprint'];
+        $params['add_paydata[shop_id]'] = $paymentData['mopt_payone__fin_ratepay_invoice_shopid'];
 
         if (isset($params['company'])) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_id', 'data' => $paymentData['mopt_payone__fin_ratepay_invoice_company_trade_registry_number'])
-            ));
+            $params['add_paydata[vat_id]'] = $userData['billingaddress']['ustid'];
+            $params['add_paydata[company_id]'] = $paymentData['mopt_payone__fin_ratepay_invoice_company_trade_registry_number'];
         }
-        $payment->setPaydata($paydata);
-        $payment->setTelephonenumber($userData['billingaddress']['phone']);
-        return $payment;
+        $params['telephonenumber'] = $userData['billingaddress']['phone'];
+        return $params;
     }
 
     /**
@@ -775,11 +711,11 @@ class Mopt_PayoneParamBuilder
      *
      * @param string $financeType
      * @param array $paymentData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
+     * @return $params
      */
     public function getPaymentRatepayInstallment($financeType, $paymentData)
     {
-        $params = array();
+        $params = [];
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
         $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
@@ -792,62 +728,25 @@ class Mopt_PayoneParamBuilder
         } else {
             $debit_paytype = 'BANK-TRANSFER';
         }
-
-
         $params['financingtype'] = $financeType;
         $params['company'] = $userData['billingaddress']['company'];
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay($params);
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__fin_ratepay_installment_device_fingerprint'])
-        ));
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__fin_ratepay_shopid'])
-        ));
-
-        //toDo direct Debit
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'debit_paytype', 'data' => $debit_paytype)
-        ));
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'installment_amount', 'data' => $paymentData['mopt_payone__fin_ratepay_installment_amount'] * 100)
-        ));
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'installment_number', 'data' => $paymentData['mopt_payone__fin_ratepay_installment_number'])
-        ));
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'last_installment_amount', 'data' => $paymentData['mopt_payone__fin_ratepay_installment_last_installment_amount'] * 100)
-        ));
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'interest_rate', 'data' => $paymentData['mopt_payone__fin_ratepay_installment_interest_rate'] * 100)
-        ));
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amount', 'data' => $paymentData['mopt_payone__fin_ratepay_installment_total'] * 100)
-        ));
-
-
+        $params['add_paydata[customer_allow_credit_inquiry]'] = 'yes';
+        $params['add_paydata[device_token]'] = $paymentData['mopt_payone__fin_ratepay_installment_device_fingerprint'];
+        $params['add_paydata[shop_id]'] = $paymentData['mopt_payone__fin_ratepay_installment_shopid'];
+        $params['add_paydata[debit_paytype]'] = $debit_paytype;
+        $params['add_paydata[installment_amount]'] = $paymentData['mopt_payone__fin_ratepay_installment_amount'] * 100;
+        $params['add_paydata[installment_number]'] = $paymentData['mopt_payone__fin_ratepay_installment_number'];
+        $params['add_paydata[last_installment_amount]'] = $paymentData['mopt_payone__fin_ratepay_installment_last_installment_amount'] * 100;
+        $params['add_paydata[interest_rate]'] = $paymentData['mopt_payone__fin_ratepay_installment_interest_rate'] * 100;
+        $params['add_paydata[amount]'] = $paymentData['mopt_payone__fin_ratepay_installment_total'] * 100;
         if (isset($params['company'])) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_id', 'data' => $paymentData['mopt_payone__fin_ratepay_installment_company_trade_registry_number'])
-            ));
+            $params['add_paydata[vat_id]'] = $userData['billingaddress']['ustid'];
+            $params['add_paydata[company_id]'] = $paymentData['mopt_payone__fin_ratepay_installment_company_trade_registry_number'];
         }
-        $payment->setPaydata($paydata);
-        $payment->setIban($this->removeWhitespaces($paymentData['mopt_payone__fin_ratepay_installment_iban']));
-        $payment->setBic($this->removeWhitespaces($paymentData['mopt_payone__fin_ratepay_installment_bic']));
-        $payment->setTelephonenumber($userData['billingaddress']['phone']);
-        return $payment;
+        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_ratepay_installment_iban']);
+        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_ratepay_installment_bic']);
+        $params['telephonenumber'] = $userData['billingaddress']['phone'];
+        return $params;
     }
 
     /**
@@ -855,7 +754,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param string $financeType
      * @param array $paymentData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay
+     * @return array
      */
     public function getPaymentRatepayDirectDebit($financeType, $paymentData)
     {
@@ -869,75 +768,19 @@ class Mopt_PayoneParamBuilder
 
         $params['financingtype'] = $financeType;
         $params['company'] = $userData['billingaddress']['company'];
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_RatePay($params);
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'customer_allow_credit_inquiry', 'data' => 'yes')
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__fin_ratepay_direct_debit_device_fingerprint'])
-        ));
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $paymentData['mopt_payone__fin_ratepay_direct_debit_shopid'])
-        ));
-
-
-        if (isset($params['company'])) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'vat_id', 'data' => $userData['billingaddress']['ustid'])
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_id', 'data' => $paymentData['mopt_payone__fin_ratepay_direct_debit_company_trade_registry_number'])
-            ));
-        }
-        // $params['bankaccountholder'] = $paymentData['mopt_payone__fin_ratepay_direct_debit_bankaccountholder'];
-        $payment->setPaydata($paydata);
-        $payment->setTelephonenumber($userData['billingaddress']['phone']);
-        $payment->setIban($this->removeWhitespaces($paymentData['mopt_payone__fin_ratepay_direct_debit_iban']));
-        $payment->setBic($this->removeWhitespaces($paymentData['mopt_payone__fin_ratepay_direct_debit_bic']));
-        return $payment;
-    }
-
-    /**
-     * create payolution payment object
-     *
-     * @param string $financeType
-     * @param array $paymentData
-     * @return \Payone_Api_Request_Genericpayment
-     */
-    public function getPaymentPayolutionDebitNotePreCheck($financeType, $paymentData)
-    {
-        $params = array();
-        $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $params['api_version'] = '3.10';
-        $params['birthday'] = implode(explode('-', $userData['additional']['user']['birthday']));
-        if ($params['birthday'] == "00000000") {
-            unset($params['birthday']);
-        }
+        $params['add_paydata[customer_allow_credit_inquiry]'] = 'yes';
+        $params['add_paydata[device_token]'] = $paymentData['mopt_payone__fin_ratepay_direct_debit_device_fingerprint'];
+        $params['add_paydata[shop_id]'] = $paymentData['mopt_payone__fin_ratepay_direct_debit_shopid'];
         $params['financingtype'] = $financeType;
-        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_payolution_debitnote_iban']);
-        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_payolution_debitnote_bic']);
-
-        $payment = new Payone_Api_Request_Genericpayment($params);
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::PAYOLUTION_PRE_CHECK)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'payment_type', 'data' => Payone_Api_Enum_PayolutionType::PYD_FULL)
-        ));
-        if ($paymentData['mopt_payone__fin_payolution_debitnote_b2bmode']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'b2b', 'data' => 'yes')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $paymentData['mopt_payone__fin_payolution_debitnote_company_trade_registry_number'])
-            ));
-            $payment->setPaydata($paydata);
+        $params['company'] = $userData['billingaddress']['company'];
+        if (isset($params['company'])) {
+            $params['add_paydata[vat_id]'] = $userData['billingaddress']['ustid'];
+            $params['add_paydata[company_id]'] = $paymentData['mopt_payone__fin_ratepay_direct_debit_company_trade_registry_number'];
         }
-
-        return $payment;
+        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_ratepay_direct_debit_iban']);
+        $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_ratepay_direct_debit_bic']);
+        $params['telephonenumber'] = $userData['billingaddress']['phone'];
+        return $params;
     }
 
     /**
@@ -954,7 +797,7 @@ class Mopt_PayoneParamBuilder
         $params['bankaccount'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_bankaccount']);
         $params['bankcode'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_bankcode']);
         $params['bankaccountholder'] = $paymentData['mopt_payone__debit_bankaccountholder'];
-        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__acc_debitnote_iban']);
+        $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_iban']);
         $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__debit_bic']);
         if (Shopware()->Session()->moptMandateData) {
             $params['mandate_identification'] = Shopware()->Session()->moptMandateData['mopt_payone__mandateIdentification'];
@@ -968,7 +811,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param object $router
      * @param array $paymentData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_OnlineBankTransfer
+     * @return $paras
      */
     public function getPaymentInstantBankTransfer($router, $paymentData)
     {
@@ -1058,8 +901,7 @@ class Mopt_PayoneParamBuilder
                 'forceSecure' => true, 'appendSession' => false));
         }
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_OnlineBankTransfer($params);
-        return $payment;
+        return $params;
     }
 
     /**
@@ -1067,7 +909,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param string $financeType
      * @param $router
-     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
+     * @return array
      */
     public function getPaymentKlarna($financeType, $router)
     {
@@ -1081,38 +923,23 @@ class Mopt_PayoneParamBuilder
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
                                                      'forceSecure' => true, 'appendSession' => false));
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing($params);
-
         // if payment is Klarna old
-        if ($financeType === Payone_Api_Enum_FinancingType::KLV) {
-            return $payment;
+        if ($financeType === PayoneEnums::FinancingType_KLV) {
+            return $params;
         }
 
-        return $this->addKlarnaPaymentParameters($payment);
-    }
-
-    /**
-     * @param Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing $payment
-     *
-     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
-     */
-    public function addKlarnaPaymentParameters($payment) {
         $session = Shopware()->Session();
         $authorizationToken = $session->offsetGet('mopt_klarna_authorization_token');
 
-        $phoneNumber = $session['mopt_klarna_phoneNumber'];
-
-        $paydata = $this->buildKlarnaPaydata($phoneNumber);
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'authorization_token', 'data' => $authorizationToken)
-        ));
-
-        $payment->setPaydata($paydata);
+        $phoneNumber = $session->offsetGet('mopt_klarna_phoneNumber');
+        $params['add_paydata[authorization_token]'] = $authorizationToken;
+        $klarnaParams = $this->buildKlarnaPaydata($phoneNumber);
+        $params = array_merge($klarnaParams, $params);
 
         unset($session['mopt_klarna_authorization_token']);
         unset($session['mopt_klarna_phoneNumber']);
 
-        return $payment;
+        return $params;
     }
 
     /**
@@ -1120,11 +947,11 @@ class Mopt_PayoneParamBuilder
      *
      * @param $router
      * @param $token
-     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return $params
      */
     public function getPaymentApplepay($router, $token)
     {
-        $params = array();
+        $params = [];
         $params['clearingtype'] = 'wlt';
         $params['wallettype'] = 'APL';
 
@@ -1135,9 +962,7 @@ class Mopt_PayoneParamBuilder
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-
-        return $this->addApplepayPaymentParameters($payment, $token);
+        return $this->addApplepayPaymentParameters($params, $token);
     }
 
     public function getPaymentGooglePay($router, $token)
@@ -1153,9 +978,7 @@ class Mopt_PayoneParamBuilder
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-
-        return $this->addGooglePayPaymentParameters($payment, $token);
+        return $this->addGooglePayPaymentParameters($params, $token);
     }
 
     /**
@@ -1163,7 +986,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param string $financeType
      * @param array $paymentData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_PayoneSecured
+     * @return $params
      */
     public function getPaymentPayoneSecuredInvoice($financeType, $paymentData)
     {
@@ -1178,14 +1001,9 @@ class Mopt_PayoneParamBuilder
         $params['financingtype'] = $financeType;
         $params['company'] = $userData['billingaddress']['company'];
         $params['vatid'] = empty($paymentData['mopt_payone__secured_invoice_vatid']) ? $userData['billingaddress']['vatId'] : $paymentData['mopt_payone__secured_invoice_vatid'];
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_PayoneSecured($params);
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__payone_secured_invoice_token'])
-        ));
-        $payment->setPaydata($paydata);
-        $payment->setTelephonenumber($userData['billingaddress']['phone']);
-        return $payment;
+        $params['add_paydata[device_token]'] = $paymentData['mopt_payone__payone_secured_invoice_token'];
+        $params['telephonenumber'] = $userData['billingaddress']['phone'];
+        return $params;
     }
 
     /**
@@ -1193,7 +1011,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param string $financeType
      * @param array $paymentData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_PayoneSecured
+     * @return $params
      */
     public function getPaymentPayoneSecuredInstallments($financeType, $paymentData)
     {
@@ -1201,20 +1019,13 @@ class Mopt_PayoneParamBuilder
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financeType;
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_PayoneSecured($params);
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__payone_secured_installment_token'])
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'installment_option_id', 'data' => $paymentData['mopt_payone__payone_secured_installment_plan'])
-        ));
-        $payment->setPaydata($paydata);
-        $payment->setTelephonenumber($paymentData['mopt_payone__payone_secured_installment_telephone']);
-        $payment->setIban($paymentData['mopt_payone__payone_secured_installment_iban']);
-        $payment->setBankaccountholder($userData['billingaddress']['firstname'] . ' ' . $userData['billingaddress']['lastname']);
-        $payment->setBirthday(implode(explode('-', $paymentData['mopt_payone__payone_secured_installment_birthdaydate'])));
-        return $payment;
+        $params['add_paydata[device_token]'] = $paymentData['mopt_payone__payone_secured_installment_token'];
+        $params['add_paydata[installment_option_id]'] = $paymentData['mopt_payone__payone_secured_installment_plan'];
+        $params['telephonenumber'] = $paymentData['mopt_payone__payone_secured_installment_telephone'];
+        $params['iban'] = $paymentData['mopt_payone__payone_secured_installment_iban'];
+        $params['bankaccountholder'] = $userData['billingaddress']['firstname'] . ' ' . $userData['billingaddress']['lastname'];
+        $params['birthday'] = implode(explode('-', $paymentData['mopt_payone__payone_secured_installment_birthdaydate']));
+        return $params;
     }
 
     /**
@@ -1222,8 +1033,8 @@ class Mopt_PayoneParamBuilder
      *
      * @param string $financeType
      * @param array $paymentData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_PayoneSecured
-     */
+     * @return $params
+ */
     public function getPaymentPayoneSecuredDirectdebit($financeType, $paymentData)
     {
         $params = array();
@@ -1236,23 +1047,18 @@ class Mopt_PayoneParamBuilder
 
         $params['financingtype'] = $financeType;
         $params['company'] = $userData['billingaddress']['company'];
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_PayoneSecured($params);
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'device_token', 'data' => $paymentData['mopt_payone__payone_secured_directdebit_token'])
-        ));
-        $payment->setPaydata($paydata);
-        $payment->setIban($paymentData['mopt_payone__payone_secured_directdebit_iban']);
-        $payment->setTelephonenumber($userData['billingaddress']['phone']);
-        $payment->setBankaccountholder($userData['billingaddress']['firstname'] . ' ' . $userData['billingaddress']['lastname']);
-        $payment->setBirthday(implode(explode('-', $paymentData['mopt_payone__payone_secured_directdebit_birthdaydate'])));
-        return $payment;
+        $params['add_paydata[device_token]'] = $paymentData['mopt_payone__payone_secured_directdebit_token'];
+        $params['telephonenumber'] = $paymentData['mopt_payone__payone_secured_directdebit_telephone'];
+        $params['iban'] = $paymentData['mopt_payone__payone_secured_directdebit_iban'];
+        $params['bankaccountholder'] = $userData['billingaddress']['firstname'] . ' ' . $userData['billingaddress']['lastname'];
+        $params['birthday'] = implode(explode('-', $paymentData['mopt_payone__payone_secured_directdebit_birthdaydate']));
+        return $params;
     }
 
     /**
-     * @param Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet $payment
+     * @param  $payment
      * @param $token
-     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return $params
      */
     public function addApplepayPaymentParameters($payment, $token) {
 
@@ -1278,14 +1084,14 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
-     * @param Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet $payment
+     * @param $params
      * @param $token
-     * @return Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return $params
      */
-    public function addGooglePayPaymentParameters($payment, $token) {
+    public function addGooglePayPaymentParameters($params, $token) {
         $paydata = $this->buildGooglePayPaydata($token);
-        $payment->setPaydata($paydata);
-        return $payment;
+        $params = array_merge($paydata, $params);
+        return $params;
     }
 
     /**
@@ -1293,11 +1099,11 @@ class Mopt_PayoneParamBuilder
      *
      * @param string $financeType
      * @param object $router
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing
+     * @return $params
      */
     public function getPaymentFinance($financeType, $router)
     {
-        $params = array();
+        $params = [];
 
         $params['financingtype'] = $financeType;
         $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
@@ -1306,31 +1112,29 @@ class Mopt_PayoneParamBuilder
             'forceSecure' => true, 'appendSession' => false));
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
-
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Financing($params);
-        return $payment;
+        return $params;
     }
 
     /**
      * returns payment data for cash on delivery payment
      *
      * @param array $userData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_CashOnDelivery
+     * @return array $params
      */
     public function getPaymentCashOnDelivery($userData)
     {
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_CashOnDelivery();
+        $params = [];
 
         switch ($userData['additional']['countryShipping']['countryiso']) {
             case 'DE':
-                $payment->setShippingprovider(Payone_Api_Enum_Shippingprovider::DHL); // DE:DHL / IT:BRT
+                $params['shippingprovider'] = PayoneEnums::DHL; // DE:DHL / IT:BRT
                 break;
             case 'IT':
-                $payment->setShippingprovider(Payone_Api_Enum_Shippingprovider::BARTOLINI); // DE:DHL / IT:Bartolini
+                $params['shippingprovider'] = PayoneEnums::BARTOLINI; // DE:DHL / IT:Bartolini
                 break;
         }
 
-        return $payment;
+        return $params;
     }
 
     /**
@@ -1338,7 +1142,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param object $router
      * @param array $paymentData
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_CreditCard
+     * @return $params
      */
     public function getPaymentCreditCard($router, $paymentData)
     {
@@ -1350,8 +1154,7 @@ class Mopt_PayoneParamBuilder
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
             'forceSecure' => true, 'appendSession' => false));
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_CreditCard($params);
-        return $payment;
+        return $params;
     }
 
     /**
@@ -1359,7 +1162,7 @@ class Mopt_PayoneParamBuilder
      *
      * @param type $router
      * @param bool $intialRecurringRequest
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return $params
      */
     public function getPaymentAlipay($router, $intialRecurringRequest = false)
     {
@@ -1378,15 +1181,14 @@ class Mopt_PayoneParamBuilder
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-        return $payment;
+        return $params;
     }
 
     /**
      * returns WeChatPay payment data object
      *
      * @param type $router
-     * @return \Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet
+     * @return $params
      */
     public function getPaymentWechatpay($router)
     {
@@ -1400,25 +1202,23 @@ class Mopt_PayoneParamBuilder
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
-        return $payment;
+        return $params;
     }
 
     /**
      * returns business parameters
      *
-     * @return \Payone_Api_Request_Parameter_Authorization_Business
+     * @return $params
      */
     public function getBusiness()
     {
-        $params = array();
+        $params = [];
 
         $params['document_date'] = '';
         $params['booking_date'] = '';
         $params['due_time'] = '';
 
-        $payment = new Payone_Api_Request_Parameter_Authorization_Business($params);
-        return $payment;
+        return $params;
     }
 
     /**
@@ -1427,18 +1227,11 @@ class Mopt_PayoneParamBuilder
      * @param array $basket
      * @param array $shipment
      * @param array $userData
-     * @return \Payone_Api_Request_Parameter_Invoicing_Transaction
+     * @return array
      */
     public function getInvoicing($basket, $shipment, $userData)
     {
-        $transaction = new Payone_Api_Request_Parameter_Invoicing_Transaction(array());
-
-        foreach ($this->getBasketItems($basket, $shipment, $userData) as $params) {
-            $item = new Payone_Api_Request_Parameter_Invoicing_Item($params);
-            $transaction->addItem($item);
-        }
-
-        return $transaction;
+        return $this->getBasketItems($basket, $shipment, $userData);
     }
 
     /**
@@ -1478,21 +1271,21 @@ class Mopt_PayoneParamBuilder
             $params['de'] = mb_substr($article['articlename'], 0, 100); // description
             $params['va'] = $taxFree ? 0 : number_format($article['tax_rate'], 2, '.', ''); // vat
             $params['va'] = $params['va'] * 100;
-            $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
+            $params['it'] = PayoneEnums::InvoicingItemType_GOODS; //item type
             if ($article['modus'] == 2) {
-                $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
+                $params['it'] = PayoneEnums::InvoicingItemType_VOUCHER;
             }
             # paypal does not accept negative values for handling use voucher instead
             # this was an issue with articles added by the SwagAdvancedPromotionSuite plugin
             if ($article['modus'] == 4 && $params['pr'] >= "0") {
-                $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
+                $params['it'] = PayoneEnums::InvoicingItemType_HANDLING;
             }
             if ($article['modus'] == 4 && $params['pr'] < "0") {
-                $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
+                $params['it'] = PayoneEnums::InvoicingItemType_VOUCHER;
             }
             # Repertus Set Artikel Plus compatibility
             if ($article['modus'] == 12 && $params['pr'] == "0") {
-                $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
+                $params['it'] = PayoneEnums::InvoicingItemType_HANDLING;
             }
 
             $items[] = $params;
@@ -1512,7 +1305,7 @@ class Mopt_PayoneParamBuilder
             $params['de'] = substr($shipment['name'], 0, 100); // description check length
             $params['va'] = $taxFree ? 0 : number_format($basket['sShippingcostsTax'], 2, '.', ''); // vat
             $params['va'] = $params['va'] * 100;
-            $params['it'] = Payone_Api_Enum_InvoicingItemType::SHIPMENT;
+            $params['it'] = PayoneEnums::InvoicingItemType_SHIPMENT;
             $params = array_map(function ($param) {
                 if (is_string($param) && !preg_match('!!u', $param)) {
                     return utf8_encode($param);
@@ -1536,7 +1329,7 @@ class Mopt_PayoneParamBuilder
      * @param boolean $debit
      * @param boolean $includeShipment
      * @param array $positionquantities //  used by refundOrder in bootstrap.php to override item quantity of a position
-     * @return \Payone_Api_Request_Parameter_Capture_Invoicing_Transaction
+     * @return array
      */
     public function getInvoicingFromOrder(
         $order,
@@ -1547,13 +1340,12 @@ class Mopt_PayoneParamBuilder
         $positionquantities = null
     )
     {
+        $items = array();
         $blTaxFree = $order->getTaxFree();
         $blNet = $order->getNet();
         // check here if netto is set and it corresponds with taxfree flag
         // if order is netto and taxfree is not set add taxes to all positions
         $blDebitBrutto = (!$blTaxFree && $blNet);
-
-        $transaction = new Payone_Api_Request_Parameter_Capture_Invoicing_Transaction(array());
 
         foreach ($order->getDetails() as $position) {
             if (!$positionIds || !in_array($position->getId(), $positionIds)) {
@@ -1567,7 +1359,7 @@ class Mopt_PayoneParamBuilder
                 }
             }
             $flTaxRate = $position->getTaxRate();
-            $params = array();
+            $params = [];
             $params['id'] = $position->getArticleNumber(); //article number
             if (!$blDebitBrutto) {
                 $params['pr'] = $position->getPrice(); //price
@@ -1598,38 +1390,36 @@ class Mopt_PayoneParamBuilder
                 $params['va'] = number_format($position->getTaxRate(), 2, '.', ''); // vat
             }
             $params['va'] = $params['va'] * 100;
-            $params['it'] = Payone_Api_Enum_InvoicingItemType::GOODS; //item type
+            $params['it'] = PayoneEnums::InvoicingItemType_GOODS;
             $mode = $position->getMode();
             if ($mode == 2) {
-                $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
+                $params['it'] = PayoneEnums::InvoicingItemType_VOUCHER;
                 $params['id'] = substr($position->getArticleNumber(), 0, 100); //article number
             }
 
             # paypal does not accept negative values for handling use voucher instead
             # this was an issue with articles added by the SwagAdvancedPromotionSuite plugin
             if ($mode == 4 && $params['pr'] >= "0") {
-                $params['it'] = Payone_Api_Enum_InvoicingItemType::HANDLING;
+                $params['it'] = PayoneEnums::InvoicingItemType_HANDLING;
                 $params['id'] = substr($position->getArticleNumber(), 0, 100); //article number
             }
             if ($mode == 4 && $params['pr'] < "0") {
-                $params['it'] = Payone_Api_Enum_InvoicingItemType::VOUCHER;
+                $params['it'] = PayoneEnums::InvoicingItemType_VOUCHER;
                 $params['id'] = substr($position->getArticleNumber(), 0, 100); //article number
             }
 
             if ($position->getArticleNumber() == 'SHIPPING') {
-                $params['it'] = Payone_Api_Enum_InvoicingItemType::SHIPMENT;
+                $params['it'] = PayoneEnums::InvoicingItemType_SHIPMENT;
                 $params['id'] = substr($position->getArticleName(), 0, 100); //article number
                 //don't use $includeShipment if shipping article exists
                 $includeShipment = false;
             }
             $params = array_map('htmlspecialchars_decode', $params);
-            $item = new Payone_Api_Request_Parameter_Invoicing_Item($params);
-            $transaction->addItem($item);
+            $items[] = $params;
         }
 
         if ($finalize !== 'skipCaptureMode') {
-            $transaction
-                ->setCapturemode($finalize ? Payone_Api_Enum_CaptureMode::COMPLETED : Payone_Api_Enum_CaptureMode::NOTCOMPLETED);
+            $params['capturemode'] = $finalize ? PayoneEnums::CaptureMode_COMPLETED : PayoneEnums::CaptureMode_NOTCOMPLETED;
         }
 
         //add shipment costs as position
@@ -1638,7 +1428,7 @@ class Mopt_PayoneParamBuilder
             if (!$debit) {
                 $orderAttribute = $this->payoneHelper->getOrCreateAttribute($order);
                 if ($orderAttribute->getMoptPayoneShipCaptured()) {
-                    return $transaction;
+                    return $params;
                 }
             }
 
@@ -1647,7 +1437,7 @@ class Mopt_PayoneParamBuilder
             if ($debit) {
                 $params['pr'] = $params['pr'] * -1;
             }
-            $params['it'] = Payone_Api_Enum_InvoicingItemType::SHIPMENT;
+            $params['it'] = PayoneEnums::InvoicingItemType_SHIPMENT;
             $params['id'] = substr($order->getDispatch()->getName(), 0, 100); //article number
             $params['de'] = substr($order->getDispatch()->getName(), 0, 100); //article number
             $params['no'] = 1;
@@ -1658,11 +1448,10 @@ class Mopt_PayoneParamBuilder
             $params['va'] = $params['va'] * 100;
 
             $params = array_map('htmlspecialchars_decode', $params);
-            $item = new Payone_Api_Request_Parameter_Invoicing_Item($params);
-            $transaction->addItem($item);
+            $items[] = $params;
         }
 
-        return $transaction;
+        return $items;
     }
 
     /**
@@ -1791,8 +1580,7 @@ class Mopt_PayoneParamBuilder
 
         $params['clearingtype'] = 'elv';
         $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
-        $params['payment'] = $this->getPaymentDebitNote($bankData);
-        $params['personalData'] = $this->getPersonalData($userData);
+        $params = array_merge($params, $this->getPaymentDebitNote($bankData), $this->getPersonalData($userData));
 
         return $params;
     }
@@ -1819,96 +1607,59 @@ class Mopt_PayoneParamBuilder
     {
         $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
         $params = $this->getAuthParameters($paymentId);
-
-        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action',
-                'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_SET_EXPRESSCHECKOUT)
-        ));
-
+        $params['add_paydata[action]'] = PayoneEnums::PAYPAL_ECS_SET_EXPRESSCHECKOUT;
         $walletParams = $this->buildPayPalEcsWalletParams($router);
-
-        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
+        $params['clearingtype'] = PayoneEnums::WALLET;
         $params['amount'] = $amount;
         $params['currency'] = $currencyName;
-        $params['paydata'] = $payData;
-        $params['wallet'] = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($walletParams);
-
-        return array_merge($params, $this->buildPayPalEcsShippingAddress($userData));
+        return array_merge($params, $walletParams, $this->buildPayPalEcsShippingAddress($userData));
     }
 
     public function buildPayPalv2ExpressCheckout($paymentId, $router, $amount, $currencyName, $userData)
     {
         $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
-        $params = $this->getAuthParameters($paymentId);
-
-        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action',
-                'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_SET_EXPRESSCHECKOUT)
-        ));
-
         $walletParams = $this->buildPayPalEcsWalletParams($router);
-
-        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
+        $params = $this->getAuthParameters($paymentId);
+        $params['add_paydata[action]'] = PayoneEnums::PAYPAL_ECS_SET_EXPRESSCHECKOUT;
+        $params['clearingtype'] = PayoneEnums::WALLET;
         $params['amount'] = $amount;
         $params['currency'] = $currencyName;
-        $params['paydata'] = $payData;
-        $params['wallet'] = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($walletParams);
-
-        return array_merge($params, $this->buildPayPalEcsShippingAddress($userData));
+        return array_merge($params, $walletParams, $this->buildPayPalEcsShippingAddress($userData));
     }
 
     public function buildPayPalExpressCheckoutDetails($paymentId, $router, $amount, $currencyName, $userData, $workerId)
     {
         $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
         $params = $this->getAuthParameters($paymentId);
-
-        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action',
-                'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS)
-        ));
+        $params['add_paydata[action]'] = PayoneEnums::PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS;
 
         $walletParams = $this->buildPayPalEcsWalletParams($router);
 
-        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
+        $params['clearingtype'] = PayoneEnums::WALLET;
         $params['workorderid'] = $workerId;
         $params['amount'] = $amount;
         $params['currency'] = $currencyName;
-        $params['paydata'] = $payData;
-        $params['wallet'] = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($walletParams);
-
-        return array_merge($params, $this->buildPayPalEcsShippingAddress($userData));
+        return array_merge($params, $walletParams, $this->buildPayPalEcsShippingAddress($userData));
     }
 
     public function buildPayPalExpressv2CheckoutDetails($paymentId, $router, $amount, $currencyName, $userData, $workerId)
     {
         $this->payoneConfig = Mopt_PayoneMain::getInstance()->getPayoneConfig($paymentId);
         $params = $this->getAuthParameters($paymentId);
-
-        $payData = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $payData->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action',
-                'data' => Payone_Api_Enum_GenericpaymentAction::PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS)
-        ));
-
+        $params['add_paydata[action]'] = PayoneEnums::PAYPAL_ECS_GET_EXPRESSCHECKOUTDETAILS;
         $walletParams = $this->buildPayPalv2EcsWalletParams($router);
-
-        $params['clearingtype'] = Payone_Enum_ClearingType::WALLET;
+        $params['clearingtype'] = PayoneEnums::WALLET;
         $params['workorderid'] = $workerId;
         $params['amount'] = $amount;
         $params['currency'] = $currencyName;
-        $params['paydata'] = $payData;
-        $params['wallet'] = new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($walletParams);
 
-        return array_merge($params, $this->buildPayPalv2EcsShippingAddress($userData));
+        return array_merge($params, $walletParams, $this->buildPayPalv2EcsShippingAddress($userData));
     }
 
     protected function buildPayPalEcsWalletParams($router)
     {
         $walletParams = array(
-            'wallettype' => Payone_Api_Enum_WalletType::PAYPAL_EXPRESS,
+            'wallettype' => PayoneEnums::PAYPAL_EXPRESS,
             'successurl' => $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'paypalexpress',
                 'forceSecure' => true, 'appendSession' => false), null),
             'errorurl' => $router->assemble(array('action' => 'paypalexpressAbort',
@@ -1923,7 +1674,7 @@ class Mopt_PayoneParamBuilder
     protected function buildPayPalv2EcsWalletParams($router)
     {
         $walletParams = array(
-            'wallettype' => Payone_Api_Enum_WalletType::PAYPAL_EXPRESSV2,
+            'wallettype' => PayoneEnums::PAYPAL_EXPRESSV2,
             'successurl' => $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'paypalexpressv2',
                 'forceSecure' => true, 'appendSession' => false), null),
             'errorurl' => $router->assemble(array('action' => 'paypalexpressv2Abort',
@@ -1973,30 +1724,30 @@ class Mopt_PayoneParamBuilder
 
     public function getPaymentPaypalEcs($router)
     {
-        $params = array();
+        $params = [];
 
-        $params['wallettype'] = Payone_Api_Enum_WalletType::PAYPAL_EXPRESS;
+        $params['wallettype'] = PayoneEnums::PAYPAL_EXPRESS;
         $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'success',
             'forceSecure' => true, 'appendSession' => false), null);
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
             'forceSecure' => true, 'appendSession' => false));
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
-        return new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
+        return $params;
     }
 
     public function getPaymentPaypalv2Ecs($router)
     {
-        $params = array();
+        $params = [];
 
-        $params['wallettype'] = Payone_Api_Enum_WalletType::PAYPAL_EXPRESSV2;
+        $params['wallettype'] = PayoneEnums::PAYPAL_EXPRESSV2;
         $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router,array('action' => 'success',
             'forceSecure' => true, 'appendSession' => false), null);
         $params['errorurl'] = $router->assemble(array('action' => 'failure',
             'forceSecure' => true, 'appendSession' => false));
         $params['backurl'] = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
-        return new Payone_Api_Request_Parameter_Authorization_PaymentMethod_Wallet($params);
+        return $params;
     }
 
     /**
@@ -2007,57 +1758,6 @@ class Mopt_PayoneParamBuilder
     protected function removeWhitespaces($input)
     {
         return preg_replace('/\s+/', '', $input);
-    }
-
-    /**
-     * get total basket amount
-     *
-     * @param array $basket
-     * @param array $userData
-     * @return int
-     */
-    protected function getParamAmount($basket, $userData)
-    {
-        if (!empty($userData['additional']['charge_vat'])) {
-            return empty($basket['AmountWithTaxNumeric']) ? $basket['AmountNumeric'] : $basket['AmountWithTaxNumeric'];
-        } else {
-            return $basket['AmountNetNumeric'];
-        }
-    }
-
-    /**
-     * determine authorization method
-     *
-     * @param array $payoneConfig
-     * @return string
-     */
-    protected function getParamAuthorizationMethod($payoneConfig)
-    {
-        $preAuthValues = array('preAuthorise', 'Vorautorisierung');
-
-        if (in_array($payoneConfig['authorisationMethod'], $preAuthValues)) {
-            return Payone_Api_Enum_RequestType::PREAUTHORIZATION;
-        } else {
-            return Payone_Api_Enum_RequestType::AUTHORIZATION;
-        }
-    }
-
-    /**
-     * build custom params
-     *
-     * @return string
-     */
-    protected function getCustomSessionParameters()
-    {
-        $session = Shopware()->Session();
-
-        //create hash
-        $orderVariables = $session['sOrderVariables'];
-        $orderHash = md5(serialize($orderVariables));
-        $session->moptOrderHash = $orderHash;
-
-        return 'session-' . Shopware()->Shop()->getId() . '|' . Shopware()->Modules()->Admin()->sSYSTEM->sSESSION_ID .
-            '|' . $orderHash;
     }
 
     /**
@@ -2081,19 +1781,17 @@ class Mopt_PayoneParamBuilder
     public function buildKlarnaSessionStartParams($clearingtype, $paymentFinancingtype, $basket, $shippingCosts, $paymentId, $phoneNumber)
     {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $paydata = $this->buildKlarnaPaydata($phoneNumber);
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key'  => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::KLARNA_START_SESSION)
-        ));
 
         $params = $this->getAuthParameters($paymentId);
         $params['clearingtype'] = $clearingtype;
         $params['financingtype'] = $paymentFinancingtype;
         $params['amount'] = $basket['AmountNumeric'] + $shippingCosts['brutto'];
-        $params['paydata'] = $paydata;
         $params['currency'] = Shopware()->Container()->get('currency')->getShortName();
         $params['telephonenumber'] = $phoneNumber;
         $params['title'] = $this->payonePaymentHelper->getKlarnaTitle($userData);
+        $klarnaParams = $this->buildKlarnaPaydata($phoneNumber);
+        $params = array_merge($params, $klarnaParams);
+        $params['add_paydata[action]'] = PayoneEnums::GenericpaymentAction_KLARNA_START_SESSION;
 
         return $params;
     }
@@ -2101,128 +1799,69 @@ class Mopt_PayoneParamBuilder
     /**
      * @param $phoneNumber
      *
-     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     * @return array
      */
     protected function buildKlarnaPaydata($phoneNumber) {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $params = [];
 
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key'  => 'shipping_email', 'data' => $userData['additional']['user']['email'])
-        ));
+        $params['add_paydata[shipping_email]'] = $userData['additional']['user']['email'];
+        $params['add_paydata[shipping_title]'] = $this->payonePaymentHelper->getKlarnaTitle($userData);
+        $params['add_paydata[shipping_telephonenumber]'] = $phoneNumber;
 
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key'  => 'shipping_title', 'data' => $this->payonePaymentHelper->getKlarnaTitle($userData))
-        ));
-
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key'  => 'shipping_telephonenumber', 'data' => $phoneNumber)
-        ));
-
-/*        if ($userData['billingaddress']['company']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key'  => 'organization_entity_type', 'data' => 'OTHER')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key'  => 'organization_registry_id', 'data' => $userData['billingaddress']['vatId'])
-            ));
-        }
-*/
-
-        return $paydata;
+        return $params;
     }
 
     /**
      *
-     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     * @return array
      */
     protected function buildApplepayPaydata($tokenData) {
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
+        $params = [];
 
         if (!isset($tokenData['paymentData']['data']) || is_null($tokenData['paymentData']['data'])) {
             $tokenData['paymentData']['data'] = '';
         }
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            [
-                'key'  => 'paymentdata_token_data',
-                'data' => $tokenData['paymentData']['data'],
-            ]
-        ));
+        $params['add_paydata[paymentdata_token_data]'] = $tokenData['paymentData']['data'];
 
         if (!isset($tokenData['paymentData']['header']['ephemeralPublicKey']) || is_null($tokenData['paymentData']['header']['ephemeralPublicKey'])) {
             $tokenData['paymentData']['header']['ephemeralPublicKey'] = '';
         }
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            [
-                'key'  => 'paymentdata_token_ephemeral_publickey',
-                'data' => $tokenData['paymentData']['header']['ephemeralPublicKey'],
-            ]
-        ));
+        $params['add_paydata[paymentdata_token_ephemeral_publickey]'] = $tokenData['paymentData']['header']['ephemeralPublicKey'];
 
         if (!isset($tokenData['paymentData']['header']['publicKeyHash']) || is_null($tokenData['paymentData']['header']['publicKeyHash'])) {
             $tokenData['paymentData']['header']['publicKeyHash'] = '';
         }
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            [
-                'key'  => 'paymentdata_token_publickey_hash',
-                'data' => $tokenData['paymentData']['header']['publicKeyHash'],
-            ]
-        ));
+        $params['add_paydata[paymentdata_token_publickey_hash]'] = $tokenData['paymentData']['header']['publicKeyHash'];
 
         if (!isset($tokenData['paymentData']['signature']) || is_null($tokenData['paymentData']['signature'])) {
             $tokenData['paymentData']['signature'] = '';
         }
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            [
-                'key'  => 'paymentdata_token_signature',
-                'data' => $tokenData['paymentData']['signature'],
-            ]
-        ));
+        $params['add_paydata[paymentdata_token_signature]'] = $tokenData['paymentData']['signature'];
 
         if (!isset($tokenData['paymentData']['header']['transactionId']) || is_null($tokenData['paymentData']['header']['transactionId'])) {
             $tokenData['paymentData']['header']['transactionId'] = '';
         }
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            [
-                'key'  => 'paymentdata_token_transaction_id',
-                'data' => $tokenData['paymentData']['header']['transactionId'],
-            ]
-        ));
+        $params['add_paydata[paymentdata_token_transaction_id]'] = $tokenData['paymentData']['header']['transactionId'];
 
         if (!isset($tokenData['paymentData']['version']) || is_null($tokenData['paymentData']['version'])) {
             $tokenData['paymentData']['version'] = 'EC_v1';
         }
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            [
-                'key'  => 'paymentdata_token_version',
-                'data' => $tokenData['paymentData']['version'],
-            ]
-        ));
+        $params['add_paydata[paymentdata_token_version]'] = $tokenData['paymentData']['version'];
 
-        return $paydata;
+        return $params;
     }
 
     /**
      *
-     * @return Payone_Api_Request_Parameter_Paydata_Paydata
+     * @return $params
      */
     protected function buildGooglePayPaydata($token) {
         $userData = Shopware()->Modules()->Admin()->sGetUserData();
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            [
-                'key'  => 'paymentmethod_token_data',
-                'data' => $token,
-            ]
-        ));
+        $params['add_paydata[paymentmethod_token_data]'] = $token;
         if ($userData['billingaddress']['company']) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                [
-                    'key' => 'b2b',
-                    'data' => 'yes',
-                ]
-            ));
+            $params['add_paydata[b2b]'] = 'yes';
         }
-        return $paydata;
+        return $params;
     }
 }

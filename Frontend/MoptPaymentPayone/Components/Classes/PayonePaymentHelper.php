@@ -4,6 +4,8 @@ use Shopware\Components\Routing\Router;
 use Shopware\Models\Customer\Address;
 use Shopware\Models\Customer\Customer;
 use Shopware\Models\Payment\Payment;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 /**
  * $Id: $
@@ -250,6 +252,8 @@ class Mopt_PayonePaymentHelper
      */
     public function extractClearingDataFromResponse($response)
     {
+        $responseData = $response->toArray();
+
         if ($responseData['txid']) {
             $responseData['clearing_txid'] = $responseData['txid'];
         }
@@ -275,7 +279,7 @@ class Mopt_PayonePaymentHelper
      */
     public function extractPayolutionClearingDataFromResponse($response)
     {
-        if ($response instanceof Payone_Api_Response_Authorization_Approved) {
+        if ($response->getStatus() === PayoneEnums::APPROVED) {
             $responseData = $response->toArray();
 
             foreach ($responseData['rawResponse'] as $key => $value) {
@@ -833,31 +837,31 @@ class Mopt_PayonePaymentHelper
     public function getOnlineBankTransferTypeFromPaymentName($paymentName)
     {
         if ($this->isPayoneSofortuerberweisung($paymentName)) {
-            return Payone_Api_Enum_OnlinebanktransferType::INSTANT_MONEY_TRANSFER;
+            return PayoneEnums::INSTANT_MONEY_TRANSFER;
         }
 
         if ($this->isPayoneBancontact($paymentName)) {
-            return Payone_Api_Enum_OnlinebanktransferType::BANCONTACT;
+            return PayoneEnums::BANCONTACT;
         }
 
         if ($this->isPayoneEPS($paymentName)) {
-            return Payone_Api_Enum_OnlinebanktransferType::EPS_ONLINE_BANK_TRANSFER;
+            return PayoneEnums::EPS_ONLINE_BANK_TRANSFER;
         }
 
         if ($this->isPayonePostEFinance($paymentName)) {
-            return Payone_Api_Enum_OnlinebanktransferType::POSTFINANCE_EFINANCE;
+            return PayoneEnums::POSTFINANCE_EFINANCE;
         }
 
         if ($this->isPayonePostFinanceCard($paymentName)) {
-            return Payone_Api_Enum_OnlinebanktransferType::POSTFINANCE_CARD;
+            return PayoneEnums::POSTFINANCE_CARD;
         }
 
         if ($this->isPayoneIDeal($paymentName)) {
-            return Payone_Api_Enum_OnlinebanktransferType::IDEAL;
+            return PayoneEnums::IDEAL;
         }
 
         if ($this->isPayoneP24($paymentName)) {
-            return Payone_Api_Enum_OnlinebanktransferType::P24;
+            return PayoneEnums::P24;
         }
 
         return '';
@@ -1146,31 +1150,31 @@ class Mopt_PayonePaymentHelper
             $billing->setPhone($paymentData['formData']['mopt_payone__klarna_telephone']);
         }
 
-        if (isset($paymentData['formData']['mopt_payone__payolution_birthdaydate'])) {
-            $user->setBirthday($paymentData['formData']['mopt_payone__payolution_birthdaydate']);
+        if (isset($paymentData['formData']['mopt_payone__fin_payolution_birthdaydate'])) {
+            $user->setBirthday($paymentData['formData']['mopt_payone__fin_payolution_birthdaydate']);
             Shopware()->Models()->persist($user);
         }
 
-        if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate'])) {
-            $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_invoice_birthdaydate']);
+        if (isset($paymentData['formData']['mopt_payone__fin_ratepay_invoice_birthdaydate'])) {
+            $user->setBirthday($paymentData['formData']['mopt_payone__fin_ratepay_invoice_birthdaydate']);
             Shopware()->Models()->persist($user);
         }
 
-        if (isset($paymentData['formData']['mopt_payone__ratepay_invoice_telephone'])) {
-            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_invoice_telephone']);
+        if (isset($paymentData['formData']['mopt_payone__fin_ratepay_invoice_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__fin_ratepay_invoice_telephone']);
         }
 
         if (isset($paymentData['formData']['mopt_payone__klarna_personalId'])) {
             $user->getAttribute()->setMoptPayoneKlarnaPersonalid($paymentData['formData']['mopt_payone__klarna_personalId']);
         }
 
-        if (isset($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate'])) {
-            $user->setBirthday($paymentData['formData']['mopt_payone__ratepay_installment_birthdaydate']);
+        if (isset($paymentData['formData']['mopt_payone__fin_ratepay_installment_birthdaydate'])) {
+            $user->setBirthday($paymentData['formData']['mopt_payone__fin_ratepay_installment_birthdaydate']);
             Shopware()->Models()->persist($user);
         }
 
-        if (isset($paymentData['formData']['mopt_payone__ratepay_installment_telephone'])) {
-            $billing->setPhone($paymentData['formData']['mopt_payone__ratepay_installment_telephone']);
+        if (isset($paymentData['formData']['mopt_payone__fin_ratepay_installment_telephone'])) {
+            $billing->setPhone($paymentData['formData']['mopt_payone__fin_ratepay_installment_telephone']);
         }
 
         if (isset($paymentData['formData']['mopt_payone__fin_ratepay_direct_debit_birthdaydate'])) {
@@ -1598,9 +1602,9 @@ class Mopt_PayonePaymentHelper
     private function klarnaPaymentFinancingtypeNameMapping()
     {
         return [
-            'mopt_payone__fin_kis_klarna_installments' => Payone_Api_Enum_FinancingType::KIS,
-            'mopt_payone__fin_kiv_klarna_invoice' => Payone_Api_Enum_FinancingType::KIV,
-            'mopt_payone__fin_kdd_klarna_direct_debit' => Payone_Api_Enum_FinancingType::KDD,
+            'mopt_payone__fin_kis_klarna_installments' => PayoneEnums::KLARNA_INSTALLMENTS,
+            'mopt_payone__fin_kiv_klarna_invoice' => PayoneEnums::KLARNA_INVOICE,
+            'mopt_payone__fin_kdd_klarna_direct_debit' => PayoneEnums::KLARNA_DIRECT_DEBIT,
         ];
     }
 
@@ -1754,15 +1758,6 @@ class Mopt_PayonePaymentHelper
         $paramBuilder = $moptPayoneMain->getParamBuilder();
         $basket = $moptPayoneMain->sGetBasket();
 
-        /** @var Payone_Builder $payoneBuilder */
-        $payoneBuilder = $bootstrap->Application()->MoptPayoneBuilder();
-        $service = $payoneBuilder->buildServicePaymentGenericpayment();
-
-        $repositoryNamespace = 'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog';
-        /** @var Payone_Api_Persistence_Interface $moptPayoneApiLogRepository */
-        $moptPayoneApiLogRepository = Shopware()->Models()->getRepository($repositoryNamespace);
-        $service->getServiceProtocol()->addRepository($moptPayoneApiLogRepository);
-
         $userData['additional']['user']['birthday'] = $birthdate;
         $userData['additional']['user']['mopt_payone_klarna_personalid'] = $personalId;
         Shopware()->Session()->offsetSet('mopt_klarna_phoneNumber', $phoneNumber);
@@ -1770,7 +1765,7 @@ class Mopt_PayonePaymentHelper
         $shippingCosts = Shopware()->Modules()->Admin()->sGetPremiumShippingcosts();
 
         $params = $paramBuilder->buildKlarnaSessionStartParams('fnc', $paymentFinancingtype, $basket, $shippingCosts, $paymentId, $phoneNumber);
-        $request = new Payone_Api_Request_Genericpayment($params);
+        $request = new PayoneRequest(PayoneRequest::GENERIC, $params);
 
         $basket['sShippingcosts'] = $shippingCosts['brutto'];
         $basket['sShippingcostsWithTax'] = $shippingCosts['brutto'];
@@ -1778,22 +1773,21 @@ class Mopt_PayonePaymentHelper
         $basket['sShippingcostsTax'] = $shippingCosts['tax'];
 
         $personalData = $paramBuilder->getPersonalData($userData);
-        $request->setPersonalData($personalData);
+        $request->add($personalData);
         $deliveryData = $paramBuilder->getDeliveryData($userData);
-        $request->setDeliveryData($deliveryData);
+        $request->add($deliveryData);
 
         $selectedDispatchId = Shopware()->Session()['sDispatch'];
         $dispatch = Shopware()->Modules()->Admin()->sGetPremiumDispatch($selectedDispatchId);
 
         $invoicing = $paramBuilder->getInvoicing($basket, $dispatch, $userData);
-        $request->setInvoicing($invoicing);
-        $request->getPersonalData()->setTelephonenumber(Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber'));
-        $request->setTelephonenumber(Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber'));
+        $request->add($invoicing);
+        $request->set('telephonenumber',(Shopware()->Session()->offsetGet('mopt_klarna_phoneNumber')));
 
         $result = null;
 
         try {
-            $result = $service->request($request);
+            $result = $request->request(PayoneRequest::GENERIC, $request);
         } catch (Exception $e) {
         }
 

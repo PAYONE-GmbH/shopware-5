@@ -1,6 +1,8 @@
 <?php
 
 use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 /**
  * Klarna payment controller
@@ -144,7 +146,6 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $session = Shopware()->Session();
         $paymentId = $session->moptAmazonpayPaymentId;
         $moptPayoneMain = $this->plugin->get('MoptPayoneMain');
-        $payoneServiceBuilder = $this->plugin->get('MoptPayoneBuilder');
         $paramBuilder = $moptPayoneMain->getParamBuilder();
         $userData = $this->getUserData();
         $config = $moptPayoneMain->getPayoneConfig($paymentId);
@@ -153,56 +154,36 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $params = $moptPayoneMain->getParamBuilder()->buildAuthorize($paymentId);
 
         if ($config['authorisationMethod'] === 'Autorisierung') {
-            $request = new Payone_Api_Request_Authorization($params);
-            $service = $payoneServiceBuilder->buildServicePaymentAuthorize();
+            $request = new PayoneRequest(PayoneRequest::AUTH, $params);
             $this->session->moptIsAuthorized = true;
         } else {
-            $request = new Payone_Api_Request_Preauthorization($params);
-            $service = $payoneServiceBuilder->buildServicePaymentPreAuthorize();
+            $request = new PayoneRequest(PayoneRequest::PREAUTH, $params);
             $this->session->moptIsAuthorized = false;
         }
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'amazon_reference_id', 'data' => $this->session->moptPayoneAmazonReferenceId)
-        ));
-
+        $params['add_paydata[amazon_reference_id]'] = $this->session->moptPayoneAmazonReferenceId;
         $payoneAmazonPayConfig = Shopware()->Container()->get('MoptPayoneMain')->getHelper()->getPayoneAmazonPayConfig(Shopware()->Shop()->getId());
 
         if ($payoneAmazonPayConfig->getAmazonMode() === 'sync') {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'amazon_timeout', 'data' => 0)
-            ));
+            $params['add_paydata[amazon_timeout]'] = 0;
             // send additional param to PO API
             // this should trigger the cancelOrderReference on timouts in API side
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'cancel_on_timeout', 'data' => 'yes')
-            ));
+            $params['add_paydata[cancel_on_timeout]'] = 'yes';
         } elseif ($payoneAmazonPayConfig->getAmazonMode() === 'async') {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'amazon_timeout', 'data' => 1440)
-            ));
+            $params['add_paydata[amazon_timeout]'] = 1440;
         } else {
             // first try sync, on failure try async
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'amazon_timeout', 'data' => 0)
-            ));
+            $params['add_paydata[amazon_timeout]'] = 0;
         }
-
-        $request->setPaydata($paydata);
-        $request->setApiVersion("3.10");
-        $request->setCurrency(Shopware()->Shop()->getCurrency()->getCurrency());
-        $request->setClearingtype(Payone_Enum_ClearingType::WALLET);
-        $request->setWorkorderId($this->session->moptPayoneAmazonWorkOrderId);
-        $request->setWallettype(Payone_Api_Enum_WalletType::AMAZONPAY);
-        $request->setReference($moptPayoneMain->reserveOrdernumber());
+        $request->set('apiversion', "3.10");
+        $request->set('currency', Shopware()->Shop()->getCurrency()->getCurrency());
+        $request->set('clearingtype', PayoneEnums::WALLET);
+        $request->set('workorderid', $this->session->moptPayoneAmazonWorkOrderId);
+        $request->set('wallettype', PayoneEnums::AMAZONPAY);
+        $request->set('reference', $moptPayoneMain->reserveOrdernumber());
         $personalData = $paramBuilder->getPersonalData($userData);
-        $request->setPersonalData($personalData);
+        $request->add($personalData);
         $deliveryData = $paramBuilder->getDeliveryData($userData);
-        $request->setDeliveryData($deliveryData);
+        $request->add($deliveryData);
 
         $router = $this->Front()->Router();
         $successurl = $router->assemble(array('action' => 'success',
@@ -212,70 +193,62 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         $backurl = $router->assemble(array('action' => 'cancel',
             'forceSecure' => true, 'appendSession' => false));
 
-        $request->setSuccessurl($successurl);
-        $request->setBackurl($errorurl);
-        $request->setErrorurl($backurl);
-        $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
+        $request->set('successurl', $successurl);
+        $request->set('backurl', $errorurl);
+        $request->set('errorurl', $backurl);
+        $request->set('amount', Shopware()->Session()->sOrderVariables['sAmount']);
         $orderVariables = $this->session['sOrderVariables'];
         $orderHash = md5(serialize($orderVariables));
         $transactionStatusPushCustomParam = 'session-' . Shopware()->Shop()->getId()
             . '|' . $this->admin->sSYSTEM->sSESSION_ID . '|' . $orderHash;
-        $request->setParam($transactionStatusPushCustomParam);
+        $request->set('param', $transactionStatusPushCustomParam);
 
         if ($config['submitBasket'] === true) {
-            $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getSelectedDispatch(), $this->getUserData()));
+            $request->add($paramBuilder->getInvoicing($this->getBasket(), $this->getSelectedDispatch(), $this->getUserData()));
         }
 
         if ($config['authorisationMethod'] === 'Autorisierung') {
-            $response = $service->authorize($request);
+            $response = $request->request(PayoneRequest::AUTH, $params);
         } else {
-            $response = $service->preauthorize($request);
+            $response = $request->request(PayoneRequest::PREAUTH, $params);
         }
 
-        if ($response->getStatus() === Payone_Api_Enum_ResponseType::ERROR) {
+        if ($response->getStatus() === PayoneEnums::ERROR) {
 
-            if ($response->getErrorCode() === '980' && $payoneAmazonPayConfig->getAmazonMode() === 'firstsync'){
+            if ($response->get('errorcode') === '980' && $payoneAmazonPayConfig->getAmazonMode() === 'firstsync'){
                 // repeat Request in async mode and handle errors afterwards as usual
-
-                $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-                $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'amazon_reference_id', 'data' => $this->session->moptPayoneAmazonReferenceId)
-                ));
-                $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                    array('key' => 'amazon_timeout', 'data' => 1440)
-                ));
+                $params['add_paydata[amazon_reference_id]'] = $this->session->moptPayoneAmazonReferenceId;
+                $params['add_paydata[amazon_timeout]'] = 1440;
 
                 // reset basket amount to prevent being multiplied with 100
                 // do the same for invoice parameters
 
-                $request->setAmount(Shopware()->Session()->sOrderVariables['sAmount']);
+                $request->set('amount', Shopware()->Session()->sOrderVariables['sAmount']);
 
                 if ($config['submitBasket'] === true) {
-                    $request->setInvoicing($paramBuilder->getInvoicing($this->getBasket(), $this->getSelectedDispatch(), $this->getUserData()));
+                    $request->add($paramBuilder->getInvoicing($this->getBasket(), $this->getSelectedDispatch(), $this->getUserData()));
                 }
 
-                $request->setPaydata($paydata);
-
                 if ($config['authorisationMethod'] === 'Autorisierung') {
-                    $response = $service->authorize($request);
+                    $response = $request->request(PayoneRequest::AUTH, $params);
                 } else {
-                    $response = $service->preauthorize($request);
+                    $response = $request->request(PayoneRequest::PREAUTH, $params);
                 }
             }
         }
 
-        if ($response->getStatus() === Payone_Api_Enum_ResponseType::ERROR) {
+        if ($response->getStatus() === PayoneEnums::ERROR) {
 
             $this->handleAmazonError($response);
 
-        } elseif ($response->getStatus() === Payone_Api_Enum_ResponseType::APPROVED || $response->getStatus() === 'PENDING') {
+        } elseif ($response->getStatus() === PayoneEnums::APPROVED || $response->getStatus() === 'PENDING') {
 
             // Save Clearing Reference as Attribute (set in session )
-            $this->session->moptPaymentReference = $request->getReference();
+            $this->session->moptPaymentReference = $request->get('reference');
             $paymentStatusId = null;
 
             Shopware()->Session()->sOrderVariables['sUserData'] = $this->getUserData();
-            $txid = $response->getTxid();
+            $txid = $response->get('txid');
             $orderNumber = $this->saveOrder(
                 $txid,
                 $this->session->moptPaymentReference,
@@ -318,7 +291,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
 
             // If auth was set to async display an additional message
 
-            $payData = $request->getPaydata()->toArray();
+            $payData = $response->getPaydata();
 
             if ($payData['add_paydata[amazon_timeout]'] == 1440) {
                 $this->View()->moptAmazonAsyncAuthMessage = Shopware()->Snippets()
@@ -353,7 +326,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
      */
     private function handleAmazonError($response)
     {
-        $errorCode = $response->getErrorCode();
+        $errorCode = $response->get('errorcode');
         $this->redirectToCart(true, $errorCode);
     }
 
