@@ -17,27 +17,27 @@
         }
     </script>
     {/if}
-    <div id="mopt_payone__ratepay_invoice_abg">
+    <div id="mopt_payone__fin_ratepay_invoice_abg">
         <p>{s name='ratepayLegalText'}Mit Klicken auf "Zahlungspflichtig bestellen" erklären Sie sich mit den <a target="_blank" href="https://www.ratepay.com/legal-payment-terms">Zahlungsbedingungen unseres Zahlungspartners</a> sowie mit der Durchführung einer <a target="_blank" href="https://www.ratepay.com/legal-payment-dataprivacy">Risikoprüfung durch unseren Zahlungspartner</a> einverstanden.{/s}</p>
     </div>
 
     {if ! $sUserData.billingaddress.company}
         <p class ="none">
-            <label for="mopt_payone__ratepay_invoice_birthday">
+            <label for="mopt_payone__fin_ratepay_invoice_birthday">
                 {s name='birthdate'}Geburtsdatum{/s}
             </label>
         </p>
 
     <div class="select-field">
-        <select name="moptPaymentData[mopt_payone__ratepay_invoice_birthday]"
-                id="mopt_payone__ratepay_invoice_birthday" onchange="ratepayInvoiceDobInput()"
+        <select name="moptPaymentData[mopt_payone__fin_ratepay_invoice_birthday]"
+                id="mopt_payone__fin_ratepay_invoice_birthday" onchange="ratepayInvoiceDobInput()"
                 aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="is--required{if $error_flags.mopt_payone__ratepay_invoice_birthday} has--error{/if}">
+                class="is--required{if $error_flags.mopt_payone__fin_ratepay_invoice_birthday} has--error{/if}">
             <option value="">--</option>
             {section name="birthdate" start=1 loop=32 step=1}
                 <option value="{if $smarty.section.birthdate.index < 10}0{/if}{$smarty.section.birthdate.index}"
-                        {if $smarty.section.birthdate.index eq $moptCreditCardCheckEnvironment.mopt_payone__ratepay_invoice_birthday}
+                        {if $smarty.section.birthdate.index eq $moptCreditCardCheckEnvironment.mopt_payone__fin_ratepay_invoice_birthday}
                             selected
                         {/if}>
                     {$smarty.section.birthdate.index}</option>
@@ -46,15 +46,15 @@
     </div>
 
     <div class="select-field">
-        <select name="moptPaymentData[mopt_payone__ratepay_invoice_birthmonth]"
-            id="mopt_payone__ratepay_invoice_birthmonth" onchange="ratepayInvoiceDobInput()"
+        <select name="moptPaymentData[mopt_payone__fin_ratepay_invoice_birthmonth]"
+            id="mopt_payone__fin_ratepay_invoice_birthmonth" onchange="ratepayInvoiceDobInput()"
             aria-label="{s name='birthdate'}Geburtsdatum{/s}"
             {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-            class="is--required {if $error_flags.mopt_payone__ratepay_invoice_birthmonth} has--error{/if}">
+            class="is--required {if $error_flags.mopt_payone__fin_ratepay_invoice_birthmonth} has--error{/if}">
             <option value="">--</option>
             {section name="birthmonth" start=1 loop=13 step=1}
                 <option value="{if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}"
-                    {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__ratepay_invoice_birthmonth}
+                    {if $smarty.section.birthmonth.index eq $moptCreditCardCheckEnvironment.mopt_payone__fin_ratepay_invoice_birthmonth}
                         selected
                     {/if}>
                     {if $smarty.section.birthmonth.index < 10}0{/if}{$smarty.section.birthmonth.index}</option>
@@ -64,15 +64,15 @@
     </div>
 
     <div class="select-field">
-        <select name="moptPaymentData[mopt_payone__ratepay_invoice_birthyear]"
-                id="mopt_payone__ratepay_invoice_birthyear" onchange="ratepayInvoiceDobInput()"
+        <select name="moptPaymentData[mopt_payone__fin_ratepay_invoice_birthyear]"
+                id="mopt_payone__fin_ratepay_invoice_birthyear" onchange="ratepayInvoiceDobInput()"
                 aria-label="{s name='birthdate'}Geburtsdatum{/s}"
                 {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
-                class="select--country is--required{if $error_flags.mopt_payone__ratepay_invoice_birthyear} register--error-msg {/if}">
+                class="select--country is--required{if $error_flags.mopt_payone__fin_ratepay_invoice_birthyear} register--error-msg {/if}">
             <option value="">----</option>
             {section name="birthyear" loop=2016 max=100 step=-1}
                 <option value="{$smarty.section.birthyear.index}"
-                        {if $smarty.section.birthyear.index eq $moptCreditCardCheckEnvironment.mopt_payone__ratepay_invoice_birthyear}
+                        {if $smarty.section.birthyear.index eq $moptCreditCardCheckEnvironment.mopt_payone__fin_ratepay_invoice_birthyear}
                 selected
                         {/if}>
                     {$smarty.section.birthyear.index}</option>
@@ -80,28 +80,28 @@
         </select>
     </div>
     {/if}
-    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__ratepay_invoice_birthdaydate]" id="mopt_payone__ratepay_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
+    <input class="is--hidden validate-18-years" type="text" name="moptPaymentData[mopt_payone__fin_ratepay_invoice_birthdaydate]" id="mopt_payone__fin_ratepay_invoice_birthdaydate" value="{$moptCreditCardCheckEnvironment.birthday}">
     <div id="ratepay-invoice-hint-18-years" class="is--hidden">Sie müssen mindestens 18 Jahre alt sein, um diese Zahlart verwenden zu können.</div>
 
-    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_invoice_shopid]" value="{$moptRatepayConfig.shopid}"/>
-    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_invoice_device_fingerprint]" value="{$moptRatepayConfig.deviceFingerPrint}"/>
+    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_ratepay_invoice_shopid]" value="{$moptRatepayConfig.shopid}"/>
+    <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_ratepay_invoice_device_fingerprint]" value="{$moptRatepayConfig.deviceFingerPrint}"/>
 
-    <input name="moptPaymentData[mopt_payone__ratepay_invoice_telephone]"
+    <input name="moptPaymentData[mopt_payone__fin_ratepay_invoice_telephone]"
            type="text"
-           id="mopt_payone__ratepay_invoice_telephone"
+           id="mopt_payone__fin_ratepay_invoice_telephone"
            {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
            placeholder="{s name='telephoneNumber'}Telefonnummer{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-           value="{$moptCreditCardCheckEnvironment.mopt_payone__ratepay_invoice_telephone|escape}"
-           class="payment--field is--required{if $error_flags.mopt_payone__ratepay_invoice_telephone} has--error{/if}"
+           value="{$moptCreditCardCheckEnvironment.mopt_payone__fin_ratepay_invoice_telephone|escape}"
+           class="payment--field is--required{if $error_flags.mopt_payone__fin_ratepay_invoice_telephone} has--error{/if}"
     />
     {if $sUserData.billingaddress.company}
-        <input type="text" name="moptPaymentData[mopt_payone__ratepay_invoice_company_trade_registry_number]"
-               id="mopt_payone__ratepay_invoice_company_trade_registry_number"
+        <input type="text" name="moptPaymentData[mopt_payone__fin_ratepay_invoice_company_trade_registry_number]"
+               id="mopt_payone__fin_ratepay_invoice_company_trade_registry_number"
                {if $payment_mean.id == $form_data.payment}required="required" aria-required="true"{/if}
                placeholder="{s name='companyTradeRegistryNumber'}Handelsregisternummer*{/s}{s name="RequiredField" namespace="frontend/register/index"}{/s}"
-               class="is--required{if $error_flags.mopt_payone__ratepay_invoice_company_trade_registry_number} has--error{/if}">
+               class="is--required{if $error_flags.mopt_payone__fin_ratepay_invoice_company_trade_registry_number} has--error{/if}">
 
-        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__ratepay_b2bmode]" id="mopt_payone__ratepay_b2bmode" value="1">
+        <input class="is--hidden" type="text" name="moptPaymentData[mopt_payone__fin_ratepay_b2bmode]" id="mopt_payone__fin_ratepay_b2bmode" value="1">
 
     {/if}
 </div>
@@ -127,10 +127,10 @@
 
     function ratepayInvoiceDobInput()
     {
-        var daySelect = document.getElementById("mopt_payone__ratepay_invoice_birthday");
-        var monthSelect = document.getElementById("mopt_payone__ratepay_invoice_birthmonth");
-        var yearSelect = document.getElementById('mopt_payone__ratepay_invoice_birthyear');
-        var hiddenDobFull = document.getElementById("mopt_payone__ratepay_invoice_birthdaydate");
+        var daySelect = document.getElementById("mopt_payone__fin_ratepay_invoice_birthday");
+        var monthSelect = document.getElementById("mopt_payone__fin_ratepay_invoice_birthmonth");
+        var yearSelect = document.getElementById('mopt_payone__fin_ratepay_invoice_birthyear');
+        var hiddenDobFull = document.getElementById("mopt_payone__fin_ratepay_invoice_birthdaydate");
         var hiddenDobHint = document.getElementById("ratepay-invoice-hint-18-years");
 
         if (daySelect.value == "" || monthSelect.value == "" || yearSelect.value == ""

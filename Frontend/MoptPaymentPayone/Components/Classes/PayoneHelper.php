@@ -2,6 +2,7 @@
 
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
 
 /**
  * $Id: $
@@ -67,19 +68,19 @@ class Mopt_PayoneHelper
             }
         }
 
-        if ($config['consumerscoreCheckModeB2C'] === Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA && $config["adresscheck{$type}Adress"] !== 0) {
-            return Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON;
+        if ($config['consumerscoreCheckModeB2C'] === PayoneEnums::BONIVERSUM_VERITA && $config["adresscheck{$type}Adress"] !== 0) {
+            return PayoneEnums::BONIVERSUM_PERSON;
         }
 
         switch ($config["adresscheck{$type}Adress"]) {
             case 1:
-                return Payone_Api_Enum_AddressCheckType::BASIC;
+                return PayoneEnums::BASIC;
             case 2:
-                return Payone_Api_Enum_AddressCheckType::PERSON;
+                return PayoneEnums::PERSON;
             case 3:
-                return Payone_Api_Enum_AddressCheckType::BONIVERSUM_BASIC;
+                return PayoneEnums::BONIVERSUM_BASIC;
             case 4:
-                return Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON;
+                return PayoneEnums::BONIVERSUM_PERSON;
             default:
                 return false;
         }
@@ -204,9 +205,9 @@ class Mopt_PayoneHelper
     public function getApiModeFromId($id)
     {
         if ($id == 1) {
-            return Payone_Enum_Mode::LIVE;
+            return PayoneEnums::MODE_LIVE;
         } else {
-            return Payone_Enum_Mode::TEST;
+            return PayoneEnums::MODE_TEST;
         }
     }
 
@@ -220,40 +221,40 @@ class Mopt_PayoneHelper
     public function getUserScoringValue($personStatus, $config)
     {
         switch ($personStatus) {
-            case Payone_Api_Enum_AddressCheckPersonstatus::NONE:
+            case PayoneEnums::AddressCheckPersonstatus_NONE:
                 return $config['mapPersonCheck'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PPB:
+            case PayoneEnums::AddressCheckPersonstatus_PPB:
                 return $config['mapKnowPreLastname'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PHB:
+            case PayoneEnums::AddressCheckPersonstatus_PHB:
                 return $config['mapKnowLastname'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PAB:
+            case PayoneEnums::AddressCheckPersonstatus_PAB:
                 return $config['mapNotKnowPreLastname'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PKI:
+            case PayoneEnums::AddressCheckPersonstatus_PKI:
                 return $config['mapMultiNameToAdress'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PNZ:
+            case PayoneEnums::AddressCheckPersonstatus_PNZ:
                 return $config['mapUndeliverable'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PPV:
+            case PayoneEnums::AddressCheckPersonstatus_PPV:
                 return $config['mapPersonDead'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PPF:
+            case PayoneEnums::AddressCheckPersonstatus_PPF:
                 return $config['mapWrongAdress'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PNP:
+            case PayoneEnums::AddressCheckPersonstatus_PNP:
                 return $config['mapAddressCheckNotPossible'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PUG:
+            case PayoneEnums::AddressCheckPersonstatus_PUG:
                 return $config['mapAddressOkayBuildingUnknown'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::PUZ:
+            case PayoneEnums::AddressCheckPersonstatus_PUZ:
                 return $config['mapPersonMovedAddressUnknown'];
 
-            case Payone_Api_Enum_AddressCheckPersonstatus::UKN:
+            case PayoneEnums::AddressCheckPersonstatus_UKN:
                 return $config['mapUnknownReturnValue'];
 
             default:
@@ -327,7 +328,7 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
-        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
+        if ($moptPayoneAddresscheckResult === PayoneEnums::INVALID) {
             return false;
         }
         if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
@@ -357,7 +358,7 @@ class Mopt_PayoneHelper
         if (!$moptPayoneAddresscheckDate) {
             return false;
         }
-        if ($moptPayoneAddresscheckResult === \Payone_Api_Enum_ResponseType::INVALID) {
+        if ($moptPayoneAddresscheckResult === PayoneEnums::INVALID) {
             return false;
         }
         if ($moptPayoneAddresscheckDate->getTimestamp() < $maxAgeTimestamp) {
@@ -414,7 +415,7 @@ class Mopt_PayoneHelper
         }
 
         $attribute->setMoptPayoneAddresscheckDate(date('Y-m-d'));
-        $attribute->setMoptPayoneAddresscheckPersonstatus($response->getPersonstatus());
+        $attribute->setMoptPayoneAddresscheckPersonstatus($response->get('personstatus'));
         $attribute->setMoptPayoneAddresscheckResult($response->getStatus());
         $attribute->setMoptPayoneConsumerscoreColor($mappedPersonStatus);
 

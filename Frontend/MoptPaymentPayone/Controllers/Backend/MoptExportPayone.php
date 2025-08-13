@@ -1,6 +1,9 @@
 <?php
 
 use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
+
 /**
  * $Id: $
  */
@@ -29,8 +32,6 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
     public function generateConfigExportAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
-        $this->moptPayone__sdk__Builder = Shopware()->Plugins()->Frontend()
-            ->MoptPaymentPayone()->Application()->MoptPayoneBuilder();
         $this->moptPayone__main = Shopware()->Plugins()->Frontend()->MoptPaymentPayone()->Application()->MoptPayoneMain();
         $this->moptPayone__helper = $this->moptPayone__main->getHelper();
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
@@ -52,9 +53,9 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         $global->setPaymentCreditcard($globalCreditCardConfig); // creditcard payment methods are handled separately
 
         if ($globalPayoneConfig['authorisationMethod'] == 'preAuthorise' || $globalPayoneConfig['authorisationMethod'] == 'Vorautorisierung') {
-            $global->setRequestType(Payone_Api_Enum_RequestType::PREAUTHORIZATION);
+            $global->setRequestType(PayoneRequest::PREAUTH);
         } else {
-            $global->setRequestType(Payone_Api_Enum_RequestType::AUTHORIZATION);
+            $global->setRequestType(PayoneRequest::AUTH);
         }
         $statusMapping = new Payone_Settings_Data_ConfigFile_Global_StatusMapping();
         $personStatusMapping = array();
@@ -279,9 +280,9 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         $paymentDto->setMode($config['liveMode']);
 
         if ($config['authorisationMethod'] == 'preAuthorise' || $config['authorisationMethod'] == 'Vorautorisierung') {
-            $paymentDto->setAuthorization(Payone_Api_Enum_RequestType::PREAUTHORIZATION);
+            $paymentDto->setAuthorization(PayoneRequest::PREAUTH);
         } else {
-            $paymentDto->setAuthorization(Payone_Api_Enum_RequestType::AUTHORIZATION);
+            $paymentDto->setAuthorization(PayoneRequest::AUTH);
         }
 
         //add forward urls
@@ -318,11 +319,8 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
 
     protected function getFinancingType($paymentHelper, $paymentName)
     {
-        if ($paymentHelper->isPayoneBillsafe($paymentName)) {
-            return Payone_Api_Enum_FinancingType::BSV;
-        }
         if ($paymentHelper->isPayoneKlarna($paymentName)) {
-            return Payone_Api_Enum_FinancingType::KLV;
+            return PayoneEnums::FinancingType_KLV;
         }
     }
 

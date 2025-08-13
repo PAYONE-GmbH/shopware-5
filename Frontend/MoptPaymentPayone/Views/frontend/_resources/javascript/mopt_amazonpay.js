@@ -1,6 +1,5 @@
 $.plugin('addressBookWidgetDiv', {
     init: function () {
-        var me = this;
         var jsloadMethod = document.querySelector('#jsLoadMethod').value;
         var isAsyncJsLoading = (jsloadMethod === 'async' || jsloadMethod === 'default');
 

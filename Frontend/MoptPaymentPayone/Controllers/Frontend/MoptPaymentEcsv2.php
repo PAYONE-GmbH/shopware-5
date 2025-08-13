@@ -1,11 +1,11 @@
 <?php
 
 use Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 class Shopware_Controllers_Frontend_MoptPaymentEcsv2 extends Shopware_Controllers_Frontend_Payment
 {
-
-    protected $moptPayone__serviceBuilder = null;
     /** @var Mopt_PayoneMain $moptPayone__main */
     protected $moptPayone__main = null;
     /** @var Mopt_PayoneHelper $moptPayone__helper */
@@ -21,7 +21,6 @@ class Shopware_Controllers_Frontend_MoptPaymentEcsv2 extends Shopware_Controller
      */
     public function init()
     {
-        $this->moptPayone__serviceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
         $this->moptPayone__main = $this->Plugin()->Application()->MoptPayoneMain();
         $this->moptPayone__helper = $this->moptPayone__main->getHelper();
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
@@ -63,20 +62,14 @@ class Shopware_Controllers_Frontend_MoptPaymentEcsv2 extends Shopware_Controller
             $userData
         );
 
-        $request = new Payone_Api_Request_Genericpayment($expressCheckoutRequestData);
-
-        $builder = $this->moptPayone__serviceBuilder;
-        $service = $builder->buildServicePaymentGenericpayment();
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment);
         // Response with new workorderid and redirect-url to paypal
-        $response = $service->request($request);
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $expressCheckoutRequestData);
 
-        if ($response->getStatus() === Payone_Api_Enum_ResponseType::REDIRECT) {
+        if ($response->getStatus() === PayoneEnums::REDIRECT) {
             $session->moptPaypalExpressWorkorderId = $response->getWorkorderId();
             $this->redirect($response->getRedirecturl());
-        } else if ($response->getStatus() === Payone_Api_Enum_ResponseType::ERROR) {
+        } else if ($response->getStatus() === PayoneEnums::OK) {
             return $this->forward('paypalv2expressError', null,null, ['errorCode' => $response->getErrorcode()]);
         } else {
             return $this->forward('paypalv2expressAbort');
@@ -132,16 +125,10 @@ class Shopware_Controllers_Frontend_MoptPaymentEcsv2 extends Shopware_Controller
             $session->moptPaypalv2ExpressWorkorderId
         );
 
-        $request = new Payone_Api_Request_Genericpayment($expressCheckoutRequestData);
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment);
 
-        $builder = $this->moptPayone__serviceBuilder;
-        $service = $builder->buildServicePaymentGenericpayment();
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            MoptPayoneApiLog::class
-        ));
-
-        $response = $service->request($request);
-        if ($response->getStatus() === Payone_Api_Enum_ResponseType::OK) {
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $expressCheckoutRequestData );
+        if ($response->getStatus() === PayoneEnums::OK) {
             $success = $this->payoneUserHelper->createOrUpdateUser($response, $paymentId, $session);
             $session->offsetSet('moptFormSubmitted', true);
             if ($success !== false) {

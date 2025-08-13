@@ -8,54 +8,42 @@ namespace Shopware\CustomModels\MoptPayoneTransactionLog;
 
 use Shopware\Components\Model\ModelRepository;
 
-use \Payone_TransactionStatus_Persistence_Interface;
-
 /**
  * Transaction Log Repository
  */
-class Repository extends ModelRepository implements \Payone_TransactionStatus_Persistence_Interface
+class Repository extends ModelRepository
 {
 
-    const KEY = 'p1_shopware_transaction';
-
-  /**
-   * @return string
-   */
-    public function getKey()
+    public function save($request, $response)
     {
-        return self::KEY;
-    }
+        $transactionLog = new MoptPayoneTransactionLog();
 
-    public function save(\Payone_TransactionStatus_Request_Interface $request, \Payone_TransactionStatus_Response_Interface $response)
-    {
-        $transactionLog = new \Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog();
-
-        $transactionLog->setStatus($request->getTxaction());
-        if ($request->getMode() == 'live') {
+        $transactionLog->setStatus($request->getParam('txaction'));
+        if ($request->getParam('mode') === 'live') {
             $transactionLog->setLiveMode(true);
         } else {
             $transactionLog->setLiveMode(false);
         }
-        $transactionLog->setPortalId((int)$request->getPortalid());
+        $transactionLog->setPortalId((int)$request->getParam('portalid'));
         $transactionLog->setCreationDate(date('Y-m-d\TH:i:sP'));
         $transactionLog->setUpdateDate(date('Y-m-d\TH:i:sP'));
-        $transactionLog->setTransactionDate(date('Y-m-d\TH:i:sP', $request->getTxtime()));
+        $transactionLog->setTransactionDate(date('Y-m-d\TH:i:sP', $request->getParam('txtime')));
 
-        $transactionLog->setTransactionId((int)$request->getTxid());
-        $transactionLog->setOrderNr($request->getReference());
-        $transactionLog->setSequenceNr($request->getSequencenumber());
+        $transactionLog->setTransactionId((int)$request->getParam('txid'));
+        $transactionLog->setOrderNr($request->getParam('reference'));
+        $transactionLog->setSequenceNr($request->getParam('sequencenumber'));
         $transactionLog->setPaymentId(Shopware()->Config()->mopt_payone__paymentId);
     
-        if (is_null($request->getReceivable())) {
+        if (is_null($request->getParam('receivable'))) {
             $transactionLog->setClaim(0);
         } else {
-            $transactionLog->setClaim($request->getReceivable());
+            $transactionLog->setClaim($request->getParam('receivable'));
         }
     
-        if (is_null($request->getBalance())) {
+        if (is_null($request->getParam('balance'))) {
             $transactionLog->setBalance(0);
         } else {
-            $transactionLog->setBalance($request->getBalance());
+            $transactionLog->setBalance($request->getParam('balance'));
         }
     
         $transactionLog->setDetails($this->buildParamDetails($request, $response));
@@ -76,16 +64,6 @@ class Repository extends ModelRepository implements \Payone_TransactionStatus_Pe
         $details = array_merge($request->toArray(), array('response_state' => $response->getStatus()));
         ksort($details);
         return $details;
-    }
-
-  /**
-   * @param \Payone_Api_Request_Interface $request
-   * @param \Exception $ex
-   * @return boolean
-   */
-    public function saveException(\Payone_Api_Request_Interface $request, \Exception $ex)
-    {
-        return true;
     }
 
   /**
