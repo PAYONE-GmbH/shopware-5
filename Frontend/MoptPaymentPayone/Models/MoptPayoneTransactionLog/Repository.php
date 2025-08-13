@@ -18,32 +18,32 @@ class Repository extends ModelRepository
     {
         $transactionLog = new MoptPayoneTransactionLog();
 
-        $transactionLog->setStatus($request->get('txaction'));
-        if ($request->get('mode') === 'live') {
+        $transactionLog->setStatus($request->getParam('txaction'));
+        if ($request->getParam('mode') === 'live') {
             $transactionLog->setLiveMode(true);
         } else {
             $transactionLog->setLiveMode(false);
         }
-        $transactionLog->setPortalId((int)$request->get('portalid'));
+        $transactionLog->setPortalId((int)$request->getParam('portalid'));
         $transactionLog->setCreationDate(date('Y-m-d\TH:i:sP'));
         $transactionLog->setUpdateDate(date('Y-m-d\TH:i:sP'));
-        $transactionLog->setTransactionDate(date('Y-m-d\TH:i:sP', $request->get('txtime')));
+        $transactionLog->setTransactionDate(date('Y-m-d\TH:i:sP', $request->getParam('txtime')));
 
-        $transactionLog->setTransactionId((int)$request->get('txid'));
-        $transactionLog->setOrderNr($request->get('reference'));
-        $transactionLog->setSequenceNr($request->get('sequencenumber'));
+        $transactionLog->setTransactionId((int)$request->getParam('txid'));
+        $transactionLog->setOrderNr($request->getParam('reference'));
+        $transactionLog->setSequenceNr($request->getParam('sequencenumber'));
         $transactionLog->setPaymentId(Shopware()->Config()->mopt_payone__paymentId);
     
-        if (is_null($request->get('receivable'))) {
+        if (is_null($request->getParam('receivable'))) {
             $transactionLog->setClaim(0);
         } else {
-            $transactionLog->setClaim($request->get('receivable'));
+            $transactionLog->setClaim($request->getParam('receivable'));
         }
     
-        if (is_null($request->get('balance'))) {
+        if (is_null($request->getParam('balance'))) {
             $transactionLog->setBalance(0);
         } else {
-            $transactionLog->setBalance($request->get('balance'));
+            $transactionLog->setBalance($request->getParam('balance'));
         }
     
         $transactionLog->setDetails($this->buildParamDetails($request, $response));

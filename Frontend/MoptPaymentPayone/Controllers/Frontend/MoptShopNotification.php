@@ -139,7 +139,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
 
         try {
             $response = new PayoneRequest(null, $request->getPost());
-            $response->set('status', 'TSOK');
+            $response->setStatus( 'TSOK');
         } catch (Exception $exc) {
             $this->logger->error('error processing request', array($exc->getTraceAsString()));
             echo 'error processing request';
@@ -147,19 +147,19 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         }
 
         $payoneRequest = new PayoneRequest(null, $request->getPost());
-        $clearingData = $this->moptPayone__paymentHelper->extractClearingDataFromResponse($request);
+        $clearingData = $this->moptPayone__paymentHelper->extractClearingDataFromResponse($payoneRequest);
         if ($clearingData && !$isOrderFinished) {
             $session->offsetSet('moptClearingData', $clearingData);
         }
 
         if (!$isOrderFinished) {
-            if ($request->get('txaction') !== 'failed') {
-                $orderIsCorrupted = $this->validateBasketSignature($session, $request);
+            if ($payoneRequest->getParam('txaction') !== 'failed') {
+                $orderIsCorrupted = $this->validateBasketSignature($session, $payoneRequest);
                 if ($orderIsCorrupted) {
                     $this->logger->error('order corrupted - order hash mismatch');
                     $orderIsCorrupted = true;
                     $paymentStatus = 21;
-                    $orderNumber = $this->saveOrder($transactionId, $request->get('reference'), $paymentStatus);
+                    $orderNumber = $this->saveOrder($transactionId, $payoneRequest->getParam('reference'), $paymentStatus);
                     $orderObj = Shopware()->Models()->getRepository(Order::class)->findOneBy(['number' => $orderNumber ]);
                     $comment = Shopware()->Snippets()
                         ->getNamespace('frontend/MoptPaymentPayone/messages')
@@ -176,13 +176,13 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     Shopware()->Models()->persist($orderObj);
                     Shopware()->Models()->flush();
                 } else {
-                    $orderNumber = $this->saveOrder($transactionId, $request->get('reference'));
+                    $orderNumber = $this->saveOrder($transactionId, $payoneRequest->getParam('reference'));
                 }
                 $order = $this->loadOrderByOrderNumber($orderNumber);
 
             } else {
                 $this->logger->debug('finished, output TSOK');
-                echo $response->get('status');
+                echo $response->getStatus();
                 $this->logger->debug('starting tx forwards');
                 $this->moptPayoneForwardTransactionStatus($_POST, $paymentId);
                 $this->logger->debug('finished all tasks, exit');
@@ -193,10 +193,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $attributeData = array();
         $saveOrderHash = false;
         $saveClearingData = false;
-        $attributeData['mopt_payone_status'] = $request->get('txaction');
-        $attributeData['mopt_payone_sequencenumber'] = $request->get('sequencenumber');
-        $attributeData['mopt_payone_payment_reference'] = $request->get('reference');
-        $customParam = explode('|', $request->get('param'));
+        $attributeData['mopt_payone_status'] = $payoneRequest->getParam('txaction');
+        $attributeData['mopt_payone_sequencenumber'] = $payoneRequest->getParam('sequencenumber');
+        $attributeData['mopt_payone_payment_reference'] = $payoneRequest->getParam('reference');
+        $customParam = explode('|', $payoneRequest->getParam('param'));
         if (isset($customParam[2])) {
             $attributeData['mopt_payone_order_hash'] = $customParam[2];
             $saveOrderHash = true;
@@ -210,25 +210,25 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         if (!$orderIsCorrupted) {
             $mappedShopwareState = $this->moptPayone__helper->getMappedShopwarePaymentStatusId(
                 $config,
-                $request->get('txaction'),
-                $request->get('reminderlevel')
+                $payoneRequest->getParam('txaction'),
+                $payoneRequest->getParam('reminderlevel')
             );
 
-            $transaction_status = $request->get('transaction_status');
-            $failedcause = $request->get('reasoncode');
+            $transaction_status = $payoneRequest->getParam('transaction_status');
+            $failedcause = $payoneRequest->getParam('reasoncode');
             //$transaction_status = 'pending';
             //$failedcause = '-981';
 
             $paymentName = $this->moptPayone__paymentHelper->getPaymentNameFromId($order['paymentID']);
             if (strpos($paymentName, 'mopt_payone__ewallet_amazon_pay') === 0) {
-                if ($request->get('txaction') == 'failed') {
+                if ($payoneRequest->getParam('txaction') == 'failed') {
                     // save failed status with mail notification
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState, true);
-                } elseif ($request->get('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause == '981') {
+                } elseif ($payoneRequest->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause == '981') {
                     // InvalidPayment Method: update Order Status to "amazon_delayed" (119) and send mail notification
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], 119, true);
                     $attributeData['mopt_payone_status'] = 'pending';
-                } elseif ($request->get('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause != '981') {
+                } elseif ($payoneRequest->getParam('txaction') == 'appointed' && $transaction_status == 'pending' && $failedcause != '981') {
                     // InvalidPayment Method: update Order Status to "amazon_delayed" (119)
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], 119);
                     $attributeData['mopt_payone_status'] = 'pending';
@@ -236,7 +236,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
                     $this->savePaymentStatus($transactionId, $order['temporaryID'], $mappedShopwareState);
                 }
 
-            } elseif ($request->get('txaction') === 'reminder' && $request->get('reminderlevel') === '0') {
+            } elseif ($payoneRequest->getParam('txaction') === 'reminder' && $payoneRequest->getParam('reminderlevel') === '0') {
                 // ignore txaction reminder with reminderlevel 0 since this only marks the end of dunning process
             } else {
                 // ! Amazonpay
@@ -256,10 +256,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             Shopware()->Models()->persist($orderObj);
             Shopware()->Models()->flush();
         }
-        $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog');
-        $repository->save($payoneRequest, $response);
         $this->logger->debug('finished, output TSOK');
-        echo $response->get('status');
+        echo $response->getStatus();
+        $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog');
+        $repository->save($payoneRequest, $payoneRequest);
         $this->logger->debug('starting tx forwards');
         $this->moptPayoneForwardTransactionStatus($_POST, $paymentId);
 
@@ -269,10 +269,10 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $this->container->get('events')->notify(
             'Payone_Controller_MoptShopNotification',
             [
-                'txaction'        => $request->get('txaction'),
-                'reference'       => $request->get('reference'),
+                'txaction'        => $payoneRequest->getParam('txaction'),
+                'reference'       => $payoneRequest->getParam('reference'),
                 'ordernumber'     => $order['ordernumber'],
-                'sequencenumber'  => $request->get('sequencenumber'),
+                'sequencenumber'  => $payoneRequest->getParam('sequencenumber'),
                 'paymentId'       => $order['paymentID'],
             ]
         );
@@ -555,7 +555,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     private function validateBasketSignature($session, $request) {
         $orderHash = md5(serialize($session['sOrderVariables']));
-        $customParam = explode('|', $request->get('param'));
+        $customParam = explode('|', $request->getParam('param'));
         return ($orderHash !== $customParam[2]);
     }
 

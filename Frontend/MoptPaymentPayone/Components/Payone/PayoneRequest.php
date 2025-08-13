@@ -345,7 +345,7 @@ class PayoneRequest
      */
     public function getParam($param)
     {
-        return $this->$param;
+        return $this->params[$param];
     }
 
     /**

@@ -21,7 +21,6 @@ class Mopt_PayoneConfig
       '213.178.72.197',
       '217.70.200.*',
       '185.60.20.*',
-        '159.69.199.*'
       );
 
     const PAYMENTS_ALL = [
