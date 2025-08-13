@@ -244,7 +244,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
         } elseif ($response->getStatus() === PayoneEnums::APPROVED || $response->getStatus() === 'PENDING') {
 
             // Save Clearing Reference as Attribute (set in session )
-            $this->session->moptPaymentReference = $request->get('reference');
+            $this->session->moptPaymentReference = $request->getParam('reference');
             $paymentStatusId = null;
 
             Shopware()->Session()->sOrderVariables['sUserData'] = $this->getUserData();
