@@ -930,7 +930,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $request->set('wallettype', $walletType);
         $request->set('currency', Shopware()->Shop()->getCurrency()->getCurrency());
         $request->set('amount', $basket['AmountNumeric']);
-        $request->set('workorderId', $session->moptPayoneAmazonWorkOrderId);
+        $request->set('workorderid', $session->moptPayoneAmazonWorkOrderId);
         $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
         return $response;
     }
