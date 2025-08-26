@@ -1508,7 +1508,17 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if ($personalData['birthday'] !== "00000000" && $personalData['birthday'] !== "" && !is_null($personalData['birthday'])) {
             $request->set('birthday', $personalData['birthday']);
         } else {
-            $request->set('birthday',$paymentData['dob']);
+            if ($paymenttype === PayoneEnums::PYV_FULL) {
+                $request->set('birthday', str_replace('-','', $paymentData['mopt_payone__fin_payolution_invoice_birthdaydate']));
+            }
+
+            if ($paymenttype === PayoneEnums::PYD_FULL) {
+                $request->set('birthday', str_replace('-','', $paymentData['mopt_payone__fin_payolution_debitnote_birthdaydate']));
+            }
+
+            if ($paymenttype === PayoneEnums::PYS_FULL) {
+                $request->set('birthday', str_replace('-','', $paymentData['mopt_payone__fin_payolution_installment_birthdaydate']));
+            }
         }
 
         if ($paymentData && $paymentData['mopt_payone__fin_payolution_b2bmode']) {

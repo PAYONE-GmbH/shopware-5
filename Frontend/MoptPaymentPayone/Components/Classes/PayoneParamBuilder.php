@@ -630,6 +630,19 @@ class Mopt_PayoneParamBuilder
         if ($params['birthday'] == "00000000") {
             unset($params['birthday']);
         }
+        if (empty($params['birthday'])) {
+            if ($financeType === PayoneEnums::PYV) {
+                $params['birthday'] = str_replace('-','', $paymentData['mopt_payone__fin_payolution_invoice_birthdaydate']);
+            }
+
+            if ($financeType === PayoneEnums::PYD) {
+                $params['birthday'] = str_replace('-','', $paymentData['mopt_payone__fin_payolution_debitnote_birthdaydate']);
+            }
+
+            if ($financeType === PayoneEnums::PYS) {
+                $params['birthday'] = str_replace('-','', $paymentData['mopt_payone__fin_payolution_installment_birthdaydate']);
+            }
+        }
         $params['financingtype'] = $financeType;
         $params['iban'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_payolution_debitnote_iban']);
         $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__fin_payolution_debitnote_bic']);
