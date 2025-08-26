@@ -1216,7 +1216,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
             //save order
             $this->forward('finishOrder', 'MoptPaymentPayone', null, array(
-                'txid' => $response->getTxid(),
+                'txid' => $response->get('txid'),
                 'hash' => $session->moptPaymentReference
             ));
         }
@@ -1749,7 +1749,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         if (!$errorMessage) {
             $clearingData = $this->moptPayoneMain->getPaymentHelper()->extractClearingDataFromResponse($response);
-            $orderNr = $this->saveOrder($response->getTxid(), $session->moptPaymentReference);
+            $orderNr = $this->saveOrder($response->get('txid'), $session->moptPaymentReference);
 
             $sql = 'SELECT `id` FROM `s_order` WHERE ordernumber = ?'; // get order id
             $orderId = Shopware()->Db()->fetchOne($sql, $orderNr);
@@ -1759,7 +1759,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                     'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, '
                     . 'mopt_payone_clearing_data=? WHERE orderID = ?';
                 Shopware()->Db()->query($sql, array(
-                    $response->getTxid(),
+                    $response->get('txid'),
                     $session->moptIsAuthorized,
                     json_encode($clearingData),
                     $orderId
@@ -1767,7 +1767,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             } else {
                 $sql = 'UPDATE `s_order_attributes`' .
                     'SET mopt_payone_txid=?, mopt_payone_is_authorized=? WHERE orderID = ?';
-                Shopware()->Db()->query($sql, array($response->getTxid(), $session->moptIsAuthorized, $orderId));
+                Shopware()->Db()->query($sql, array($response->get('txid'), $session->moptIsAuthorized, $orderId));
             }
 
             if (Shopware()->Session()->moptPayment) {
@@ -1790,7 +1790,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                     'data' => array(
                         array(
                             'orderNumber' => $orderNr,
-                            'transactionId' => $response->getTxid(),
+                            'transactionId' => $response->get('txid'),
                         )
                     )
                 );
