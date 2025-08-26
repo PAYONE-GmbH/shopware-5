@@ -213,7 +213,7 @@ class FrontendCheckout implements SubscriberInterface
 
             $orderLines = [];
             foreach ($invoicing as $item) {
-                $price = (int)($item['pr'] * 100);
+                $price = (int) round($item['pr'] * 100, 2);
                 $quantity = $item['no'];
                 /** the current items index in $basket['content'] */
                 $basketItemIndex = array_search($item['id'], array_column($basket['content'], 'ordernumber'));

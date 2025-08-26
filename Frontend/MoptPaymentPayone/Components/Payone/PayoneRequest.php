@@ -106,7 +106,7 @@ class PayoneRequest
         // $this->params['bankcountry'] = 'BE';
         $this->params['key'] = hash('sha384', $this->params['key']);
         $this->params['hash'] = $this->generate($this->params, $this->params['key']);
-        $this->params['amount'] = (int)(round($this->params['amount'], 2) * 100);
+        $this->params['amount'] = (int)(round($this->params['amount'] * 100, 2));
 
         $this->setInvoicing();
         $this->rawRequest = $this->parseResponse($this->params);
