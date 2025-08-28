@@ -1336,7 +1336,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 $deliveryData['shipping_state'] = $personalData['state'];
                 $deliveryData['shipping_addressaddition'] = $personalData['additionalAddressLine1'];
                 $deliveryData['shipping_country'] = $personalData['country'];
-                $deliveryData['shipping_zip'] = $personalData['zipcode'];
+                $deliveryData['shipping_zip'] = $personalData['zip'];
                 $request->add($deliveryData);
             }
         }
