@@ -5,6 +5,9 @@ namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 use Enlight\Event\SubscriberInterface;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware\Models\Customer\Customer;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneResponse;
 
 /**
  * Class AddressCheck
@@ -186,7 +189,6 @@ class AddressCheck implements SubscriberInterface
                 $response = $this->performAddressCheck(
                     $config,
                     $params,
-                    $this->container->get('MoptPayoneBuilder'),
                     $moptPayoneMain,
                     $billingAddressChecktype
                 );
@@ -236,7 +238,6 @@ class AddressCheck implements SubscriberInterface
                 $response = $this->performAddressCheck(
                     $config,
                     $params,
-                    $this->container->get('MoptPayoneBuilder'),
                     $moptPayoneMain,
                     $shippingAddressChecktype
                 );
@@ -428,7 +429,6 @@ class AddressCheck implements SubscriberInterface
             $response = $this->performAddressCheck(
                 $config,
                 $params,
-                $this->container->get('MoptPayoneBuilder'),
                 $moptPayoneMain,
                 $billingAddressChecktype
             );
@@ -455,8 +455,8 @@ class AddressCheck implements SubscriberInterface
         // Handle previous INVALID Response and forward accordingly
         if (!empty($session->moptAddressError)) {
             unset($session->moptAddressError);
-            $response = new \Payone_Api_Response_AddressCheck_Invalid();
-            $response->setStatus('INVALID');
+            $response = new PayoneResponse();
+            $response->set('status', 'INVALID');
             $errors = $this->handleBillingAddressCheckResult(
                 $response,
                 $config,
@@ -520,7 +520,7 @@ class AddressCheck implements SubscriberInterface
             $response = $this->performAddressCheck(
                 $config,
                 $params,
-                $this->container->get('MoptPayoneBuilder'),
+                null,
                 $moptPayoneMain,
                 $shippingAddressChecktype
             );
@@ -628,7 +628,6 @@ class AddressCheck implements SubscriberInterface
         }
 
         try {
-            /** @var \Mopt_PayoneMain $moptPayoneMain */
             $userId = Shopware()->Session()->sUserId;
             $moptPayoneMain = $this->container->get('MoptPayoneMain');
             $user = Shopware()->Models()->getRepository('Shopware\Models\Customer\Customer')->find($userId);
@@ -670,12 +669,12 @@ class AddressCheck implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config = $moptPayoneMain->getPayoneConfig();
 
-        if ($result->getStatus() === \Payone_Api_Enum_ResponseType::INVALID ||
-            $result->getStatus() === \Payone_Api_Enum_ResponseType::ERROR
+        if ($result->getStatus() === PayoneEnums::INVALID ||
+            $result->getStatus() === PayoneEnums::ERROR
         ) {
             $moptPayoneMain->getHelper()->saveBillingAddressError($userId, $result);
         } else {
-            if ($result->getStatus() === \Payone_Api_Enum_ResponseType::VALID &&
+            if ($result->getStatus() === PayoneEnums::VALID &&
                 $result->getSecstatus() === '20' &&
                 $config['adresscheckAutomaticCorrection'] === 0 &&
                 Shopware()->Modules()->Admin()->sSYSTEM->_GET['action'] === 'saveRegister'
@@ -710,12 +709,12 @@ class AddressCheck implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $config = $moptPayoneMain->getPayoneConfig();
 
-        if ($result->getStatus() === \Payone_Api_Enum_ResponseType::INVALID ||
-            $result->getStatus() === \Payone_Api_Enum_ResponseType::ERROR
+        if ($result->getStatus() === PayoneEnums::INVALID ||
+            $result->getStatus() === PayoneEnums::ERROR
         ) {
             $moptPayoneMain->getHelper()->saveShippingAddressError($userId, $result);
         } else {
-            if ($result->getStatus() === \Payone_Api_Enum_ResponseType::VALID &&
+            if ($result->getStatus() === PayoneEnums::VALID &&
                 $result->getSecstatus() === '20' &&
                 $config['adresscheckAutomaticCorrection'] === 0 &&
                 Shopware()->Modules()->Admin()->sSYSTEM->_GET['action'] === 'saveRegister'
@@ -855,33 +854,24 @@ class AddressCheck implements SubscriberInterface
      * @param \Payone_Builder $payoneServiceBuilder
      * @param \Mopt_PayoneMain $mopt_payone__main
      * @param string $billingAddressChecktype
-     * @return \Payone_Api_Response_AddressCheck_Invalid|\Payone_Api_Response_AddressCheck_Valid|\Payone_Api_Response_Error
+     * @return PayoneResponse
      * @throws \Exception
      */
     protected function performAddressCheck(
         array $config,
         array $params,
-        \Payone_Builder $payoneServiceBuilder,
         \Mopt_PayoneMain $mopt_payone__main,
         $billingAddressChecktype
     )
     {
-        /** @var \Payone_Api_Service_Verification_AddressCheck $service */
-        $service = $payoneServiceBuilder->buildServiceVerificationAddressCheck();
-        $service->getServiceProtocol()->addRepository(
-            Shopware()->Models()->getRepository(
-                'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-            )
-        );
-        $request = new \Payone_Api_Request_AddressCheck($params);
-
-        $request->setAddresschecktype($billingAddressChecktype);
-        $request->setAid($config['subaccountId']);
-        $request->setMode($mopt_payone__main->getHelper()
-            ->getApiModeFromId($config['adresscheckLiveMode']));
+        $params['addresschecktype'] = $billingAddressChecktype;
+        $params['aid'] = $config['subaccountId'];
+        $params['mode'] = $mopt_payone__main->getHelper()
+            ->getApiModeFromId($config['adresscheckLiveMode']);
+        $request = new PayoneRequest($params);
 
         try {
-            $response = $service->check($request);
+            $response = $request->request('addresscheck', $params);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -893,39 +883,33 @@ class AddressCheck implements SubscriberInterface
      * @param array $config
      * @param array $addressData
      * @param int $paymentID
-     * @return \Payone_Api_Response_Consumerscore_Invalid|\Payone_Api_Response_Consumerscore_Valid|\Payone_Api_Response_Error
+     * @return $response
      * @throws \Exception
      */
     protected function performConsumerScoreCheck(array $config, array $addressData, $paymentID = 0)
     {
         /** @var \Mopt_PayoneMain $moptPayoneMain */
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
-        /** @var \Payone_Api_Factory $payoneServiceBuilder */
-        $payoneServiceBuilder = $this->container->get('MoptPayoneBuilder');
         $params = $moptPayoneMain->getParamBuilder()
             ->getConsumerscoreCheckParams($addressData, $paymentID);
-        $service = $payoneServiceBuilder->buildServiceVerificationConsumerscore();
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-        $request = new \Payone_Api_Request_Consumerscore($params);
+        $request = new PayoneRequest('consumescore', $params);
         $userId = Shopware()->Session()->sUserId;
         $isCompany = $moptPayoneMain->getHelper()->isCompany($userId);
         if ($isCompany) {
-            $request->setAddresschecktype(\Payone_Api_Enum_AddressCheckType::NONE);
-            $request->setBusinessRelation(null);
-            $request->setConsumerscoretype($config['consumerscoreCheckModeB2B']);
+            $request->set('addresschecktype', PayoneEnums::NONE);
+            $request->set('businessrelation', null);
+            $request->set('consumerscoretype',$config['consumerscoreCheckModeB2B']);
         } else {
-            $request->setAddresschecktype(
-                ($config['consumerscoreCheckModeB2C'] === \Payone_Api_Enum_ConsumerscoreType::BONIVERSUM_VERITA) ?
-                    \Payone_Api_Enum_AddressCheckType::BONIVERSUM_PERSON :
-                    \Payone_Api_Enum_AddressCheckType::NONE
+            $request->set('addresschecktype',
+                ($config['consumerscoreCheckModeB2C'] === PayoneEnums::BONIVERSUM_VERITA) ?
+                    PayoneEnums::BONIVERSUM_PERSON :
+                    PayoneEnums::NONE
             );
-            $request->setConsumerscoretype($config['consumerscoreCheckModeB2C']);
+            $request->set('consumerscoretype',$config['consumerscoreCheckModeB2C']);
         }
 
         try {
-            $response = $service->score($request);
+            $response = $request->request('consumerscore', $request);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -955,17 +939,17 @@ class AddressCheck implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $session = Shopware()->Session();
 
-        if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
-            $secStatus = (int)$response->getSecstatus();
+        if ($response->getStatus() == PayoneEnums::VALID) {
+            $secStatus = (int)$response->get('secstatus');
             $mappedPersonStatus = $moptPayoneMain->getHelper()
                 ->getUserScoringValue(
-                    $response->getPersonstatus(),
+                    $response->get('personstatus'),
                     $config
                 );
             $mappedPersonStatus = $moptPayoneMain->getHelper()
                 ->getUserScoringColorFromValue($mappedPersonStatus);
             // check secstatus and config
-            if ($secStatus == \Payone_Api_Enum_AddressCheckSecstatus::ADDRESS_CORRECT) {
+            if ($secStatus == PayoneEnums::ADDRESS_CORRECT) {
                 // valid address returned -> save result to db
                 $moptPayoneMain->getHelper()
                     ->saveAddressCheckResult(
@@ -1105,14 +1089,14 @@ class AddressCheck implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
         $session = Shopware()->Session();
 
-        if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
+        if ($response->getStatus() == PayoneEnums::VALID) {
             $secStatus = (int)$response->getSecstatus();
             $mappedPersonStatus = $moptPayoneMain->getHelper()
-                ->getUserScoringValue($response->getPersonstatus(), $config);
+                ->getUserScoringValue($response->get('personstatus'), $config);
             $mappedPersonStatus = $moptPayoneMain->getHelper()
                 ->getUserScoringColorFromValue($mappedPersonStatus);
             // check secstatus and config
-            if ($secStatus == \Payone_Api_Enum_AddressCheckSecstatus::ADDRESS_CORRECT) {
+            if ($secStatus == PayoneEnums::ADDRESS_CORRECT) {
                 // valid address returned -> save result to db
                 $moptPayoneMain->getHelper()
                     ->saveAddressCheckResult(
@@ -1258,11 +1242,11 @@ class AddressCheck implements SubscriberInterface
         $moptPayoneMain = $this->container->get('MoptPayoneMain');
 
         // handle ERROR, VALID, INVALID
-        if ($response->getStatus() == \Payone_Api_Enum_ResponseType::VALID) {
+        if ($response->getStatus() == PayoneEnums::VALID) {
 
             // in case Boniversum returns unknown set response to backend user-defined value
-            if ($response->getScore() === 'U') {
-                $response->setScore($moptPayoneMain->getHelper()->getScoreColor($config));
+            if ($response->get('score') === 'U') {
+                $response->set('score', $moptPayoneMain->getHelper()->getScoreColor($config));
             }
             // save result
             $moptPayoneMain->getHelper()->saveConsumerScoreCheckResult($userId, $response);

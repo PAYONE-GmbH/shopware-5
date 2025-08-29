@@ -6,6 +6,8 @@
  * $Id: $
  */
 use Shopware\Components\CSRFWhitelistAware;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware {
 
@@ -17,8 +19,6 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
      * @var Mopt_PayoneMain
      */
     protected $moptPayoneMain = null;
-    protected $payoneServiceBuilder = null;
-    protected $service = null;
     
     public function getWhitelistedCSRFActions()
     {
@@ -212,16 +212,15 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
     /**
      * @param $ratePayShopId
      * @param $currency
-     * @return bool|Payone_Api_Request_Parameter_Paydata_Paydata
+     * @return
      * @throws Exception
      */
     protected function requestRatePayConfigFromApi($ratePayShopId, $currency, $paymentRatepayId)
     {
         $this->moptPayoneMain = $this->Plugin()->Application()->MoptPayoneMain();
-        $this->payoneServiceBuilder = $this->Plugin()->Application()->MoptPayoneBuilder();
         $config = $this->moptPayoneMain->getPayoneConfig($paymentRatepayId);
-        $financeType = Payone_Api_Enum_RatepayType::RPV;
-        $paymentType = Payone_Api_Enum_RatepayType::RPV_FULL;
+        $financeType = PayoneEnums::RPV;
+        $paymentType = PayoneEnums::RPV_FULL;
         try {
             $profileResponse = $this->buildAndCallRatepayProfile(
                 $config,
@@ -234,7 +233,7 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         } catch (Exception $e) {
         }
 
-        if (isset($profileResponse) && $profileResponse instanceof Payone_Api_Response_Genericpayment_Ok) {
+        if (isset($profileResponse) && $profileResponse->getStatus() === PayoneEnums::OK) {
             $payData = $profileResponse->getRatepayPayDataArray();
             $payData['shop_id'] = $ratePayShopId;
             return $payData;
@@ -264,23 +263,14 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         $params['api_version'] = '3.10';
         $params['financingtype'] = $financetype;
 
-        $request = new Payone_Api_Request_Genericpayment($params);
+        $request = new PayoneRequest(PayoneEnums::GenericpaymentAction_genericpayment, $params);
 
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'action', 'data' => Payone_Api_Enum_GenericpaymentAction::RATEPAY_PROFILE)
-        ));
-        $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-            array('key' => 'shop_id', 'data' => $ratePayShopId)
-        ));
-
-        $request->setPaydata($paydata);
-        $request->setCurrency($currency);
-        $request->setClearingtype($clearingType);
-        $request->setFinancingType(Payone_Api_Enum_RatepayType::RPV);
-
-        $this->service = $this->payoneServiceBuilder->buildServicePaymentGenericpayment();
-        $response = $this->service->request($request);
+        $params['add_paydata[action]'] = PayoneEnums::RATEPAY_PROFILE;
+        $params['add_paydata[shop_id]'] = $ratePayShopId;
+        $params['currency'] = $currency;
+        $params['clearingtype'] = $clearingType;
+        $params['financingtype'] = PayoneEnums::RPV;
+        $response = $request->request(PayoneEnums::GenericpaymentAction_genericpayment, $params);
         return $response;
     }
 

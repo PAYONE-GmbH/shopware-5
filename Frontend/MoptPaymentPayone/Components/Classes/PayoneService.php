@@ -7,6 +7,10 @@
  * versions in the future. If you wish to customize Payone for your
  * needs please refer to http://www.payone.de for more information.
  */
+
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
+
 /**
  * This class implements a service that provides access to some of the plugin's operations. You can request
  * the service by calling `$this->get('payone_service')` e.g. from controllers or plugin bootstraps.
@@ -129,7 +133,7 @@ class Mopt_PayoneService
             // call the capture service
             $response = $this->callPayoneCaptureService($params, $invoicing);
 
-            if ($response->getStatus() == Payone_Api_Enum_ResponseType::APPROVED) {
+            if ($response->getStatus() == PayoneEnums::APPROVED) {
                 // increase the sequence number
                 $this->updateSequenceNumber($order, true);
 
@@ -250,7 +254,7 @@ class Mopt_PayoneService
             // call the refund service
             $response = $this->callPayoneRefundService($params, $invoicing);
 
-            if ($response->getStatus() == Payone_Api_Enum_ResponseType::APPROVED) {
+            if ($response->getStatus() == PayoneEnums::APPROVED) {
                 // increase the sequence number
                 $this->updateSequenceNumber($order, true);
 
@@ -269,48 +273,37 @@ class Mopt_PayoneService
     /**
      * @param mixed $params
      * @param null $invoicing
-     * @return Payone_Api_Response_Capture_Approved|Payone_Api_Response_Error
+     * @return $response
      */
     protected function callPayoneCaptureService($params, $invoicing = null)
     {
-        $service = Shopware()->Container()->get('MoptPayoneBuilder')->buildServicePaymentCapture();
-        $service->getServiceProtocol()->addRepository(
-            Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog')
-        );
-        $request = new Payone_Api_Request_Capture($params);
+        $request = new PayoneRequest('capture', $params);
 
         if ($invoicing) {
-            $request->setInvoicing($invoicing);
+            $request->add($invoicing);
         }
 
         if ($params['payolution_b2b'] == true) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                ['key' => 'b2b', 'data' => 'yes']
-            ));
-            $request->setPaydata($paydata);
+            $params['add_paydata[b2b]'] = 'yes';
+            $params['add_paydata[company_trade_registry_number]'] = $params['vatid'];
         }
-        return $service->capture($request);
+        return $request->request('capture', $request);
     }
 
     /**
      * @param mixed $params
      * @param null $invoicing
-     * @return Payone_Api_Response_Debit_Approved|Payone_Api_Response_Error
+     * @return $response
      */
     protected function callPayoneRefundService($params, $invoicing = null)
     {
-        $service = Shopware()->Container()->get('MoptPayoneBuilder')->buildServicePaymentDebit();
-        $service->getServiceProtocol()->addRepository(
-            Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog')
-        );
-        $request = new Payone_Api_Request_Debit($params);
+        $request = new PayoneRequest('debit', $params);
 
         if ($invoicing) {
-            $request->setInvoicing($invoicing);
+            $request->add($invoicing);
         }
 
-        return $service->debit($request);
+        return $request->request('debit', $request);
     }
 
     /**

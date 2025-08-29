@@ -171,6 +171,23 @@ class Mopt_PayoneConfig
         'mopt_payone__acc_cashondel',
     ];
 
+    const PAYMENTS_SHIPPINGPAYMENT_REQUIRED = [
+        'mopt_payone__fin_kis_klarna_installments',
+        'mopt_payone__fin_paypal_installment',
+        'mopt_payone__fin_payolution_installment',
+        'mopt_payone__fin_ratepay_installment',
+        'mopt_payone__fin_payone_secured_installment',
+        'mopt_payone__fin_ratepay_invoice',
+        'mopt_payone__fin_ratepay_direct_debit',
+    ];
+
+    const PAYMENTS_CART_REQUIRED = [
+        'mopt_payone__ewallet_amazon_pay',
+        'mopt_payone__ewallet_paypal_express',
+        'mopt_payone__ewallet_applepay',
+        'mopt_payone__ewallet_paypal_expressv2',
+    ];
+
   /**
    * return array with configured valid IPs to accept transaction feedback from
    *

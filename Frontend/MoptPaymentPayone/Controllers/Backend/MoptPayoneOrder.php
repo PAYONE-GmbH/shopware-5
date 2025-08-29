@@ -1,18 +1,16 @@
 <?php
 
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
+
 class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_Backend_ExtJs
 {
-
-    protected $moptPayone__sdk__Builder   = null;
-    /** @var Mopt_PayoneMain $moptPayoneMain */
     protected $moptPayone__main           = null;
     protected $moptPayone__helper         = null;
     protected $moptPayone__paymentHelper  = null;
 
     public function init()
     {
-        $this->moptPayone__sdk__Builder = Shopware()->Plugins()->Frontend()
-            ->MoptPaymentPayone()->Application()->MoptPayoneBuilder();
         $this->moptPayone__main = Shopware()->Plugins()->Frontend()->MoptPaymentPayone()->Application()->MoptPayoneMain();
         $this->moptPayone__helper = $this->moptPayone__main->getHelper();
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
@@ -69,7 +67,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
           //call capture service
             $response = $this->moptPayone_callDebitService($params, $invoicing);
 
-            if ($response->getStatus() == Payone_Api_Enum_ResponseType::APPROVED) {
+            if ($response->getStatus() == PayoneEnums::APPROVED) {
             //increase sequence
                 $this->moptPayoneUpdateSequenceNumber($order, true);
 
@@ -152,7 +150,7 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 
             $response = $this->moptPayone_callCaptureService($params, $invoicing, $autoSettleAccount, $doNotSendCaptureMode);
 
-            if ($response->getStatus() == Payone_Api_Enum_ResponseType::APPROVED) {
+            if ($response->getStatus() == PayoneEnums::APPROVED) {
             //increase sequence
                 $this->moptPayoneUpdateSequenceNumber($order, true);
 
@@ -214,58 +212,38 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 
     protected function moptPayone_callCaptureService($params, $invoicing = null, $autoSettleAccount = false, $doNotSendCaptureMode = false)
     {
-        $service = $this->moptPayone__sdk__Builder->buildServicePaymentCapture();
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-        $request = new Payone_Api_Request_Capture($params);
+        $request = new PayoneRequest('capture', $params);
 
         if ($invoicing) {
-            $request->setInvoicing($invoicing);
+            $request->add($invoicing);
         }
 
-        $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-
         if ($params['payolution_b2b'] == true) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'b2b', 'data' => 'yes')
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'company_trade_registry_number', 'data' => $params['vatid'])
-            ));
+            $params['add_paydata[b2b]'] = 'yes';
+            $params['add_paydata[company_trade_registry_number]'] = $params['vatid'];
         }
 
         if (isset($params['shop_id'])) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'shop_id', 'data' => $params['shop_id'])
-            ));
+            $params['add_paydata[shop_id]'] = $params['shop_id'];
         }
 
         // see https://integrator.payone.de/jira/browse/SW-149
         if (isset($params['capturemode']) && !$doNotSendCaptureMode) {
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'capturemode', 'data' => $params['capturemode'])
-            ));
+            $params['add_paydata[capturemode]'] = $params['capturemode'];
         }
 
         // see https://integrator.payone.de/jira/browse/SW-149
         if ($invoicing && $doNotSendCaptureMode === true){
-            $invoiceParam = $request->getInvoicing();
-            $invoiceParam->setCapturemode(null);
-            $request->setInvoicing($invoiceParam);
+            $request->set('capturemode', null);
         }
 
         if ($autoSettleAccount) {
-            $businessParam = $request->getBusiness();
-            $businessParam->setSettleaccount('auto');
-            $request->setBusiness($businessParam);
+            $request->set('settleaccount', 'auto');
         }
-
-        $request->setPaydata($paydata);
 
         unset($params['data']);
 
-        return $service->capture($request);
+        return $request->request('capture', $request);
     }
 
     protected function moptPayoneMarkPositionsAsCaptured($order, $positionIds, $includeShipment = false)
@@ -336,46 +314,27 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
 
     protected function moptPayone_callDebitService($params, $invoicing = null)
     {
-        $service = $this->moptPayone__sdk__Builder->buildServicePaymentDebit();
-
-        $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-            'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-        ));
-        $request = new Payone_Api_Request_Debit($params);
+        $request = new PayoneRequest('debit', $params);
 
         if ($invoicing) {
-            $request->setInvoicing($invoicing);
+            $request->add($invoicing);
         }
         
         if ($params['payolution_b2b'] == true) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                ['key' => 'b2b', 'data' => 'yes']
-            ));
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                ['key' => 'company_trade_registry_number', 'data' => $params['vatid']]
-            ));
-            $request->setPaydata($paydata);
+            $params['add_paydata[b2b]'] = 'yes';
+            $params['add_paydata[company_trade_registry_number]'] = $params['vatid'];
         }
 
         if (isset($params['cancellation_reason'])) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'cancellation_reason', 'data' => $params['cancellation_reason'])
-            ));
-            $request->setPaydata($paydata);
+            $params['add_paydata[cancellation_reason]'] = $params['cancellation_reason'];
             unset($params['cancellation_reason']);
         }
         
         if (isset($params['shop_id'])) {
-            $paydata = new Payone_Api_Request_Parameter_Paydata_Paydata();
-            $paydata->addItem(new Payone_Api_Request_Parameter_Paydata_DataItem(
-                array('key' => 'shop_id', 'data' => $params['shop_id'])
-            ));
-            $request->setPaydata($paydata);
+            $params['add_paydata[shop_id]'] = $params['shop_id'];
         }
         
-        return $service->debit($request);
+        return $request->request('debit', $request);
     }
 
     protected function moptPayoneMarkPositionsAsDebited($order, $positionIds, $includeShipment = false)

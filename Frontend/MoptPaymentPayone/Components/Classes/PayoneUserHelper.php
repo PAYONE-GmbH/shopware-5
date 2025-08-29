@@ -449,7 +449,7 @@ class Mopt_PayoneUserHelper
     }
 
     /**
-     * @param Payone_Api_Response_Genericpayment_Ok $apiResponse
+     * @param $apiResponse
      * @param int $paymentId
      * @param $session
      * @return array|bool|null $success
@@ -457,7 +457,7 @@ class Mopt_PayoneUserHelper
      */
     public function createOrUpdateUser($apiResponse, $paymentId, $session)
     {
-        $payData = $apiResponse->getPaydata()->toAssocArray();
+        $payData = $apiResponse->getPaydata();
 
         if (!$this->isUserLoggedIn($session)) {
             $success = $this->createUserWithoutAccount($payData, $paymentId, $session);

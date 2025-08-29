@@ -4,6 +4,8 @@ namespace Shopware\Plugins\MoptPaymentPayone\Subscribers;
 
 use Enlight\Event\SubscriberInterface;
 use Mopt_PayonePaymentHelper;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
+use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 class Payment implements SubscriberInterface
 {
@@ -148,34 +150,27 @@ class Payment implements SubscriberInterface
                 if ($config['mandateActive']) {
                     //perform bankaccountcheck
                     $params = $moptPayoneMain->getParamBuilder()->buildManageMandate($paymentId, $user, $paymentData['formData']);
-                    $payoneServiceBuilder = $this->container->get('MoptPayoneBuilder');
-                    $service = $payoneServiceBuilder->buildServiceManagementManageMandate();
-                    $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-                    ));
-                    $generateHashService = $this->container->get('MoptPayoneBuilder')->buildServiceClientApiGenerateHash();
-                    $request = new \Payone_Api_Request_ManageMandate($params);
-                    $request->set('hash', $generateHashService->generate($request, $params['key']));
+                    $request = new PayoneRequest('managemandate', $params);
+                    $response = $request->request('managemandate', $params);
 
-                    $response = $service->managemandate($request);
-
-                    if ($response->getStatus() == 'APPROVED') {
+                    if ($response->getStatus() === PayoneEnums::APPROVED) {
                         $moptMandateData = array();
                         $moptMandateData['mopt_payone__showMandateText'] = false;
 
-                        if ($response->getMandateStatus() === 'pending') {
+                        if ($response->get('mandate_status') === 'pending') {
                             $moptMandateData['mopt_payone__showMandateText'] = true;
-                            $moptMandateData['mopt_payone__mandateText'] = urldecode($response->getMandateText());
+                            $moptMandateData['mopt_payone__mandateText'] = urldecode($response->get('mandate_text'));
                         }
 
-                        $moptMandateData['mopt_payone__mandateStatus'] = $response->getMandateStatus();
-                        $moptMandateData['mopt_payone__mandateIdentification'] = $response->getMandateIdentification();
-                        $moptMandateData['mopt_payone__creditorIdentifier'] = $response->getCreditorIdentifier();
+                        $moptMandateData['mopt_payone__mandateStatus'] = $response->get('mandate_status');
+                        $moptMandateData['mopt_payone__mandateIdentification'] = $response->get('mandate_identification');
+
+                        $moptMandateData['mopt_payone__creditorIdentifier'] = $response->get('creditor_identifier');
 
                         $session->moptMandateData = $moptMandateData;
                     }
 
-                    if ($response->getStatus() == 'ERROR') {
+                    if ($response->getStatus() === PayoneEnums::ERROR) {
                         $returnValues['checkPayment']['sErrorMessages'][] = $moptPayoneMain
                                         ->getPaymentHelper()->moptGetErrorMessageFromErrorCodeViaSnippet('bankaccountcheck', $response->getErrorcode());
                         $session->moptPayment = $post;
@@ -185,14 +180,8 @@ class Payment implements SubscriberInterface
                 } elseif ($bankAccountChecktype === 0 || $bankAccountChecktype === 1) {
                     //perform bankaccountcheck
                     $params = $moptPayoneMain->getParamBuilder()->buildBankaccountcheck($paymentId, $bankAccountChecktype, $billingFormData['countryID'], $paymentData['formData']);
-
-                    $payoneServiceBuilder = $this->container->get('MoptPayoneBuilder');
-                    $service = $payoneServiceBuilder->buildServiceVerificationBankAccountCheck();
-                    $service->getServiceProtocol()->addRepository(Shopware()->Models()->getRepository(
-                        'Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'
-                    ));
-                    $request = new \Payone_Api_Request_BankAccountCheck($params);
-                    $response = $service->check($request);
+                    $request = new PayoneRequest('bankaccountcheck', $params);
+                    $response = $request->request('bankaccountcheck', $params);
 
                     if ($response->getStatus() == 'ERROR' || $response->getStatus() == 'INVALID') {
                         $returnValues['checkPayment']['sErrorFlag']['mopt_payone__account_invalid'] = true;
