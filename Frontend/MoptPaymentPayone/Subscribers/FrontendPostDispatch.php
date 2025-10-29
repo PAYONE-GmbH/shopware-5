@@ -263,10 +263,10 @@ class FrontendPostDispatch implements SubscriberInterface
         if ($controllerName == 'checkout' && $request->getActionName() === 'confirm' && in_array($moptPaymentName, \Mopt_PayoneConfig::PAYMENTS_ALL)) {
             $session->offsetSet('moptFormSubmitted', false);
         }
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
 
         if ($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
                 $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
-                $userData = Shopware()->Modules()->Admin()->sGetUserData();
                 $debug = $moptPayoneData['moptApplepayConfig']['applepayDebug'] === true ? 1 : 0;
                 $view->assign('mopt_applepay_country',  $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']));
                 $view->assign('mopt_applepay_currency', Shopware()->Container()->get('currency')->getShortName());
@@ -280,7 +280,6 @@ class FrontendPostDispatch implements SubscriberInterface
         if ($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_googlepay') {
             $moptPayoneMain = $this->container->get('MoptPayoneMain')->getInstance();
             $config = $moptPayoneMain->getPayoneConfig($paymentId);
-            $userData = Shopware()->Modules()->Admin()->sGetUserData();
             $displayItems = $this->getGooglePayDisplayItems($userData);
             $supportedNetworks = $this->getSupportedNetworks($config);
             $shop = Shopware()->Shop();
@@ -306,6 +305,14 @@ class FrontendPostDispatch implements SubscriberInterface
         }
         if ($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
             $view->assign('applepayNotConfiguredError', ! $this->isApplepayConfigured($moptPayoneData['moptApplepayConfig']));
+        }
+
+        if ($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_wero') {
+            $moptPayoneHelper = $this->container->get('MoptPayoneMain')->getInstance()->getHelper();
+            $billingCountry = $moptPayoneHelper->getCountryIsoFromId($userData['billingaddress']['countryID']);
+            if (! in_array($billingCountry, \Mopt_PayoneConfig::WERO_ALLOWED_COUNTRIES)) {
+                $action->forward('shippingPayment', 'checkout', null);
+            }
         }
 
         // set flag to remove all address change buttons on confirm page
@@ -456,6 +463,8 @@ class FrontendPostDispatch implements SubscriberInterface
             // remove other express payments
             $payments = $moptPaymentHelper->filterExpressPayments($payments, $session);
             $payments = $moptPaymentHelper->filterB2bPayments($payments);
+            $payments = $moptPaymentHelper->filterWeroCountries($payments);
+
             $view->assign('sPayments', $payments);
 
         }
@@ -473,6 +482,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $payments = $view->getAssign('sPaymentMeans');
             $filteredPayments = $moptPaymentHelper->filterPaymentsInAccount($payments);
             $filteredPayments = $moptPaymentHelper->filterB2bPayments($filteredPayments);
+            $filteredPayments = $moptPaymentHelper->filterWeroCountries($filteredPayments);
             $view->assign('sPaymentMeans', $filteredPayments);
             // fallback if current payment is now exluded from payment list to make sure a payment is selected
             $paymentName = $moptPaymentHelper->getPaymentNameFromId($view->sUserData['additional']['user']['paymentID']);

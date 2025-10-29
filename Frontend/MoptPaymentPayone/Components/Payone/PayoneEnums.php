@@ -136,4 +136,6 @@ class PayoneEnums
     const RPD = 'RPD'; // Ratepay-Direct-Debit
     const AMAZONPAY = 'AMZ';
     const INTERNET = 'internet';
+    const BSV = 'BSV';
+    const WERO_WALLET_TYPE = 'WRO';
 }

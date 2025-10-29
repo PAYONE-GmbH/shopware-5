@@ -90,6 +90,8 @@ class RiskRules
             'BILLINGLANDISNOT', 'AT', 'BILLINGLANDISNOT', 'DE', 4);
         $this->createPayoneRiskRule('mopt_payone__fin_payone_secured_directdebit',
             'CURRENCIESISOISNOT', 'EUR', '', '', 4);
+        $this->createPayoneRiskRule('mopt_payone__ewallet_wero',
+            'CURRENCIESISOISNOT', 'EUR', '', '', 4);
     }
 
     /**

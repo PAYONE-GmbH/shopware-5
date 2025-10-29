@@ -41,24 +41,35 @@ use Shopware\Models\Plugin\Plugin;
 use Shopware\Plugins\MoptPaymentPayone\Bootstrap\RiskRules;
 use Monolog\Logger;
 use Monolog\Handler\RotatingFileHandler;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\AddressCheck;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendOrder;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendPayment;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendRiskManagement;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\ControllerPath;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\Document;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\EMail;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\FrontendAccount;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\FrontendCheckout;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\FrontendPostDispatch;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\OrderNumber;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\Paymentfilter;
+use Shopware\Plugins\MoptPaymentPayone\Subscribers\PayoneResource;
 
 class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Components_Plugin_Bootstrap
 {
     /**
-     * PayoneHelper
-     * @var Mopt_PayoneInstallHelper
+     * @var Mopt_PayoneInstallHelper|null
      */
     protected $moptPayoneInstallHelper = null;
 
     /**
-     * PayoneHelper
-     * @var Monolog\Logger
+     * @var Logger|null
      */
     protected $moptPayoneLogger = null;
 
     /**
      * registers the custom plugin models and plugin namespaces
-     * @throws ReflectionException
+     * @throws ReflectionException|NotSupported
      */
     public function afterInit()
     {
@@ -72,7 +83,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             return;
         }
 
-        $proxies = array('Shopware_Proxies_sAdminProxy', 'Shopware_Proxies_sBasketProxy');
+        $proxies = ['Shopware_Proxies_sAdminProxy', 'Shopware_Proxies_sBasketProxy'];
         $this->revalidateCoreProxies($proxies);
     }
 
@@ -83,7 +94,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      * @param array $proxies
      * @throws ReflectionException
      */
-    public function revalidateCoreProxies($proxies = []) {
+    public function revalidateCoreProxies(array $proxies = []) {
         foreach($proxies as $proxy) {
             if(class_exists($proxy)) {
                 $hooks = $proxy::getHookMethods();
@@ -92,7 +103,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                     continue;
                 }
 
-                $proxy = new \ReflectionClass($proxy);
+                $proxy = new ReflectionClass($proxy);
                 $proxyFile = $proxy->getFileName();
 
                 unlink($proxyFile);
@@ -104,13 +115,13 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $currentVersion = '';
 
         if(defined('\Shopware::VERSION')) {
-            $currentVersion = \Shopware::VERSION;
+            $currentVersion = Shopware::VERSION;
         }
 
         //get old composer versions
         if($currentVersion === '___VERSION___' && class_exists('ShopwareVersion') && class_exists('PackageVersions\Versions')) {
-            $currentVersion = \ShopwareVersion::parseVersion(
-                \PackageVersions\Versions::getVersion('shopware/shopware')
+            $currentVersion = ShopwareVersion::parseVersion(
+                Versions::getVersion('shopware/shopware')
             )['version'];
         }
 
@@ -121,7 +132,12 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         return $currentVersion;
     }
 
-    public function isPluginActive() {
+    /**
+     * @return bool
+     * @throws NotSupported
+     */
+    public function isPluginActive(): bool
+    {
         $pluginName = $this->getName();
 
         /** @var Plugin $plugin */
@@ -131,11 +147,16 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     }
 
     /**
-     * perform all neccessary install tasks
+     * perform all necessary installation tasks
      *
      * @return array
+     * @throws DBALException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
      */
-    public function install()
+    public function install(): array
     {
         $this->registerEvents();
         $this->createPayments();
@@ -170,10 +191,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->createCronJob('Payone Transaktionsweiterleitung', 'PayoneTransactionForward', 60);
         }
 
-        return array('success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme'));
+        return ['success' => true, 'invalidateCache' => array('backend', 'proxy', 'theme')];
     }
 
-    private function doesCronJobExist($cronJobAction)
+    /**
+     * @param $cronJobAction
+     * @return bool
+     */
+    private function doesCronJobExist($cronJobAction): bool
     {
         /** @var Connection $connection */
         $connection = $this->get('dbal_connection');
@@ -182,11 +207,13 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     }
 
     /**
-     * perform all neccessary uninstall tasks
+     * perform all necessary uninstall tasks
      *
+     * @param bool $deleteModels
+     * @param bool $removeAttributes
      * @return boolean
      */
-    public function uninstall($deleteModels = false, $removeAttributes = false)
+    public function uninstall(bool $deleteModels = false, bool $removeAttributes = false): bool
     {
         if ($deleteModels) {
             $this->deleteModels();
@@ -211,17 +238,17 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $em = $this->Application()->Models();
         $platform = $em->getConnection()->getDatabasePlatform();
         $platform->registerDoctrineTypeMapping('enum', 'string');
-        $tool = new \Doctrine\ORM\Tools\SchemaTool($em);
+        $tool = new SchemaTool($em);
 
-        $tool->dropSchema(array(
-            $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog')
-        ));
-        $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog')));
-        $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig')));
-        $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal')));
-        $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig')));
-        $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')));
-        $tool->dropSchema(array($em->getClassMetadata('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay')));
+        $tool->dropSchema(
+            [$em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog')]
+        );
+        $tool->dropSchema([$em->getClassMetadata('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog')]);
+        $tool->dropSchema([$em->getClassMetadata('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig')]);
+        $tool->dropSchema([$em->getClassMetadata('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal')]);
+        $tool->dropSchema([$em->getClassMetadata('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig')]);
+        $tool->dropSchema([$em->getClassMetadata('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay')]);
+        $tool->dropSchema([$em->getClassMetadata('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay')]);
     }
 
     /**
@@ -235,14 +262,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $tables = $this->getInstallHelper()->moptAttributeExtensionsArray($this->getId());
 
-        /** @var \Shopware\Bundle\AttributeBundle\Service\CrudService $attributeService */
+        /** @var CrudService $attributeService */
         $attributeService = Shopware()->Container()->get('shopware_attribute.crud_service');
 
         foreach ($tables as $table => $attributes) {
             foreach ($attributes as $attribute => $options) {
                 try {
                     $attributeService->delete($table, $prefix . '_' . $attribute);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     continue; // if table or column does not exist
                 }
             }
@@ -255,39 +282,37 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      * Remove payment instance
      *
      * @param string $paymentName
-     *
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
-    public function removePayment($paymentName)
+    public function removePayment(string $paymentName)
     {
-        $payment = $this->Payments()->findOneBy(
-            array(
-                'name' => $paymentName
-            )
-        );
-        if ($payment === null) {
-            // do nothing
-
-        } else {
+        $payment = $this->Payments()->findOneBy(['name' => $paymentName]);
+        if ($payment) {
             Shopware()->Models()->remove($payment);
             Shopware()->Models()->flush();
         }
     }
 
     /**
-     * update plugin, check previous versions
-     *
-     * @param type $oldVersion
+     * @param $version
+     * @return bool
+     * @throws DBALException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
      */
-    public function update($oldVersion)
+    public function update($version): bool
     {
         //extra handling for early beta version
-        if (strpos($oldVersion, '0.0.') === 0) {
+        if (strpos($version, '0.0.') === 0) {
             $this->uninstall();
             $this->install();
 
             return true;
         }
-        if (version_compare($oldVersion, '3.8.3', '<')) {
+        if (version_compare($version, '3.8.3', '<')) {
             $this->getInstallHelper()->updatePayolutionAuthSettings();
         }
         $this->install();
@@ -297,9 +322,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     }
 
     /**
-     * @return boolean
+     * @return true
      */
-    public function enable()
+    public function enable(): bool
     {
         return true;
     }
@@ -307,48 +332,50 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     /**
      * @return boolean
      */
-    public function disable()
+    public function disable(): bool
     {
         return true;
     }
 
-    public function getCapabilities()
+    public function getCapabilities(): array
     {
-        return array(
+        return [
             'install' => true,
             'update' => true,
             'enable' => true
-        );
+        ];
     }
 
     /**
      * Returns the informations of plugin as array.
      *
      * @return array
+     * @throws Exception
      */
-    public function getInfo()
+    public function getInfo(): array
     {
         $logo = base64_encode(file_get_contents(dirname(__FILE__) . '/logo.png'));
         $info = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'plugin.json'), true);
-        return array(
+        return [
             'label' => $this->getLabel(),
             'author' => $info['author'],
             'copyright' => $info['copyright'],
             'link' => $info['link'],
             'support' => $info['support'],
             'version' => $this->getVersion(),
-            'description' => '<p><img src="data:image/png;base64,' . $logo . '" /></p> '
+            'description' => '<p><img src="data:image/png;base64,' . $logo . '"  alt="logo"/></p> '
                 . file_get_contents(__DIR__ . '/description.txt'),
             'solution_name' => $this->getSolutionName()
-        );
+        ];
     }
 
     /**
      * Returns the version of plugin as string.
      *
      * @return string
+     * @throws Exception
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         $info = json_decode(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'plugin.json'), true);
 
@@ -429,6 +456,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $rotatingLogger->info(date('Y-m-d H:i:s > ') . 'Payone transactionqueue cronjob stopped.');
     }
 
+    /**
+     * @return CookieCollection|void
+     * @throws NotSupported
+     */
     public function registerAmazonCookie()
     {
         if(class_exists('Shopware\\Bundle\\CookieBundle\\CookieCollection')) {
@@ -441,12 +472,12 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 return;
             }
 
-            $collection = new \Shopware\Bundle\CookieBundle\CookieCollection();
-            $collection->add(new \Shopware\Bundle\CookieBundle\Structs\CookieStruct(
+            $collection = new CookieCollection();
+            $collection->add(new CookieStruct(
                 'moptamazon',
                 '/^amazon/',
                 'Amazon Payment Cookies',
-                \Shopware\Bundle\CookieBundle\Structs\CookieGroupStruct::TECHNICAL
+                CookieGroupStruct::TECHNICAL
             ));
 
             return $collection;
@@ -455,7 +486,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         return;
     }
 
-    public function addJsFiles(Enlight_Event_EventArgs $args)
+    public function addJsFiles(Enlight_Event_EventArgs $args): ArrayCollection
     {
         $jsFiles = [
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_checkout.js',
@@ -480,24 +511,24 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         $container = Shopware()->Container();
 
-        $subscribers = array(
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\PayoneResource(),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\Paymentfilter($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\ControllerPath($this->Path()),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\AddressCheck($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\Document($container, $this->Path()),
+        $subscribers = [
+            new PayoneResource(),
+            new Paymentfilter($container),
+            new ControllerPath($this->Path()),
+            new AddressCheck($container),
+            new Document($container, $this->Path()),
             new \Shopware\Plugins\MoptPaymentPayone\Subscribers\Payment($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\OrderNumber($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\EMail($container),
+            new OrderNumber($container),
+            new EMail($container),
             // Frontend
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\FrontendCheckout($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\FrontendAccount($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\FrontendPostDispatch($container, $this->Path()),
+            new FrontendCheckout($container),
+            new FrontendAccount($container),
+            new FrontendPostDispatch($container, $this->Path()),
             // Backend
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendPayment($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendRiskManagement($container),
-            new \Shopware\Plugins\MoptPaymentPayone\Subscribers\BackendOrder($container)
-        );
+            new BackendPayment($container),
+            new BackendRiskManagement($container),
+            new BackendOrder($container)
+        ];
         foreach ($subscribers as $subscriber) {
             $this->Application()->Events()->addSubscriber($subscriber);
         }
@@ -511,23 +542,23 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $fcPayonePaymentMethods = $this->getInstallHelper()->mopt_payone__getPaymentMethods();
 
         foreach ($fcPayonePaymentMethods as $paymentMethod) {
-            if ($this->Payments()->findOneBy(array('name' => $paymentMethod['name']))) {
+            if ($this->Payments()->findOneBy(['name' => $paymentMethod['name']])) {
                 continue;
             }
 
-            $payment = array(
+            $payment = [
                 'name' => $paymentMethod['name'],
                 'description' => $paymentMethod['description'],
                 'action' => 'mopt_payment_payone',
                 'active' => 0,
                 'position' => $paymentMethod['position'],
                 'additionalDescription' => 'Pay save and secured through our payment service.',
-            );
+            ];
 
             if (!is_null($paymentMethod['template'])) {
                 $payment['template'] = $paymentMethod['template'];
             }
-            if (isset($paymentMethod['additionalDescription']) && !is_null($paymentMethod['additionalDescription'])) {
+            if (isset($paymentMethod['additionalDescription'])) {
                 $payment['additionalDescription'] = $paymentMethod['additionalDescription'];
             }
             $this->createPayment($payment);
@@ -541,21 +572,16 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     {
         /** @var Shopware\Models\Payment\Payment $payment */
         $payment = $this->Payments()->findOneBy(
-            array('name' => 'mopt_payone__acc_payone_safe_invoice')
+            ['name' => 'mopt_payone__acc_payone_safe_invoice']
         );
-        if ($payment === null) {
-            // do nothing
-
-        } else {
+        if ($payment) {
             $payment->setTemplate('mopt_paymentmean_payone_safe_invoice.tpl');
             Shopware()->Models()->persist($payment);
             Shopware()->Models()->flush();
         }
 
         /** @var Payment $payment */
-        $payment = $this->Payments()->findOneBy(
-            array('name' => 'mopt_payone__fin_klarna')
-        );
+        $payment = $this->Payments()->findOneBy(['name' => 'mopt_payone__fin_klarna']);
         if ($payment) {
             $payment->setName('mopt_payone__fin_klarna_old');
             $payment->setDescription('PAYONE Klarna OLD');
@@ -565,13 +591,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         }
 
         /** @var Shopware\Models\Payment\Payment $payment */
-        $payment = $this->Payments()->findOneBy(
-            array('name' => 'mopt_payone__cc_discover')
-        );
-        if ($payment === null) {
-            // do nothing
-
-        } else {
+        $payment = $this->Payments()->findOneBy(['name' => 'mopt_payone__cc_discover']);
+        if ($payment) {
             $payment->setActive(false);
             Shopware()->Models()->persist($payment);
             Shopware()->Models()->flush();
@@ -579,9 +600,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         // Update PAYONE Paysafe Payment Names
         /** @var Payment $payment */
-        $payment = $this->Payments()->findOneBy(
-            array('name' => 'mopt_payone__fin_payolution_invoice')
-        );
+        $payment = $this->Payments()->findOneBy(['name' => 'mopt_payone__fin_payolution_invoice']);
         if ($payment) {
             $payment->setDescription('PAYONE Unzer Rechnungskauf');
             Shopware()->Models()->persist($payment);
@@ -589,9 +608,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         }
 
         /** @var Payment $payment */
-        $payment = $this->Payments()->findOneBy(
-            array('name' => 'mopt_payone__fin_payolution_debitnote')
-        );
+        $payment = $this->Payments()->findOneBy(['name' => 'mopt_payone__fin_payolution_debitnote']);
         if ($payment) {
             $payment->setDescription('PAYONE Unzer Lastschrift');
             Shopware()->Models()->persist($payment);
@@ -599,9 +616,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         }
 
         /** @var Payment $payment */
-        $payment = $this->Payments()->findOneBy(
-            array('name' => 'mopt_payone__fin_payolution_installment')
-        );
+        $payment = $this->Payments()->findOneBy(['name' => 'mopt_payone__fin_payolution_installment']);
         if ($payment) {
             $payment->setDescription('PAYONE Unzer Ratenkauf');
             Shopware()->Models()->persist($payment);
@@ -622,72 +637,72 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $em = $this->Application()->Models();
         $platform = $em->getConnection()->getDatabasePlatform();
         $platform->registerDoctrineTypeMapping('enum', 'string');
-        $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
+        $schemaTool = new SchemaTool($em);
 
         $cacheManager = Shopware()->Container()->get('shopware.cache_manager');
 
         $cacheManager->clearProxyCache();
 
         try {
-            $schemaTool->createSchema(array(
+            $schemaTool->createSchema([
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionLog\MoptPayoneTransactionLog'),
-            ));
+            ]);
         } catch (ToolsException $e) {
             // ignore
         }
 
         try {
-            $schemaTool->createSchema(array(
+            $schemaTool->createSchema([
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog'),
-            ));
+            ]);
         } catch (ToolsException $e) {
             // ignore
         }
 
         try {
-            $schemaTool->createSchema(array(
+            $schemaTool->createSchema([
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig'),
-            ));
+            ]);
         } catch (ToolsException $e) {
             // ignore
         }
 
         try {
-            $schemaTool->createSchema(array(
+            $schemaTool->createSchema([
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal'),
-            ));
+            ]);
         } catch (ToolsException $e) {
             // ignore
         }
 
         try {
-            $schemaTool->createSchema(array(
+            $schemaTool->createSchema([
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig'),
-            ));
+            ]);
         } catch (ToolsException $e) {
             // ignore
         }
 
         try {
-            $schemaTool->createSchema(array(
+            $schemaTool->createSchema([
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay'),
-            ));
+            ]);
         } catch (ToolsException $e) {
             // ignore
         }
 
         try {
-            $schemaTool->createSchema(array(
+            $schemaTool->createSchema([
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay'),
-            ));
+            ]);
         } catch (ToolsException $e) {
             // ignore
         }
 
         try {
-            $schemaTool->createSchema(array(
+            $schemaTool->createSchema([
                 $em->getClassMetadata('Shopware\CustomModels\MoptPayoneTransactionForwardQueue\MoptPayoneTransactionForwardQueue'),
-            ));
+            ]);
         } catch (ToolsException $e) {
             // ignore
         }
@@ -884,10 +899,10 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      *
      * @param string $tableName
      * @param string $columnName
-     *
      * @return bool
+     * @throws Zend_Db_Statement_Exception
      */
-    public function attributeColumnExists($tableName, $columnName)
+    public function attributeColumnExists(string $tableName, string $columnName): bool
     {
         $sql = 'SELECT column_name
                 FROM information_schema.columns
@@ -910,11 +925,12 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      * @param string $columnName
      *
      * @return void
+     * @throws NotSupported
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
-    private function removeAttributeColumnFromConfig($tableName, $columnName) {
-        /** @var \Shopware\Components\Model\ModelManager $em */
+    private function removeAttributeColumnFromConfig(string $tableName, string $columnName) {
         $em = Shopware()->Models();
-
         $repository = $em->getRepository(Configuration::class);
 
         $entity = $repository->findOneBy([
@@ -933,15 +949,15 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     protected function createMenu()
     {
-        $labelPayment = array('label' => 'Zahlungen');
-        $labelKontollZentrum = array('label' => 'PAYONE Kontrollzentrum');
+        $labelPayment = ['label' => 'Zahlungen'];
+        $labelKontollZentrum = ['label' => 'PAYONE Kontrollzentrum'];
 
         // Lightweight Backend Controller
         $ret = $this->Menu()->findOneBy($labelKontollZentrum);
         if (!$ret) {
             // controller and action are not used, but make it possible to translate the menu entry
             $this->createMenuItem(
-                array(
+                [
                     'label' => 'PAYONE',
                     'onclick' => 'Shopware.ModuleManager.createSimplifiedModule("FcPayone", { "title": "PAYONE Kontrollzentrum" })',
                     'class' => 'payoneicon',
@@ -949,7 +965,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                     'controller' => 'FcPayone',
                     'action' => 'index',
                     'parent' => $this->Menu()->findOneBy($labelPayment),
-                )
+                ]
             );
         }
     }
@@ -972,18 +988,18 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     /**
      * internal getter for install helper
      *
-     * @return \Mopt_PayoneInstallHelper
+     * @return Mopt_PayoneInstallHelper
      */
-    protected function getInstallHelper()
+    protected function getInstallHelper(): ?Mopt_PayoneInstallHelper
     {
         if (is_null($this->moptPayoneInstallHelper)) {
-            $this->moptPayoneInstallHelper = new \Mopt_PayoneInstallHelper();
+            $this->moptPayoneInstallHelper = new Mopt_PayoneInstallHelper();
         }
 
         return $this->moptPayoneInstallHelper;
     }
 
-    protected function getPayoneLogger()
+    protected function getPayoneLogger(): ?Logger
     {
         if (!$this->moptPayoneLogger) {
             $this->moptPayoneLogger = new Monolog\Logger('moptPayone');
@@ -1004,39 +1020,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      *
      * @return string
      */
-    public function onGetBackendController()
+    public function onGetBackendController(): string
     {
         $this->get('template')->addTemplateDir($this->Path() . 'Views/');
 
         return $this->Path() . 'Controllers/Backend/FcPayone.php';
-    }
-
-    /**
-     * @deprecated Use Shopware()->Container()->get('payone_service')->captureOrder() instead
-     *
-     * @param array $orderDetailParams array of order detail ID's and amounts to capture
-     * @param bool $finalize true marks the last capture operation; afterwards captures are no longer possible
-     * @param bool $includeShipment true to include shipping costs; false if they are an extra order position
-     * @return bool true if the request has been approved
-     * @throws Exception
-     */
-    public function captureOrder($orderDetailParams, $finalize = false, $includeShipment = false)
-    {
-        return $this->get('payone_service')->captureOrder($orderDetailParams, $finalize, $includeShipment);
-    }
-
-    /**
-     * @deprecated Use Shopware()->Container()->get('payone_service')->refundOrder() instead
-     *
-     * @param array $orderDetailParams array of order detail ID's, amounts and quantities to refund
-     * @param bool $finalize true marks the last refund operation; afterwards refunds are no longer possible
-     * @param bool $includeShipment true to include shipping costs; false if they are an extra order position
-     * @return bool true if the request has been approved
-     * @throws Exception
-     */
-    public function refundOrder($orderDetailParams, $finalize = false, $includeShipment = false)
-    {
-        return $this->get('payone_service')->refundOrder($orderDetailParams, $finalize, $includeShipment);
     }
 
     /**
@@ -1047,7 +1035,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      * @param Enlight_Event_EventArgs $args
      * @return false
      */
-    public function sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS(Enlight_Event_EventArgs $args)
+    public function sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS(Enlight_Event_EventArgs $args): bool
     {
         $args->setReturn(false);
         return false;
@@ -1061,7 +1049,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      * @param Enlight_Event_EventArgs $args
      * @return false
      */
-    public function sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT(Enlight_Event_EventArgs $args)
+    public function sRiskMOPT_PAYONE__TRAFFIC_LIGHT_IS_NOT(Enlight_Event_EventArgs $args): bool
     {
         $args->setReturn(false);
         return false;
@@ -1078,7 +1066,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $pluginID = $result->fetchColumn();
         $sql = "DELETE FROM s_core_menu
                 WHERE name != 'Payone Kontrollzentrum' AND pluginId = " . $pluginID;
-        $result = Shopware()->Db()->query($sql);
+        Shopware()->Db()->query($sql);
     }
 
     private function addGooglePayConfigOptions()
@@ -1096,9 +1084,9 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
                 ('backend/index/view/main', 1, 2, 'FcPayone/index', 'PAYONE Control Center', '2025-07-22 08:41:47', '2025-07-22 08:41:47', 0)";
         $sqlNL = "INSERT IGNORE INTO `s_core_snippets` (`namespace`, `shopID`, `localeID`, `name`, `value`, `created`, `updated`, `dirty`) VALUES
                 ('backend/index/view/main', 1, 176, 'FcPayone/index', 'PAYONE Controlecentrum', '2025-07-22 08:41:47', '2025-07-22 08:41:47', 0)";
-        $result = Shopware()->Db()->query($sqlDE);
-        $result = Shopware()->Db()->query($sqlEN);
-        $result = Shopware()->Db()->query($sqlNL);
+        Shopware()->Db()->query($sqlDE);
+        Shopware()->Db()->query($sqlEN);
+        Shopware()->Db()->query($sqlNL);
     }
 
 }

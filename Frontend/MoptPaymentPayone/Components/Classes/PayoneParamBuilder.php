@@ -1219,6 +1219,27 @@ class Mopt_PayoneParamBuilder
     }
 
     /**
+     * returns WeChatPay payment data object
+     *
+     * @param type $router
+     * @return $params
+     */
+    public function getPaymentWero($router)
+    {
+        $params = array();
+        $params['wallettype'] = PayoneEnums::WERO_WALLET_TYPE;
+
+        $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+            'forceSecure' => true, 'appendSession' => false));
+
+        return $params;
+    }
+
+    /**
      * returns business parameters
      *
      * @return $params
@@ -1529,7 +1550,7 @@ class Mopt_PayoneParamBuilder
      * @param string $id
      * @return string
      */
-    protected function getCountryFromId($id)
+    public function getCountryFromId($id)
     {
         $sql = 'SELECT `countryiso` FROM s_core_countries WHERE id = ' . $id;
         $country = Shopware()->Db()->fetchOne($sql);
