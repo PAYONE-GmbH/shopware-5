@@ -292,6 +292,12 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $this->mopt_payone__handleRedirectFeedback($response);
     }
 
+    public function weroAction()
+    {
+        $response = $this->mopt_payone__wero();
+        $this->mopt_payone__handleRedirectFeedback($response);
+    }
+
     /**
      * @return $response
      */
@@ -806,6 +812,22 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
 
         $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentWechatpay(
+            $this->Front()->Router(),
+            $paymentData
+        );
+        $response = $this->buildAndCallPayment($config, 'wlt', $payment);
+        return $response;
+    }
+
+    /**
+     * @return $response
+     */
+    protected function mopt_payone__wero()
+    {
+        $paymentData = Shopware()->Session()->moptPayment;
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentWero(
             $this->Front()->Router(),
             $paymentData
         );
