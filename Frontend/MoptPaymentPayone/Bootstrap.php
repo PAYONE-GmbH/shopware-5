@@ -846,6 +846,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndAddPaypalV2ButtonShape();
 
+        $this->addGooglePayConfigOptions();
+
         // Do not add/remove columns to s_plugin_mopt_payone_config, after PPE migration
         /** @var Payment $payment */
         $paypalExpressPayment = $this->Payments()->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);
@@ -874,8 +876,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndRemovePaydirektExtension();
 
         $this->getInstallHelper()->checkAndRemoveTrustlyExtension();
-
-        $this->addGooglePayConfigOptions();
 
     }
 
@@ -1082,9 +1082,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
     private function addGooglePayConfigOptions()
     {
         $this->getInstallHelper()->checkAndAddGooglePayAllowCardOptions();
-        $this->getInstallHelper()->checkAndAddGooglePayCountryCode();
         $this->getInstallHelper()->checkAndAddGooglePayButtonOptions();
-        $this->getInstallHelper()->checkAndAddGooglePayMerchantId();
+        $this->getInstallHelper()->checkAndAddGooglePayMerchantIdandName();
     }
 
     private function addMenuTranslations(){
