@@ -671,6 +671,11 @@ class MoptPayoneConfig extends ModelEntity
     private $googlepayMerchantId;
 
     /**
+     *  @ORM\Column(name="googlepay_merchant_name", type="string", length=255, nullable=true, unique=false)
+     */
+    private $googlepayMerchantName;
+
+    /**
      * @ORM\Column(name="googlepay_allow_visa", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
      */
     private $googlepayAllowVisa;
@@ -2716,5 +2721,13 @@ class MoptPayoneConfig extends ModelEntity
 
     public function getGooglepayMerchantId() {
         return $this->googlepayMerchantId;
+    }
+
+    public function setGooglepayMerchantName($value) {
+        $this->googlepayMerchantName = $value;
+    }
+
+    public function getGooglepayMerchantName() {
+        return $this->googlepayMerchantName;
     }
 }
