@@ -26,7 +26,7 @@ You can install the PAYONE plugin using two methods:
 - Facilitates simplified PCI DSS compliance in accordance with SAQ A
 
 ## Documentation
-You find our documentation here: https://docs.payone.com/integration/plugins/integration-guide-shopware-5
+Our documentation can be found here: https://docs.payone.com/integration/plugins/integration-guide-shopware-5
 
 ## Contact
 PAYONE GmbH<br>
