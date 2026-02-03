@@ -696,11 +696,6 @@ class MoptPayoneConfig extends ModelEntity
     private $googlepayAllowCreditCards;
 
     /**
-     * @ORM\Column(name="googlepay_country_code", type="string", length=255, unique=false, nullable=true, options={"default" : "DE"})
-     */
-    private $googlepayCountryCode;
-
-    /**
      *  @ORM\Column(name="googlepay_button_color", type="string", length=255, nullable=true, unique=false, options={"default" : "default"})
      */
     private $googlepayButtonColor;
