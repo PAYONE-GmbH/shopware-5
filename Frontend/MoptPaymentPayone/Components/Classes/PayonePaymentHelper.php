@@ -343,6 +343,17 @@ class Mopt_PayonePaymentHelper
     }
 
     /**
+     * check if given payment name is payone click2pay payment
+     *
+     * @param string $paymentName
+     * @return boolean
+     */
+    public function isPayoneClick2Pay($paymentName)
+    {
+        return preg_match('#mopt_payone__ewallet_click2pay#', $paymentName) ? true : false;
+    }
+
+    /**
      * check if given payment name is payone creditcard payment
      *
      * @param string $paymentName

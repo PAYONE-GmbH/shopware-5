@@ -7,6 +7,9 @@ use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\Payo
 /**
  * mopt payone payment controller
  */
+/**
+ * Class Shopware_Controllers_Frontend_MoptPaymentPayone
+ */
 class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controllers_Frontend_Payment implements
     CSRFWhitelistAware
 {
@@ -29,11 +32,14 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
      * @var Mopt_PayonePaymentHelper
      */
     protected $moptPayonePaymentHelper = null;
-    /** @var Enlight_Components_Session_Namespace $session */
+
+    /**
+     * @var Enlight_Components_Session_Namespace
+     */
     protected $session = null;
 
     /**
-     * init payment controller
+     * @return void
      */
     public function init()
     {
@@ -44,11 +50,6 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     }
 
     /**
-     * whitelists Actions for CSRF checks
-     *
-     * it only used here to whitelist iDeal redirects, since
-     * these use Post Requests
-     *
      * @return array
      */
     public function getWhitelistedCSRFActions()
@@ -218,6 +219,18 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         $token = $this->Request()->getParam('token');
         $response = $this->mopt_payone__google_pay($token);
         $this->mopt_payone__handleRedirectFeedback($response);
+    }
+
+    public function click2payAction()
+    {
+        $token = $this->Request()->getParam('token');
+        $type = $this->Request()->getParam('type');
+        $cardholderName = $this->Request()->getParam('cardholderName');
+        $cardNumber = $this->Request()->getParam('cardNumber');
+        $cardType = $this->Request()->getParam('cardType');
+        $cardExpiry = $this->Request()->getParam('cardExpiry');
+        $response = $this->mopt_payone__click2pay($token, $type, $cardholderName, $cardNumber, $cardType, $cardExpiry);
+        $this->mopt_payone__handleDirectFeedback($response);
     }
 
     public function financeAction()
@@ -656,6 +669,21 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         return $response;
     }
 
+    protected function mopt_payone__click2pay($token, $type, $cardholderName, $cardNumber, $cardType, $cardExpiry)
+    {
+        $router = $this->Front()->Router();
+        $clearingtype = ($type === 'manual') ? 'cc' : 'wlt';
+
+        $config = $this->moptPayoneMain->getPayoneConfig($this->getPaymentId());
+
+        $payment = $this->moptPayoneMain->getParamBuilder()->getPaymentClick2Pay($router, $token, $type, $cardholderName, $cardNumber, $cardType, $cardExpiry);
+
+        /** @var $response */
+        $response = $this->buildAndCallPayment($config, $clearingtype, $payment);
+
+        return $response;
+    }
+
     /**
      * @return $response
      */
@@ -1072,7 +1100,9 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
         if (
             $response->getStatus() == 'REDIRECT' &&
             ( $this->moptPayoneMain->getPaymentHelper()->isPayonePaypalExpress($paymentId) ||
-                $this->moptPayoneMain->getPaymentHelper()->isPayonePaypalExpressv2($paymentId)  )
+                $this->moptPayoneMain->getPaymentHelper()->isPayonePaypalExpressv2($paymentId) ||
+                $this->moptPayoneMain->getPaymentHelper()->isPayoneClick2Pay($paymentId)
+            )
         )
         {
             $session->txId = $response->get('txid');

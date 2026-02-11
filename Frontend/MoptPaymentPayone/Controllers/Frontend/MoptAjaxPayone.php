@@ -5,11 +5,12 @@ use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\Payo
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 /**
+ * Class Shopware_Controllers_Frontend_MoptAjaxPayone
+ *
  * Integrate Payone protect and Ajax call handling
  */
 class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Action implements CSRFWhitelistAware
 {
-
     /**
      * Reference to sAdmin object (core/class/sAdmin.php)
      *
@@ -35,9 +36,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     protected $session;
 
     /**
-     * Init method that get called automatically
-     * Set class properties
-     *
      * @return void
      */
     public function init()
@@ -49,7 +47,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     }
 
     /**
-     * Ask user wether to keep original submittted or corrected values
+     * @return void
      */
     public function ajaxGetConsumerScoreUserAgreementAction()
     {
@@ -72,7 +70,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     }
 
     /**
-     * ask user wether to keep original submittted or newly chosen payment method
+     * @return void
      */
     public function ajaxVerifyPaymentAction()
     {
@@ -81,6 +79,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->View()->moptCheckedId = $this->Request()->getParam('moptCheckedId');
     }
 
+    /**
+     * @return void
+     */
     public function checkConsumerScoreAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();

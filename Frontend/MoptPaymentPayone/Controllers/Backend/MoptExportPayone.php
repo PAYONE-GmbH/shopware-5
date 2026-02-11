@@ -5,16 +5,40 @@ use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\Payo
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 /**
- * $Id: $
+ * Class Shopware_Controllers_Backend_MoptExportPayone
  */
 class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_Action implements CSRFWhitelistAware
 {
+    /**
+     * @var null
+     */
     protected $moptPayone__sdk__Builder   = null;
+
+    /**
+     * @var null
+     */
     protected $moptPayone__main           = null;
+
+    /**
+     * @var null
+     */
     protected $moptPayone__helper         = null;
+
+    /**
+     * @var null
+     */
     protected $moptPayone__paymentHelper  = null;
+
+    /**
+     * @var array
+     */
     protected $transactionForwardingUrls  = array();
 
+    /**
+     * Returns a list of actions which are allowed to be called without a CSRF token.
+     *
+     * @return array
+     */
     public function getWhitelistedCSRFActions()
     {
         $returnArray = array(
@@ -172,6 +196,9 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         return $rows;
     }
 
+    /**
+     * @return array
+     */
     protected function getShippingCosts()
     {
         $queryBuilder = Shopware()->Models()->getRepository('Shopware\Models\Dispatch\Dispatch')->getDispatchesQueryBuilder();
@@ -188,6 +215,10 @@ class Shopware_Controllers_Backend_MoptExportPayone extends Enlight_Controller_A
         return $shippingMethods;
     }
 
+    /**
+     * @param string $checkCvC
+     * @return array
+     */
     protected function getPaymentMethods($checkCvC)
     {
         $paymentMethods = array();

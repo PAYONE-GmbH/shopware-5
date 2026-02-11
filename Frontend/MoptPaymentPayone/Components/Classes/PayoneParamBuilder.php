@@ -837,35 +837,17 @@ class Mopt_PayoneParamBuilder
             $params['bic'] = $this->removeWhitespaces($paymentData['mopt_payone__sofort_bic']);
             $params['bankaccount'] = $this->removeWhitespaces($paymentData['mopt_payone__sofort_bankaccount']);
             $params['bankcode'] = $this->removeWhitespaces($paymentData['mopt_payone__sofort_bankcode']);
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => false));
         }
 
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'BCT') {
             $params['onlinebanktransfertype'] = 'BCT';
             $params['bankcountry'] = $paymentData['mopt_payone__bancontact_bankcountry'];
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => false));
         }
 
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'EPS') {
             $params['onlinebanktransfertype'] = 'EPS';
             $params['bankcountry'] = $paymentData['mopt_payone__eps_bankcountry'];
             $params['bankgrouptype'] = $paymentData['mopt_payone__eps_bankgrouptype'];
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => false));
         }
 
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'IDL') {
@@ -873,46 +855,28 @@ class Mopt_PayoneParamBuilder
             $session->offsetSet('isIdealredirect', true);
             $params['onlinebanktransfertype'] = 'IDL';
             $params['bankcountry'] = $paymentData['mopt_payone__ideal_bankcountry'];
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => false));
         }
 
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'PFF') {
             $params['onlinebanktransfertype'] = 'PFF';
             $params['bankcountry'] = 'CH';
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => false));
         }
 
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'PFC') {
             $params['onlinebanktransfertype'] = 'PFC';
             $params['bankcountry'] = 'CH';
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => false));
         }
 
         if ($paymentData['mopt_payone__onlinebanktransfertype'] == 'P24') {
             $params['onlinebanktransfertype'] = 'P24';
             $params['bankcountry'] = 'PL';
-            $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['errorurl'] = $router->assemble(array('action' => 'failure',
-                'forceSecure' => true, 'appendSession' => false));
-            $params['backurl'] = $router->assemble(array('action' => 'cancel',
-                'forceSecure' => true, 'appendSession' => false));
         }
+        $params['successurl'] = $this->payonePaymentHelper->assembleTokenizedUrl($router, array('action' => 'success',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+            'forceSecure' => true, 'appendSession' => false));
 
         return $params;
     }
@@ -982,7 +946,7 @@ class Mopt_PayoneParamBuilder
     {
         $params = array();
         $params['clearingtype'] = 'wlt';
-        $params['wallettype'] = 'GGP';
+        $params['wallettype'] = PayoneEnums::GOOGLEPAY_WALLET_TYPE;
 
         $params['successurl'] = $router->assemble(array('action' => 'success',
             'forceSecure' => true, 'appendSession' => false));
@@ -992,6 +956,30 @@ class Mopt_PayoneParamBuilder
             'forceSecure' => true, 'appendSession' => false));
 
         return $this->addGooglePayPaymentParameters($params, $token);
+    }
+
+    public function getPaymentClick2Pay($router, $token, $type, $cardholderName, $cardNumber, $cardType, $cardExpiry)
+    {
+        $params = array();
+        $params['clearingtype'] = $type === 'manual' ? 'cc' : 'wlt';
+        if ($type !== 'manual') {
+            $params['wallettype'] = PayoneEnums::CLICK2PAY_WALLET_TYPE;
+        }
+        $params['cardtype'] = $this->getClick2PayCardType($cardType);
+        $params['successurl'] = $router->assemble(array('action' => 'success',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['errorurl'] = $router->assemble(array('action' => 'failure',
+            'forceSecure' => true, 'appendSession' => false));
+        $params['backurl'] = $router->assemble(array('action' => 'cancel',
+            'forceSecure' => true, 'appendSession' => false));
+
+        return $this->addClick2PayPaymentParameters($params, $token, $type, $cardholderName, $cardNumber, $cardType, $cardExpiry);
+    }
+
+    private function getClick2PayCardType($cardType)
+    {
+
+        return strtoupper(substr($cardType, 0, 1));
     }
 
     /**
@@ -1103,6 +1091,17 @@ class Mopt_PayoneParamBuilder
      */
     public function addGooglePayPaymentParameters($params, $token) {
         $paydata = $this->buildGooglePayPaydata($token);
+        $params = array_merge($paydata, $params);
+        return $params;
+    }
+
+    /**
+     * @param $params
+     * @param $token
+     * @return $params
+     */
+    public function addClick2PayPaymentParameters($params, $token, $type, $cardholderName, $cardNumber, $cardType, $cardExpiry) {
+        $paydata = $this->buildClick2PayPaydata($token, $type, $cardholderName, $cardNumber, $cardType, $cardExpiry);
         $params = array_merge($paydata, $params);
         return $params;
     }
@@ -1895,6 +1894,26 @@ class Mopt_PayoneParamBuilder
         $params['add_paydata[paymentmethod_token_data]'] = $token;
         if ($userData['billingaddress']['company']) {
             $params['add_paydata[b2b]'] = 'yes';
+        }
+        return $params;
+    }
+
+    /**
+     *
+     * @return $params
+     */
+    protected function buildClick2PayPaydata($token, $type, $cardholderName, $cardNumber, $cardType, $cardExpiry) {
+        $userData = Shopware()->Modules()->Admin()->sGetUserData();
+        if ($type !== 'manual') {
+            $params['add_paydata[paymentcheckout_data]'] = $token;
+        }
+        if ($userData['billingaddress']['company']) {
+            $params['add_paydata[b2b]'] = 'yes';
+        }
+        if ($type === 'manual') {
+            $params['pseudocardpan'] = $token;
+            $params['cardholder'] = $cardholderName;
+            // $params['cardexpiredate'] = $cardExpiry;
         }
         return $params;
     }

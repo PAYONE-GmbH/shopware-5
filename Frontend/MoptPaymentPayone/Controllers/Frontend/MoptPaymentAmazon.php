@@ -5,7 +5,7 @@ use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\Payo
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 /**
- * Klarna payment controller
+ * Class Shopware_Controllers_Frontend_MoptPaymentAmazon
  */
 class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
@@ -16,9 +16,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
     private $basket;
 
     /**
-     * Init method that get called automatically
-     *
-     * Set class properties
+     * @return void
      */
     public function init()
     {
@@ -34,7 +32,7 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
     }
 
     /**
-     * whitelists Actions for SW 5.2 compatibility
+     * @return array
      */
     public function getWhitelistedCSRFActions()
     {

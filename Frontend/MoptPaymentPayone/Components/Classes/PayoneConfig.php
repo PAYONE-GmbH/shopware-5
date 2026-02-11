@@ -64,6 +64,7 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_paypal_expressv2',
         'mopt_payone__ewallet_googlepay',
         'mopt_payone__ewallet_wero',
+        'mopt_payone__ewallet_click2pay',
     ];
 
     const PAYMENTS_ADDRESSCHECK_EXCLUDED = [
@@ -124,6 +125,7 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_paypal_expressv2',
         'mopt_payone__ewallet_applepay',
         'mopt_payone__ewallet_googlepay',
+        'mopt_payone__ewallet_click2pay',
     ];
 
     const PAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE = [
