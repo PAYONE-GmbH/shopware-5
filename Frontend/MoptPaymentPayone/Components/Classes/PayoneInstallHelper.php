@@ -2504,7 +2504,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
             $result = $db->query($sql);
 
-            if ($result->rowCount() === 0 && $textColumns === 'click2pay_buttonTextCase' ) {
+            if ($result->rowCount() === 0 && $column === 'click2pay_buttonTextCase' ) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT 'capitalize';";
                 $db->exec($sql);
