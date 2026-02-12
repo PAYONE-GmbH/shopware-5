@@ -806,7 +806,7 @@ class MoptPayoneConfig extends ModelEntity
     private $click2payButtonStyle;
 
     /**
-     *  @ORM\Column(name="click2pay_buttonTextCase", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     *  @ORM\Column(name="click2pay_buttonTextCase", type="string", length=255, nullable=true, unique=false, options={"default" : "capitalize"})
      */
     private $click2payButtonTextCase;
 
@@ -889,6 +889,27 @@ class MoptPayoneConfig extends ModelEntity
      *  @ORM\Column(name="click2pay_master_src_initiator_id", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
      */
     private $click2payMasterSrcInitiatorId;
+
+    /**
+     *  @ORM\Column(name="click2pay_shopname", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payShopname;
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payShopname()
+    {
+        return $this->click2payShopname;
+    }
+
+    /**
+     * @param mixed $click2payShopname
+     */
+    public function setClick2payShopname($click2payShopname): void
+    {
+        $this->click2payShopname = $click2payShopname;
+    }
 
     /**
      * @return mixed

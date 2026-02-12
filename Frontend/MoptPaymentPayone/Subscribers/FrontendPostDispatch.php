@@ -314,7 +314,7 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->assign('mopt_click2pay_mode',$config['liveMode'] === true? 'live' : 'test');
             $view->assign('mopt_click2pay_locale',  $shop->getLocale()->getLocale());
             $view->assign('mopt_click2pay_currency', Shopware()->Container()->get('currency')->getShortName());
-            $view->assign('mopt_click2pay_shopname', Shopware()->Config()->get('shopName'));
+            $view->assign('mopt_click2pay_shopname', $config['click2payShopname']);
             $view->assign('mopt_click2pay_ui_config', json_encode($this->getClick2PayUiConfig($config)));
             $view->assign('mopt_click2pay_ctp_ui_config', json_encode($this->getClick2PayCTPUiConfig($config)));
             // $view->assign('mopt_click2pay_visa_src_initiator_id', $config['click2payVisaSrcInitiatorId']);
@@ -1287,10 +1287,6 @@ class FrontendPostDispatch implements SubscriberInterface
         foreach ($configOption2CTPUiOption as $configName => $uiConfigName) {
             $CTPuiConfig[$uiConfigName] = $config[$configName];
         }
-        if ($CTPuiConfig['buttonTextCase'] === '') {
-            $CTPuiConfig['buttonTextCase'] = 'capitalize';
-        }
-
         return $CTPuiConfig;
     }
 
