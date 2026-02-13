@@ -3,12 +3,29 @@
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
+/**
+ * Class Shopware_Controllers_Backend_MoptPayoneOrder
+ */
 class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_Backend_ExtJs
 {
+    /**
+     * @var Mopt_PayoneMain
+     */
     protected $moptPayone__main           = null;
+
+    /**
+     * @var Mopt_PayoneHelper
+     */
     protected $moptPayone__helper         = null;
+
+    /**
+     * @var Mopt_PayonePaymentHelper
+     */
     protected $moptPayone__paymentHelper  = null;
 
+    /**
+     * @return void
+     */
     public function init()
     {
         $this->moptPayone__main = Shopware()->Plugins()->Frontend()->MoptPaymentPayone()->Application()->MoptPayoneMain();
@@ -16,6 +33,10 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         $this->moptPayone__paymentHelper = $this->moptPayone__main->getPaymentHelper();
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function moptPayoneDebitAction()
     {
         $request = $this->Request();
@@ -87,6 +108,10 @@ class Shopware_Controllers_Backend_MoptPayoneOrder extends Shopware_Controllers_
         $this->View()->assign($response);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function moptPayoneCaptureOrderAction()
     {
         $request = $this->Request();

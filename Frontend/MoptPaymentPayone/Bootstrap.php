@@ -172,6 +172,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->createPayments();
         $this->updatePayments();
         $this->createDatabase();
+        $this->getInstallHelper()->moptInsertEmptyConfigIfNotExists();
         $this->addAttributes();
         $this->createMenu();
         $this->addMenuTranslations();
@@ -508,6 +509,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_payolution.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_shipping_payment.js',
             $this->Path() . 'Views/frontend/_resources/javascript/mopt_klarna_confirm.js',
+            $this->Path() . 'Views/frontend/_resources/javascript/mopt_click2pay.js',
         ];
         return new Doctrine\Common\Collections\ArrayCollection($jsFiles);
     }
@@ -786,8 +788,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->getInstallHelper()->checkAndUpdateCreditcardConfigModelExtension();
 
-        $this->getInstallHelper()->moptInsertEmptyConfigIfNotExists();
-
         $this->getInstallHelper()->checkAndUpdateCreditcardModelIframeExtension();
 
         $this->getInstallHelper()->checkAndUpdateConfigModelPayolutionInstallmentExtension();
@@ -848,6 +848,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->addGooglePayConfigOptions();
 
+        $this->addClick2PayConfigOptions();
+
         // Do not add/remove columns to s_plugin_mopt_payone_config, after PPE migration
         /** @var Payment $payment */
         $paypalExpressPayment = $this->Payments()->findOneBy(['name' => 'mopt_payone__ewallet_paypal_express']);
@@ -876,6 +878,7 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         $this->getInstallHelper()->checkAndRemovePaydirektExtension();
 
         $this->getInstallHelper()->checkAndRemoveTrustlyExtension();
+
 
     }
 
@@ -1096,6 +1099,14 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
         Shopware()->Db()->query($sqlDE);
         Shopware()->Db()->query($sqlEN);
         Shopware()->Db()->query($sqlNL);
+    }
+
+    private function addClick2PayConfigOptions()
+    {
+        $this->getInstallHelper()->checkAndAddClick2PayCardConfigOptions();
+        $this->getInstallHelper()->checkAndAddClick2PayAllowCardOptions();
+        $this->getInstallHelper()->checkAndAddClick2PayUiOptions();
+        $this->getInstallHelper()->checkAndAddClick2PayCTPOptions();
     }
 
 }

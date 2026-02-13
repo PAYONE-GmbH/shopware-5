@@ -55,6 +55,8 @@ class PayoneRequest
 
     const URL = 'https://api.pay1.de/post-gateway/';
 
+    const JWT_URL = 'https://api.prelive.pay1-test.de/';
+
     const PREAUTH = 'preauthorization';
 
     const AUTH = 'authorization';
@@ -124,9 +126,43 @@ class PayoneRequest
     }
 
     /**
+     * @param $action
+     * @param $params
+     * @return PayoneResponse
+     */
+    public function jwtRequest($action, $params = null)
+    {
+        $this->add($params);
+        $this->params['request'] = $action;
+        $this->params['key'] = hash('sha384', $this->params['key']);
+        $this->params['hash'] = $this->generate($this->params, $this->params['key']);
+        // $this->params['hash'] = base64_encode($this->generate($this->params, $this->params['key']));
+        $this->rawRequest = $this->parseResponse($this->params);
+        $responseRaw = $this->doJwtRequest();
+
+        $result = $this->parseResponse($responseRaw);
+
+        $response = new PayoneResponse($result);
+        $response->setRawResponse($result);
+
+        // DO not save JWT token requests for now
+        // $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog');
+        // $repository->save($this, $response);
+
+        return $response->get('rawResponse')['token'];
+    }
+
+    /**
      * @return array
      */
     protected function generateUrlArray()
+    {
+        $urlRequest = self::URL . '?' . http_build_query($this->getParams(), null, '&');
+        $urlArray = parse_url($urlRequest);
+        return $urlArray;
+    }
+
+    protected function generateJWTUrlArray()
     {
         $urlRequest = self::URL . '?' . http_build_query($this->getParams(), null, '&');
         $urlArray = parse_url($urlRequest);
@@ -156,6 +192,48 @@ class PayoneRequest
 
         $this->setRawResponse($result);
 
+        if (curl_getinfo($curl, CURLINFO_HTTP_CODE) != 200) {
+            throw new \Exception('Invalid Response');
+        } elseif (curl_error($curl)) {
+            $response[] = "errormessage=" . curl_errno($curl) . ": " . curl_error($curl);
+        } else {
+            $response = explode("\n", $result);
+        }
+        curl_close($curl);
+
+        return $response;
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    protected function doJwtRequest()
+    {
+        $response = array();
+        $urlArray = $this->generateJWTUrlArray();
+        $urlQuery = $urlArray['query'];
+
+        $curl = curl_init(self::URL);
+
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $urlQuery);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, self::DEFAULT_TIMEOUT);
+        $headers = [
+            'Accept: text/plain',
+        ];
+
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($curl);
+
+        $this->setRawResponse($result);
+
+        $test = curl_getinfo($curl);
+        $error = curl_error($curl);
         if (curl_getinfo($curl, CURLINFO_HTTP_CODE) != 200) {
             throw new \Exception('Invalid Response');
         } elseif (curl_error($curl)) {

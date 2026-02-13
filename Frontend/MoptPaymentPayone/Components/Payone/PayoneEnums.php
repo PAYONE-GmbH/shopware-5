@@ -115,6 +115,8 @@ class PayoneEnums
     const PIV = 'PIV';  // PAYONE secured Invoice
     const PIN = 'PIN'; // PAYONE secured installment
     const PDD = 'PDD'; // PAYONE secured direct debit
+
+    const CTP = 'CTP';
     const PAYONE_SECURED_INSTALLMENT_CALCULATE = "installment_options";
     const PAYPAL_EXPRESS = 'PPE';
     const PAYPAL_EXPRESSV2 = 'PAL';
@@ -138,4 +140,9 @@ class PayoneEnums
     const INTERNET = 'internet';
     const BSV = 'BSV';
     const WERO_WALLET_TYPE = 'WRO';
+
+    const GOOGLEPAY_WALLET_TYPE = 'GGP';
+    const CLICK2PAY_JWT_REQUEST = 'getJWT';
+
+    const CLICK2PAY_WALLET_TYPE = 'CTP';
 }

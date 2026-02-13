@@ -303,6 +303,7 @@ class FrontendPostDispatch implements SubscriberInterface
 
             $view->extendsTemplate('frontend/checkout/mopt_confirm_googlepay.tpl');
         }
+
         if ($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
             $view->assign('applepayNotConfiguredError', ! $this->isApplepayConfigured($moptPayoneData['moptApplepayConfig']));
         }
@@ -627,6 +628,10 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone_klarna_financingtype'] = $paymentHelper->getKlarnaFinancingtypeByName($paymentMean['name']);
                 $data['mopt_payone__klarna_paymentname'] = $paymentMean['name'];
                 $data['mopt_payone_klarna_paymentid'] = $paymentMean['id'];
+            }
+
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneClick2Pay($paymentMean['name'])) {
+                $data['mopt_payone_click2pay_paymentid'] = $paymentMean['id'];
             }
 
 

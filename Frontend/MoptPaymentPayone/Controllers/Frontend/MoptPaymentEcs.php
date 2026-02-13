@@ -4,19 +4,38 @@ use Shopware\CustomModels\MoptPayoneApiLog\MoptPayoneApiLog;
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
+/**
+ * Class Shopware_Controllers_Frontend_MoptPaymentEcs
+ */
 class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_Frontend_Payment
 {
+    /**
+     * @var Mopt_PayoneMain
+     */
     protected $moptPayone__main = null;
-    /** @var Mopt_PayoneHelper $moptPayone__helper */
+
+    /**
+     * @var Mopt_PayoneHelper
+     */
     protected $moptPayone__helper = null;
-    /** @var Mopt_PayoneUserHelper $moptPayone__paymentHelper */
+
+    /**
+     * @var Mopt_PayonePaymentHelper
+     */
     protected $moptPayone__paymentHelper = null;
-    /** @var Mopt_PayoneUserHelper $payoneUserHelper */
+
+    /**
+     * @var Mopt_PayoneUserHelper
+     */
     protected $payoneUserHelper = null;
+
+    /**
+     * @var sAdmin
+     */
     protected $admin;
 
     /**
-     * init notification controller for processing status updates
+     * @return void
      */
     public function init()
     {
@@ -28,6 +47,9 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
     }
 
+    /**
+     * @return void
+     */
     public function initPaymentAction()
     {
         $session = Shopware()->Session();
@@ -77,7 +99,7 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
     /**
      * get plugin bootstrap
      *
-     * @return plugin
+     * @return Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap
      */
     protected function Plugin()
     {
@@ -87,6 +109,8 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
     /**
      * user returns succesfully from paypal
      * retrieve userdata now
+     *
+     * @return void
      */
     public function paypalexpressAction()
     {
@@ -127,6 +151,9 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         }
     }
 
+    /**
+     * @return void
+     */
     public function paypalexpressabortAction()
     {
         $session = Shopware()->Session();
@@ -140,6 +167,9 @@ class Shopware_Controllers_Frontend_MoptPaymentEcs extends Shopware_Controllers_
         $this->redirect(array('controller' => 'checkout', 'action' => 'cart'));
     }
 
+    /**
+     * @return void
+     */
     public function paypalexpressErrorAction()
     {
         $session = Shopware()->Session();

@@ -3,17 +3,29 @@
 use Shopware\Components\CSRFWhitelistAware;
 
 /**
+ * Class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding
+ *
  * updated and finish transactions
  */
 class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shopware_Controllers_Frontend_Payment implements CSRFWhitelistAware
 {
+    /**
+     * @var Mopt_PayoneMain
+     */
     protected $moptPayone__main = null;
+
+    /**
+     * @var mixed
+     */
     protected $payoneConfig = null;
-    /** @var $payoneHelper Mopt_PayoneHelper */
+
+    /**
+     * @var Mopt_PayoneHelper
+     */
     protected $payoneHelper = null;
 
     /**
-     * init notification controller for processing status updates
+     * @return void
      */
     public function init()
     {
@@ -25,7 +37,7 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
     }
 
     /**
-     * whitelists indexAction for SW 5.2 compatibility
+     * @return array
      */
     public function getWhitelistedCSRFActions()
     {
@@ -35,9 +47,7 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
     }
 
     /**
-     * index action called by Payone platform to triger the transaction status queue
-     *
-     * @return mixed
+     * @return void
      */
     public function indexAction()
     {
@@ -65,10 +75,7 @@ class Shopware_Controllers_Frontend_MoptTransactionStatusForwarding extends Shop
     }
 
     /**
-     * get plugin bootstrap
-     *
-     * @param void
-     * @return plugin
+     * @return Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap
      */
     public function Plugin()
     {

@@ -1,13 +1,15 @@
 <?php
 
+/**
+ * Class Shopware_Controllers_Backend_MoptPayonePayment
+ */
 class Shopware_Controllers_Backend_MoptPayonePayment extends Shopware_Controllers_Backend_ExtJs
 {
 
-  /**
-   * create a copy of the given payment
-   *
-   * @throws Exception
-   */
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function moptPayoneDuplicatePaymentAction()
     {
         $request = $this->Request();
