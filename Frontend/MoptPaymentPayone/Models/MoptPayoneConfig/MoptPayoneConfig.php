@@ -801,7 +801,7 @@ class MoptPayoneConfig extends ModelEntity
     private $click2payFieldErrorCodeColor;
 
     /**
-     *  @ORM\Column(name="click2pay_buttonStyle", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     *  @ORM\Column(name="click2pay_buttonStyle", type="string", length=255, nullable=true, unique=false, options={"default" : "OUTLINED"})
      */
     private $click2payButtonStyle;
 

@@ -1440,6 +1440,10 @@ class Mopt_PayonePaymentHelper
         if ($this->isPayoneWero($paymentShortName)) {
             return 'wero';
         }
+
+        if ($this->isPayoneClick2Pay($paymentShortName)) {
+            return 'click2pay';
+        }
         return false;
     }
 

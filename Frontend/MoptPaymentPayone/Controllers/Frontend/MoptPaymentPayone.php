@@ -223,12 +223,19 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
     public function click2payAction()
     {
-        $token = $this->Request()->getParam('token');
-        $type = $this->Request()->getParam('type');
-        $cardholderName = $this->Request()->getParam('cardholderName');
-        $cardNumber = $this->Request()->getParam('cardNumber');
-        $cardType = $this->Request()->getParam('cardType');
-        $cardExpiry = $this->Request()->getParam('cardExpiry');
+
+        $token = $this->session->get('mopt_click2pay_token');
+        $this->session->offsetUnset('mopt_click2pay_token');
+        $type = $this->session->get('mopt_click2pay_cardInputMode');
+        $this->session->offsetUnset('mopt_click2pay_cardInputMode');
+        $cardholderName = $this->session->get('mopt_click2pay_cardholderName');
+        $this->session->offsetUnset('mopt_click2pay_cardholderName');
+        $cardNumber = $this->session->get('mopt_click2pay_cardNumber');
+        $this->session->offsetUnset('mopt_click2pay_cardNumber');
+        $cardType = $this->session->get('mopt_click2pay_cardType');
+        $this->session->offsetUnset('mopt_click2pay_cardType');
+        $cardExpiry = $this->session->get('mopt_click2pay_expiryDate');
+        $this->session->offsetUnset('mopt_click2pay_expiryDate');
         $response = $this->mopt_payone__click2pay($token, $type, $cardholderName, $cardNumber, $cardType, $cardExpiry);
         $this->mopt_payone__handleDirectFeedback($response);
     }

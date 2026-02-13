@@ -304,31 +304,6 @@ class FrontendPostDispatch implements SubscriberInterface
             $view->extendsTemplate('frontend/checkout/mopt_confirm_googlepay.tpl');
         }
 
-        if ($controllerName == 'checkout' && $request->getActionName() == 'confirm' && $moptPaymentName === 'mopt_payone__ewallet_click2pay') {
-            $moptPayoneMain = $this->container->get('MoptPayoneMain')->getInstance();
-            $config = $moptPayoneMain->getPayoneConfig($paymentId);
-            $allowedCardSchemes = json_encode($this->getClick2PayAllowedCards($config));
-            $token = $this->getToken($config);
-            $shop = Shopware()->Shop();
-            $view->assign('mopt_click2pay_allowedCardSchemes', $allowedCardSchemes);
-            $view->assign('mopt_click2pay_mode',$config['liveMode'] === true? 'live' : 'test');
-            $view->assign('mopt_click2pay_locale',  $shop->getLocale()->getLocale());
-            $view->assign('mopt_click2pay_currency', Shopware()->Container()->get('currency')->getShortName());
-            $view->assign('mopt_click2pay_shopname', $config['click2payShopname']);
-            $view->assign('mopt_click2pay_ui_config', json_encode($this->getClick2PayUiConfig($config)));
-            $view->assign('mopt_click2pay_ctp_ui_config', json_encode($this->getClick2PayCTPUiConfig($config)));
-            // $view->assign('mopt_click2pay_visa_src_initiator_id', $config['click2payVisaSrcInitiatorId']);
-            $view->assign('mopt_click2pay_src_dpa_id', $config['click2paySrcDpaId']);
-            // $view->assign('mopt_click2pay_visa_encryption_key', $config['click2payVisaEncryptionKey']);
-            // $view->assign('mopt_click2pay_visa_n_modulus', $config['click2payVisaNModulus']);
-            // $view->assign('mopt_click2pay_master_src_initiator_id', $config['click2payMasterSrcInitiatorId']);
-            $view->assign('mopt_click2pay_token', $token);
-            $view->assign('mopt_click2pay_enable_CTP', $config['click2payEnableCTP'] === true? 'true' : 'false');
-            $view->assign('mopt_click2pay_enable_customer_onboarding', $config['click2payEnableCustomerOnboarding'] === true? 'true' : 'false');
-
-            $view->extendsTemplate('frontend/checkout/mopt_confirm_click2pay.tpl');
-        }
-
         if ($controllerName == 'checkout' && $request->getActionName() == 'shippingPayment' && $moptPaymentName === 'mopt_payone__ewallet_applepay') {
             $view->assign('applepayNotConfiguredError', ! $this->isApplepayConfigured($moptPayoneData['moptApplepayConfig']));
         }
@@ -653,6 +628,10 @@ class FrontendPostDispatch implements SubscriberInterface
                 $data['mopt_payone_klarna_financingtype'] = $paymentHelper->getKlarnaFinancingtypeByName($paymentMean['name']);
                 $data['mopt_payone__klarna_paymentname'] = $paymentMean['name'];
                 $data['mopt_payone_klarna_paymentid'] = $paymentMean['id'];
+            }
+
+            if ($moptPayoneMain->getPaymentHelper()->isPayoneClick2Pay($paymentMean['name'])) {
+                $data['mopt_payone_click2pay_paymentid'] = $paymentMean['id'];
             }
 
 
@@ -1207,100 +1186,5 @@ class FrontendPostDispatch implements SubscriberInterface
         } else if ($config['googlepayAllowVisa'] == 0 && $config['googlepayAllowMasterCard'] == 1) {
             return '["MASTERCARD"]';
         }
-    }
-
-    /**
-     * @param $config
-     * @return array
-     */
-    private function getClick2PayAllowedCards($config): array
-    {
-        $configOption2Card = [
-        'click2payAllowAmex' => "amex",
-        'click2payAllowDiners'    => "diners",
-        'click2payAllowDiscover'    => "discover",
-        'click2payAllowJcb'    => "jcb",
-        'click2payAllowMaestro'    => "maestro",
-        'click2payAllowMasterCard'    => "mastercard",
-        'click2payAllowVisa'    => "visa",
-        'click2payAllowUnionpay'    => "unionpay",
-        ];
-        $allowedCards = [];
-
-        foreach ($configOption2Card as $configName => $cardName) {
-            if ($config[$configName] === true) {
-                $allowedCards[] = $cardName;
-            }
-        }
-
-        return $allowedCards;
-    }
-
-    /**
-     * @param $config
-     * @return array
-     */
-    private function getClick2PayUiConfig($config): array
-    {
-        $configOption2UiOption = [
-            'click2payFormBgColor' => "formBgColor",
-            'click2payFieldBgColor'    => "fieldBgColor",
-            'click2payFieldBorder'    => "fieldBorder",
-            'click2payFieldOutline'    => "fieldOutline",
-            'click2payFieldLabelColor'    => "fieldLabelColor",
-            'click2payFieldPlaceholderColor'    => "fieldPlaceholderColor",
-            'click2payFieldTextColor'    => "fieldTextColor",
-            'click2payFieldErrorCodeColor'    => "fieldErrorCodeColor",
-        ];
-        $uiConfig = [];
-
-        foreach ($configOption2UiOption as $configName => $uiConfigName) {
-                $uiConfig[$uiConfigName] = $config[$configName];
-        }
-
-        return $uiConfig;
-    }
-
-    /**
-     * @param $config
-     * @return array
-     */
-    private function getClick2PayCTPUiConfig($config): array
-    {
-        $configOption2CTPUiOption = [
-            'click2payButtonStyle' => "buttonStyle",
-            'click2payButtonTextCase'    => "buttonTextCase",
-            'click2payButtonAndBadgeColor'    => "buttonAndBadgeColor",
-            'click2payButtonAndBadgeTextColor'    => "buttonAndBadgeTextColor",
-            'click2payButtonFilledHoverColor'    => "buttonFilledHoverColor",
-            'click2payButtonOutlinedHoverColor'    => "buttonOutlinedHoverColor",
-            'click2payButtonDisabledColor'    => "buttonDisabledColor",
-            'click2payCardItemActiveColor'    => "cardItemActiveColor",
-            'click2payLinkTextColor'    => "linkTextColor",
-            'click2payAccentColor'    => "accentColor",
-            'click2payFontFamily'    => "fontFamily",
-            'click2payButtonAndInputRadius'    => "buttonAndInputRadius",
-            'click2payCardItemRadius'    => "cardItemRadius",
-        ];
-        $CTPuiConfig = [];
-
-        foreach ($configOption2CTPUiOption as $configName => $uiConfigName) {
-            $CTPuiConfig[$uiConfigName] = $config[$configName];
-        }
-        return $CTPuiConfig;
-    }
-
-    private function getToken($config) {
-        // return 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJhcGlndzAxLmpha2t1LnBheTEtdGVzdC5kZSIsInN1YiI6IjEwMTc2IiwiYXVkIjoiYXBpZ3cwMS5qYWtrdS5wYXkxLXRlc3QuZGUiLCJleHAiOjE3NjAzMzU4MDMsImlhdCI6MTc2MDMzNDkwMywianRpIjoiYWQ3YWYzMTEtZmUxYi00YjViLTkyY2QtMmFmM2I4ZGExOTZjIn0.E5WGje6E8KmUq3o8zAV4dwjBQauNcm7od41kdxGkeOCgJ3gVFP59HrB6EUikuUCfZWrr4vWR9IviVbgdSq6IPsQ8hLHgDudGHXQU9mfWJuW_E5-mBzpOF9fNP6hppNb3M-Qq0gLSwEQNP1RwZgxpG7DNaoKlTl9OqEoPDqFt9I-RFQAvgI5ArwSn9w5yKn5YaXd_cOxZb7-UxiVHJ6m97TxMmtCgkibPc8gAmq0eHngdFm4qiULyN9oRPZoloahbJiSeqGo89IRRc4NvMPrzkk5DnOGCkh9D9xJEYKATfYI4eGTZWusVBRgSHSEw5-ew_Q0t8yaTtaDjs_-pgcLnA';
-        $params = array(
-            'mid' => $config['merchantId'],
-            'portalid' => $config['portalId'],
-            'key' => $config['apiKey'],
-            'request' => PayoneEnums::CLICK2PAY_JWT_REQUEST,
-        );
-        $request = new PayoneRequest(null , $params);
-        $response = $request->jwtRequest(PayoneEnums::CLICK2PAY_JWT_REQUEST);
-        return $response;
-
     }
 }

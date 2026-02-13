@@ -1098,6 +1098,25 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->session->offsetSet('mopt_klarna_finalize_required', $finalizeRequired);
     }
 
+    protected function storeClick2payDataAction()
+    {
+        $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
+
+        $token = $this->request->getParam('token');
+        $cardholderName = $this->request->getParam('cardholderName');
+        $cardNumber = $this->request->getParam('cardNumber');
+        $expiryDate = $this->request->getParam('expiryDate');
+        $cardType = $this->request->getParam('cardType');
+        $cardInputMode = $this->request->getParam('cardInputMode');
+
+        $this->session->offsetSet('mopt_click2pay_token', $token);
+        $this->session->offsetSet('mopt_click2pay_cardholderName', $cardholderName);
+        $this->session->offsetSet('mopt_click2pay_cardNumber', $cardNumber);
+        $this->session->offsetSet('mopt_click2pay_expiryDate', $expiryDate);
+        $this->session->offsetSet('mopt_click2pay_cardType', $cardType);
+        $this->session->offsetSet('mopt_click2pay_cardInputMode', $cardInputMode);
+    }
+
     public function startKlarnaSessionAction()
     {
         try {

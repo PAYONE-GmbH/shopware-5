@@ -182,6 +182,7 @@ class Mopt_PayoneConfig
         'mopt_payone__fin_payone_secured_installment',
         'mopt_payone__fin_ratepay_invoice',
         'mopt_payone__fin_ratepay_direct_debit',
+        'mopt_payone__ewallet_click2pay',
     ];
 
     const PAYMENTS_CART_REQUIRED = [
