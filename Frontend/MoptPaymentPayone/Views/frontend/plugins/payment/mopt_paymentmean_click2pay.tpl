@@ -11,7 +11,6 @@
     >
     <br>
     <div id="payoneclick2paycontainer" class="center-block" style="align-items: center; justify-content: center; display:flex;"></div>
-        <script src="https://sdk.tokenization.secure.payone.com/1.3.0/hosted-tokenization-sdk.js" crossorigin="anonymous"></script>
 
         <script>
             var registeredClick = false;
@@ -89,19 +88,32 @@
                     shopName: "{$mopt_click2pay_shopname}",
                 }
             }
-            if (window.HostedTokenizationSdk) {
-                console.log('HTP-SDK initialized successfully');
-                async function loadSDK() {
-                    try {
-                        await window.HostedTokenizationSdk.init();
-                        window.HostedTokenizationSdk.getPaymentPage(config, callbackfunc);
-                    } catch (error) {
-                        console.error('Error initializing HTP-SDK:', error);
-                    }
-                }
-                loadSDK();
-            } else {
-                console.log("HTP-SDK failed to load");
+
+            function getScript(scriptUrl, callback) {
+                const script = document.createElement('script');
+                script.src = scriptUrl;
+                script.onload = callback;
+
+                document.body.appendChild(script);
             }
+
+            function onScriptLoad() {
+                if (window.HostedTokenizationSdk) {
+                    console.log('HTP-SDK initialized successfully');
+                    async function loadSDK() {
+                        try {
+                            await window.HostedTokenizationSdk.init();
+                            window.HostedTokenizationSdk.getPaymentPage(config, callbackfunc);
+                        } catch (error) {
+                            console.error('Error initializing HTP-SDK:', error);
+                        }
+                    }
+                    loadSDK();
+                } else {
+                    console.log("HTP-SDK failed to load");
+                }
+            }
+
+            getScript('https://sdk.tokenization.secure.payone.com/1.3.0/hosted-tokenization-sdk.js', onScriptLoad);
         </script>
 {/if}
