@@ -10,7 +10,7 @@
            value="{$moptCreditCardCheckEnvironment.mopt_payone_click2pay_paymentid}"
     >
     <br>
-    <div id="payoneclick2paycontainer" class="center-block" style="align-items: center; justify-content: center; display:flex;">></div>
+    <div id="payoneclick2paycontainer" class="center-block" style="align-items: center; justify-content: center; display:flex;"></div>
         <script src="https://sdk.tokenization.secure.payone.com/1.3.0/hosted-tokenization-sdk.js" crossorigin="anonymous"></script>
 
         <script>
