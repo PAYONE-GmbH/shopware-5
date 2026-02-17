@@ -11,16 +11,9 @@
     >
     <br>
     <div id="payoneclick2paycontainer" class="center-block" style="align-items: center; justify-content: center; display:flex;">></div>
-        {if $mopt_click2pay_mode == 'test'}
-            <script src="https://sdk.preprod.tokenization.secure.payone.com/1.2.1/hosted-tokenization-sdk.js"
-                    integrity="sha384-oga+IGWvy3VpUUrebY+BnLYvsNZRsB3NUCMSa+j3CfA9ePHUZ++8/SVyim9F7Jm3" crossorigin="anonymous">
-            </script>
-        {else}
-            <script src="https://sdk.tokenization.secure.payone.com/1.3.0/hosted-tokenization-sdk.js" crossorigin="anonymous">
-            </script>
-        {/if}
-        <script>
+        <script src="https://sdk.tokenization.secure.payone.com/1.3.0/hosted-tokenization-sdk.js" crossorigin="anonymous"></script>
 
+        <script>
             var registeredClick = false;
             var successFullCallback = false;
 
