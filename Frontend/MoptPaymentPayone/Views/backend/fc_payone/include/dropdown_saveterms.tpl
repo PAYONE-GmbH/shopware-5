@@ -8,8 +8,6 @@
             <option value="1">{s name="fieldvalue/onconfirm"}Auf der Confirm Seite{/s}</option>
             <option value="2">{s name="fieldvalue/global"}Global{/s}</option>
         </select>
-        <span class="bi form-control-feedback bi-remove" aria-hidden="true"></span>
-        <span id="{$id}-status" class="sr-only">(success)</span>
         <div class="help-block with-errors"></div>
     </div>
 </div>

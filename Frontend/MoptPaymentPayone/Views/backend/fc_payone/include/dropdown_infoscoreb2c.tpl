@@ -9,8 +9,6 @@
             <option value="CE">{s name="fieldvalue/CE"}Boniversum VERITA Score{/s}</option>
             <option value="NO">{s name="fieldvalue/NONE"}Keine Prüfung{/s}</option>
         </select>
-        <span class="bi form-control-feedback bi-remove" aria-hidden="true"></span>
-        <span id="{$id}-status" class="sr-only">(success)</span>
         <div class="help-block with-errors"></div>
     </div>
 </div>

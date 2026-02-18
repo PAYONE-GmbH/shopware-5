@@ -7,8 +7,6 @@
             <option value="Vorautorisierung">{s name="fieldvalue/preauthorisation"}Vorauthorisierung{/s}</option>
             <option value="Autorisierung">{s name="fieldvalue/authorisation"}Authorisierung{/s}</option>
         </select>
-        <span class="bi form-control-feedback bi-remove" aria-hidden="true"></span>
-        <span id="{$id}-status" class="sr-only">(success)</span>
         <div class="help-block with-errors"></div>
     </div>
 </div>

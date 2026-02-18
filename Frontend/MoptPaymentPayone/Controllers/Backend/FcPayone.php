@@ -677,9 +677,12 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function generalconfigDataAction()
     {
+        $paymentHelper = new Mopt_PayonePaymentHelper();
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentid = $this->Request()->getParam('paymentid');
+        $paymentName = $paymentHelper->getPaymentNameFromId($paymentid);
         $data['data'] = $this->get('MoptPayoneMain')->getPayoneConfig($paymentid, true);
+        $data['paymentName'] = $paymentName;
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;

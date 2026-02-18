@@ -47,7 +47,7 @@
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="googlepay"}">
                                 <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/googlepay"}Google Pay{/s}</a></li>
                         <li><a class="box box-submenu payone-submenu menu-level-expert" href="{url controller="fcPayone" action="click2pay"}">
-                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/click2pay"}Kreditkarte neu{/s}</a></li>
+                                <span class="glyphicon glyphicon-arrow-right"></span>{s name="fieldlabel/click2pay"}Kreditkarte (Click to Pay){/s}</a></li>
                     </ul>
                 </li>  
                 <li><a href="#" id="link-drilldown-1-3" class="box box-menu payone-menu"  data-toggle="collapse" data-target="#drilldown-1-3">

@@ -419,7 +419,8 @@ class FrontendCheckout implements SubscriberInterface
                 $token = $this->getToken($config);
                 $shop = Shopware()->Shop();
                 $view->assign('mopt_click2pay_allowedCardSchemes', $allowedCardSchemes);
-                $view->assign('mopt_click2pay_mode',$config['liveMode'] === true? 'live' : 'test');
+                // $view->assign('mopt_click2pay_mode',$config['liveMode'] === true? 'live' : 'test');
+                $view->assign('mopt_click2pay_mode','live'); // Click2pay always uses live mode
                 $view->assign('mopt_click2pay_locale',  $shop->getLocale()->getLocale());
                 $view->assign('mopt_click2pay_currency', Shopware()->Container()->get('currency')->getShortName());
                 $view->assign('mopt_click2pay_shopname', $config['click2payShopname']);

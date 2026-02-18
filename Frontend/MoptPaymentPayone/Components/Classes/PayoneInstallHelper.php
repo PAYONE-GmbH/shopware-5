@@ -586,7 +586,7 @@ class Mopt_PayoneInstallHelper
                 'position' => 42,],
             [
                 'name' => 'mopt_payone__ewallet_click2pay',
-                'description' => 'PAYONE Kreditkarte Neu',
+                'description' => 'PAYONE Kreditkarte (Click to Pay)',
                 'template' => 'mopt_paymentmean_click2pay.tpl',
                 'position' => 43,],
 

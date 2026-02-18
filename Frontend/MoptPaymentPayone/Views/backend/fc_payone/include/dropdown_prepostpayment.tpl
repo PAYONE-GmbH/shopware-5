@@ -6,8 +6,6 @@
             <option value="0">{s name="fieldvalue/beforepaymentchoice"}Vor der Zahlartenauswahl{/s}</option>
             <option value="1">{s name="fieldvalue/afterpaymentchoice"}Nach der Zahlartenauswahl{/s}</option>
         </select>
-        <span class="bi form-control-feedback bi-remove" aria-hidden="true"></span>
-        <span id="{$id}-status" class="sr-only">(success)</span>
         <div class="help-block with-errors"></div>
     </div>
 </div>

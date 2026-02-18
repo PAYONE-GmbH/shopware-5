@@ -6,8 +6,6 @@
             <option value="0">{s name="fieldvalue/cancel"}Abbrechen{/s}</option>
             <option value="1">{s name="fieldvalue/continue"}Fortfahren{/s}</option>
         </select>
-        <span class="bi form-control-feedback bi-remove" aria-hidden="true"></span>
-        <span id="{$id}-status" class="sr-only">(success)</span>
         <div class="help-block with-errors"></div>
     </div>
 </div>
