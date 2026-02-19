@@ -3,13 +3,14 @@
 use Shopware\Components\CSRFWhitelistAware;
 
 /**
+ * Class Shopware_Controllers_Frontend_MoptAccountPayone
+ *
  * updated and finish transactions
  */
 class Shopware_Controllers_Frontend_MoptAccountPayone extends Shopware_Controllers_Frontend_Account implements CSRFWhitelistAware
 {
-
     /**
-     * Pre dispatch method
+     * @return void
      */
     public function preDispatch()
     {
@@ -29,7 +30,7 @@ class Shopware_Controllers_Frontend_MoptAccountPayone extends Shopware_Controlle
     }
 
     /**
-     * whitelists indexAction for SW 5.2 compatibility
+     * @return array
      */
     public function getWhitelistedCSRFActions()
     {

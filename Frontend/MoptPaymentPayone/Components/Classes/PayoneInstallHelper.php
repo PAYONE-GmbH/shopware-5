@@ -584,6 +584,11 @@ class Mopt_PayoneInstallHelper
                 'description' => 'PAYONE Wero',
                 'template' => null,
                 'position' => 42,],
+            [
+                'name' => 'mopt_payone__ewallet_click2pay',
+                'description' => 'PAYONE Kreditkarte (Click to Pay)',
+                'template' => 'mopt_paymentmean_click2pay.tpl',
+                'position' => 43,],
 
         ];
     }
@@ -905,8 +910,8 @@ class Mopt_PayoneInstallHelper
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
-            $sql = "INSERT INTO `s_plugin_mopt_payone_config` (`payment_id`, `merchant_id`, `portal_id`, `subaccount_id`, `api_key`, `live_mode`, `authorisation_method`, `submit_basket`, `adresscheck_active`, `adresscheck_live_mode`, `adresscheck_billing_adress`, `adresscheck_shipping_adress`, `adresscheck_automatic_correction`, `adresscheck_failure_handling`, `adresscheck_min_basket`, `adresscheck_max_basket`, `adresscheck_lifetime`, `adresscheck_failure_message`, `map_person_check`, `map_know_pre_lastname`, `map_know_lastname`, `map_not_known_pre_lastname`, `map_multi_name_to_adress`, `map_undeliverable`, `map_person_dead`, `map_wrong_adress`, `map_address_check_not_possible`, `map_address_okay_building_unknown`, `map_person_moved_address_unknown`, `map_unknown_return_value`, `consumerscore_active`, `consumerscore_live_mode`, `consumerscore_check_moment`, `consumerscore_check_mode_b2c`, `consumerscore_check_mode_b2b`,`consumerscore_default`, `consumerscore_lifetime`, `consumerscore_min_basket`, `consumerscore_max_basket`, `consumerscore_failure_handling`, `consumerscore_note_message`, `consumerscore_note_active`, `consumerscore_agreement_message`, `consumerscore_agreement_active`, `consumerscore_abtest_value`, `consumerscore_abtest_active`, `payment_specific_data`, `state_appointed`, `state_capture`, `state_paid`, `state_underpaid`, `state_cancelation`, `state_refund`, `state_debit`, `state_reminder`, `state_vauthorization`, `state_vsettlement`, `state_transfer`, `state_invoice`, `state_failed`,  `check_cc`, `check_account`, `trans_appointed`, `trans_capture`, `trans_paid`, `trans_underpaid`, `trans_cancelation`, `trans_refund`, `trans_debit`, `trans_reminder`, `trans_vauthorization`, `trans_vsettlement`, `trans_transfer`, `trans_invoice`, `trans_failed` , `trans_timeout` , `trans_timeout_raise` , `trans_max_trials`, `googlepay_allow_visa`, `googlepay_allow_master_card`, `googlepay_allow_prepaid_cards`, `googlepay_allow_credit_cards`, `googlepay_button_color`, `googlepay_button_type`, `googlepay_merchant_id`,  `googlepay_merchant_name`) VALUES
-      (0, 0, 0, 0, '0', 0, 'Vorautorisierung', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'Es ist ein Fehler aufgetreten', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'IH','NONE', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 'N;'," . self::DEFAULT_TRANSACTION_STATE_APPOINTED . ", " . self::DEFAULT_TRANSACTION_STATE_CAPTURE . ", " . self::DEFAULT_TRANSACTION_STATE_PAID . ", " . self::DEFAULT_TRANSACTION_STATE_UNDERPAID . ", " . self::DEFAULT_TRANSACTION_STATE_CANCELATION . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", 0, 0, 0, 0, 0, 121,  1, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '', :timeout, :timeout_raise, :max_trials, 1, 1, 1, 1, 'default', 'pay', '','');
+            $sql = "INSERT INTO `s_plugin_mopt_payone_config` (`payment_id`, `merchant_id`, `portal_id`, `subaccount_id`, `api_key`, `live_mode`, `authorisation_method`, `submit_basket`, `adresscheck_active`, `adresscheck_live_mode`, `adresscheck_billing_adress`, `adresscheck_shipping_adress`, `adresscheck_automatic_correction`, `adresscheck_failure_handling`, `adresscheck_min_basket`, `adresscheck_max_basket`, `adresscheck_lifetime`, `adresscheck_failure_message`, `map_person_check`, `map_know_pre_lastname`, `map_know_lastname`, `map_not_known_pre_lastname`, `map_multi_name_to_adress`, `map_undeliverable`, `map_person_dead`, `map_wrong_adress`, `map_address_check_not_possible`, `map_address_okay_building_unknown`, `map_person_moved_address_unknown`, `map_unknown_return_value`, `consumerscore_active`, `consumerscore_live_mode`, `consumerscore_check_moment`, `consumerscore_check_mode_b2c`, `consumerscore_check_mode_b2b`,`consumerscore_default`, `consumerscore_lifetime`, `consumerscore_min_basket`, `consumerscore_max_basket`, `consumerscore_failure_handling`, `consumerscore_note_message`, `consumerscore_note_active`, `consumerscore_agreement_message`, `consumerscore_agreement_active`, `consumerscore_abtest_value`, `consumerscore_abtest_active`, `payment_specific_data`, `state_appointed`, `state_capture`, `state_paid`, `state_underpaid`, `state_cancelation`, `state_refund`, `state_debit`, `state_reminder`, `state_vauthorization`, `state_vsettlement`, `state_transfer`, `state_invoice`, `state_failed`,  `check_cc`, `check_account`, `trans_appointed`, `trans_capture`, `trans_paid`, `trans_underpaid`, `trans_cancelation`, `trans_refund`, `trans_debit`, `trans_reminder`, `trans_vauthorization`, `trans_vsettlement`, `trans_transfer`, `trans_invoice`, `trans_failed` , `trans_timeout` , `trans_timeout_raise` , `trans_max_trials`, `googlepay_allow_visa`, `googlepay_allow_master_card`, `googlepay_allow_prepaid_cards`, `googlepay_allow_credit_cards`, `googlepay_country_code`, `googlepay_button_color`, `googlepay_button_type`, `googlepay_merchant_id`,  `googlepay_merchant_name`, `click2pay_allow_visa`, `click2pay_allow_master_card`, `click2pay_allow_amex`, `click2pay_allow_maestro`, `click2pay_allow_diners`, `click2pay_allow_discover`, `click2pay_allow_jcb`, `click2pay_allow_unionpay`, `click2pay_formBgColor`, `click2pay_fieldBgColor`, `click2pay_fieldBorder`, `click2pay_fieldOutline`, `click2pay_fieldLabelColor`, `click2pay_fieldPlaceholderColor`, `click2pay_fieldTextColor`, `click2pay_fieldErrorCodeColor`, `click2pay_buttonStyle`, `click2pay_buttonTextCase`, `click2pay_buttonAndBadgeColor`, `click2pay_buttonFilledHoverColor`, `click2pay_buttonOutlinedHoverColor`, `click2pay_buttonDisabledColor`, `click2pay_cardItemActiveColor`, `click2pay_buttonAndBadgeTextColor`, `click2pay_linkTextColor`, `click2pay_accentColor`, `click2pay_fontFamily`, `click2pay_buttonAndInputRadius`, `click2pay_cardItemRadius`, `click2pay_visa_src_initiator_id`, `click2pay_src_dpa_id`, `click2pay_visa_encryption_key`, `click2pay_visa_n_modulus`, `click2pay_master_src_initiator_id`,`click2pay_enable_c_t_p`, `click2pay_enable_customer_onboarding`, `click2pay_shopname`) VALUES
+      (0, 0, 0, 0, '0', 0, 'Vorautorisierung', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'Es ist ein Fehler aufgetreten', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'IH','NONE', 0, 0, 0, 0, 0, '', 0, '', 0, 0, 0, 'N;'," . self::DEFAULT_TRANSACTION_STATE_APPOINTED . ", " . self::DEFAULT_TRANSACTION_STATE_CAPTURE . ", " . self::DEFAULT_TRANSACTION_STATE_PAID . ", " . self::DEFAULT_TRANSACTION_STATE_UNDERPAID . ", " . self::DEFAULT_TRANSACTION_STATE_CANCELATION . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", " . self::DEFAULT_TRANSACTION_STATE_REFUND . ", 0, 0, 0, 0, 0, 121,  1, NULL, '', '', '', '', '', '', '', '', '', '', '', '', '', :timeout, :timeout_raise, :max_trials, 1, 1, 1, 1, 'DE', 'default', 'pay', '', '', 1, 1, 1, 1, 1, 1, 1, 1, '', '', '', '', '', '', '', 'OUTLINED', 'capitalize', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',1, 1, '');
       ";
             Shopware()->Db()->query($sql, [
                 ':timeout' => Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'],
@@ -2363,7 +2368,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     }
 
     /**
-     * Checks if paypalExressUseDefaultShipping columns are present and creates
+     * Checks if google pay columns are present and creates
      * columns if not present.
      *
      * @return void
@@ -2386,6 +2391,134 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` TINYINT(1) NOT NULL DEFAULT 1;";
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if click2pay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddClick2PayCardConfigOptions()
+    {
+        $textColumns = ['click2pay_visa_src_initiator_id', 'click2pay_src_dpa_id', 'click2pay_visa_encryption_key', 'click2pay_visa_n_modulus', 'click2pay_master_src_initiator_id'];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT '';";
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if click2pay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddClick2PayAllowCardOptions()
+    {
+        $textColumns = ['click2pay_allow_visa', 'click2pay_allow_master_card', 'click2pay_allow_amex', 'click2pay_allow_maestro', 'click2pay_allow_diners', 'click2pay_allow_discover', 'click2pay_allow_jcb', 'click2pay_allow_unionpay', 'click2pay_enable_c_t_p', 'click2pay_enable_customer_onboarding' ];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` TINYINT(1) NOT NULL DEFAULT 1;";
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if click2pay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddClick2PayUiOptions()
+    {
+        $textColumns = ['click2pay_formBgColor', 'click2pay_fieldBgColor', 'click2pay_fieldBorder', 'click2pay_fieldOutline', 'click2pay_fieldLabelColor', 'click2pay_fieldPlaceholderColor', 'click2pay_fieldTextColor', 'click2pay_fieldErrorCodeColor' ];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT '';";
+                $db->exec($sql);
+            }
+        }
+    }
+
+    /**
+     * Checks if click2pay columns are present and creates
+     * columns if not present.
+     *
+     * @return void
+     * @throws Zend_Db_Adapter_Exception
+     * @throws Zend_Db_Statement_Exception
+     */
+    public function checkAndAddClick2PayCTPOptions()
+    {
+        $textColumns = ['click2pay_buttonStyle', 'click2pay_buttonTextCase', 'click2pay_buttonAndBadgeColor', 'click2pay_buttonFilledHoverColor', 'click2pay_buttonOutlinedHoverColor', 'click2pay_buttonDisabledColor', 'click2pay_cardItemActiveColor', 'click2pay_buttonAndBadgeTextColor', 'click2pay_linkTextColor', 'click2pay_accentColor', 'click2pay_fontFamily', 'click2pay_buttonAndInputRadius', 'click2pay_cardItemRadius', 'click2pay_shopname' ];
+        $db = Shopware()->Db();
+        $dbConfig = $db->getConfig();
+
+        foreach ($textColumns AS $column) {
+            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
+                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
+                    AND COLUMN_NAME = '$column'";
+
+            $result = $db->query($sql);
+
+            if ($result->rowCount() === 0 && $column === 'click2pay_buttonTextCase' ) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT 'capitalize';";
+                $db->exec($sql);
+            }
+
+            if ($result->rowCount() === 0 && $column === 'click2pay_buttonStyle' ) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT 'OUTLINED';";
+                $db->exec($sql);
+            }
+
+            if ($result->rowCount() === 0) {
+                $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
+                        ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT '';";
                 $db->exec($sql);
             }
         }

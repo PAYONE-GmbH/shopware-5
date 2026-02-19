@@ -7,7 +7,6 @@
                 <option value="{$paymentstate.id}">{$paymentstate.description}</option>
             {/foreach}
         </select>
-        <span class="bi form-control-feedback bi-remove" aria-hidden="true"></span>
         <div class="help-block with-errors"></div>
     </div>
 </div>

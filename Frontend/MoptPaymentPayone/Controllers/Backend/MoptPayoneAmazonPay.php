@@ -4,10 +4,20 @@ use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
+/**
+ * Class Shopware_Controllers_Backend_MoptPayoneAmazonPay
+ */
 class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
 {
 
+    /**
+     * @var string
+     */
     protected $model = 'Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay';
+
+    /**
+     * @var string
+     */
     protected $alias = 'MoptPayoneAmazonPay';
 
     /**
@@ -16,6 +26,11 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
      */
     protected $moptPayoneMain = null;
 
+    /**
+     * Returns a list of actions which are allowed to be called without a CSRF token.
+     *
+     * @return array
+     */
     public function getWhitelistedCSRFActions()
     {
         $returnArray = array(
@@ -61,6 +76,10 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
         }
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function downloadConfigsAction()
     {
         $this->Front()->Plugins()->Json()->setRenderer(true);
@@ -107,6 +126,9 @@ class Shopware_Controllers_Backend_MoptPayoneAmazonPay extends Shopware_Controll
         exit();
     }
 
+    /**
+     * @return void
+     */
     public function saveAmazonPayConfigsAction()
     {
         $this->Front()->Plugins()->Json()->setRenderer(true);

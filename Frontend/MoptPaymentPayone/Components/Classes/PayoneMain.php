@@ -108,10 +108,16 @@ class Mopt_PayoneMain
             ) {
                 $data['sendOrdernumberAsReference'] = true;
             }
+            if ($this->paymentHelper->isPayoneClick2Pay($paymentName)) {
+                $data['liveMode'] = true;
+            }
         } else {
             $data->setSendOrdernumberAsReference(
                 $global_config->getSendOrdernumberAsReference()
             );
+            if ($this->paymentHelper->isPayoneClick2Pay($paymentName)) {
+                $data->setLiveMode = true;
+            }
         }
 
         if ($data === null) {

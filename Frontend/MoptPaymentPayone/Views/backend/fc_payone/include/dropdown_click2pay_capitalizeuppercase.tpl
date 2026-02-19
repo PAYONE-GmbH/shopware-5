@@ -4,8 +4,8 @@
     <label for="{$id}" class="text-left col-md-3 control-label">{$label}</label>
     <div class="col-md-6">
         <select class="form-control " pattern='{$pattern}' id="{$id}" name="{$id}" aria-describedby="{$id}-status" >
-            <option value="Vorautorisierung">{s name="fieldvalue/preauthorisation"}Vorauthorisierung{/s}</option>
-            <option value="Autorisierung">{s name="fieldvalue/authorisation"}Authorisierung{/s}</option>
+            <option value="capitalize">{s name="fieldvalue/capitalize"}Capitalize{/s}</option>
+            <option value="uppercase">{s name="fieldvalue/uppercase"}Uppercase{/s}</option>
         </select>
         <div class="help-block with-errors"></div>
     </div>

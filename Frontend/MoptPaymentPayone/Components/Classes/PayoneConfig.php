@@ -64,6 +64,7 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_paypal_expressv2',
         'mopt_payone__ewallet_googlepay',
         'mopt_payone__ewallet_wero',
+        'mopt_payone__ewallet_click2pay',
     ];
 
     const PAYMENTS_ADDRESSCHECK_EXCLUDED = [
@@ -124,6 +125,7 @@ class Mopt_PayoneConfig
         'mopt_payone__ewallet_paypal_expressv2',
         'mopt_payone__ewallet_applepay',
         'mopt_payone__ewallet_googlepay',
+        'mopt_payone__ewallet_click2pay',
     ];
 
     const PAYMENTS_EXCLUDED_FROM_SHIPPINGPAYMENTPAGE = [
@@ -180,6 +182,7 @@ class Mopt_PayoneConfig
         'mopt_payone__fin_payone_secured_installment',
         'mopt_payone__fin_ratepay_invoice',
         'mopt_payone__fin_ratepay_direct_debit',
+        'mopt_payone__ewallet_click2pay',
     ];
 
     const PAYMENTS_CART_REQUIRED = [

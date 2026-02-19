@@ -696,6 +696,11 @@ class MoptPayoneConfig extends ModelEntity
     private $googlepayAllowCreditCards;
 
     /**
+     * @ORM\Column(name="googlepay_country_code", type="string", length=255, unique=false, nullable=true, options={"default" : "DE"})
+     */
+    private $googlepayCountryCode;
+
+    /**
      *  @ORM\Column(name="googlepay_button_color", type="string", length=255, nullable=true, unique=false, options={"default" : "default"})
      */
     private $googlepayButtonColor;
@@ -704,6 +709,671 @@ class MoptPayoneConfig extends ModelEntity
      *  @ORM\Column(name="googlepay_button_type", type="string", length=255, nullable=true, unique=false, options={"default" : "pay"})
      */
     private $googlepayButtonType;
+
+    /**
+     * @ORM\Column(name="click2pay_allow_visa", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payAllowVisa;
+
+    /**
+     * @ORM\Column(name="click2pay_allow_master_card", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payAllowMasterCard;
+
+    /**
+     * @ORM\Column(name="click2pay_allow_amex", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payAllowAmex;
+
+    /**
+     * @ORM\Column(name="click2pay_allow_maestro", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payAllowMaestro;
+
+    /**
+     * @ORM\Column(name="click2pay_allow_diners", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payAllowDiners;
+
+    /**
+     * @ORM\Column(name="click2pay_allow_discover", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payAllowDiscover;
+
+    /**
+     * @ORM\Column(name="click2pay_allow_jcb", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payAllowJcb;
+
+    /**
+     * @ORM\Column(name="click2pay_allow_unionpay", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payAllowUnionpay;
+
+    /**
+     * @ORM\Column(name="click2pay_enable_c_t_p", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payEnableCTP;
+
+    /**
+     * @ORM\Column(name="click2pay_enable_customer_onboarding", type="boolean", precision=0, scale=0, nullable=true, unique=false, options={"default" : 1})
+     */
+    private $click2payEnableCustomerOnboarding;
+
+    /**
+     *  @ORM\Column(name="click2pay_formBgColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payFormBgColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_fieldBgColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payFieldBgColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_fieldBorder", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payFieldBorder;
+
+    /**
+     *  @ORM\Column(name="click2pay_fieldOutline", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payFieldOutline;
+
+    /**
+     *  @ORM\Column(name="click2pay_fieldLabelColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payFieldLabelColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_fieldPlaceholderColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payFieldPlaceholderColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_fieldTextColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payFieldTextColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_fieldErrorCodeColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payFieldErrorCodeColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_buttonStyle", type="string", length=255, nullable=true, unique=false, options={"default" : "OUTLINED"})
+     */
+    private $click2payButtonStyle;
+
+    /**
+     *  @ORM\Column(name="click2pay_buttonTextCase", type="string", length=255, nullable=true, unique=false, options={"default" : "capitalize"})
+     */
+    private $click2payButtonTextCase;
+
+    /**
+     *  @ORM\Column(name="click2pay_buttonAndBadgeColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payButtonAndBadgeColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_buttonFilledHoverColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payButtonFilledHoverColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_buttonOutlinedHoverColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payButtonOutlinedHoverColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_buttonDisabledColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payButtonDisabledColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_cardItemActiveColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payCardItemActiveColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_buttonAndBadgeTextColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payButtonAndBadgeTextColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_linkTextColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payLinkTextColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_accentColor", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payAccentColor;
+
+    /**
+     *  @ORM\Column(name="click2pay_fontFamily", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payFontFamily;
+
+    /**
+     *  @ORM\Column(name="click2pay_buttonAndInputRadius", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payButtonAndInputRadius;
+
+    /**
+     *  @ORM\Column(name="click2pay_cardItemRadius", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payCardItemRadius;
+
+    /**
+     *  @ORM\Column(name="click2pay_visa_src_initiator_id", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payVisaSrcInitiatorId;
+
+    /**
+     *  @ORM\Column(name="click2pay_src_dpa_id", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2paySrcDpaId;
+
+    /**
+     *  @ORM\Column(name="click2pay_visa_encryption_key", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payVisaEncryptionKey;
+
+    /**
+     *  @ORM\Column(name="click2pay_visa_n_modulus", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payVisaNModulus;
+
+    /**
+     *  @ORM\Column(name="click2pay_master_src_initiator_id", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payMasterSrcInitiatorId;
+
+    /**
+     *  @ORM\Column(name="click2pay_shopname", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
+     */
+    private $click2payShopname;
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payShopname()
+    {
+        return $this->click2payShopname;
+    }
+
+    /**
+     * @param mixed $click2payShopname
+     */
+    public function setClick2payShopname($click2payShopname): void
+    {
+        $this->click2payShopname = $click2payShopname;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payAllowVisa()
+    {
+        return $this->click2payAllowVisa;
+    }
+
+    /**
+     * @param mixed $click2payAllowVisa
+     */
+    public function setClick2payAllowVisa($click2payAllowVisa): void
+    {
+        $this->click2payAllowVisa = $click2payAllowVisa;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payAllowMasterCard()
+    {
+        return $this->click2payAllowMasterCard;
+    }
+
+    /**
+     * @param mixed $click2payAllowMasterCard
+     */
+    public function setClick2payAllowMasterCard($click2payAllowMasterCard): void
+    {
+        $this->click2payAllowMasterCard = $click2payAllowMasterCard;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payAllowAmex()
+    {
+        return $this->click2payAllowAmex;
+    }
+
+    /**
+     * @param mixed $click2payAllowAmex
+     */
+    public function setClick2payAllowAmex($click2payAllowAmex): void
+    {
+        $this->click2payAllowAmex = $click2payAllowAmex;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payAllowMaestro()
+    {
+        return $this->click2payAllowMaestro;
+    }
+
+    /**
+     * @param mixed $click2payAllowMaestro
+     */
+    public function setClick2payAllowMaestro($click2payAllowMaestro): void
+    {
+        $this->click2payAllowMaestro = $click2payAllowMaestro;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payAllowDiners()
+    {
+        return $this->click2payAllowDiners;
+    }
+
+    /**
+     * @param mixed $click2payAllowDiners
+     */
+    public function setClick2payAllowDiners($click2payAllowDiners): void
+    {
+        $this->click2payAllowDiners = $click2payAllowDiners;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payAllowDiscover()
+    {
+        return $this->click2payAllowDiscover;
+    }
+
+    /**
+     * @param mixed $click2payAllowDiscover
+     */
+    public function setClick2payAllowDiscover($click2payAllowDiscover): void
+    {
+        $this->click2payAllowDiscover = $click2payAllowDiscover;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payAllowJcb()
+    {
+        return $this->click2payAllowJcb;
+    }
+
+    /**
+     * @param mixed $click2payAllowJcb
+     */
+    public function setClick2payAllowJcb($click2payAllowJcb): void
+    {
+        $this->click2payAllowJcb = $click2payAllowJcb;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payAllowUnionpay()
+    {
+        return $this->click2payAllowUnionpay;
+    }
+
+    /**
+     * @param mixed $click2payAllowUnionpay
+     */
+    public function setClick2payAllowUnionpay($click2payAllowUnionpay): void
+    {
+        $this->click2payAllowUnionpay = $click2payAllowUnionpay;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payFormBgColor()
+    {
+        return $this->click2payFormBgColor;
+    }
+
+    /**
+     * @param mixed $click2payFormBgColor
+     */
+    public function setClick2payFormBgColor($click2payFormBgColor): void
+    {
+        $this->click2payFormBgColor = $click2payFormBgColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payFieldBgColor()
+    {
+        return $this->click2payFieldBgColor;
+    }
+
+    /**
+     * @param mixed $click2payFieldBgColor
+     */
+    public function setClick2payFieldBgColor($click2payFieldBgColor): void
+    {
+        $this->click2payFieldBgColor = $click2payFieldBgColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payFieldBorder()
+    {
+        return $this->click2payFieldBorder;
+    }
+
+    /**
+     * @param mixed $click2payFieldBorder
+     */
+    public function setClick2payFieldBorder($click2payFieldBorder): void
+    {
+        $this->click2payFieldBorder = $click2payFieldBorder;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payFieldOutline()
+    {
+        return $this->click2payFieldOutline;
+    }
+
+    /**
+     * @param mixed $click2payFieldOutline
+     */
+    public function setClick2payFieldOutline($click2payFieldOutline): void
+    {
+        $this->click2payFieldOutline = $click2payFieldOutline;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payFieldLabelColor()
+    {
+        return $this->click2payFieldLabelColor;
+    }
+
+    /**
+     * @param mixed $click2payFieldLabelColor
+     */
+    public function setClick2payFieldLabelColor($click2payFieldLabelColor): void
+    {
+        $this->click2payFieldLabelColor = $click2payFieldLabelColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payFieldPlaceholderColor()
+    {
+        return $this->click2payFieldPlaceholderColor;
+    }
+
+    /**
+     * @param mixed $click2payFieldPlaceholderColor
+     */
+    public function setClick2payFieldPlaceholderColor($click2payFieldPlaceholderColor): void
+    {
+        $this->click2payFieldPlaceholderColor = $click2payFieldPlaceholderColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payFieldTextColor()
+    {
+        return $this->click2payFieldTextColor;
+    }
+
+    /**
+     * @param mixed $click2payFieldTextColor
+     */
+    public function setClick2payFieldTextColor($click2payFieldTextColor): void
+    {
+        $this->click2payFieldTextColor = $click2payFieldTextColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payFieldErrorCodeColor()
+    {
+        return $this->click2payFieldErrorCodeColor;
+    }
+
+    /**
+     * @param mixed $click2payFieldErrorCodeColor
+     */
+    public function setClick2payFieldErrorCodeColor($click2payFieldErrorCodeColor): void
+    {
+        $this->click2payFieldErrorCodeColor = $click2payFieldErrorCodeColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payButtonStyle()
+    {
+        return $this->click2payButtonStyle;
+    }
+
+    /**
+     * @param mixed $click2payButtonStyle
+     */
+    public function setClick2payButtonStyle($click2payButtonStyle): void
+    {
+        $this->click2payButtonStyle = $click2payButtonStyle;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payButtonTextCase()
+    {
+        return $this->click2payButtonTextCase;
+    }
+
+    /**
+     * @param mixed $click2payButtonTextCase
+     */
+    public function setClick2payButtonTextCase($click2payButtonTextCase): void
+    {
+        $this->click2payButtonTextCase = $click2payButtonTextCase;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payButtonAndBadgeColor()
+    {
+        return $this->click2payButtonAndBadgeColor;
+    }
+
+    /**
+     * @param mixed $click2payButtonAndBadgeColor
+     */
+    public function setClick2payButtonAndBadgeColor($click2payButtonAndBadgeColor): void
+    {
+        $this->click2payButtonAndBadgeColor = $click2payButtonAndBadgeColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payButtonFilledHoverColor()
+    {
+        return $this->click2payButtonFilledHoverColor;
+    }
+
+    /**
+     * @param mixed $click2payButtonFilledHoverColor
+     */
+    public function setClick2payButtonFilledHoverColor($click2payButtonFilledHoverColor): void
+    {
+        $this->click2payButtonFilledHoverColor = $click2payButtonFilledHoverColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payButtonOutlinedHoverColor()
+    {
+        return $this->click2payButtonOutlinedHoverColor;
+    }
+
+    /**
+     * @param mixed $click2payButtonOutlinedHoverColor
+     */
+    public function setClick2payButtonOutlinedHoverColor($click2payButtonOutlinedHoverColor): void
+    {
+        $this->click2payButtonOutlinedHoverColor = $click2payButtonOutlinedHoverColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payButtonDisabledColor()
+    {
+        return $this->click2payButtonDisabledColor;
+    }
+
+    /**
+     * @param mixed $click2payButtonDisabledColor
+     */
+    public function setClick2payButtonDisabledColor($click2payButtonDisabledColor): void
+    {
+        $this->click2payButtonDisabledColor = $click2payButtonDisabledColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payCardItemActiveColor()
+    {
+        return $this->click2payCardItemActiveColor;
+    }
+
+    /**
+     * @param mixed $click2payCardItemActiveColor
+     */
+    public function setClick2payCardItemActiveColor($click2payCardItemActiveColor): void
+    {
+        $this->click2payCardItemActiveColor = $click2payCardItemActiveColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payButtonAndBadgeTextColor()
+    {
+        return $this->click2payButtonAndBadgeTextColor;
+    }
+
+    /**
+     * @param mixed $click2payButtonAndBadgeTextColor
+     */
+    public function setClick2payButtonAndBadgeTextColor($click2payButtonAndBadgeTextColor): void
+    {
+        $this->click2payButtonAndBadgeTextColor = $click2payButtonAndBadgeTextColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payLinkTextColor()
+    {
+        return $this->click2payLinkTextColor;
+    }
+
+    /**
+     * @param mixed $click2payLinkTextColor
+     */
+    public function setClick2payLinkTextColor($click2payLinkTextColor): void
+    {
+        $this->click2payLinkTextColor = $click2payLinkTextColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payAccentColor()
+    {
+        return $this->click2payAccentColor;
+    }
+
+    /**
+     * @param mixed $click2payAccentColor
+     */
+    public function setClick2payAccentColor($click2payAccentColor): void
+    {
+        $this->click2payAccentColor = $click2payAccentColor;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payFontFamily()
+    {
+        return $this->click2payFontFamily;
+    }
+
+    /**
+     * @param mixed $click2payFontFamily
+     */
+    public function setClick2payFontFamily($click2payFontFamily): void
+    {
+        $this->click2payFontFamily = $click2payFontFamily;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payButtonAndInputRadius()
+    {
+        return $this->click2payButtonAndInputRadius;
+    }
+
+    /**
+     * @param mixed $click2payButtonAndInputRadius
+     */
+    public function setClick2payButtonAndInputRadius($click2payButtonAndInputRadius): void
+    {
+        $this->click2payButtonAndInputRadius = $click2payButtonAndInputRadius;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payCardItemRadius()
+    {
+        return $this->click2payCardItemRadius;
+    }
+
+    /**
+     * @param mixed $click2payCardItemRadius
+     */
+    public function setClick2payCardItemRadius($click2payCardItemRadius): void
+    {
+        $this->click2payCardItemRadius = $click2payCardItemRadius;
+    }
 
     /**
      * @return mixed
@@ -2725,4 +3395,117 @@ class MoptPayoneConfig extends ModelEntity
     public function getGooglepayMerchantName() {
         return $this->googlepayMerchantName;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payVisaSrcInitiatorId()
+    {
+        return $this->click2payVisaSrcInitiatorId;
+    }
+
+    /**
+     * @param mixed $click2payVisaSrcInitiatorId
+     */
+    public function setClick2payVisaSrcInitiatorId($click2payVisaSrcInitiatorId): void
+    {
+        $this->click2payVisaSrcInitiatorId = $click2payVisaSrcInitiatorId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2paySrcDpaId()
+    {
+        return $this->click2paySrcDpaId;
+    }
+
+    /**
+     * @param mixed $click2paySrcDpaId
+     */
+    public function setClick2paySrcDpaId($click2paySrcDpaId): void
+    {
+        $this->click2paySrcDpaId = $click2paySrcDpaId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payVisaEncryptionKey()
+    {
+        return $this->click2payVisaEncryptionKey;
+    }
+
+    /**
+     * @param mixed $click2payVisaEncryptionKey
+     */
+    public function setClick2payVisaEncryptionKey($click2payVisaEncryptionKey): void
+    {
+        $this->click2payVisaEncryptionKey = $click2payVisaEncryptionKey;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payVisaNModulus()
+    {
+        return $this->click2payVisaNModulus;
+    }
+
+    /**
+     * @param mixed $click2payVisaNModulus
+     */
+    public function setClick2payVisaNModulus($click2payVisaNModulus): void
+    {
+        $this->click2payVisaNModulus = $click2payVisaNModulus;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payMasterSrcInitiatorId()
+    {
+        return $this->click2payMasterSrcInitiatorId;
+    }
+
+    /**
+     * @param mixed $click2payMasterSrcInitiatorId
+     */
+    public function setClick2payMasterSrcInitiatorId($click2payMasterSrcInitiatorId): void
+    {
+        $this->click2payMasterSrcInitiatorId = $click2payMasterSrcInitiatorId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payEnableCTP()
+    {
+        return $this->click2payEnableCTP;
+    }
+
+    /**
+     * @param mixed $click2payEnableCTP
+     */
+    public function setClick2payEnableCTP($click2payEnableCTP): void
+    {
+        $this->click2payEnableCTP = $click2payEnableCTP;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getClick2payEnableCustomerOnboarding()
+    {
+        return $this->click2payEnableCustomerOnboarding;
+    }
+
+    /**
+     * @param mixed $click2payEnableCustomerOnboarding
+     */
+    public function setClick2payEnableCustomerOnboarding($click2payEnableCustomerOnboarding): void
+    {
+        $this->click2payEnableCustomerOnboarding = $click2payEnableCustomerOnboarding;
+    }
+
 }

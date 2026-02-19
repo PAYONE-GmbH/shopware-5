@@ -10,7 +10,6 @@
             <option value="3">{s name="fieldvalue/boniversum_basic"}Boniversum Basic{/s}</option>
             <option value="4">{s name="fieldvalue/boniversum_person"}Boniversum Person{/s}</option>
         </select>
-        <span class="bi form-control-feedback bi-remove" aria-hidden="true"></span>
         <div class="help-block with-errors"></div>
     </div>
 </div>

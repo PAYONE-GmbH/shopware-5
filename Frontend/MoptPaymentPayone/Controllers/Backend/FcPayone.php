@@ -16,6 +16,9 @@ require_once 'MoptConfigPayone.php';
  * file that was distributed with this source code.
  */
 
+/**
+ * Class Shopware_Controllers_Backend_FcPayone
+ */
 class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action implements CSRFWhitelistAware
 {
     /**
@@ -39,12 +42,20 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     protected $aMinimumParams = null;
     protected $logging;
 
+    /**
+     * Init controller
+     */
     public function init()
     {
         $this->logging = new Logging();
         $this->logging->lfile(Shopware()->Container()->get('kernel')->getLogDir() . '/moptPayoneConnectionTest.log');
     }
 
+    /**
+     * Returns a list of actions which are allowed to be called without a CSRF token.
+     *
+     * @return array
+     */
     public function getWhitelistedCSRFActions()
     {
         $returnArray = array(
@@ -57,6 +68,7 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
             'unzer',
             'klarna',
             'googlepay',
+            'click2pay',
             'transactionstatusconfig',
             'paymentstatusconfig',
             'paymentstatusconfigData',
@@ -223,8 +235,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     }
 
     /**
-     * @param $params
-     * @return $params
+     * @param array $params
+     * @return array
      */
     private function setTestRequestParams($params)
     {
@@ -247,8 +259,8 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     }
 
     /**
-     * @param $params
-     * @param $paymentFull
+     * @param array $params
+     * @param string $paymentFull
      * @return void
      */
     private function doTestrequest($params, $paymentFull)
@@ -280,9 +292,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
     }
 
     /**
-     * @param $cardType
-     * @param $cardPan
-     * @param $clearingType
+     * @param string $cardType
+     * @param string $cardPan
+     * @param string $clearingType
      * @return void
      */
     public function creditcardCheck($cardType, $cardPan, $clearingType)
@@ -342,6 +354,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $this->doTestrequest($params, $paymentFull);
     }
 
+    /**
+     * @return void
+     */
     public function apilogAction()
     {
         // API Log Entries
@@ -361,6 +376,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         ));
     }
 
+    /**
+     * @return void
+     */
     public function ajaxapilogAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -397,6 +415,9 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         echo $encoded;
     }
 
+    /**
+     * @return void
+     */
     public function ajaxtransactionstatusAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -448,6 +469,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         echo $encoded;
     }
 
+    /**
+     * @return void
+     * @throws \Doctrine\ORM\Exception\NotSupported
+     */
     public function paymentstatusconfigAction()
     {
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
@@ -652,9 +677,12 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
 
     public function generalconfigDataAction()
     {
+        $paymentHelper = new Mopt_PayonePaymentHelper();
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
         $paymentid = $this->Request()->getParam('paymentid');
+        $paymentName = $paymentHelper->getPaymentNameFromId($paymentid);
         $data['data'] = $this->get('MoptPayoneMain')->getPayoneConfig($paymentid, true);
+        $data['paymentName'] = $paymentName;
         $data['status'] = 'success';
         $encoded = json_encode($data);
         echo $encoded;
@@ -704,6 +732,19 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
         $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
         $query = $this->getAllPaymentsQuery(array('name' => 'mopt_payone__ewallet_googlepay%'), null, $repository);
+        $payonepaymentmethods = $query->getArrayResult();
+
+        $this->View()->assign(array(
+            "payonepaymentmethods" => $payonepaymentmethods,
+            "data" => $data,
+        ));
+    }
+
+    public function click2payAction()
+    {
+        $data = $this->get('MoptPayoneMain')->getPayoneConfig(0, true);
+        $repository = Shopware()->Models()->getRepository('Shopware\Models\Payment\Payment');
+        $query = $this->getAllPaymentsQuery(array('name' => 'mopt_payone__ewallet_click2pay%'), null, $repository);
         $payonepaymentmethods = $query->getArrayResult();
 
         $this->View()->assign(array(
@@ -853,6 +894,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         echo $response;
     }
 
+    /**
+     * @param array $options
+     * @return \Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig
+     */
     public function createIframeConfig($options)
     {
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneCreditcardConfig\MoptPayoneCreditcardConfig');
@@ -885,6 +930,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         return $payment;
     }
 
+    /**
+     * @param array $data
+     * @return \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
+     */
     public function createPaypalConfig($data)
     {
         // if new image was uploaded $data['image'] contains the image base64 encoded
@@ -925,6 +974,10 @@ class Shopware_Controllers_Backend_FcPayone extends Enlight_Controller_Action im
         return $payment;
     }
 
+    /**
+     * @param array $options
+     * @return \Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig
+     */
     public function createPayoneConfig($options)
     {
         $repository = Shopware()->Models()->getRepository('Shopware\CustomModels\MoptPayoneConfig\MoptPayoneConfig');

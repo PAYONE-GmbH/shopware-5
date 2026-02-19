@@ -34,6 +34,9 @@ $(".dropdown-menu li a").click(function () {
         success: function (data) {
             response = $.parseJSON(data);
             if (response.status === 'success') {
+                if (typeof(response.paymentName) !== undefined && response.paymentName === 'mopt_payone__ewallet_click2pay' && '{$form}' === '#generalconfigform') {
+                    $('#liveMode').attr('disabled', 'disabled');
+                }
                 populateForm(form, response.data);
                 form.validator('validate');
             }

@@ -3,9 +3,9 @@
 use Shopware\Models\Order\Order;
 
 /**
- * backend controller for payone configuration
+ * Class Shopware_Controllers_Backend_MoptConfigPayone
  *
- * $Id: $
+ * backend controller for payone configuration
  */
 class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers_Backend_ExtJs
 {
@@ -39,7 +39,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     }
 
     /**
-     * get global payone config
+     * @return void
      */
     public function getConfigAction()
     {
@@ -53,8 +53,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     }
 
     /**
-     * Controller action which can be called over an ajax request.
-     * This function can be used to update an existing payment configuration
+     * @return void
      */
     public function updateConfigAction()
     {
@@ -208,8 +207,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     }
 
     /**
-     * get all payments and some additional information
-     * used to fill payment store
+     * @return void
      */
     public function getPaymentsAction()
     {
@@ -236,7 +234,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     }
 
     /**
-     * get pament config action, returns config according to submitted payment id
+     * @return void
      */
     public function getPaymentConfigAction()
     {
@@ -251,7 +249,7 @@ class Shopware_Controllers_Backend_MoptConfigPayone extends Shopware_Controllers
     }
 
     /**
-     * retrieve all possible payment states a order may have for transaction status mapping
+     * @return void
      */
     public function readPaymentStateAction()
     {

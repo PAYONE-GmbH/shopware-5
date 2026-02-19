@@ -5,11 +5,12 @@ use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\Payo
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
 /**
+ * Class Shopware_Controllers_Frontend_MoptAjaxPayone
+ *
  * Integrate Payone protect and Ajax call handling
  */
 class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Action implements CSRFWhitelistAware
 {
-
     /**
      * Reference to sAdmin object (core/class/sAdmin.php)
      *
@@ -35,9 +36,6 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     protected $session;
 
     /**
-     * Init method that get called automatically
-     * Set class properties
-     *
      * @return void
      */
     public function init()
@@ -49,7 +47,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     }
 
     /**
-     * Ask user wether to keep original submittted or corrected values
+     * @return void
      */
     public function ajaxGetConsumerScoreUserAgreementAction()
     {
@@ -72,7 +70,7 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     }
 
     /**
-     * ask user wether to keep original submittted or newly chosen payment method
+     * @return void
      */
     public function ajaxVerifyPaymentAction()
     {
@@ -81,6 +79,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
         $this->View()->moptCheckedId = $this->Request()->getParam('moptCheckedId');
     }
 
+    /**
+     * @return void
+     */
     public function checkConsumerScoreAction()
     {
         $this->Front()->Plugins()->ViewRenderer()->setNoRender();
@@ -1095,6 +1096,25 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         $this->session->offsetSet('mopt_klarna_authorization_token', $token);
         $this->session->offsetSet('mopt_klarna_finalize_required', $finalizeRequired);
+    }
+
+    protected function storeClick2payDataAction()
+    {
+        $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
+
+        $token = $this->request->getParam('token');
+        $cardholderName = $this->request->getParam('cardholderName');
+        $cardNumber = $this->request->getParam('cardNumber');
+        $expiryDate = $this->request->getParam('expiryDate');
+        $cardType = $this->request->getParam('cardType');
+        $cardInputMode = $this->request->getParam('cardInputMode');
+
+        $this->session->offsetSet('mopt_click2pay_token', $token);
+        $this->session->offsetSet('mopt_click2pay_cardholderName', $cardholderName);
+        $this->session->offsetSet('mopt_click2pay_cardNumber', $cardNumber);
+        $this->session->offsetSet('mopt_click2pay_expiryDate', $expiryDate);
+        $this->session->offsetSet('mopt_click2pay_cardType', $cardType);
+        $this->session->offsetSet('mopt_click2pay_cardInputMode', $cardInputMode);
     }
 
     public function startKlarnaSessionAction()

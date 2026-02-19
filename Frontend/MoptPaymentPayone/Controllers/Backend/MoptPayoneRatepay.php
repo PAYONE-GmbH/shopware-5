@@ -9,9 +9,20 @@ use Shopware\Components\CSRFWhitelistAware;
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneEnums;
 use Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneRequest;
 
-class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware {
+/**
+ * Class Shopware_Controllers_Backend_MoptPayoneRatepay
+ */
+class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controllers_Backend_Application implements CSRFWhitelistAware
+{
 
+    /**
+     * @var string
+     */
     protected $model = 'Shopware\CustomModels\MoptPayoneRatepay\MoptPayoneRatepay';
+
+    /**
+     * @var string
+     */
     protected $alias = 'moptPayoneRatepay';
 
     /**
@@ -19,7 +30,10 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
      * @var Mopt_PayoneMain
      */
     protected $moptPayoneMain = null;
-    
+
+    /**
+     * @return array
+     */
     public function getWhitelistedCSRFActions()
     {
         $returnArray = array(
@@ -29,6 +43,9 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         return $returnArray;
     }
 
+    /**
+     * @return \Shopware\Components\Model\QueryBuilder
+     */
     protected function getListQuery()
     {
         $builder = parent::getListQuery();
@@ -37,6 +54,10 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         return $builder;
     }
 
+    /**
+     * @param int $id
+     * @return \Shopware\Components\Model\QueryBuilder
+     */
     protected function getDetailQuery($id)
     {
         $builder = parent::getDetailQuery($id);
@@ -44,8 +65,11 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         $builder->addSelect(array('currency'));
         return $builder;
     }
-    
-    
+
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function downloadRatepayConfigsAction()
     {
         $this->Front()->Plugins()->Json()->setRenderer(true);
@@ -101,7 +125,10 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         echo $encoded;
         exit();
     }
-    
+
+    /**
+     * @return void
+     */
     public function saveRatepayConfigsAction()
     {
         $this->Front()->Plugins()->Json()->setRenderer(true);
@@ -157,6 +184,9 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
         exit();
     }
 
+    /**
+     * @return void
+     */
     public function downloadConfigAction()
     {
         $configId = $this->Request()->getParam('configId');
@@ -210,9 +240,10 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
     }
 
     /**
-     * @param $ratePayShopId
-     * @param $currency
-     * @return
+     * @param string $ratePayShopId
+     * @param string $currency
+     * @param int $paymentRatepayId
+     * @return array
      * @throws Exception
      */
     protected function requestRatePayConfigFromApi($ratePayShopId, $currency, $paymentRatepayId)
@@ -243,13 +274,13 @@ class Shopware_Controllers_Backend_MoptPayoneRatepay extends Shopware_Controller
     }
 
     /**
-     * @param $config
-     * @param $clearingType
-     * @param $financetype
-     * @param $paymenttype
-     * @param $ratePayShopId
-     * @param $currency
-     * @return mixed
+     * @param array $config
+     * @param string $clearingType
+     * @param string $financetype
+     * @param string $paymenttype
+     * @param string $ratePayShopId
+     * @param string $currency
+     * @return \Shopware\Plugins\Community\Frontend\MoptPaymentPayone\Components\Payone\PayoneResponse
      */
     protected function buildAndCallRatepayProfile(
         $config,
