@@ -176,6 +176,8 @@ class Mopt_PayoneConfig
 
     const PAYMENTS_SHIPPINGPAYMENT_REQUIRED = [
         'mopt_payone__fin_kis_klarna_installments',
+        'mopt_payone__fin_kiv_klarna_invoice',
+        'mopt_payone__fin_kdd_klarna_direct_debit',
         'mopt_payone__fin_paypal_installment',
         'mopt_payone__fin_payolution_installment',
         'mopt_payone__fin_ratepay_installment',
