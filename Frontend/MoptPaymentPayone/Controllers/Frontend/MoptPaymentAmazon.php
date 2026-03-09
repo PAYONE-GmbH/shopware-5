@@ -261,8 +261,8 @@ class Shopware_Controllers_Frontend_MoptPaymentAmazon extends Shopware_Controlle
             $sql = 'UPDATE `s_order_attributes` ' .
                 'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, mopt_payone_payment_reference=?, '
                 . 'mopt_payone_order_hash=?, mopt_payone_payolution_workorder_id=?,  mopt_payone_payolution_clearing_reference=?  WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array($txid, $this->session->moptIsAuthorized,
-                $this->session->moptPaymentReference, $this->session->moptOrderHash, $this->session->moptPayoneAmazonWorkOrderId, $this->session->moptPayoneAmazonReferenceId, $orderId));
+            Shopware()->Db()->query($sql, [$txid, $this->session->moptIsAuthorized,
+                $this->session->moptPaymentReference, $this->session->moptOrderHash, $this->session->moptPayoneAmazonWorkOrderId, $this->session->moptPayoneAmazonReferenceId, $orderId]);
 
             if ($this->session->moptIsAuthorized === true) {
                 $order = Shopware()->Models()->getRepository('Shopware\Models\Order\Order')->findOneBy(['transactionId' => $txid]);

@@ -150,11 +150,10 @@ class Mopt_PayoneInstallHelper
     public function updatePayolutionAuthSettings()
     {
         $moptPayonePaymentHelper = new Mopt_PayonePaymentHelper();
-        $sql = 'SELECT payment_id, authorisation_method FROM s_plugin_mopt_payone_config;';
+        $sql = 'SELECT `payment_id`, `authorisation_method` FROM `s_plugin_mopt_payone_config`;';
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() > 0) {
-
             $resultArr = $result->fetchAll();
             foreach ($resultArr as $value) {
                 $paymentId = $value['payment_id'];
@@ -165,8 +164,8 @@ class Mopt_PayoneInstallHelper
                     if ($authMethod == 'Vorautorisierung') {
                         // nothing to do
                     } else {
-                        $updateSQl = "UPDATE s_plugin_mopt_payone_config SET authorisation_method = \"Vorautorisierung\" WHERE payment_id = $paymentId;";
-                        Shopware()->Db()->query($updateSQl);
+                        $updateSQl = "UPDATE `s_plugin_mopt_payone_config` SET `authorisation_method` = \"Vorautorisierung\" WHERE `payment_id` = ?";
+                        Shopware()->Db()->query($updateSQl, [$paymentId] );
                     }
                 }
             }
@@ -675,12 +674,11 @@ class Mopt_PayoneInstallHelper
     public function moptConfigChangeOrderOnTXSExist()
     {
         $DBConfig = Shopware()->Db()->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND TABLE_NAME='s_plugin_mopt_payone_config'
-                AND COLUMN_NAME ='change_order_on_txs'";
-
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_SCHEMA` = ?
+                AND `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `COLUMN_NAME`= 'change_order_on_txs'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']] );
 
         return $result->rowCount() !== 0;
     }
@@ -691,12 +689,12 @@ class Mopt_PayoneInstallHelper
     public function moptConfigTransactionTimeoutExist()
     {
         $DBConfig = Shopware()->Db()->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND TABLE_NAME='s_plugin_mopt_payone_config'
-                AND COLUMN_NAME ='trans_timeout'";
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_SCHEMA` = ? 
+                AND `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `COLUMN_NAME` = 'trans_timeout'";
         try {
-            $result = Shopware()->Db()->query($sql);
+            $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
             return $result->rowCount() !== 0;
         } catch (Zend_Db_Statement_Exception $e) {
@@ -710,12 +708,12 @@ class Mopt_PayoneInstallHelper
     public function moptConfigTransactionTimeoutRaiseExist()
     {
         $DBConfig = Shopware()->Db()->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND TABLE_NAME='s_plugin_mopt_payone_config'
-                AND COLUMN_NAME ='trans_timeout_raise'";
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_SCHEMA` = ? 
+                AND `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `COLUMN_NAME` = 'trans_timeout_raise'";
         try {
-            $result = Shopware()->Db()->query($sql);
+            $result = Shopware()->Db()->query($sql,[$DBConfig['dbname']]);
 
             return $result->rowCount() !== 0;
         } catch (Zend_Db_Statement_Exception $e) {
@@ -729,12 +727,12 @@ class Mopt_PayoneInstallHelper
     public function moptConfigTransactionTrialsExist()
     {
         $DBConfig = Shopware()->Db()->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND TABLE_NAME='s_plugin_mopt_payone_config'
-                AND COLUMN_NAME ='trans_max_trials'";
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_SCHEMA` = ?
+                AND `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `COLUMN_NAME` = 'trans_max_trials'";
         try {
-            $result = Shopware()->Db()->query($sql);
+            $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
             return $result->rowCount() !== 0;
         } catch (Zend_Db_Statement_Exception $e) {
@@ -770,22 +768,15 @@ class Mopt_PayoneInstallHelper
      */
     public function moptExtendConfigPayolutionDataTable()
     {
-        $sql = "SELECT value FROM s_core_config_values "
-            . "WHERE element_id = '893';";
+        $sql = "SELECT `value` FROM `s_core_config_values` WHERE `element_id` = '893';";
         $result = Shopware()->Db()->query($sql);
         $serializedCompanyName = $result->fetchColumn(0);
         $companyName = unserialize((string)$serializedCompanyName);
-        if ($companyName) {
-            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT '" . $companyName . "' ,"
-                . "ADD COLUMN payolution_b2bmode TINYINT(1) NOT NULL DEFAULT 1;";
-        } else {
-            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN payolution_company_name VARCHAR(255) DEFAULT 'Ihr Firmenname' ,"
-                . "ADD COLUMN payolution_b2bmode TINYINT(1) NOT NULL DEFAULT 1;";
-        }
-
-        Shopware()->Db()->exec($sql);
+        $companyName = $companyName ? $companyName : 'Ihr Firmenname';
+        $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
+            . "ADD COLUMN `payolution_company_name` VARCHAR(255) DEFAULT ?,"
+            . "ADD COLUMN `payolution_b2bmode` TINYINT(1) NOT NULL DEFAULT 1;";
+        Shopware()->Db()->query($sql, [$companyName]);
     }
 
     /**
@@ -794,7 +785,7 @@ class Mopt_PayoneInstallHelper
     public function fcExtendConfigShowBicDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-            . "ADD COLUMN show_bic TINYINT(1) NOT NULL DEFAULT 0;";
+            . "ADD COLUMN `show_bic` TINYINT(1) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -804,7 +795,7 @@ class Mopt_PayoneInstallHelper
     public function fcExtendConfigShowSofortIbanBicDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-            . "ADD COLUMN show_sofort_iban_bic TINYINT(1) NOT NULL DEFAULT 1;";
+            . "ADD COLUMN `show_sofort_iban_bic` TINYINT(1) NOT NULL DEFAULT 1;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -814,7 +805,7 @@ class Mopt_PayoneInstallHelper
     public function fcExtendConfigRatepayInstallmentModeDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_ratepay` "
-            . "ADD COLUMN ratepay_installment_mode TINYINT(1) NOT NULL DEFAULT 0;";
+            . "ADD COLUMN `ratepay_installment_mode` TINYINT(1) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -824,7 +815,7 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigSaveTermsDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-            . "ADD COLUMN save_terms VARCHAR(255) DEFAULT 0;";
+            . "ADD COLUMN `save_terms` VARCHAR(255) DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -834,7 +825,7 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigPaypalEcsDataTable()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-            . "ADD COLUMN paypal_ecs_active TINYINT(1) NOT NULL DEFAULT 0;";
+            . "ADD COLUMN `paypal_ecs_active` TINYINT(1) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -844,7 +835,7 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigCreditcardMinValidDays()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-            . "ADD COLUMN creditcard_min_valid INT(11) NOT NULL DEFAULT 0;";
+            . "ADD COLUMN `creditcard_min_valid` INT(11) NOT NULL DEFAULT 0;";
         Shopware()->Db()->exec($sql);
     }
 
@@ -854,9 +845,9 @@ class Mopt_PayoneInstallHelper
     public function moptExtendConfigAddressCheckCountries()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-            . "ADD COLUMN adresscheck_billing_countries VARCHAR(255);";
+            . "ADD COLUMN `adresscheck_billing_countries` VARCHAR(255);";
         $sql1 = "ALTER TABLE `s_plugin_mopt_payone_config` "
-            . "ADD COLUMN adresscheck_shipping_countries VARCHAR(255);";
+            . "ADD COLUMN `adresscheck_shipping_countries` VARCHAR(255);";
         Shopware()->Db()->exec($sql);
         Shopware()->Db()->exec($sql1);
     }
@@ -866,11 +857,10 @@ class Mopt_PayoneInstallHelper
      */
     public function createDocumentTemplates()
     {
-        $sql = 'SELECT * FROM s_core_documents_box WHERE name = ? OR name = ?';
+        $sql = 'SELECT * FROM `s_core_documents_box` WHERE `name` = ? OR `name` = ?';
         $result = Shopware()->Db()->query($sql, ['PAYONE_Footer', 'PAYONE_Content_Info']);
 
         if ($result->rowCount() < 2) {
-
             $sql = "
             INSERT INTO `s_core_documents_box` (`documentID`, `name`, `style`, `value`) VALUES
             (1, 'PAYONE_Footer', :footerStyle, :footerValue),
@@ -896,7 +886,7 @@ class Mopt_PayoneInstallHelper
      */
     public function removeDocumentTemplates()
     {
-        $sql = "DELETE FROM s_core_documents_box WHERE `name` LIKE 'PAYONE%'";
+        $sql = "DELETE FROM `s_core_documents_box` WHERE `name` LIKE 'PAYONE%'";
         Shopware()->Db()->query($sql);
     }
 
@@ -906,7 +896,7 @@ class Mopt_PayoneInstallHelper
      */
     public function moptInsertEmptyConfigIfNotExists()
     {
-        $sql = 'SELECT id FROM s_plugin_mopt_payone_config WHERE payment_id = 0;';
+        $sql = 'SELECT `id` FROM `s_plugin_mopt_payone_config` WHERE `payment_id` = 0;';
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
@@ -921,7 +911,7 @@ class Mopt_PayoneInstallHelper
         }
 
         // insert default values for creditcard config
-        $sql = 'SELECT id FROM s_plugin_mopt_payone_creditcard_config';
+        $sql = 'SELECT `id` FROM s_plugin_mopt_payone_creditcard_config';
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
@@ -932,7 +922,7 @@ class Mopt_PayoneInstallHelper
         }
 
         // insert default values for amazon
-        $sql = 'SELECT id FROM s_plugin_mopt_payone_amazon_pay';
+        $sql = 'SELECT `id` FROM s_plugin_mopt_payone_amazon_pay';
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
@@ -951,10 +941,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='show_accountnumber'";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'show_accountnumber'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -972,10 +963,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='map_unknown_return_value'";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'map_unknown_return_value'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -993,10 +985,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='klarna_store_id'";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'klarna_store_id'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -1014,10 +1007,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='payolution_company_name';";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'payolution_company_name';";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -1035,10 +1029,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='show_bic';";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'show_bic';";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -1056,10 +1051,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='show_sofort_iban_bic';";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'show_sofort_iban_bic';";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -1077,10 +1073,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_ratepay'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='ratepay_installment_mode';";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_ratepay'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'ratepay_installment_mode';";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -1098,10 +1095,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='save_terms'";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'save_terms'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -1119,10 +1117,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='paypal_ecs_active'";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'paypal_ecs_active'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -1140,13 +1139,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_transaction_log'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='order_nr'";
-        $result = Shopware()->Db()->query($sql);
-        //$sql1    = "SHOW FIELDS FROM s_plugin_mopt_payone_transaction_log WHERE Field='order_nr'";
-        //$sql2    = "describe ". $DBConfig['dbname'] .".s_plugin_mopt_payone_transaction_log order_nr";
-
+        $sql = "SELECT `DATA_TYPE` FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_transaction_log'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'order_nr'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
         $type = $result->fetch();
 
         if ($type['DATA_TYPE'] === 'int') {
@@ -1165,10 +1162,11 @@ class Mopt_PayoneInstallHelper
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='creditcard_min_valid'";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'creditcard_min_valid'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -1184,20 +1182,19 @@ class Mopt_PayoneInstallHelper
      */
     public function checkAndUpdateBoniversumConfigModelExtension()
     {
-        $db = Shopware()->Db();
+        $DBConfig = Shopware()->Db()->getConfig();
 
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='consumerscore_boniversum_unknown'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ? 
+                AND `COLUMN_NAME` = 'consumerscore_boniversum_unknown'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN consumerscore_boniversum_unknown INT(11) NOT NULL DEFAULT 2;";
+                . "ADD COLUMN `consumerscore_boniversum_unknown` INT(11) NOT NULL DEFAULT 2;";
 
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
     }
 
@@ -1208,36 +1205,30 @@ class Mopt_PayoneInstallHelper
      */
     public function checkAndUpdateFailedStatusConfigModelExtension()
     {
-        $db = Shopware()->Db();
+        $DBConfig = Shopware()->Db()->getConfig();
 
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='state_failed'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'state_failed'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN state_failed INT(11) NULL DEFAULT NULL;";
-
-            $db->exec($sql);
+                . "ADD COLUMN `state_failed` INT(11) NULL DEFAULT NULL;";
+            Shopware()->Db()->exec($sql);
         }
 
-        $db = Shopware()->Db();
-
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='trans_failed'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'trans_failed'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']] );
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
                 . "ADD COLUMN trans_failed LONGTEXT NULL DEFAULT NULL;";
-
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
     }
 
@@ -1249,24 +1240,19 @@ class Mopt_PayoneInstallHelper
      */
     public function checkAndInsertFailedStatusEmailTemplate()
     {
-        $db = Shopware()->Db();
-
         $sql = "SELECT * FROM s_core_states
                 WHERE  id = 121";
-        $result = $db->query($sql);
+        $result =  Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
             $sql = '
-            INSERT INTO `s_core_states` (`id`, `name`, `description`, `position`, `group`, `mail`) VALUES
-            
-            (121, "amazon_failed", "Amazon Failed",121, "payment", 0);
-            ';
-            $db->exec($sql);
+            INSERT INTO `s_core_states` (`id`, `name`, `description`, `position`, `group`, `mail`) VALUES            
+            (121, "amazon_failed", "Amazon Failed",121, "payment", 0);';
+            Shopware()->Db()->exec($sql);
         }
 
-        $sql = "SELECT * FROM s_core_config_mails
-                WHERE  stateId = 121";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM s_core_config_mails WHERE  stateId = 121";
+        $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
             $sql = '
@@ -1279,22 +1265,19 @@ Sehr geehrter Kunde,\n\n
 Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=shopName} von Amazon Pay zurückgewiesen. Bitte kontaktieren Sie uns.\r\n\r\n
 {include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
             ';
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
 
         if (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') ||
             Shopware()->Config()->get('version') == '__VERSION___') {
             $sql = "SELECT * FROM s_core_snippets
                 WHERE  name = 'amazon_failed' AND namespace = 'backend/static/payment_status'";
-            $result = $db->query($sql);
+            $result = Shopware()->Db()->query($sql);
 
             if ($result->rowCount() === 0) {
-                $sql = '
-            INSERT INTO `s_core_snippets` (`namespace`, `shopID`, `localeID`, `name`, `value` ) VALUES
-            
-            ("backend/static/payment_status",1 , 1, "amazon_failed", "Amazon Failed");
-            ';
-                $db->exec($sql);
+                $sql = 'INSERT INTO `s_core_snippets` (`namespace`, `shopID`, `localeID`, `name`, `value` ) VALUES
+                    ("backend/static/payment_status",1 , 1, "amazon_failed", "Amazon Failed");';
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -1307,24 +1290,21 @@ Leider wurde die Zahlung zu Ihrer Bestellung in unserem Onlineshop {config name=
      */
     public function checkAndInsertDelayedStatusEmailTemplate()
     {
-        $db = Shopware()->Db();
-
         $sql = "SELECT * FROM s_core_states
                 WHERE  id = 119";
-        $result = $db->query($sql);
+        $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
             $sql = '
             INSERT INTO `s_core_states` (`id`, `name`, `description`, `position`, `group`, `mail`) VALUES
-            
             (119, "amazon_delayed", "Amazon Delayed",119, "payment", 0);
             ';
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
 
         $sql = "SELECT * FROM s_core_config_mails
                 WHERE  stateId = 119";
-        $result = $db->query($sql);
+        $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
             $sql = '
@@ -1342,22 +1322,21 @@ Zahlungsweise angeben. Mit der neuen Zahlungsweise wird dann ein erneuter
 Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 {include file=\"string:{config name = emailfooterplain}\"}\', \'\', 0, \'\', 3, NULL, 0);
             ';
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
 
         if (version_compare(Shopware()->Config()->get('version'), '5.5.0', '>=') ||
             Shopware()->Config()->get('version') == '__VERSION___') {
             $sql = "SELECT * FROM s_core_snippets
                 WHERE  name = 'amazon_delayed' AND namespace = 'backend/static/payment_status'";
-            $result = $db->query($sql);
+            $result = Shopware()->Db()->query($sql);
 
             if ($result->rowCount() === 0) {
                 $sql = '
             INSERT INTO `s_core_snippets` (`namespace`, `shopID`, `localeID`, `name`, `value` ) VALUES
-            
             ("backend/static/payment_status",1 , 1, "amazon_delayed", "Amazon Delayed");
             ';
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
 
@@ -1370,9 +1349,9 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function moptGetConfigurationLabelName()
     {
-        $sql = "SELECT id FROM s_core_menu
-                WHERE name = 'Konfiguration'
-                AND controller <> 'MoptConfigPayone'";
+        $sql = "SELECT `id` FROM `s_core_menu`
+                WHERE `name` = 'Konfiguration'
+                AND `controller` <> 'MoptConfigPayone'";
         $result = Shopware()->Db()->query($sql);
 
         if ($result->rowCount() === 0) {
@@ -1384,7 +1363,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
 
     public function updateTransactionLogModel()
     {
-        $sql = 'alter table s_plugin_mopt_payone_transaction_log change order_nr order_nr varchar(100)';
+        $sql = 'ALTER TABLE `s_plugin_mopt_payone_transaction_log` change order_nr order_nr varchar(100)';
         Shopware()->Db()->query($sql);
     }
 
@@ -1392,129 +1371,120 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "select CONSTRAINT_NAME from "
-            . "information_schema.key_column_usage where "
-            . "table_schema = '" . $DBConfig['dbname'] . "' and "
-            . "table_name = 's_plugin_mopt_payone_creditcard_config' and column_name = 'error_locale_id';";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT CONSTRAINT_NAME from `information_schema`.`key_column_usage` where `table_schema` = ? 
+            AND `table_name` = 's_plugin_mopt_payone_creditcard_config' and `column_name` = 'error_locale_id'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
 
         if ($result->rowCount() === 1) {
             $constraint = $result->fetch();
 
             try {
-                $sqlUpdate = 'ALTER TABLE s_plugin_mopt_payone_creditcard_config DROP INDEX '
-                    . $constraint['CONSTRAINT_NAME'] . ';';
-                Shopware()->Db()->query($sqlUpdate);
+                $sqlUpdate = 'ALTER TABLE `s_plugin_mopt_payone_creditcard_config` DROP INDEX ?';
+                Shopware()->Db()->query($sqlUpdate, [$constraint['CONSTRAINT_NAME']]);
             } catch (Exception $exc) {
                 $logger->error('removing unique index from '
                     . 's_plugin_mopt_payone_creditcard_config.error_locale_id failed', $exc->getMessage());
             }
         }
 
-        $sqlColumn = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_creditcard_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='is_default'";
-        $resultColumn = Shopware()->Db()->query($sqlColumn);
+        $sqlColumn = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_creditcard_config'
+                AND `TABLE_SCHEMA` = ? 
+                AND `COLUMN_NAME` ='is_default'";
+        $resultColumn = Shopware()->Db()->query($sqlColumn, [$DBConfig['dbname']]);
 
         if ($resultColumn->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config` "
-                . "ADD COLUMN is_default TINYINT(1) DEFAULT 0;";
+                . "ADD COLUMN `is_default` TINYINT(1) DEFAULT 0;";
             Shopware()->Db()->exec($sql);
         }
     }
 
     public function checkAndUpdateCreditcardConfigModelExtension()
     {
-        $db = Shopware()->Db();
+        $DBConfig = Shopware()->Db()->getConfig();
 
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_creditcard_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='merchant_id'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_creditcard_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` ='merchant_id'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config` "
-                . "ADD COLUMN merchant_id INT(11) NOT NULL DEFAULT 0,"
-                . "ADD COLUMN portal_id INT(11) NOT NULL DEFAULT 0,"
-                . "ADD COLUMN subaccount_id INT(11) NOT NULL DEFAULT 0,"
-                . "ADD COLUMN api_key VARCHAR(100) NOT NULL,"
-                . "ADD COLUMN live_mode TINYINT(1) NOT NULL DEFAULT 0,"
-                . "ADD COLUMN check_cc TINYINT(1) NOT NULL DEFAULT 1,"
-                . "ADD COLUMN creditcard_min_valid INT(11) DEFAULT 0;";
+                . "ADD COLUMN `merchant_id` INT(11) NOT NULL DEFAULT 0,"
+                . "ADD COLUMN `portal_id` INT(11) NOT NULL DEFAULT 0,"
+                . "ADD COLUMN `subaccount_id` INT(11) NOT NULL DEFAULT 0,"
+                . "ADD COLUMN `api_key` VARCHAR(100) NOT NULL,"
+                . "ADD COLUMN `live_mode` TINYINT(1) NOT NULL DEFAULT 0,"
+                . "ADD COLUMN `check_cc` TINYINT(1) NOT NULL DEFAULT 1,"
+                . "ADD COLUMN `creditcard_min_valid` INT(11) DEFAULT 0;";
 
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
     }
 
     public function checkAndUpdateCreditcardModelIframeExtension()
     {
-        $db = Shopware()->Db();
+        $DBConfig = Shopware()->Db()->getConfig();
 
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_creditcard_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='default_translation_iframe_month1'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_NAME`='s_plugin_mopt_payone_creditcard_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` ='default_translation_iframe_month1'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config` "
-                . "ADD COLUMN default_translation_iframe_month1 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month2 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month3 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month4 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month5 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month6 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month7 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month8 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month9 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month10 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month11 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframe_month12 VARCHAR(40) NULL,"
-                . "ADD COLUMN default_translation_iframeinvalid_cardpan VARCHAR(255) NULL,"
-                . "ADD COLUMN default_translation_iframeinvalid_cvc VARCHAR(255) NULL,"
-                . "ADD COLUMN default_translation_iframeinvalid_pan_for_cardtype VARCHAR(255) NULL,"
-                . "ADD COLUMN default_translation_iframeinvalid_cardtype VARCHAR(255) NULL,"
-                . "ADD COLUMN default_translation_iframeinvalid_expire_date VARCHAR(255) NULL,"
-                . "ADD COLUMN default_translation_iframeinvalid_issue_number VARCHAR(255) NULL,"
-                . "ADD COLUMN default_translation_iframetransaction_rejected VARCHAR(255) NULL,"
-                . "ADD COLUMN default_translation_iframe_cardpan VARCHAR(255) NULL,"
-                . "ADD COLUMN default_translation_iframe_cvc VARCHAR(255) NULL;";
-            $db->exec($sql);
+                . "ADD COLUMN `default_translation_iframe_month1` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month2` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month3` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month4` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month5` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month6` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month7` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month8` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month9` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month10` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month11` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframe_month12` VARCHAR(40) NULL,"
+                . "ADD COLUMN `default_translation_iframeinvalid_cardpan` VARCHAR(255) NULL,"
+                . "ADD COLUMN `default_translation_iframeinvalid_cvc` VARCHAR(255) NULL,"
+                . "ADD COLUMN `default_translation_iframeinvalid_pan_for_cardtype` VARCHAR(255) NULL,"
+                . "ADD COLUMN `default_translation_iframeinvalid_cardtype` VARCHAR(255) NULL,"
+                . "ADD COLUMN `default_translation_iframeinvalid_expire_date` VARCHAR(255) NULL,"
+                . "ADD COLUMN `default_translation_iframeinvalid_issue_number` VARCHAR(255) NULL,"
+                . "ADD COLUMN `default_translation_iframetransaction_rejected` VARCHAR(255) NULL,"
+                . "ADD COLUMN `default_translation_iframe_cardpan` VARCHAR(255) NULL,"
+                . "ADD COLUMN `default_translation_iframe_cvc` VARCHAR(255) NULL;";
+            Shopware()->Db()->exec($sql);
         }
     }
 
     public function checkAndUpdateConfigModelPayolutionInstallmentExtension()
     {
-        $db = Shopware()->Db();
+        $DBConfig = Shopware()->Db()->getConfig();
 
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='payolution_draft_user'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_NAME`='s_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` ='payolution_draft_user'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `payolution_draft_user` VARCHAR(255) NULL AFTER `payolution_b2bmode`,
                    ADD `payolution_draft_password` VARCHAR(255) NULL AFTER `payolution_draft_user`;";
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
     }
 
     public function checkAndUpdateConfigModelRatepayExtension()
     {
-        $db = Shopware()->Db();
+        $DBConfig = Shopware()->Db()->getConfig();
 
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_ratepay'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='id'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_NAME`='s_plugin_mopt_payone_ratepay'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'id'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "CREATE TABLE IF NOT EXISTS `s_plugin_mopt_payone_ratepay`(
@@ -1576,7 +1546,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
             `tx_limit_prepayment_max` DOUBLE NULL,
             `tx_limit_prepayment_min` DOUBLE NULL,
             `valid_payment_firstdays` TINYINT(2) NULL;";
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
     }
 
@@ -1588,10 +1558,10 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     {
         $DBConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_api_log'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='transaction_id';";
-        $result = Shopware()->Db()->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_NAME`='s_plugin_mopt_payone_api_log'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'transaction_id';";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             return false;
@@ -1606,60 +1576,55 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function extendPayoneApiLogTransactionId()
     {
         $sql = "ALTER TABLE `s_plugin_mopt_payone_api_log` "
-            . "ADD COLUMN transaction_id VARCHAR(255);";
+            . "ADD COLUMN `transaction_id` VARCHAR(255);";
         Shopware()->Db()->exec($sql);
     }
 
     public function checkAndUpdateConsumerscoreExtension()
     {
-        $db = Shopware()->Db();
+        $DBConfig = Shopware()->Db()->getConfig();
 
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='consumerscore_check_mode_b2b'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_NAME`='s_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` ='consumerscore_check_mode_b2b'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `consumerscore_check_mode_b2b` VARCHAR(4) NOT NULL DEFAULT 'NO';";
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` CHANGE `consumerscore_check_mode` `consumerscore_check_mode_b2c` VARCHAR(4);";
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
     }
 
     public function checkAndUpdateSendOrderNumberAsReferenceExtension()
     {
-        $db = Shopware()->Db();
+        $DBConfig = Shopware()->Db()->getConfig();
 
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='send_ordernumber_as_reference'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_NAME`='s_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` ='send_ordernumber_as_reference'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `send_ordernumber_as_reference` TINYINT(1) NULL DEFAULT 1;";
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
     }
 
     public function checkAndUpdateTransLoggingExtension()
     {
-        $db = Shopware()->Db();
+        $DBConfig = Shopware()->Db()->getConfig();
 
-        $DBConfig = $db->getConfig();
-
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='trans_logging'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'trans_logging'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` ADD `trans_logging` TINYINT(1) NOT NULL DEFAULT 0;";
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
     }
 
@@ -1670,17 +1635,18 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndUpdateAmazonPackStationModelExtension()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_amazon_pay'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='pack_station_mode'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_amazon_pay'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'pack_station_mode'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_amazon_pay` "
-                . "ADD COLUMN pack_station_mode VARCHAR(50) DEFAULT 'allow';";
-            $db->exec($sql);
+                . "ADD COLUMN `pack_station_mode` VARCHAR(50) DEFAULT 'allow';";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -1692,22 +1658,20 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndUpdatePayPalPackStationModelExtension()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='pack_station_mode'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_paypal'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'pack_station_mode'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_paypal` "
-                . "ADD COLUMN pack_station_mode VARCHAR(50) DEFAULT 'allow';";
-            $db->exec($sql);
+                . "ADD COLUMN `pack_station_mode` VARCHAR(50) DEFAULT 'allow';";
+            Shopware()->Db()->exec($sql);
 
-            $sql = "UPDATE s_plugin_mopt_payone_paypal SET pack_station_mode = 'allow';";
-            $db->exec($sql);
-
-
+            $sql = "UPDATE `s_plugin_mopt_payone_paypal` SET `pack_station_mode` = 'allow';";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -1722,20 +1686,18 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndAddAutoCardtypeDetectionColumn()
     {
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_creditcard_config'
-                AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                AND COLUMN_NAME = 'auto_cardtype_detection'";
-
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_creditcard_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'auto_cardtype_detection'";
+        $result = Shopware()->Db()->query($sql, [$dbConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_creditcard_config`
                     ADD COLUMN `auto_cardtype_detection` BOOLEAN NULL;";
-
-            $db->exec($sql);
+            Shopware()->Db()->exec($sql);
         }
     }
 
@@ -1750,21 +1712,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddReminderLevelColumns()
     {
         $reminderLevels = ['2', '3', '4', '5', 'A', 'S', 'M', 'I'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($reminderLevels AS $reminderLevel) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = 'state_reminder$reminderLevel'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], "state_reminder$reminderLevel"]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `state_reminder$reminderLevel` INT(11) NULL;";
-
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -1776,17 +1736,17 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndAddRatepaySnippetIdColumn()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='ratepay_snippet_id'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'ratepay_snippet_id'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN ratepay_snippet_id VARCHAR(50) DEFAULT 'ratepay';";
-            $db->exec($sql);
+                . "ADD COLUMN `ratepay_snippet_id` VARCHAR(50) DEFAULT 'ratepay';";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -1803,35 +1763,36 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     {
         $textColumns = ['applepay_merchant_id', 'applepay_certificate', 'applepay_private_key', 'applepay_private_key_password'];
         $tinyIntColumns = ['applepay_visa', 'applepay_mastercard', 'applepay_girocard', 'applepay_amex', 'applepay_discover', 'applepay_debug'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
 
-            $result = $db->query($sql);
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
 
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
 
         foreach ($tinyIntColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
 
-            $result = $db->query($sql);
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` TINYINT(1) NULL DEFAULT '0';";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -1843,20 +1804,20 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndUpdatePayPalShopModelExtension()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='shop_id'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_paypal'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'shop_id'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_paypal` "
-                . "ADD COLUMN shop_id int(11) DEFAULT 1;";
-            $db->exec($sql);
+                . "ADD COLUMN `shop_id` int(11) DEFAULT 1;";
+            Shopware()->Db()->exec($sql);
 
-            $sql = "UPDATE s_plugin_mopt_payone_paypal SET shop_id = 1;";
-            $db->exec($sql);
+            $sql = "UPDATE `s_plugin_mopt_payone_paypal` SET `shop_id` = 1;";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -1868,20 +1829,20 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndUpdateAmazonPayShopModelExtension()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_amazon_pay'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='shop_id'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_amazon_pay'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'shop_id'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_amazon_pay` "
-                . "ADD COLUMN shop_id int(11) DEFAULT 1;";
-            $db->exec($sql);
+                . "ADD COLUMN `shop_id` int(11) DEFAULT 1;";
+            Shopware()->Db()->exec($sql);
 
-            $sql = "UPDATE s_plugin_mopt_payone_amazon_pay SET shop_id = 1;";
-            $db->exec($sql);
+            $sql = "UPDATE `s_plugin_mopt_payone_amazon_pay` SET `shop_id` = 1;";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -1893,17 +1854,17 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndUpdatePayPalDefaultModelExtension()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='is_default'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_paypal'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'is_default'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() > 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_paypal` "
-                . "DROP COLUMN is_default;";
-            $db->exec($sql);
+                . "DROP COLUMN `is_default`;";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -1915,17 +1876,17 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndRemovePayPalLocaleModelExtension()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_paypal'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='locale_id'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_paypal'
+                AND `TABLE_SCHEMA`= ?
+                AND `COLUMN_NAME` = 'locale_id'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() > 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_paypal` "
-                . "DROP COLUMN locale_id;";
-            $db->exec($sql);
+                . "DROP COLUMN `locale_id`;";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -1937,17 +1898,17 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndRemoveTrustlyExtension()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='trustly_show_iban_bic'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'trustly_show_iban_bic'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() > 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "DROP COLUMN trustly_show_iban_bic;";
-            $db->exec($sql);
+                . "DROP COLUMN `trustly_show_iban_bic`;";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -1959,39 +1920,40 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndRemovePaydirektExtension()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='paydirekt_overcapture'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'paydirekt_overcapture'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() > 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "DROP COLUMN paydirekt_overcapture;";
-            $db->exec($sql);
+                . "DROP COLUMN `paydirekt_overcapture`;";
+            Shopware()->Db()->exec($sql);
         }
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='paydirekt_order_secured'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'paydirekt_order_secured'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() > 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "DROP COLUMN paydirekt_order_secured;";
-            $db->exec($sql);
+                . "DROP COLUMN `paydirekt_order_secured`;";
+            Shopware()->Db()->exec($sql);
         }
 
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='paydirekt_preauthorization_validity'";
-        $result = $db->query($sql);
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` ='paydirekt_preauthorization_validity'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() > 0) {
-            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "DROP COLUMN paydirekt_preauthorization_validity;";
-            $db->exec($sql);
+            $sql = "ALTER TABLE `s_plugin_mopt_payone_config` DROP COLUMN `paydirekt_preauthorization_validity`;";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -2084,17 +2046,17 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
      */
     public function checkAndUpdateAllowDifferentAdressesOption()
     {
-        $db = Shopware()->Db();
-        $DBConfig = $db->getConfig();
-        $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                AND TABLE_SCHEMA='" . $DBConfig['dbname'] . "'
-                AND COLUMN_NAME ='allow_different_addresses'";
-        $result = $db->query($sql);
+        $DBConfig = Shopware()->Db()->getConfig();
+        $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                AND `TABLE_SCHEMA` = ?
+                AND `COLUMN_NAME` = 'allow_different_addresses'";
+        $result = Shopware()->Db()->query($sql, [$DBConfig['dbname']]);
 
         if ($result->rowCount() === 0) {
             $sql = "ALTER TABLE `s_plugin_mopt_payone_config` "
-                . "ADD COLUMN allow_different_addresses TINYINT(1) NULL DEFAULT '0';";
-            $db->exec($sql);
+                . "ADD COLUMN `allow_different_addresses` TINYINT(1) NULL DEFAULT '0';";
+            Shopware()->Db()->exec($sql);
         }
 
     }
@@ -2110,21 +2072,20 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddCreditcardDefaultDescription()
     {
         $textColumns = ['creditcard_default_description'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
 
-            $result = $db->query($sql);
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
-
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2140,20 +2101,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddPaypalExpressUseDefaultShipping()
     {
         $textColumns = ['paypal_express_use_default_shipping'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` TINYINT(1) NOT NULL DEFAULT 0;";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2169,20 +2129,20 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddPaypalV2ShowButton()
     {
         $textColumns = ['paypal_v2_show_button'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
 
-            $result = $db->query($sql);
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` TINYINT(1) NOT NULL DEFAULT 0;";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2198,21 +2158,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddPaypalV2MerchantId()
     {
         $textColumns = ['paypal_v2_merchant_id'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
-
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2228,21 +2186,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddPaypalV2ButtonColor()
     {
         $textColumns = ['paypal_v2_button_color'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
-
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2258,21 +2214,20 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddPaypalV2ButtonShape()
     {
         $textColumns = ['paypal_v2_button_shape'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
 
-            $result = $db->query($sql);
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
-
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2288,21 +2243,20 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddGooglePayButtonOptions()
     {
         $textColumns = ['googlepay_button_type', 'googlepay_button_color'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
 
-            $result = $db->query($sql);
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
-
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2318,21 +2272,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddGooglePayMerchantIdandName()
     {
         $textColumns = ['googlepay_merchant_id', 'googlepay_merchant_name'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT '';";
-
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2348,21 +2300,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddGooglePayCountryCode()
     {
         $textColumns = ['googlepay_country_code'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NULL DEFAULT 'DE';";
-
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2378,20 +2328,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddGooglePayAllowCardOptions()
     {
         $textColumns = ['googlepay_allow_visa', 'googlepay_allow_master_card', 'googlepay_allow_credit_cards', 'googlepay_allow_prepaid_cards'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` TINYINT(1) NOT NULL DEFAULT 1;";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2407,20 +2356,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddClick2PayCardConfigOptions()
     {
         $textColumns = ['click2pay_visa_src_initiator_id', 'click2pay_src_dpa_id', 'click2pay_visa_encryption_key', 'click2pay_visa_n_modulus', 'click2pay_master_src_initiator_id'];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql. [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT '';";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2436,20 +2384,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddClick2PayAllowCardOptions()
     {
         $textColumns = ['click2pay_allow_visa', 'click2pay_allow_master_card', 'click2pay_allow_amex', 'click2pay_allow_maestro', 'click2pay_allow_diners', 'click2pay_allow_discover', 'click2pay_allow_jcb', 'click2pay_allow_unionpay', 'click2pay_enable_c_t_p', 'click2pay_enable_customer_onboarding' ];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` TINYINT(1) NOT NULL DEFAULT 1;";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2465,20 +2412,19 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddClick2PayUiOptions()
     {
         $textColumns = ['click2pay_formBgColor', 'click2pay_fieldBgColor', 'click2pay_fieldBorder', 'click2pay_fieldOutline', 'click2pay_fieldLabelColor', 'click2pay_fieldPlaceholderColor', 'click2pay_fieldTextColor', 'click2pay_fieldErrorCodeColor' ];
-        $db = Shopware()->Db();
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT '';";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
@@ -2494,34 +2440,32 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddClick2PayCTPOptions()
     {
         $textColumns = ['click2pay_buttonStyle', 'click2pay_buttonTextCase', 'click2pay_buttonAndBadgeColor', 'click2pay_buttonFilledHoverColor', 'click2pay_buttonOutlinedHoverColor', 'click2pay_buttonDisabledColor', 'click2pay_cardItemActiveColor', 'click2pay_buttonAndBadgeTextColor', 'click2pay_linkTextColor', 'click2pay_accentColor', 'click2pay_fontFamily', 'click2pay_buttonAndInputRadius', 'click2pay_cardItemRadius', 'click2pay_shopname' ];
-        $db = Shopware()->Db();
         $dbConfig = $db->getConfig();
 
         foreach ($textColumns AS $column) {
-            $sql = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='s_plugin_mopt_payone_config'
-                    AND TABLE_SCHEMA = '{$dbConfig['dbname']}'
-                    AND COLUMN_NAME = '$column'";
-
-            $result = $db->query($sql);
+            $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                    WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
+                    AND `TABLE_SCHEMA` = ?
+                    AND `COLUMN_NAME` = ?";
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0 && $column === 'click2pay_buttonTextCase' ) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT 'capitalize';";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
 
             if ($result->rowCount() === 0 && $column === 'click2pay_buttonStyle' ) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT 'OUTLINED';";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
                         ADD COLUMN `$column` VARCHAR(255) NOT NULL DEFAULT '';";
-                $db->exec($sql);
+                Shopware()->Db()->exec($sql);
             }
         }
     }
 }
-

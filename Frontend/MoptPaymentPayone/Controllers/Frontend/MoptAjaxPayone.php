@@ -303,14 +303,14 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
 
         if ($previousPayment['paymentTable']) {
             $deleteSQL = 'DELETE FROM ' . $previousPayment['paymentTable'] . ' WHERE userID=?';
-            Shopware()->Db()->query($deleteSQL, array($this->session->sUserId));
+            Shopware()->Db()->query($deleteSQL, [(int)$userId]);
         }
 
         $sqlPayment = "UPDATE s_user SET paymentID = ? WHERE id = ?";
-        Shopware()->Db()->query($sqlPayment, array($actualPaymentId, $userId));
+        Shopware()->Db()->query($sqlPayment, [$actualPaymentId, (int)$userId]);
 
         $sql = "UPDATE s_user_attributes SET `mopt_payone_creditcard_initial_payment` = ? WHERE id = ?";
-        Shopware()->Db()->query($sql, array(0, (int)$userId));
+        Shopware()->Db()->query($sql, [0, (int)$userId]);
 
     }
 
@@ -1214,6 +1214,14 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function createApplePaySessionAction()
     {
         $validationUrl = $this->Request()->getParam('validationUrl');
+        if (!preg_match('^https://apple-pay-gateway-cert.apple.com', $validationUrl) ||
+            !preg_match('^https://apple-pay-gateway.apple.com', $validationUrl)
+        ) {
+            $data['success'] = false;
+            $data['error'] = 'Invalid validation URL';
+            echo json_encode($data);
+            return;
+        }
         $this->container->get('front')->Plugins()->ViewRenderer()->setNoRender();
         $paymentId = $this->session->moptPaymentId;
         $config = $this->moptPayoneMain->getPayoneConfig($paymentId);
@@ -1231,6 +1239,10 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             curl_setopt($ch, CURLOPT_SSLCERT, $config['applepayCertificate']);
             curl_setopt($ch, CURLOPT_SSLCERTPASSWD, $config['applepayPrivateKeyPassword']);
             curl_setopt($ch, CURLOPT_SSLKEY, $config['applepayPrivateKey']);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedParams);

@@ -450,16 +450,16 @@ class FrontendCheckout implements SubscriberInterface
         $builder = $paymentRepository->getListQueryBuilder();
         $builder->addFilter(['payment.name' => '%mopt_payone__ewallet_amazon_pay%', 'payment.active' => 1]);
         $query = $builder->getQuery();
-        $test = $query->execute();
+        $result = $query->execute();
 
         if ($payoneMain->getHelper()->isAboCommerceArticleInBasket()) {
             return false;
         }
-        if (empty($test)) {
+        if (empty($result)) {
             return false;
         }
 
-        foreach ($test as $payment) {
+        foreach ($result as $payment) {
             if ($payoneMain->getPaymentHelper()->isPaymentAssignedToSubshop($payment->getId(), $shop->getId())) {
                 Shopware()->Session()->moptAmazonpayPaymentId = $payment->getId();
                 return true;
@@ -481,16 +481,16 @@ class FrontendCheckout implements SubscriberInterface
         $builder = $paymentRepository->getListQueryBuilder();
         $builder->addFilter(['payment.name' => '%mopt_payone__ewallet_paypal_express%', 'payment.active' => 1]);
         $query = $builder->getQuery();
-        $test = $query->execute();
+        $result = $query->execute();
 
         if ($payoneMain->getHelper()->isAboCommerceArticleInBasket()) {
             return false;
         }
-        if (empty($test)) {
+        if (empty($result)) {
             return false;
         }
 
-        foreach ($test as $payment) {
+        foreach ($result as $payment) {
             if ($payoneMain->getPaymentHelper()->isPaymentAssignedToSubshop($payment->getId(), $shop->getId())) {
                 Shopware()->Session()->moptPaypayEcsPaymentId = $payment->getId();
                 return true;
@@ -512,16 +512,16 @@ class FrontendCheckout implements SubscriberInterface
         $builder = $paymentRepository->getListQueryBuilder();
         $builder->addFilter(['payment.name' => '%mopt_payone__ewallet_paypal_expressv2%', 'payment.active' => 1]);
         $query = $builder->getQuery();
-        $test = $query->execute();
+        $result = $query->execute();
 
         if ($payoneMain->getHelper()->isAboCommerceArticleInBasket()) {
             return false;
         }
-        if (empty($test)) {
+        if (empty($result)) {
             return false;
         }
 
-        foreach ($test as $payment) {
+        foreach ($result as $payment) {
             if ($payoneMain->getPaymentHelper()->isPaymentAssignedToSubshop($payment->getId(), $shop->getId())) {
                 Shopware()->Session()->moptPaypalv2EcsPaymentId = $payment->getId();
                 return true;

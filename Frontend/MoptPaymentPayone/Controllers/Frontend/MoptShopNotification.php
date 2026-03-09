@@ -433,7 +433,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
             UPDATE s_order SET transactionID=?
             WHERE ordernumber=?';
 
-        Shopware()->Db()->query($sql, array($transactionId, $orderNumber));
+        Shopware()->Db()->query($sql, [$transactionId, $orderNumber]);
     }
 
     /**
@@ -446,11 +446,11 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
      */
     protected function saveOrderAttributeData($order, $attributeData, $saveOrderHash, $saveClearingData)
     {
-        $params = array(
+        $params = [
             $attributeData['mopt_payone_status'],
             $attributeData['mopt_payone_sequencenumber'],
             $attributeData['mopt_payone_payment_reference'],
-        );
+        ];
 
         $sql = 'UPDATE s_order_attributes SET mopt_payone_status=?, mopt_payone_sequencenumber=?, '
             . 'mopt_payone_payment_reference=? ';
