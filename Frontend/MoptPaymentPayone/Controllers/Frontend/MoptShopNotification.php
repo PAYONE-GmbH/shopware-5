@@ -296,7 +296,7 @@ class Shopware_Controllers_Frontend_MoptShopNotification extends Shopware_Contro
         $forwardingUrls = explode(';', $this->payoneConfig[$configKey]);
 
         foreach ($forwardingUrls as $url) {
-            if (trim($url !== '')) {
+            if (trim($url) !== '') {
                 $queueWorker->queuePush(
                     '',
                     '',

@@ -1246,6 +1246,9 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
             curl_setopt($ch, CURLOPT_POST, 1);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedParams);
+            curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+            curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, 0);
+            curl_setopt($ch, CURLOPT_MAXREDIRS, 0);
             $response = curl_exec($ch);
             if (curl_errno($ch) > 0) {
                 $data['success'] = false;

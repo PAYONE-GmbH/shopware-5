@@ -187,6 +187,10 @@ class PayoneRequest
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_TIMEOUT, self::DEFAULT_TIMEOUT);
+        curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+        curl_setopt($curl, CURLOPT_REDIR_PROTOCOLS, 0);
+        curl_setopt($curl, CURLOPT_MAXREDIRS, 0);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
 
         $result = curl_exec($curl);
 
@@ -222,6 +226,10 @@ class PayoneRequest
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_TIMEOUT, self::DEFAULT_TIMEOUT);
+        curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+        curl_setopt($curl, CURLOPT_REDIR_PROTOCOLS, 0);
+        curl_setopt($curl, CURLOPT_MAXREDIRS, 0);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
         $headers = [
             'Accept: text/plain',
         ];
