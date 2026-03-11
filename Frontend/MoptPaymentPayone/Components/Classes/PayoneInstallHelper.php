@@ -2363,7 +2363,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
                     WHERE `TABLE_NAME` = 's_plugin_mopt_payone_config'
                     AND `TABLE_SCHEMA` = ?
                     AND `COLUMN_NAME` = ?";
-            $result = Shopware()->Db()->query($sql. [$dbConfig['dbname'], $column]);
+            $result = Shopware()->Db()->query($sql, [$dbConfig['dbname'], $column]);
 
             if ($result->rowCount() === 0) {
                 $sql = "ALTER TABLE `s_plugin_mopt_payone_config`
@@ -2440,7 +2440,7 @@ Zahlungsversuch vorgenommen, und Sie erhalten eine Bestätigungsemail.\r\n\r\n
     public function checkAndAddClick2PayCTPOptions()
     {
         $textColumns = ['click2pay_buttonStyle', 'click2pay_buttonTextCase', 'click2pay_buttonAndBadgeColor', 'click2pay_buttonFilledHoverColor', 'click2pay_buttonOutlinedHoverColor', 'click2pay_buttonDisabledColor', 'click2pay_cardItemActiveColor', 'click2pay_buttonAndBadgeTextColor', 'click2pay_linkTextColor', 'click2pay_accentColor', 'click2pay_fontFamily', 'click2pay_buttonAndInputRadius', 'click2pay_cardItemRadius', 'click2pay_shopname' ];
-        $dbConfig = $db->getConfig();
+        $dbConfig = Shopware()->Db()->getConfig();
 
         foreach ($textColumns AS $column) {
             $sql = "SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` 
