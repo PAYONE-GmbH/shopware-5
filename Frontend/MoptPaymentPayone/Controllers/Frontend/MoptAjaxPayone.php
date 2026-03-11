@@ -1214,8 +1214,8 @@ class Shopware_Controllers_Frontend_MoptAjaxPayone extends Enlight_Controller_Ac
     public function createApplePaySessionAction()
     {
         $validationUrl = $this->Request()->getParam('validationUrl');
-        if (!preg_match('#^https://apple-pay-gateway-cert.apple.com#', $validationUrl) &&
-            !preg_match('#^https://apple-pay-gateway.apple.com#', $validationUrl)
+        if (!preg_match('#^https://apple-pay-gateway-cert\.apple\.com#', $validationUrl) &&
+            !preg_match('#^https://apple-pay-gateway\.apple\.com#', $validationUrl)
         ) {
             $data['success'] = false;
             $data['error'] = 'Invalid validation URL';
