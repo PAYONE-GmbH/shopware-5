@@ -1551,8 +1551,8 @@ class Mopt_PayoneParamBuilder
      */
     public function getCountryFromId($id)
     {
-        $sql = 'SELECT `countryiso` FROM s_core_countries WHERE id = ' . $id;
-        $country = Shopware()->Db()->fetchOne($sql);
+        $sql = 'SELECT `countryiso` FROM s_core_countries WHERE id = ?';
+        $country = Shopware()->Db()->fetchOne($sql, [$id]);
         return $country;
     }
 
@@ -1583,8 +1583,8 @@ class Mopt_PayoneParamBuilder
             return '';
         }
 
-        $sql = 'SELECT `shortcode` FROM s_core_countries_states WHERE id = ' . $stateId;
-        $state = Shopware()->Db()->fetchOne($sql);
+        $sql = 'SELECT `shortcode` FROM s_core_countries_states WHERE id = ?';
+        $state = Shopware()->Db()->fetchOne($sql, [$stateId]);
 
         return $state;
     }

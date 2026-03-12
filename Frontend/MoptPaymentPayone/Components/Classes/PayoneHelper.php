@@ -20,7 +20,7 @@ class Mopt_PayoneHelper
     public function isResponsive()
     {
         //Is Responsive Template installed and activated?
-        $sql = "SELECT 1 FROM s_core_plugins WHERE name='SwfResponsiveTemplate' AND active=1";
+        $sql = "SELECT 1 FROM `s_core_plugins` WHERE `name` = 'SwfResponsiveTemplate' AND `active` = 1";
 
         $result = Shopware()->Db()->fetchOne($sql);
         if ($result != 1) {
@@ -29,12 +29,11 @@ class Mopt_PayoneHelper
         }
 
         //activated for current subshop?
-        $shop = Shopware()->Shop()->getId();
-        $sql = "SELECT 1 FROM s_core_config_elements scce, s_core_config_values sccv WHERE "
-            . "scce.name='SwfResponsiveTemplateActive' AND scce.id=sccv.element_id AND sccv.shop_id='"
-            . (int)$shop . "' AND sccv.value='b:0;'";
+        $shopId = Shopware()->Shop()->getId();
+        $sql = "SELECT 1 FROM `s_core_config_elements` scce, `s_core_config_values` sccv WHERE `scce`.`name`='SwfResponsiveTemplateActive'
+                AND `scce`.`id`=`sccv`.`element_id` AND `sccv`.`shop_id` = ? AND `sccv`.`value` = 'b:0;'";
 
-        $result = Shopware()->Db()->fetchOne($sql);
+        $result = Shopware()->Db()->fetchOne($sql, [$shopId]);
         if ($result == 1) {
             //deactivated
             return false;
@@ -673,12 +672,12 @@ class Mopt_PayoneHelper
     {
 
         // Todo SW 5.3
-        $sql = 'SELECT `id` FROM `s_user_billingaddress` WHERE userID = ?';
-        $billingId = Shopware()->Db()->fetchOne($sql, $userId);
+        $sql = 'SELECT `id` FROM `s_user_billingaddress` WHERE `userID` = ?';
+        $billingId = Shopware()->Db()->fetchOne($sql, [(int)$userId]);
 
         $sql = 'UPDATE `s_user_billingaddress_attributes`' .
-            'SET mopt_payone_addresscheck_date=?, mopt_payone_addresscheck_result=? WHERE billingID = ?';
-        Shopware()->Db()->query($sql, array('NULL', 'NULL', $billingId));
+            'SET `mopt_payone_addresscheck_date` = ?, `mopt_payone_addresscheck_result` = ? WHERE `billingID` = ?';
+        Shopware()->Db()->query($sql, ['NULL', 'NULL', (int)$billingId]);
     }
 
     /**
@@ -996,11 +995,8 @@ class Mopt_PayoneHelper
                     Shopware()->Models()->persist($order);
                     Shopware()->Models()->flush();
                 } else {
-                    $db = Shopware()->Db();
-                    $sql = "UPDATE s_order
-                  SET cleared = " . $db->quote($shopwareState->getId()) . "
-                  WHERE id = " . $db->quote($order->getId());
-                    $db->exec($sql);
+                    $sql = "UPDATE `s_order` SET `cleared` = ? WHERE `id` = ?";
+                    Shopware()->Db()->query($sql, [(int)$shopwareState->getId(),(int)$order->getId()]);
                 }
             }
         }
@@ -1063,7 +1059,6 @@ class Mopt_PayoneHelper
             return false;
         }
         //insert shipping as new order detail
-        $db = Shopware()->Db();
         $sql = "INSERT INTO `s_order_details` (`id`, "
             . " `orderID`, "
             . "`ordernumber`, "
@@ -1083,13 +1078,13 @@ class Mopt_PayoneHelper
             . "`config`) "
             . " VALUES ("
             . "NULL, "
-            . $db->quote($order->getId()) . ", "
-            . $db->quote($order->getNumber()) . ", "
+            . "?" . ", "
+            . "?" . ", "
             . "'0', "
             . "'SHIPPING', "
-            . $db->quote($order->getInvoiceShipping()) . ", "
+            . "?" . ", "
             . "'1', "
-            . $db->quote($dispatch->getName()) . ", "
+            . "?" . ", "
             . "'0', "
             . "'0', "
             . "'0',"
@@ -1097,18 +1092,22 @@ class Mopt_PayoneHelper
             . "'4', "
             . "'0', "
             . "'0', "
-            . $db->quote($basketData['sShippingcostsTax']) . ", "
+            . "?" . ", "
             . " '');";
-        $db->exec($sql);
+        Shopware()->Db()->query($sql, [
+            $order->getId(),
+            $order->getNumber(),
+            $order->getInvoiceShipping(),
+            $dispatch->getName(),
+            $basketData['sShippingcostsTax']
+        ]);
 
 
         // Set shipping details to zero since these informations are stored within the basket
         // of the corresponding order.
-        $sql = "UPDATE s_order
-                  SET invoice_shipping = 0,
-                    invoice_shipping_net = 0
-                  WHERE id = " . $db->quote($order->getId());
-        $db->exec($sql);
+        $sql = "UPDATE `s_order` SET `invoice_shipping` = 0, `invoice_shipping_net` = 0 
+               WHERE `id` = ?";
+        Shopware()->Db()->query($sql, [$order->getId()]);
     }
 
     /**
@@ -1125,7 +1124,7 @@ class Mopt_PayoneHelper
 
         $sql = 'SELECT `mopt_payone_consumerscore_result`, '
             . '`mopt_payone_consumerscore_date` FROM `s_user_attributes` WHERE userID = ?';
-        $result = Shopware()->Db()->fetchAll($sql, $userId);
+        $result = Shopware()->Db()->fetchAll($sql, [(int)$userId]);
 
         if ($result) {
             $userConsumerScoreData['moptPayoneConsumerscoreResult'] = $result[0]['mopt_payone_consumerscore_result'];
@@ -1147,9 +1146,8 @@ class Mopt_PayoneHelper
     public function getRatepayBanDateFromUserId($userId)
     {
         $ratepayBanDate = null;
-        $sql = 'SELECT `mopt_payone_ratepay_ban` '
-            . 'FROM `s_user_attributes` WHERE userID = ?';
-        $result = Shopware()->Db()->fetchAll($sql, $userId);
+        $sql = 'SELECT `mopt_payone_ratepay_ban` FROM `s_user_attributes` WHERE userID = ?';
+        $result = Shopware()->Db()->fetchAll($sql, [(int)$userId]);
 
         if ($result) {
             $ratepayBanDate = DateTime::createFromFormat(
@@ -1194,17 +1192,12 @@ class Mopt_PayoneHelper
         return $userBillingAddressCheckData;
     }
 
-    /**
-     * get country id from iso
-     *
-     * @param string $iso
-     * @return string
-     */
-    public function getCountryIdFromIso($iso)
+    public function getCountryIdFromIso($countryIso)
     {
-        $sql = 'SELECT `id` FROM s_core_countries WHERE `countryiso` LIKE "' . $iso . '";';
-        $countryId = Shopware()->Db()->fetchOne($sql);
-        return $countryId;
+        /** @var  $entityManager \Shopware\Components\Model\ModelManager */
+        $entityManager = Shopware()->Container()->get('models');
+        $country = $entityManager->getRepository('Shopware\Models\Country\Country')->findOneBy(['iso' => $countryIso]);
+        return $country->getId();
     }
 
     /**
@@ -1215,9 +1208,10 @@ class Mopt_PayoneHelper
      */
     public function getCountryIsoFromId($id)
     {
-        $sql = 'SELECT `countryiso` FROM s_core_countries WHERE `id`="' . (int)$id . '";';
-        $countryIso = Shopware()->Db()->fetchOne($sql);
-        return $countryIso;
+        /** @var  $entityManager \Shopware\Components\Model\ModelManager */
+        $entityManager = Shopware()->Container()->get('models');
+        $country = $entityManager->getRepository('Shopware\Models\Country\Country')->findOneBy(['id' => $id]);
+        return $country->getIso();
     }
 
     /**
@@ -1233,9 +1227,8 @@ class Mopt_PayoneHelper
         // so try again after mapping them to the real ISO Codes
         $stateIso = ($isPaypalEcs && !empty($this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso))) ? $this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso)  : $stateIso;
 
-        $sql = 'SELECT `id` FROM s_core_countries_states WHERE `shortcode` LIKE "' . $stateIso . '" '
-            . 'AND `countryID` = ' . $countryId . ';';
-        $stateId = Shopware()->Db()->fetchOne($sql);
+        $sql = 'SELECT `id` FROM `s_core_countries_states` WHERE `shortcode` = ? AND `countryID` = ?';
+        $stateId = Shopware()->Db()->fetchOne($sql, [$stateIso, (int)$countryId] );
 
         if ($stateId) {
             return $stateId;
@@ -1258,9 +1251,8 @@ class Mopt_PayoneHelper
         // so try again after mapping them to the real ISO Codes
         // $stateIso = ($isPaypalEcs && !empty($this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso))) ? $this->getCountryIsoFromPaypalCountryCode($countryId, $stateIso)  : $stateIso;
 
-        $sql = 'SELECT `id` FROM s_core_countries_states WHERE `name` = "' . $stateIso . '" '
-            . 'AND `countryID` LIKE ' . $countryId . ';';
-        $stateId = Shopware()->Db()->fetchOne($sql);
+        $sql = 'SELECT `id` FROM s_core_countries_states WHERE `name` = ? AND `countryID` = ?';
+        $stateId = Shopware()->Db()->fetchOne($sql, [$stateIso, (int) $countryId] );
 
         if ($stateId) {
             return $stateId;
@@ -1278,9 +1270,8 @@ class Mopt_PayoneHelper
      */
     public function getStateShortcodeFromId($countryId, $stateId)
     {
-        $sql = 'SELECT `shortcode` FROM s_core_countries_states WHERE `id`= "' . $stateId . '" '
-            . 'AND `countryID` = ' . $countryId . ';';
-        $stateShortcode = Shopware()->Db()->fetchOne($sql);
+        $sql = 'SELECT `shortcode` FROM s_core_countries_states WHERE `id`= ? AND `countryID` = ?';
+        $stateShortcode = Shopware()->Db()->fetchOne($sql, [$stateId, (int)$countryId] );
 
         if ($stateShortcode) {
             return $stateShortcode;
@@ -1624,8 +1615,8 @@ class Mopt_PayoneHelper
      */
     public function getPayonePayPalConfig($subshopId)
     {
-        $sql = "SELECT id FROM s_plugin_mopt_payone_paypal WHERE shop_id = " . $subshopId;
-        $configId = Shopware()->Db()->fetchOne($sql);
+        $sql = "SELECT id FROM s_plugin_mopt_payone_paypal WHERE shop_id = ?";
+        $configId = Shopware()->Db()->fetchOne($sql, [(int)$subshopId]);
         if ($configId) {
             /**
              * @var $config \Shopware\CustomModels\MoptPayonePaypal\MoptPayonePaypal
@@ -1641,8 +1632,8 @@ class Mopt_PayoneHelper
 
     public function getPayoneAmazonPayConfig($subshopId)
     {
-        $sql = "SELECT id FROM s_plugin_mopt_payone_amazon_pay WHERE shop_id =" .$subshopId;
-        $configId = Shopware()->Db()->fetchOne($sql);
+        $sql = "SELECT id FROM s_plugin_mopt_payone_amazon_pay WHERE shop_id = ?";
+        $configId = Shopware()->Db()->fetchOne($sql, [(int)$subshopId]);
         if ($configId) {
             /**
              * @var $config \Shopware\CustomModels\MoptPayoneAmazonPay\MoptPayoneAmazonPay
@@ -1705,12 +1696,15 @@ class Mopt_PayoneHelper
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FAILONERROR, true);
         curl_setopt($curl, CURLINFO_HEADER_OUT, true);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
         curl_setopt($curl, CURLOPT_TIMEOUT_MS, $timeout);
+        curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+        curl_setopt($curl, CURLOPT_REDIR_PROTOCOLS, 0);
+        curl_setopt($curl, CURLOPT_MAXREDIRS, 0);
         // uncomment to override dns resolution
         // curl_setopt($curl, CURLOPT_RESOLVE, ["shop.testing.fatchip.local:443:127.0.0.1",]);
 
@@ -1797,8 +1791,12 @@ class Mopt_PayoneHelper
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
+        curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+        curl_setopt($curl, CURLOPT_REDIR_PROTOCOLS, 0);
+        curl_setopt($curl, CURLOPT_MAXREDIRS, 0);
 
         $curl_timeout = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout'];
         $curl_timeout_raise = Mopt_PayoneConfig::$MOPT_PAYONE_FORWARD_TRANSACTION_STATUS_DEFAULTS['curl_timeout_raise'];

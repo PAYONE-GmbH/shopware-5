@@ -135,11 +135,11 @@ class Mopt_PayonePaymentHelper
     public function deletePaymentData($userId)
     {
         if ($userId != null) {
-            $sql = 'SELECT userId FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
-            $result = Shopware()->Db()->fetchOne($sql);
+            $sql = 'SELECT `userId` FROM `s_plugin_mopt_payone_payment_data` WHERE `userId` = ?';
+            $result = Shopware()->Db()->fetchOne($sql, [$userId]);
             if ($result) {
-                $sql = 'DELETE FROM s_plugin_mopt_payone_payment_data WHERE userId = ' . $userId;
-                Shopware()->Db()->exec($sql);
+                $sql = 'DELETE FROM `s_plugin_mopt_payone_payment_data` WHERE `userId` = ?';
+                Shopware()->Db()->query($sql, [$userId]);
             }
         }
     }
@@ -153,11 +153,11 @@ class Mopt_PayonePaymentHelper
     public function deleteCreditcardPaymentData($userId)
     {
         if ($userId != null) {
-            $sql = 'SELECT userId FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ' . $userId;
-            $result = Shopware()->Db()->fetchOne($sql);
+            $sql = 'SELECT userId FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ? ';
+            $result = Shopware()->Db()->fetchOne($sql, [$userId]);
             if ($result) {
-                $sql = 'DELETE FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ' . $userId;
-                Shopware()->Db()->exec($sql);
+                $sql = 'DELETE FROM s_plugin_mopt_payone_creditcard_payment_data WHERE userId = ?';
+                Shopware()->Db()->query($sql, [$userId]);
             }
             // also remove initial payment flag
             $this->updateUserCreditcardInitialPaymentSuccess($userId, false);
@@ -183,7 +183,7 @@ class Mopt_PayonePaymentHelper
     public function getPaymentNameFromId($paymentID)
     {
         $sql = 'SELECT `name` FROM `s_core_paymentmeans` WHERE id = ?';
-        $paymentName = Shopware()->Db()->fetchOne($sql, $paymentID);
+        $paymentName = Shopware()->Db()->fetchOne($sql, [$paymentID]);
 
         return $paymentName;
     }
@@ -197,7 +197,7 @@ class Mopt_PayonePaymentHelper
     public function getPaymentIdFromName($paymentName)
     {
         $sql = 'SELECT `id` FROM `s_core_paymentmeans` WHERE name = ?';
-        $paymentId = Shopware()->Db()->fetchOne($sql, $paymentName);
+        $paymentId = Shopware()->Db()->fetchOne($sql, [$paymentName]);
 
         return $paymentId;
     }
@@ -214,7 +214,7 @@ class Mopt_PayonePaymentHelper
         $sql = 'REPLACE INTO `s_plugin_mopt_payone_payment_data`' .
             '(`userId`,`moptPaymentData`) VALUES (?,?)';
         $paymentData = serialize($paymentData['formData']);
-        Shopware()->Db()->query($sql, array($userId, $paymentData));
+        Shopware()->Db()->query($sql, [$userId, $paymentData]);
     }
 
     /**
@@ -229,7 +229,7 @@ class Mopt_PayonePaymentHelper
         $sql = 'REPLACE INTO `s_plugin_mopt_payone_creditcard_payment_data`' .
             '(`userId`, `moptCreditcardPaymentData`) VALUES (?,?)';
         $creditcardPaymentData = serialize($creditcardPaymentData['formData']);
-        Shopware()->Db()->query($sql, array($userId, $creditcardPaymentData));
+        Shopware()->Db()->query($sql, [$userId, $creditcardPaymentData]);
     }
 
     /**
@@ -241,7 +241,7 @@ class Mopt_PayonePaymentHelper
     public function setConfiguredDefaultPaymentAsPayment($userId)
     {
         $sql = "UPDATE s_user SET paymentID = ? WHERE id = ?";
-        Shopware()->Db()->query($sql, array((int)Shopware()->Config()->Defaultpayment, (int)$userId));
+        Shopware()->Db()->query($sql, [(int)Shopware()->Config()->Defaultpayment, (int)$userId]);
     }
 
     /**
@@ -927,14 +927,6 @@ class Mopt_PayonePaymentHelper
         }
 
         return false;
-    }
-
-    public function getCountryIdFromIso($countryIso)
-    {
-        /** @var  $entityManager \Shopware\Components\Model\ModelManager */
-        $entityManager = Shopware()->Container()->get('models');
-        $country = $entityManager->getRepository('Shopware\Models\Country\Country')->findOneBy(array('iso' => $countryIso));
-        return $country;
     }
 
     /**

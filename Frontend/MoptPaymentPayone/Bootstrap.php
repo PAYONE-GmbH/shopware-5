@@ -917,11 +917,11 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      */
     public function attributeColumnExists(string $tableName, string $columnName): bool
     {
-        $sql = 'SELECT column_name
-                FROM information_schema.columns
-                WHERE table_name = :tableName
-                    AND column_name = :columnName
-                    AND table_schema = DATABASE();';
+        $sql = 'SELECT `column_name`
+                FROM `information_schema`.`columns`
+                WHERE `table_name` = :tableName
+                    AND `column_name` = :columnName
+                    AND `table_schema` = DATABASE();';
 
         $columnNameInDb = Shopware()->DB()->executeQuery(
             $sql,
@@ -1073,13 +1073,13 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
      * @throws Zend_Db_Statement_Exception
      */
     private function removeOldMenu() {
-        $sql = "SELECT id FROM s_core_plugins
-                WHERE name = 'MoptPaymentPayone'";
+        $sql = "SELECT `id` FROM `s_core_plugins`
+                WHERE `name` = 'MoptPaymentPayone'";
         $result = Shopware()->Db()->query($sql);
         $pluginID = $result->fetchColumn();
-        $sql = "DELETE FROM s_core_menu
-                WHERE name != 'Payone Kontrollzentrum' AND pluginId = " . $pluginID;
-        Shopware()->Db()->query($sql);
+        $sql = "DELETE FROM `s_core_menu`
+                WHERE `name` != 'Payone Kontrollzentrum' AND `pluginId` = ?";
+        Shopware()->Db()->query($sql, [$pluginID]);
     }
 
     private function addGooglePayConfigOptions()

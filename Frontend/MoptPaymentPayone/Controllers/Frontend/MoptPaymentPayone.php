@@ -1020,25 +1020,25 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $sql = 'UPDATE `s_order_attributes`' .
                 'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, mopt_payone_payment_reference=?, '
                 . 'mopt_payone_order_hash=?, mopt_payone_clearing_data=? WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array(
+            Shopware()->Db()->query($sql, [
                 $txId,
                 $session->moptIsAuthorized,
                 $session->moptPaymentReference,
                 $session->moptOrderHash,
                 $clearingData,
                 $orderId
-            ));
+            ]);
         } else {
             $sql = 'UPDATE `s_order_attributes`' .
                 'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, mopt_payone_payment_reference=?, '
                 . 'mopt_payone_order_hash=? WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array(
+            Shopware()->Db()->query($sql, [
                 $txId,
                 $session->moptIsAuthorized,
                 $session->moptPaymentReference,
                 $session->moptOrderHash,
                 $orderId
-            ));
+            ]);
         }
 
         if ($payolutionClearingData) {
@@ -1046,7 +1046,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
             $payolutionWorkOrderId = $payolutionClearingData['add_paydata[workorderid]'];
             $sql = 'UPDATE `s_order_attributes`' .
                 'SET mopt_payone_payolution_clearing_reference = ?, mopt_payone_payolution_workorder_id = ? WHERE orderID = ?';
-            Shopware()->Db()->query($sql, array($payolutionClearingReference, $payolutionWorkOrderId, $orderId));
+            Shopware()->Db()->query($sql, [$payolutionClearingReference, $payolutionWorkOrderId, $orderId]);
         }
 
         if ($session->moptIsAuthorized === true && !$orderIsCorrupted) {
@@ -1068,7 +1068,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
 
         $this->removeSessionVariablesOnOrderFinish();
 
-        $this->redirect(array('controller' => 'checkout', 'action' => 'finish', 'sUniqueID' => $moptPaymentReference));
+        $this->redirect(['controller' => 'checkout', 'action' => 'finish', 'sUniqueID' => $moptPaymentReference]);
     }
 
     /**
@@ -1827,16 +1827,16 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
                 $sql = 'UPDATE `s_order_attributes`' .
                     'SET mopt_payone_txid=?, mopt_payone_is_authorized=?, '
                     . 'mopt_payone_clearing_data=? WHERE orderID = ?';
-                Shopware()->Db()->query($sql, array(
+                Shopware()->Db()->query($sql, [
                     $response->get('txid'),
                     $session->moptIsAuthorized,
                     json_encode($clearingData),
                     $orderId
-                ));
+                ]);
             } else {
                 $sql = 'UPDATE `s_order_attributes`' .
                     'SET mopt_payone_txid=?, mopt_payone_is_authorized=? WHERE orderID = ?';
-                Shopware()->Db()->query($sql, array($response->get('txid'), $session->moptIsAuthorized, $orderId));
+                Shopware()->Db()->query($sql, [$response->get('txid'), $session->moptIsAuthorized, $orderId]);
             }
 
             if (Shopware()->Session()->moptPayment) {
@@ -1889,7 +1889,7 @@ class Shopware_Controllers_Frontend_MoptPaymentPayone extends Shopware_Controlle
     protected function saveTransactionPaymentData($orderId, $paymentData)
     {
         $sql = 'UPDATE `s_order_attributes` SET mopt_payone_payment_data=? WHERE orderID = ?';
-        Shopware()->Db()->query($sql, array(serialize($paymentData), $orderId));
+        Shopware()->Db()->query($sql, [serialize($paymentData), $orderId]);
     }
 
     /**
