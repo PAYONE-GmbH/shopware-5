@@ -68,15 +68,7 @@
                     enableCTP: {$mopt_click2pay_enable_CTP},
                     enableCustomerOnboarding: {$mopt_click2pay_enable_customer_onboarding},
                     schemeConfig: {
-                        merchantPresentationName: "PayoneC2P-00004",
-                        visaConfig: {
-                            srcInitiatorId: '2662KBGOLX92KS4XIFYU213JLdGTvLhYkOB-_1gLo1D1jOqgM',
-                            encryptionKey: 'GQJIKLOAMZWIT8IRIGHR14vQUlllxiMWf-XSHQHvjI5wuTZ2w',
-                            nModulus: 'kPujwVJjevI_oeZwZoA2Wjt94DFcMvRCab8iRiEGrGfKWtNCwQYkylyuRoB615cYm2BVbvoKH8Yyv0aC3dwah6UmOdJszmL0pV_cbx_tXzWgYg3sYNsp0sBxUFcQ1A6DVbyOxxJbmnwlHGE5fkuzJr-qqul3RswsCG-vPrh_--2_RSipa9lVr9gvfI4AbFABLTqKeto0rWPbIBKdhcGQ7JMPxzq8239KPUZfSyNueAcdL-yHADi3L2VSzdF7tS7si3ue_IFoXDpbggsFxvEt79UlBDOBsagc_ms9_ZsYlJaKCT8ZjwhakMo_-Zdc97mudVj1jz2_L5l4l_zibF5riw',
-                        },
-                        mastercardConfig: {
-                            srcInitiatorId: '559003b0-5d17-4d89-aa2b-b02a4023d64d'
-                        }
+                        merchantPresentationName: "PayoneC2P-00004"
                     },
                     transactionAmount: {
                         amount: "{$sAmount * 100}",
