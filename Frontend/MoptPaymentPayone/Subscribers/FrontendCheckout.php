@@ -426,11 +426,6 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('mopt_click2pay_shopname', $config['click2payShopname']);
                 $view->assign('mopt_click2pay_ui_config', json_encode($this->getClick2PayUiConfig($config)));
                 $view->assign('mopt_click2pay_ctp_ui_config', json_encode($this->getClick2PayCTPUiConfig($config)));
-                // $view->assign('mopt_click2pay_visa_src_initiator_id', $config['click2payVisaSrcInitiatorId']);
-                $view->assign('mopt_click2pay_src_dpa_id', $config['click2paySrcDpaId']);
-                // $view->assign('mopt_click2pay_visa_encryption_key', $config['click2payVisaEncryptionKey']);
-                // $view->assign('mopt_click2pay_visa_n_modulus', $config['click2payVisaNModulus']);
-                // $view->assign('mopt_click2pay_master_src_initiator_id', $config['click2payMasterSrcInitiatorId']);
                 $view->assign('mopt_click2pay_token', $token);
                 $view->assign('mopt_click2pay_enable_CTP', $config['click2payEnableCTP'] === true? 'true' : 'false');
                 $view->assign('mopt_click2pay_enable_customer_onboarding', $config['click2payEnableCustomerOnboarding'] === true? 'true' : 'false');
