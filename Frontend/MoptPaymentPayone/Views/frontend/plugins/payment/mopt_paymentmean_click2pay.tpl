@@ -67,9 +67,6 @@
                 CTPConfig: {
                     enableCTP: {$mopt_click2pay_enable_CTP},
                     enableCustomerOnboarding: {$mopt_click2pay_enable_customer_onboarding},
-                    schemeConfig: {
-                        merchantPresentationName: "PayoneC2P-00004"
-                    },
                     transactionAmount: {
                         amount: "{$sAmount * 100}",
                         currencyCode: "{$mopt_click2pay_currency}"
