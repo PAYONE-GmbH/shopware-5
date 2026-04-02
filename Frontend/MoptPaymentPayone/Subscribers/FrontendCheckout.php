@@ -427,6 +427,7 @@ class FrontendCheckout implements SubscriberInterface
                 $view->assign('mopt_click2pay_ui_config', json_encode($this->getClick2PayUiConfig($config)));
                 $view->assign('mopt_click2pay_ctp_ui_config', json_encode($this->getClick2PayCTPUiConfig($config)));
                 $view->assign('mopt_click2pay_token', $token);
+                $view->assign('mopt_click2pay_email', $userData['additional']['user']['email']);
                 $view->assign('mopt_click2pay_enable_CTP', $config['click2payEnableCTP'] === true? 'true' : 'false');
                 $view->assign('mopt_click2pay_enable_customer_onboarding', $config['click2payEnableCustomerOnboarding'] === true? 'true' : 'false');
             }

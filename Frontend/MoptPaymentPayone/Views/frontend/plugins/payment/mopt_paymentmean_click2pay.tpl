@@ -62,6 +62,7 @@
                 locale: "{$mopt_click2pay_locale}",
 
                 token: "{$mopt_click2pay_token}",
+                email:  "{$mopt_click2pay_email}",
                 mode: "{$mopt_click2pay_mode}",
                 allowedCardSchemes: {$mopt_click2pay_allowedCardSchemes},
                 CTPConfig: {
