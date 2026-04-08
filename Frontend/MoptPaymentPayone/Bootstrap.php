@@ -848,6 +848,8 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
         $this->addGooglePayConfigOptions();
 
+        $this->getInstallHelper()->checkAndRemoveClick2PayOptions();
+
         $this->addClick2PayConfigOptions();
 
         // Do not add/remove columns to s_plugin_mopt_payone_config, after PPE migration
@@ -1103,7 +1105,6 @@ class Shopware_Plugins_Frontend_MoptPaymentPayone_Bootstrap extends Shopware_Com
 
     private function addClick2PayConfigOptions()
     {
-        $this->getInstallHelper()->checkAndAddClick2PayCardConfigOptions();
         $this->getInstallHelper()->checkAndAddClick2PayAllowCardOptions();
         $this->getInstallHelper()->checkAndAddClick2PayUiOptions();
         $this->getInstallHelper()->checkAndAddClick2PayCTPOptions();

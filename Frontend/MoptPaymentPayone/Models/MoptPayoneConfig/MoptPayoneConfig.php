@@ -866,31 +866,6 @@ class MoptPayoneConfig extends ModelEntity
     private $click2payCardItemRadius;
 
     /**
-     *  @ORM\Column(name="click2pay_visa_src_initiator_id", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
-     */
-    private $click2payVisaSrcInitiatorId;
-
-    /**
-     *  @ORM\Column(name="click2pay_src_dpa_id", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
-     */
-    private $click2paySrcDpaId;
-
-    /**
-     *  @ORM\Column(name="click2pay_visa_encryption_key", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
-     */
-    private $click2payVisaEncryptionKey;
-
-    /**
-     *  @ORM\Column(name="click2pay_visa_n_modulus", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
-     */
-    private $click2payVisaNModulus;
-
-    /**
-     *  @ORM\Column(name="click2pay_master_src_initiator_id", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
-     */
-    private $click2payMasterSrcInitiatorId;
-
-    /**
      *  @ORM\Column(name="click2pay_shopname", type="string", length=255, nullable=true, unique=false, options={"default" : ""})
      */
     private $click2payShopname;
@@ -3394,86 +3369,6 @@ class MoptPayoneConfig extends ModelEntity
 
     public function getGooglepayMerchantName() {
         return $this->googlepayMerchantName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClick2payVisaSrcInitiatorId()
-    {
-        return $this->click2payVisaSrcInitiatorId;
-    }
-
-    /**
-     * @param mixed $click2payVisaSrcInitiatorId
-     */
-    public function setClick2payVisaSrcInitiatorId($click2payVisaSrcInitiatorId): void
-    {
-        $this->click2payVisaSrcInitiatorId = $click2payVisaSrcInitiatorId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClick2paySrcDpaId()
-    {
-        return $this->click2paySrcDpaId;
-    }
-
-    /**
-     * @param mixed $click2paySrcDpaId
-     */
-    public function setClick2paySrcDpaId($click2paySrcDpaId): void
-    {
-        $this->click2paySrcDpaId = $click2paySrcDpaId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClick2payVisaEncryptionKey()
-    {
-        return $this->click2payVisaEncryptionKey;
-    }
-
-    /**
-     * @param mixed $click2payVisaEncryptionKey
-     */
-    public function setClick2payVisaEncryptionKey($click2payVisaEncryptionKey): void
-    {
-        $this->click2payVisaEncryptionKey = $click2payVisaEncryptionKey;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClick2payVisaNModulus()
-    {
-        return $this->click2payVisaNModulus;
-    }
-
-    /**
-     * @param mixed $click2payVisaNModulus
-     */
-    public function setClick2payVisaNModulus($click2payVisaNModulus): void
-    {
-        $this->click2payVisaNModulus = $click2payVisaNModulus;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getClick2payMasterSrcInitiatorId()
-    {
-        return $this->click2payMasterSrcInitiatorId;
-    }
-
-    /**
-     * @param mixed $click2payMasterSrcInitiatorId
-     */
-    public function setClick2payMasterSrcInitiatorId($click2payMasterSrcInitiatorId): void
-    {
-        $this->click2payMasterSrcInitiatorId = $click2payMasterSrcInitiatorId;
     }
 
     /**
