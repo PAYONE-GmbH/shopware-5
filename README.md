@@ -5,7 +5,7 @@
 ![Latest release version (semver)](https://img.shields.io/github/v/release/PAYONE-GmbH/shopware-5)
 
 The official extension for [Shopware 5](https://www.payone.com/DE-de/payment-loesungen/online-shops/shopware) to enable payment for your
-website via PAYONE service.
+onlineshop via PAYONE service.
 
 ## Installation
 
